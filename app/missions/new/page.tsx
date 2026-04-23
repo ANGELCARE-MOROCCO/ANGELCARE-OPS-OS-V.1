@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { createMission } from '../actions'
 
 const SERVICE_OPTIONS = [

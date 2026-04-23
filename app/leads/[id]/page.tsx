@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { convertLeadToMission } from '../convert-action'
 import { archiveLead } from '../archive-action'
 

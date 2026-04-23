@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '../../../lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function addLeadEvent(formData: FormData) {
   const supabase = await createClient()
@@ -86,7 +86,7 @@ export async function addLeadReminder(formData: FormData) {
 EOF 
 cat > "app/leads/[id]/page.tsx" <<'EOF'
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { addLeadEvent, addLeadTask, addLeadReminder } from './actions'
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
