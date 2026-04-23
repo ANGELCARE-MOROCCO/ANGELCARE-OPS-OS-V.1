@@ -26,7 +26,9 @@ export default async function LeadDetailPage({
       <main style={{ padding: 32, fontFamily: 'Arial, sans-serif' }}>
         <h1>Lead introuvable</h1>
         <p>Vérifie l’ID ou retourne à la liste.</p>
-        <Link href="/leads" style={secondaryButtonStyle}>← Retour aux leads</Link>
+        <Link href="/leads" style={secondaryButtonStyle}>
+          ← Retour aux leads
+        </Link>
       </main>
     )
   }
@@ -50,46 +52,98 @@ export default async function LeadDetailPage({
     .order('created_at', { ascending: false })
 
   return (
-    <main style={{ padding: 32, fontFamily: 'Arial, sans-serif', background: '#f8fafc', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap', marginBottom: 24 }}>
+    <main
+      style={{
+        padding: 32,
+        fontFamily: 'Arial, sans-serif',
+        background: '#f8fafc',
+        minHeight: '100vh',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          gap: 16,
+          flexWrap: 'wrap',
+          marginBottom: 24,
+        }}
+      >
         <div>
           <h1 style={{ margin: 0 }}>{lead.parent_name || 'Sans nom'}</h1>
           <p style={{ color: '#64748b', marginTop: 8 }}>
-            Lead #{lead.id} • {lead.city || 'Ville non définie'} • {lead.phone || 'Sans téléphone'}
+            Lead #{lead.id} • {lead.city || 'Ville non définie'} •{' '}
+            {lead.phone || 'Sans téléphone'}
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Link href="/leads" style={secondaryButtonStyle}>← Retour</Link>
-          <Link href={`/leads/edit/${lead.id}`} style={secondaryButtonStyle}>Modifier</Link>
+          <Link href="/leads" style={secondaryButtonStyle}>
+            ← Retour
+          </Link>
+          <Link href={`/leads/edit/${lead.id}`} style={secondaryButtonStyle}>
+            Modifier
+          </Link>
         </div>
       </div>
-<form action={archiveLead}>
-  <input type="hidden" name="lead_id" value={lead.id} />
-  <button type="submit" style={archiveButtonStyle}>
-    Archiver
-  </button>
-</form>
+
+      <form action={archiveLead} style={{ marginBottom: 20 }}>
+        <input type="hidden" name="lead_id" value={lead.id} />
+        <button type="submit" style={archiveButtonStyle}>
+          Archiver
+        </button>
+      </form>
+
       <section style={summaryCardStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 16,
+            flexWrap: 'wrap',
+          }}
+        >
           <div>
-            <p><strong>Source :</strong> {lead.source || 'Non définie'}</p>
-            <p><strong>Urgence :</strong> <span style={badgeStyle(lead.urgency || 'normal')}>{lead.urgency || 'normal'}</span></p>
-            <p><strong>Statut :</strong> <span style={badgeStyle(lead.status || 'new')}>{lead.status || 'new'}</span></p>
-            <p><strong>Enfants :</strong> {lead.children_count || 0}</p>
-            <p><strong>Âges enfants :</strong> {lead.children_ages || 'Non précisé'}</p>
+            <p>
+              <strong>Source :</strong> {lead.source || 'Non définie'}
+            </p>
+            <p>
+              <strong>Urgence :</strong>{' '}
+              <span style={badgeStyle(lead.urgency || 'normal')}>
+                {lead.urgency || 'normal'}
+              </span>
+            </p>
+            <p>
+              <strong>Statut :</strong>{' '}
+              <span style={badgeStyle(lead.status || 'new')}>
+                {lead.status || 'new'}
+              </span>
+            </p>
+            <p>
+              <strong>Enfants :</strong> {lead.children_count || 0}
+            </p>
+            <p>
+              <strong>Âges enfants :</strong> {lead.children_ages || 'Non précisé'}
+            </p>
           </div>
 
           <div style={{ minWidth: 320, flex: 1 }}>
-            <p><strong>Services demandés :</strong></p>
+            <p>
+              <strong>Services demandés :</strong>
+            </p>
             <div style={{ color: '#475569' }}>
               {lead.service_interests?.length
                 ? lead.service_interests.join(', ')
                 : lead.service_needed || 'Non précisé'}
             </div>
 
-            <p style={{ marginTop: 16 }}><strong>Besoins spécifiques :</strong></p>
-            <div style={{ color: '#475569' }}>{lead.special_needs || 'Aucun détail'}</div>
+            <p style={{ marginTop: 16 }}>
+              <strong>Besoins spécifiques :</strong>
+            </p>
+            <div style={{ color: '#475569' }}>
+              {lead.special_needs || 'Aucun détail'}
+            </div>
           </div>
         </div>
 
@@ -101,16 +155,26 @@ export default async function LeadDetailPage({
         </form>
       </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 20, marginTop: 20 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.2fr 1fr 1fr',
+          gap: 20,
+          marginTop: 20,
+        }}
+      >
         <section style={panelStyle}>
           <h2 style={panelTitleStyle}>Timeline</h2>
           {events && events.length > 0 ? (
             events.map((event) => (
               <div key={event.id} style={itemStyle}>
-                <div style={{ fontWeight: 700 }}>{event.event_type || 'event'}</div>
+                <div style={{ fontWeight: 700 }}>
+                  {event.event_type || 'event'}
+                </div>
                 <div>{event.content}</div>
                 <div style={smallStyle}>
-                  {event.created_by || 'AngelCare'} • {new Date(event.created_at).toLocaleString()}
+                  {event.created_by || 'AngelCare'} •{' '}
+                  {new Date(event.created_at).toLocaleString()}
                 </div>
               </div>
             ))
@@ -128,7 +192,10 @@ export default async function LeadDetailPage({
                 <div style={smallStyle}>Statut : {task.status || 'open'}</div>
                 <div style={smallStyle}>Notes : {task.notes || '—'}</div>
                 <div style={smallStyle}>
-                  Échéance : {task.due_at ? new Date(task.due_at).toLocaleString() : 'Non définie'}
+                  Échéance :{' '}
+                  {task.due_at
+                    ? new Date(task.due_at).toLocaleString()
+                    : 'Non définie'}
                 </div>
               </div>
             ))
@@ -143,8 +210,12 @@ export default async function LeadDetailPage({
             reminders.map((reminder) => (
               <div key={reminder.id} style={itemStyle}>
                 <div style={{ fontWeight: 700 }}>{reminder.reason}</div>
-                <div style={smallStyle}>{new Date(reminder.remind_at).toLocaleString()}</div>
-                <div style={smallStyle}>Statut : {reminder.status || 'pending'}</div>
+                <div style={smallStyle}>
+                  {new Date(reminder.remind_at).toLocaleString()}
+                </div>
+                <div style={smallStyle}>
+                  Statut : {reminder.status || 'pending'}
+                </div>
               </div>
             ))
           ) : (
@@ -235,6 +306,7 @@ function badgeStyle(status: string): React.CSSProperties {
     textTransform: 'capitalize',
   }
 }
+
 const archiveButtonStyle: React.CSSProperties = {
   background: '#fff7ed',
   color: '#9a3412',
