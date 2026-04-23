@@ -12,8 +12,10 @@ type Caregiver = {
   reliability_score: number | null
   special_needs_capable: boolean | null
   academy_certified: boolean | null
-  skills_summary: string | null
+  skills_summary: string | nullƒ
   last_mission_at: string | null
+  language_tags?: string[] | null
+skill_tags?: string[] | null
 }
 
 
