@@ -424,7 +424,7 @@ function CommandLeadCard({ lead, reminders, alerts, actions }: any) {
       </div>
 
       <div style={tagRowStyle}>
-        <StatusPill tone={sla.tone}>{sla.label}</StatusPill>
+        <StatusPill tone={sla.tone as "blue" | "green" | "purple" | "red" | "amber" | "slate"}>{sla.label}</StatusPill>
         <StatusPill tone="blue">{lead.assigned_to || 'unassigned'}</StatusPill>
         <StatusPill tone={activeAlerts.length ? 'red' : 'green'}>{activeAlerts.length} alerts</StatusPill>
         <StatusPill tone={overdueReminders.length ? 'amber' : 'green'}>{overdueReminders.length} overdue</StatusPill>
