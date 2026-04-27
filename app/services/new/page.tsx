@@ -34,12 +34,10 @@ export default function NewServicePage() {
       internal_checklist: String(formData.get('internal_checklist') || ''),
       status: String(formData.get('status') || 'active'),
       price_3h: Number(formData.get('price_3h') || 0),
-
-      price_3h: Number(formData.get('price_3h') || 0),
-price_5h: Number(formData.get('price_5h') || 0),
-price_8h: Number(formData.get('price_8h') || 0),
-price_12h: Number(formData.get('price_12h') || 0),
-price_24h: Number(formData.get('price_24h') || 0),
+      price_5h: Number(formData.get('price_5h') || 0),
+      price_8h: Number(formData.get('price_8h') || 0),
+      price_12h: Number(formData.get('price_12h') || 0),
+      price_24h: Number(formData.get('price_24h') || 0),
 
 price_b2c: Number(formData.get('price_b2c') || 0),
 price_b2b: Number(formData.get('price_b2b') || 0),
@@ -60,16 +58,7 @@ available_cities: String(formData.get('available_cities') || ''),
 available_regions: String(formData.get('available_regions') || ''),
 fulfillment_notes: String(formData.get('fulfillment_notes') || ''),
 
-      price_3h: Number(formData.get('price_3h') || 0),
-price_5h: Number(formData.get('price_5h') || 0),
-price_8h: Number(formData.get('price_8h') || 0),
-
-price_b2c: Number(formData.get('price_b2c') || 0),
-price_b2b: Number(formData.get('price_b2b') || 0),
-
-required_staff: String(formData.get('required_staff') || ''),
-equipment: String(formData.get('equipment') || ''),
-    }
+}
 
 const { error } = await supabase
   .from('service_catalog')

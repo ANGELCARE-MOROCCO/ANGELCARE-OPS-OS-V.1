@@ -518,7 +518,14 @@ function RegistryRow({ lead, reminders, alerts, actions }: any) {
       <span>{lead.assigned_to || 'unassigned'}</span>
       <span>{lead.status || 'new'}</span>
       <StatusPill tone={scoreTone(score)}>{score}</StatusPill>
-      <StatusPill tone={sla.tone}>{sla.label}</StatusPill>
+      <StatusPill
+  tone={
+    ["blue", "green", "purple", "red", "amber", "slate"].includes(sla.tone)
+      ? (sla.tone as "blue" | "green" | "purple" | "red" | "amber" | "slate")
+      : "slate"
+  }>
+  {sla.label}
+</StatusPill>
       <span>{Number(lead.contact_attempts || 0)} attempts</span>
       <span>{actions.length} actions</span>
       <span>{reminders.filter((r: any) => low(r.status) !== 'done').length} reminders</span>
