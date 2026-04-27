@@ -137,3 +137,428 @@ button {
   aside, header, button, a[href] { box-shadow: none !important; }
   body { background: #fff !important; }
 }
+
+.voice-terminal {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 340px;
+  background: linear-gradient(180deg, #101827, #060913);
+  color: #f8fafc;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 22px;
+  padding: 14px;
+  z-index: 9999;
+  box-shadow: 0 24px 70px rgba(0,0,0,.42);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.voice-terminal.is-minimized {
+  width: 245px;
+}
+
+.vt-topbar,
+.vt-actions,
+.vt-input-row,
+.vt-transfer,
+.vt-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vt-topbar {
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.vt-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.vt-status {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.vt-idle { color: #94a3b8; }
+.vt-calling { color: #facc15; }
+.vt-active { color: #22c55e; }
+.vt-hold { color: #fb923c; }
+
+.vt-icon-btn {
+  background: rgba(255,255,255,.08);
+  border: 0;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.vt-display {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.vt-label {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.vt-number {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: .4px;
+}
+
+.vt-bars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.vt-bars div {
+  background: rgba(255,255,255,.055);
+  border-radius: 14px;
+  padding: 9px;
+}
+
+.vt-bars span {
+  display: block;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.vt-bars b {
+  font-size: 12px;
+}
+
+.vt-input-row input,
+.vt-transfer input {
+  flex: 1;
+  background: #020617;
+  border: 1px solid rgba(255,255,255,.12);
+  color: white;
+  border-radius: 13px;
+  padding: 11px;
+  outline: none;
+}
+
+.vt-input-row button,
+.vt-transfer button {
+  background: rgba(255,255,255,.09);
+  border: 0;
+  color: white;
+  border-radius: 13px;
+  padding: 11px;
+  cursor: pointer;
+}
+
+.vt-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin: 12px 0;
+}
+
+.vt-keypad button {
+  height: 42px;
+  border: 0;
+  border-radius: 15px;
+  background: rgba(255,255,255,.075);
+  color: white;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.vt-keypad button:hover,
+.vt-icon-btn:hover,
+.vt-input-row button:hover,
+.vt-transfer button:hover {
+  background: rgba(255,255,255,.14);
+}
+
+.vt-actions {
+  margin-bottom: 10px;
+}
+
+.vt-actions button {
+  flex: 1;
+  height: 42px;
+  border: 0;
+  border-radius: 15px;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.vt-call {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.vt-hangup {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.vt-secondary {
+  background: rgba(255,255,255,.1);
+}
+
+.vt-secondary:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.vt-transfer {
+  margin-bottom: 12px;
+}
+
+.vt-footer {
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.vt-footer span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vt-lead-card {
+  margin: -4px 0 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(34,197,94,.12);
+  border: 1px solid rgba(34,197,94,.25);
+  display: grid;
+  gap: 3px;
+}
+
+.vt-lead-card b {
+  color: #dcfce7;
+  font-size: 13px;
+}
+
+.vt-lead-card span {
+  color: #bbf7d0;
+  font-size: 12px;
+}
+
+.vt-lead-card small {
+  color: #86efac;
+  font-size: 11px;
+}
+
+.vt-control-panel {
+  margin: 12px 0;
+  display: grid;
+  gap: 9px;
+}
+
+.vt-queue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(59,130,246,.12);
+  border: 1px solid rgba(59,130,246,.25);
+  border-radius: 14px;
+  padding: 9px 11px;
+}
+
+.vt-queue span {
+  color: #bfdbfe;
+  font-size: 11px;
+}
+
+.vt-queue b {
+  color: #dbeafe;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.vt-control-panel textarea {
+  width: 100%;
+  min-height: 58px;
+  resize: none;
+  background: #020617;
+  border: 1px solid rgba(255,255,255,.12);
+  color: white;
+  border-radius: 14px;
+  padding: 10px;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.vt-outcomes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.vt-outcomes button {
+  border: 0;
+  border-radius: 12px;
+  padding: 8px;
+  background: rgba(255,255,255,.08);
+  color: #cbd5e1;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.vt-outcomes button.active {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  font-weight: 800;
+}
+
+.vt-inbound-test {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(14,165,233,.12);
+  border: 1px solid rgba(14,165,233,.25);
+  display: grid;
+  gap: 8px;
+}
+
+.vt-inbound-test div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vt-inbound-test span {
+  color: #bae6fd;
+  font-size: 11px;
+}
+
+.vt-inbound-test b {
+  color: #e0f2fe;
+  font-size: 12px;
+}
+
+.vt-inbound-test button {
+  border: 0;
+  border-radius: 12px;
+  padding: 9px;
+  background: rgba(255,255,255,.1);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.vt-inbound-test button:hover {
+  background: rgba(255,255,255,.18);
+}
+
+.vt-incoming-popup {
+  position: fixed;
+  right: 22px;
+  bottom: 420px;
+  width: 330px;
+  background: linear-gradient(180deg, #020617, #0f172a);
+  color: white;
+  border: 1px solid rgba(56,189,248,.35);
+  border-radius: 22px;
+  padding: 14px;
+  z-index: 10000;
+  box-shadow: 0 20px 60px rgba(14,165,233,.25);
+  display: grid;
+  gap: 12px;
+}
+
+.vt-radar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid rgba(56,189,248,.5);
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.vt-radar::before {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background: conic-gradient(from 0deg, rgba(56,189,248,.6), transparent 45%, transparent);
+  animation: vtRadarSpin 1.4s linear infinite;
+}
+
+.vt-radar span {
+  width: 12px;
+  height: 12px;
+  background: #38bdf8;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0 20px #38bdf8;
+}
+
+@keyframes vtRadarSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vt-incoming-popup small {
+  color: #7dd3fc;
+  font-size: 10px;
+  letter-spacing: .12em;
+  font-weight: 900;
+}
+
+.vt-incoming-popup b {
+  display: block;
+  margin-top: 4px;
+  font-size: 19px;
+}
+
+.vt-incoming-popup p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.vt-popup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.vt-popup-actions button {
+  border: 0;
+  border-radius: 14px;
+  padding: 10px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vt-popup-actions button:first-child {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.vt-popup-actions button:last-child {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}

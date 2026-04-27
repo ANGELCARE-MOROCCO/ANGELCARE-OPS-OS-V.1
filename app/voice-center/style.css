@@ -1,0 +1,54 @@
+:root{--bg:#f7f3ec;--ink:#162018;--muted:#647067;--card:#fffaf2;--line:#eadfce;--gold:#b98a37;--green:#104b3a}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#fff8e8,#f4efe7 45%,#eef5f1);font-family:Inter,ui-sans-serif,system-ui;color:var(--ink)}.shell{max-width:1180px;margin:auto;padding:34px}.hero{display:grid;grid-template-columns:1fr 330px;gap:24px;align-items:stretch}.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:white;padding:8px 12px;border-radius:999px;color:var(--green);font-weight:700}.hero h1{font-size:58px;line-height:.92;margin:20px 0 12px;letter-spacing:-2px}.hero p{font-size:18px;line-height:1.6;color:var(--muted);max-width:760px}.heroCard,.card,.panel{background:rgba(255,250,242,.86);border:1px solid var(--line);box-shadow:0 24px 70px rgba(52,37,9,.08);border-radius:28px}.heroCard{padding:28px;display:flex;flex-direction:column;justify-content:end;gap:10px;color:var(--green)}.heroCard b{font-size:24px}.grid{display:grid;gap:18px}.metrics{grid-template-columns:repeat(4,1fr);margin:24px 0}.card{padding:22px;display:flex;flex-direction:column;gap:10px}.card svg{color:var(--gold)}.card span{color:var(--muted);font-size:14px}.card b{font-size:30px}.twoCols{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{padding:26px}.panel h2{margin-top:0}.list{display:flex;flex-direction:column;gap:10px}.row{display:grid;grid-template-columns:80px 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:18px;background:white;border:1px solid var(--line)}.row em{font-style:normal;color:var(--green);font-weight:700}.empty{color:var(--muted)}.roadmap{margin-top:18px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.step{background:white;border:1px solid var(--line);padding:18px;border-radius:20px;display:flex;flex-direction:column;gap:8px}.step b{width:34px;height:34px;border-radius:50%;background:var(--green);color:white;display:grid;place-items:center}@media(max-width:850px){.hero,.twoCols,.metrics,.flow{grid-template-columns:1fr}.hero h1{font-size:42px}.shell{padding:18px}}
+.phone-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  background: #0f172a;
+  color: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  z-index: 9999;
+}
+
+.phone-widget .header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.phone-widget .status {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.phone-widget .dial {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 10px;
+}
+
+.phone-widget .actions {
+  display: flex;
+  gap: 8px;
+}
+
+.phone-widget button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.phone-widget button:first-child {
+  background: #22c55e;
+}
+
+.phone-widget button:last-child {
+  background: #ef4444;
+}
