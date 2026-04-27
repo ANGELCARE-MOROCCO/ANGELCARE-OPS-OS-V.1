@@ -230,11 +230,11 @@ export default function VoicePhoneWidget() {
     }
 
     const client = new TelnyxRTC({
-  login: username,
-  password,
-  debug: true,
-  audio: true,
-} as any)
+      login: username,
+      password,
+      debug: true,
+      audio: true,
+    } as any)
 
     clientRef.current = client
 
