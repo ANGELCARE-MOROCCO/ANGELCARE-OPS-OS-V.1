@@ -133,7 +133,7 @@ export default function VoicePhoneWidget() {
       }
 
       audio.autoplay = true
-      audio.playsInline = true
+      audio.setAttribute("playsinline", "true")
       audio.muted = false
       audio.volume = 1
 
