@@ -10,12 +10,20 @@ export async function getCurrentUser() {
 
   const supabase = await createClient()
 
-  const { data } = await supabase
+  const { data: session } = await supabase
     .from('app_sessions')
-    .select('user_id, app_users(*)')
+    .select('user_id, expires_at')
     .eq('session_token', token)
     .gt('expires_at', new Date().toISOString())
     .maybeSingle()
 
-  return data?.app_users || null
+  if (!session?.user_id) return null
+
+  const { data: user } = await supabase
+    .from('app_users')
+    .select('*')
+    .eq('id', session.user_id)
+    .maybeSingle()
+
+  return user || null
 }

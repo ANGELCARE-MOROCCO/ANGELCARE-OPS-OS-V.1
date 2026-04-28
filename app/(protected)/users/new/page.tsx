@@ -4,17 +4,83 @@ import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
 
 const PERMISSIONS = [
-  { value: 'leads.view', label: 'Voir les leads' },
-  { value: 'leads.create', label: 'Créer des leads' },
-  { value: 'families.view', label: 'Voir familles' },
-  { value: 'caregivers.view', label: 'Voir intervenantes' },
-  { value: 'missions.view', label: 'Voir missions' },
-  { value: 'missions.assign', label: 'Assigner missions' },
-  { value: 'billing.view', label: 'Voir facturation' },
-  { value: 'reports.view', label: 'Voir rapports' },
-  { value: 'users.manage', label: 'Gérer utilisateurs' },
-  { value: 'voice_center.access', label: 'Voice Center' },
-  { value: 'revenue_center.access', label: 'Revenue Center' },
+  { value: 'academy.view', label: 'Academy - Voir' },
+  { value: 'academy.manage', label: 'Academy - Gérer' },
+
+  { value: 'admin.view', label: 'Admin - Voir' },
+  { value: 'admin.manage', label: 'Admin - Gérer' },
+
+  { value: 'billing.view', label: 'Facturation - Voir' },
+  { value: 'billing.manage', label: 'Facturation - Gérer' },
+
+  { value: 'caregivers.view', label: 'Intervenantes - Voir' },
+  { value: 'caregivers.create', label: 'Intervenantes - Créer' },
+  { value: 'caregivers.edit', label: 'Intervenantes - Modifier' },
+  { value: 'caregivers.delete', label: 'Intervenantes - Supprimer' },
+
+  { value: 'contracts.view', label: 'Contrats - Voir' },
+  { value: 'contracts.create', label: 'Contrats - Créer' },
+  { value: 'contracts.edit', label: 'Contrats - Modifier' },
+  { value: 'contracts.delete', label: 'Contrats - Supprimer' },
+
+  { value: 'families.view', label: 'Familles - Voir' },
+  { value: 'families.create', label: 'Familles - Créer' },
+  { value: 'families.edit', label: 'Familles - Modifier' },
+  { value: 'families.delete', label: 'Familles - Supprimer' },
+
+  { value: 'hr.view', label: 'RH - Voir' },
+  { value: 'hr.manage', label: 'RH - Gérer' },
+
+  { value: 'incidents.view', label: 'Incidents - Voir' },
+  { value: 'incidents.create', label: 'Incidents - Créer' },
+  { value: 'incidents.edit', label: 'Incidents - Modifier' },
+  { value: 'incidents.close', label: 'Incidents - Clôturer' },
+
+  { value: 'leads.view', label: 'Leads - Voir' },
+  { value: 'leads.create', label: 'Leads - Créer' },
+  { value: 'leads.edit', label: 'Leads - Modifier' },
+  { value: 'leads.delete', label: 'Leads - Supprimer' },
+
+  { value: 'locations.view', label: 'Localisations - Voir' },
+  { value: 'locations.manage', label: 'Localisations - Gérer' },
+
+  { value: 'missions.view', label: 'Missions - Voir' },
+  { value: 'missions.create', label: 'Missions - Créer' },
+  { value: 'missions.edit', label: 'Missions - Modifier' },
+  { value: 'missions.assign', label: 'Missions - Assigner' },
+  { value: 'missions.delete', label: 'Missions - Supprimer' },
+
+  { value: 'operations.view', label: 'Operations - Voir' },
+  { value: 'operations.manage', label: 'Operations - Gérer' },
+
+  { value: 'pointage.view', label: 'Pointage - Voir' },
+  { value: 'pointage.manage', label: 'Pointage - Gérer' },
+
+  { value: 'print.view', label: 'Print Center - Voir' },
+  { value: 'print.create', label: 'Print Center - Créer' },
+
+  { value: 'reports.view', label: 'Rapports - Voir' },
+  { value: 'reports.export', label: 'Rapports - Exporter' },
+
+  { value: 'revenue.view', label: 'Revenue Center - Voir' },
+  { value: 'revenue.manage', label: 'Revenue Center - Gérer' },
+
+  { value: 'sales.view', label: 'Sales - Voir' },
+  { value: 'sales.manage', label: 'Sales - Gérer' },
+
+  { value: 'services.view', label: 'Services - Voir' },
+  { value: 'services.create', label: 'Services - Créer' },
+  { value: 'services.edit', label: 'Services - Modifier' },
+  { value: 'services.delete', label: 'Services - Supprimer' },
+
+  { value: 'users.view', label: 'Utilisateurs - Voir' },
+  { value: 'users.create', label: 'Utilisateurs - Créer' },
+  { value: 'users.edit', label: 'Utilisateurs - Modifier' },
+  { value: 'users.delete', label: 'Utilisateurs - Supprimer' },
+
+  { value: 'voice.view', label: 'Voice Center - Voir' },
+  { value: 'voice.call', label: 'Voice Center - Appeler' },
+  { value: 'voice.manage', label: 'Voice Center - Gérer' },
 ]
 
 export default async function NewUserPage() {

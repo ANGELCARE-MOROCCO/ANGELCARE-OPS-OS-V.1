@@ -1,43 +1,69 @@
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
-import { APP_SESSION_COOKIE, generateSessionToken } from '@/lib/auth/session'
+import { APP_SESSION_COOKIE } from '@/lib/auth/session'
+import { getFirstAllowedRoute } from '@/lib/auth/permissions'
+
+type LoginUser = {
+  id: string
+  role?: string | null
+  permissions?: string[] | null
+}
 
 export default function LoginPage() {
   async function loginAction(formData: FormData) {
     'use server'
-    console.log('LOGIN ACTION TRIGGERED')
+
     const username = String(formData.get('username') || '').trim().toLowerCase()
     const password = String(formData.get('password') || '')
 
-    if (!username || !password) throw new Error('Nom utilisateur et mot de passe obligatoires.')
+    if (!username || !password) {
+      throw new Error('Nom utilisateur et mot de passe obligatoires.')
+    }
 
     const supabase = await createClient()
 
-    const { data: rawUser, error } = await supabase
-  .rpc('login_app_user', {
-    input_username: username,
-    input_password: password,
-  })
-  .maybeSingle()
+    const { data, error } = await supabase.rpc('login_app_user', {
+      input_username: username,
+      input_password: password,
+    })
 
-const user = rawUser as { id: string } | null
+    if (error) throw new Error(error.message)
 
-if (error) throw new Error(error.message)
-if (!user) throw new Error('Identifiants incorrects.')
+    const rpcUser = Array.isArray(data) ? (data[0] as LoginUser | undefined) : (data as LoginUser | null)
 
-    const token = generateSessionToken()
+    if (!rpcUser?.id) {
+      throw new Error('Identifiants incorrects.')
+    }
+
+    const { data: fullUser, error: fullUserError } = await supabase
+      .from('app_users')
+      .select('id, role, permissions')
+      .eq('id', rpcUser.id)
+      .single()
+
+    if (fullUserError) throw new Error(fullUserError.message)
+
+    const user = fullUser as LoginUser
+
+    const token = crypto.randomUUID()
     const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000)
 
-    const { error: sessionError } = await supabase.from('app_sessions').insert([
-      { user_id: user.id, session_token: token, expires_at: expiresAt.toISOString() },
-    ])
+    const { error: sessionError } = await supabase.from('app_sessions').insert({
+      user_id: user.id,
+      session_token: token,
+      expires_at: expiresAt.toISOString(),
+    })
 
     if (sessionError) throw new Error(sessionError.message)
 
-    await supabase.from('app_users').update({ last_login_at: new Date().toISOString() }).eq('id', user.id)
+    await supabase
+      .from('app_users')
+      .update({ last_login_at: new Date().toISOString() })
+      .eq('id', user.id)
 
     const cookieStore = await cookies()
+
     cookieStore.set(APP_SESSION_COOKIE, token, {
       httpOnly: true,
       sameSite: 'lax',
@@ -46,7 +72,18 @@ if (!user) throw new Error('Identifiants incorrects.')
       expires: expiresAt,
     })
 
-    redirect('/')
+    cookieStore.set(APP_SESSION_COOKIE, token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      expires: expiresAt,
+    })
+    
+    const redirectTo = getFirstAllowedRoute(user)
+    redirect(redirectTo)
+
+
   }
 
   return (

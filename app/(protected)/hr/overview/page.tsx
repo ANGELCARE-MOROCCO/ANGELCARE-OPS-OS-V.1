@@ -1,6 +1,6 @@
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
-import { requireRole } from '@/lib/auth/session'
+import { requireAccess } from '@/lib/auth/requireAccess'
 
 type AppUser = {
   id: string
@@ -59,7 +59,7 @@ export default async function HRLiveOverviewPage({
 }: {
   searchParams?: Promise<{ status?: string; department?: string; q?: string }>
 }) {
-  await requireRole(['ceo', 'manager'])
+  await requireAccess('hr.view')
 
   const filters = await searchParams
   const statusFilter = filters?.status || 'all'

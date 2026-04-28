@@ -1,44 +1,125 @@
 import Link from 'next/link'
+import AppShell, { PageAction } from '@/app/components/erp/AppShell'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+
+function money(value: any) { return new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD', maximumFractionDigits: 0 }).format(Number(value || 0)) }
+function date(value: any) { return value ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium' }).format(new Date(value)) : '—' }
+function datetime(value: any) { return value ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—' }
+function daysUntil(value: any) { if (!value) return null; const a = new Date(); const b = new Date(value); a.setHours(0,0,0,0); b.setHours(0,0,0,0); return Math.ceil((b.getTime()-a.getTime())/86400000) }
 
 export default async function ContractDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const contractId = Number(id)
   const supabase = await createClient()
-  const [contractRes, missionsRes, rowsRes] = await Promise.all([
-    supabase.from('contracts').select(`*, families:family_id (family_name, parent_name, city), caregivers:preferred_caregiver_id (full_name)`).eq('id', contractId).eq('is_archived', false).maybeSingle(),
+
+  const [contractRes, missionsRes, rowsRes, invoicesRes, eventsRes] = await Promise.all([
+    supabase.from('contracts').select(`*, families:family_id (family_name, parent_name, city, phone), caregivers:preferred_caregiver_id (full_name, phone)`).eq('id', contractId).eq('is_archived', false).maybeSingle(),
     supabase.from('missions').select('*').eq('contract_id', contractId).eq('is_archived', false).order('contract_row_order', { ascending: true }),
     supabase.from('contract_mission_rows').select('*').eq('contract_id', contractId).order('row_order', { ascending: true }),
+    supabase.from('billing_invoices').select('*').eq('contract_id', contractId).eq('is_archived', false).order('created_at', { ascending: false }),
+    supabase.from('contract_finance_events').select('*').eq('contract_id', contractId).order('created_at', { ascending: false }).limit(12),
   ])
+
   if (contractRes.error) return <main style={{ padding: 32 }}>Erreur : {contractRes.error.message}</main>
   const contract = contractRes.data
+  if (!contract) notFound()
+
   const missions = missionsRes.data || []
   const rows = rowsRes.data || []
-  if (!contract) return <main style={{ padding:32, fontFamily:'Arial, sans-serif' }}><h1>Contrat introuvable</h1><Link href="/contracts" style={secondaryButtonStyle}>← Retour contrats</Link></main>
+  const invoices = invoicesRes.data || []
+  const events = eventsRes.data || []
   const totalSessions = Number(contract.total_sessions || 0)
   const used = Number(contract.sessions_used || 0)
   const remaining = Math.max(0, totalSessions - used)
-  return <main style={pageStyle}><div style={headerStyle}><div><div style={eyebrowStyle}>AngelCare • Contracts Engine</div><h1 style={titleStyle}>{contract.contract_reference || contract.package_label || `Contrat #${contract.id}`}</h1><p style={subtitleStyle}>Vue complète du contrat, lignes planifiées et missions réelles liées.</p></div><div style={{ display:'flex', gap:12, flexWrap:'wrap' }}><Link href="/contracts" style={secondaryButtonStyle}>← Retour contrats</Link><Link href={`/contracts/edit/${contract.id}`} style={secondaryButtonStyle}>Modifier</Link></div></div><section style={heroCardStyle}><div style={heroGridStyle}><InfoCard label="Type contrat" value={contract.contract_type || 'one_shot'} /><InfoCard label="Famille" value={contract.families?.family_name || contract.families?.parent_name || 'Non définie'} /><InfoCard label="Ville famille" value={contract.families?.city || 'Non définie'} /><InfoCard label="Service" value={contract.service_type || 'Non défini'} /><InfoCard label="Caregiver préférée" value={contract.caregivers?.full_name || 'Non définie'} /><InfoCard label="Statut" value={contract.status || 'draft'} /><InfoCard label="Date début" value={contract.start_date || '—'} /><InfoCard label="Date fin" value={contract.end_date || '—'} /><InfoCard label="Jours préférés" value={contract.preferred_days || '—'} /><InfoCard label="Heure préférée" value={contract.preferred_time || '—'} /></div><div style={{ marginTop:20 }}><div style={progressHeaderStyle}><span>Sessions utilisées: <strong>{used}/{totalSessions}</strong></span><span>Restantes: <strong>{remaining}</strong></span></div><div style={progressTrackStyle}><div style={{ ...progressFillStyle, width:`${totalSessions>0 ? Math.min(100, (used/totalSessions)*100) : 0}%` }} /></div></div></section><section style={panelStyle}><h2 style={panelTitleStyle}>Lignes planifiées du contrat</h2>{rows.length===0 ? <div style={emptyStyle}>Aucune ligne mission enregistrée.</div> : <div style={{ display:'grid', gap:12 }}>{rows.map((row:any)=><div key={row.id} style={rowStyle}><div><div style={rowTitleStyle}>{row.mission_code || `Ligne #${row.row_order}`}</div><div style={rowMetaStyle}>{row.service_type || 'Service non défini'} • {row.mission_date || 'Date inconnue'} • {row.start_time || '--:--'} → {row.end_time || '--:--'}</div><div style={rowMetaStyle}>Durée: {row.duration_hours || 0}h • Caregiver ID: {row.caregiver_id || '—'}</div></div><div style={tagStyle}>{row.service_code || 'N/A'}</div></div>)}</div>}</section><section style={panelStyle}><h2 style={panelTitleStyle}>Missions réelles liées au contrat</h2>{missions.length===0 ? <div style={emptyStyle}>Aucune mission réelle liée pour le moment.</div> : <div style={{ display:'grid', gap:12 }}>{missions.map((mission:any)=><div key={mission.id} style={rowStyle}><div><div style={rowTitleStyle}>{mission.mission_code || `Mission #${mission.id}`} • {mission.service_type || 'Mission'}</div><div style={rowMetaStyle}>{mission.mission_date || 'Date inconnue'} • {mission.start_time || '--:--'} → {mission.end_time || '--:--'}</div><div style={rowMetaStyle}>Statut: {mission.status || 'draft'} • Urgence: {mission.urgency || 'normal'} • Caregiver ID: {mission.caregiver_id || '—'}</div></div><Link href={`/missions/${mission.id}`} style={secondaryButtonStyle}>Ouvrir mission</Link></div>)}</div>}</section></main>
+  const progress = totalSessions > 0 ? Math.min(100, (used / totalSessions) * 100) : 0
+  const invoiceAmount = invoices.reduce((s: number, i: any) => s + Number(i.amount || 0), 0)
+  const paidAmount = invoices.reduce((s: number, i: any) => s + Number(i.amount_paid || 0), 0)
+  const unpaid = Math.max(0, invoiceAmount - paidAmount)
+  const renewalDays = daysUntil(contract.renewal_date || contract.end_date)
+
+  return (
+    <AppShell
+      title={contract.contract_reference || contract.package_label || `Contrat #${contract.id}`}
+      subtitle="Vue complète contrat: famille, service, missions, consommation, facturation et risques."
+      breadcrumbs={[{ label: 'Contracts', href: '/contracts' }, { label: contract.contract_reference || `#${contract.id}` }]}
+      actions={<><PageAction href="/contracts" variant="light">Retour</PageAction><PageAction href={`/contracts/edit/${contract.id}`} variant="light">Modifier</PageAction><PageAction href={`/contracts/${contract.id}/print`} variant="light">Print</PageAction></>}
+    >
+      <div style={pageStyle}>
+        <section style={heroStyle}>
+          <div><div style={badgeStyle}>📦 CONTRACT CONTROL FILE</div><h1 style={heroTitleStyle}>{contract.contract_reference || contract.package_label || `Contrat #${contract.id}`}</h1><p style={heroTextStyle}>{contract.families?.family_name || contract.families?.parent_name || 'Famille non définie'} • {contract.service_type || 'Service non défini'} • {contract.status || 'draft'}</p></div>
+          <div style={heroCardStyle}><span>Reste à encaisser</span><strong>{money(unpaid || Math.max(0, Number(contract.contract_value || 0) - Number(contract.amount_paid || 0)))}</strong><small>{contract.payment_status || 'pending'} • {renewalDays === null ? 'renouvellement non défini' : `${renewalDays}j renouvellement`}</small></div>
+        </section>
+
+        <section style={kpiGridStyle}>
+          <Kpi label="Valeur" value={money(contract.contract_value || contract.monthly_amount)} sub="contrat" />
+          <Kpi label="Payé" value={money(contract.amount_paid || paidAmount)} sub="encaissement" />
+          <Kpi label="Sessions" value={`${used}/${totalSessions}`} sub={`${remaining} restantes`} />
+          <Kpi label="Missions" value={missions.length} sub="liées au contrat" />
+          <Kpi label="Factures" value={invoices.length} sub="billing records" />
+          <Kpi label="Risque" value={contract.risk_level || 'normal'} sub="lecture manager" />
+        </section>
+
+        <section style={gridStyle}>
+          <Panel title="Dossier contrat" subtitle="Informations principales du contrat.">
+            <Info label="Famille" value={contract.families?.family_name || contract.families?.parent_name || '—'} />
+            <Info label="Ville" value={contract.families?.city || '—'} />
+            <Info label="Service" value={contract.service_type || '—'} />
+            <Info label="Package" value={contract.package_label || '—'} />
+            <Info label="Caregiver préférée" value={contract.caregivers?.full_name || '—'} />
+            <Info label="Cycle billing" value={contract.billing_cycle || 'one_time'} />
+            <Info label="Début" value={date(contract.start_date)} />
+            <Info label="Fin" value={date(contract.end_date)} />
+            <Info label="Renouvellement" value={date(contract.renewal_date)} />
+          </Panel>
+
+          <Panel title="Consommation & finance" subtitle="Vision manager des sessions et paiements.">
+            <div style={progressWrapStyle}><div style={progressLabelStyle}><span>Consommation sessions</span><strong>{Math.round(progress)}%</strong></div><div style={trackStyle}><div style={{ ...fillStyle, width: `${progress}%` }} /></div></div>
+            <Info label="Payment status" value={contract.payment_status || 'pending'} />
+            <Info label="Next billing" value={date(contract.next_billing_date)} />
+            <Info label="Last payment" value={datetime(contract.last_payment_at)} />
+            <Info label="Finance notes" value={contract.finance_notes || '—'} />
+          </Panel>
+        </section>
+
+        <section style={gridStyle}>
+          <Panel title="Missions liées" subtitle="Livraison opérationnelle attachée au contrat.">
+            {missions.length ? <div style={{ display:'grid', gap:10 }}>{missions.map((m: any) => <Link key={m.id} href={`/missions/${m.id}`} style={rowLinkStyle}><div><strong>{m.mission_code || `Mission #${m.id}`}</strong><span>{m.service_type || 'Service'} • {date(m.mission_date)}</span></div><b>{m.status || 'draft'}</b></Link>)}</div> : <Empty text="Aucune mission liée." />}
+          </Panel>
+
+          <Panel title="Factures & événements finance" subtitle="Historique facturation et notes financières.">
+            {invoices.length ? <div style={{ display:'grid', gap:10, marginBottom:14 }}>{invoices.map((i: any) => <div key={i.id} style={rowStyle}><div><strong>{i.invoice_reference || i.invoice_label || `Invoice #${i.id}`}</strong><span>{money(i.amount)} • paid {money(i.amount_paid)}</span></div><b>{i.status}</b></div>)}</div> : <Empty text="Aucune facture liée." />}
+            {events.length ? <div style={{ display:'grid', gap:8 }}>{events.map((e: any) => <div key={e.id} style={miniEventStyle}><strong>{e.event_type}</strong><span>{money(e.amount)} • {datetime(e.created_at)}</span></div>)}</div> : null}
+          </Panel>
+        </section>
+      </div>
+    </AppShell>
+  )
 }
-function InfoCard({ label, value }: { label: string; value: string }) { return <div style={infoCardStyle}><div style={smallLabelStyle}>{label}</div><div style={infoValueStyle}>{value}</div></div> }
-const pageStyle: React.CSSProperties = { padding:32, fontFamily:'Arial, sans-serif', background:'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)', minHeight:'100vh' }
-const headerStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:20, flexWrap:'wrap', marginBottom:24 }
-const eyebrowStyle: React.CSSProperties = { display:'inline-block', padding:'6px 10px', borderRadius:999, background:'#e2e8f0', color:'#334155', fontSize:12, fontWeight:800, marginBottom:10 }
-const titleStyle: React.CSSProperties = { margin:0, fontSize:40, lineHeight:1.05, color:'#0f172a', fontWeight:800 }
-const subtitleStyle: React.CSSProperties = { color:'#475569', margin:'10px 0 0 0', fontSize:17 }
-const heroCardStyle: React.CSSProperties = { background:'rgba(255,255,255,0.96)', borderRadius:24, padding:24, border:'1px solid #dbe3ee', boxShadow:'0 16px 40px rgba(15, 23, 42, 0.07)', marginBottom:20 }
-const heroGridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(5, minmax(0, 1fr))', gap:14 }
-const infoCardStyle: React.CSSProperties = { background:'#fcfdff', border:'1px solid #e2e8f0', borderRadius:14, padding:14 }
-const smallLabelStyle: React.CSSProperties = { color:'#64748b', fontSize:13, fontWeight:700, marginBottom:6 }
-const infoValueStyle: React.CSSProperties = { color:'#0f172a', fontSize:15, fontWeight:600, lineHeight:1.5 }
-const progressHeaderStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', gap:12, marginBottom:8, color:'#334155', fontSize:14 }
-const progressTrackStyle: React.CSSProperties = { height:12, borderRadius:999, background:'#e2e8f0', overflow:'hidden' }
-const progressFillStyle: React.CSSProperties = { height:12, borderRadius:999, background:'linear-gradient(90deg, #0f172a 0%, #334155 100%)' }
-const panelStyle: React.CSSProperties = { background:'rgba(255,255,255,0.96)', borderRadius:24, padding:24, border:'1px solid #dbe3ee', boxShadow:'0 16px 40px rgba(15, 23, 42, 0.06)', marginBottom:20 }
-const panelTitleStyle: React.CSSProperties = { margin:'0 0 16px 0', color:'#0f172a', fontSize:24, fontWeight:800 }
-const rowStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:16, padding:14, borderRadius:16, border:'1px solid #e2e8f0', background:'#ffffff' }
-const rowTitleStyle: React.CSSProperties = { color:'#0f172a', fontWeight:800, marginBottom:6 }
-const rowMetaStyle: React.CSSProperties = { color:'#64748b', fontSize:13, lineHeight:1.6 }
-const secondaryButtonStyle: React.CSSProperties = { background:'white', color:'#0f172a', padding:'12px 16px', borderRadius:12, textDecoration:'none', fontWeight:800, border:'1px solid #cbd5e1' }
-const emptyStyle: React.CSSProperties = { padding:16, borderRadius:14, border:'1px dashed #cbd5e1', background:'#ffffff', color:'#64748b' }
-const tagStyle: React.CSSProperties = { display:'inline-flex', alignItems:'center', padding:'7px 10px', borderRadius:999, background:'#eef2ff', color:'#4338ca', fontSize:12, fontWeight:800, border:'1px solid #c7d2fe' }
+
+function Kpi({ label, value, sub }: { label: string; value: any; sub: string }) { return <div style={kpiStyle}><span>{label}</span><strong>{value}</strong><small>{sub}</small></div> }
+function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) { return <section style={panelStyle}><h2 style={sectionTitleStyle}>{title}</h2><p style={sectionTextStyle}>{subtitle}</p><div style={{ marginTop:16 }}>{children}</div></section> }
+function Info({ label, value }: { label: string; value: any }) { return <div style={infoStyle}><span>{label}</span><strong>{value}</strong></div> }
+function Empty({ text }: { text: string }) { return <div style={emptyStyle}>{text}</div> }
+
+const pageStyle: React.CSSProperties = { display:'grid', gap:20 }
+const heroStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', alignItems:'center', gap:24, padding:32, borderRadius:34, background:'linear-gradient(135deg,#1e3a8a,#020617 70%)', color:'#fff', boxShadow:'0 34px 90px rgba(15,23,42,.28)' }
+const badgeStyle: React.CSSProperties = { display:'inline-flex', padding:'7px 12px', borderRadius:999, background:'rgba(255,255,255,.12)', color:'#dbeafe', fontWeight:950, fontSize:12, marginBottom:12 }
+const heroTitleStyle: React.CSSProperties = { margin:0, fontSize:38, fontWeight:950, maxWidth:820, letterSpacing:-.8 }
+const heroTextStyle: React.CSSProperties = { color:'#dbeafe', fontWeight:760, maxWidth:760, lineHeight:1.6 }
+const heroCardStyle: React.CSSProperties = { minWidth:300, padding:22, borderRadius:26, background:'rgba(255,255,255,.1)', border:'1px solid rgba(255,255,255,.18)', display:'grid', gap:8 }
+const kpiGridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(6,minmax(0,1fr))', gap:14 }
+const kpiStyle: React.CSSProperties = { background:'#fff', border:'1px solid #dbe3ee', borderRadius:22, padding:18, display:'grid', gap:7, boxShadow:'0 18px 38px rgba(15,23,42,.05)', color:'#0f172a' }
+const gridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'1fr 1fr', gap:18, alignItems:'start' }
+const panelStyle: React.CSSProperties = { background:'#fff', border:'1px solid #dbe3ee', borderRadius:26, padding:22, boxShadow:'0 18px 38px rgba(15,23,42,.06)' }
+const sectionTitleStyle: React.CSSProperties = { margin:0, color:'#0f172a', fontSize:24, fontWeight:950 }
+const sectionTextStyle: React.CSSProperties = { margin:'8px 0 0', color:'#64748b', fontWeight:700 }
+const infoStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', gap:14, padding:'12px 0', borderBottom:'1px solid #e2e8f0', color:'#334155' }
+const progressWrapStyle: React.CSSProperties = { marginBottom:14, padding:14, borderRadius:18, background:'#f8fafc', border:'1px solid #e2e8f0' }
+const progressLabelStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', marginBottom:8, color:'#334155', fontWeight:900 }
+const trackStyle: React.CSSProperties = { height:12, borderRadius:999, background:'#e2e8f0', overflow:'hidden' }
+const fillStyle: React.CSSProperties = { height:12, borderRadius:999, background:'linear-gradient(90deg,#2563eb,#0f172a)' }
+const rowStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', gap:12, padding:14, borderRadius:18, background:'#f8fafc', border:'1px solid #e2e8f0', color:'#0f172a' }
+const rowLinkStyle: React.CSSProperties = { ...rowStyle, textDecoration:'none' }
+const miniEventStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', padding:10, borderRadius:14, background:'#fff', border:'1px solid #e2e8f0', color:'#334155' }
+const emptyStyle: React.CSSProperties = { padding:18, borderRadius:18, background:'#f8fafc', border:'1px dashed #cbd5e1', color:'#64748b', fontWeight:800 }

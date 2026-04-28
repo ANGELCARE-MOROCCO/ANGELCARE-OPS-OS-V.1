@@ -119,19 +119,15 @@ export default async function EditUserPage({
   )
 }
 
-const PERMISSIONS = [
-  { value: 'leads.view', label: 'Voir les leads' },
-  { value: 'leads.create', label: 'Créer des leads' },
-  { value: 'families.view', label: 'Voir familles' },
-  { value: 'caregivers.view', label: 'Voir intervenantes' },
-  { value: 'missions.view', label: 'Voir missions' },
-  { value: 'missions.assign', label: 'Assigner missions' },
-  { value: 'billing.view', label: 'Voir facturation' },
-  { value: 'reports.view', label: 'Voir rapports' },
-  { value: 'users.manage', label: 'Gérer utilisateurs' },
-  { value: 'voice_center.access', label: 'Voice Center' },
-  { value: 'revenue_center.access', label: 'Revenue Center' },
-]
+import { MODULE_PERMISSIONS } from '@/lib/auth/permissions'
+
+const PERMISSIONS = Object.entries(MODULE_PERMISSIONS).flatMap(([moduleKey, permissions]) =>
+  permissions.map((permission) => ({
+    value: permission,
+    label: permission, // we can improve labels later
+    module: moduleKey,
+  }))
+)
 
 function Field({ name, label, defaultValue }: { name: string; label: string; defaultValue?: string | null }) {
   return (
