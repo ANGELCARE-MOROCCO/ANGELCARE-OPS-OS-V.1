@@ -1,425 +1,158 @@
 import Link from 'next/link'
+import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
 
-type Family = {
-  id: number
-  family_name: string | null
-  parent_name: string | null
-  phone: string | null
-  secondary_phone: string | null
-  city: string | null
-  zone: string | null
-  address: string | null
-  children_count: number | null
-  children_ages: string | null
-  preferred_schedule: string | null
-  service_preferences: string | null
-  special_needs: string | null
-  source: string | null
-  status: string | null
-  notes: string | null
-  created_at: string | null
+type Family = Record<string, any>
+
+function text(value: any, fallback = '—') {
+  return value === null || value === undefined || value === '' ? fallback : String(value)
 }
 
-function badgeStyle(value: string): React.CSSProperties {
-  const v = (value || '').toLowerCase()
-
-  const map: Record<string, { bg: string; text: string; border: string }> = {
-    active: { bg: '#dcfce7', text: '#166534', border: '#bbf7d0' },
-    pending: { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
-    inactive: { bg: '#e2e8f0', text: '#334155', border: '#cbd5e1' },
-    vip: { bg: '#ede9fe', text: '#6d28d9', border: '#ddd6fe' },
-  }
-
-  const color = map[v] || { bg: '#e2e8f0', text: '#334155', border: '#cbd5e1' }
-
-  return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '7px 11px',
-    borderRadius: 999,
-    background: color.bg,
-    color: color.text,
-    border: `1px solid ${color.border}`,
-    fontSize: 12,
-    fontWeight: 800,
-    textTransform: 'capitalize',
-  }
+function tone(status?: string) {
+  const s = (status || '').toLowerCase()
+  if (s.includes('vip')) return { bg: '#ede9fe', fg: '#5b21b6', bd: '#c4b5fd' }
+  if (s.includes('active')) return { bg: '#dcfce7', fg: '#166534', bd: '#86efac' }
+  if (s.includes('pending')) return { bg: '#fef3c7', fg: '#92400e', bd: '#fcd34d' }
+  if (s.includes('risk') || s.includes('urgent')) return { bg: '#fee2e2', fg: '#991b1b', bd: '#fca5a5' }
+  return { bg: '#e2e8f0', fg: '#334155', bd: '#cbd5e1' }
 }
 
-export default async function FamiliesPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ q?: string; city?: string; status?: string }>
-}) {
-  const params = searchParams ? await searchParams : undefined
-  const q = (params?.q || '').trim()
-  const cityFilter = (params?.city || '').trim()
-  const statusFilter = (params?.status || '').trim()
+export default async function FamiliesPage({ searchParams }: { searchParams?: Promise<{ q?: string; city?: string; status?: string; segment?: string }> }) {
+  const sp = await searchParams
+  const q = (sp?.q || '').trim()
+  const city = (sp?.city || '').trim()
+  const status = (sp?.status || '').trim()
+  const segment = (sp?.segment || '').trim()
 
   const supabase = await createClient()
 
-  let query = supabase
-    .from('families')
-    .select('*')
-    .eq('is_archived', false)
-    .order('id', { ascending: false })
+  let query = supabase.from('families').select('*').eq('is_archived', false).order('id', { ascending: false })
+  if (city) query = query.eq('city', city)
+  if (status) query = query.eq('status', status)
+  if (segment) query = query.eq('family_segment', segment)
+  if (q) query = query.or(`family_name.ilike.%${q}%,parent_name.ilike.%${q}%,phone.ilike.%${q}%,city.ilike.%${q}%,zone.ilike.%${q}%`)
 
-  if (cityFilter) query = query.eq('city', cityFilter)
-  if (statusFilter) query = query.eq('status', statusFilter)
-  if (q) {
-    query = query.or(
-      `family_name.ilike.%${q}%,parent_name.ilike.%${q}%,phone.ilike.%${q}%,city.ilike.%${q}%,zone.ilike.%${q}%`
-    )
-  }
+  const [{ data, error }, { data: allRaw }] = await Promise.all([
+    query,
+    supabase.from('families').select('*').eq('is_archived', false),
+  ])
 
-  const { data, error } = await query
   const families = (data || []) as Family[]
+  const all = (allRaw || []) as Family[]
+  const cities = Array.from(new Set(all.map((f) => f.city).filter(Boolean))) as string[]
+  const segments = Array.from(new Set(all.map((f) => f.family_segment).filter(Boolean))) as string[]
 
-  const { data: allFamiliesRaw } = await supabase.from('families').select('*').eq('is_archived', false)
-  const allFamilies = (allFamiliesRaw || []) as Family[]
-
-  const cityOptions = Array.from(new Set(allFamilies.map((f) => f.city).filter(Boolean))) as string[]
-
-  const total = allFamilies.length
-  const active = allFamilies.filter((f) => (f.status || '').toLowerCase() === 'active').length
-  const pending = allFamilies.filter((f) => (f.status || '').toLowerCase() === 'pending').length
-  const vip = allFamilies.filter((f) => (f.status || '').toLowerCase() === 'vip').length
-  const childrenTotal = allFamilies.reduce((sum, f) => sum + Number(f.children_count || 0), 0)
+  const total = all.length
+  const active = all.filter((f) => (f.status || '').toLowerCase() === 'active').length
+  const vip = all.filter((f) => (f.status || '').toLowerCase() === 'vip' || (f.family_segment || '').toLowerCase() === 'vip').length
+  const risk = all.filter((f) => ['high', 'critical', 'urgent'].includes((f.risk_level || '').toLowerCase())).length
+  const children = all.reduce((s, f) => s + Number(f.children_count || 0), 0)
+  const pendingReview = all.filter((f) => f.next_review_at && new Date(f.next_review_at) <= new Date()).length
 
   return (
-    <main style={pageStyle}>
-      <div style={headerStyle}>
-        <div>
-          <div style={eyebrowStyle}>AngelCare • Families CRM</div>
-          <h1 style={titleStyle}>Families / Clients Directory</h1>
-          <p style={subtitleStyle}>
-            Répertoire CRM des familles clientes, coordonnées, besoins enfants et suivi relationnel.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Link href="/" style={secondaryButtonStyle}>← Dashboard</Link>
-          <Link href="/families/new" style={buttonStyle}>+ Nouvelle famille</Link>
-        </div>
-      </div>
-
-      <section style={kpiGridStyle}>
-        <KpiCard label="Familles totales" value={`👨‍👩‍👧 ${total}`} />
-        <KpiCard label="Familles actives" value={`✅ ${active}`} />
-        <KpiCard label="En attente" value={`🕓 ${pending}`} />
-        <KpiCard label="VIP" value={`⭐ ${vip}`} />
-        <KpiCard label="Enfants suivis" value={`🧒 ${childrenTotal}`} />
-      </section>
-
-      <section style={panelStyle}>
-        <form method="GET" style={filterGridStyle}>
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Nom famille, parent, téléphone, ville..."
-            style={inputStyle}
-          />
-
-          <select name="city" defaultValue={cityFilter} style={inputStyle}>
-            <option value="">Toutes les villes</option>
-            {cityOptions.map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </select>
-
-          <select name="status" defaultValue={statusFilter} style={inputStyle}>
-            <option value="">Tous les statuts</option>
-            <option value="active">active</option>
-            <option value="pending">pending</option>
-            <option value="inactive">inactive</option>
-            <option value="vip">vip</option>
-          </select>
-
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button type="submit" style={buttonStyle}>Filtrer</button>
-            <Link href="/families" style={secondaryButtonStyle}>Reset</Link>
+    <AppShell
+      title="Families Intelligence"
+      subtitle="CRM client enrichi : familles, besoins enfants, priorités, risques et continuité opérationnelle."
+      breadcrumbs={[{ label: 'Families' }]}
+      actions={<><PageAction href="/families/intelligence" variant="light">Command Center</PageAction><PageAction href="/families/new">+ Nouvelle famille</PageAction></>}
+    >
+      <div style={pageStyle}>
+        <section style={heroStyle}>
+          <div>
+            <div style={eyebrowStyle}>Family Operating Layer</div>
+            <h1 style={heroTitleStyle}>Clients, besoins & potentiel service</h1>
+            <p style={heroTextStyle}>Vue manager pour détecter les familles VIP, les besoins spécifiques, les relances et les comptes à risque.</p>
           </div>
+          <div style={heroPanelStyle}>
+            <strong>{total}</strong>
+            <span>familles actives dans le CRM</span>
+          </div>
+        </section>
+
+        <section style={kpiGridStyle}>
+          <Kpi label="Total familles" value={total} sub="CRM actif" />
+          <Kpi label="Familles actives" value={active} sub="service en cours" />
+          <Kpi label="VIP / Premium" value={vip} sub="priorité relation" />
+          <Kpi label="À risque" value={risk} sub="surveillance manager" />
+          <Kpi label="Enfants suivis" value={children} sub="population service" />
+          <Kpi label="Reviews dues" value={pendingReview} sub="action attendue" />
+        </section>
+
+        <form style={filterStyle}>
+          <input name="q" defaultValue={q} placeholder="Recherche famille, parent, téléphone, ville, zone..." style={inputStyle} />
+          <select name="city" defaultValue={city} style={inputStyle}><option value="">Toutes villes</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</select>
+          <select name="status" defaultValue={status} style={inputStyle}><option value="">Tous statuts</option><option value="active">active</option><option value="pending">pending</option><option value="inactive">inactive</option><option value="vip">vip</option></select>
+          <select name="segment" defaultValue={segment} style={inputStyle}><option value="">Tous segments</option>{segments.map((s) => <option key={s} value={s}>{s}</option>)}</select>
+          <button style={buttonStyle}>Filtrer</button>
+          <Link href="/families" style={lightButtonStyle}>Reset</Link>
         </form>
-      </section>
 
-      {error ? (
-        <div style={errorStyle}>Erreur : {error.message}</div>
-      ) : families.length === 0 ? (
-        <div style={emptyStyle}>
-          <h3 style={{ marginTop: 0, color: '#0f172a' }}>Aucune famille trouvée</h3>
-          <p style={{ color: '#475569' }}>Ajoute une première famille pour lancer le CRM client.</p>
-        </div>
-      ) : (
-        <div style={gridStyle}>
-          {families.map((family) => (
-            <section key={family.id} style={cardStyle}>
-              <div style={cardTopStyle}>
-                <div>
-                  <div style={idStyle}>Family #{family.id}</div>
-                  <h2 style={nameStyle}>
-                    {family.family_name || family.parent_name || 'Famille sans nom'}
-                  </h2>
+        {error ? <div style={errorStyle}>Erreur : {error.message}</div> : null}
+
+        <section style={gridStyle}>
+          {families.map((family) => {
+            const c = tone(family.status || family.risk_level)
+            return (
+              <article key={family.id} style={cardStyle}>
+                <div style={cardTopStyle}>
+                  <div>
+                    <div style={idStyle}>Family #{family.id}</div>
+                    <h2 style={cardTitleStyle}>{text(family.family_name || family.parent_name, 'Famille sans nom')}</h2>
+                    <p style={mutedStyle}>{text(family.city)} • {text(family.zone)} • {text(family.source, 'source inconnue')}</p>
+                  </div>
+                  <span style={{ ...badgeStyle, background: c.bg, color: c.fg, borderColor: c.bd }}>{text(family.status, 'active')}</span>
                 </div>
 
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={badgeStyle(family.status || 'active')}>
-                    {family.status || 'active'}
-                  </span>
-                </div>
-              </div>
-
-              <div style={contentGridStyle}>
-                <div>
-                  <div style={lineStyle}>👤 <strong>Parent :</strong> {family.parent_name || 'Non défini'}</div>
-                  <div style={lineStyle}>📞 <strong>Téléphone :</strong> {family.phone || 'Non défini'}</div>
-                  <div style={lineStyle}>📍 <strong>Ville :</strong> {family.city || 'Non définie'}</div>
-                  <div style={lineStyle}>🧭 <strong>Zone :</strong> {family.zone || 'Non définie'}</div>
+                <div style={miniGridStyle}>
+                  <Info label="Parent" value={family.parent_name} />
+                  <Info label="Téléphone" value={family.phone} />
+                  <Info label="Enfants" value={family.children_count ?? 0} />
+                  <Info label="Âges" value={family.children_ages} />
                 </div>
 
-                <div>
-                  <div style={lineStyle}>🧒 <strong>Enfants :</strong> {family.children_count ?? 0}</div>
-                  <div style={lineStyle}>🎂 <strong>Âges :</strong> {family.children_ages || 'Non définis'}</div>
-                  <div style={lineStyle}>🗓️ <strong>Créneaux :</strong> {family.preferred_schedule || 'Non définis'}</div>
-                  <div style={lineStyle}>🧩 <strong>Besoins spécifiques :</strong> {family.special_needs || 'Aucun'}</div>
+                <div style={sectionMiniStyle}>
+                  <strong>Besoins & préférences</strong>
+                  <p>{text(family.service_preferences || family.special_needs, 'Besoins non détaillés')}</p>
                 </div>
-              </div>
 
-              <div style={{ marginTop: 12 }}>
-                <div style={smallBlockTitleStyle}>Préférences service</div>
-                <div style={metaTextStyle}>{family.service_preferences || 'Non définies'}</div>
-              </div>
-
-              <div style={actionsWrapStyle}>
-                <Link href={`/families/${family.id}`} style={primaryActionStyle}>
-                  Voir fiche famille
-                </Link>
-              </div>
-            </section>
-          ))}
-        </div>
-      )}
-    </main>
+                <div style={footerActionsStyle}>
+                  <Link href={`/families/${family.id}`} style={darkButtonStyle}>Ouvrir fiche</Link>
+                  <Link href={`/missions/new?family_id=${family.id}`} style={lightButtonStyle}>Créer mission</Link>
+                </div>
+              </article>
+            )
+          })}
+        </section>
+      </div>
+    </AppShell>
   )
 }
 
-function KpiCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={kpiCardStyle}>
-      <div style={kpiLabelStyle}>{label}</div>
-      <div style={kpiValueStyle}>{value}</div>
-    </div>
-  )
-}
+function Kpi({ label, value, sub }: { label: string; value: number | string; sub: string }) { return <div style={kpiStyle}><span>{label}</span><strong>{value}</strong><small>{sub}</small></div> }
+function Info({ label, value }: { label: string; value: any }) { return <div style={infoStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
 
-const pageStyle: React.CSSProperties = {
-  padding: 32,
-  fontFamily: 'Arial, sans-serif',
-  background: 'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
-  minHeight: '100vh',
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: 20,
-  flexWrap: 'wrap',
-  marginBottom: 24,
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  display: 'inline-block',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#e2e8f0',
-  color: '#334155',
-  fontSize: 12,
-  fontWeight: 800,
-  marginBottom: 10,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: 42,
-  lineHeight: 1.05,
-  color: '#0f172a',
-  fontWeight: 800,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  color: '#475569',
-  margin: '10px 0 0 0',
-  fontSize: 18,
-}
-
-const kpiGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
-  gap: 16,
-  marginBottom: 20,
-}
-
-const kpiCardStyle: React.CSSProperties = {
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 18,
-  padding: 18,
-  boxShadow: '0 10px 24px rgba(15, 23, 42, 0.05)',
-}
-
-const kpiLabelStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 14,
-  marginBottom: 8,
-}
-
-const kpiValueStyle: React.CSSProperties = {
-  fontSize: 28,
-  fontWeight: 800,
-  color: '#0f172a',
-}
-
-const panelStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 20,
-  padding: 18,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 12px 30px rgba(15, 23, 42, 0.05)',
-  marginBottom: 20,
-}
-
-const filterGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '2fr 1fr 1fr auto',
-  gap: 12,
-  alignItems: 'center',
-}
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 18,
-}
-
-const cardStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 24,
-  padding: 24,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.07)',
-}
-
-const cardTopStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: 20,
-  marginBottom: 18,
-  flexWrap: 'wrap',
-}
-
-const idStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 13,
-  fontWeight: 700,
-  marginBottom: 6,
-}
-
-const nameStyle: React.CSSProperties = {
-  margin: 0,
-  color: '#0f172a',
-  fontSize: 24,
-  fontWeight: 800,
-}
-
-const contentGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: 24,
-  marginBottom: 12,
-}
-
-const lineStyle: React.CSSProperties = {
-  color: '#475569',
-  fontSize: 16,
-  lineHeight: 1.7,
-}
-
-const smallBlockTitleStyle: React.CSSProperties = {
-  color: '#475569',
-  fontSize: 13,
-  fontWeight: 800,
-  marginBottom: 6,
-}
-
-const metaTextStyle: React.CSSProperties = {
-  color: '#334155',
-  fontSize: 15,
-  lineHeight: 1.6,
-}
-
-const actionsWrapStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 12,
-  flexWrap: 'wrap',
-  paddingTop: 16,
-  borderTop: '1px solid #e2e8f0',
-  marginTop: 16,
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 14px',
-  borderRadius: 12,
-  border: '1px solid #cbd5e1',
-  fontSize: 14,
-  boxSizing: 'border-box',
-  background: 'white',
-  color: '#0f172a',
-}
-
-const buttonStyle: React.CSSProperties = {
-  background: '#0f172a',
-  color: 'white',
-  padding: '12px 16px',
-  borderRadius: 12,
-  textDecoration: 'none',
-  fontWeight: 800,
-  border: 'none',
-  cursor: 'pointer',
-}
-
-const secondaryButtonStyle: React.CSSProperties = {
-  background: 'white',
-  color: '#0f172a',
-  padding: '12px 16px',
-  borderRadius: 12,
-  textDecoration: 'none',
-  fontWeight: 800,
-  border: '1px solid #cbd5e1',
-}
-
-const primaryActionStyle: React.CSSProperties = {
-  background: '#0f172a',
-  color: 'white',
-  padding: '10px 14px',
-  borderRadius: 10,
-  textDecoration: 'none',
-  fontWeight: 800,
-  fontSize: 14,
-}
-
-const emptyStyle: React.CSSProperties = {
-  background: 'white',
-  borderRadius: 20,
-  padding: 32,
-  border: '1px solid #e2e8f0',
-}
-
-const errorStyle: React.CSSProperties = {
-  background: '#fff7f7',
-  border: '1px solid #fecaca',
-  color: '#991b1b',
-  borderRadius: 16,
-  padding: 16,
-}
+const pageStyle: React.CSSProperties = { display: 'grid', gap: 20 }
+const heroStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, padding: 30, borderRadius: 32, color: '#fff', background: 'radial-gradient(circle at top left,#2563eb,#020617 65%)', boxShadow: '0 30px 80px rgba(2,6,23,.28)' }
+const eyebrowStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 12px', borderRadius: 999, background: 'rgba(255,255,255,.12)', color: '#bfdbfe', fontWeight: 950, fontSize: 12, marginBottom: 12 }
+const heroTitleStyle: React.CSSProperties = { margin: 0, fontSize: 38, fontWeight: 950, color: '#fff' }
+const heroTextStyle: React.CSSProperties = { margin: '8px 0 0', color: 'rgba(255,255,255,.86)', fontWeight: 750, maxWidth: 720 }
+const heroPanelStyle: React.CSSProperties = { minWidth: 250, padding: 22, borderRadius: 26, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', display: 'grid', gap: 6 }
+const kpiGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 14 }
+const kpiStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 22, padding: 18, display: 'grid', gap: 6, color: '#0f172a', boxShadow: '0 18px 38px rgba(15,23,42,.05)' }
+const filterStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 170px 150px 170px auto auto', gap: 12, padding: 16, borderRadius: 24, background: '#fff', border: '1px solid #dbe3ee', alignItems: 'center' }
+const inputStyle: React.CSSProperties = { padding: '12px 13px', borderRadius: 13, border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }
+const buttonStyle: React.CSSProperties = { border: 'none', borderRadius: 14, padding: '13px 16px', background: '#0f172a', color: '#fff', fontWeight: 950, cursor: 'pointer' }
+const lightButtonStyle: React.CSSProperties = { borderRadius: 14, padding: '12px 14px', background: '#f8fafc', color: '#0f172a', border: '1px solid #dbe3ee', fontWeight: 900, textDecoration: 'none', display: 'inline-flex', justifyContent: 'center' }
+const darkButtonStyle: React.CSSProperties = { ...buttonStyle, textDecoration: 'none', display: 'inline-flex', justifyContent: 'center' }
+const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 18 }
+const cardStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 26, padding: 22, boxShadow: '0 18px 38px rgba(15,23,42,.06)', display: 'grid', gap: 16 }
+const cardTopStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'start' }
+const idStyle: React.CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 900, marginBottom: 6 }
+const cardTitleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 24, fontWeight: 950 }
+const mutedStyle: React.CSSProperties = { margin: '6px 0 0', color: '#64748b', fontWeight: 750 }
+const badgeStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 11px', borderRadius: 999, border: '1px solid', fontSize: 12, fontWeight: 950 }
+const miniGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10 }
+const infoStyle: React.CSSProperties = { display: 'grid', gap: 5, padding: 12, borderRadius: 16, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155' }
+const sectionMiniStyle: React.CSSProperties = { padding: 14, borderRadius: 18, background: 'linear-gradient(180deg,#f8fafc,#eef2ff)', border: '1px solid #dbe3ee', color: '#334155' }
+const footerActionsStyle: React.CSSProperties = { display: 'flex', gap: 10, flexWrap: 'wrap' }
+const errorStyle: React.CSSProperties = { padding: 16, borderRadius: 18, background: '#fee2e2', color: '#991b1b', fontWeight: 900 }

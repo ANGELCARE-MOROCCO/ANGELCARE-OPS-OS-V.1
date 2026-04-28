@@ -1,360 +1,150 @@
 import Link from 'next/link'
+import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
 import { archiveFamily } from '../archive-action'
 
-export default async function FamilyDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+function text(value: any, fallback = '—') { return value === null || value === undefined || value === '' ? fallback : String(value) }
+function date(value: any) { return value ? new Date(value).toLocaleString('fr-FR') : '—' }
+
+export default async function FamilyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const familyId = Number(id)
   const supabase = await createClient()
 
-  const [familyRes, leadsRes, missionsRes, notesRes] = await Promise.all([
+  const [familyRes, leadsRes, missionsRes, notesRes, contractsRes] = await Promise.all([
     supabase.from('families').select('*').eq('id', familyId).maybeSingle(),
-    supabase.from('leads').select('*').eq('family_id', familyId).order('id', { ascending: false }),
-    supabase.from('missions').select('*').eq('family_id', familyId).order('id', { ascending: false }),
-    supabase.from('family_notes').select('*').eq('family_id', familyId).order('created_at', { ascending: false }),
+    supabase.from('leads').select('*').eq('family_id', familyId).order('id', { ascending: false }).limit(8),
+    supabase.from('missions').select('*').eq('family_id', familyId).order('id', { ascending: false }).limit(10),
+    supabase.from('family_notes').select('*').eq('family_id', familyId).order('created_at', { ascending: false }).limit(8),
+    supabase.from('contracts').select('*').eq('family_id', familyId).order('id', { ascending: false }).limit(6),
   ])
 
-  const family = familyRes.data
+  const family = familyRes.data as any
   const leads = leadsRes.data || []
   const missions = missionsRes.data || []
   const notes = notesRes.data || []
-
-  if (familyRes.error) {
-    return <main style={{ padding: 32 }}>Erreur : {familyRes.error.message}</main>
-  }
+  const contracts = contractsRes.data || []
 
   if (!family) {
-    return (
-      <main style={{ padding: 32, fontFamily: 'Arial, sans-serif' }}>
-        <h1>Famille introuvable</h1>
-        <Link href="/families" style={secondaryButtonStyle}>← Retour familles</Link>
-      </main>
-    )
+    return <AppShell title="Famille introuvable" subtitle="Aucune fiche famille disponible."><Link href="/families">Retour familles</Link></AppShell>
   }
 
+  const activeMissions = missions.filter((m: any) => ['planned', 'active', 'confirmed', 'in_progress'].includes((m.status || '').toLowerCase())).length
+  const incidents = missions.filter((m: any) => ['incident', 'blocked', 'urgent'].includes((m.status || '').toLowerCase())).length
+  const risk = family.risk_level || (incidents > 0 ? 'high' : 'normal')
+
   return (
-    <main style={pageStyle}>
-      <div style={headerStyle}>
-        <div>
-          <div style={eyebrowStyle}>AngelCare • Family CRM</div>
-          <h1 style={titleStyle}>
-            {family.family_name || family.parent_name || `Famille #${family.id}`}
-          </h1>
-          <p style={subtitleStyle}>
-            Vue complète de la famille cliente, besoins, missions liées et relation CRM.
-          </p>
-        </div>
-<form action={archiveFamily}>
-  <input type="hidden" name="family_id" value={family.id} />
-  <button type="submit" style={archiveButtonStyle}>
-    Archiver
-  </button>
-</form>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-  <Link href="/families" style={secondaryButtonStyle}>← Retour directory</Link>
-  <Link href={`/families/edit/${family.id}`} style={secondaryButtonStyle}>Modifier</Link>
-</div>
-      </div>
-
-      <section style={heroCardStyle}>
-        <div style={heroGridStyle}>
-          <InfoCard label="ID famille" value={String(family.id)} />
-          <InfoCard label="Parent principal" value={family.parent_name || 'Non défini'} />
-          <InfoCard label="Téléphone" value={family.phone || 'Non défini'} />
-          <InfoCard label="Téléphone secondaire" value={family.secondary_phone || 'Non défini'} />
-          <InfoCard label="Ville" value={family.city || 'Non définie'} />
-          <InfoCard label="Zone" value={family.zone || 'Non définie'} />
-          <InfoCard label="Statut" value={family.status || 'active'} />
-          <InfoCard label="Source" value={family.source || 'Non définie'} />
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Adresse</div>
-          <div style={infoValueStyle}>{family.address || 'Non définie'}</div>
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Enfants / âges</div>
-          <div style={infoValueStyle}>
-            {family.children_count ?? 0} enfant(s) • {family.children_ages || 'Âges non définis'}
+    <AppShell
+      title={family.family_name || family.parent_name || `Famille #${family.id}`}
+      subtitle="Fiche client 360° : besoin familial, historique missions, leads, contrats et lecture manager."
+      breadcrumbs={[{ label: 'Families', href: '/families' }, { label: family.family_name || `#${family.id}` }]}
+      actions={<><PageAction href="/families" variant="light">Retour</PageAction><PageAction href={`/missions/new?family_id=${family.id}`} variant="light">Créer mission</PageAction></>}
+    >
+      <div style={pageStyle}>
+        <section style={heroStyle}>
+          <div>
+            <div style={eyebrowStyle}>Family 360 Command File</div>
+            <h1 style={heroTitleStyle}>{family.family_name || family.parent_name || `Famille #${family.id}`}</h1>
+            <p style={heroTextStyle}>{text(family.city)} • {text(family.zone)} • Parent: {text(family.parent_name)}</p>
+            <div style={tagRowStyle}><span>📞 {text(family.phone)}</span><span>🧒 {text(family.children_count ?? 0)} enfant(s)</span><span>⭐ {text(family.family_segment || family.status, 'standard')}</span></div>
           </div>
-        </div>
+          <div style={statusPanelStyle(risk)}>
+            <strong>{String(risk).toUpperCase()}</strong>
+            <span>Niveau de vigilance famille</span>
+          </div>
+        </section>
 
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Créneaux préférés</div>
-          <div style={infoValueStyle}>{family.preferred_schedule || 'Non définis'}</div>
-        </div>
+        <section style={kpiGridStyle}>
+          <Kpi label="Missions" value={missions.length} sub="historique récent" />
+          <Kpi label="Actives" value={activeMissions} sub="en cours / planifiées" />
+          <Kpi label="Leads" value={leads.length} sub="opportunités liées" />
+          <Kpi label="Contrats" value={contracts.length} sub="documents / ventes" />
+          <Kpi label="Notes" value={notes.length} sub="suivi relation" />
+          <Kpi label="Alertes" value={incidents} sub="statuts sensibles" />
+        </section>
 
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Préférences services</div>
-          <div style={infoValueStyle}>{family.service_preferences || 'Non définies'}</div>
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Besoins spécifiques</div>
-          <div style={infoValueStyle}>{family.special_needs || 'Aucun'}</div>
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Notes famille</div>
-          <div style={infoValueStyle}>{family.notes || 'Aucune note'}</div>
-        </div>
-      </section>
-
-      <div style={sectionGridStyle}>
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Leads liés</h2>
-          {leads.length > 0 ? (
-            <div style={listGridStyle}>
-              {leads.map((lead: any) => (
-                <div key={lead.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>
-                    Lead #{lead.id} • {lead.parent_name || 'Sans nom'}
-                  </div>
-                  <div style={metaStyle}>
-                    {lead.city || 'Ville non définie'} • {lead.phone || 'Téléphone non défini'}
-                  </div>
-                  <div style={metaStyle}>
-                    Statut : {lead.status || 'new'} • Urgence : {lead.urgency || 'normal'}
-                  </div>
-                  <div style={{ marginTop: 10 }}>
-                    <Link href={`/leads/${lead.id}`} style={miniButtonStyle}>
-                      Voir lead
-                    </Link>
-                  </div>
-                </div>
-              ))}
+        <section style={gridStyle}>
+          <div style={panelStyle}>
+            <Header title="Profil famille" subtitle="Informations client et contexte de service." />
+            <div style={infoGridStyle}>
+              <Info label="Parent" value={family.parent_name} />
+              <Info label="Téléphone" value={family.phone} />
+              <Info label="Téléphone 2" value={family.secondary_phone} />
+              <Info label="Adresse" value={family.address} />
+              <Info label="Ville" value={family.city} />
+              <Info label="Zone" value={family.zone} />
+              <Info label="Source" value={family.source} />
+              <Info label="Statut" value={family.status} />
             </div>
-          ) : (
-            <EmptyHint text="Aucun lead lié à cette famille." />
-          )}
+          </div>
+
+          <aside style={panelStyle}>
+            <Header title="Lecture manager" subtitle="Décision rapide pour opération." />
+            <Insight label="Priorité" value={family.priority || (risk === 'high' ? 'Haute' : 'Standard')} />
+            <Insight label="Action recommandée" value={activeMissions === 0 ? 'Proposer mission / suivi commercial' : 'Suivi qualité service'} />
+            <Insight label="Review" value={family.next_review_at ? date(family.next_review_at) : 'Non programmée'} />
+            <form action={archiveFamily} style={{ marginTop: 16 }}>
+              <input type="hidden" name="family_id" value={family.id} />
+              <button style={archiveButtonStyle}>Archiver famille</button>
+            </form>
+          </aside>
         </section>
 
         <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Missions liées</h2>
-          {missions.length > 0 ? (
-            <div style={listGridStyle}>
-              {missions.map((mission: any) => (
-                <div key={mission.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>
-                    Mission #{mission.id} • {mission.service_type || 'Mission AngelCare'}
-                  </div>
-                  <div style={metaStyle}>
-                    {mission.mission_date || 'Date non définie'} • {mission.city || 'Ville non définie'}
-                  </div>
-                  <div style={metaStyle}>
-                    Statut : {mission.status || 'draft'} • Urgence : {mission.urgency || 'normal'}
-                  </div>
-                  <div style={{ marginTop: 10 }}>
-                    <Link href={`/missions/${mission.id}`} style={miniButtonStyle}>
-                      Voir mission
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucune mission liée à cette famille." />
-          )}
+          <Header title="Besoin enfant & préférences service" subtitle="Données utiles pour matching, briefing intervenante et qualité." />
+          <div style={briefStyle}>
+            <Block title="Âges enfants" value={family.children_ages} />
+            <Block title="Créneaux préférés" value={family.preferred_schedule} />
+            <Block title="Préférences service" value={family.service_preferences} />
+            <Block title="Besoins spécifiques" value={family.special_needs} />
+            <Block title="Notes internes" value={family.notes} />
+          </div>
         </section>
 
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Notes CRM famille</h2>
-          {notes.length > 0 ? (
-            <div style={listGridStyle}>
-              {notes.map((note: any) => (
-                <div key={note.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>
-                    {note.note_type || 'Note'}
-                  </div>
-                  <div style={metaStyle}>{note.content || '—'}</div>
-                  <div style={smallMetaStyle}>
-                    {note.created_by || 'Ops'} •{' '}
-                    {note.created_at ? new Date(note.created_at).toLocaleString() : '—'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucune note CRM pour cette famille." />
-          )}
+        <section style={gridStyle}>
+          <Related title="Missions liées" items={missions} empty="Aucune mission liée." hrefBase="/missions" labelKey="service_type" />
+          <Related title="Leads liés" items={leads} empty="Aucun lead lié." hrefBase="/leads" labelKey="service_interest" />
+        </section>
+
+        <section style={gridStyle}>
+          <Related title="Contrats" items={contracts} empty="Aucun contrat lié." hrefBase="/contracts" labelKey="contract_type" />
+          <div style={panelStyle}>
+            <Header title="Notes relationnelles" subtitle="Derniers éléments de contexte." />
+            {notes.length ? notes.map((n: any) => <div key={n.id} style={itemStyle}><strong>{text(n.note_type, 'Note')}</strong><p>{text(n.content || n.note)}</p><small>{date(n.created_at)}</small></div>) : <Empty text="Aucune note." />}
+          </div>
         </section>
       </div>
-    </main>
+    </AppShell>
   )
 }
 
-function InfoCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={infoCardStyle}>
-      <div style={smallLabelStyle}>{label}</div>
-      <div style={infoValueStyle}>{value}</div>
-    </div>
-  )
-}
+function Kpi({ label, value, sub }: { label: string; value: any; sub: string }) { return <div style={kpiStyle}><span>{label}</span><strong>{value}</strong><small>{sub}</small></div> }
+function Header({ title, subtitle }: { title: string; subtitle: string }) { return <div style={{ marginBottom: 18 }}><h2 style={titleStyle}>{title}</h2><p style={subStyle}>{subtitle}</p></div> }
+function Info({ label, value }: { label: string; value: any }) { return <div style={infoStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
+function Insight({ label, value }: { label: string; value: any }) { return <div style={insightStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
+function Block({ title, value }: { title: string; value: any }) { return <div style={blockStyle}><strong>{title}</strong><p>{text(value, 'Non renseigné')}</p></div> }
+function Empty({ text }: { text: string }) { return <div style={emptyStyle}>{text}</div> }
+function Related({ title, items, empty, hrefBase, labelKey }: { title: string; items: any[]; empty: string; hrefBase: string; labelKey: string }) { return <div style={panelStyle}><Header title={title} subtitle="Historique connecté à cette famille." />{items.length ? items.map((i) => <Link key={i.id} href={`${hrefBase}/${i.id}`} style={itemLinkStyle}><strong>#{i.id} • {text(i[labelKey] || i.title || i.status)}</strong><span>{text(i.status)} • {date(i.created_at || i.mission_date)}</span></Link>) : <Empty text={empty} />}</div> }
 
-function EmptyHint({ text }: { text: string }) {
-  return <div style={emptyHintStyle}>{text}</div>
-}
-
-const pageStyle: React.CSSProperties = {
-  padding: 32,
-  fontFamily: 'Arial, sans-serif',
-  background: 'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
-  minHeight: '100vh',
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: 20,
-  flexWrap: 'wrap',
-  marginBottom: 24,
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  display: 'inline-block',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#e2e8f0',
-  color: '#334155',
-  fontSize: 12,
-  fontWeight: 800,
-  marginBottom: 10,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: 42,
-  lineHeight: 1.05,
-  color: '#0f172a',
-  fontWeight: 800,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  color: '#475569',
-  margin: '10px 0 0 0',
-  fontSize: 18,
-}
-
-const heroCardStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 24,
-  padding: 24,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.07)',
-  marginBottom: 20,
-}
-
-const heroGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-  gap: 14,
-}
-
-const sectionGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 20,
-}
-
-const panelStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 24,
-  padding: 24,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
-}
-
-const panelTitleStyle: React.CSSProperties = {
-  margin: '0 0 16px 0',
-  color: '#0f172a',
-  fontSize: 24,
-  fontWeight: 800,
-}
-
-const listGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 12,
-}
-
-const itemCardStyle: React.CSSProperties = {
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 16,
-  padding: 14,
-}
-
-const infoCardStyle: React.CSSProperties = {
-  background: '#fcfdff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 14,
-  padding: 14,
-}
-
-const smallLabelStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 13,
-  fontWeight: 700,
-  marginBottom: 6,
-}
-
-const infoValueStyle: React.CSSProperties = {
-  color: '#0f172a',
-  fontSize: 15,
-  fontWeight: 600,
-  lineHeight: 1.5,
-}
-
-const metaStyle: React.CSSProperties = {
-  color: '#475569',
-  fontSize: 14,
-  lineHeight: 1.6,
-}
-
-const smallMetaStyle: React.CSSProperties = {
-  color: '#94a3b8',
-  fontSize: 12,
-  marginTop: 6,
-}
-
-const emptyHintStyle: React.CSSProperties = {
-  padding: 16,
-  borderRadius: 14,
-  border: '1px dashed #cbd5e1',
-  background: '#ffffff',
-  color: '#64748b',
-}
-
-const secondaryButtonStyle: React.CSSProperties = {
-  background: 'white',
-  color: '#0f172a',
-  padding: '12px 16px',
-  borderRadius: 12,
-  textDecoration: 'none',
-  fontWeight: 800,
-  border: '1px solid #cbd5e1',
-}
-
-const miniButtonStyle: React.CSSProperties = {
-  background: '#0f172a',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: 10,
-  textDecoration: 'none',
-  fontWeight: 700,
-  fontSize: 13,
-}
-const archiveButtonStyle: React.CSSProperties = {
-  background: '#fff7ed',
-  color: '#9a3412',
-  padding: '12px 16px',
-  borderRadius: 12,
-  fontWeight: 800,
-  border: '1px solid #fdba74',
-  cursor: 'pointer',
-}
+const pageStyle: React.CSSProperties = { display: 'grid', gap: 20 }
+const heroStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, padding: 32, borderRadius: 34, color: '#fff', background: 'radial-gradient(circle at top left,#1d4ed8,#020617 68%)', boxShadow: '0 30px 80px rgba(2,6,23,.3)' }
+const eyebrowStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 12px', borderRadius: 999, background: 'rgba(255,255,255,.12)', color: '#bfdbfe', fontWeight: 950, fontSize: 12, marginBottom: 12 }
+const heroTitleStyle: React.CSSProperties = { margin: 0, color: '#fff', fontSize: 40, fontWeight: 950 }
+const heroTextStyle: React.CSSProperties = { margin: '8px 0', color: 'rgba(255,255,255,.85)', fontWeight: 800 }
+const tagRowStyle: React.CSSProperties = { display: 'flex', gap: 12, flexWrap: 'wrap', color: '#e2e8f0', fontWeight: 800, fontSize: 13 }
+const statusPanelStyle = (risk: any): React.CSSProperties => ({ minWidth: 260, padding: 22, borderRadius: 26, background: String(risk).toLowerCase() === 'high' ? 'rgba(239,68,68,.16)' : 'rgba(34,197,94,.14)', border: '1px solid rgba(255,255,255,.2)', display: 'grid', gap: 6 })
+const kpiGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 14 }
+const kpiStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 22, padding: 18, display: 'grid', gap: 6, color: '#0f172a', boxShadow: '0 18px 38px rgba(15,23,42,.05)' }
+const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1.25fr .75fr', gap: 18, alignItems: 'start' }
+const panelStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 26, padding: 22, boxShadow: '0 18px 38px rgba(15,23,42,.06)' }
+const titleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 23, fontWeight: 950 }
+const subStyle: React.CSSProperties = { margin: '7px 0 0', color: '#64748b', fontWeight: 750 }
+const infoGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12 }
+const infoStyle: React.CSSProperties = { display: 'grid', gap: 5, padding: 13, borderRadius: 16, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155' }
+const insightStyle: React.CSSProperties = { display: 'grid', gap: 6, padding: 15, borderRadius: 18, background: 'linear-gradient(180deg,#f8fafc,#eef2ff)', border: '1px solid #dbe3ee', marginBottom: 10, color: '#0f172a' }
+const archiveButtonStyle: React.CSSProperties = { width: '100%', border: 'none', borderRadius: 14, padding: '13px 16px', background: '#991b1b', color: '#fff', fontWeight: 950, cursor: 'pointer' }
+const briefStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: 12 }
+const blockStyle: React.CSSProperties = { padding: 16, borderRadius: 18, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155' }
+const itemStyle: React.CSSProperties = { padding: 14, borderRadius: 16, background: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: 10, color: '#334155' }
+const itemLinkStyle: React.CSSProperties = { ...itemStyle, display: 'grid', gap: 6, textDecoration: 'none' }
+const emptyStyle: React.CSSProperties = { padding: 18, borderRadius: 18, background: '#f8fafc', border: '1px dashed #cbd5e1', color: '#64748b', fontWeight: 800 }

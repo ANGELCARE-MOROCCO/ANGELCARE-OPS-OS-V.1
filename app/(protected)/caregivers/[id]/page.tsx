@@ -1,35 +1,27 @@
 import Link from 'next/link'
+import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
 import { archiveCaregiver } from '../archive-action'
 
-export default async function CaregiverDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+function text(v: any, f = '—') { return v === null || v === undefined || v === '' ? f : String(v) }
+function date(v: any) { return v ? new Date(v).toLocaleString('fr-FR') : '—' }
+
+export default async function CaregiverDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const caregiverId = Number(id)
   const supabase = await createClient()
 
-  const [
-    caregiverRes,
-    skillsRes,
-    availabilityRes,
-    notesRes,
-    incidentsRes,
-    checkinsRes,
-    missionsRes,
-  ] = await Promise.all([
+  const [caregiverRes, skillsRes, availabilityRes, notesRes, incidentsRes, checkinsRes, missionsRes] = await Promise.all([
     supabase.from('caregivers').select('*').eq('id', caregiverId).maybeSingle(),
     supabase.from('caregiver_skills').select('*').eq('caregiver_id', caregiverId).order('id', { ascending: false }),
     supabase.from('caregiver_availability').select('*').eq('caregiver_id', caregiverId).order('id', { ascending: true }),
-    supabase.from('caregiver_notes').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }),
-    supabase.from('caregiver_incidents').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }),
-    supabase.from('caregiver_checkins').select('*').eq('caregiver_id', caregiverId).order('event_time', { ascending: false }).limit(10),
-    supabase.from('missions').select('*').eq('caregiver_id', caregiverId).order('mission_date', { ascending: false }).limit(10),
+    supabase.from('caregiver_notes').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(10),
+    supabase.from('caregiver_incidents').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(10),
+    supabase.from('caregiver_checkins').select('*').eq('caregiver_id', caregiverId).order('event_time', { ascending: false }).limit(12),
+    supabase.from('missions').select('*').eq('caregiver_id', caregiverId).order('id', { ascending: false }).limit(12),
   ])
 
-  const caregiver = caregiverRes.data
+  const caregiver = caregiverRes.data as any
   const skills = skillsRes.data || []
   const availability = availabilityRes.data || []
   const notes = notesRes.data || []
@@ -37,422 +29,57 @@ export default async function CaregiverDetailPage({
   const checkins = checkinsRes.data || []
   const missions = missionsRes.data || []
 
-  if (caregiverRes.error) {
-    return <main style={{ padding: 32 }}>Erreur : {caregiverRes.error.message}</main>
-  }
+  if (!caregiver) return <AppShell title="Intervenante introuvable" subtitle="Profil absent."><Link href="/caregivers">Retour caregivers</Link></AppShell>
 
-  if (!caregiver) {
-    return (
-      <main style={{ padding: 32, fontFamily: 'Arial, sans-serif' }}>
-        <h1>Intervenante introuvable</h1>
-        <Link href="/caregivers" style={secondaryButtonStyle}>← Retour caregivers</Link>
-      </main>
-    )
-  }
+  const activeMissions = missions.filter((m: any) => ['planned','active','confirmed','in_progress'].includes((m.status || '').toLowerCase())).length
+  const reliability = Number(caregiver.reliability_score || 0)
+  const risk = incidents.length > 0 || reliability < 50 ? 'surveillance' : reliability >= 80 ? 'top performer' : 'standard'
 
   return (
-    <main style={pageStyle}>
-      <div style={headerStyle}>
-        <div>
-          <div style={eyebrowStyle}>AngelCare • Caregiver Profile</div>
-          <h1 style={titleStyle}>{caregiver.full_name || 'Intervenante sans nom'}</h1>
-          <p style={subtitleStyle}>
-            Profil opérationnel, disponibilité, incidents, missions et suivi terrain.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Link href="/caregivers" style={secondaryButtonStyle}>← Retour directory</Link>
-        </div>
+    <AppShell title={caregiver.full_name || `Caregiver #${caregiver.id}`} subtitle="Fiche intervenante 360° : disponibilité, compétences, qualité, incidents, pointage et missions." breadcrumbs={[{ label: 'Caregivers', href: '/caregivers' }, { label: caregiver.full_name || `#${caregiver.id}` }]} actions={<><PageAction href="/caregivers" variant="light">Retour</PageAction><PageAction href={`/operations/replacements?caregiver_id=${caregiver.id}`} variant="light">Matching remplacement</PageAction></>}>
+      <div style={pageStyle}>
+        <section style={heroStyle}>
+          <div><div style={eyebrowStyle}>Caregiver 360 Workforce File</div><h1 style={heroTitleStyle}>{caregiver.full_name || 'Intervenante sans nom'}</h1><p style={heroTextStyle}>{text(caregiver.city)} • {text(caregiver.zone)} • {text(caregiver.phone)}</p><div style={tagRowStyle}><span>🎓 Academy: {caregiver.academy_certified ? 'Oui' : 'Non'}</span><span>🧩 Special needs: {caregiver.special_needs_capable ? 'Oui' : 'Non'}</span><span>📊 Score: {reliability}/100</span></div></div>
+          <div style={statusPanelStyle(risk)}><strong>{risk.toUpperCase()}</strong><span>Lecture qualité & disponibilité</span></div>
+        </section>
+        <section style={kpiGridStyle}><Kpi label="Missions" value={missions.length} sub="historique récent" /><Kpi label="Actives" value={activeMissions} sub="charge actuelle" /><Kpi label="Compétences" value={skills.length} sub="déclarées" /><Kpi label="Disponibilités" value={availability.length} sub="slots" /><Kpi label="Incidents" value={incidents.length} sub="qualité" /><Kpi label="Check-ins" value={checkins.length} sub="terrain" /></section>
+        <section style={gridStyle}><div style={panelStyle}><Header title="Profil opérationnel" subtitle="Informations utiles au matching et à la supervision." /><div style={infoGridStyle}><Info label="Ville" value={caregiver.city} /><Info label="Zone" value={caregiver.zone} /><Info label="Téléphone" value={caregiver.phone} /><Info label="Statut" value={caregiver.current_status || caregiver.status} /><Info label="Reliability" value={`${reliability}/100`} /><Info label="Academy" value={caregiver.academy_certified ? 'Oui' : 'Non'} /><Info label="Special needs" value={caregiver.special_needs_capable ? 'Oui' : 'Non'} /><Info label="Langues" value={Array.isArray(caregiver.language_tags) ? caregiver.language_tags.join(', ') : caregiver.languages} /></div></div><aside style={panelStyle}><Header title="Lecture manager" subtitle="Décision rapide staffing." /><Insight label="Priorité" value={risk} /><Insight label="Action recommandée" value={activeMissions > 2 ? 'Surveiller charge' : incidents.length ? 'Coaching qualité' : 'Disponible matching'} /><Insight label="Dernier check-in" value={checkins[0] ? date(checkins[0].event_time) : 'Aucun'} /><form action={archiveCaregiver} style={{ marginTop: 16 }}><input type="hidden" name="caregiver_id" value={caregiver.id} /><button style={archiveButtonStyle}>Archiver intervenante</button></form></aside></section>
+        <section style={panelStyle}><Header title="Compétences & tags mission" subtitle="Base pour matching intelligent." /><div style={tagWrapStyle}>{(Array.isArray(caregiver.skill_tags) ? caregiver.skill_tags : []).map((t:string)=><span key={t} style={tagStyle}>{t}</span>)}{skills.map((s:any)=><span key={`s-${s.id}`} style={tagStyle}>{text(s.skill_name)} • {text(s.skill_level)}</span>)}{(!skills.length && (!Array.isArray(caregiver.skill_tags) || !caregiver.skill_tags.length)) ? <Empty text="Aucune compétence renseignée." /> : null}</div><div style={briefStyle}><Block title="Résumé compétences" value={caregiver.skills_summary} /><Block title="Notes profil" value={caregiver.notes} /></div></section>
+        <section style={gridStyle}><Related title="Disponibilités" items={availability} empty="Aucune disponibilité." render={(a:any)=><><strong>{text(a.weekday)}</strong><span>{text(a.start_time)} → {text(a.end_time)} • {text(a.availability_status, 'available')}</span></>} /><Related title="Missions récentes" items={missions} empty="Aucune mission." hrefBase="/missions" render={(m:any)=><><strong>Mission #{m.id} • {text(m.service_type || m.status)}</strong><span>{text(m.mission_date || m.created_at)} • {text(m.city || m.zone)}</span></>} /></section>
+        <section style={gridStyle}><Related title="Check-ins terrain" items={checkins} empty="Aucun pointage." render={(c:any)=><><strong>{c.event_type === 'check_in' ? '🟢 Check-in' : '⚪ Check-out'}</strong><span>{date(c.event_time)} • Mission {text(c.mission_id)}</span></>} /><Related title="Incidents / qualité" items={incidents} empty="Aucun incident." render={(i:any)=><><strong>{text(i.incident_type, 'Incident')} • {text(i.severity)}</strong><span>{text(i.content || i.description)} • {date(i.created_at)}</span></>} /></section>
+        <section style={panelStyle}><Header title="Notes opérations" subtitle="Suivi interne et coaching." />{notes.length ? notes.map((n:any)=><div key={n.id} style={itemStyle}><strong>{text(n.note_type,'Note')}</strong><p>{text(n.content || n.note)}</p><small>{date(n.created_at)}</small></div>) : <Empty text="Aucune note." />}</section>
       </div>
-<form action={archiveCaregiver}>
-  <input type="hidden" name="caregiver_id" value={caregiver.id} />
-  <button type="submit" style={archiveButtonStyle}>
-    Archiver
-  </button>
-</form>
-      <section style={heroCardStyle}>
-        <div style={heroGridStyle}>
-          <InfoCard label="ID" value={String(caregiver.id)} />
-          <InfoCard label="Ville" value={caregiver.city || 'Non définie'} />
-          <InfoCard label="Zone" value={caregiver.zone || 'Non définie'} />
-          <InfoCard label="Téléphone" value={caregiver.phone || 'Non défini'} />
-          <InfoCard label="Statut courant" value={caregiver.current_status || caregiver.status || 'available'} />
-          <InfoCard label="Reliability score" value={String(caregiver.reliability_score ?? 0)} />
-          <InfoCard label="Academy certified" value={caregiver.academy_certified ? 'Oui' : 'Non'} />
-          <InfoCard label="Special needs capable" value={caregiver.special_needs_capable ? 'Oui' : 'Non'} />
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Résumé compétences</div>
-          <div style={infoValueStyle}>{caregiver.skills_summary || 'Non défini'}</div>
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={smallLabelStyle}>Notes profil</div>
-          <div style={infoValueStyle}>{caregiver.notes || 'Aucune note'}</div>
-        </div>
-        <div style={{ marginTop: 18 }}>
-  <div style={smallLabelStyle}>Langues</div>
-  <div style={tagWrapStyle}>
-    {(Array.isArray(caregiver.language_tags) ? caregiver.language_tags : []).length > 0 ? (
-      (caregiver.language_tags as string[]).map((tag) => (
-        <span key={tag} style={languageTagStyle}>{tag}</span>
-      ))
-    ) : (
-      <span style={emptyMiniTextStyle}>Aucune langue renseignée</span>
-    )}
-  </div>
-</div>
-
-<div style={{ marginTop: 18 }}>
-  <div style={smallLabelStyle}>Skill tags mission</div>
-  <div style={tagWrapStyle}>
-    {(Array.isArray(caregiver.skill_tags) ? caregiver.skill_tags : []).length > 0 ? (
-      (caregiver.skill_tags as string[]).map((tag) => (
-        <span key={tag} style={skillTagStyle}>{tag}</span>
-      ))
-    ) : (
-      <span style={emptyMiniTextStyle}>Aucune compétence codée</span>
-    )}
-  </div>
-</div>
-      </section>
-
-      <div style={sectionGridStyle}>
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Compétences</h2>
-          {skills.length > 0 ? (
-            <div style={listGridStyle}>
-              {skills.map((skill: any) => (
-                <div key={skill.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{skill.skill_name}</div>
-                  <div style={metaStyle}>{skill.skill_level || 'Niveau non défini'}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucune compétence renseignée." />
-          )}
-        </section>
-
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Disponibilités</h2>
-          {availability.length > 0 ? (
-            <div style={listGridStyle}>
-              {availability.map((slot: any) => (
-                <div key={slot.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{slot.weekday}</div>
-                  <div style={metaStyle}>
-                    {slot.start_time || '--:--'} → {slot.end_time || '--:--'}
-                  </div>
-                  <div style={metaStyle}>{slot.availability_status || 'available'}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucune disponibilité renseignée." />
-          )}
-        </section>
-
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Notes opérations</h2>
-          {notes.length > 0 ? (
-            <div style={listGridStyle}>
-              {notes.map((note: any) => (
-                <div key={note.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{note.note_type || 'Note'}</div>
-                  <div style={metaStyle}>{note.content || '—'}</div>
-                  <div style={smallMetaStyle}>
-                    {note.created_by || 'Ops'} • {note.created_at ? new Date(note.created_at).toLocaleString() : '—'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucune note opérationnelle." />
-          )}
-        </section>
-
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Incidents</h2>
-          {incidents.length > 0 ? (
-            <div style={listGridStyle}>
-              {incidents.map((incident: any) => (
-                <div key={incident.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#991b1b' }}>
-                    {incident.incident_type || 'Incident'} • {incident.severity || 'N/A'}
-                  </div>
-                  <div style={metaStyle}>{incident.content || '—'}</div>
-                  <div style={smallMetaStyle}>
-                    {incident.created_at ? new Date(incident.created_at).toLocaleString() : '—'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucun incident déclaré." />
-          )}
-        </section>
-
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Check-ins récents</h2>
-          {checkins.length > 0 ? (
-            <div style={listGridStyle}>
-              {checkins.map((checkin: any) => (
-                <div key={checkin.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>
-                    {checkin.event_type === 'check_in' ? '🟢 Check-in' : '⚪ Check-out'}
-                  </div>
-                  <div style={metaStyle}>
-                    {checkin.city || 'Ville non définie'} • {checkin.zone || 'Zone non définie'}
-                  </div>
-                  <div style={metaStyle}>Mission ID: {checkin.mission_id || '—'}</div>
-                  <div style={smallMetaStyle}>
-                    {checkin.event_time ? new Date(checkin.event_time).toLocaleString() : '—'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucun pointage enregistré." />
-          )}
-        </section>
-
-        <section style={panelStyle}>
-          <h2 style={panelTitleStyle}>Missions récentes</h2>
-          {missions.length > 0 ? (
-            <div style={listGridStyle}>
-              {missions.map((mission: any) => (
-                <div key={mission.id} style={itemCardStyle}>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>
-                    {mission.service_type || 'Mission AngelCare'}
-                  </div>
-                  <div style={metaStyle}>
-                    {mission.mission_date || 'Date non définie'} • {mission.city || 'Ville non définie'}
-                  </div>
-                  <div style={metaStyle}>
-                    Statut : {mission.status || 'draft'} • Urgence : {mission.urgency || 'normal'}
-                  </div>
-                  <div style={{ marginTop: 10 }}>
-                    <Link href={`/missions/${mission.id}`} style={miniButtonStyle}>
-                      Voir mission
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyHint text="Aucune mission liée." />
-          )}
-        </section>
-      </div>
-    </main>
+    </AppShell>
   )
 }
-
-function InfoCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={infoCardStyle}>
-      <div style={smallLabelStyle}>{label}</div>
-      <div style={infoValueStyle}>{value}</div>
-    </div>
-  )
-}
-
-function EmptyHint({ text }: { text: string }) {
-  return <div style={emptyHintStyle}>{text}</div>
-}
-
-const pageStyle: React.CSSProperties = {
-  padding: 32,
-  fontFamily: 'Arial, sans-serif',
-  background: 'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
-  minHeight: '100vh',
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: 20,
-  flexWrap: 'wrap',
-  marginBottom: 24,
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  display: 'inline-block',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#e2e8f0',
-  color: '#334155',
-  fontSize: 12,
-  fontWeight: 800,
-  marginBottom: 10,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: 42,
-  lineHeight: 1.05,
-  color: '#0f172a',
-  fontWeight: 800,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  color: '#475569',
-  margin: '10px 0 0 0',
-  fontSize: 18,
-}
-
-const heroCardStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 24,
-  padding: 24,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.07)',
-  marginBottom: 20,
-}
-
-const heroGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-  gap: 14,
-}
-
-const sectionGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 20,
-}
-
-const panelStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 24,
-  padding: 24,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
-}
-
-const panelTitleStyle: React.CSSProperties = {
-  margin: '0 0 16px 0',
-  color: '#0f172a',
-  fontSize: 24,
-  fontWeight: 800,
-}
-
-const listGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 12,
-}
-
-const itemCardStyle: React.CSSProperties = {
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 16,
-  padding: 14,
-}
-
-const infoCardStyle: React.CSSProperties = {
-  background: '#fcfdff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 14,
-  padding: 14,
-}
-
-const smallLabelStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 13,
-  fontWeight: 700,
-  marginBottom: 6,
-}
-
-const infoValueStyle: React.CSSProperties = {
-  color: '#0f172a',
-  fontSize: 15,
-  fontWeight: 600,
-  lineHeight: 1.5,
-}
-
-const metaStyle: React.CSSProperties = {
-  color: '#475569',
-  fontSize: 14,
-  lineHeight: 1.6,
-}
-
-const smallMetaStyle: React.CSSProperties = {
-  color: '#94a3b8',
-  fontSize: 12,
-  marginTop: 6,
-}
-
-const emptyHintStyle: React.CSSProperties = {
-  padding: 16,
-  borderRadius: 14,
-  border: '1px dashed #cbd5e1',
-  background: '#ffffff',
-  color: '#64748b',
-}
-
-const secondaryButtonStyle: React.CSSProperties = {
-  background: 'white',
-  color: '#0f172a',
-  padding: '12px 16px',
-  borderRadius: 12,
-  textDecoration: 'none',
-  fontWeight: 800,
-  border: '1px solid #cbd5e1',
-}
-
-const miniButtonStyle: React.CSSProperties = {
-  background: '#0f172a',
-  color: 'white',
-  padding: '8px 12px',
-  borderRadius: 10,
-  textDecoration: 'none',
-  fontWeight: 700,
-  fontSize: 13,
-}
-const tagWrapStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 8,
-  flexWrap: 'wrap',
-  marginTop: 8,
-}
-
-const languageTagStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '7px 11px',
-  borderRadius: 999,
-  background: '#e0f2fe',
-  color: '#075985',
-  border: '1px solid #bae6fd',
-  fontSize: 12,
-  fontWeight: 800,
-}
-
-const skillTagStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '7px 11px',
-  borderRadius: 999,
-  background: '#ede9fe',
-  color: '#6d28d9',
-  border: '1px solid #ddd6fe',
-  fontSize: 12,
-  fontWeight: 800,
-}
-
-const emptyMiniTextStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 13,
-}
-const archiveButtonStyle: React.CSSProperties = {
-  background: '#fff7ed',
-  color: '#9a3412',
-  padding: '12px 16px',
-  borderRadius: 12,
-  fontWeight: 800,
-  border: '1px solid #fdba74',
-  cursor: 'pointer',
-}
+function Kpi({ label, value, sub }: { label:string; value:any; sub:string }) { return <div style={kpiStyle}><span>{label}</span><strong>{value}</strong><small>{sub}</small></div> }
+function Header({ title, subtitle }: { title:string; subtitle:string }) { return <div style={{ marginBottom: 18 }}><h2 style={titleStyle}>{title}</h2><p style={subStyle}>{subtitle}</p></div> }
+function Info({ label, value }: { label:string; value:any }) { return <div style={infoStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
+function Insight({ label, value }: { label:string; value:any }) { return <div style={insightStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
+function Block({ title, value }: { title:string; value:any }) { return <div style={blockStyle}><strong>{title}</strong><p>{text(value, 'Non renseigné')}</p></div> }
+function Empty({ text }: { text:string }) { return <div style={emptyStyle}>{text}</div> }
+function Related({ title, items, empty, hrefBase, render }: { title:string; items:any[]; empty:string; hrefBase?:string; render:(item:any)=>React.ReactNode }) { return <div style={panelStyle}><Header title={title} subtitle="Données connectées au profil." />{items.length ? items.map((i:any)=>(hrefBase ? <Link key={i.id} href={`${hrefBase}/${i.id}`} style={itemLinkStyle}>{render(i)}</Link> : <div key={i.id} style={itemStyle}>{render(i)}</div>)) : <Empty text={empty} />}</div> }
+const pageStyle: React.CSSProperties = { display:'grid', gap:20 }
+const heroStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', alignItems:'center', gap:24, padding:32, borderRadius:34, color:'#fff', background:'radial-gradient(circle at top left,#059669,#020617 68%)', boxShadow:'0 30px 80px rgba(2,6,23,.3)' }
+const eyebrowStyle: React.CSSProperties = { display:'inline-flex', padding:'7px 12px', borderRadius:999, background:'rgba(255,255,255,.12)', color:'#bbf7d0', fontWeight:950, fontSize:12, marginBottom:12 }
+const heroTitleStyle: React.CSSProperties = { margin:0, color:'#fff', fontSize:40, fontWeight:950 }
+const heroTextStyle: React.CSSProperties = { margin:'8px 0', color:'rgba(255,255,255,.85)', fontWeight:800 }
+const tagRowStyle: React.CSSProperties = { display:'flex', gap:12, flexWrap:'wrap', color:'#e2e8f0', fontWeight:800, fontSize:13 }
+const statusPanelStyle = (risk:any): React.CSSProperties => ({ minWidth:260, padding:22, borderRadius:26, background:String(risk).includes('top')?'rgba(34,197,94,.16)':String(risk).includes('surveillance')?'rgba(245,158,11,.18)':'rgba(255,255,255,.08)', border:'1px solid rgba(255,255,255,.2)', display:'grid', gap:6 })
+const kpiGridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(6,minmax(0,1fr))', gap:14 }
+const kpiStyle: React.CSSProperties = { background:'#fff', border:'1px solid #dbe3ee', borderRadius:22, padding:18, display:'grid', gap:6, color:'#0f172a', boxShadow:'0 18px 38px rgba(15,23,42,.05)' }
+const gridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'1.25fr .75fr', gap:18, alignItems:'start' }
+const panelStyle: React.CSSProperties = { background:'#fff', border:'1px solid #dbe3ee', borderRadius:26, padding:22, boxShadow:'0 18px 38px rgba(15,23,42,.06)' }
+const titleStyle: React.CSSProperties = { margin:0, color:'#0f172a', fontSize:23, fontWeight:950 }
+const subStyle: React.CSSProperties = { margin:'7px 0 0', color:'#64748b', fontWeight:750 }
+const infoGridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(4,minmax(0,1fr))', gap:12 }
+const infoStyle: React.CSSProperties = { display:'grid', gap:5, padding:13, borderRadius:16, background:'#f8fafc', border:'1px solid #e2e8f0', color:'#334155' }
+const insightStyle: React.CSSProperties = { display:'grid', gap:6, padding:15, borderRadius:18, background:'linear-gradient(180deg,#f8fafc,#ecfdf5)', border:'1px solid #dbe3ee', marginBottom:10, color:'#0f172a' }
+const archiveButtonStyle: React.CSSProperties = { width:'100%', border:'none', borderRadius:14, padding:'13px 16px', background:'#991b1b', color:'#fff', fontWeight:950, cursor:'pointer' }
+const tagWrapStyle: React.CSSProperties = { display:'flex', flexWrap:'wrap', gap:8 }
+const tagStyle: React.CSSProperties = { padding:'8px 11px', borderRadius:999, background:'#ecfdf5', color:'#047857', border:'1px solid #a7f3d0', fontWeight:850, fontSize:12 }
+const briefStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:12, marginTop:16 }
+const blockStyle: React.CSSProperties = { padding:16, borderRadius:18, background:'#f8fafc', border:'1px solid #e2e8f0', color:'#334155' }
+const itemStyle: React.CSSProperties = { padding:14, borderRadius:16, background:'#f8fafc', border:'1px solid #e2e8f0', marginBottom:10, color:'#334155', display:'grid', gap:6 }
+const itemLinkStyle: React.CSSProperties = { ...itemStyle, textDecoration:'none' }
+const emptyStyle: React.CSSProperties = { padding:18, borderRadius:18, background:'#f8fafc', border:'1px dashed #cbd5e1', color:'#64748b', fontWeight:800 }

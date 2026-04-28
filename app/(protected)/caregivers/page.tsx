@@ -1,453 +1,79 @@
 import Link from 'next/link'
+import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
 
-type Caregiver = {
-  id: number
-  full_name: string | null
-  city: string | null
-  zone: string | null
-  status: string | null
-  current_status: string | null
-  phone: string | null
-  reliability_score: number | null
-  special_needs_capable: boolean | null
-  academy_certified: boolean | null
-  skills_summary: string | null
-  last_mission_at: string | null
-  language_tags?: string[] | null
-skill_tags?: string[] | null
-}
+type Caregiver = Record<string, any>
+function text(v: any, f = '—') { return v === null || v === undefined || v === '' ? f : String(v) }
+function statusTone(status?: string) { const s = (status || '').toLowerCase(); if (['available','active'].includes(s)) return ['#dcfce7','#166534','#86efac']; if (s.includes('mission') || s.includes('busy')) return ['#dbeafe','#1d4ed8','#93c5fd']; if (s.includes('risk') || s.includes('blocked')) return ['#fee2e2','#991b1b','#fca5a5']; return ['#e2e8f0','#334155','#cbd5e1'] }
 
-
-function badgeStyle(value: string): React.CSSProperties {
-  const v = (value || '').toLowerCase()
-
-  const map: Record<string, { bg: string; text: string; border: string }> = {
-    available: { bg: '#dcfce7', text: '#166534', border: '#bbf7d0' },
-    assigned: { bg: '#ede9fe', text: '#6d28d9', border: '#ddd6fe' },
-    in_mission: { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
-    absent: { bg: '#fee2e2', text: '#991b1b', border: '#fecaca' },
-    blocked: { bg: '#e2e8f0', text: '#334155', border: '#cbd5e1' },
-  }
-
-  const color = map[v] || { bg: '#e2e8f0', text: '#334155', border: '#cbd5e1' }
-
-  return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '7px 11px',
-    borderRadius: 999,
-    background: color.bg,
-    color: color.text,
-    border: `1px solid ${color.border}`,
-    fontSize: 12,
-    fontWeight: 800,
-    textTransform: 'capitalize',
-  }
-}
-
-export default async function CaregiversPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ q?: string; city?: string; status?: string }>
-}) {
-  const params = searchParams ? await searchParams : undefined
-  const q = (params?.q || '').trim()
-  const cityFilter = (params?.city || '').trim()
-  const statusFilter = (params?.status || '').trim()
-
+export default async function CaregiversPage({ searchParams }: { searchParams?: Promise<{ q?: string; city?: string; status?: string; skill?: string }> }) {
+  const sp = await searchParams
+  const q = (sp?.q || '').trim()
+  const city = (sp?.city || '').trim()
+  const status = (sp?.status || '').trim()
+  const skill = (sp?.skill || '').trim()
   const supabase = await createClient()
 
-  let query = supabase
-    .from('caregivers')
-    .select('*')
-    .order('id', { ascending: false })
+  let query = supabase.from('caregivers').select('*').eq('is_archived', false).order('id', { ascending: false })
+  if (city) query = query.eq('city', city)
+  if (status) query = query.eq('current_status', status)
+  if (q) query = query.or(`full_name.ilike.%${q}%,phone.ilike.%${q}%,city.ilike.%${q}%,zone.ilike.%${q}%,skills_summary.ilike.%${q}%`)
 
-  if (cityFilter) query = query.eq('city', cityFilter)
-  if (statusFilter) query = query.eq('current_status', statusFilter)
-  if (q) query = query.or(`full_name.ilike.%${q}%,city.ilike.%${q}%,zone.ilike.%${q}%,skills_summary.ilike.%${q}%`)
-
-  const { data, error } = await query
-  const caregivers = (data || []) as Caregiver[]
-
-  const { data: allCaregiversRaw } = await supabase.from('caregivers').select('*').eq('is_archived', false)
-  const allCaregivers = (allCaregiversRaw || []) as Caregiver[]
-
-  const cityOptions = Array.from(new Set(allCaregivers.map((c) => c.city).filter(Boolean))) as string[]
-  const total = allCaregivers.length
-  const available = allCaregivers.filter((c) => (c.current_status || '').toLowerCase() === 'available').length
-  const assigned = allCaregivers.filter((c) => (c.current_status || '').toLowerCase() === 'assigned').length
-  const inMission = allCaregivers.filter((c) => (c.current_status || '').toLowerCase() === 'in_mission').length
-  const specialNeeds = allCaregivers.filter((c) => !!c.special_needs_capable).length
+  const [{ data, error }, { data: allRaw }, { data: missionsRaw }] = await Promise.all([
+    query,
+    supabase.from('caregivers').select('*').eq('is_archived', false),
+    supabase.from('missions').select('*').limit(500),
+  ])
+  let caregivers = (data || []) as Caregiver[]
+  if (skill) caregivers = caregivers.filter((c) => Array.isArray(c.skill_tags) && c.skill_tags.includes(skill))
+  const all = (allRaw || []) as Caregiver[]
+  const missions = missionsRaw || []
+  const cities = Array.from(new Set(all.map((c) => c.city).filter(Boolean))) as string[]
+  const skills = Array.from(new Set(all.flatMap((c) => Array.isArray(c.skill_tags) ? c.skill_tags : []).filter(Boolean))) as string[]
+  const active = all.filter((c) => ['active','available'].includes((c.current_status || c.status || '').toLowerCase())).length
+  const busy = all.filter((c) => ['busy','on_mission','mission'].includes((c.current_status || '').toLowerCase())).length
+  const certified = all.filter((c) => c.academy_certified).length
+  const special = all.filter((c) => c.special_needs_capable).length
+  const highReliability = all.filter((c) => Number(c.reliability_score || 0) >= 80).length
 
   return (
-    <main style={pageStyle}>
-      <div style={headerStyle}>
-        <div>
-          <div style={eyebrowStyle}>AngelCare • Caregiver Operations</div>
-          <h1 style={titleStyle}>Caregiver Directory</h1>
-          <p style={subtitleStyle}>
-            Répertoire opérationnel des intervenantes, disponibilité, compétences et statut terrain.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-  <Link href="/" style={secondaryButtonStyle}>← Dashboard</Link>
-
-  <Link href="/caregivers/new" style={buttonStyle}>
-    + Ajouter agent
-  </Link>
-</div>
+    <AppShell title="Caregivers Workforce" subtitle="Gestion premium des intervenantes : disponibilité, compétences, fiabilité, matching mission et risque terrain." breadcrumbs={[{ label: 'Caregivers' }]} actions={<><PageAction href="/caregivers/workforce" variant="light">Workforce Command</PageAction><PageAction href="/caregivers/new">+ Nouvelle intervenante</PageAction></>}>
+      <div style={pageStyle}>
+        <section style={heroStyle}><div><div style={eyebrowStyle}>Workforce Operating Layer</div><h1 style={heroTitleStyle}>Intervenantes, disponibilité & performance</h1><p style={heroTextStyle}>Vue opérationnelle pour staffer, remplacer, surveiller la qualité et préparer la croissance terrain.</p></div><div style={heroPanelStyle}><strong>{all.length}</strong><span>profils actifs</span></div></section>
+        <section style={kpiGridStyle}><Kpi label="Total" value={all.length} sub="profils actifs" /><Kpi label="Disponibles" value={active} sub="prêtes mission" /><Kpi label="Occupées" value={busy} sub="en mission" /><Kpi label="Certifiées" value={certified} sub="Academy" /><Kpi label="Besoins spécifiques" value={special} sub="capables" /><Kpi label="Fiabilité 80+" value={highReliability} sub="top performers" /></section>
+        <form style={filterStyle}><input name="q" defaultValue={q} placeholder="Recherche nom, téléphone, ville, zone, compétence..." style={inputStyle} /><select name="city" defaultValue={city} style={inputStyle}><option value="">Toutes villes</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</select><select name="status" defaultValue={status} style={inputStyle}><option value="">Tous statuts</option><option value="available">available</option><option value="active">active</option><option value="busy">busy</option><option value="on_mission">on_mission</option><option value="inactive">inactive</option></select><select name="skill" defaultValue={skill} style={inputStyle}><option value="">Toutes compétences</option>{skills.map((s) => <option key={s} value={s}>{s}</option>)}</select><button style={buttonStyle}>Filtrer</button><Link href="/caregivers" style={lightButtonStyle}>Reset</Link></form>
+        {error ? <div style={errorStyle}>Erreur : {error.message}</div> : null}
+        <section style={gridStyle}>{caregivers.map((c) => { const [bg,fg,bd] = statusTone(c.current_status || c.status); const missionCount = missions.filter((m: any) => Number(m.caregiver_id) === Number(c.id)).length; return <article key={c.id} style={cardStyle}><div style={cardTopStyle}><div><div style={idStyle}>Caregiver #{c.id}</div><h2 style={cardTitleStyle}>{text(c.full_name, 'Intervenante sans nom')}</h2><p style={mutedStyle}>{text(c.city)} • {text(c.zone)} • {text(c.phone)}</p></div><span style={{...badgeStyle, background:bg, color:fg, borderColor:bd}}>{text(c.current_status || c.status, 'available')}</span></div><div style={miniGridStyle}><Info label="Fiabilité" value={`${Number(c.reliability_score || 0)}/100`} /><Info label="Missions" value={missionCount} /><Info label="Academy" value={c.academy_certified ? 'Oui' : 'Non'} /><Info label="Special needs" value={c.special_needs_capable ? 'Oui' : 'Non'} /></div><div style={tagWrapStyle}>{(Array.isArray(c.skill_tags) ? c.skill_tags : []).slice(0,6).map((t:string)=><span key={t} style={tagStyle}>{t}</span>)}{(!Array.isArray(c.skill_tags) || c.skill_tags.length===0) ? <span style={tagStyle}>skills à compléter</span> : null}</div><div style={sectionMiniStyle}><strong>Résumé</strong><p>{text(c.skills_summary || c.notes, 'Résumé profil non renseigné')}</p></div><div style={footerActionsStyle}><Link href={`/caregivers/${c.id}`} style={darkButtonStyle}>Ouvrir profil</Link><Link href={`/operations/replacements?caregiver_id=${c.id}`} style={lightButtonStyle}>Matching</Link></div></article> })}</section>
       </div>
-
-      <section style={kpiGridStyle}>
-        <KpiCard label="Intervenantes totales" value={`👩‍👧 ${total}`} />
-        <KpiCard label="Disponibles" value={`✅ ${available}`} />
-        <KpiCard label="Assignées" value={`📌 ${assigned}`} />
-        <KpiCard label="En mission" value={`🛰️ ${inMission}`} />
-        <KpiCard label="Spécial needs" value={`🧩 ${specialNeeds}`} />
-      </section>
-
-      <section style={panelStyle}>
-        <form method="GET" style={filterGridStyle}>
-          <input name="q" defaultValue={q} placeholder="Nom, ville, zone, compétence" style={inputStyle} />
-
-          <select name="city" defaultValue={cityFilter} style={inputStyle}>
-            <option value="">Toutes les villes</option>
-            {cityOptions.map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </select>
-
-          <select name="status" defaultValue={statusFilter} style={inputStyle}>
-            <option value="">Tous les statuts</option>
-            <option value="available">available</option>
-            <option value="assigned">assigned</option>
-            <option value="in_mission">in_mission</option>
-            <option value="absent">absent</option>
-            <option value="blocked">blocked</option>
-          </select>
-
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button type="submit" style={buttonStyle}>Filtrer</button>
-            <Link href="/caregivers" style={secondaryButtonStyle}>Reset</Link>
-          </div>
-        </form>
-      </section>
-
-      {error ? (
-        <div style={errorStyle}>Erreur : {error.message}</div>
-      ) : caregivers.length === 0 ? (
-        <div style={emptyStyle}>
-          <h3 style={{ marginTop: 0, color: '#0f172a' }}>Aucune intervenante trouvée</h3>
-          <p style={{ color: '#475569' }}>Ajoute ou complète les profils des intervenantes dans la base.</p>
-        </div>
-      ) : (
-        <div style={gridStyle}>
-          {caregivers.map((caregiver) => (
-            <section key={caregiver.id} style={cardStyle}>
-              <div style={cardTopStyle}>
-                <div>
-                  <div style={idStyle}>Caregiver #{caregiver.id}</div>
-                  <h2 style={nameStyle}>{caregiver.full_name || 'Intervenante sans nom'}</h2>
-                </div>
-
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={badgeStyle(caregiver.current_status || caregiver.status || 'available')}>
-                    {caregiver.current_status || caregiver.status || 'available'}
-                  </span>
-                  {caregiver.academy_certified ? <span style={miniPillStyle}>Academy Certified</span> : null}
-                  {caregiver.special_needs_capable ? <span style={miniPillStyle}>Special Needs</span> : null}
-                </div>
-              </div>
-
-              <div style={contentGridStyle}>
-                <div>
-                  <div style={lineStyle}>📍 <strong>Ville :</strong> {caregiver.city || 'Non définie'}</div>
-                  <div style={lineStyle}>🧭 <strong>Zone :</strong> {caregiver.zone || 'Non définie'}</div>
-                  <div style={lineStyle}>📞 <strong>Téléphone :</strong> {caregiver.phone || 'Non défini'}</div>
-                </div>
-
-                <div>
-                  <div style={lineStyle}>⭐ <strong>Reliability :</strong> {caregiver.reliability_score ?? 0}</div>
-                  <div style={lineStyle}>🧠 <strong>Compétences :</strong> {caregiver.skills_summary || 'Non définies'}</div>
-                  <div style={lineStyle}>🗓️ <strong>Dernière mission :</strong> {caregiver.last_mission_at || 'Jamais'}</div>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 10 }}>
-  <div style={tagWrapStyle}>
-    {(Array.isArray(caregiver.language_tags) ? caregiver.language_tags : []).map((tag: string) => (
-      <span key={tag} style={languageTagStyle}>{tag}</span>
-    ))}
-    {(Array.isArray(caregiver.skill_tags) ? caregiver.skill_tags : []).map((tag: string) => (
-      <span key={tag} style={skillTagStyle}>{tag}</span>
-    ))}
-  </div>
-</div>
-
-              <div style={actionsWrapStyle}>
-  <Link href={`/caregivers/${caregiver.id}`} style={primaryActionStyle}>
-    Voir profil
-  </Link>
-
-  <Link href={`/caregivers/edit/${caregiver.id}`} style={secondaryButtonStyle}>
-    Modifier
-  </Link>
-</div>
-            </section>
-          ))}
-        </div>
-      )}
-    </main>
+    </AppShell>
   )
 }
-
-function KpiCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={kpiCardStyle}>
-      <div style={kpiLabelStyle}>{label}</div>
-      <div style={kpiValueStyle}>{value}</div>
-    </div>
-  )
-}
-
-const pageStyle: React.CSSProperties = {
-  padding: 32,
-  fontFamily: 'Arial, sans-serif',
-  background: 'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
-  minHeight: '100vh',
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: 20,
-  flexWrap: 'wrap',
-  marginBottom: 24,
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  display: 'inline-block',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#e2e8f0',
-  color: '#334155',
-  fontSize: 12,
-  fontWeight: 800,
-  marginBottom: 10,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: 42,
-  lineHeight: 1.05,
-  color: '#0f172a',
-  fontWeight: 800,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  color: '#475569',
-  margin: '10px 0 0 0',
-  fontSize: 18,
-}
-
-const kpiGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
-  gap: 16,
-  marginBottom: 20,
-}
-
-const kpiCardStyle: React.CSSProperties = {
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 18,
-  padding: 18,
-  boxShadow: '0 10px 24px rgba(15, 23, 42, 0.05)',
-}
-
-const kpiLabelStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 14,
-  marginBottom: 8,
-}
-
-const kpiValueStyle: React.CSSProperties = {
-  fontSize: 28,
-  fontWeight: 800,
-  color: '#0f172a',
-}
-
-const panelStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 20,
-  padding: 18,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 12px 30px rgba(15, 23, 42, 0.05)',
-  marginBottom: 20,
-}
-
-const filterGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '2fr 1fr 1fr auto',
-  gap: 12,
-  alignItems: 'center',
-}
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 18,
-}
-
-const cardStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.96)',
-  borderRadius: 24,
-  padding: 24,
-  border: '1px solid #dbe3ee',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.07)',
-}
-
-const cardTopStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: 20,
-  marginBottom: 18,
-  flexWrap: 'wrap',
-}
-
-const idStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 13,
-  fontWeight: 700,
-  marginBottom: 6,
-}
-
-const nameStyle: React.CSSProperties = {
-  margin: 0,
-  color: '#0f172a',
-  fontSize: 24,
-  fontWeight: 800,
-}
-
-const contentGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: 24,
-  marginBottom: 20,
-}
-
-const lineStyle: React.CSSProperties = {
-  color: '#475569',
-  fontSize: 16,
-  lineHeight: 1.7,
-}
-
-const actionsWrapStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 12,
-  flexWrap: 'wrap',
-  paddingTop: 16,
-  borderTop: '1px solid #e2e8f0',
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 14px',
-  borderRadius: 12,
-  border: '1px solid #cbd5e1',
-  fontSize: 14,
-  boxSizing: 'border-box',
-  background: 'white',
-  color: '#0f172a',
-}
-
-const buttonStyle: React.CSSProperties = {
-  background: '#0f172a',
-  color: 'white',
-  padding: '12px 16px',
-  borderRadius: 12,
-  textDecoration: 'none',
-  fontWeight: 800,
-  border: 'none',
-  cursor: 'pointer',
-}
-
-const secondaryButtonStyle: React.CSSProperties = {
-  background: 'white',
-  color: '#0f172a',
-  padding: '12px 16px',
-  borderRadius: 12,
-  textDecoration: 'none',
-  fontWeight: 800,
-  border: '1px solid #cbd5e1',
-}
-
-const primaryActionStyle: React.CSSProperties = {
-  background: '#0f172a',
-  color: 'white',
-  padding: '10px 14px',
-  borderRadius: 10,
-  textDecoration: 'none',
-  fontWeight: 800,
-  fontSize: 14,
-}
-
-const miniPillStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '7px 11px',
-  borderRadius: 999,
-  background: '#f8fafc',
-  color: '#334155',
-  border: '1px solid #cbd5e1',
-  fontSize: 12,
-  fontWeight: 800,
-}
-
-const emptyStyle: React.CSSProperties = {
-  background: 'white',
-  borderRadius: 20,
-  padding: 32,
-  border: '1px solid #e2e8f0',
-}
-
-const errorStyle: React.CSSProperties = {
-  background: '#fff7f7',
-  border: '1px solid #fecaca',
-  color: '#991b1b',
-  borderRadius: 16,
-  padding: 16,
-}
-const tagWrapStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 8,
-  flexWrap: 'wrap',
-  marginTop: 8,
-}
-
-const languageTagStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#e0f2fe',
-  color: '#075985',
-  border: '1px solid #bae6fd',
-  fontSize: 12,
-  fontWeight: 800,
-}
-
-const skillTagStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#ede9fe',
-  color: '#6d28d9',
-  border: '1px solid #ddd6fe',
-  fontSize: 12,
-  fontWeight: 800,
-}
+function Kpi({ label, value, sub }: { label: string; value: any; sub: string }) { return <div style={kpiStyle}><span>{label}</span><strong>{value}</strong><small>{sub}</small></div> }
+function Info({ label, value }: { label: string; value: any }) { return <div style={infoStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
+const pageStyle: React.CSSProperties = { display: 'grid', gap: 20 }
+const heroStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, padding: 30, borderRadius: 32, color: '#fff', background: 'radial-gradient(circle at top left,#059669,#020617 65%)', boxShadow: '0 30px 80px rgba(2,6,23,.28)' }
+const eyebrowStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 12px', borderRadius: 999, background: 'rgba(255,255,255,.12)', color: '#bbf7d0', fontWeight: 950, fontSize: 12, marginBottom: 12 }
+const heroTitleStyle: React.CSSProperties = { margin: 0, fontSize: 38, fontWeight: 950, color: '#fff' }
+const heroTextStyle: React.CSSProperties = { margin: '8px 0 0', color: 'rgba(255,255,255,.86)', fontWeight: 750, maxWidth: 760 }
+const heroPanelStyle: React.CSSProperties = { minWidth: 230, padding: 22, borderRadius: 26, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', display: 'grid', gap: 6 }
+const kpiGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 14 }
+const kpiStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 22, padding: 18, display: 'grid', gap: 6, color: '#0f172a', boxShadow: '0 18px 38px rgba(15,23,42,.05)' }
+const filterStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 170px 170px 180px auto auto', gap: 12, padding: 16, borderRadius: 24, background: '#fff', border: '1px solid #dbe3ee', alignItems: 'center' }
+const inputStyle: React.CSSProperties = { padding: '12px 13px', borderRadius: 13, border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }
+const buttonStyle: React.CSSProperties = { border: 'none', borderRadius: 14, padding: '13px 16px', background: '#0f172a', color: '#fff', fontWeight: 950, cursor: 'pointer' }
+const lightButtonStyle: React.CSSProperties = { borderRadius: 14, padding: '12px 14px', background: '#f8fafc', color: '#0f172a', border: '1px solid #dbe3ee', fontWeight: 900, textDecoration: 'none', display: 'inline-flex', justifyContent: 'center' }
+const darkButtonStyle: React.CSSProperties = { ...buttonStyle, textDecoration: 'none', display: 'inline-flex', justifyContent: 'center' }
+const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 18 }
+const cardStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 26, padding: 22, boxShadow: '0 18px 38px rgba(15,23,42,.06)', display: 'grid', gap: 16 }
+const cardTopStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'start' }
+const idStyle: React.CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 900, marginBottom: 6 }
+const cardTitleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 24, fontWeight: 950 }
+const mutedStyle: React.CSSProperties = { margin: '6px 0 0', color: '#64748b', fontWeight: 750 }
+const badgeStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 11px', borderRadius: 999, border: '1px solid', fontSize: 12, fontWeight: 950 }
+const miniGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10 }
+const infoStyle: React.CSSProperties = { display: 'grid', gap: 5, padding: 12, borderRadius: 16, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155' }
+const tagWrapStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8 }
+const tagStyle: React.CSSProperties = { padding: '7px 10px', borderRadius: 999, background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: 850, fontSize: 12 }
+const sectionMiniStyle: React.CSSProperties = { padding: 14, borderRadius: 18, background: 'linear-gradient(180deg,#f8fafc,#ecfdf5)', border: '1px solid #dbe3ee', color: '#334155' }
+const footerActionsStyle: React.CSSProperties = { display: 'flex', gap: 10, flexWrap: 'wrap' }
+const errorStyle: React.CSSProperties = { padding: 16, borderRadius: 18, background: '#fee2e2', color: '#991b1b', fontWeight: 900 }
