@@ -4,6 +4,7 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
+
 type NavItem = {
   label: string
   href: string

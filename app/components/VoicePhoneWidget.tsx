@@ -243,10 +243,10 @@ export default function VoicePhoneWidget() {
       setWebrtcReady(true)
     })
 
-    client.on("telnyx.error", (error: any) => {
-      console.error("Telnyx WebRTC error:", error)
-      setWebrtcReady(false)
-    })
+    client.on('telnyx.error', (error: any) => {
+  console.warn('Telnyx WebRTC warning:', error)
+  setWebrtcReady(false)
+})
 
     client.on("telnyx.notification", async (notification: any) => {
       console.log("Telnyx notification:", notification)
