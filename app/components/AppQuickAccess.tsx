@@ -27,7 +27,7 @@ export function AppQuickAccess({
       {open && (
         <div style={menuStyle}>
           {links.map((link) => (
-            <Link key={link.href} href={link.href} style={itemStyle} onClick={() => setOpen(false)}>
+            <Link key={`${link.href}-${link.permission}-${link.label}`} href={link.href} style={itemStyle} onClick={() => setOpen(false)}>
               <span>{link.label}</span>
               <small style={smallStyle}>{link.permission}</small>
             </Link>

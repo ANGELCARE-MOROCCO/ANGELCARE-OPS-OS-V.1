@@ -182,10 +182,6 @@ function makeCallRoomName(type: CallType, fromId: string, toId: string) {
 }
 
 export default function AngelCareConnect() {
-  const currentUserId =
-  typeof window !== "undefined"
-    ? localStorage.getItem("angelcare_connect_display_name") || "unknown"
-    : "unknown";
   const supabase = useMemo(() => createClient(), []);
   const notifyAudioRef = useRef<HTMLAudioElement | null>(null);
   const ringtoneAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -286,56 +282,36 @@ export default function AngelCareConnect() {
 
     async function loadCurrentUser() {
       try {
-        const { data: authData } = await supabase.auth.getUser();
-        const authUser = authData?.user;
+        const response = await fetch("/api/connect/me", {
+          method: "GET",
+          cache: "no-store",
+          credentials: "same-origin",
+        });
 
-        if (authUser?.id) {
-          const { data } = await supabase
-            .from("app_users")
-            .select("id, full_name, role, department")
-            .eq("id", authUser.id)
-            .maybeSingle();
-
-          if (mounted && data) {
-            setCurrentUser({
-              id: String(data.id),
-              name: data.full_name || authUser.email || "AngelCare User",
-              role: data.role || "Staff",
-              department: data.department || "AngelCare",
-            });
-            return;
-          }
-
-          if (mounted) {
-            setCurrentUser({
-              id: authUser.id,
-              name: authUser.email || "AngelCare User",
-              role: "Staff",
-              department: "AngelCare",
-            });
-            return;
-          }
+        if (!response.ok) {
+          throw new Error(`Unable to load current user (${response.status})`);
         }
 
-        const localName = window.localStorage.getItem("angelcare_connect_display_name");
-        const localId = window.localStorage.getItem("angelcare_connect_display_id");
+        const payload = await response.json();
+        const user = payload?.user;
+
+        if (!user?.id) {
+          throw new Error("Current user payload is missing id");
+        }
+
         if (mounted) {
           setCurrentUser({
-            id: localId || clientId,
-            name: localName || `Desk ${clientId.slice(0, 4).toUpperCase()}`,
-            role: "Staff",
-            department: "AngelCare",
+            id: String(user.id),
+            name: user.name || user.full_name || user.username || "AngelCare User",
+            role: user.role || "Staff",
+            department: user.department || "AngelCare",
           });
         }
       } catch (error) {
         console.error("AngelCare Connect current user load error:", error);
         if (mounted) {
-          setCurrentUser({
-            id: clientId,
-            name: `Desk ${clientId.slice(0, 4).toUpperCase()}`,
-            role: "Staff",
-            department: "AngelCare",
-          });
+          setCurrentUser(null);
+          setConnectWarning("Connect identity could not load from your secure session. Please refresh after login.");
         }
       }
     }
@@ -345,7 +321,7 @@ export default function AngelCareConnect() {
     return () => {
       mounted = false;
     };
-  }, [clientId, supabase]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -643,6 +619,42 @@ export default function AngelCareConnect() {
     }
   }
 
+  async function openDirectStaffRoom(person: Staff) {
+    if (!currentUser) {
+      setConnectWarning("Connect identity is still loading. Try again in one second.");
+      return;
+    }
+
+    primeAudio();
+
+    const [firstId, secondId] = [currentUser.id, person.id].sort();
+    const roomId = `direct-${firstId}-${secondId}`.replace(/[^a-zA-Z0-9-_]/g, "-").slice(0, 120);
+    const roomName = `${currentUser.name} ↔ ${person.name}`;
+
+    setRooms((prev) => {
+      if (prev.some((room) => room.id === roomId)) return prev;
+      return [
+        ...prev,
+        {
+          id: roomId,
+          name: roomName,
+          type: "direct",
+          unread: 0,
+        },
+      ];
+    });
+
+    await supabase
+      .from("connect_rooms")
+      .upsert({ id: roomId, name: roomName, type: "direct" }, { onConflict: "id" });
+
+    setSelectedRoom(roomId);
+    setTab("rooms");
+    setOpen(true);
+    setDraft("");
+    setConnectWarning(`Direct message opened with ${person.name}.`);
+  }
+
   async function startCall(target: string, type: CallType, targetId?: string) {
     if (!currentUser) {
       setConnectWarning("Connect identity is still loading. Try again in one second.");
@@ -752,21 +764,6 @@ export default function AngelCareConnect() {
   function openPanel() {
     primeAudio();
     setOpen((v) => !v);
-  }
-
-  function useStaffAsCurrentUser(person: Staff) {
-    primeAudio();
-    setCurrentUser({
-      id: person.id,
-      name: person.name,
-      role: person.role,
-      department: person.department,
-    });
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("angelcare_connect_display_name", person.name);
-      window.localStorage.setItem("angelcare_connect_display_id", person.id);
-    }
-    setConnectWarning(`Connect identity set to ${person.name}. Use another window as another staff member to test calls.`);
   }
 
   return (
@@ -993,31 +990,20 @@ export default function AngelCareConnect() {
                                 </p>
                               </div>
                             </div>
-                            <div className="mt-3 grid grid-cols-2 gap-2">
-                              {!isSelf && (
-                                <button
-                                  onClick={() => useStaffAsCurrentUser(person)}
-                                  className="col-span-2 rounded-xl bg-amber-500/20 px-3 py-2 text-xs font-black text-amber-100 ring-1 ring-amber-300/30 hover:bg-amber-500/30"
-                                  title="Use this identity in this browser session if app auth is not linked to Supabase auth."
-                                >
-                                  Use as me in this window
-                                </button>
-                              )}
+                            <div className="mt-3 grid grid-cols-3 gap-2">
                               <button
                                 disabled={isSelf}
-                                onClick={async () => {
-  const room = `angelcare-audio-${Date.now()}`;
-
-  await supabase.from("calls").insert({
-    caller_id: currentUserId,
-receiver_id: person.id,
-    room_name: room,
-    type: "audio",
-    status: "ringing",
-  });
-
-  console.log("📞 Call request sent");
-}}
+                                onClick={() => openDirectStaffRoom(person)}
+                                className={classNames(
+                                  "rounded-xl px-3 py-2 text-xs font-black text-white",
+                                  isSelf ? "cursor-not-allowed bg-white/5 opacity-50" : "bg-slate-700 hover:bg-slate-600"
+                                )}
+                              >
+                                Message
+                              </button>
+                              <button
+                                disabled={isSelf}
+                                onClick={() => startCall(person.name, "audio", person.id)}
                                 className={classNames(
                                   "rounded-xl px-3 py-2 text-xs font-black text-white",
                                   isSelf ? "cursor-not-allowed bg-white/5 opacity-50" : "bg-white/10 hover:bg-white/20"

@@ -1,73 +1,14 @@
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
-import { CockpitHero, EmptyState, MetricCard, Panel, TaskRow, formatDateTime } from '../../_components/ExecutionPrimitives'
+import { notFound, redirect } from 'next/navigation'
+import { Badge, EmptyState, KpiCard, Panel, TaskCard, WorkspaceHero, formatCurrency, safeDate } from '../../_components/RevenueOpsPrimitives'
 
-export default async function ProspectWorkspacePage({ params }: { params: Promise<{ id: string }> }) {
-  await requireRole(['ceo', 'manager', 'agent'])
-  const { id } = await params
-  const supabase = await createClient()
-
-  const [{ data: prospect }, { data: tasks }, { data: logs }, { data: users }] = await Promise.all([
-    supabase.from('bd_prospects').select('*').eq('id', id).maybeSingle(),
-    supabase.from('bd_tasks').select('*').eq('linked_entity_type', 'prospect').eq('linked_entity_id', id).eq('is_archived', false).order('end_at', { ascending: true, nullsFirst: false }),
-    supabase.from('bd_activity_logs').select('*').eq('prospect_id', id).order('created_at', { ascending: false }).limit(30),
-    supabase.from('app_users').select('id, full_name, username'),
-  ])
-
-  if (!prospect) notFound()
-  const userMap = new Map((users || []).map((u: any) => [u.id, u.full_name || u.username]))
-  const rows = tasks || []
-  const open = rows.filter((t: any) => t.status !== 'completed')
-  const completed = rows.filter((t: any) => t.status === 'completed')
-
-  return (
-    <AppShell
-      title={`Prospect — ${prospect.name || prospect.company_name || 'Workspace'}`}
-      subtitle="Workspace CRM complet: profil, segmentation, tâches, historique, prochaine action et discipline commerciale."
-      breadcrumbs={[{ label: 'Revenue', href: '/revenue-command-center' }, { label: 'Prospects', href: '/revenue-command-center/prospects' }, { label: prospect.name || prospect.company_name || 'Prospect' }]}
-      actions={<><PageAction href="/revenue-command-center/prospects" variant="light">Base prospects</PageAction><PageAction href={`/revenue-command-center/tasks/new?linked_entity_type=prospect&linked_entity_id=${prospect.id}&linked_entity_label=${encodeURIComponent(prospect.name || prospect.company_name || 'Prospect')}`}>Créer tâche</PageAction></>}
-    >
-      <div style={pageStyle}>
-        <CockpitHero title={prospect.name || prospect.company_name || 'Prospect'} subtitle={`${prospect.segment || 'segment non défini'} • ${prospect.city || 'ville non définie'} • ${prospect.status || 'statut non défini'}`} />
-        <section style={metricsGrid}>
-          <MetricCard label="Score" value={prospect.score || 0} sub="priorité stratégique" tone="purple" />
-          <MetricCard label="Valeur estimée" value={`${Number(prospect.estimated_value || 0).toLocaleString('fr-FR')} MAD`} sub="forecast" tone="green" />
-          <MetricCard label="Tasks ouvertes" value={open.length} sub="actions à faire" tone="amber" />
-          <MetricCard label="Tasks terminées" value={completed.length} sub="exécution" tone="blue" />
-        </section>
-        <section style={gridStyle}>
-          <Panel title="Profil & segmentation" subtitle="Informations utiles pour domination marché et qualification corporate.">
-            <Info label="Segment" value={prospect.segment || '—'} />
-            <Info label="Type" value={prospect.type || prospect.category || '—'} />
-            <Info label="Ville" value={prospect.city || '—'} />
-            <Info label="Téléphone" value={prospect.phone || '—'} />
-            <Info label="Email" value={prospect.email || '—'} />
-            <Info label="Next action" value={prospect.next_action || '—'} />
-          </Panel>
-          <Panel title="Tasks liées" subtitle="Toutes les actions sur ce prospect.">
-            <div style={{ display: 'grid', gap: 10 }}>
-              {rows.map((task: any) => <TaskRow key={task.id} task={task} assigneeName={userMap.get(task.assigned_to)} />)}
-              {!rows.length ? <EmptyState text="Aucune tâche liée à ce prospect. Créez une prochaine action." /> : null}
-            </div>
-          </Panel>
-        </section>
-        <Panel title="Historique CRM" subtitle="Logs, actions et signaux disponibles.">
-          <div style={{ display: 'grid', gap: 10 }}>
-            {(logs || []).map((log: any) => <div key={log.id} style={logCard}><strong>{log.action || log.event_type || 'activity'}</strong><span>{formatDateTime(log.created_at)}</span></div>)}
-            {!(logs || []).length ? <EmptyState text="Aucune activité CRM enregistrée pour ce prospect." /> : null}
-          </div>
-        </Panel>
-      </div>
-    </AppShell>
-  )
+export default async function ProspectDetail({ params }: { params: Promise<{ id: string }> }) {
+  await requireRole(['ceo','manager','agent']); const { id } = await params; const supabase = await createClient()
+  const [{ data: prospect }, { data: tasks }, { data: logs }, { data: users }] = await Promise.all([supabase.from('bd_prospects').select('*').eq('id', id).maybeSingle(), supabase.from('bd_tasks').select('*').eq('linked_type','prospect').eq('linked_id',id).eq('is_archived',false).order('created_at',{ascending:false}), supabase.from('bd_activity_logs').select('*').eq('entity_type','prospect').eq('entity_id',id).order('created_at',{ascending:false}), supabase.from('app_users').select('id, full_name, username')])
+  if (!prospect) notFound(); const userMap=new Map((users||[]).map((u:any)=>[u.id,u.full_name||u.username]))
+  async function createTask(formData: FormData){'use server'; const supabase=await createClient(); await supabase.from('bd_tasks').insert([{title:String(formData.get('title')||'Follow-up prospect'),description:String(formData.get('description')||''),status:'open',priority:String(formData.get('priority')||'medium'),assigned_to:String(formData.get('assigned_to')||'')||null,end_at:String(formData.get('end_at')||'')||null,linked_type:'prospect',linked_id:id,linked_label:prospect.name}]); await supabase.from('bd_activity_logs').insert([{entity_type:'prospect',entity_id:id,action:'task_created',details:{title:String(formData.get('title')||'')}}]); redirect(`/revenue-command-center/prospects/${id}`)}
+  return <AppShell title={prospect.name} subtitle="Workspace CRM complet : actions, tâches, historique, pipeline et prochaine étape." breadcrumbs={[{label:'Prospects',href:'/revenue-command-center/prospects'},{label:prospect.name}]} actions={<><PageAction href="/revenue-command-center/prospects" variant="light">Prospects</PageAction><PageAction href="/revenue-command-center/tasks/new" variant="light">Créer tâche globale</PageAction></>}><div style={{display:'grid',gap:20}}><WorkspaceHero eyebrow="PROSPECT CRM WORKSPACE" title={prospect.name} subtitle={`${prospect.segment || 'segment'} • ${prospect.city || 'ville non définie'} • ${prospect.stage || 'new'}`} right={<div style={{display:'grid',gap:8}}><Badge tone="amber">{prospect.priority || 'medium'}</Badge><strong>{formatCurrency(prospect.estimated_value)}</strong></div>}/><section style={metricsStyle}><KpiCard label="Score" value={prospect.score || 0}/><KpiCard label="Stage" value={prospect.stage || 'new'} tone="purple"/><KpiCard label="Valeur" value={formatCurrency(prospect.estimated_value)} tone="green"/><KpiCard label="Next" value={prospect.next_action || '—'} tone="amber"/></section><section style={gridStyle}><Panel title="Créer tâche liée" subtitle="Action directe sur ce prospect."><form action={createTask} style={{display:'grid',gap:10}}><input name="title" placeholder="Titre tâche" style={inputStyle}/><textarea name="description" placeholder="Description" style={{...inputStyle,minHeight:90}}/><select name="priority" style={inputStyle}><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option></select><select name="assigned_to" style={inputStyle}><option value="">Sans owner</option>{(users||[]).map((u:any)=><option key={u.id} value={u.id}>{u.full_name || u.username}</option>)}</select><input name="end_at" type="datetime-local" style={inputStyle}/><button style={buttonStyle}>Créer tâche</button></form></Panel><Panel title="Tâches prospect" subtitle="Tout le travail à exécuter.">{tasks?.length ? <div style={{display:'grid',gap:10}}>{tasks.map((t:any)=><TaskCard key={t.id} task={t} assigneeName={userMap.get(t.assigned_to)}/>)}</div> : <EmptyState text="Aucune tâche liée à ce prospect."/>}</Panel></section><Panel title="Historique CRM" subtitle="Actions et signaux.">{logs?.length ? <div style={{display:'grid',gap:10}}>{logs.map((l:any)=><div key={l.id} style={logStyle}><strong>{l.action}</strong><span>{safeDate(l.created_at)}</span></div>)}</div> : <EmptyState text="Aucun log CRM."/>}</Panel></div></AppShell>
 }
-
-function Info({ label, value }: { label: string; value: string }) { return <div style={infoCard}><span>{label}</span><strong>{value}</strong></div> }
-
-const pageStyle: React.CSSProperties = { display: 'grid', gap: 20 }
-const metricsGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 14 }
-const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '.85fr 1.15fr', gap: 18, alignItems: 'start' }
-const infoCard: React.CSSProperties = { display: 'grid', gap: 5, padding: 13, borderRadius: 15, background: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: 8 }
-const logCard: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 12, padding: 13, borderRadius: 14, background: '#f8fafc', border: '1px solid #e2e8f0' }
+const metricsStyle:React.CSSProperties={display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:14}.valueOf(); const gridStyle:React.CSSProperties={display:'grid',gridTemplateColumns:'.7fr 1.3fr',gap:18}.valueOf(); const inputStyle:React.CSSProperties={padding:'12px 13px',borderRadius:13,border:'1px solid #cbd5e1',background:'#f8fafc',fontWeight:800}.valueOf(); const buttonStyle:React.CSSProperties={border:'none',borderRadius:14,padding:'13px 18px',background:'#0f172a',color:'#fff',fontWeight:950,cursor:'pointer'}.valueOf(); const logStyle:React.CSSProperties={display:'flex',justifyContent:'space-between',gap:10,padding:13,borderRadius:14,background:'#f8fafc',border:'1px solid #e2e8f0'}.valueOf()

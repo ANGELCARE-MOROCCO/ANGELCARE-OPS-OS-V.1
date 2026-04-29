@@ -1,9 +1,8 @@
-
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-
 
 type NavItem = {
   label: string
@@ -18,48 +17,73 @@ type NavGroup = {
 }
 
 const NAV_GROUPS: NavGroup[] = [
-  { group: 'Control Center', items: [
-    { label: 'Dashboard', href: '/', icon: '📡', badge: 'Live' },
-    { label: 'Operations Hub', href: '/operations', icon: '🧭' },
-    { label: 'Reports', href: '/reports', icon: '📊' },
-  ] },
-  { group: 'Sales CRM', items: [
-    { label: 'Sales Cockpit', href: '/sales', icon: '🚀', badge: 'New' },
-    { label: 'Leads', href: '/leads', icon: '📈' },
-    { label: 'Families CRM', href: '/families', icon: '🏡' },
-    { label: 'Institutions', href: '/sales#institutions', icon: '🏫' },
-  ] },
-  { group: 'Operations', items: [
-    { label: 'Missions', href: '/missions', icon: '🛫' },
-    { label: 'Pointage', href: '/pointage', icon: '🕒' },
-    { label: 'Availability', href: '/operations/availability', icon: '🟢' },
-    { label: 'Replacements', href: '/operations/replacements', icon: '🔄' },
-  ] },
-  { group: 'Contracts & Billing', items: [
-    { label: 'Contracts', href: '/contracts', icon: '📦' },
-    { label: 'Billing Center', href: '/billing', icon: '🧾', badge: 'Ready' },
-    { label: 'Print Center', href: '/print', icon: '🖨️' },
-  ] },
-  { group: 'Workforce', items: [
-    { label: 'Caregivers', href: '/caregivers', icon: '👩‍👧' },
-    { label: 'Field Portal', href: '/my-space', icon: '📱' },
-  ] },
-  { group: 'Quality & Incidents', items: [
-    { label: 'Incidents', href: '/incidents', icon: '🚨' },
-    { label: 'Archive Center', href: '/admin/archive-center', icon: '🗄️' },
-  ] },
-  { group: 'Products & Services', items: [
-    { label: 'Service Catalog', href: '/services', icon: '🧩', badge: 'ERP' },
-    { label: 'New Service', href: '/services/new', icon: '➕' },
-  ] },
-  { group: 'Academy', items: [
-    { label: 'Academy Hub', href: '/academy', icon: '🎓' },
-  ] },
-  { group: 'Administration', items: [
-    { label: 'Users', href: '/users', icon: '🔐' },
-    { label: 'Profile', href: '/profile', icon: '👤' },
-    { label: 'Locations', href: '/locations', icon: '📍' },
-  ] },
+  {
+    group: 'Control Center',
+    items: [
+      { label: 'Dashboard', href: '/', icon: '📡', badge: 'Live' },
+      { label: 'Operations Hub', href: '/operations', icon: '🧭' },
+      { label: 'Reports', href: '/reports', icon: '📊' },
+    ],
+  },
+  {
+    group: 'Sales CRM',
+    items: [
+      { label: 'Sales Cockpit', href: '/sales', icon: '🚀', badge: 'New' },
+      { label: 'Leads', href: '/leads', icon: '📈' },
+      { label: 'Families CRM', href: '/families', icon: '🏡' },
+      { label: 'Institutions', href: '/sales#institutions', icon: '🏫' },
+    ],
+  },
+  {
+    group: 'Operations',
+    items: [
+      { label: 'Missions', href: '/missions', icon: '🛫' },
+      { label: 'Pointage', href: '/pointage', icon: '🕒' },
+      { label: 'Availability', href: '/operations/availability', icon: '🟢' },
+      { label: 'Replacements', href: '/operations/replacements', icon: '🔄' },
+    ],
+  },
+  {
+    group: 'Contracts & Billing',
+    items: [
+      { label: 'Contracts', href: '/contracts', icon: '📦' },
+      { label: 'Billing Center', href: '/billing', icon: '🧾', badge: 'Ready' },
+      { label: 'Print Center', href: '/print', icon: '🖨️' },
+    ],
+  },
+  {
+    group: 'Workforce',
+    items: [
+      { label: 'Caregivers', href: '/caregivers', icon: '👩‍👧' },
+      { label: 'Field Portal', href: '/my-space', icon: '📱' },
+    ],
+  },
+  {
+    group: 'Quality & Incidents',
+    items: [
+      { label: 'Incidents', href: '/incidents', icon: '🚨' },
+      { label: 'Archive Center', href: '/admin/archive-center', icon: '🗄️' },
+    ],
+  },
+  {
+    group: 'Products & Services',
+    items: [
+      { label: 'Service Catalog', href: '/services', icon: '🧩', badge: 'ERP' },
+      { label: 'New Service', href: '/services/new', icon: '➕' },
+    ],
+  },
+  {
+    group: 'Academy',
+    items: [{ label: 'Academy Hub', href: '/academy', icon: '🎓' }],
+  },
+  {
+    group: 'Administration',
+    items: [
+      { label: 'Users', href: '/users', icon: '🔐' },
+      { label: 'Profile', href: '/profile', icon: '👤' },
+      { label: 'Locations', href: '/locations', icon: '📍' },
+    ],
+  },
 ]
 
 const QUICK_CREATE = [
@@ -87,21 +111,32 @@ export default function AppShell({
   const [search, setSearch] = useState('')
   const [quickOpen, setQuickOpen] = useState(false)
 
-  const flatNav = useMemo(() => NAV_GROUPS.flatMap((group) => group.items.map((item) => ({ ...item, group: group.group }))), [])
+  const flatNav = useMemo(
+    () => NAV_GROUPS.flatMap((group) => group.items.map((item) => ({ ...item, group: group.group }))),
+    []
+  )
+
   const searchResults = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return flatNav.slice(0, 8)
-    return flatNav.filter((item) => `${item.label} ${item.group}`.toLowerCase().includes(q)).slice(0, 10)
+    return flatNav
+      .filter((item) => `${item.label} ${item.group}`.toLowerCase().includes(q))
+      .slice(0, 10)
   }, [search, flatNav])
 
   return (
     <div style={shellStyle}>
       <aside style={sidebarStyle}>
-        <Link href="/" style={brandStyle}>
-          <div style={logoBoxStyle}>AC</div>
-          <div>
-            <div style={brandTitleStyle}>AngelCare</div>
-            <div style={brandSubStyle}>OpsOS 2026</div>
+        <Link href="/" style={brandStyle} aria-label="Go to AngelCare dashboard">
+          <div style={logoImageBoxStyle}>
+            <Image
+              src="/logo.png"
+              alt="AngelCare"
+              width={110}
+              height={72}
+              priority
+              style={logoImageStyle}
+            />
           </div>
         </Link>
 
@@ -149,10 +184,17 @@ export default function AppShell({
           </div>
 
           <div style={topbarActionsStyle}>
-            <button type="button" onClick={() => setQuickOpen(!quickOpen)} style={quickButtonStyle}>＋ Quick Create</button>
+            <button type="button" onClick={() => setQuickOpen(!quickOpen)} style={quickButtonStyle}>
+              ＋ Quick Create
+            </button>
             <Link href="/reports" style={iconButtonStyle}>📊</Link>
-            <Link href="/incidents" style={notificationButtonStyle}>🔔<span style={notificationDotStyle} /></Link>
-            <Link href="/profile" style={profileButtonStyle}><span style={avatarStyle}>A</span><span>Profile</span></Link>
+            <Link href="/incidents" style={notificationButtonStyle}>
+              🔔<span style={notificationDotStyle} />
+            </Link>
+            <Link href="/profile" style={profileButtonStyle}>
+              <span style={avatarStyle}>A</span>
+              <span>Profile</span>
+            </Link>
           </div>
 
           {quickOpen ? (
@@ -174,7 +216,13 @@ export default function AppShell({
               {breadcrumbs.map((crumb, index) => (
                 <span key={`${crumb.label}-${index}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
                   <span>/</span>
-                  {crumb.href ? <Link href={crumb.href} style={{ textDecoration: 'none', color: '#64748b' }}>{crumb.label}</Link> : <span>{crumb.label}</span>}
+                  {crumb.href ? (
+                    <Link href={crumb.href} style={{ textDecoration: 'none', color: '#64748b' }}>
+                      {crumb.label}
+                    </Link>
+                  ) : (
+                    <span>{crumb.label}</span>
+                  )}
                 </span>
               ))}
             </div>
@@ -190,17 +238,38 @@ export default function AppShell({
   )
 }
 
-export function PageAction({ href, children, variant = 'dark' }: { href: string; children: React.ReactNode; variant?: 'dark' | 'light' | 'danger' }) {
+export function PageAction({
+  href,
+  children,
+  variant = 'dark',
+}: {
+  href: string
+  children: React.ReactNode
+  variant?: 'dark' | 'light' | 'danger'
+}) {
   const style = variant === 'dark' ? actionDarkStyle : variant === 'danger' ? actionDangerStyle : actionLightStyle
   return <Link href={href} style={style}>{children}</Link>
 }
 
 const shellStyle: React.CSSProperties = { minHeight: '100vh', display: 'flex', background: '#eef2f7', color: '#0f172a', fontFamily: 'Inter, Arial, sans-serif' }
 const sidebarStyle: React.CSSProperties = { width: 310, minWidth: 310, height: '100vh', position: 'sticky', top: 0, background: 'linear-gradient(180deg, #07111f 0%, #0f172a 100%)', color: '#fff', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.08)' }
-const brandStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 12, padding: 20, color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(255,255,255,0.08)' }
-const logoBoxStyle: React.CSSProperties = { width: 48, height: 48, borderRadius: 16, background: 'linear-gradient(135deg, #ffffff 0%, #dbeafe 100%)', color: '#0f172a', display: 'grid', placeItems: 'center', fontWeight: 950, letterSpacing: -1 }
-const brandTitleStyle: React.CSSProperties = { fontWeight: 950, fontSize: 18, letterSpacing: -0.3 }
-const brandSubStyle: React.CSSProperties = { color: '#94a3b8', fontSize: 12, fontWeight: 800, marginTop: 3 }
+const brandStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '18px 20px', color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(255,255,255,0.08)' }
+const logoImageBoxStyle: React.CSSProperties = {
+  width: '100%',
+  height: 80, // fixed height (important)
+  borderRadius: 22,
+  background: '#ffffff',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  overflow: 'hidden', // 🔥 critical (cuts extra space)
+  padding: 0, // remove padding
+}
+const logoImageStyle: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover', // 🔥 fills entire box (key change)
+}
 const sideScrollStyle: React.CSSProperties = { overflowY: 'auto', padding: '14px 14px 24px' }
 const navGroupStyle: React.CSSProperties = { marginBottom: 18 }
 const navGroupTitleStyle: React.CSSProperties = { color: '#94a3b8', fontSize: 11, fontWeight: 950, textTransform: 'uppercase', letterSpacing: 1, padding: '8px 10px' }
