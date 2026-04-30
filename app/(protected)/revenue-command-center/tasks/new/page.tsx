@@ -1,12 +1,31 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
+import AppShell from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
-import { requireRole } from '@/lib/auth/session'
 import { redirect } from 'next/navigation'
-import { Panel, WorkspaceHero } from '../../_components/RevenueOpsPrimitives'
+import { Field, Panel, Select, TextArea, WorkspaceHero } from '../../_components/BDV3Primitives'
 
 export default async function NewTaskPage() {
-  await requireRole(['ceo','manager','agent']); const supabase=await createClient(); const [{data:users},{data:prospects}]=await Promise.all([supabase.from('app_users').select('id, full_name, username').order('full_name'), supabase.from('bd_prospects').select('id,name,company_name').eq('is_archived',false).order('created_at',{ascending:false})])
-  async function createTask(formData: FormData){'use server'; const supabase=await createClient(); const linkedType=String(formData.get('linked_type')||''); const linkedId=String(formData.get('linked_id')||''); const {data,error}=await supabase.from('bd_tasks').insert([{title:String(formData.get('title')||'Task'),description:String(formData.get('description')||''),status:String(formData.get('status')||'open'),priority:String(formData.get('priority')||'medium'),assigned_to:String(formData.get('assigned_to')||'')||null,start_at:String(formData.get('start_at')||'')||null,end_at:String(formData.get('end_at')||'')||null,linked_type:linkedType||null,linked_id:linkedId||null,linked_label:String(formData.get('linked_label')||'')||null}]).select('id').single(); if(error) throw new Error(error.message); redirect(`/revenue-command-center/tasks/${data.id}`)}
-  return <AppShell title="Créer tâche" subtitle="Créer une action assignée, datée, liée et monitorée." breadcrumbs={[{label:'Tasks',href:'/revenue-command-center/tasks'}, {label:'New'}]} actions={<PageAction href="/revenue-command-center/tasks" variant="light">Retour</PageAction>}><div style={{display:'grid',gap:20}}><WorkspaceHero eyebrow="TASK CREATION" title="Nouvelle action opérationnelle" subtitle="Chaque tâche doit avoir owner, deadline, priorité, description et objet lié quand possible."/><Panel title="Task form" subtitle="Compatible BD, Sales, Prospects, Leads, Familles, Campagnes."><form action={createTask} style={formStyle}><input name="title" placeholder="Titre" style={inputStyle}/><select name="status" style={inputStyle}><option value="open">Open</option><option value="waiting">Waiting</option><option value="in_progress">In progress</option><option value="completed">Completed</option></select><select name="priority" style={inputStyle}><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option><option value="low">Low</option></select><select name="assigned_to" style={inputStyle}><option value="">Sans owner</option>{(users||[]).map((u:any)=><option key={u.id} value={u.id}>{u.full_name||u.username}</option>)}</select><input name="start_at" type="datetime-local" style={inputStyle}/><input name="end_at" type="datetime-local" style={inputStyle}/><select name="linked_type" style={inputStyle}><option value="">Sans lien</option><option value="prospect">Prospect</option><option value="lead">Lead</option><option value="family">Family</option><option value="campaign">Campaign</option><option value="partnership">Partnership</option></select><select name="linked_id" style={inputStyle}><option value="">Choisir prospect si applicable</option>{(prospects||[]).map((p:any)=><option key={p.id} value={p.id}>{p.name||p.company_name}</option>)}</select><input name="linked_label" placeholder="Label lien manuel" style={inputStyle}/><textarea name="description" placeholder="Description détaillée" style={{...inputStyle,minHeight:130,gridColumn:'1/-1'}}/><button style={buttonStyle}>Créer tâche</button></form></Panel></div></AppShell>
+  async function createTask(formData: FormData) {
+    'use server'
+    const supabase = await createClient()
+    const payload = {
+      title: String(formData.get('title') || ''),
+      description: String(formData.get('description') || ''),
+      status: String(formData.get('status') || 'open'),
+      priority: String(formData.get('priority') || 'normal'),
+      assigned_to: String(formData.get('assigned_to') || '') || null,
+      linked_type: String(formData.get('linked_type') || '') || null,
+      linked_id: String(formData.get('linked_id') || '') || null,
+      start_at: String(formData.get('start_at') || '') || null,
+      due_at: String(formData.get('due_at') || '') || null,
+    }
+    const { data, error } = await supabase.from('bd_tasks').insert([payload]).select('id').single()
+    if (error) throw new Error(error.message)
+    redirect(`/revenue-command-center/tasks/${data.id}`)
+  }
+  return <AppShell title="Create BD Task" subtitle="Assign real work with time, status, owner and linked business context." breadcrumbs={[{ label: 'Tasks', href: '/revenue-command-center/tasks' }, { label: 'New' }]}>
+    <form action={createTask} style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 18 }}>
+      <Panel title="Task definition" subtitle="Make it specific enough for tomorrow morning execution."><div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 14 }}><Field name="title" label="Task title" required /><Select name="status" label="Status" options={[{value:'open',label:'Open'},{value:'waiting',label:'Waiting'},{value:'in_progress',label:'In progress'},{value:'completed',label:'Completed'}]} /><Select name="priority" label="Priority" options={[{value:'low',label:'Low'},{value:'normal',label:'Normal'},{value:'high',label:'High'},{value:'critical',label:'Critical'}]} /><Field name="assigned_to" label="Assigned user UUID (optional)" /><Field name="start_at" label="Start date/time" type="datetime-local" /><Field name="due_at" label="End/due date/time" type="datetime-local" /><Select name="linked_type" label="Linked to" options={[{value:'',label:'None'},{value:'prospect',label:'Prospect'},{value:'lead',label:'Lead'},{value:'family',label:'Family'},{value:'campaign',label:'Campaign'},{value:'appointment',label:'Appointment'},{value:'partnership',label:'Partnership'}]} /><Field name="linked_id" label="Linked record ID" /><div style={{ gridColumn: '1 / -1' }}><TextArea name="description" label="Description" /></div></div></Panel>
+      <Panel title="Manager control" subtitle="This task will appear in Revenue tasks and user task dashboards."><button style={{ border: 'none', borderRadius: 14, background: '#0f172a', color: '#fff', padding: 14, fontWeight: 950, width: '100%' }}>Create task</button></Panel>
+    </form>
+  </AppShell>
 }
-const formStyle:React.CSSProperties={display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:12}.valueOf(); const inputStyle:React.CSSProperties={padding:'13px 14px',borderRadius:14,border:'1px solid #cbd5e1',background:'#f8fafc',fontWeight:800}.valueOf(); const buttonStyle:React.CSSProperties={border:'none',borderRadius:14,padding:'14px 18px',background:'#0f172a',color:'#fff',fontWeight:950,cursor:'pointer',gridColumn:'1/-1'}.valueOf()

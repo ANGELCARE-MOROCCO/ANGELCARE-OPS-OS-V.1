@@ -1,0 +1,6 @@
+import { HrOsShell } from "@/components/hr-os/HrOsShell";
+import { ActionButton, WorkCard, RiskBadge } from "@/components/hr-os/EliteCards";
+import { talents } from "@/lib/hr-os/mockData";
+export default function PerformancePage(){return <HrOsShell title="Performance & Incentive Engine" subtitle="Operational KPI system connecting punctuality, client satisfaction, incident history, academy progress, elite eligibility, rewards, and corrective actions.">
+ <section className="grid gap-4">{talents.map(t=><WorkCard key={t.id} title={t.fullName} eyebrow={`${t.role} · ${t.city}`} footer={<div className="flex flex-wrap gap-2"><ActionButton>Approve bonus</ActionButton><ActionButton>Promote to Elite</ActionButton><ActionButton>Open coaching plan</ActionButton><ActionButton>Export review</ActionButton></div>}><div className="grid gap-3 md:grid-cols-5">{[["Reliability",t.reliabilityScore],["Behavior",t.behaviorScore],["Emotional IQ",t.emotionalIntelligence],["Punctuality",t.punctualityScore],["Rating",Math.round(t.clientRating*20)]].map(([l,v]:any)=><div key={l} className="rounded-2xl bg-slate-950/70 p-4"><p className="text-xs text-slate-400">{l}</p><b className="text-3xl">{v}</b></div>)}</div><div className="mt-4"><RiskBadge risk={t.risk}/><p className="mt-2 text-sm text-slate-300">{t.nextAction}</p></div></WorkCard>)}</section>
+</HrOsShell>}

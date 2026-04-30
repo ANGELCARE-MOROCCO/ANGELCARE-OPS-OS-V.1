@@ -1,0 +1,7 @@
+import { HrOsShell } from "@/components/hr-os/HrOsShell";
+import { ActionButton, WorkCard, RiskBadge } from "@/components/hr-os/EliteCards";
+import { talents } from "@/lib/hr-os/mockData";
+export default function ReadinessPage(){return <HrOsShell title="Mission Readiness Board" subtitle="Real deployment control: who can serve, who needs supervision, who is blocked, and which service lines are safe for premium clients.">
+ <section className="grid gap-4 md:grid-cols-5">{["Postpartum","BabyCare","SpecialNeeds","HybridSchoolHome","EmergencyBackup"].map(line => <WorkCard key={line} title={line}><p className="text-4xl font-semibold">{talents.filter(t=>t.serviceEligibility.includes(line as any)).length}</p><p className="text-sm text-slate-300">eligible profiles</p></WorkCard>)}</section>
+ <section className="mt-6 grid gap-4">{talents.map(t=><WorkCard key={t.id} title={t.fullName} eyebrow={`${t.status} · ${t.city}`} footer={<div className="flex flex-wrap gap-2"><ActionButton>Approve mission access</ActionButton><ActionButton>Restrict premium missions</ActionButton><ActionButton>Send to academy</ActionButton><ActionButton>Supervisor validation</ActionButton></div>}><div className="flex flex-wrap items-center gap-3"><span className="text-4xl font-semibold">{t.readinessScore}</span><RiskBadge risk={t.risk}/>{t.serviceEligibility.map(s=><span key={s} className="rounded-full bg-white/10 px-3 py-1 text-xs">{s}</span>)}</div><p className="mt-3 text-sm text-slate-300">{t.nextAction}</p></WorkCard>)}</section>
+</HrOsShell>}

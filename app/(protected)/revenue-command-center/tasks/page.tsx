@@ -1,10 +1,31 @@
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
-import { requireRole } from '@/lib/auth/session'
-import { EmptyState, KpiCard, Panel, TaskCard, WorkspaceHero } from '../_components/RevenueOpsPrimitives'
+import { Badge, Kpi, Panel, RowLink, WorkspaceHero, dateTime, isOverdue, statusTone } from '../_components/BDV3Primitives'
 
-export default async function TasksPage({ searchParams }: { searchParams?: Promise<{ status?: string; priority?: string }> }) {
-  await requireRole(['ceo','manager','agent']); const filters=(await searchParams)||{}; const supabase=await createClient(); let q=supabase.from('bd_tasks').select('*').eq('is_archived',false).order('end_at',{ascending:true,nullsFirst:false}).order('created_at',{ascending:false}); if(filters.status&&filters.status!=='all') q=q.eq('status',filters.status); if(filters.priority&&filters.priority!=='all') q=q.eq('priority',filters.priority); const [{data:tasks},{data:users}]=await Promise.all([q,supabase.from('app_users').select('id, full_name, username').order('full_name')]); const ts=tasks||[]; const map=new Map((users||[]).map((u:any)=>[u.id,u.full_name||u.username])); const overdue=ts.filter((t:any)=>t.end_at && new Date(t.end_at).getTime()<Date.now()&&t.status!=='completed')
-  return <AppShell title="Task Command Center" subtitle="Toutes les actions business development et sales centralisées." breadcrumbs={[{label:'Revenue',href:'/revenue-command-center'}, {label:'Tasks'}]} actions={<><PageAction href="/revenue-command-center/cockpit" variant="light">Cockpit</PageAction><PageAction href="/revenue-command-center/tasks/new">Créer tâche</PageAction></>}><div style={{display:'grid',gap:20}}><WorkspaceHero eyebrow="EXECUTION ENGINE" title="Backoffice Task Board" subtitle="Statuts, owners, dates, priorités, objets liés, retards et exécution quotidienne."/><section style={metricsStyle}><KpiCard label="Total" value={ts.length}/><KpiCard label="Open" value={ts.filter((t:any)=>t.status==='open').length} tone="purple"/><KpiCard label="In progress" value={ts.filter((t:any)=>t.status==='in_progress').length} tone="green"/><KpiCard label="Waiting" value={ts.filter((t:any)=>t.status==='waiting').length} tone="amber"/><KpiCard label="Completed" value={ts.filter((t:any)=>t.status==='completed').length} tone="slate"/><KpiCard label="Overdue" value={overdue.length} tone="red"/></section><form style={filterStyle}><strong>Filtres</strong><select name="status" defaultValue={filters.status||'all'} style={inputStyle}><option value="all">Tous statuts</option><option value="open">Open</option><option value="waiting">Waiting</option><option value="in_progress">In progress</option><option value="completed">Completed</option></select><select name="priority" defaultValue={filters.priority||'all'} style={inputStyle}><option value="all">Toutes priorités</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><button style={buttonStyle}>Filtrer</button></form><section style={kanbanStyle}>{['open','in_progress','waiting','completed'].map(s=><Panel key={s} title={s.replace('_',' ')} subtitle="colonne opérationnelle">{ts.filter((t:any)=>t.status===s).length?<div style={{display:'grid',gap:10}}>{ts.filter((t:any)=>t.status===s).map((t:any)=><TaskCard key={t.id} task={t} assigneeName={map.get(t.assigned_to)}/>)}</div>:<EmptyState text="Aucune tâche."/>}</Panel>)}</section></div></AppShell>
+export default async function TasksBoard({ searchParams }: { searchParams?: Promise<{ status?: string }> }) {
+  const filters = await searchParams
+  const status = filters?.status || 'all'
+  const supabase = await createClient()
+  let q = supabase.from('bd_tasks').select('*').order('due_at', { ascending: true })
+  if (status !== 'all') q = q.eq('status', status)
+  const { data: tasks } = await q
+  const list = tasks || []
+  const overdue = list.filter((t: any) => t.status !== 'completed' && isOverdue(t.due_at)).length
+
+  return <AppShell title="Task Command Board" subtitle="Centralized execution board for BD and sales actions." breadcrumbs={[{ label: 'Revenue', href: '/revenue-command-center' }, { label: 'Tasks' }]} actions={<PageAction href="/revenue-command-center/tasks/new">Create task</PageAction>}>
+    <div style={{ display: 'grid', gap: 20 }}>
+      <WorkspaceHero title="Action Execution Engine" subtitle="Assign staff, set due dates, link tasks to prospects/leads/families/campaigns, comment and monitor overdue work." />
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: 14 }}>
+        <Kpi title="Visible tasks" value={String(list.length)} />
+        <Kpi title="Overdue" value={String(overdue)} tone="#dc2626" />
+        <Kpi title="Open" value={String(list.filter((t:any)=>t.status==='open').length)} tone="#2563eb" />
+        <Kpi title="In progress" value={String(list.filter((t:any)=>t.status==='in_progress').length)} tone="#7c3aed" />
+        <Kpi title="Completed" value={String(list.filter((t:any)=>t.status==='completed').length)} tone="#16a34a" />
+      </section>
+      <Panel title="Task filters" subtitle="Switch status without changing data."><div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>{['all','open','waiting','in_progress','completed'].map((s) => <a key={s} href={`/revenue-command-center/tasks?status=${s}`} style={{ padding: '10px 13px', borderRadius: 14, background: status === s ? '#0f172a' : '#fff', color: status === s ? '#fff' : '#0f172a', border: '1px solid #dbe3ee', textDecoration: 'none', fontWeight: 900 }}>{s}</a>)}</div></Panel>
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 14 }}>
+        {['open','waiting','in_progress','completed'].map((col) => <Panel key={col} title={col.replace('_',' ').toUpperCase()} subtitle="Drag later; click now."><div style={{ display: 'grid', gap: 10 }}>{list.filter((t:any)=>t.status===col).map((t:any) => <RowLink key={t.id} href={`/revenue-command-center/tasks/${t.id}`}><strong>{t.title}</strong><span>{t.linked_type || 'general'} • {dateTime(t.due_at)}</span><Badge tone={isOverdue(t.due_at) && t.status !== 'completed' ? '#dc2626' : statusTone[t.status] || '#2563eb'}>{isOverdue(t.due_at) && t.status !== 'completed' ? 'OVERDUE' : t.priority}</Badge></RowLink>)}</div></Panel>)}
+      </section>
+    </div>
+  </AppShell>
 }
-const metricsStyle:React.CSSProperties={display:'grid',gridTemplateColumns:'repeat(6,minmax(0,1fr))',gap:14}.valueOf(); const filterStyle:React.CSSProperties={display:'grid',gridTemplateColumns:'1fr 220px 220px auto',gap:12,alignItems:'center',background:'#fff',border:'1px solid #dbe3ee',borderRadius:24,padding:16}.valueOf(); const inputStyle:React.CSSProperties={padding:'12px 13px',borderRadius:13,border:'1px solid #cbd5e1',background:'#f8fafc',fontWeight:800}.valueOf(); const buttonStyle:React.CSSProperties={border:'none',borderRadius:14,padding:'13px 18px',background:'#0f172a',color:'#fff',fontWeight:950,cursor:'pointer'}.valueOf(); const kanbanStyle:React.CSSProperties={display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:14,alignItems:'start'}.valueOf()

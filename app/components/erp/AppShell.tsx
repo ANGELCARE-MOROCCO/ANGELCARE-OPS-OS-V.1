@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import OverheadPanel from '@/app/components/erp/OverheadPanel'
 
 type NavItem = {
   label: string
@@ -126,14 +127,16 @@ export default function AppShell({
 
   return (
     <div style={shellStyle}>
+      <OverheadPanel />
+
       <aside style={sidebarStyle}>
         <Link href="/" style={brandStyle} aria-label="Go to AngelCare dashboard">
           <div style={logoImageBoxStyle}>
             <Image
               src="/logo.png"
               alt="AngelCare"
-              width={110}
-              height={72}
+              width={250}
+              height={96}
               priority
               style={logoImageStyle}
             />
@@ -251,25 +254,12 @@ export function PageAction({
   return <Link href={href} style={style}>{children}</Link>
 }
 
-const shellStyle: React.CSSProperties = { minHeight: '100vh', display: 'flex', background: '#eef2f7', color: '#0f172a', fontFamily: 'Inter, Arial, sans-serif' }
-const sidebarStyle: React.CSSProperties = { width: 310, minWidth: 310, height: '100vh', position: 'sticky', top: 0, background: 'linear-gradient(180deg, #07111f 0%, #0f172a 100%)', color: '#fff', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.08)' }
-const brandStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '18px 20px', color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(255,255,255,0.08)' }
-const logoImageBoxStyle: React.CSSProperties = {
-  width: '100%',
-  height: 80, // fixed height (important)
-  borderRadius: 22,
-  background: '#ffffff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  overflow: 'hidden', // 🔥 critical (cuts extra space)
-  padding: 0, // remove padding
-}
-const logoImageStyle: React.CSSProperties = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover', // 🔥 fills entire box (key change)
-}
+const OVERHEAD_HEIGHT = 86
+const shellStyle: React.CSSProperties = { minHeight: '100vh', display: 'flex', paddingTop: OVERHEAD_HEIGHT, background: '#eef2f7', color: '#0f172a', fontFamily: 'Inter, Arial, sans-serif' }
+const sidebarStyle: React.CSSProperties = { width: 310, minWidth: 310, height: `calc(100vh - ${OVERHEAD_HEIGHT}px)`, position: 'sticky', top: OVERHEAD_HEIGHT, background: 'linear-gradient(180deg, #07111f 0%, #0f172a 100%)', color: '#fff', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.08)' }
+const brandStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '14px 16px 16px', color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(255,255,255,0.08)' }
+const logoImageBoxStyle: React.CSSProperties = { width: '100%', height: 94, borderRadius: 24, display: 'grid', placeItems: 'center', overflow: 'hidden', background: '#fff', boxShadow: '0 18px 38px rgba(2,6,23,.30)', border: '1px solid rgba(255,255,255,.18)' }
+const logoImageStyle: React.CSSProperties = { width: '100%', height: '100%', objectFit: 'cover', display: 'block' }
 const sideScrollStyle: React.CSSProperties = { overflowY: 'auto', padding: '14px 14px 24px' }
 const navGroupStyle: React.CSSProperties = { marginBottom: 18 }
 const navGroupTitleStyle: React.CSSProperties = { color: '#94a3b8', fontSize: 11, fontWeight: 950, textTransform: 'uppercase', letterSpacing: 1, padding: '8px 10px' }
@@ -277,7 +267,7 @@ const navItemStyle: React.CSSProperties = { display: 'flex', alignItems: 'center
 const navIconStyle: React.CSSProperties = { width: 26, height: 26, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.06)' }
 const navBadgeStyle: React.CSSProperties = { fontSize: 10, padding: '4px 7px', borderRadius: 999, background: '#dbeafe', color: '#1e3a8a', fontWeight: 950 }
 const mainShellStyle: React.CSSProperties = { flex: 1, minWidth: 0 }
-const topbarStyle: React.CSSProperties = { height: 74, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '14px 24px', background: 'rgba(255,255,255,0.86)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #dbe3ee', position: 'sticky', top: 0, zIndex: 10 }
+const topbarStyle: React.CSSProperties = { height: 74, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '14px 24px', background: 'rgba(255,255,255,0.86)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #dbe3ee', position: 'sticky', top: OVERHEAD_HEIGHT, zIndex: 10 }
 const searchWrapStyle: React.CSSProperties = { position: 'relative', flex: 1, maxWidth: 680, display: 'flex', alignItems: 'center', gap: 10, background: '#f8fafc', border: '1px solid #dbe3ee', borderRadius: 18, padding: '0 14px', height: 48 }
 const searchInputStyle: React.CSSProperties = { flex: 1, border: 'none', outline: 'none', background: 'transparent', color: '#0f172a', fontWeight: 700, fontSize: 14 }
 const searchResultsStyle: React.CSSProperties = { position: 'absolute', top: 56, left: 0, right: 0, background: '#fff', border: '1px solid #dbe3ee', borderRadius: 18, padding: 10, boxShadow: '0 22px 50px rgba(15,23,42,.14)', zIndex: 20, display: 'grid', gap: 8 }
