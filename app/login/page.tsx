@@ -203,6 +203,8 @@ const headlineStyle: React.CSSProperties = {
   lineHeight: 1.02,
   fontWeight: 950,
   letterSpacing: '-.04em',
+  color: '#ffffff', // ✅ FORCE PURE WHITE
+  textShadow: '0 4px 20px rgba(0,0,0,0.6)', // ✅ optional premium readability
 }
 
 const headlineTextStyle: React.CSSProperties = {

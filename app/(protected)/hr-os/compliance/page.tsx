@@ -1,7 +1,5 @@
-import { HrOsShell } from "@/components/hr-os/HrOsShell";
-import { ActionButton, WorkCard } from "@/components/hr-os/EliteCards";
-const docs=["Contract","ID / Passport","Training certificate","Medical/Fitness file","Background references","Service policy signature","Data privacy consent","Country labor addendum"];
-export default function CompliancePage(){return <HrOsShell title="Governance & Compliance Control" subtitle="Hard-gated compliance system for document expiry, audit logs, export reasons, country standards, and deployment blocks.">
- <section className="grid gap-4 md:grid-cols-4">{docs.map((d,i)=><WorkCard key={d} title={d}><p className="text-3xl font-semibold">{[96,91,84,78,88,94,97,72][i]}%</p><p className="mt-2 text-sm text-slate-300">completion across active deployable pool</p></WorkCard>)}</section>
- <section className="mt-6 grid gap-6 lg:grid-cols-3"><WorkCard title="Hard Gate Rules" eyebrow="No exception"><ul className="space-y-2 text-sm text-slate-300"><li>No certificate = no mission.</li><li>Expired contract = no assignment.</li><li>High incident risk = supervisor approval.</li><li>Export requires reason and reference.</li></ul></WorkCard><WorkCard title="Audit Trace" eyebrow="Every action logged"><p className="text-sm text-slate-300">Assignment, approval, restriction, export, incident update, document change, and role permission changes are traceable by actor, timestamp, region, and payload.</p></WorkCard><WorkCard title="Actions" eyebrow="Control panel"><div className="flex flex-wrap gap-2"><ActionButton>Run audit</ActionButton><ActionButton>Block expired</ActionButton><ActionButton>Notify owners</ActionButton><ActionButton>Export compliance pack</ActionButton></div></WorkCard></section>
-</HrOsShell>}
+import HrOsModulePage from '../_components/HrOsModulePage'
+
+export default function Page() {
+  return <HrOsModulePage moduleKey="compliance" />
+}

@@ -1,10 +1,5 @@
-import { HrOsShell } from "@/components/hr-os/HrOsShell";
-import { ActionButton, WorkCard, RiskBadge } from "@/components/hr-os/EliteCards";
-import { candidates } from "@/lib/hr-os/mockData";
-export default function RecruitmentPage(){return <HrOsShell title="Recruitment Intelligence Pipeline" subtitle="Move hiring from CV collection to strategic capacity building: service-line fit, culture risk, document readiness, academy decision, and expansion gap coverage.">
-  <section className="grid gap-4 lg:grid-cols-4">{["Sourcing", "Screening", "Simulation", "Academy admission"].map((stage,i)=><WorkCard key={stage} title={stage} eyebrow={`Stage ${i+1}`}><p className="text-3xl font-semibold">{[84,41,19,12][i]}</p><p className="mt-2 text-sm text-slate-300">Candidates currently managed with decision gates and action owners.</p></WorkCard>)}</section>
-  <section className="mt-6 grid gap-5">{candidates.map(c => <WorkCard key={c.id} title={c.name} eyebrow={`${c.city} · ${c.source} · ${c.stage}`} footer={<div className="flex flex-wrap gap-2"><ActionButton>Schedule interview</ActionButton><ActionButton>Move to academy</ActionButton><ActionButton>Request documents</ActionButton><ActionButton>Reject with reason</ActionButton></div>}>
-    <div className="grid gap-4 md:grid-cols-4"><div className="rounded-2xl bg-slate-950/70 p-4"><p className="text-sm text-slate-400">Screening</p><b className="text-3xl">{c.screeningScore}</b></div><div className="rounded-2xl bg-slate-950/70 p-4"><p className="text-sm text-slate-400">Culture</p><b className="text-3xl">{c.cultureFit}</b></div><div className="rounded-2xl bg-slate-950/70 p-4"><p className="text-sm text-slate-400">Docs</p><b className="text-3xl">{c.documentScore}</b></div><div className="rounded-2xl bg-slate-950/70 p-4"><p className="text-sm text-slate-400">Decision</p><RiskBadge risk={c.academyDecision}/></div></div>
-    <p className="mt-4 text-sm text-slate-300"><b className="text-white">Fit:</b> {c.serviceFit.join(", ")} · <b className="text-white">Next:</b> {c.nextStep}</p>{c.redFlags.length>0 && <p className="mt-2 text-sm text-amber-200">Flags: {c.redFlags.join(" · ")}</p>}
-  </WorkCard>)}</section>
-</HrOsShell>}
+import HrOsModulePage from '../_components/HrOsModulePage'
+
+export default function Page() {
+  return <HrOsModulePage moduleKey="recruitment" />
+}

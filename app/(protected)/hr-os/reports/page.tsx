@@ -1,6 +1,5 @@
-import { HrOsShell } from "@/components/hr-os/HrOsShell";
-import { ActionButton, WorkCard } from "@/components/hr-os/EliteCards";
-const reports=["Board HR Impact Report","Workforce Capacity Report","Academy Cohort Report","Certification Register","Mission Readiness Report","Incident Root-Cause Report","Compliance Audit Pack","Employee 360 File","Elite Promotion Memo","Country Launch Readiness Pack","Payroll Preparation Export","Global Standards Deviation Report"];
-export default function ReportsPage(){return <HrOsShell title="Global Reports & Export Governance" subtitle="Professional corporate outputs with reference numbers, reason capture, generator identity, timestamp, department, region, and version control.">
- <section className="grid gap-4 md:grid-cols-3">{reports.map((r,i)=><WorkCard key={r} title={r} eyebrow={`AC-REP-${String(i+1).padStart(3,'0')}`} footer={<div className="flex gap-2"><ActionButton>Generate</ActionButton><ActionButton>Schedule</ActionButton><ActionButton>View log</ActionButton></div>}><p className="text-sm text-slate-300">Includes codification, export purpose, user trace, region, period, and executive summary section.</p></WorkCard>)}</section>
-</HrOsShell>}
+import HrOsModulePage from '../_components/HrOsModulePage'
+
+export default function Page() {
+  return <HrOsModulePage moduleKey="reports" />
+}

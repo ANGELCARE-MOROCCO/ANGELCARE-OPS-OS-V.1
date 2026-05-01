@@ -1,6 +1,5 @@
-import { HrOsShell } from "@/components/hr-os/HrOsShell";
-import { ActionButton, WorkCard, RiskBadge } from "@/components/hr-os/EliteCards";
-import { incidents } from "@/lib/hr-os/mockData";
-export default function IncidentsPage(){return <HrOsShell title="Incident & Escalation Center" subtitle="Corporate service protection layer: complaints, root-cause analysis, corrective action, supervisor ownership, retraining trigger, and executive visibility.">
- <section className="grid gap-5">{incidents.map(i=><WorkCard key={i.id} title={i.title} eyebrow={`${i.id} · ${i.region}`} footer={<div className="flex flex-wrap gap-2"><ActionButton>Assign owner</ActionButton><ActionButton>Trigger retraining</ActionButton><ActionButton>Escalate to HQ</ActionButton><ActionButton>Generate incident report</ActionButton></div>}><div className="flex gap-2"><RiskBadge risk={i.severity}/><RiskBadge risk={i.status}/></div><p className="mt-3 text-sm text-slate-300"><b className="text-white">Root cause:</b> {i.rootCause}</p><p className="mt-2 text-sm text-slate-300"><b className="text-white">Corrective action:</b> {i.correctiveAction}</p><p className="mt-2 text-sm text-slate-400">Owner: {i.owner} · Due: {i.dueDate} · Caregiver: {i.caregiver}</p></WorkCard>)}</section>
-</HrOsShell>}
+import HrOsModulePage from '../_components/HrOsModulePage'
+
+export default function Page() {
+  return <HrOsModulePage moduleKey="incidents" />
+}

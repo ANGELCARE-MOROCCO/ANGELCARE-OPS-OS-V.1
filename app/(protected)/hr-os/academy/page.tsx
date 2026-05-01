@@ -1,11 +1,5 @@
-import { HrOsShell } from "@/components/hr-os/HrOsShell";
-import { ActionButton, WorkCard } from "@/components/hr-os/EliteCards";
-import { cohorts } from "@/lib/hr-os/mockData";
-export default function AcademyPage(){return <HrOsShell title="AngelCare Academy Factory" subtitle="Industrialize human quality through cohorts, trainer accountability, simulations, certification gates, field validation, and re-certification cycles.">
-  <section className="grid gap-4 md:grid-cols-4">{[["Certification velocity","76%"],["Simulation pass rate","81%"],["Field validation","68%"],["Retraining triggers","14"]].map(([l,v])=><WorkCard key={l} title={l}><p className="text-4xl font-semibold">{v}</p></WorkCard>)}</section>
-  <section className="mt-6 grid gap-5">{cohorts.map(c => <WorkCard key={c.id} title={c.name} eyebrow={`${c.id} · ${c.serviceLine} · Trainer ${c.trainer}`} footer={<div className="flex flex-wrap gap-2"><ActionButton>Open trainer room</ActionButton><ActionButton>Run simulation board</ActionButton><ActionButton>Generate certificates</ActionButton><ActionButton>Block failed trainees</ActionButton></div>}>
-    <div className="grid gap-3 md:grid-cols-5">{[["Readiness",c.readiness],["Attendance",c.attendance],["Simulation",c.simulationScore],["Certification",c.certificationRate],["Field validation",c.fieldValidation]].map(([label,val]:any)=><div key={label} className="rounded-2xl bg-slate-950/70 p-4"><p className="text-xs uppercase tracking-wide text-slate-400">{label}</p><b className="mt-2 block text-3xl">{val}%</b><div className="mt-3 h-2 rounded bg-white/10"><div className="h-2 rounded bg-white/70" style={{width:`${val}%`}} /></div></div>)}</div>
-    <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100"><b>Blockers:</b> {c.blockers.join(" · ")}</div>
-  </WorkCard>)}</section>
-  <section className="mt-6 grid gap-6 lg:grid-cols-3"><WorkCard title="Simulation Library" eyebrow="Scenario engine"><ul className="space-y-2 text-sm text-slate-300"><li>Exhausted mother + crying newborn</li><li>Autism meltdown in school handover</li><li>Client complaint recovery</li><li>Emergency response protocol</li></ul></WorkCard><WorkCard title="Certification Gate" eyebrow="Hard controls"><p className="text-sm text-slate-300">No valid certificate, document pack, and trainer approval means the profile stays blocked from mission assignment.</p></WorkCard><WorkCard title="Generated Documents" eyebrow="Governance"><p className="text-sm text-slate-300">Training certificate, cohort report, trainee file, trainer evaluation, readiness memo, re-certification notice.</p></WorkCard></section>
-</HrOsShell>}
+import HrOsModulePage from '../_components/HrOsModulePage'
+
+export default function Page() {
+  return <HrOsModulePage moduleKey="academy" />
+}

@@ -2,85 +2,68 @@ import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
+import { APP_ROUTE_PERMISSIONS } from '@/lib/generated/app-routes'
+import SmartPermissionsPanel from '@/app/(protected)/users/_components/SmartPermissionsPanel'
 
-const PERMISSIONS = [
-  { value: 'academy.view', label: 'Academy - Voir' },
-  { value: 'academy.manage', label: 'Academy - Gérer' },
-
-  { value: 'admin.view', label: 'Admin - Voir' },
-  { value: 'admin.manage', label: 'Admin - Gérer' },
-
-  { value: 'billing.view', label: 'Facturation - Voir' },
-  { value: 'billing.manage', label: 'Facturation - Gérer' },
-
-  { value: 'caregivers.view', label: 'Intervenantes - Voir' },
-  { value: 'caregivers.create', label: 'Intervenantes - Créer' },
-  { value: 'caregivers.edit', label: 'Intervenantes - Modifier' },
-  { value: 'caregivers.delete', label: 'Intervenantes - Supprimer' },
-
-  { value: 'contracts.view', label: 'Contrats - Voir' },
-  { value: 'contracts.create', label: 'Contrats - Créer' },
-  { value: 'contracts.edit', label: 'Contrats - Modifier' },
-  { value: 'contracts.delete', label: 'Contrats - Supprimer' },
-
-  { value: 'families.view', label: 'Familles - Voir' },
-  { value: 'families.create', label: 'Familles - Créer' },
-  { value: 'families.edit', label: 'Familles - Modifier' },
-  { value: 'families.delete', label: 'Familles - Supprimer' },
-
-  { value: 'hr.view', label: 'RH - Voir' },
-  { value: 'hr.manage', label: 'RH - Gérer' },
-
-  { value: 'incidents.view', label: 'Incidents - Voir' },
-  { value: 'incidents.create', label: 'Incidents - Créer' },
-  { value: 'incidents.edit', label: 'Incidents - Modifier' },
-  { value: 'incidents.close', label: 'Incidents - Clôturer' },
-
-  { value: 'leads.view', label: 'Leads - Voir' },
-  { value: 'leads.create', label: 'Leads - Créer' },
-  { value: 'leads.edit', label: 'Leads - Modifier' },
-  { value: 'leads.delete', label: 'Leads - Supprimer' },
-
-  { value: 'locations.view', label: 'Localisations - Voir' },
-  { value: 'locations.manage', label: 'Localisations - Gérer' },
-
-  { value: 'missions.view', label: 'Missions - Voir' },
-  { value: 'missions.create', label: 'Missions - Créer' },
-  { value: 'missions.edit', label: 'Missions - Modifier' },
-  { value: 'missions.assign', label: 'Missions - Assigner' },
-  { value: 'missions.delete', label: 'Missions - Supprimer' },
-
-  { value: 'operations.view', label: 'Operations - Voir' },
-  { value: 'operations.manage', label: 'Operations - Gérer' },
-
-  { value: 'pointage.view', label: 'Pointage - Voir' },
-  { value: 'pointage.manage', label: 'Pointage - Gérer' },
-
-  { value: 'print.view', label: 'Print Center - Voir' },
-  { value: 'print.create', label: 'Print Center - Créer' },
-
-  { value: 'reports.view', label: 'Rapports - Voir' },
-  { value: 'reports.export', label: 'Rapports - Exporter' },
-
-  { value: 'revenue.view', label: 'Revenue Center - Voir' },
-  { value: 'revenue.manage', label: 'Revenue Center - Gérer' },
-
-  { value: 'sales.view', label: 'Sales - Voir' },
-  { value: 'sales.manage', label: 'Sales - Gérer' },
-
-  { value: 'services.view', label: 'Services - Voir' },
-  { value: 'services.create', label: 'Services - Créer' },
-  { value: 'services.edit', label: 'Services - Modifier' },
-  { value: 'services.delete', label: 'Services - Supprimer' },
-
-  { value: 'users.view', label: 'Utilisateurs - Voir' },
-  { value: 'users.create', label: 'Utilisateurs - Créer' },
-  { value: 'users.edit', label: 'Utilisateurs - Modifier' },
-  { value: 'users.delete', label: 'Utilisateurs - Supprimer' },
-
-  { value: 'voice.view', label: 'Voice Center - Voir' },
-  { value: 'voice.call', label: 'Voice Center - Appeler' },
-  { value: 'voice.manage', label: 'Voice Center - Gérer' },
+const CORE_PERMISSIONS = [
+  { value: 'academy.view', label: 'Academy - Voir', module: 'academy' },
+  { value: 'academy.manage', label: 'Academy - Gérer', module: 'academy' },
+  { value: 'admin.view', label: 'Admin - Voir', module: 'admin' },
+  { value: 'admin.manage', label: 'Admin - Gérer', module: 'admin' },
+  { value: 'billing.view', label: 'Facturation - Voir', module: 'billing' },
+  { value: 'billing.manage', label: 'Facturation - Gérer', module: 'billing' },
+  { value: 'caregivers.view', label: 'Intervenantes - Voir', module: 'caregivers' },
+  { value: 'caregivers.create', label: 'Intervenantes - Créer', module: 'caregivers' },
+  { value: 'caregivers.edit', label: 'Intervenantes - Modifier', module: 'caregivers' },
+  { value: 'caregivers.delete', label: 'Intervenantes - Supprimer', module: 'caregivers' },
+  { value: 'contracts.view', label: 'Contrats - Voir', module: 'contracts' },
+  { value: 'contracts.create', label: 'Contrats - Créer', module: 'contracts' },
+  { value: 'contracts.edit', label: 'Contrats - Modifier', module: 'contracts' },
+  { value: 'contracts.delete', label: 'Contrats - Supprimer', module: 'contracts' },
+  { value: 'families.view', label: 'Familles - Voir', module: 'families' },
+  { value: 'families.create', label: 'Familles - Créer', module: 'families' },
+  { value: 'families.edit', label: 'Familles - Modifier', module: 'families' },
+  { value: 'families.delete', label: 'Familles - Supprimer', module: 'families' },
+  { value: 'hr.view', label: 'RH - Voir', module: 'hr' },
+  { value: 'hr.manage', label: 'RH - Gérer', module: 'hr' },
+  { value: 'incidents.view', label: 'Incidents - Voir', module: 'incidents' },
+  { value: 'incidents.create', label: 'Incidents - Créer', module: 'incidents' },
+  { value: 'incidents.edit', label: 'Incidents - Modifier', module: 'incidents' },
+  { value: 'incidents.close', label: 'Incidents - Clôturer', module: 'incidents' },
+  { value: 'leads.view', label: 'Leads - Voir', module: 'leads' },
+  { value: 'leads.create', label: 'Leads - Créer', module: 'leads' },
+  { value: 'leads.edit', label: 'Leads - Modifier', module: 'leads' },
+  { value: 'leads.delete', label: 'Leads - Supprimer', module: 'leads' },
+  { value: 'locations.view', label: 'Localisations - Voir', module: 'locations' },
+  { value: 'locations.manage', label: 'Localisations - Gérer', module: 'locations' },
+  { value: 'missions.view', label: 'Missions - Voir', module: 'missions' },
+  { value: 'missions.create', label: 'Missions - Créer', module: 'missions' },
+  { value: 'missions.edit', label: 'Missions - Modifier', module: 'missions' },
+  { value: 'missions.assign', label: 'Missions - Assigner', module: 'missions' },
+  { value: 'missions.delete', label: 'Missions - Supprimer', module: 'missions' },
+  { value: 'operations.view', label: 'Operations - Voir', module: 'operations' },
+  { value: 'operations.manage', label: 'Operations - Gérer', module: 'operations' },
+  { value: 'pointage.view', label: 'Pointage - Voir', module: 'pointage' },
+  { value: 'pointage.manage', label: 'Pointage - Gérer', module: 'pointage' },
+  { value: 'print.view', label: 'Print Center - Voir', module: 'print' },
+  { value: 'print.create', label: 'Print Center - Créer', module: 'print' },
+  { value: 'reports.view', label: 'Rapports - Voir', module: 'reports' },
+  { value: 'reports.export', label: 'Rapports - Exporter', module: 'reports' },
+  { value: 'revenue.view', label: 'Revenue Center - Voir', module: 'revenue-command-center' },
+  { value: 'revenue.manage', label: 'Revenue Center - Gérer', module: 'revenue-command-center' },
+  { value: 'sales.view', label: 'Sales - Voir', module: 'sales' },
+  { value: 'sales.manage', label: 'Sales - Gérer', module: 'sales' },
+  { value: 'services.view', label: 'Services - Voir', module: 'services' },
+  { value: 'services.create', label: 'Services - Créer', module: 'services' },
+  { value: 'services.edit', label: 'Services - Modifier', module: 'services' },
+  { value: 'services.delete', label: 'Services - Supprimer', module: 'services' },
+  { value: 'users.view', label: 'Utilisateurs - Voir', module: 'users' },
+  { value: 'users.create', label: 'Utilisateurs - Créer', module: 'users' },
+  { value: 'users.edit', label: 'Utilisateurs - Modifier', module: 'users' },
+  { value: 'users.delete', label: 'Utilisateurs - Supprimer', module: 'users' },
+  { value: 'voice.view', label: 'Voice Center - Voir', module: 'voice-center' },
+  { value: 'voice.call', label: 'Voice Center - Appeler', module: 'voice-center' },
+  { value: 'voice.manage', label: 'Voice Center - Gérer', module: 'voice-center' },
 ]
 
 export default async function NewUserPage() {
@@ -95,9 +78,8 @@ export default async function NewUserPage() {
     const password = String(formData.get('password') || '')
     if (password.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.')
 
-    const permissions = formData.getAll('permissions').map(String)
+    const permissions = Array.from(new Set(formData.getAll('permissions').map(String)))
 
-    // 🔐 Hash password via Postgres
     const { data: passwordHash, error: hashError } = await supabase.rpc('hash_app_password', {
       input_password: password,
     })
@@ -129,7 +111,7 @@ export default async function NewUserPage() {
         actor_user_id: actor.id,
         action: 'create_user',
         target_table: 'app_users',
-        details: { username: payload.username, role: payload.role },
+        details: { username: payload.username, role: payload.role, permissions_count: permissions.length },
       },
     ])
 
@@ -139,71 +121,56 @@ export default async function NewUserPage() {
   return (
     <AppShell
       title="Créer utilisateur"
-      subtitle="Création d’un compte interne avec nom utilisateur, mot de passe, rôle et permissions."
+      subtitle="Création d’un compte interne avec rôle, permissions métier et accès exact aux pages."
       breadcrumbs={[{ label: 'Administration', href: '/users' }, { label: 'Nouvel utilisateur' }]}
       actions={<PageAction href="/users" variant="light">Retour</PageAction>}
     >
       <form action={createUser} style={pageGridStyle}>
-        {/* IDENTITÉ */}
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={eyebrowStyle}>Identité</div>
-            <h2 style={sectionTitleStyle}>Informations utilisateur</h2>
-          </div>
+        <main>
+          <section style={panelStyle}>
+            <div style={sectionHeaderStyle}>
+              <div style={eyebrowStyle}>Identité</div>
+              <h2 style={sectionTitleStyle}>Informations utilisateur</h2>
+            </div>
 
-          <div style={gridStyle}>
-            <Field name="full_name" label="Nom complet" />
-            <Field name="username" label="Nom utilisateur" />
-            <Field name="password" label="Mot de passe" type="password" />
-            <Field name="phone" label="Téléphone" />
-            <Field name="email" label="Email" />
-            <Field name="job_title" label="Poste" />
-          </div>
-        </section>
+            <div style={gridStyle}>
+              <Field name="full_name" label="Nom complet" />
+              <Field name="username" label="Nom utilisateur" />
+              <Field name="password" label="Mot de passe" type="password" />
+              <Field name="phone" label="Téléphone" />
+              <Field name="email" label="Email" />
+              <Field name="job_title" label="Poste" />
+            </div>
+          </section>
 
-        {/* ACCÈS */}
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={eyebrowStyle}>Accès</div>
-            <h2 style={sectionTitleStyle}>Rôle & statut</h2>
-          </div>
+          <section style={panelStyle}>
+            <div style={sectionHeaderStyle}>
+              <div style={eyebrowStyle}>Accès</div>
+              <h2 style={sectionTitleStyle}>Rôle & statut</h2>
+            </div>
 
-          <div style={gridStyle}>
-            <Select name="role" label="Rôle" options={['ceo', 'manager', 'agent']} />
-            <Select name="language" label="Langue" options={['fr', 'en', 'ar']} />
-            <Select name="status" label="Statut" options={['active', 'inactive']} />
-            <Field name="department" label="Département" />
-          </div>
-        </section>
+            <div style={gridStyle}>
+              <Select name="role" label="Rôle" options={['ceo', 'manager', 'agent']} />
+              <Select name="language" label="Langue" options={['fr', 'en', 'ar']} />
+              <Select name="status" label="Statut" options={['active', 'inactive']} />
+              <Field name="department" label="Département" />
+            </div>
+          </section>
 
-        {/* PERMISSIONS */}
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={eyebrowStyle}>Permissions</div>
-            <h2 style={sectionTitleStyle}>Accès détaillés</h2>
-          </div>
+          <SmartPermissionsPanel
+            corePermissions={CORE_PERMISSIONS}
+            pagePermissions={[...APP_ROUTE_PERMISSIONS]}
+            defaultPermissions={['profile.view', 'page:/profile']}
+          />
+        </main>
 
-          <div style={permissionsGridStyle}>
-            {PERMISSIONS.map((perm) => (
-              <label key={perm.value} style={permissionCardStyle}>
-                <input type="checkbox" name="permissions" value={perm.value} />
-                <span>
-                  <strong>{perm.label}</strong>
-                  <br />
-                  <small>{perm.value}</small>
-                </span>
-              </label>
-            ))}
-          </div>
-        </section>
-
-        {/* SIDE PANEL */}
         <aside style={sidePanelStyle}>
           <h3>Validation</h3>
           <ul>
             <li>Mot de passe ≥ 6 caractères</li>
             <li>Username unique</li>
-            <li>Permissions adaptées</li>
+            <li>Permissions métier adaptées</li>
+            <li>Pages exactes visibles dans le panel</li>
           </ul>
           <button type="submit" style={buttonStyle}>Créer le compte</button>
         </aside>
@@ -212,7 +179,6 @@ export default async function NewUserPage() {
   )
 }
 
-/* COMPONENTS */
 function Field({ name, label, type = 'text' }: any) {
   return (
     <label style={fieldStyle}>
@@ -227,24 +193,21 @@ function Select({ name, label, options }: any) {
     <label style={fieldStyle}>
       <span>{label}</span>
       <select name={name} style={inputStyle}>
-        {options.map((o: string) => (
-          <option key={o} value={o}>{o}</option>
+        {options.map((option: string) => (
+          <option key={option} value={option}>{option}</option>
         ))}
       </select>
     </label>
   )
 }
 
-/* STYLES */
-const pageGridStyle = { display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }
-const panelStyle = { background: '#fff', padding: 20, borderRadius: 16 }
-const sectionHeaderStyle = { marginBottom: 10 }
-const eyebrowStyle = { fontSize: 12, color: '#6366f1' }
-const sectionTitleStyle = { fontSize: 20, fontWeight: 900 }
-const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }
-const fieldStyle = { display: 'grid', gap: 4 }
-const inputStyle = { padding: 10, border: '1px solid #ccc', borderRadius: 8 }
-const permissionsGridStyle = { display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }
-const permissionCardStyle = { display: 'flex', gap: 10, padding: 10, border: '1px solid #ddd', borderRadius: 10 }
-const sidePanelStyle = { background: '#0f172a', color: '#fff', padding: 20, borderRadius: 16 }
-const buttonStyle = { marginTop: 20, width: '100%', padding: 12, background: '#fff', borderRadius: 10 }
+const pageGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, alignItems: 'start' }
+const panelStyle: React.CSSProperties = { background: '#fff', padding: 20, borderRadius: 16, marginBottom: 18, border: '1px solid #e2e8f0', boxShadow: '0 18px 38px rgba(15,23,42,.05)' }
+const sectionHeaderStyle: React.CSSProperties = { marginBottom: 14 }
+const eyebrowStyle: React.CSSProperties = { fontSize: 12, color: '#6366f1', fontWeight: 950, textTransform: 'uppercase', letterSpacing: .6 }
+const sectionTitleStyle: React.CSSProperties = { fontSize: 20, fontWeight: 950, color: '#0f172a', margin: '4px 0' }
+const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }
+const fieldStyle: React.CSSProperties = { display: 'grid', gap: 4, color: '#0f172a', fontWeight: 850 }
+const inputStyle: React.CSSProperties = { padding: 10, border: '1px solid #cbd5e1', borderRadius: 8, background: '#fff', color: '#0f172a' }
+const sidePanelStyle: React.CSSProperties = { position: 'sticky', top: 104, background: '#0f172a', color: '#fff', padding: 20, borderRadius: 16 }
+const buttonStyle: React.CSSProperties = { marginTop: 20, width: '100%', padding: 12, background: '#fff', color: '#0f172a', borderRadius: 10, border: 'none', fontWeight: 950, cursor: 'pointer' }
