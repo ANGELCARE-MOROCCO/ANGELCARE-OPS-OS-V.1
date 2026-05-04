@@ -1,7 +1,1 @@
-import SeoEditorialCalendarControl from "@/app/components/market-os/seo-editorial-calendar-control"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <SeoEditorialCalendarControl />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

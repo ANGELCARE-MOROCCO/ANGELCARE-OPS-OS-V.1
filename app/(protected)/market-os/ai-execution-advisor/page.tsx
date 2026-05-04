@@ -1,7 +1,1 @@
-import AiExecutionAdvisor from "@/app/components/market-os/ai-execution-advisor"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <AiExecutionAdvisor />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

@@ -1,74 +1,0 @@
-Script started on Tue Apr 28 23:41:18 2026
-pe text,
-  city text,
-  status text default 'prospecting',
-  owner_id uuid,
-  estimated_value numeric default 0,
-  decision_maker text,
-  next_action text,
-  next_action_at timestamp with time zone,
-  notes text,
-  is_archived boolean default false,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
-);
-
-create index if not exists idx_bd_prospects_owner on public.bd_prospects(owner_id);
-create index if not exists idx_bd_prospects_segment on public.bd_prospects(segment);
-create index if not exists idx_bd_tasks_assigned on public.bd_tasks(assigned_to);
-create index if not exists idx_bd_tasks_status on public.bd_tasks(status);
-create index if not exists idx_bd_tasks_due on public.bd_tasks(end_at);
-create index if not exists idx_bd_campaigns_status on public.bd_campaigns(status);
-create index if not exists idx_bd_appointments_scheduled on public.bd_appointments(scheduled_at);
-create index if not exists idx_bd_partnerships_status on public.b
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-[?1034hbash-3.2$ pe text,
-bash: pe: command not found
-bash-3.2$   city text,
-bash: city: command not found
-bash-3.2$   status text default 'prospecting',
-bash: status: command not found
-bash-3.2$   owner_id uuid,
-bash: owner_id: command not found
-bash-3.2$   estimated_value numeric default 0,
-bash: estimated_value: command not found
-bash-3.2$   decision_maker text,
-bash: decision_maker: command not found
-bash-3.2$   next_action text,
-bash: next_action: command not found
-bash-3.2$   next_action_at timestamp with time zone,
-bash: next_action_at: command not found
-bash-3.2$   notes text,
-bash: notes: command not found
-bash-3.2$   is_archived boolean default false,
-bash: is_archived: command not found
-bash-3.2$   created_at timestamp with time zone default now(),
-bash: syntax error near unexpected token `('
-bash-3.2$   updated_at timestamp with time zone default now()
-bash: syntax error near unexpected token `('
-bash-3.2$ );
-bash: syntax error near unexpected token `)'
-bash-3.2$ 
-bash-3.2$ create index if not exists idx_bd_prospects_owner on public.bd_prospec ts(owner_id);
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_prospects_segment on public.bd_prosp ects(segment);
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_tasks_assigned on public.bd_tasks(as signed_to);
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_tasks_status on public.bd_tasks(stat us);
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_tasks_due on public.bd_tasks(end_at) ;
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_campaigns_status on public.bd_campai gns(status);
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_appointments_scheduled on public.bd_ appointments(scheduled_at);
-bash: syntax error near unexpected token `('
-bash-3.2$ create index if not exists idx_bd_partnerships_status on public.bd_par tnerships(status);
-bash: syntax error near unexpected token `('
-bash-3.2$ 
-bash-3.2$ 
-bash-3.2$ 
-bash-3.2$ 
-bash-3.2$ 

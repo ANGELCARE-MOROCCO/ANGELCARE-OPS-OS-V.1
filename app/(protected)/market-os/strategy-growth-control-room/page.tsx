@@ -1,7 +1,1 @@
-import StrategyGrowthControlRoom from "@/app/components/market-os/strategy-growth-control-room"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <StrategyGrowthControlRoom />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

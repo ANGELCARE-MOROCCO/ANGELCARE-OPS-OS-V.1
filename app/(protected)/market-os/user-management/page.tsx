@@ -1,7 +1,1 @@
-import MarketOsUserManagement from "@/app/components/market-os/market-os-user-management"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <MarketOsUserManagement />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

@@ -1,7 +1,1 @@
-import ContentTaskEditor from "@/app/components/market-os/content-task-editor"
-
-export const dynamic = "force-dynamic"
-
-export default function Page({ params }: { params: { id: string } }) {
-  return <ContentTaskEditor taskId={params.id} />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

@@ -1,7 +1,1 @@
-import SeoBlogCreatePage from "@/app/components/market-os/seo-blog-create-page"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <SeoBlogCreatePage />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

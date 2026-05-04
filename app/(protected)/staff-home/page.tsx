@@ -1,4 +1,3 @@
-
 import Link from 'next/link'
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { ERPPanel, MetricCard, ModuleCard, StatusPill } from '@/app/components/erp/ERPPrimitives'
@@ -8,13 +7,23 @@ import { getAllowedAppRoutes, groupRoutesByModule } from '@/lib/auth/page-access
 
 type AnyRow = Record<string, any>
 
+type WorkItem = {
+  source: string
+  row: AnyRow
+  title: string
+  status: string
+  date: unknown
+  href: string
+  detail: string
+}
+
 function low(value: unknown) { return String(value || '').toLowerCase() }
 function todayISO() { return new Date().toISOString().slice(0, 10) }
 function addDays(date: Date, days: number) { const d = new Date(date); d.setDate(d.getDate()+days); return d }
 function dateISO(date: Date) { return date.toISOString().slice(0, 10) }
 function displayName(user: any) { return user?.full_name || user?.name || user?.username || user?.email || 'AngelCare teammate' }
 function canAccess(user: any, permission: string) { if (low(user?.role || user?.role_key) === 'ceo') return true; return Array.isArray(user?.permissions) && user.permissions.includes(permission) }
-function asArray(res: any) { return Array.isArray(res?.data) ? res.data : [] }
+function asArray(res: any): AnyRow[] { return Array.isArray(res?.data) ? res.data : [] }
 function fmtDate(v: unknown) { if (!v) return 'Not scheduled'; const d = new Date(String(v)); if (Number.isNaN(d.getTime())) return String(v); return d.toLocaleDateString('fr-MA', { weekday:'short', day:'2-digit', month:'short' }) }
 function fmtDay(v: unknown) { if (!v) return '—'; const d = new Date(String(v)); if (Number.isNaN(d.getTime())) return String(v).slice(0,10); return d.toLocaleDateString('fr-MA', { day:'2-digit', month:'short' }) }
 function fmtTime(v: unknown) { if (!v) return '—'; const raw=String(v); if (/^\d{2}:\d{2}/.test(raw)) return raw.slice(0,5); const d=new Date(raw); if (Number.isNaN(d.getTime())) return raw; return d.toLocaleTimeString('fr-MA',{hour:'2-digit',minute:'2-digit'}) }
@@ -24,7 +33,7 @@ function rowOwner(row: AnyRow) { return row.assigned_to || row.user_id || row.ag
 function belongsToUser(row: AnyRow, userId: any) { const owner=rowOwner(row); if (!userId || !owner) return true; return String(owner)===String(userId) }
 function statusTone(status: unknown): 'blue'|'green'|'red'|'amber'|'purple'|'slate' { const s=low(status); if(['done','completed','closed','resolved','confirmed'].includes(s)) return 'green'; if(['late','urgent','blocked','critical','overdue'].includes(s)) return 'red'; if(['pending','open','in_progress','progress','planned'].includes(s)) return 'amber'; if(['assigned','new','qualified'].includes(s)) return 'blue'; return 'slate' }
 function hrefFor(source: string, row: AnyRow) { const id=row.id || row.task_id || row.uuid; if (source==='Mission') return id ? `/missions/${id}` : '/missions'; if (source==='Revenue Task') return id ? `/revenue-command-center/tasks/${id}` : '/revenue-command-center/tasks'; if (source==='Appointment') return '/revenue-command-center/appointments'; if (source==='Incident') return id ? `/incidents/${id}` : '/incidents'; if (source==='Lead') return id ? `/leads/${id}` : '/leads'; if (source==='Contract') return id ? `/contracts/${id}` : '/contracts'; return '/staff-home' }
-function priorityScore(item: any) { const s=low(item.status); let n=0; if(['urgent','critical','blocked','overdue'].includes(s)) n+=50; if(['pending','open','new','assigned','in_progress'].includes(s)) n+=20; const d=new Date(String(item.date||'')); if(!Number.isNaN(d.getTime())) { const diff=(d.getTime()-Date.now())/86400000; if(diff<0) n+=30; if(diff<=1) n+=20; if(diff<=7) n+=10 } return n }
+function priorityScore(item: WorkItem) { const s=low(item.status); let n=0; if(['urgent','critical','blocked','overdue'].includes(s)) n+=50; if(['pending','open','new','assigned','in_progress'].includes(s)) n+=20; const d=new Date(String(item.date||'')); if(!Number.isNaN(d.getTime())) { const diff=(d.getTime()-Date.now())/86400000; if(diff<0) n+=30; if(diff<=1) n+=20; if(diff<=7) n+=10 } return n }
 const moduleMeta: Record<string,{icon:string;text:string}> = {
   hr:{icon:'👥',text:'People, attendance, users and HR control.'}, sales:{icon:'💼',text:'Orders, clients and commercial execution.'}, missions:{icon:'🛫',text:'Mission planning, execution and follow-up.'}, operations:{icon:'🧭',text:'Availability, replacements and dispatch.'}, pointage:{icon:'🕒',text:'Attendance and shift presence.'}, incidents:{icon:'🚨',text:'Escalation, risk and incident resolution.'}, leads:{icon:'📈',text:'Lead intake and conversion.'}, contracts:{icon:'📦',text:'Contracts and renewals.'}, billing:{icon:'🧾',text:'Payment follow-up and invoicing.'}, reports:{icon:'📊',text:'Reporting and management visibility.'}, users:{icon:'🔐',text:'Users and permission control.'}, 'revenue-command-center':{icon:'🚀',text:'Revenue tasks, prospects and appointments.'}, 'market-os':{icon:'📣',text:'Marketing, content and campaigns.'}, profile:{icon:'👤',text:'Account and profile workspace.'}
 }
@@ -49,18 +58,83 @@ export default async function StaffHomePage() {
   ])
 
   const missions=asArray(missionsRes), tasks=asArray(tasksRes), appointments=asArray(appointmentsRes), incidents=asArray(incidentsRes), leads=asArray(leadsRes), contracts=asArray(contractsRes), attendance=asArray(attendanceRes), appUsers=asArray(usersRes), rosterTable=asArray(rosterRes)
-  const userId=user?.id
-  const workItems = [
-    ...missions.filter(r=>belongsToUser(r,userId)).map(r=>({source:'Mission', row:r, title:titleOf(r), status:r.status||'planned', date:rowDate(r), href:hrefFor('Mission',r), detail:r.description||r.family_name||r.client_name||'Mission execution item'})),
-    ...tasks.filter(r=>belongsToUser(r,userId)).map(r=>({source:'Revenue Task', row:r, title:titleOf(r), status:r.status||r.priority||'open', date:rowDate(r), href:hrefFor('Revenue Task',r), detail:r.description||r.notes||r.category||'Revenue command task'})),
-    ...appointments.filter(r=>belongsToUser(r,userId)).map(r=>({source:'Appointment', row:r, title:titleOf(r), status:r.status||'scheduled', date:rowDate(r), href:hrefFor('Appointment',r), detail:r.notes||r.location||r.contact_name||'Appointment or event'})),
-    ...incidents.filter(r=>belongsToUser(r,userId)).map(r=>({source:'Incident', row:r, title:titleOf(r), status:r.status||'open', date:rowDate(r), href:hrefFor('Incident',r), detail:r.description||r.severity||'Incident follow-up'})),
-    ...leads.filter(r=>belongsToUser(r,userId)).map(r=>({source:'Lead', row:r, title:titleOf(r), status:r.status||'new', date:rowDate(r), href:hrefFor('Lead',r), detail:r.phone||r.email||r.notes||'Lead follow-up'})),
-    ...contracts.filter(r=>belongsToUser(r,userId)).map(r=>({source:'Contract', row:r, title:titleOf(r), status:r.status||'active', date:rowDate(r), href:hrefFor('Contract',r), detail:r.client_name||r.family_name||'Contract action'})),
-  ].sort((a,b)=>priorityScore(b)-priorityScore(a)).slice(0,18)
+  const userId = user?.id
+  const workItems: WorkItem[] = [
+    ...missions
+      .filter((r: AnyRow) => belongsToUser(r, userId))
+      .map((r: AnyRow): WorkItem => ({
+        source: 'Mission',
+        row: r,
+        title: String(titleOf(r)),
+        status: String(r.status || 'planned'),
+        date: rowDate(r),
+        href: hrefFor('Mission', r),
+        detail: String(r.description || r.family_name || r.client_name || 'Mission execution item'),
+      })),
 
-  const openWork=workItems.filter(i=>!['done','completed','closed','resolved','cancelled','archived'].includes(low(i.status)))
-  const todayWork=workItems.filter(i=>String(i.date||'').startsWith(today))
+    ...tasks
+      .filter((r: AnyRow) => belongsToUser(r, userId))
+      .map((r: AnyRow): WorkItem => ({
+        source: 'Revenue Task',
+        row: r,
+        title: String(titleOf(r)),
+        status: String(r.status || r.priority || 'open'),
+        date: rowDate(r),
+        href: hrefFor('Revenue Task', r),
+        detail: String(r.description || r.notes || r.category || 'Revenue command task'),
+      })),
+
+    ...appointments
+      .filter((r: AnyRow) => belongsToUser(r, userId))
+      .map((r: AnyRow): WorkItem => ({
+        source: 'Appointment',
+        row: r,
+        title: String(titleOf(r)),
+        status: String(r.status || 'scheduled'),
+        date: rowDate(r),
+        href: hrefFor('Appointment', r),
+        detail: String(r.notes || r.location || r.contact_name || 'Appointment or event'),
+      })),
+
+    ...incidents
+      .filter((r: AnyRow) => belongsToUser(r, userId))
+      .map((r: AnyRow): WorkItem => ({
+        source: 'Incident',
+        row: r,
+        title: String(titleOf(r)),
+        status: String(r.status || 'open'),
+        date: rowDate(r),
+        href: hrefFor('Incident', r),
+        detail: String(r.description || r.severity || 'Incident follow-up'),
+      })),
+
+    ...leads
+      .filter((r: AnyRow) => belongsToUser(r, userId))
+      .map((r: AnyRow): WorkItem => ({
+        source: 'Lead',
+        row: r,
+        title: String(titleOf(r)),
+        status: String(r.status || 'new'),
+        date: rowDate(r),
+        href: hrefFor('Lead', r),
+        detail: String(r.phone || r.email || r.notes || 'Lead follow-up'),
+      })),
+
+    ...contracts
+      .filter((r: AnyRow) => belongsToUser(r, userId))
+      .map((r: AnyRow): WorkItem => ({
+        source: 'Contract',
+        row: r,
+        title: String(titleOf(r)),
+        status: String(r.status || 'active'),
+        date: rowDate(r),
+        href: hrefFor('Contract', r),
+        detail: String(r.client_name || r.family_name || 'Contract action'),
+      })),
+  ].sort((a: WorkItem, b: WorkItem) => priorityScore(b) - priorityScore(a)).slice(0, 18)
+
+  const openWork=workItems.filter((i: WorkItem)=>!['done','completed','closed','resolved','cancelled','archived'].includes(low(i.status)))
+  const todayWork=workItems.filter((i: WorkItem) => String(i.date||'').startsWith(today))
   const latestAttendance=attendance[0]
   const openIncidents=incidents.filter(i=>!['resolved','closed','archived'].includes(low(i.status)))
   const priority = workItems[0]?.href || '/profile'
@@ -75,7 +149,7 @@ export default async function StaffHomePage() {
 
     <section style={grid2}><ERPPanel title="Permitted Modules Gateway" subtitle="Only authorized modules appear. Use this as the staff control panel after login."><div style={moduleGrid}>{allowedModules.length?allowedModules.map(module=>{const first=groupedRoutes[module]?.[0]; const meta=moduleMeta[module]||{icon:'🔹',text:'Authorized workspace.'}; return <ModuleCard key={module} href={first?.href || '/profile'} icon={meta.icon} title={first?.moduleLabel || module.replaceAll('-',' ')} text={meta.text} badge={`${groupedRoutes[module]?.length||1} access points`}/>}) : <Empty title="No permissions found" text="Ask admin to assign allowed modules."/>}</div></ERPPanel><ERPPanel title="Management Memo + Reminder Board" subtitle="Operational notes for staff before starting the shift."><div style={memo}><Memo tone="blue" title="Start with attendance" text="Clock in, check your roster, then open priority tasks."/><Memo tone={openIncidents.length?'red':'green'} title={openIncidents.length?'Open incident attention':'No critical incident visible'} text={openIncidents.length?'Review open incidents and document every escalation.':'Normal operations: keep statuses updated.'}/><Memo tone="amber" title="Documentation rule" text="Every task, mission, event or appointment should be updated after execution."/><Memo tone="purple" title="Management visibility" text="Your cards show only what the system can detect from assigned records and permissions."/></div></ERPPanel></section>
 
-    <ERPPanel title="All My Operational Tasks, Missions, Events & Appointments" subtitle="Scans the app system queues: missions, revenue tasks, appointments, incidents, leads and contracts. Buttons open the source page directly." right={<div style={toolbar}><span>Filters:</span><b>All</b><b>Today</b><b>Urgent</b><b>Open</b></div>}><div style={taskGrid}>{workItems.length?workItems.map((item:any)=><Link key={`${item.source}-${item.row.id}`} href={item.href} style={taskCard}><div style={taskTop}><StatusPill tone={statusTone(item.status)}>{item.status || 'open'}</StatusPill><span style={source}>{item.source}</span></div><h3 style={taskTitle}>{item.title}</h3><p style={taskText}>{item.detail}</p><div style={taskMeta}><span>📅 {fmtDate(item.date)}</span><span>🕒 {fmtTime(item.date)}</span></div><div style={taskActions}><span>Open details</span><span>Update status</span><span>Follow-up</span></div></Link>) : <Empty title="No assigned system work detected" text="The page is ready; once tasks/missions/events are assigned to this user, they appear here."/>}</div></ERPPanel>
+    <ERPPanel title="All My Operational Tasks, Missions, Events & Appointments" subtitle="Scans the app system queues: missions, revenue tasks, appointments, incidents, leads and contracts. Buttons open the source page directly." right={<div style={toolbar}><span>Filters:</span><b>All</b><b>Today</b><b>Urgent</b><b>Open</b></div>}><div style={taskGrid}>{workItems.length?workItems.map((item: WorkItem)=><Link key={`${item.source}-${item.row.id}`} href={item.href} style={taskCard}><div style={taskTop}><StatusPill tone={statusTone(item.status)}>{String(item.status || 'open')}</StatusPill><span style={source}>{item.source}</span></div><h3 style={taskTitle}>{item.title}</h3><p style={taskText}>{item.detail}</p><div style={taskMeta}><span>📅 {fmtDate(item.date)}</span><span>🕒 {fmtTime(item.date)}</span></div><div style={taskActions}><span>Open details</span><span>Update status</span><span>Follow-up</span></div></Link>) : <Empty title="No assigned system work detected" text="The page is ready; once tasks/missions/events are assigned to this user, they appear here."/>}</div></ERPPanel>
 
     <section style={grid2}><ERPPanel title="AI Staff Assistant" subtitle="Useful logic to guide the agent by role, tasks and roster."><div style={aiBox}><div style={aiIcon}>✨</div><div><h3 style={aiTitle}>Recommended next move</h3><p style={aiText}>{todayWork.length?`You have ${todayWork.length} item(s) today. Start with the earliest or highest-risk card, then update progress.`:openWork.length?`You have ${openWork.length} open item(s). Clear urgent and overdue items first.`:'No direct task pressure detected. Check attendance, roster and authorized module queue.'}</p></div></div><div style={brief}>{['Confirm attendance status before execution.','Review roster duties and shift coverage.','Open every assigned task from the cards above, not from memory.','Document outcomes after each client, mission, lead or appointment.','Escalate incident or blocker immediately.'].map(x=><div key={x}>• {x}</div>)}</div></ERPPanel><ERPPanel title="Smart User-Type Widgets" subtitle="Cards adapt logically to module permissions."><div style={widgetGrid}><Quick show={canAccess(user,'sales.view')} href="/sales/orders" icon="💼" label="Sales execution" value={contracts.length} sub="Orders/contracts"/><Quick show={canAccess(user,'revenue.view')} href="/revenue-command-center/tasks" icon="🚀" label="Revenue tasks" value={tasks.length} sub="BD queue"/><Quick show={canAccess(user,'missions.view')} href="/missions" icon="🛫" label="Missions" value={missions.length} sub="Field operations"/><Quick show={canAccess(user,'hr.view')} href="/hr" icon="👥" label="HR desk" value={appUsers.length} sub="Staff visibility"/><Quick show={canAccess(user,'incidents.view')} href="/incidents" icon="🚨" label="Incidents" value={openIncidents.length} sub="Risk queue"/><Quick show={true} href="/profile" icon="👤" label="My profile" value="Open" sub="Account"/></div></ERPPanel></section>
 

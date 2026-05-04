@@ -1,5 +1,1 @@
-import { DatabaseCrudPage } from "@/app/components/market-os/database-crud-suite"
-
-export default function Page() {
-  return <DatabaseCrudPage domain="partners-network" resource="partner_deals" mode="new" title="New Deal / Case Tracking" description="" />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

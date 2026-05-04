@@ -1,5 +1,1 @@
-import HRDominationWorkspace from '../_components/HRDominationWorkspace'
-
-export default function Page() {
-  return <HRDominationWorkspace kind="staff" />
-}
+export default function Page() { return <div>HR SAFE MODE</div> }

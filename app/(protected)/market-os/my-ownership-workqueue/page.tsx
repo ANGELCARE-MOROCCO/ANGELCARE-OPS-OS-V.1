@@ -1,7 +1,1 @@
-import MyOwnershipWorkQueue from "@/app/components/market-os/my-ownership-workqueue"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <MyOwnershipWorkQueue />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

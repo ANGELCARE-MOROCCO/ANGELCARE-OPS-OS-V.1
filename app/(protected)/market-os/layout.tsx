@@ -1,9 +1,5 @@
-import MarketOsLayout from "@/app/components/market-os/layout/layout"
+import type { ReactNode } from 'react'
 
-export default function Layout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return <MarketOsLayout>{children}</MarketOsLayout>
+export default function Layout({ children }: { children: ReactNode }) {
+  return children
 }

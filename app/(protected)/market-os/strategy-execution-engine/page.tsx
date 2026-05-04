@@ -1,7 +1,1 @@
-import StrategyExecutionEngine from "@/app/components/market-os/strategy-execution-engine"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <StrategyExecutionEngine />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

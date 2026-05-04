@@ -1,8 +1,1 @@
-import { DatabaseCrudPage } from "@/app/components/market-os/database-crud-suite"
-
-type PageProps = { params: Promise<{ id: string }> }
-
-export default async function Page({ params }: PageProps) {
-  const { id } = await params
-  return <DatabaseCrudPage domain="partners-network" resource="partners" mode="edit" recordId={id} title="Edit Partner Master Profiles" description="" />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

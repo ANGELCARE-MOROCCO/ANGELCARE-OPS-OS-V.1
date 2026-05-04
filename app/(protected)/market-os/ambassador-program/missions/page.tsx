@@ -1,5 +1,1 @@
-import { DatabaseCrudPage } from "@/app/components/market-os/database-crud-suite"
-
-export default function Page() {
-  return <DatabaseCrudPage domain="ambassador-program" resource="ambassador_missions" mode="list" title="Mission Execution" description="" />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

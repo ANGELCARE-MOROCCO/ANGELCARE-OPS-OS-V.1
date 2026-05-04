@@ -1,2 +1,1 @@
-import MOSWorkspace from '../_components/MOSWorkspace';
-export default function Page(){return <MOSWorkspace kind="offer" title="Offer Engineering" subtitle="Design services, bundles, trials and positioning logic."/>}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }

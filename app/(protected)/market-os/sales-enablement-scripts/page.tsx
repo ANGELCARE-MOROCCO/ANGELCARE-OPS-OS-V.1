@@ -1,7 +1,1 @@
-import SalesEnablementScriptsEngine from "@/app/components/market-os/sales-enablement-scripts-engine"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <SalesEnablementScriptsEngine />
-}
+export default function Page() { return <div>MARKET-OS SAFE MODE</div> }
