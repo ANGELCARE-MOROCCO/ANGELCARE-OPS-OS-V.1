@@ -16,20 +16,6 @@ import {
 
 type CallStatus = "idle" | "calling" | "active" | "hold"
 
-const MINIMIZED_KEY = "angelcare_voice_terminal_minimized"
-
-async function safeJson(res: Response) {
-  const contentType = res.headers.get("content-type") || ""
-  if (!res.ok) return null
-  if (!contentType.includes("application/json")) return null
-
-  try {
-    return await res.json()
-  } catch {
-    return null
-  }
-}
-
 export default function VoicePhoneWidget() {
   const [number, setNumber] = useState("")
   const [transferTo, setTransferTo] = useState("")
@@ -50,16 +36,11 @@ export default function VoicePhoneWidget() {
   const beepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
 
+  // Prevents the second Telnyx WebRTC bridge leg from creating a duplicate popup
   const bridgeAutoAnswerRef = useRef(false)
   const originalCallerRef = useRef("")
   const handledCallControlIdRef = useRef<string | null>(null)
   const suppressWebrtcPopupRef = useRef(true)
-
-  useEffect(() => {
-    try {
-      setMinimized(localStorage.getItem(MINIMIZED_KEY) === "true")
-    } catch {}
-  }, [])
 
   const stopRadarBeep = () => {
     if (beepIntervalRef.current) {
@@ -97,6 +78,7 @@ export default function VoicePhoneWidget() {
   const requestMicPermission = async () => {
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
+        console.error("Browser does not support getUserMedia")
         setMicReady(false)
         return false
       }
@@ -104,6 +86,7 @@ export default function VoicePhoneWidget() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       stream.getTracks().forEach((track) => track.stop())
       setMicReady(true)
+      console.log("Microphone permission granted")
       return true
     } catch (error) {
       setMicReady(false)
@@ -118,7 +101,10 @@ export default function VoicePhoneWidget() {
         remoteAudioRef.current ||
         (document.getElementById("telnyx-remote-audio") as HTMLAudioElement | null)
 
-      if (!audio) return
+      if (!audio) {
+        console.error("Remote audio element not found")
+        return
+      }
 
       let remoteStream: MediaStream | null =
         call?.remoteStream ||
@@ -126,16 +112,13 @@ export default function VoicePhoneWidget() {
         call?.session?.remoteStream ||
         null
 
-      const peerConnection =
-        call?.peerConnection || call?.pc || call?.session?.peerConnection
+      const peerConnection = call?.peerConnection || call?.pc || call?.session?.peerConnection
 
       if (!remoteStream && peerConnection?.getReceivers) {
         const audioTracks = peerConnection
           .getReceivers()
           .map((receiver: RTCRtpReceiver) => receiver.track)
-          .filter(
-            (track: MediaStreamTrack | null) => track && track.kind === "audio"
-          ) as MediaStreamTrack[]
+          .filter((track: MediaStreamTrack | null) => track && track.kind === "audio") as MediaStreamTrack[]
 
         if (audioTracks.length > 0) {
           remoteStream = new MediaStream(audioTracks)
@@ -144,6 +127,9 @@ export default function VoicePhoneWidget() {
 
       if (remoteStream && remoteStream.getAudioTracks().length > 0) {
         audio.srcObject = remoteStream
+        console.log("Remote audio stream attached:", remoteStream.getAudioTracks())
+      } else {
+        console.warn("No remote audio stream found on call object yet")
       }
 
       audio.autoplay = true
@@ -151,7 +137,9 @@ export default function VoicePhoneWidget() {
       audio.muted = false
       audio.volume = 1
 
-      await audio.play().catch((error) => {
+      await audio.play().then(() => {
+        console.log("Remote audio playback started")
+      }).catch((error) => {
         console.warn("Remote audio play blocked or failed:", error)
       })
     } catch (error) {
@@ -178,14 +166,10 @@ export default function VoicePhoneWidget() {
       if (incomingNumber || status !== "idle") return
 
       try {
-        const res = await fetch("/api/voice/incoming/latest", {
-          cache: "no-store",
-        })
-
-        const json = await safeJson(res)
-        if (!json?.call) return
-
+        const res = await fetch("/api/voice/incoming/latest")
+        const json = await res.json()
         const call = json.call
+
         const incomingId = call?.telnyx_call_control_id || null
         const caller = call?.from_number || ""
 
@@ -204,9 +188,9 @@ export default function VoicePhoneWidget() {
           startRadarBeep()
         }
       } catch (error) {
-        console.warn("Incoming poll skipped:", error)
+        console.error("Incoming poll error:", error)
       }
-    }, 3000)
+    }, 2000)
 
     return () => clearInterval(poll)
   }, [incomingNumber, status])
@@ -222,14 +206,12 @@ export default function VoicePhoneWidget() {
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(
-          `/api/voice/leads/lookup?phone=${encodeURIComponent(number)}`,
-          { cache: "no-store" }
+          `/api/voice/leads/lookup?phone=${encodeURIComponent(number)}`
         )
-
-        const json = await safeJson(res)
-        setLead(json?.lead || null)
+        const json = await res.json()
+        setLead(json.lead || null)
       } catch (error) {
-        console.warn("Lead lookup skipped:", error)
+        console.error("Lead lookup error:", error)
         setLead(null)
       }
     }, 400)
@@ -257,15 +239,17 @@ export default function VoicePhoneWidget() {
     clientRef.current = client
 
     client.on("telnyx.ready", () => {
+      console.log("Telnyx WebRTC READY")
       setWebrtcReady(true)
     })
 
-    client.on("telnyx.error", (error: any) => {
-      console.warn("Telnyx WebRTC warning:", error)
-      setWebrtcReady(false)
-    })
+    client.on('telnyx.error', (error: any) => {
+  console.warn('Telnyx WebRTC warning:', error)
+  setWebrtcReady(false)
+})
 
     client.on("telnyx.notification", async (notification: any) => {
+      console.log("Telnyx notification:", notification)
       const call = notification.call
 
       if (notification.type === "callUpdate" && call) {
@@ -274,6 +258,8 @@ export default function VoicePhoneWidget() {
         if (call.state === "ringing") {
           activeCallRef.current = call
 
+          // This is the second WebRTC leg after transfer.
+          // Never show a second popup. Auto-answer it silently.
           if (bridgeAutoAnswerRef.current || suppressWebrtcPopupRef.current) {
             try {
               await call.answer()
@@ -343,7 +329,7 @@ export default function VoicePhoneWidget() {
         client.disconnect()
       } catch {}
     }
-  }, [number])
+  }, [])
 
   const formatTime = (s: number) => {
     const min = Math.floor(s / 60)
@@ -366,11 +352,13 @@ export default function VoicePhoneWidget() {
     try {
       const res = await fetch("/api/voice/outbound", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ to: number }),
       })
 
-      const json = await safeJson(res)
+      const json = await res.json().catch(() => ({}))
 
       if (!res.ok) {
         console.error("Outbound call failed:", json)
@@ -390,27 +378,23 @@ export default function VoicePhoneWidget() {
   const logCall = async () => {
     if (!number.trim()) return
 
-    try {
-      await fetch("/api/voice/calls/log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          direction: incomingNumber ? "inbound" : "outbound",
-          from_number: incomingNumber || "VoiceWidget",
-          to_number: incomingNumber ? "AngelCare" : number,
-          agent_extension: "1001",
-          lead_id: lead?.id || null,
-          status: outcome,
-          queue_status: queueStatus === "none" ? "completed" : queueStatus,
-          queue_name: "main_voice_queue",
-          duration_seconds: seconds,
-          notes: note,
-          outcome,
-        }),
-      })
-    } catch (error) {
-      console.warn("Call log skipped:", error)
-    }
+    await fetch("/api/voice/calls/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        direction: incomingNumber ? "inbound" : "outbound",
+        from_number: incomingNumber || "VoiceWidget",
+        to_number: incomingNumber ? "AngelCare" : number,
+        agent_extension: "1001",
+        lead_id: lead?.id || null,
+        status: outcome,
+        queue_status: queueStatus === "none" ? "completed" : queueStatus,
+        queue_name: "main_voice_queue",
+        duration_seconds: seconds,
+        notes: note,
+        outcome,
+      }),
+    })
   }
 
   const simulateIncoming = () => {
@@ -432,9 +416,13 @@ export default function VoicePhoneWidget() {
   const answerIncoming = async () => {
     await requestMicPermission()
 
+    // The next WebRTC ringing event is the bridge leg.
+    // Auto-answer it silently and do not show a second popup.
     bridgeAutoAnswerRef.current = true
 
     const call = activeCallRef.current
+    console.log("ACTIVE WEBRTC CALL:", call)
+    console.log("CALL CONTROL ID:", callControlId)
 
     if (call?.answer) {
       await call.answer()
@@ -479,25 +467,23 @@ export default function VoicePhoneWidget() {
       })
     }
 
-    try {
-      await fetch("/api/voice/calls/log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          direction: "inbound",
-          from_number: incomingNumber || number,
-          to_number: "AngelCare",
-          agent_extension: "1001",
-          lead_id: lead?.id || null,
-          status: "missed",
-          queue_status: "missed",
-          queue_name: "main_voice_queue",
-          duration_seconds: seconds,
-          notes: "Incoming call rejected/missed from Voice Terminal V2",
-          outcome: "no_answer",
-        }),
-      })
-    } catch {}
+    await fetch("/api/voice/calls/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        direction: "inbound",
+        from_number: incomingNumber || number,
+        to_number: "AngelCare",
+        agent_extension: "1001",
+        lead_id: lead?.id || null,
+        status: "missed",
+        queue_status: "missed",
+        queue_name: "main_voice_queue",
+        duration_seconds: seconds,
+        notes: "Incoming call rejected/missed from Voice Terminal V2",
+        outcome: "no_answer",
+      }),
+    })
 
     setIncomingNumber("")
     setStatus("idle")
@@ -568,15 +554,6 @@ export default function VoicePhoneWidget() {
     setTransferTo("")
   }
 
-  const toggleMinimized = () => {
-    const next = !minimized
-    setMinimized(next)
-
-    try {
-      localStorage.setItem(MINIMIZED_KEY, String(next))
-    } catch {}
-  }
-
   const statusLabel = {
     idle: "Prêt",
     calling: "Appel en cours",
@@ -632,7 +609,7 @@ export default function VoicePhoneWidget() {
             </div>
           </div>
 
-          <button className="vt-icon-btn" onClick={toggleMinimized}>
+          <button className="vt-icon-btn" onClick={() => setMinimized(!minimized)}>
             <Minus size={15} />
           </button>
         </div>
@@ -649,9 +626,7 @@ export default function VoicePhoneWidget() {
                 <b>{lead.parent_name || lead.name || "Lead détecté"}</b>
                 <span>{lead.phone}</span>
                 <span>{lead.city || "Ville non renseignée"}</span>
-                <small>
-                  {lead.service_interest || lead.stage || "Besoin à qualifier"}
-                </small>
+                <small>{lead.service_interest || lead.stage || "Besoin à qualifier"}</small>
               </div>
             )}
 
@@ -686,13 +661,11 @@ export default function VoicePhoneWidget() {
             </div>
 
             <div className="vt-keypad">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "0", "#"].map(
-                (key) => (
-                  <button key={key} onClick={() => press(key)}>
-                    {key}
-                  </button>
-                )
-              )}
+              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "0", "#"].map((key) => (
+                <button key={key} onClick={() => press(key)}>
+                  {key}
+                </button>
+              ))}
             </div>
 
             <div className="vt-inbound-test">
