@@ -45,7 +45,13 @@ export default async function ProspectActionRoomPage({ params }: { params: Promi
       title={`${prospect.name || 'Prospect'} — Action Room`}
       subtitle="One-screen operating room for qualification, follow-up, notes, tasks, appointments, and timeline."
       breadcrumbs={[{ label: 'Revenue Command', href: '/revenue-command-center' }, { label: 'Prospects', href: '/revenue-command-center/prospects' }, { label: prospect.name || 'Action Room' }]}
-      actions={<><PageAction href="/revenue-command-center/prospects" variant="light">Back</PageAction><PageAction href="/revenue-command-center/tasks/new">Create Task</PageAction></>}
+      actions={
+        <>
+          <PageAction href="/revenue-command-center/prospects" variant="light">Back</PageAction>
+          <PageAction href={`/revenue-command-center/prospects/${prospect.id}/edit`} variant="light">Edit Prospect</PageAction>
+          <PageAction href="/revenue-command-center/tasks/new">Create Task</PageAction>
+        </>
+      }
     >
       <div style={{ display: 'grid', gap: 18 }}>
         <section style={heroStyle}>
@@ -88,6 +94,7 @@ export default async function ProspectActionRoomPage({ params }: { params: Promi
               {prospect.phone ? <ActionButton href={`tel:${prospect.phone}`}>Call</ActionButton> : <ActionButton variant="light">No phone</ActionButton>}
               {prospect.phone ? <ActionButton href={`https://wa.me/${String(prospect.phone).replace(/[^0-9]/g, '')}`} variant="success">WhatsApp</ActionButton> : <ActionButton variant="light">No WhatsApp</ActionButton>}
               {prospect.email ? <ActionButton href={`mailto:${prospect.email}`} variant="light">Email</ActionButton> : <ActionButton variant="light">No email</ActionButton>}
+              <ActionButton href={`/revenue-command-center/prospects/${prospect.id}/edit`} variant="light">Edit Profile</ActionButton>
             </div>
           </Panel>
 

@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import OverheadPanel from '@/app/components/erp/OverheadPanel'
 
 type NavItem = {
   label: string
@@ -127,8 +126,6 @@ export default function AppShell({
 
   return (
     <div style={shellStyle}>
-      <OverheadPanel />
-
       <aside style={sidebarStyle}>
         <Link href="/" style={brandStyle} aria-label="Go to AngelCare dashboard">
           <div style={logoImageBoxStyle}>

@@ -35,6 +35,7 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Voice Center', href: '/voice-center', permission: 'voice.view' },
   { label: 'AngelCare Connect', href: '/voice-center', permission: 'voice.view' },
 
+  
   { label: 'Revenue Command Center', href: '/revenue-command-center', permission: 'revenue.view' },
   { label: 'Revenue Cockpit', href: '/revenue-command-center/cockpit', permission: 'revenue.view' },
   { label: 'Prospects', href: '/revenue-command-center/prospects', permission: 'revenue.view' },

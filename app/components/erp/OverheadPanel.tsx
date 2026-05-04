@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
 import type { CSSProperties } from "react"
-import { APP_ROUTES } from "@/lib/generated/app-routes"
 
 type AppRoute = {
   label: string
@@ -60,7 +59,6 @@ const MODULE_ORDER = [
   "profile",
 ]
 
-const STATIC_ROUTES = APP_ROUTES as unknown as AppRoute[]
 
 function normalizeRoute(route: Partial<AppRoute> | null | undefined): AppRoute | null {
   if (!route || typeof route.href !== "string" || route.href.length === 0) return null
@@ -87,7 +85,7 @@ function normalizeRoute(route: Partial<AppRoute> | null | undefined): AppRoute |
 }
 
 function normalizeRoutes(routes: unknown): AppRoute[] {
-  const rawRoutes = Array.isArray(routes) ? routes : STATIC_ROUTES
+  const rawRoutes = Array.isArray(routes) ? routes : []
   const normalized = rawRoutes
     .map((route) => normalizeRoute(route as Partial<AppRoute>))
     .filter((route): route is AppRoute => Boolean(route))
@@ -143,7 +141,7 @@ export default function OverheadPanel() {
   const [voiceState, setVoiceState] = useState<"ready" | "incoming" | "offline">("ready")
   const [connectState, setConnectState] = useState<"online" | "message" | "offline">("online")
   const [pagesOpen, setPagesOpen] = useState(false)
-  const [allowedRoutes, setAllowedRoutes] = useState<AppRoute[]>(() => normalizeRoutes(STATIC_ROUTES))
+  const [allowedRoutes, setAllowedRoutes] = useState<AppRoute[]>([])
   const [routesLoading, setRoutesLoading] = useState(false)
   const appPagesRef = useRef<HTMLDivElement | null>(null)
 
@@ -205,11 +203,12 @@ export default function OverheadPanel() {
         const routes = normalizeRoutes(payload?.routes)
 
         if (alive) {
-          setAllowedRoutes(routes.length > 0 ? routes : normalizeRoutes(STATIC_ROUTES))
+          setAllowedRoutes(routes)
         }
       } catch {
         if (alive) {
-          setAllowedRoutes(normalizeRoutes(STATIC_ROUTES))
+          setAllowedRoutes([])
+          setTerminalMessage("PAGE ACCESS CHECK FAILED • ROUTES LOCKED")
         }
       } finally {
         if (alive) {
@@ -403,7 +402,7 @@ export default function OverheadPanel() {
 
               {routesCount === 0 && !routesLoading ? (
                 <div style={emptyStateStyle}>
-                  No pages assigned. Ask an administrator to grant page access in Users → Edit user.
+                  No pages assigned or route access failed. Ask an administrator to grant page access in Users → Edit user.
                 </div>
               ) : (
                 <div style={appPagesGroupsStyle}>

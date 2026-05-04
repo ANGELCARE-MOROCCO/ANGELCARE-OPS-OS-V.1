@@ -5,6 +5,7 @@ import HRTimeClockWidget from '@/app/components/hr/HRTimeClockWidget'
 import AngelCareConnect from '@/app/components/connect/AngelCareConnect'
 import { AppQuickAccess } from '@/app/components/AppQuickAccess'
 import { MODULE_ACCESS_LINKS } from '@/lib/auth/permissions'
+import OverheadPanel from '@/app/components/erp/OverheadPanel'
 
 export default async function ProtectedLayout({
   children,
@@ -26,6 +27,7 @@ export default async function ProtectedLayout({
 
   return (
   <>
+  <OverheadPanel />
   <AppQuickAccess links={allowedLinks} />
     {/* 🔥 HR WIDGET (TOP RIGHT) */}
     <div
