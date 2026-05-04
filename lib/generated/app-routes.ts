@@ -407,190 +407,190 @@ export const APP_ROUTES = [
   {
     "label": "Hr Os",
     "shortLabel": "Hr Os",
-    "href": "/hr-os",
+    "href": "/hr",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os",
+    "permissionKey": "page:/hr",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Academy",
     "shortLabel": "Academy",
-    "href": "/hr-os/academy",
+    "href": "/hr/academy",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/academy",
+    "permissionKey": "page:/hr/academy",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Allocation",
     "shortLabel": "Allocation",
-    "href": "/hr-os/allocation",
+    "href": "/hr/allocation",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/allocation",
+    "permissionKey": "page:/hr/allocation",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Autonomous",
     "shortLabel": "Autonomous",
-    "href": "/hr-os/autonomous",
+    "href": "/hr/autonomous",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/autonomous",
+    "permissionKey": "page:/hr/autonomous",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Board Reports",
     "shortLabel": "Board Reports",
-    "href": "/hr-os/board-reports",
+    "href": "/hr/board-reports",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/board-reports",
+    "permissionKey": "page:/hr/board-reports",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Compliance",
     "shortLabel": "Compliance",
-    "href": "/hr-os/compliance",
+    "href": "/hr/compliance",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/compliance",
+    "permissionKey": "page:/hr/compliance",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Enterprise",
     "shortLabel": "Enterprise",
-    "href": "/hr-os/enterprise",
+    "href": "/hr/enterprise",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/enterprise",
+    "permissionKey": "page:/hr/enterprise",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Executive Ai",
     "shortLabel": "Executive Ai",
-    "href": "/hr-os/executive-ai",
+    "href": "/hr/executive-ai",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/executive-ai",
+    "permissionKey": "page:/hr/executive-ai",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Incidents",
     "shortLabel": "Incidents",
-    "href": "/hr-os/incidents",
+    "href": "/hr/incidents",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/incidents",
+    "permissionKey": "page:/hr/incidents",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Intelligence",
     "shortLabel": "Intelligence",
-    "href": "/hr-os/intelligence",
+    "href": "/hr/intelligence",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/intelligence",
+    "permissionKey": "page:/hr/intelligence",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Onboarding",
     "shortLabel": "Onboarding",
-    "href": "/hr-os/onboarding",
+    "href": "/hr/onboarding",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/onboarding",
+    "permissionKey": "page:/hr/onboarding",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Onboarding Smart",
     "shortLabel": "Onboarding Smart",
-    "href": "/hr-os/onboarding-smart",
+    "href": "/hr/onboarding-smart",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/onboarding-smart",
+    "permissionKey": "page:/hr/onboarding-smart",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Performance",
     "shortLabel": "Performance",
-    "href": "/hr-os/performance",
+    "href": "/hr/performance",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/performance",
+    "permissionKey": "page:/hr/performance",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Readiness",
     "shortLabel": "Readiness",
-    "href": "/hr-os/readiness",
+    "href": "/hr/readiness",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/readiness",
+    "permissionKey": "page:/hr/readiness",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Realtime",
     "shortLabel": "Realtime",
-    "href": "/hr-os/realtime",
+    "href": "/hr/realtime",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/realtime",
+    "permissionKey": "page:/hr/realtime",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Recruitment",
     "shortLabel": "Recruitment",
-    "href": "/hr-os/recruitment",
+    "href": "/hr/recruitment",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/recruitment",
+    "permissionKey": "page:/hr/recruitment",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Reports",
     "shortLabel": "Reports",
-    "href": "/hr-os/reports",
+    "href": "/hr/reports",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/reports",
+    "permissionKey": "page:/hr/reports",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Reports Advanced",
     "shortLabel": "Reports Advanced",
-    "href": "/hr-os/reports-advanced",
+    "href": "/hr/reports-advanced",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/reports-advanced",
+    "permissionKey": "page:/hr/reports-advanced",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Strategy",
     "shortLabel": "Strategy",
-    "href": "/hr-os/strategy",
+    "href": "/hr/strategy",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/strategy",
+    "permissionKey": "page:/hr/strategy",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / Talent Dna",
     "shortLabel": "Talent Dna",
-    "href": "/hr-os/talent-dna",
+    "href": "/hr/talent-dna",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/talent-dna",
+    "permissionKey": "page:/hr/talent-dna",
     "modulePermissionKey": "hr-os.view"
   },
   {
     "label": "Hr Os / War Room",
     "shortLabel": "War Room",
-    "href": "/hr-os/war-room",
+    "href": "/hr/war-room",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "permissionKey": "page:/hr-os/war-room",
+    "permissionKey": "page:/hr/war-room",
     "modulePermissionKey": "hr-os.view"
   },
   {
@@ -1893,151 +1893,151 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/hr/overview"
   },
   {
-    "value": "page:/hr-os",
+    "value": "page:/hr",
     "label": "Hr Os",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os"
+    "href": "/hr"
   },
   {
-    "value": "page:/hr-os/academy",
+    "value": "page:/hr/academy",
     "label": "Hr Os / Academy",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/academy"
+    "href": "/hr/academy"
   },
   {
-    "value": "page:/hr-os/allocation",
+    "value": "page:/hr/allocation",
     "label": "Hr Os / Allocation",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/allocation"
+    "href": "/hr/allocation"
   },
   {
-    "value": "page:/hr-os/autonomous",
+    "value": "page:/hr/autonomous",
     "label": "Hr Os / Autonomous",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/autonomous"
+    "href": "/hr/autonomous"
   },
   {
-    "value": "page:/hr-os/board-reports",
+    "value": "page:/hr/board-reports",
     "label": "Hr Os / Board Reports",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/board-reports"
+    "href": "/hr/board-reports"
   },
   {
-    "value": "page:/hr-os/compliance",
+    "value": "page:/hr/compliance",
     "label": "Hr Os / Compliance",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/compliance"
+    "href": "/hr/compliance"
   },
   {
-    "value": "page:/hr-os/enterprise",
+    "value": "page:/hr/enterprise",
     "label": "Hr Os / Enterprise",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/enterprise"
+    "href": "/hr/enterprise"
   },
   {
-    "value": "page:/hr-os/executive-ai",
+    "value": "page:/hr/executive-ai",
     "label": "Hr Os / Executive Ai",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/executive-ai"
+    "href": "/hr/executive-ai"
   },
   {
-    "value": "page:/hr-os/incidents",
+    "value": "page:/hr/incidents",
     "label": "Hr Os / Incidents",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/incidents"
+    "href": "/hr/incidents"
   },
   {
-    "value": "page:/hr-os/intelligence",
+    "value": "page:/hr/intelligence",
     "label": "Hr Os / Intelligence",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/intelligence"
+    "href": "/hr/intelligence"
   },
   {
-    "value": "page:/hr-os/onboarding",
+    "value": "page:/hr/onboarding",
     "label": "Hr Os / Onboarding",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/onboarding"
+    "href": "/hr/onboarding"
   },
   {
-    "value": "page:/hr-os/onboarding-smart",
+    "value": "page:/hr/onboarding-smart",
     "label": "Hr Os / Onboarding Smart",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/onboarding-smart"
+    "href": "/hr/onboarding-smart"
   },
   {
-    "value": "page:/hr-os/performance",
+    "value": "page:/hr/performance",
     "label": "Hr Os / Performance",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/performance"
+    "href": "/hr/performance"
   },
   {
-    "value": "page:/hr-os/readiness",
+    "value": "page:/hr/readiness",
     "label": "Hr Os / Readiness",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/readiness"
+    "href": "/hr/readiness"
   },
   {
-    "value": "page:/hr-os/realtime",
+    "value": "page:/hr/realtime",
     "label": "Hr Os / Realtime",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/realtime"
+    "href": "/hr/realtime"
   },
   {
-    "value": "page:/hr-os/recruitment",
+    "value": "page:/hr/recruitment",
     "label": "Hr Os / Recruitment",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/recruitment"
+    "href": "/hr/recruitment"
   },
   {
-    "value": "page:/hr-os/reports",
+    "value": "page:/hr/reports",
     "label": "Hr Os / Reports",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/reports"
+    "href": "/hr/reports"
   },
   {
-    "value": "page:/hr-os/reports-advanced",
+    "value": "page:/hr/reports-advanced",
     "label": "Hr Os / Reports Advanced",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/reports-advanced"
+    "href": "/hr/reports-advanced"
   },
   {
-    "value": "page:/hr-os/strategy",
+    "value": "page:/hr/strategy",
     "label": "Hr Os / Strategy",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/strategy"
+    "href": "/hr/strategy"
   },
   {
-    "value": "page:/hr-os/talent-dna",
+    "value": "page:/hr/talent-dna",
     "label": "Hr Os / Talent Dna",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/talent-dna"
+    "href": "/hr/talent-dna"
   },
   {
-    "value": "page:/hr-os/war-room",
+    "value": "page:/hr/war-room",
     "label": "Hr Os / War Room",
     "module": "hr-os",
     "moduleLabel": "Hr Os",
-    "href": "/hr-os/war-room"
+    "href": "/hr/war-room"
   },
   {
     "value": "page:/incidents",
