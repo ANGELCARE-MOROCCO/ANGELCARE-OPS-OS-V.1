@@ -20,7 +20,10 @@ export default function VoicePhoneWidget() {
   const [number, setNumber] = useState("")
   const [transferTo, setTransferTo] = useState("")
   const [status, setStatus] = useState<CallStatus>("idle")
-  const [minimized, setMinimized] = useState(false)
+const [minimized, setMinimized] = useState(() => {
+  if (typeof window === "undefined") return false
+  return localStorage.getItem("angelcare_voice_terminal_minimized") === "true"
+})
   const [seconds, setSeconds] = useState(0)
   const [lead, setLead] = useState<any>(null)
   const [note, setNote] = useState("")
@@ -609,7 +612,14 @@ export default function VoicePhoneWidget() {
             </div>
           </div>
 
-          <button className="vt-icon-btn" onClick={() => setMinimized(!minimized)}>
+<button
+  className="vt-icon-btn"
+  onClick={() => {
+    const next = !minimized
+    setMinimized(next)
+    localStorage.setItem("angelcare_voice_terminal_minimized", String(next))
+  }}
+>
             <Minus size={15} />
           </button>
         </div>
