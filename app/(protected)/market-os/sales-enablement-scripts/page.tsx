@@ -1,4 +1,4 @@
-import SalesEnablementScriptsEngine from "@/components/market-os/sales-enablement-scripts-engine"
+import SalesEnablementScriptsEngine from "@/app/components/market-os/sales-enablement-scripts-engine"
 
 export const dynamic = "force-dynamic"
 

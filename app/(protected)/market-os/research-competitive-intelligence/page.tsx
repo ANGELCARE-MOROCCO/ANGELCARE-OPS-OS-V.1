@@ -1,4 +1,4 @@
-import ResearchCompetitiveIntelligenceEngine from "@/components/market-os/research-competitive-intelligence-engine"
+import ResearchCompetitiveIntelligenceEngine from "@/app/components/market-os/research-competitive-intelligence-engine"
 
 export const dynamic = "force-dynamic"
 

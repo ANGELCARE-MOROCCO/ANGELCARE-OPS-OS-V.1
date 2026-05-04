@@ -1,4 +1,4 @@
-import ConfigAdminControlEngine from "@/components/market-os/config-admin-control-engine"
+import ConfigAdminControlEngine from "@/app/components/market-os/config-admin-control-engine"
 
 export const dynamic = "force-dynamic"
 

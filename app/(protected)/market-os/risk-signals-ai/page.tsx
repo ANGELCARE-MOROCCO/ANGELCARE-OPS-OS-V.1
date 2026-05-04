@@ -1,4 +1,4 @@
-import RiskSignalsAiEngine from "@/components/market-os/risk-signals-ai-engine"
+import RiskSignalsAiEngine from "@/app/components/market-os/risk-signals-ai-engine"
 
 export const dynamic = "force-dynamic"
 

@@ -1,4 +1,4 @@
-import MarketingCalendarExecutionEngine from "@/components/market-os/marketing-calendar-execution-engine"
+import MarketingCalendarExecutionEngine from "@/app/components/market-os/marketing-calendar-execution-engine"
 
 export const dynamic = "force-dynamic"
 

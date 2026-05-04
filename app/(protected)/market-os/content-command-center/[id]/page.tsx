@@ -1,4 +1,4 @@
-import ContentTaskEditor from "@/components/market-os/content-task-editor"
+import ContentTaskEditor from "@/app/components/market-os/content-task-editor"
 
 export const dynamic = "force-dynamic"
 

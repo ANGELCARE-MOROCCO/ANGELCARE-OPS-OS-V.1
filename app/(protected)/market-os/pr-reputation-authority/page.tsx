@@ -1,4 +1,4 @@
-import PrReputationAuthorityEngine from "@/components/market-os/pr-reputation-authority-engine"
+import PrReputationAuthorityEngine from "@/app/components/market-os/pr-reputation-authority-engine"
 
 export const dynamic = "force-dynamic"
 

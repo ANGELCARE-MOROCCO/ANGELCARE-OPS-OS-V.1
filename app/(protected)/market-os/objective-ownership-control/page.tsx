@@ -1,4 +1,4 @@
-import ObjectiveOwnershipControl from "@/components/market-os/objective-ownership-control"
+import ObjectiveOwnershipControl from "@/app/components/market-os/objective-ownership-control"
 
 export const dynamic = "force-dynamic"
 

@@ -1,4 +1,4 @@
-import AiTaskChainOrchestrator from "@/components/market-os/ai-task-chain-orchestrator"
+import AiTaskChainOrchestrator from "@/app/components/market-os/ai-task-chain-orchestrator"
 
 export const dynamic = "force-dynamic"
 

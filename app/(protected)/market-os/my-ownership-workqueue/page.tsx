@@ -1,4 +1,4 @@
-import MyOwnershipWorkQueue from "@/components/market-os/my-ownership-workqueue"
+import MyOwnershipWorkQueue from "@/app/components/market-os/my-ownership-workqueue"
 
 export const dynamic = "force-dynamic"
 

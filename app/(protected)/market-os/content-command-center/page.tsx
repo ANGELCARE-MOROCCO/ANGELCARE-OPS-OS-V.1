@@ -1,4 +1,4 @@
-import ContentCommandCenter from "@/components/market-os/content-command-center"
+import ContentCommandCenter from "@/app/components/market-os/content-command-center"
 
 export const dynamic = "force-dynamic"
 

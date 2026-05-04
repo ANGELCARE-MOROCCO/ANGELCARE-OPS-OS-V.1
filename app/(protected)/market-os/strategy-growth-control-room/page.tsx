@@ -1,4 +1,4 @@
-import StrategyGrowthControlRoom from "@/components/market-os/strategy-growth-control-room"
+import StrategyGrowthControlRoom from "@/app/components/market-os/strategy-growth-control-room"
 
 export const dynamic = "force-dynamic"
 

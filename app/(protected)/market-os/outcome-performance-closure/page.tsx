@@ -1,4 +1,4 @@
-import OutcomePerformanceClosureEngine from "@/components/market-os/outcome-performance-closure-engine"
+import OutcomePerformanceClosureEngine from "@/app/components/market-os/outcome-performance-closure-engine"
 
 export const dynamic = "force-dynamic"
 

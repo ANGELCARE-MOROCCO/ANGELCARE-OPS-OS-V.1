@@ -1,4 +1,4 @@
-import InvestorMarketingCommandCenter from "@/components/market-os/investor-marketing-command-center"
+import InvestorMarketingCommandCenter from "@/app/components/market-os/investor-marketing-command-center"
 
 export const dynamic = "force-dynamic"
 

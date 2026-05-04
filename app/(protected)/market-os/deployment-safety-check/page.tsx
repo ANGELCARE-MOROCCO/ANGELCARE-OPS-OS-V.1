@@ -1,4 +1,4 @@
-import DeploymentSafetyCheck from "@/components/market-os/deployment-safety-check"
+import DeploymentSafetyCheck from "@/app/components/market-os/deployment-safety-check"
 
 export const dynamic = "force-dynamic"
 

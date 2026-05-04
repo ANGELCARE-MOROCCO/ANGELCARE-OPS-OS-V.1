@@ -1,4 +1,4 @@
-import MarketExpansionCityOpportunityEngine from "@/components/market-os/market-expansion-city-opportunity-engine"
+import MarketExpansionCityOpportunityEngine from "@/app/components/market-os/market-expansion-city-opportunity-engine"
 
 export const dynamic = "force-dynamic"
 

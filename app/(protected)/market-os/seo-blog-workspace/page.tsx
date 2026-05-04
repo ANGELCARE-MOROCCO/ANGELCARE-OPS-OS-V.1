@@ -1,4 +1,4 @@
-import SeoBlogWorkspace from "@/components/market-os/seo-blog-workspace"
+import SeoBlogWorkspace from "@/app/components/market-os/seo-blog-workspace"
 
 export const dynamic = "force-dynamic"
 

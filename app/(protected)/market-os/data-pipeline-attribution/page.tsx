@@ -1,4 +1,4 @@
-import DataPipelineAttributionEngine from "@/components/market-os/data-pipeline-attribution-engine"
+import DataPipelineAttributionEngine from "@/app/components/market-os/data-pipeline-attribution-engine"
 
 export const dynamic = "force-dynamic"
 

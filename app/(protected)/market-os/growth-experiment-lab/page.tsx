@@ -1,4 +1,4 @@
-import GrowthExperimentLab from "@/components/market-os/growth-experiment-lab"
+import GrowthExperimentLab from "@/app/components/market-os/growth-experiment-lab"
 
 export const dynamic = "force-dynamic"
 

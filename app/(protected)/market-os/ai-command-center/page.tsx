@@ -1,4 +1,4 @@
-import AiCommandCenter from "@/components/market-os/ai-command-center"
+import AiCommandCenter from "@/app/components/market-os/ai-command-center"
 
 export const dynamic = "force-dynamic"
 

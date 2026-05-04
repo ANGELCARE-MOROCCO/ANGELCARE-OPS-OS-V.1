@@ -1,4 +1,4 @@
-import WorkforceCapacityCommandEngine from "@/components/market-os/workforce-capacity-command-engine"
+import WorkforceCapacityCommandEngine from "@/app/components/market-os/workforce-capacity-command-engine"
 
 export const dynamic = "force-dynamic"
 

@@ -1,4 +1,4 @@
-import MarketOsUserManagement from "@/components/market-os/market-os-user-management"
+import MarketOsUserManagement from "@/app/components/market-os/market-os-user-management"
 
 export const dynamic = "force-dynamic"
 

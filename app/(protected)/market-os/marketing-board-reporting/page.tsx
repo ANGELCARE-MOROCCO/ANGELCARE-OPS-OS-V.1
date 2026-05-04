@@ -1,4 +1,4 @@
-import MarketingBoardReportingEngine from "@/components/market-os/marketing-board-reporting-engine"
+import MarketingBoardReportingEngine from "@/app/components/market-os/marketing-board-reporting-engine"
 
 export const dynamic = "force-dynamic"
 

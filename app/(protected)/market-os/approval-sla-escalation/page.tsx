@@ -1,4 +1,4 @@
-import ApprovalSlaEscalationEngine from "@/components/market-os/approval-sla-escalation-engine"
+import ApprovalSlaEscalationEngine from "@/app/components/market-os/approval-sla-escalation-engine"
 
 export const dynamic = "force-dynamic"
 

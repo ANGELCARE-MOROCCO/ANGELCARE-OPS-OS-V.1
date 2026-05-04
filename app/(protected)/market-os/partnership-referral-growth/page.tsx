@@ -1,4 +1,4 @@
-import PartnershipReferralGrowthEngine from "@/components/market-os/partnership-referral-growth-engine"
+import PartnershipReferralGrowthEngine from "@/app/components/market-os/partnership-referral-growth-engine"
 
 export const dynamic = "force-dynamic"
 

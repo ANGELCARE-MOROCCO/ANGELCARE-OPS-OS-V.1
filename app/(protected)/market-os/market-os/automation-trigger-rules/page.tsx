@@ -1,4 +1,4 @@
-import AutomationTriggerRulesEngine from "@/components/market-os/automation-trigger-rules-engine"
+import AutomationTriggerRulesEngine from "@/app/components/market-os/automation-trigger-rules-engine"
 
 export const dynamic = "force-dynamic"
 

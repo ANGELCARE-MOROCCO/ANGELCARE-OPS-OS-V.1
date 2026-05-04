@@ -1,4 +1,4 @@
-import MarketOsFinalIndex from "@/components/market-os/market-os-final-index"
+import MarketOsFinalIndex from "@/app/components/market-os/market-os-final-index"
 
 export const dynamic = "force-dynamic"
 

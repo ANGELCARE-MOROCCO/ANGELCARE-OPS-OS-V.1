@@ -1,4 +1,4 @@
-import SeoAuthorityGrowthEngine from "@/components/market-os/seo-authority-growth-engine"
+import SeoAuthorityGrowthEngine from "@/app/components/market-os/seo-authority-growth-engine"
 
 export const dynamic = "force-dynamic"
 

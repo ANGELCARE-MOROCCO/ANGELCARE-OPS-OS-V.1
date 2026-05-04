@@ -1,4 +1,4 @@
-import AiSynthesisEngine from "@/components/market-os/ai-synthesis-engine"
+import AiSynthesisEngine from "@/app/components/market-os/ai-synthesis-engine"
 
 export const dynamic = "force-dynamic"
 

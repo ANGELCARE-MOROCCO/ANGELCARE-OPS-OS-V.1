@@ -1,4 +1,4 @@
-import OperatingDoctrineEngine from "@/components/market-os/operating-doctrine-engine"
+import OperatingDoctrineEngine from "@/app/components/market-os/operating-doctrine-engine"
 
 export const dynamic = "force-dynamic"
 

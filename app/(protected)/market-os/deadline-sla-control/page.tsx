@@ -1,4 +1,4 @@
-import DeadlineSlaControl from "@/components/market-os/deadline-sla-control"
+import DeadlineSlaControl from "@/app/components/market-os/deadline-sla-control"
 
 export const dynamic = "force-dynamic"
 

@@ -1,4 +1,4 @@
-import ContentBrandGovernanceEngine from "@/components/market-os/content-brand-governance-engine"
+import ContentBrandGovernanceEngine from "@/app/components/market-os/content-brand-governance-engine"
 
 export const dynamic = "force-dynamic"
 

@@ -37,7 +37,7 @@ function badgeClass(value: string) {
 
   return "border-slate-200 bg-slate-50 text-slate-700"
 }
-import MarketActionButton from "@/components/market-os/market-action-button"
+import MarketActionButton from "@/app/components/market-os/market-action-button"
 
 export default function ApprovalSlaEscalationEngine() {
   const [query, setQuery] = useState("")

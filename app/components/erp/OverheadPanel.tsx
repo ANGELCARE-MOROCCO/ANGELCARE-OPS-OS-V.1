@@ -21,6 +21,15 @@ type SystemSignal = {
   pulse?: boolean
 }
 
+type UserAlert = {
+  id: string
+  title: string
+  body: string
+  source: "HR" | "Memo" | "System" | "Connect"
+  createdAt: string
+  urgent?: boolean
+}
+
 const PUNCHES: {
   action: PunchAction
   label: string
@@ -141,9 +150,25 @@ export default function OverheadPanel() {
   const [voiceState, setVoiceState] = useState<"ready" | "incoming" | "offline">("ready")
   const [connectState, setConnectState] = useState<"online" | "message" | "offline">("online")
   const [pagesOpen, setPagesOpen] = useState(false)
+  const [alertsOpen, setAlertsOpen] = useState(false)
+  const [userAlerts, setUserAlerts] = useState<UserAlert[]>([])
   const [allowedRoutes, setAllowedRoutes] = useState<AppRoute[]>([])
   const [routesLoading, setRoutesLoading] = useState(false)
   const appPagesRef = useRef<HTMLDivElement | null>(null)
+  const alertsRef = useRef<HTMLDivElement | null>(null)
+
+  const pushUserAlert = (alert: Omit<UserAlert, "id" | "createdAt"> & { createdAt?: string }) => {
+    const nextAlert: UserAlert = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      createdAt: alert.createdAt || new Date().toISOString(),
+      title: alert.title,
+      body: alert.body,
+      source: alert.source,
+      urgent: alert.urgent,
+    }
+
+    setUserAlerts((current) => [nextAlert, ...current].slice(0, 8))
+  }
 
   useEffect(() => {
     setNow(new Date())
@@ -170,6 +195,26 @@ export default function OverheadPanel() {
     const onConnectMessage = () => {
       setConnectState("message")
       setTerminalMessage("ANGELCARE CONNECT • NEW MESSAGE RECEIVED")
+      pushUserAlert({
+        source: "Connect",
+        title: "New Connect message",
+        body: "A new AngelCare Connect message was received.",
+      })
+      window.setTimeout(() => setConnectState("online"), 15000)
+    }
+
+    const onHRMessage = (event: Event) => {
+      const detail = (event as CustomEvent<Partial<UserAlert>>).detail || {}
+
+      pushUserAlert({
+        source: detail.source || "HR",
+        title: detail.title || "New HR memo",
+        body: detail.body || "A new memo or profile message was pushed to your workspace.",
+        urgent: detail.urgent ?? true,
+      })
+
+      setTerminalMessage("HR ALERT • NEW USER-SPECIFIC MEMO RECEIVED")
+      setConnectState("message")
       window.setTimeout(() => setConnectState("online"), 15000)
     }
 
@@ -177,6 +222,7 @@ export default function OverheadPanel() {
     window.addEventListener("offline", onOffline)
     window.addEventListener("angelcare:voice-incoming", onVoiceIncoming)
     window.addEventListener("angelcare:connect-message", onConnectMessage)
+    window.addEventListener("angelcare:hr-message", onHRMessage)
 
     return () => {
       window.clearInterval(clock)
@@ -184,6 +230,7 @@ export default function OverheadPanel() {
       window.removeEventListener("offline", onOffline)
       window.removeEventListener("angelcare:voice-incoming", onVoiceIncoming)
       window.removeEventListener("angelcare:connect-message", onConnectMessage)
+      window.removeEventListener("angelcare:hr-message", onHRMessage)
     }
   }, [])
 
@@ -235,6 +282,18 @@ export default function OverheadPanel() {
     window.addEventListener("mousedown", onPointerDown)
     return () => window.removeEventListener("mousedown", onPointerDown)
   }, [pagesOpen])
+
+  useEffect(() => {
+    if (!alertsOpen) return
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!alertsRef.current) return
+      if (!alertsRef.current.contains(event.target as Node)) setAlertsOpen(false)
+    }
+
+    window.addEventListener("mousedown", onPointerDown)
+    return () => window.removeEventListener("mousedown", onPointerDown)
+  }, [alertsOpen])
 
   const time = useMemo(
     () =>
@@ -302,6 +361,8 @@ export default function OverheadPanel() {
   }, [allowedRoutes])
 
   const routesCount = allowedRoutes.length
+  const urgentAlertsCount = userAlerts.filter((alert) => alert.urgent).length
+  const hasUserAlerts = userAlerts.length > 0
 
   async function punch(action: PunchAction, nextStatus: AttendanceStatus) {
     try {
@@ -340,7 +401,29 @@ export default function OverheadPanel() {
               : "Non pointé"
 
   return (
-    <div style={panelStyle}>
+    <>
+      <style jsx global>{`
+        @keyframes angelcare-radio-pulse {
+          0% { opacity: 1; transform: scale(1); }
+          50% { opacity: .35; transform: scale(1.42); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes angelcare-terminal-scan {
+          0% { transform: translateY(-16px); opacity: 0; }
+          20% { opacity: .7; }
+          100% { transform: translateY(72px); opacity: 0; }
+        }
+
+        @keyframes angelcare-terminal-flicker {
+          0%, 100% { opacity: 1; }
+          45% { opacity: .86; }
+          55% { opacity: .96; }
+          75% { opacity: .78; }
+        }
+      `}</style>
+
+      <div style={panelStyle}>
       <div style={systemZoneStyle}>
         {signals.map((signal) => (
           <div key={signal.label} style={signalChipStyle(signal.tone)}>
@@ -352,6 +435,7 @@ export default function OverheadPanel() {
       </div>
 
       <div style={terminalZoneStyle}>
+        <div style={scanLineStyle} />
         <div style={terminalHeaderStyle}>ANGELCARE OPS TERMINAL</div>
         <div style={terminalDisplayStyle}>{terminalMessage}</div>
       </div>
@@ -441,10 +525,70 @@ export default function OverheadPanel() {
 
         <Link href="/profile" style={userButtonStyle}>👤 Profile</Link>
         <Link href="/revenue-command-center/tasks" style={iconActionStyle}>✅</Link>
-        <Link href="/incidents" style={iconActionStyle}>🔔</Link>
+
+        <div ref={alertsRef} style={alertsDropdownStyle}>
+          <button
+            type="button"
+            onClick={() => setAlertsOpen((value) => !value)}
+            style={alertButtonStyle(hasUserAlerts, alertsOpen)}
+            aria-expanded={alertsOpen}
+            aria-haspopup="menu"
+            title="User alerts, HR memos and operational notifications"
+          >
+            🔔
+            {hasUserAlerts ? <span style={alertDotStyle} /> : null}
+            {hasUserAlerts ? <small style={alertCountStyle}>{userAlerts.length}</small> : null}
+          </button>
+
+          {alertsOpen ? (
+            <div style={alertsMenuStyle}>
+              <div style={alertsHeaderStyle}>
+                <div>
+                  <strong>Personal command alerts</strong>
+                  <span>HR memos • messages • operational pushes</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUserAlerts([])}
+                  style={clearAlertsButtonStyle}
+                >
+                  Clear
+                </button>
+              </div>
+
+              {hasUserAlerts ? (
+                <div style={alertsListStyle}>
+                  {userAlerts.map((alert) => (
+                    <div key={alert.id} style={alertCardStyle(alert.urgent)}>
+                      <div style={alertCardTopStyle}>
+                        <span style={alertSourceStyle(alert.source)}>{alert.source}</span>
+                        <small>{new Date(alert.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</small>
+                      </div>
+                      <strong>{alert.title}</strong>
+                      <p>{alert.body}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={emptyAlertsStyle}>
+                  No personal memo is currently pending. HR/user-profile pushes will appear here with the red radio signal.
+                </div>
+              )}
+
+              <div style={alertsFooterStyle}>
+                <span>{urgentAlertsCount} urgent</span>
+                <Link href="/incidents" onClick={() => setAlertsOpen(false)} style={alertsFooterLinkStyle}>
+                  Open incidents
+                </Link>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
         <Link href="/reports" style={iconActionStyle}>📊</Link>
       </div>
     </div>
+    </>
   )
 }
 
@@ -512,10 +656,13 @@ const signalLabelStyle: CSSProperties = {
 }
 
 const terminalZoneStyle: CSSProperties = {
+  position: "relative",
+  overflow: "hidden",
   borderRadius: 15,
-  border: "1px solid rgba(34,197,94,.32)",
-  background: "linear-gradient(180deg,#05140c,#06110b)",
-  boxShadow: "inset 0 0 22px rgba(34,197,94,.10), 0 0 22px rgba(34,197,94,.10)",
+  border: "1px solid rgba(34,197,94,.42)",
+  background:
+    "radial-gradient(circle at 10% 20%, rgba(34,197,94,.13), transparent 30%), linear-gradient(180deg,#05140c,#06110b)",
+  boxShadow: "inset 0 0 26px rgba(34,197,94,.16), 0 0 26px rgba(34,197,94,.13)",
   padding: "8px 10px",
   minWidth: 0,
 }
@@ -535,7 +682,8 @@ const terminalDisplayStyle: CSSProperties = {
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  textShadow: "0 0 8px rgba(34,197,94,.45)",
+  textShadow: "0 0 11px rgba(34,197,94,.68)",
+  animation: "angelcare-terminal-flicker 3.4s infinite",
 }
 
 const attendanceZoneStyle: CSSProperties = {
@@ -751,6 +899,7 @@ const userButtonStyle: CSSProperties = {
 }
 
 const iconActionStyle: CSSProperties = {
+  position: "relative",
   width: 40,
   height: 40,
   borderRadius: 14,
@@ -759,4 +908,180 @@ const iconActionStyle: CSSProperties = {
   background: "rgba(255,255,255,.08)",
   border: "1px solid rgba(255,255,255,.14)",
   textDecoration: "none",
+}
+
+const scanLineStyle: CSSProperties = {
+  position: "absolute",
+  left: 0,
+  right: 0,
+  top: 0,
+  height: 18,
+  background: "linear-gradient(180deg, rgba(34,197,94,0), rgba(34,197,94,.22), rgba(34,197,94,0))",
+  animation: "angelcare-terminal-scan 2.6s linear infinite",
+  pointerEvents: "none",
+}
+
+const alertsDropdownStyle: CSSProperties = {
+  position: "relative",
+}
+
+const alertButtonStyle = (hasAlerts: boolean, open: boolean): CSSProperties => ({
+  position: "relative",
+  width: 40,
+  height: 40,
+  borderRadius: 14,
+  display: "grid",
+  placeItems: "center",
+  background: open
+    ? "rgba(239,68,68,.20)"
+    : hasAlerts
+      ? "rgba(239,68,68,.14)"
+      : "rgba(255,255,255,.08)",
+  border: open
+    ? "1px solid rgba(248,113,113,.72)"
+    : hasAlerts
+      ? "1px solid rgba(248,113,113,.45)"
+      : "1px solid rgba(255,255,255,.14)",
+  color: "#fff",
+  cursor: "pointer",
+  boxShadow: hasAlerts ? "0 0 24px rgba(239,68,68,.24)" : "none",
+})
+
+const alertDotStyle: CSSProperties = {
+  position: "absolute",
+  top: 5,
+  right: 5,
+  width: 9,
+  height: 9,
+  borderRadius: 999,
+  background: "#ef4444",
+  boxShadow: "0 0 12px #ef4444, 0 0 24px rgba(239,68,68,.45)",
+  animation: "angelcare-radio-pulse 1s infinite",
+  border: "1px solid rgba(255,255,255,.88)",
+}
+
+const alertCountStyle: CSSProperties = {
+  position: "absolute",
+  bottom: -4,
+  right: -4,
+  minWidth: 17,
+  height: 17,
+  padding: "0 5px",
+  borderRadius: 999,
+  background: "#ef4444",
+  color: "#fff",
+  border: "2px solid #020617",
+  fontSize: 9,
+  fontWeight: 950,
+  display: "grid",
+  placeItems: "center",
+}
+
+const alertsMenuStyle: CSSProperties = {
+  position: "absolute",
+  top: 48,
+  right: 0,
+  width: 390,
+  maxHeight: "calc(100vh - 112px)",
+  overflowY: "auto",
+  borderRadius: 22,
+  background: "linear-gradient(180deg,#0f172a,#020617)",
+  border: "1px solid rgba(248,113,113,.28)",
+  boxShadow: "0 28px 80px rgba(2,6,23,.55), 0 0 34px rgba(239,68,68,.16)",
+  color: "#e5eefc",
+  zIndex: 5200,
+  padding: 14,
+}
+
+const alertsHeaderStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: 12,
+  paddingBottom: 12,
+  borderBottom: "1px solid rgba(148,163,184,.18)",
+  marginBottom: 12,
+}
+
+const clearAlertsButtonStyle: CSSProperties = {
+  border: "1px solid rgba(255,255,255,.14)",
+  borderRadius: 999,
+  background: "rgba(255,255,255,.08)",
+  color: "#cbd5e1",
+  padding: "7px 10px",
+  fontSize: 11,
+  fontWeight: 900,
+  cursor: "pointer",
+}
+
+const alertsListStyle: CSSProperties = {
+  display: "grid",
+  gap: 9,
+}
+
+const alertCardStyle = (urgent?: boolean): CSSProperties => ({
+  display: "grid",
+  gap: 6,
+  borderRadius: 16,
+  padding: 11,
+  background: urgent ? "rgba(239,68,68,.12)" : "rgba(255,255,255,.06)",
+  border: urgent ? "1px solid rgba(248,113,113,.32)" : "1px solid rgba(255,255,255,.10)",
+})
+
+const alertCardTopStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  color: "#94a3b8",
+  fontSize: 10,
+  fontWeight: 850,
+}
+
+const alertSourceStyle = (source: UserAlert["source"]): CSSProperties => ({
+  padding: "3px 7px",
+  borderRadius: 999,
+  background:
+    source === "HR"
+      ? "rgba(239,68,68,.18)"
+      : source === "Connect"
+        ? "rgba(245,158,11,.18)"
+        : "rgba(56,189,248,.16)",
+  color:
+    source === "HR"
+      ? "#fecaca"
+      : source === "Connect"
+        ? "#fde68a"
+        : "#bae6fd",
+  fontSize: 9,
+  fontWeight: 950,
+  letterSpacing: .5,
+})
+
+const emptyAlertsStyle: CSSProperties = {
+  padding: 16,
+  borderRadius: 16,
+  background: "rgba(255,255,255,.06)",
+  border: "1px dashed rgba(148,163,184,.28)",
+  color: "#cbd5e1",
+  fontSize: 12,
+  fontWeight: 800,
+  lineHeight: 1.6,
+}
+
+const alertsFooterStyle: CSSProperties = {
+  marginTop: 12,
+  paddingTop: 10,
+  borderTop: "1px solid rgba(148,163,184,.18)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  color: "#94a3b8",
+  fontSize: 11,
+  fontWeight: 850,
+}
+
+const alertsFooterLinkStyle: CSSProperties = {
+  color: "#bfdbfe",
+  textDecoration: "none",
+  fontWeight: 950,
 }

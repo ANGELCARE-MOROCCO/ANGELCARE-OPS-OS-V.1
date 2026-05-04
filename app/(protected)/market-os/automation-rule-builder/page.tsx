@@ -1,4 +1,4 @@
-import AutomationRuleBuilder from "@/components/market-os/automation-rule-builder"
+import AutomationRuleBuilder from "@/app/components/market-os/automation-rule-builder"
 
 export const dynamic = "force-dynamic"
 

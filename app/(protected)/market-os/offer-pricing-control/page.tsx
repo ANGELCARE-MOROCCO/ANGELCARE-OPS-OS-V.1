@@ -1,4 +1,4 @@
-import OfferPricingControlEngine from "@/components/market-os/offer-pricing-control-engine"
+import OfferPricingControlEngine from "@/app/components/market-os/offer-pricing-control-engine"
 
 export const dynamic = "force-dynamic"
 

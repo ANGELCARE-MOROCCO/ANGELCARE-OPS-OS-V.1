@@ -1,4 +1,4 @@
-import LeadIntakeControlEngine from "@/components/market-os/lead-intake-control-engine"
+import LeadIntakeControlEngine from "@/app/components/market-os/lead-intake-control-engine"
 
 export const dynamic = "force-dynamic"
 

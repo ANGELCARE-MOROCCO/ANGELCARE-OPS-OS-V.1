@@ -1,4 +1,4 @@
-import SeoEditorialCalendarControl from "@/components/market-os/seo-editorial-calendar-control"
+import SeoEditorialCalendarControl from "@/app/components/market-os/seo-editorial-calendar-control"
 
 export const dynamic = "force-dynamic"
 

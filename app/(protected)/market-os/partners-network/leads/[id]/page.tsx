@@ -1,4 +1,4 @@
-import { DatabaseCrudPage } from "@/components/market-os/database-crud-suite"
+import { DatabaseCrudPage } from "@/app/components/market-os/database-crud-suite"
 
 type PageProps = { params: Promise<{ id: string }> }
 

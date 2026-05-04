@@ -16,14 +16,25 @@ import {
 
 type CallStatus = "idle" | "calling" | "active" | "hold"
 
+const MINIMIZED_KEY = "angelcare_voice_terminal_minimized"
+
+async function safeJson(res: Response) {
+  const contentType = res.headers.get("content-type") || ""
+  if (!res.ok) return null
+  if (!contentType.includes("application/json")) return null
+
+  try {
+    return await res.json()
+  } catch {
+    return null
+  }
+}
+
 export default function VoicePhoneWidget() {
   const [number, setNumber] = useState("")
   const [transferTo, setTransferTo] = useState("")
   const [status, setStatus] = useState<CallStatus>("idle")
-const [minimized, setMinimized] = useState(() => {
-  if (typeof window === "undefined") return false
-  return localStorage.getItem("angelcare_voice_terminal_minimized") === "true"
-})
+  const [minimized, setMinimized] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [lead, setLead] = useState<any>(null)
   const [note, setNote] = useState("")
@@ -39,11 +50,16 @@ const [minimized, setMinimized] = useState(() => {
   const beepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
 
-  // Prevents the second Telnyx WebRTC bridge leg from creating a duplicate popup
   const bridgeAutoAnswerRef = useRef(false)
   const originalCallerRef = useRef("")
   const handledCallControlIdRef = useRef<string | null>(null)
   const suppressWebrtcPopupRef = useRef(true)
+
+  useEffect(() => {
+    try {
+      setMinimized(localStorage.getItem(MINIMIZED_KEY) === "true")
+    } catch {}
+  }, [])
 
   const stopRadarBeep = () => {
     if (beepIntervalRef.current) {
@@ -81,7 +97,6 @@ const [minimized, setMinimized] = useState(() => {
   const requestMicPermission = async () => {
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
-        console.error("Browser does not support getUserMedia")
         setMicReady(false)
         return false
       }
@@ -89,7 +104,6 @@ const [minimized, setMinimized] = useState(() => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       stream.getTracks().forEach((track) => track.stop())
       setMicReady(true)
-      console.log("Microphone permission granted")
       return true
     } catch (error) {
       setMicReady(false)
@@ -104,10 +118,7 @@ const [minimized, setMinimized] = useState(() => {
         remoteAudioRef.current ||
         (document.getElementById("telnyx-remote-audio") as HTMLAudioElement | null)
 
-      if (!audio) {
-        console.error("Remote audio element not found")
-        return
-      }
+      if (!audio) return
 
       let remoteStream: MediaStream | null =
         call?.remoteStream ||
@@ -115,13 +126,16 @@ const [minimized, setMinimized] = useState(() => {
         call?.session?.remoteStream ||
         null
 
-      const peerConnection = call?.peerConnection || call?.pc || call?.session?.peerConnection
+      const peerConnection =
+        call?.peerConnection || call?.pc || call?.session?.peerConnection
 
       if (!remoteStream && peerConnection?.getReceivers) {
         const audioTracks = peerConnection
           .getReceivers()
           .map((receiver: RTCRtpReceiver) => receiver.track)
-          .filter((track: MediaStreamTrack | null) => track && track.kind === "audio") as MediaStreamTrack[]
+          .filter(
+            (track: MediaStreamTrack | null) => track && track.kind === "audio"
+          ) as MediaStreamTrack[]
 
         if (audioTracks.length > 0) {
           remoteStream = new MediaStream(audioTracks)
@@ -130,9 +144,6 @@ const [minimized, setMinimized] = useState(() => {
 
       if (remoteStream && remoteStream.getAudioTracks().length > 0) {
         audio.srcObject = remoteStream
-        console.log("Remote audio stream attached:", remoteStream.getAudioTracks())
-      } else {
-        console.warn("No remote audio stream found on call object yet")
       }
 
       audio.autoplay = true
@@ -140,9 +151,7 @@ const [minimized, setMinimized] = useState(() => {
       audio.muted = false
       audio.volume = 1
 
-      await audio.play().then(() => {
-        console.log("Remote audio playback started")
-      }).catch((error) => {
+      await audio.play().catch((error) => {
         console.warn("Remote audio play blocked or failed:", error)
       })
     } catch (error) {
@@ -169,10 +178,14 @@ const [minimized, setMinimized] = useState(() => {
       if (incomingNumber || status !== "idle") return
 
       try {
-        const res = await fetch("/api/voice/incoming/latest")
-        const json = await res.json()
-        const call = json.call
+        const res = await fetch("/api/voice/incoming/latest", {
+          cache: "no-store",
+        })
 
+        const json = await safeJson(res)
+        if (!json?.call) return
+
+        const call = json.call
         const incomingId = call?.telnyx_call_control_id || null
         const caller = call?.from_number || ""
 
@@ -191,9 +204,9 @@ const [minimized, setMinimized] = useState(() => {
           startRadarBeep()
         }
       } catch (error) {
-        console.error("Incoming poll error:", error)
+        console.warn("Incoming poll skipped:", error)
       }
-    }, 2000)
+    }, 3000)
 
     return () => clearInterval(poll)
   }, [incomingNumber, status])
@@ -209,12 +222,14 @@ const [minimized, setMinimized] = useState(() => {
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(
-          `/api/voice/leads/lookup?phone=${encodeURIComponent(number)}`
+          `/api/voice/leads/lookup?phone=${encodeURIComponent(number)}`,
+          { cache: "no-store" }
         )
-        const json = await res.json()
-        setLead(json.lead || null)
+
+        const json = await safeJson(res)
+        setLead(json?.lead || null)
       } catch (error) {
-        console.error("Lead lookup error:", error)
+        console.warn("Lead lookup skipped:", error)
         setLead(null)
       }
     }, 400)
@@ -242,17 +257,15 @@ const [minimized, setMinimized] = useState(() => {
     clientRef.current = client
 
     client.on("telnyx.ready", () => {
-      console.log("Telnyx WebRTC READY")
       setWebrtcReady(true)
     })
 
-    client.on('telnyx.error', (error: any) => {
-  console.warn('Telnyx WebRTC warning:', error)
-  setWebrtcReady(false)
-})
+    client.on("telnyx.error", (error: any) => {
+      console.warn("Telnyx WebRTC warning:", error)
+      setWebrtcReady(false)
+    })
 
     client.on("telnyx.notification", async (notification: any) => {
-      console.log("Telnyx notification:", notification)
       const call = notification.call
 
       if (notification.type === "callUpdate" && call) {
@@ -261,8 +274,6 @@ const [minimized, setMinimized] = useState(() => {
         if (call.state === "ringing") {
           activeCallRef.current = call
 
-          // This is the second WebRTC leg after transfer.
-          // Never show a second popup. Auto-answer it silently.
           if (bridgeAutoAnswerRef.current || suppressWebrtcPopupRef.current) {
             try {
               await call.answer()
@@ -332,7 +343,7 @@ const [minimized, setMinimized] = useState(() => {
         client.disconnect()
       } catch {}
     }
-  }, [])
+  }, [number])
 
   const formatTime = (s: number) => {
     const min = Math.floor(s / 60)
@@ -355,13 +366,11 @@ const [minimized, setMinimized] = useState(() => {
     try {
       const res = await fetch("/api/voice/outbound", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ to: number }),
       })
 
-      const json = await res.json().catch(() => ({}))
+      const json = await safeJson(res)
 
       if (!res.ok) {
         console.error("Outbound call failed:", json)
@@ -381,23 +390,27 @@ const [minimized, setMinimized] = useState(() => {
   const logCall = async () => {
     if (!number.trim()) return
 
-    await fetch("/api/voice/calls/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        direction: incomingNumber ? "inbound" : "outbound",
-        from_number: incomingNumber || "VoiceWidget",
-        to_number: incomingNumber ? "AngelCare" : number,
-        agent_extension: "1001",
-        lead_id: lead?.id || null,
-        status: outcome,
-        queue_status: queueStatus === "none" ? "completed" : queueStatus,
-        queue_name: "main_voice_queue",
-        duration_seconds: seconds,
-        notes: note,
-        outcome,
-      }),
-    })
+    try {
+      await fetch("/api/voice/calls/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          direction: incomingNumber ? "inbound" : "outbound",
+          from_number: incomingNumber || "VoiceWidget",
+          to_number: incomingNumber ? "AngelCare" : number,
+          agent_extension: "1001",
+          lead_id: lead?.id || null,
+          status: outcome,
+          queue_status: queueStatus === "none" ? "completed" : queueStatus,
+          queue_name: "main_voice_queue",
+          duration_seconds: seconds,
+          notes: note,
+          outcome,
+        }),
+      })
+    } catch (error) {
+      console.warn("Call log skipped:", error)
+    }
   }
 
   const simulateIncoming = () => {
@@ -419,13 +432,9 @@ const [minimized, setMinimized] = useState(() => {
   const answerIncoming = async () => {
     await requestMicPermission()
 
-    // The next WebRTC ringing event is the bridge leg.
-    // Auto-answer it silently and do not show a second popup.
     bridgeAutoAnswerRef.current = true
 
     const call = activeCallRef.current
-    console.log("ACTIVE WEBRTC CALL:", call)
-    console.log("CALL CONTROL ID:", callControlId)
 
     if (call?.answer) {
       await call.answer()
@@ -470,23 +479,25 @@ const [minimized, setMinimized] = useState(() => {
       })
     }
 
-    await fetch("/api/voice/calls/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        direction: "inbound",
-        from_number: incomingNumber || number,
-        to_number: "AngelCare",
-        agent_extension: "1001",
-        lead_id: lead?.id || null,
-        status: "missed",
-        queue_status: "missed",
-        queue_name: "main_voice_queue",
-        duration_seconds: seconds,
-        notes: "Incoming call rejected/missed from Voice Terminal V2",
-        outcome: "no_answer",
-      }),
-    })
+    try {
+      await fetch("/api/voice/calls/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          direction: "inbound",
+          from_number: incomingNumber || number,
+          to_number: "AngelCare",
+          agent_extension: "1001",
+          lead_id: lead?.id || null,
+          status: "missed",
+          queue_status: "missed",
+          queue_name: "main_voice_queue",
+          duration_seconds: seconds,
+          notes: "Incoming call rejected/missed from Voice Terminal V2",
+          outcome: "no_answer",
+        }),
+      })
+    } catch {}
 
     setIncomingNumber("")
     setStatus("idle")
@@ -557,6 +568,15 @@ const [minimized, setMinimized] = useState(() => {
     setTransferTo("")
   }
 
+  const toggleMinimized = () => {
+    const next = !minimized
+    setMinimized(next)
+
+    try {
+      localStorage.setItem(MINIMIZED_KEY, String(next))
+    } catch {}
+  }
+
   const statusLabel = {
     idle: "Prêt",
     calling: "Appel en cours",
@@ -612,14 +632,7 @@ const [minimized, setMinimized] = useState(() => {
             </div>
           </div>
 
-<button
-  className="vt-icon-btn"
-  onClick={() => {
-    const next = !minimized
-    setMinimized(next)
-    localStorage.setItem("angelcare_voice_terminal_minimized", String(next))
-  }}
->
+          <button className="vt-icon-btn" onClick={toggleMinimized}>
             <Minus size={15} />
           </button>
         </div>
@@ -636,7 +649,9 @@ const [minimized, setMinimized] = useState(() => {
                 <b>{lead.parent_name || lead.name || "Lead détecté"}</b>
                 <span>{lead.phone}</span>
                 <span>{lead.city || "Ville non renseignée"}</span>
-                <small>{lead.service_interest || lead.stage || "Besoin à qualifier"}</small>
+                <small>
+                  {lead.service_interest || lead.stage || "Besoin à qualifier"}
+                </small>
               </div>
             )}
 
@@ -671,11 +686,13 @@ const [minimized, setMinimized] = useState(() => {
             </div>
 
             <div className="vt-keypad">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "0", "#"].map((key) => (
-                <button key={key} onClick={() => press(key)}>
-                  {key}
-                </button>
-              ))}
+              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "0", "#"].map(
+                (key) => (
+                  <button key={key} onClick={() => press(key)}>
+                    {key}
+                  </button>
+                )
+              )}
             </div>
 
             <div className="vt-inbound-test">

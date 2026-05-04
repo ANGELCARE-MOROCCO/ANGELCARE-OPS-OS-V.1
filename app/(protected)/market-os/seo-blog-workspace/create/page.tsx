@@ -1,4 +1,4 @@
-import SeoBlogCreatePage from "@/components/market-os/seo-blog-create-page"
+import SeoBlogCreatePage from "@/app/components/market-os/seo-blog-create-page"
 
 export const dynamic = "force-dynamic"
 

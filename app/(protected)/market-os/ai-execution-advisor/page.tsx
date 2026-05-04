@@ -1,4 +1,4 @@
-import AiExecutionAdvisor from "@/components/market-os/ai-execution-advisor"
+import AiExecutionAdvisor from "@/app/components/market-os/ai-execution-advisor"
 
 export const dynamic = "force-dynamic"
 

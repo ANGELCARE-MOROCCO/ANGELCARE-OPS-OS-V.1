@@ -1,4 +1,4 @@
-import SeoBlogEditor from "@/components/market-os/seo-blog-editor"
+import SeoBlogEditor from "@/app/components/market-os/seo-blog-editor"
 
 export const dynamic = "force-dynamic"
 

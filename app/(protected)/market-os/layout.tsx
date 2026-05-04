@@ -1,4 +1,4 @@
-import MarketOsLayout from "@/components/market-os/layout/layout"
+import MarketOsLayout from "@/app/components/market-os/layout/layout"
 
 export default function Layout({
   children,

@@ -1,4 +1,4 @@
-import AuditPlaybookMemoryEngine from "@/components/market-os/audit-playbook-memory-engine"
+import AuditPlaybookMemoryEngine from "@/app/components/market-os/audit-playbook-memory-engine"
 
 export const dynamic = "force-dynamic"
 
