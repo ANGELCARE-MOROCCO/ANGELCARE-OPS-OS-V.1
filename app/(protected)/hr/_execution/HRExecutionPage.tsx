@@ -6,8 +6,9 @@ import { createHRExecutionRecord, updateHRExecutionStatus } from './actions'
 
 export const dynamic = 'force-dynamic'
 
-type FieldType = 'text' | 'textarea' | 'select' | 'date' | 'time' | 'number' | 'hidden'
-type Field = { name: string; label: string; type?: FieldType; placeholder?: string; options?: string[]; required?: boolean; value?: string }
+type FieldType = 'text' | 'select' | 'date' | 'time' | 'number' | 'hidden'
+type FieldVariant = 'textarea'
+type Field = { name: string; label: string; type?: FieldType; variant?: FieldVariant; placeholder?: string; options?: string[]; required?: boolean; value?: string }
 type TableConfig = { table: string; order?: string; columns: string[]; labels: string[]; moduleKey: string }
 
 type HRExecutionPageProps = {
@@ -49,7 +50,7 @@ function FieldInput({ field }: { field: Field }) {
     return <input type="hidden" name={field.name} value={field.value || ''} />
   }
 
-  if (field.type === 'textarea') {
+  if (field.variant === 'textarea') {
     return (
       <label style={styles.fieldWide}>
         <span>{field.label}</span>
@@ -72,7 +73,7 @@ function FieldInput({ field }: { field: Field }) {
   }
 
   return (
-    <label style={field.type === 'textarea' ? styles.fieldWide : styles.field}>
+    <label style={field.variant === 'textarea' ? styles.fieldWide : styles.field}>
       <span>{field.label}</span>
       <input
         type={field.type || 'text'}
