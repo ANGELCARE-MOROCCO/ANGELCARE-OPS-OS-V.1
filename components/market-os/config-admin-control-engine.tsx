@@ -1,14 +1,114 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import {
-  adminConfigs,
-  statusLabel,
-  typeLabel,
-  type ConfigRisk,
-  type ConfigStatus,
-  type ConfigType,
-} from "@/lib/market-os/config-admin-control-engine"
+import MarketActionButton from "@/components/market-os/market-action-button"
+
+type ConfigType = "workflow" | "sla" | "approval" | "risk" | "visibility" | "priority"
+type ConfigStatus = "active" | "draft" | "needs_review"
+type ConfigRisk = "critical" | "high" | "medium" | "low"
+
+type AdminConfig = {
+  id: string
+  title: string
+  type: ConfigType
+  status: ConfigStatus
+  risk: ConfigRisk
+  module: string
+  owner: string
+  currentRule: string
+  businessReason: string
+  impact: string
+  nextAction: string
+}
+
+const adminConfigs: AdminConfig[] = [
+  {
+    id: "config-001",
+    title: "Campaign approval gate",
+    type: "approval",
+    status: "active",
+    risk: "high",
+    module: "Campaign Lifecycle",
+    owner: "Marketing Lead",
+    currentRule: "Campaigns with launch risk require manager approval before publication.",
+    businessReason: "Protects campaign quality and prevents rushed launches.",
+    impact: "Reduces blocked launch incidents and improves decision traceability.",
+    nextAction: "Review approval SLA and backup approver.",
+  },
+  {
+    id: "config-002",
+    title: "SEO content creation SLA",
+    type: "sla",
+    status: "active",
+    risk: "medium",
+    module: "SEO Blog Workspace",
+    owner: "Content Manager",
+    currentRule: "New SEO tasks must receive owner and first draft deadline within 24 hours.",
+    businessReason: "Avoids idle content items and improves production rhythm.",
+    impact: "Improves throughput and reduces forgotten drafts.",
+    nextAction: "Connect SLA to reminder automation.",
+  },
+  {
+    id: "config-003",
+    title: "High-budget growth visibility",
+    type: "visibility",
+    status: "needs_review",
+    risk: "critical",
+    module: "Growth Control Room",
+    owner: "Growth Lead",
+    currentRule: "Budget-sensitive actions remain visible to managers and executive users.",
+    businessReason: "Ensures high-cost actions are not hidden from approval stakeholders.",
+    impact: "Improves spend governance and accountability.",
+    nextAction: "Request CEO review for visibility rules.",
+  },
+  {
+    id: "config-004",
+    title: "Content task priority matrix",
+    type: "priority",
+    status: "draft",
+    risk: "low",
+    module: "Content Command Center",
+    owner: "Market OS",
+    currentRule: "Priority is calculated from deadline, campaign impact, owner load and approval status.",
+    businessReason: "Creates consistent task ranking across the marketing department.",
+    impact: "Improves daily prioritization and reduces manual sorting.",
+    nextAction: "Validate with marketing operations team.",
+  },
+  {
+    id: "config-005",
+    title: "Risk escalation workflow",
+    type: "workflow",
+    status: "active",
+    risk: "high",
+    module: "Market Core",
+    owner: "Ops Controller",
+    currentRule: "High and critical risks generate escalation actions and audit events.",
+    businessReason: "Keeps serious risks visible and actionable.",
+    impact: "Strengthens operating control and reduces missed blockers.",
+    nextAction: "Audit escalation outcomes weekly.",
+  },
+]
+
+function statusLabel(status: ConfigStatus) {
+  const labels: Record<ConfigStatus, string> = {
+    active: "Active",
+    draft: "Draft",
+    needs_review: "Needs Review",
+  }
+  return labels[status]
+}
+
+function typeLabel(type: ConfigType) {
+  const labels: Record<ConfigType, string> = {
+    workflow: "Workflow",
+    sla: "SLA",
+    approval: "Approval",
+    risk: "Risk",
+    visibility: "Visibility",
+    priority: "Priority",
+  }
+  return labels[type]
+}
 
 function badgeClass(value: string) {
   if (value === "critical" || value === "high" || value === "draft") return "border-red-200 bg-red-50 text-red-700"
@@ -16,7 +116,6 @@ function badgeClass(value: string) {
   if (value === "low" || value === "active") return "border-emerald-200 bg-emerald-50 text-emerald-700"
   return "border-slate-200 bg-slate-50 text-slate-700"
 }
-import MarketActionButton from "@/components/market-os/market-action-button"
 
 export default function ConfigAdminControlEngine() {
   const [query, setQuery] = useState("")
@@ -53,14 +152,13 @@ export default function ConfigAdminControlEngine() {
       <section className="mx-auto max-w-7xl space-y-6">
         <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
-            Market-OS · Pack 24
+            Market-OS · Self-contained admin config
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Market-OS Configuration & Admin Control Engine
           </h1>
           <p className="mt-4 max-w-3xl text-slate-300">
-            This layer makes Market-OS configurable and governance-ready: workflows, SLA rules,
-            approval gates, risk settings, visibility, priorities and role-based control.
+            This component no longer imports the removed config lib. It keeps admin controls visible with local presets while the backend engine can be rebuilt later.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">

@@ -95,7 +95,7 @@ export default function MarketOsFinalExecutionGuard() {
             <div className="mt-4 max-h-52 overflow-auto rounded-2xl border border-amber-200 bg-amber-50 p-3">
               <div className="text-xs font-black text-amber-900">Buttons requiring verification</div>
               <div className="mt-2 space-y-2">
-                {audit.suspectButtons.slice(0, 8).map((item, index) => (
+                {audit.suspectButtons.slice(0, 8).map((item: any, index: number) => (
                   <div key={`${item.selector}-${index}`} className="text-xs text-amber-900">
                     <span className="font-bold">{item.text}</span>
                     <div className="text-[10px] text-amber-700">{item.selector}</div>

@@ -28,7 +28,20 @@ export async function POST(req: NextRequest) {
     metadata: payload,
   }
   const { data, error } = await supabase.from('revenue_command_records').insert(row).select('*').single()
-  await supabase.from('revenue_command_action_logs').insert({ module_key: row.module_key, page_key: row.page_key, action_key: 'create_record', selected_count: 1, payload: row, status: error ? 'failed' : 'logged' }).catch?.(() => undefined)
+  try {
+  await supabase
+    .from('revenue_command_action_logs')
+    .insert({
+      module_key: row.module_key,
+      page_key: row.page_key,
+      action_key: 'create_record',
+      selected_count: 1,
+      payload: row,
+      status: error ? 'failed' : 'logged'
+    })
+} catch {
+  // do nothing (logging must not break flow)
+}
   return NextResponse.json({ ok: !error, record: data || null, error: error?.message || null })
 }
 

@@ -1,14 +1,125 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import {
-  actionLabel,
-  automationRules,
-  statusLabel,
-  type RuleAction,
-  type RuleRisk,
-  type RuleStatus,
-} from "@/lib/market-os/automation-trigger-rules-engine"
+import MarketActionButton from "@/components/market-os/market-action-button"
+
+type RuleStatus = "active" | "paused" | "draft"
+type RuleRisk = "critical" | "high" | "medium" | "low"
+type RuleAction = "create_task" | "send_alert" | "escalate" | "request_approval" | "create_report"
+
+type AutomationRule = {
+  id: string
+  title: string
+  status: RuleStatus
+  risk: RuleRisk
+  action: RuleAction
+  sourceEngine: string
+  owner: string
+  sla: string
+  triggerCount: number
+  lastTriggered: string
+  triggerCondition: string
+  generatedAction: string
+  businessReason: string
+}
+
+const automationRules: AutomationRule[] = [
+  {
+    id: "auto-rule-001",
+    title: "High-risk campaign blocker escalation",
+    status: "active",
+    risk: "critical",
+    action: "escalate",
+    sourceEngine: "Campaign Lifecycle",
+    owner: "Marketing Lead",
+    sla: "2h",
+    triggerCount: 18,
+    lastTriggered: "Today",
+    triggerCondition: "Campaign task remains blocked while launch date is less than 48 hours away.",
+    generatedAction: "Escalate to marketing lead and create recovery task.",
+    businessReason: "Protects launch deadlines and prevents campaign execution delays.",
+  },
+  {
+    id: "auto-rule-002",
+    title: "SEO content missing owner",
+    status: "active",
+    risk: "high",
+    action: "create_task",
+    sourceEngine: "SEO Blog Workspace",
+    owner: "Content Manager",
+    sla: "24h",
+    triggerCount: 9,
+    lastTriggered: "Yesterday",
+    triggerCondition: "SEO item has no owner or no next action after creation.",
+    generatedAction: "Create task to assign owner and due date.",
+    businessReason: "Prevents content from becoming invisible after intake.",
+  },
+  {
+    id: "auto-rule-003",
+    title: "Approval delay warning",
+    status: "paused",
+    risk: "medium",
+    action: "send_alert",
+    sourceEngine: "Approval Workflow",
+    owner: "Ops Controller",
+    sla: "1 day",
+    triggerCount: 12,
+    lastTriggered: "This week",
+    triggerCondition: "Approval status remains pending beyond configured delay.",
+    generatedAction: "Send alert to manager and requester.",
+    businessReason: "Keeps operational decisions moving without blocking production.",
+  },
+  {
+    id: "auto-rule-004",
+    title: "Weekly content production report",
+    status: "draft",
+    risk: "low",
+    action: "create_report",
+    sourceEngine: "Content Command Center",
+    owner: "Market OS",
+    sla: "Weekly",
+    triggerCount: 0,
+    lastTriggered: "Never",
+    triggerCondition: "Every Monday morning, summarize open, completed and blocked content tasks.",
+    generatedAction: "Create weekly report and route to marketing leadership.",
+    businessReason: "Improves visibility and rhythm for marketing operations.",
+  },
+  {
+    id: "auto-rule-005",
+    title: "Budget-sensitive content decision",
+    status: "active",
+    risk: "high",
+    action: "request_approval",
+    sourceEngine: "Growth Control Room",
+    owner: "Growth Lead",
+    sla: "4h",
+    triggerCount: 5,
+    lastTriggered: "Today",
+    triggerCondition: "Growth action has budget impact above approved threshold.",
+    generatedAction: "Request approval before execution.",
+    businessReason: "Protects spending control while allowing fast growth execution.",
+  },
+]
+
+function statusLabel(status: RuleStatus) {
+  const labels: Record<RuleStatus, string> = {
+    active: "Active",
+    paused: "Paused",
+    draft: "Draft",
+  }
+  return labels[status]
+}
+
+function actionLabel(action: RuleAction) {
+  const labels: Record<RuleAction, string> = {
+    create_task: "Create Task",
+    send_alert: "Send Alert",
+    escalate: "Escalate",
+    request_approval: "Request Approval",
+    create_report: "Create Report",
+  }
+  return labels[action]
+}
 
 function badgeClass(value: string) {
   if (value === "critical" || value === "high" || value === "draft") return "border-red-200 bg-red-50 text-red-700"
@@ -16,7 +127,6 @@ function badgeClass(value: string) {
   if (value === "low" || value === "active" || value === "create_task") return "border-emerald-200 bg-emerald-50 text-emerald-700"
   return "border-slate-200 bg-slate-50 text-slate-700"
 }
-import MarketActionButton from "@/components/market-os/market-action-button"
 
 export default function AutomationTriggerRulesEngine() {
   const [query, setQuery] = useState("")
@@ -52,14 +162,13 @@ export default function AutomationTriggerRulesEngine() {
       <section className="mx-auto max-w-7xl space-y-6">
         <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
-            Market-OS · Pack 23
+            Market-OS · Self-contained rules view
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Marketing Automation & Trigger Rules Engine
           </h1>
           <p className="mt-4 max-w-3xl text-slate-300">
-            This layer makes Market-OS proactive: when signals, risks, SLA issues, campaign blockers
-            or workload problems appear, the system creates tasks, alerts, approvals or escalations.
+            This component no longer imports the removed automation lib. It stays visible and operational with local rule presets while you decide whether to rebuild the backend engine later.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">

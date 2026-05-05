@@ -1,15 +1,90 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import {
-  formatMad,
-  memoryItems,
-  statusLabel,
-  typeLabel,
-  type MemoryRisk,
-  type MemoryStatus,
-  type MemoryType,
-} from "@/lib/market-os/audit-playbook-memory-engine"
+import MarketActionButton from "@/components/market-os/market-action-button"
+
+type MemoryType = "decision" | "mistake" | "success" | "playbook" | "audit" | "lesson"
+type MemoryStatus = "new" | "validated" | "converted" | "archived"
+type MemoryRisk = "critical" | "high" | "medium" | "low"
+
+type MemoryItem = {
+  id: string
+  title: string
+  type: MemoryType
+  status: MemoryStatus
+  risk: MemoryRisk
+  sourceModule: string
+  owner: string
+  createdAt: string
+  businessImpactMad: number
+  lesson: string
+  ruleToRemember: string
+  reusablePlaybook: string
+  nextAction: string
+}
+
+const memoryItems: MemoryItem[] = [
+  {
+    id: "market-memory-001",
+    title: "Campaign approval delay created execution risk",
+    type: "lesson",
+    status: "validated",
+    risk: "high",
+    sourceModule: "Campaign Lifecycle",
+    owner: "Marketing Lead",
+    createdAt: "2026-05-05",
+    businessImpactMad: 42000,
+    lesson: "Campaigns waiting for approval need a visible escalation owner and a deadline.",
+    ruleToRemember: "Every launch-sensitive campaign must have approval owner + deadline + backup validator.",
+    reusablePlaybook: "Approval Delay Recovery Playbook",
+    nextAction: "Convert into campaign approval checklist.",
+  },
+  {
+    id: "market-memory-002",
+    title: "SEO workspace titles improved after scenario presets",
+    type: "success",
+    status: "converted",
+    risk: "low",
+    sourceModule: "SEO Blog Workspace",
+    owner: "Content Officer",
+    createdAt: "2026-05-05",
+    businessImpactMad: 18000,
+    lesson: "Preconfigured SEO scenarios reduce blank-page creation and improve title quality.",
+    ruleToRemember: "All SEO creation pages should start with a scenario selection.",
+    reusablePlaybook: "SEO Scenario Preset Playbook",
+    nextAction: "Reuse preset logic in social content creation.",
+  },
+  {
+    id: "market-memory-003",
+    title: "Missing owner on content task caused follow-up loss",
+    type: "mistake",
+    status: "new",
+    risk: "critical",
+    sourceModule: "Content Command Center",
+    owner: "Market OS",
+    createdAt: "2026-05-05",
+    businessImpactMad: 65000,
+    lesson: "Tasks without assigned owners become invisible during production handoff.",
+    ruleToRemember: "No content task can be created without owner, deadline and next action.",
+    reusablePlaybook: "Ownerless Task Prevention Rule",
+    nextAction: "Add required owner control to content task forms.",
+  },
+  {
+    id: "market-memory-004",
+    title: "Audit event captured for production workflow",
+    type: "audit",
+    status: "validated",
+    risk: "medium",
+    sourceModule: "Market Core",
+    owner: "Ops Controller",
+    createdAt: "2026-05-05",
+    businessImpactMad: 12000,
+    lesson: "Audit logs are useful when they do not block the main user action.",
+    ruleToRemember: "Audit writes must be safe and non-blocking.",
+    reusablePlaybook: "Non-Blocking Audit Logging Pattern",
+    nextAction: "Apply the safe audit pattern to remaining API routes.",
+  },
+]
 
 function badgeClass(value: string) {
   if (value === "critical" || value === "high" || value === "mistake" || value === "new") {
@@ -23,7 +98,36 @@ function badgeClass(value: string) {
   }
   return "border-slate-200 bg-slate-50 text-slate-700"
 }
-import MarketActionButton from "@/components/market-os/market-action-button"
+
+function formatMad(value: number) {
+  return new Intl.NumberFormat("fr-MA", {
+    style: "currency",
+    currency: "MAD",
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
+function typeLabel(type: MemoryType) {
+  const labels: Record<MemoryType, string> = {
+    decision: "Decision",
+    mistake: "Mistake",
+    success: "Success",
+    playbook: "Playbook",
+    audit: "Audit",
+    lesson: "Lesson",
+  }
+  return labels[type]
+}
+
+function statusLabel(status: MemoryStatus) {
+  const labels: Record<MemoryStatus, string> = {
+    new: "New",
+    validated: "Validated",
+    converted: "Converted",
+    archived: "Archived",
+  }
+  return labels[status]
+}
 
 export default function AuditPlaybookMemoryEngine() {
   const [query, setQuery] = useState("")
@@ -61,14 +165,13 @@ export default function AuditPlaybookMemoryEngine() {
       <section className="mx-auto max-w-7xl space-y-6">
         <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
-            Market-OS · Pack 16
+            Market-OS · Local Memory View
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Audit, Playbook & Learning Memory Engine
           </h1>
           <p className="mt-4 max-w-3xl text-slate-300">
-            This layer prevents Market-OS from forgetting. Every decision, mistake, success,
-            audit event and lesson can become a reusable playbook for future execution.
+            This component is now self-contained. It no longer imports the removed lib memory engine, so the build can pass while keeping the page visible.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">

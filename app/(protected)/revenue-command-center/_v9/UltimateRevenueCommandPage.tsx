@@ -331,4 +331,29 @@ function RiskPill({risk}:{risk:string}) {
   const cls = risk === 'Critical' ? 'border-red-300/30 bg-red-400/10 text-red-100' : risk === 'High' ? 'border-amber-300/30 bg-amber-400/10 text-amber-100' : 'border-emerald-300/30 bg-emerald-400/10 text-emerald-100'
   return <span className={`rounded-full border px-2.5 py-1 text-xs ${cls}`}>{risk}</span>
 }
-function MiniButton({icon,label,onClick}:{icon:React.ReactElement;label:string;onClick:()=>void}) { return <button onClick={onClick} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs hover:bg-white/10 flex items-center gap-1">{React.cloneElement(icon,{className:'h-3.5 w-3.5'})}{label}</button> }
+function MiniButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactElement<{ className?: string }>
+  label: string
+  onClick: () => void
+}) {
+  const renderedIcon = React.isValidElement(icon)
+    ? React.cloneElement(icon, {
+        className: ['h-3.5 w-3.5', icon.props.className].filter(Boolean).join(' '),
+      })
+    : null
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs hover:bg-white/10 flex items-center gap-1"
+    >
+      {renderedIcon}
+      {label}
+    </button>
+  )
+}

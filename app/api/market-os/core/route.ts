@@ -43,7 +43,9 @@ function removeUndefined(row: Record<string, unknown>) {
 
 async function seedBaseData(supabase: Awaited<ReturnType<typeof createClient>>) {
   for (const agent of DEFAULT_AGENTS) {
-    const { error } = await supabase.from('market_os_agents').upsert(agent, { onConflict: 'agent_key' })
+    const { error } = await supabase
+  .from('market_os_agents')
+  .upsert(agent as any, { onConflict: 'agent_key' })
     if (error) console.error('Market-OS agent seed error:', error)
   }
 
