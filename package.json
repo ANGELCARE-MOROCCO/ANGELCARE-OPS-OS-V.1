@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "scan:routes": "node scripts/scan-app-routes.mjs"
-},
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "scan:routes": "node scripts/scan-app-routes.mjs"
+  },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",
     "@livekit/components-styles": "^1.2.0",
@@ -20,12 +20,14 @@
     "livekit-server-sdk": "^2.15.2",
     "lucide-react": "^1.11.0",
     "next": "16.2.3",
+    "nodemailer": "^8.0.7",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
