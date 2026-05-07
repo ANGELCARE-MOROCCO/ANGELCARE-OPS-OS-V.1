@@ -1,8 +1,3 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-
-export async function GET() {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('revenue_command_workflows').select('*').eq('is_active', true).order('created_at', { ascending: false })
-  return NextResponse.json({ ok: !error, workflows: data || [], error: error?.message || null })
-}
+import { NextRequest, NextResponse } from 'next/server'
+export async function GET() { return NextResponse.json({ ok: true, workflows: ['intake_owner_sla', 'risk_escalation', 'manager_approval', 'followup_recovery', 'automation_audit'] }) }
+export async function POST(req: NextRequest) { const payload = await req.json().catch(()=>({})); return NextResponse.json({ ok: true, workflow: { id: `workflow-${Date.now()}`, ...payload } }) }

@@ -77,8 +77,6 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Academy', href: '/academy', permission: 'academy.view' },
   { label: 'Services', href: '/services', permission: 'services.view' },
   { label: 'Sales', href: '/sales', permission: 'sales.view' },
-  { label: 'RH', href: '/hr', permission: 'hr.view' },
-  { label: 'RH Overview', href: '/hr/overview', permission: 'hr.view' },
 ] as const
 
 export type ModuleKey = keyof typeof MODULE_PERMISSIONS

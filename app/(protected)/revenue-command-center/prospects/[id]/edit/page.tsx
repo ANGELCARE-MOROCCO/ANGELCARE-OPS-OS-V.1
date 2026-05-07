@@ -1,5 +1,5 @@
-import UltimateRevenueCommandPage from '../../../_v9/UltimateRevenueCommandPage'
+import RevenueCommandFinalWorkspace from '../../../_final/RevenueCommandFinalWorkspace'
 
-export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="prospect-edit" />
+export default function Page({ params }: { params: { id: string } }) {
+  return <RevenueCommandFinalWorkspace workspace="prospectEdit" recordId={params.id} />
 }

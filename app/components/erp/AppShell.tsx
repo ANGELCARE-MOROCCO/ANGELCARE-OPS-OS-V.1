@@ -105,7 +105,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Caregivers', href: '/caregivers', icon: '👩‍👧', keywords: ['staff', 'caregivers'] },
       { label: 'Field Portal', href: '/my-space', icon: '📱', keywords: ['field', 'portal'] },
-      { label: 'HR OS', href: '/hr', icon: '🧑‍💼', keywords: ['hr', 'human resources'] },
       { label: 'Academy Hub', href: '/academy', icon: '🎓', keywords: ['training', 'academy'] },
     ],
   },

@@ -1,2 +1,5 @@
-import EmailOsOperationalCommand from "../components/EmailOsOperationalCommand";
-export default function Page(){ return <EmailOsOperationalCommand mode="sync" />; }
+import EmailOSV12Shell from '@/components/email-os/v12/EmailOSV12Shell';
+
+export default function Page() {
+  return <EmailOSV12Shell mode="sync" />;
+}

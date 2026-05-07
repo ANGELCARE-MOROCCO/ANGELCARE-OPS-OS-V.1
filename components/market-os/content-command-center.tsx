@@ -1,657 +1,720 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
 import {
-  Archive,
-  ArrowUpRight,
-  BarChart3,
-  CalendarDays,
-  CheckCircle2,
-  ClipboardCheck,
-  Eye,
-  FileCheck2,
-  FileText,
-  Filter,
-  Image,
-  Layers3,
-  Megaphone,
-  PauseCircle,
-  PlayCircle,
-  Plus,
-  RotateCcw,
-  Search,
-  Send,
-  Sparkles,
-  Target,
-  UserCheck,
-  Wand2,
-  XCircle,
-} from "lucide-react"
-import {
-  contentTypeLabels,
-  defaultServices,
-  seedContentItems,
-  stageLabels,
-  stageOrder,
-  type ContentPriority,
-  type ContentStage,
-  type ContentWorkspaceItem,
-  type ServiceOption,
-} from "@/lib/market-os/content-workspace"
+  Badge,
+  Button,
+  ContentRow,
+  Metric,
+  Meter,
+  Panel,
+  Shell,
+  channels,
+  canPublish,
+  itemReadiness,
+  nextStatus,
+  statusFlow,
+  statusLabel,
+  useContentStore,
+  todayISO,
+  ContentItem,
+  ContentStatus,
+} from "./content-command/content-command-system"
 
-const STORAGE_KEY = "market-os-content-items"
-const ENABLE_DEMO_CONTENT = false
+type BoardView = "command" | "pipeline" | "table" | "calendar" | "queue"
+type FocusMode = "all" | "urgent" | "review" | "publishing" | "brand" | "planning"
 
-function cn(...v: Array<string | false | null | undefined>) {
-  return v.filter(Boolean).join(" ")
+const pageSurface = "market-os-content-command-contrast-fix min-h-screen bg-slate-50 text-slate-950 antialiased"
+const premiumPanel = "rounded-[1.75rem] border border-slate-200 bg-white shadow-sm shadow-slate-200/60"
+
+const workspaceLinks = [
+  {
+    href: "/market-os/content-command-center/create",
+    label: "Create content",
+    intent: "Open the production form",
+    detail: "Create a content item with channel, owner, reviewer, deadline, objective, audience, CTA and body.",
+    tone: "bg-slate-950 text-white border-slate-950",
+  },
+  {
+    href: "/market-os/content-command-center/briefs",
+    label: "Brief builder",
+    intent: "Convert strategy into work",
+    detail: "Build content briefs and turn them into production-ready direction for creators.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+  {
+    href: "/market-os/content-command-center/calendar",
+    label: "Monthly calendar",
+    intent: "Plan publishing rhythm",
+    detail: "Use the month grid to schedule, reschedule and open content by date.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+  {
+    href: "/market-os/content-command-center/review",
+    label: "Review queue",
+    intent: "Approve or reject work",
+    detail: "Review drafts, send revisions, approve content and unblock publishing.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+  {
+    href: "/market-os/content-command-center/publishing",
+    label: "Publishing queue",
+    intent: "Release approved work",
+    detail: "Publish now, hold, cancel or reschedule approved and scheduled content.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+  {
+    href: "/market-os/content-command-center/tasks",
+    label: "Production tasks",
+    intent: "Assign execution work",
+    detail: "Create tasks, assign owners, update status and clear blockers.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+  {
+    href: "/market-os/content-command-center/assets",
+    label: "Asset library",
+    intent: "Control creative materials",
+    detail: "Register assets, connect them to content and manage approval status.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+  {
+    href: "/market-os/content-command-center/brand-governance",
+    label: "Brand governance",
+    intent: "Protect tone and compliance",
+    detail: "Maintain rules, CTA discipline, medical sensitivity and premium brand standards.",
+    tone: "bg-white text-slate-950 border-slate-200",
+  },
+]
+
+const executiveLanes = [
+  {
+    key: "planning" as FocusMode,
+    title: "Planning lane",
+    description: "Ideas, briefs and draft work that still needs strategic direction.",
+  },
+  {
+    key: "review" as FocusMode,
+    title: "Review lane",
+    description: "Items that require approval, rejection or revision before release.",
+  },
+  {
+    key: "publishing" as FocusMode,
+    title: "Publishing lane",
+    description: "Approved and scheduled work ready for calendar or publishing decisions.",
+  },
+  {
+    key: "brand" as FocusMode,
+    title: "Brand lane",
+    description: "Brand-score, assets, CTA, compliance and message safety control.",
+  },
+]
+
+function cx(...parts: Array<string | false | null | undefined>) {
+  return parts.filter(Boolean).join(" ")
 }
 
-function loadStoredItems(): ContentWorkspaceItem[] {
-  if (typeof window === "undefined") return ENABLE_DEMO_CONTENT ? seedContentItems : []
-  try {
-    const saved = window.localStorage.getItem(STORAGE_KEY)
-    if (!saved) return ENABLE_DEMO_CONTENT ? seedContentItems : []
-    const parsed = JSON.parse(saved)
-    return Array.isArray(parsed) ? parsed : (ENABLE_DEMO_CONTENT ? seedContentItems : [])
-  } catch {
-    return ENABLE_DEMO_CONTENT ? seedContentItems : []
-  }
+function moneylessPercent(value: number) {
+  return `${Math.max(0, Math.min(100, Math.round(value)))}%`
 }
 
-function persistItems(items: ContentWorkspaceItem[]) {
-  if (typeof window === "undefined") return
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+function isOverdue(item: ContentItem) {
+  return item.dueDate < todayISO(0) && item.status !== "published" && item.status !== "archived"
 }
 
-type OperationalStage = ContentStage | "archived" | "paused"
-type ContentAction = "submit_review" | "approve" | "reject" | "publish" | "pause" | "resume" | "archive" | "cancel"
+function stageColor(status: string) {
+  if (["published", "approved", "scheduled"].includes(status)) return "border-emerald-200 bg-emerald-50 text-emerald-800"
+  if (["review", "revision"].includes(status)) return "border-amber-200 bg-amber-50 text-amber-800"
+  if (["archived"].includes(status)) return "border-slate-200 bg-slate-100 text-slate-500"
+  return "border-slate-200 bg-white text-slate-700"
+}
 
-function Badge({
-  children,
-  tone = "slate",
-}: {
-  children: React.ReactNode
-  tone?: "slate" | "pink" | "green" | "amber" | "red" | "violet" | "blue" | "dark"
-}) {
-  const m = {
-    slate: "bg-slate-100 text-slate-700 border-slate-200",
-    pink: "bg-pink-50 text-pink-700 border-pink-200",
-    green: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    amber: "bg-amber-50 text-amber-700 border-amber-200",
-    red: "bg-red-50 text-red-700 border-red-200",
-    violet: "bg-violet-50 text-violet-700 border-violet-200",
-    blue: "bg-blue-50 text-blue-700 border-blue-200",
-    dark: "bg-slate-900 text-white border-slate-800",
-  }
-
+function SectionHeader({ eyebrow, title, description, action }: { eyebrow: string; title: string; description?: string; action?: React.ReactNode }) {
   return (
-    <span className={cn("rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-wide", m[tone])}>
-      {children}
-    </span>
-  )
-}
-
-const button =
-  "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
-const input =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800 outline-none placeholder:text-slate-400 focus:border-pink-400 focus:ring-4 focus:ring-pink-50"
-
-function priorityTone(p: ContentPriority) {
-  return p === "urgent" ? "red" : p === "high" ? "amber" : p === "normal" ? "blue" : "slate"
-}
-
-function getOperationalStage(item: ContentWorkspaceItem): OperationalStage {
-  if (String(item.approval_status) === "archived") return "archived"
-  if (String(item.approval_status) === "paused") return "paused"
-  return item.stage
-}
-
-function stageTone(s: OperationalStage) {
-  return s === "published" || s === "approved"
-    ? "green"
-    : s === "rejected"
-      ? "red"
-      : s === "review"
-        ? "violet"
-        : s === "production"
-          ? "amber"
-          : s === "archived"
-            ? "dark"
-            : s === "paused"
-              ? "blue"
-              : "slate"
-}
-
-function safeStageLabel(s: OperationalStage) {
-  if (s === "archived") return "Archived"
-  if (s === "paused") return "Paused"
-  return stageLabels[s]
-}
-
-function StatCard({ label, value, icon: Icon, sub }: { label: string; value: string | number; icon: any; sub: string }) {
-  return (
-    <div className="rounded-[1.65rem] border border-white/10 bg-white/10 p-5 shadow-xl shadow-black/10 backdrop-blur">
-      <Icon className="h-5 w-5 text-pink-200" />
-      <p className="mt-4 text-[11px] font-black uppercase tracking-[0.2em] !text-white/75">{label}</p>
-      <p className="mt-1 text-3xl font-black tracking-tight !text-white">{value}</p>
-      <p className="mt-1 text-xs font-bold !text-white/65">{sub}</p>
+    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">{eyebrow}</p>
+        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 md:text-3xl">{title}</h2>
+        {description ? <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">{description}</p> : null}
+      </div>
+      {action ? <div className="flex flex-wrap gap-2">{action}</div> : null}
     </div>
   )
 }
 
-function Panel({
-  title,
-  subtitle,
-  icon: Icon,
-  children,
-  dark = false,
+function CorporateHero({
+  total,
+  urgent,
+  review,
+  publishable,
+  onReset,
 }: {
-  title: string
-  subtitle?: string
-  icon: any
-  children: React.ReactNode
-  dark?: boolean
+  total: number
+  urgent: number
+  review: number
+  publishable: number
+  onReset: () => void
 }) {
   return (
-    <section
-      className={cn(
-        "rounded-[2rem] border p-5 shadow-sm",
-        dark ? "border-slate-800 bg-slate-950 text-white shadow-xl shadow-slate-900/10" : "border-slate-200 bg-white text-slate-950",
-      )}
-    >
-      <div className="flex items-start justify-between gap-4">
+    <section className="select-none overflow-hidden rounded-[2rem] border border-slate-900 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.16),transparent_32%),linear-gradient(135deg,#020617,#0f172a_62%,#111827)] text-white shadow-2xl shadow-slate-200">
+      <div className="grid gap-8 p-6 lg:grid-cols-[1.5fr_.8fr] lg:p-8 2xl:p-10">
         <div>
-          <h2 className={cn("flex items-center gap-2 text-lg font-black", dark ? "!text-white" : "!text-slate-950")}>
-            <Icon className={cn("h-5 w-5", dark ? "text-pink-300" : "text-pink-600")} />
-            {title}
-          </h2>
-          {subtitle ? <p className={cn("mt-1 text-sm font-semibold", dark ? "!text-white/75" : "!text-slate-500")}>{subtitle}</p> : null}
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-white">Market-OS</span>
+            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-white">Content Command Center</span>
+            <span className="rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-100">Operational</span>
+          </div>
+          <h1 className="mt-5 max-w-5xl text-4xl font-black leading-[1.05] tracking-tight text-white md:text-5xl xl:text-6xl">
+            Enterprise content production command center.
+          </h1>
+          <p className="mt-5 max-w-4xl text-base font-semibold leading-8 text-white/80 md:text-lg">
+            A senior workspace for marketing, brand and communication operators to control content pipeline, calendar, review queue, publishing rhythm, assets, briefs and governance from one clean command surface.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button href="/market-os/content-command-center/create" kind="primary">+ Create content</Button>
+            <Button href="/market-os/content-command-center/calendar" kind="dark">Open calendar</Button>
+            <Button href="/market-os/content-command-center/review" kind="dark">Review queue</Button>
+            <button onClick={onReset} className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-white/20">Reset workspace</button>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
+            <p className="text-xs font-black uppercase tracking-widest text-slate-300">Active content</p>
+            <p className="mt-2 text-4xl font-black text-white">{total}</p>
+            <p className="mt-1 text-sm font-bold text-slate-300">Items in shared production store</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <p className="text-xs font-black uppercase text-slate-300">Urgent</p>
+              <p className="mt-2 text-2xl font-black text-white">{urgent}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <p className="text-xs font-black uppercase text-slate-300">Review</p>
+              <p className="mt-2 text-2xl font-black text-white">{review}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <p className="text-xs font-black uppercase text-slate-300">Ready</p>
+              <p className="mt-2 text-2xl font-black text-white">{publishable}</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mt-5">{children}</div>
+    </section>
+  )
+}
+
+function GatewayCard({ link }: { link: (typeof workspaceLinks)[number] }) {
+  return (
+    <Link href={link.href} className={cx("group block select-none rounded-3xl border p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl", link.tone)}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className={cx("text-xs font-black uppercase tracking-[0.2em]", link.tone.includes("slate-950") ? "text-white/70" : "text-rose-600")}>{link.intent}</p>
+          <h3 className={cx("mt-3 text-xl font-black", link.tone.includes("slate-950") ? "text-white" : "text-slate-950")}>{link.label}</h3>
+        </div>
+        <span className={cx("rounded-full px-3 py-1 text-xs font-black", link.tone.includes("slate-950") ? "bg-white text-slate-950" : "bg-slate-950 text-white")}>Open</span>
+      </div>
+      <p className={cx("mt-4 text-sm font-semibold leading-6", link.tone.includes("slate-950") ? "text-white/75" : "text-slate-600")}>{link.detail}</p>
+    </Link>
+  )
+}
+
+function CommandStatGrid({ store }: { store: ReturnType<typeof useContentStore>["store"] }) {
+  const pending = store.items.filter(i => ["review", "revision"].includes(i.status))
+  const scheduled = store.items.filter(i => i.status === "scheduled")
+  const publishable = store.items.filter(i => canPublish(i, store.tasks, store.rules))
+  const overdue = store.items.filter(isOverdue)
+  const blockedTasks = store.tasks.filter(t => t.status === "blocked")
+  const lowBrand = store.items.filter(i => i.brandScore < 75)
+
+  return (
+    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <Metric label="Content items" value={String(store.items.length)} sub="Active workspace" />
+      <Metric label="Pending review" value={String(pending.length)} sub="Approval decisions" />
+      <Metric label="Scheduled" value={String(scheduled.length)} sub="Calendar queue" />
+      <Metric label="Publishable" value={String(publishable.length)} sub="Ready now" />
+      <Metric label="Blocked tasks" value={String(blockedTasks.length)} sub="Execution risk" />
+      <Metric label="Brand watch" value={String(lowBrand.length)} sub="Score below 75" />
+    </section>
+  )
+}
+
+function ControlStrip({
+  query,
+  setQuery,
+  status,
+  setStatus,
+  channel,
+  setChannel,
+  view,
+  setView,
+  focus,
+  setFocus,
+}: {
+  query: string
+  setQuery: (value: string) => void
+  status: string
+  setStatus: (value: string) => void
+  channel: string
+  setChannel: (value: string) => void
+  view: BoardView
+  setView: (value: BoardView) => void
+  focus: FocusMode
+  setFocus: (value: FocusMode) => void
+}) {
+  return (
+    <Panel className="p-5">
+      <div className="grid gap-4 xl:grid-cols-[1.2fr_.6fr_.6fr_.8fr_.9fr]">
+        <input
+          value={query}
+          onChange={event => setQuery(event.target.value)}
+          placeholder="Search title, campaign, owner, channel, objective..."
+          className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-4 focus:ring-slate-100"
+        />
+        <select value={status} onChange={event => setStatus(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-slate-950 focus:ring-4 focus:ring-slate-100">
+          <option value="all">All statuses</option>
+          {[...statusFlow, "revision", "archived"].map(value => <option key={value} value={value}>{statusLabel(value)}</option>)}
+        </select>
+        <select value={channel} onChange={event => setChannel(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-slate-950 focus:ring-4 focus:ring-slate-100">
+          <option value="all">All channels</option>
+          {channels.map(value => <option key={value} value={value}>{value}</option>)}
+        </select>
+        <select value={view} onChange={event => setView(event.target.value as BoardView)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-slate-950 focus:ring-4 focus:ring-slate-100">
+          <option value="command">Command view</option>
+          <option value="pipeline">Pipeline view</option>
+          <option value="table">Table view</option>
+          <option value="calendar">Calendar preview</option>
+          <option value="queue">Queue view</option>
+        </select>
+        <select value={focus} onChange={event => setFocus(event.target.value as FocusMode)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-slate-950 focus:ring-4 focus:ring-slate-100">
+          <option value="all">All focus modes</option>
+          <option value="urgent">Urgent only</option>
+          <option value="review">Review focus</option>
+          <option value="publishing">Publishing focus</option>
+          <option value="brand">Brand focus</option>
+          <option value="planning">Planning focus</option>
+        </select>
+      </div>
+    </Panel>
+  )
+}
+
+function ExecutiveDecisionPanel({ store }: { store: ReturnType<typeof useContentStore>["store"] }) {
+  const overdue = store.items.filter(isOverdue)
+  const pending = store.items.filter(i => ["review", "revision"].includes(i.status))
+  const publishable = store.items.filter(i => canPublish(i, store.tasks, store.rules))
+  const lowBrand = store.items.filter(i => i.brandScore < 75)
+  const nextMove = overdue.length
+    ? "Clear overdue production risk before creating new work."
+    : pending.length
+      ? "Open review queue and unblock approvals."
+      : publishable.length
+        ? "Move ready items into publishing."
+        : "Create or brief the next content priority."
+
+  return (
+    <Panel className="p-5">
+      <SectionHeader eyebrow="Decision intelligence" title="Operator next move" description="A practical, state-based assistant panel for senior content leaders. No fake AI call: it reads the workspace and explains the next best action." />
+      <div className="mt-5 select-none rounded-3xl border border-slate-800 bg-slate-950 p-5 text-white shadow-lg">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-300">Recommended action</p>
+        <h3 className="mt-3 text-2xl font-black text-white">{nextMove}</h3>
+        <p className="mt-3 text-sm font-semibold leading-6 text-slate-300">
+          This recommendation is based on overdue items, review queue pressure, publishable content and brand-score risks.
+        </p>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <Link href="/market-os/content-command-center/tasks" className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-black text-red-800">Overdue items: {overdue.length}</Link>
+        <Link href="/market-os/content-command-center/review" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-black text-amber-800">Review queue: {pending.length}</Link>
+        <Link href="/market-os/content-command-center/publishing" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-black text-emerald-800">Publishable: {publishable.length}</Link>
+        <Link href="/market-os/content-command-center/brand-governance" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-slate-800">Brand watch: {lowBrand.length}</Link>
+      </div>
+    </Panel>
+  )
+}
+
+function PipelineColumn({
+  status,
+  items,
+  store,
+  onAdvance,
+  onArchive,
+}: {
+  status: ContentStatus
+  items: ContentItem[]
+  store: ReturnType<typeof useContentStore>["store"]
+  onAdvance: (id: string) => void
+  onArchive: (id: string) => void
+}) {
+  return (
+    <div className="min-h-[300px] rounded-3xl border border-slate-200 bg-slate-50 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-black text-slate-950">{statusLabel(status)}</h3>
+          <p className="mt-1 text-xs font-bold text-slate-500">{items.length} item(s)</p>
+        </div>
+        <Badge>{items.length}</Badge>
+      </div>
+      <div className="mt-4 space-y-3">
+        {items.slice(0, 5).map(item => (
+          <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex flex-wrap gap-2">
+              <span className={cx("rounded-full border px-2.5 py-1 text-[11px] font-black uppercase", stageColor(item.status))}>{statusLabel(item.status)}</span>
+              <Badge kind="priority">{item.priority}</Badge>
+            </div>
+            <Link href={`/market-os/content-command-center/${item.id}`} className="mt-3 block text-sm font-black leading-5 text-slate-950 hover:underline">{item.title}</Link>
+            <p className="mt-2 text-xs font-bold text-slate-500">{item.channel} • {item.owner}</p>
+            <div className="mt-3">
+              <div className="mb-1 flex items-center justify-between text-[11px] font-black uppercase text-slate-400">
+                <span>Readiness</span>
+                <span>{moneylessPercent(itemReadiness(item, store.tasks, store.rules))}</span>
+              </div>
+              <Meter value={itemReadiness(item, store.tasks, store.rules)} />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button onClick={() => onAdvance(item.id)} className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Next</button>
+              <Link href={`/market-os/content-command-center/${item.id}/edit`} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-700">Edit</Link>
+              <button onClick={() => onArchive(item.id)} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-700">Archive</button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">No items in this lane.</div> : null}
+      </div>
+    </div>
+  )
+}
+
+function PipelineBoard({
+  store,
+  visibleItems,
+  onAdvance,
+  onArchive,
+}: {
+  store: ReturnType<typeof useContentStore>["store"]
+  visibleItems: ContentItem[]
+  onAdvance: (id: string) => void
+  onArchive: (id: string) => void
+}) {
+  return (
+    <Panel className="p-5">
+      <SectionHeader
+        eyebrow="Production pipeline"
+        title="From idea to published"
+        description="Move content through the real workflow. Every Next action updates the shared store and will be reflected in review, publishing, calendar and detail pages."
+        action={<Button href="/market-os/content-command-center/create" kind="primary">+ New content</Button>}
+      />
+      <div className="mt-5 overflow-x-auto pb-2">
+        <div className="grid min-w-[1180px] gap-4 xl:grid-cols-7">
+        {statusFlow.map(status => (
+          <PipelineColumn
+            key={status}
+            status={status}
+            items={visibleItems.filter(item => item.status === status)}
+            store={store}
+            onAdvance={onAdvance}
+            onArchive={onArchive}
+          />
+        ))}
+        </div>
+      </div>
+    </Panel>
+  )
+}
+
+function CalendarPreview({ items }: { items: ContentItem[] }) {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth()
+  const first = new Date(year, month, 1)
+  const startOffset = first.getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const cells = Array.from({ length: 42 }, (_, index) => {
+    const dayNumber = index - startOffset + 1
+    const date = new Date(year, month, dayNumber)
+    const inMonth = dayNumber >= 1 && dayNumber <= daysInMonth
+    const iso = date.toISOString().slice(0, 10)
+    return { index, dayNumber, inMonth, iso }
+  })
+
+  return (
+    <Panel className="p-5">
+      <SectionHeader eyebrow="Calendar preview" title="This month publishing map" description="A compact executive view. Open the full calendar page for monthly planning actions, rescheduling and content creation by date." action={<Button href="/market-os/content-command-center/calendar" kind="primary">Open full calendar</Button>} />
+      <div className="mt-5 grid grid-cols-7 gap-2 text-center text-xs font-black uppercase text-slate-400">
+        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day => <div key={day}>{day}</div>)}
+      </div>
+      <div className="mt-2 grid grid-cols-7 gap-2">
+        {cells.map(cell => {
+          const scheduled = items.filter(item => item.scheduledDate === cell.iso)
+          return (
+            <div key={cell.index} className={cx("min-h-[90px] rounded-2xl border p-2", cell.inMonth ? "border-slate-200 bg-white" : "border-slate-100 bg-slate-50 text-slate-300")}>
+              <p className="text-xs font-black">{cell.inMonth ? cell.dayNumber : ""}</p>
+              <div className="mt-2 space-y-1">
+                {scheduled.slice(0, 2).map(item => <Link key={item.id} href={`/market-os/content-command-center/${item.id}`} className="block truncate rounded-lg bg-slate-950 px-2 py-1 text-[10px] font-black text-white">{item.title}</Link>)}
+                {scheduled.length > 2 ? <p className="text-[10px] font-black text-slate-500">+{scheduled.length - 2} more</p> : null}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </Panel>
+  )
+}
+
+function WorkQueuePanel({
+  store,
+  onAdvance,
+}: {
+  store: ReturnType<typeof useContentStore>["store"]
+  onAdvance: (id: string) => void
+}) {
+  const review = store.items.filter(item => ["review", "revision"].includes(item.status))
+  const publishing = store.items.filter(item => ["approved", "scheduled"].includes(item.status))
+  const blocked = store.tasks.filter(task => task.status === "blocked")
+
+  return (
+    <div className="grid gap-5 xl:grid-cols-3">
+      <Panel className="p-5">
+        <SectionHeader eyebrow="Review" title="Approval queue" description="Approve, revise or open full review workflow." action={<Button href="/market-os/content-command-center/review">Open review</Button>} />
+        <div className="mt-5 space-y-3">
+          {review.slice(0, 5).map(item => (
+            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <Link href={`/market-os/content-command-center/${item.id}`} className="text-sm font-black text-slate-950 hover:underline">{item.title}</Link>
+              <p className="mt-1 text-xs font-bold text-slate-500">Reviewer: {item.reviewer}</p>
+              <button onClick={() => onAdvance(item.id)} className="mt-3 rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Move forward</button>
+            </div>
+          ))}
+          {review.length === 0 ? <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No pending review items.</p> : null}
+        </div>
+      </Panel>
+      <Panel className="p-5">
+        <SectionHeader eyebrow="Publishing" title="Release queue" description="Approved and scheduled items waiting for publishing decisions." action={<Button href="/market-os/content-command-center/publishing">Open publishing</Button>} />
+        <div className="mt-5 space-y-3">
+          {publishing.slice(0, 5).map(item => (
+            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <Link href={`/market-os/content-command-center/${item.id}`} className="text-sm font-black text-slate-950 hover:underline">{item.title}</Link>
+              <p className="mt-1 text-xs font-bold text-slate-500">Scheduled: {item.scheduledDate}</p>
+              <button onClick={() => onAdvance(item.id)} className="mt-3 rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Publish / next</button>
+            </div>
+          ))}
+          {publishing.length === 0 ? <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No items currently waiting for release.</p> : null}
+        </div>
+      </Panel>
+      <Panel className="p-5">
+        <SectionHeader eyebrow="Blockers" title="Execution risk" description="Blocked tasks and operational blockers to clear." action={<Button href="/market-os/content-command-center/tasks">Open tasks</Button>} />
+        <div className="mt-5 space-y-3">
+          {blocked.slice(0, 5).map(task => (
+            <div key={task.id} className="rounded-2xl border border-red-200 bg-red-50 p-4">
+              <p className="text-sm font-black text-red-900">{task.title}</p>
+              <p className="mt-1 text-xs font-bold text-red-700">Owner: {task.owner} • Due: {task.dueDate}</p>
+            </div>
+          ))}
+          {blocked.length === 0 ? <p className="rounded-2xl bg-emerald-50 p-4 text-sm font-bold text-emerald-700">No blocked tasks right now.</p> : null}
+        </div>
+      </Panel>
+    </div>
+  )
+}
+
+function BrandGovernanceStrip({ store }: { store: ReturnType<typeof useContentStore>["store"] }) {
+  const activeRules = store.rules.filter(rule => rule.active)
+  const requiredRules = store.rules.filter(rule => rule.active && rule.required)
+  const lowScore = store.items.filter(item => item.brandScore < 75)
+  const assetIssues = store.assets.filter(asset => asset.status === "needs revision" || asset.status === "draft")
+
+  return (
+    <Panel className="p-5">
+      <SectionHeader eyebrow="Brand command" title="Governance and asset control" description="Senior content work needs disciplined brand safety, CTA clarity, asset approval and tone control." action={<Button href="/market-os/content-command-center/brand-governance" kind="primary">Open governance</Button>} />
+      <div className="mt-5 grid gap-4 md:grid-cols-4">
+        <div className="rounded-3xl bg-slate-50 p-5">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-400">Active rules</p>
+          <p className="mt-2 text-3xl font-black text-slate-950">{activeRules.length}</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">Governance controls</p>
+        </div>
+        <div className="rounded-3xl bg-slate-50 p-5">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-400">Required</p>
+          <p className="mt-2 text-3xl font-black text-slate-950">{requiredRules.length}</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">Must pass</p>
+        </div>
+        <div className="rounded-3xl bg-slate-50 p-5">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-400">Brand watch</p>
+          <p className="mt-2 text-3xl font-black text-slate-950">{lowScore.length}</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">Score below 75</p>
+        </div>
+        <div className="rounded-3xl bg-slate-50 p-5">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-400">Asset issues</p>
+          <p className="mt-2 text-3xl font-black text-slate-950">{assetIssues.length}</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">Draft/revision</p>
+        </div>
+      </div>
+    </Panel>
+  )
+}
+
+function WorkspaceNavigator() {
+  return (
+    <Panel className="p-5">
+      <SectionHeader eyebrow="Workspace navigation" title="Execution gateways" description="Clear routes for expert operators. No hidden buttons: each card opens the page where that work is actually completed." />
+      <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {workspaceLinks.map(link => <GatewayCard key={link.href} link={link} />)}
+      </div>
+    </Panel>
+  )
+}
+
+function ExpertFocusLanes({ focus, setFocus }: { focus: FocusMode; setFocus: (value: FocusMode) => void }) {
+  return (
+    <section className="grid gap-4 xl:grid-cols-4">
+      {executiveLanes.map(lane => (
+        <button
+          key={lane.key}
+          onClick={() => setFocus(lane.key)}
+          className={cx(
+            "rounded-3xl border p-5 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl",
+            focus === lane.key ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"
+          )}
+        >
+          <p className={cx("text-xs font-black uppercase tracking-[0.2em]", focus === lane.key ? "text-white/60" : "text-rose-600")}>Focus mode</p>
+          <h3 className={cx("mt-3 text-xl font-black", focus === lane.key ? "text-white" : "text-slate-950")}>{lane.title}</h3>
+          <p className={cx("mt-2 text-sm font-semibold leading-6", focus === lane.key ? "text-white/75" : "text-slate-600")}>{lane.description}</p>
+        </button>
+      ))}
     </section>
   )
 }
 
 export default function ContentCommandCenter() {
-  const [items, setItems] = useState<ContentWorkspaceItem[]>(() => loadStoredItems())
-  const [, setServices] = useState<ServiceOption[]>(defaultServices)
-  const [selected, setSelected] = useState<ContentWorkspaceItem | null>(() => loadStoredItems()[0] || null)
-  const [filter, setFilter] = useState<OperationalStage | "all">("all")
-  const [query, setQuery] = useState("")
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState("Ready for content execution.")
+  const { store, commit, reset } = useContentStore()
+  const [query, setQuery] = React.useState("")
+  const [status, setStatus] = React.useState("all")
+  const [channel, setChannel] = React.useState("all")
+  const [view, setView] = React.useState<BoardView>("command")
+  const [focus, setFocus] = React.useState<FocusMode>("all")
 
-  useEffect(() => {
-    const localItems = loadStoredItems()
-    setItems(localItems)
-    setSelected((current) => current || localItems[0] || null)
-
-    fetch("/api/market-os/content-workspace")
-      .then((r) => r.json())
-      .then((j) => {
-        if (Array.isArray(j.data) && j.data.length && typeof window !== "undefined" && !window.localStorage.getItem(STORAGE_KEY)) {
-          setItems(j.data)
-          setSelected(j.data[0] || null)
-          persistItems(j.data)
-        }
-      })
-      .catch(() => {})
-
-    fetch("/api/market-os/content-workspace/services")
-      .then((r) => r.json())
-      .then((j) => Array.isArray(j.data) && setServices(j.data))
-      .catch(() => {})
-  }, [])
-
-  const visible = useMemo(() => {
-    return items.filter((i) => {
-      const operationalStage = getOperationalStage(i)
-      const stageMatch = filter === "all" ? true : operationalStage === filter
-      const q = query.trim().toLowerCase()
-      const queryMatch =
-        !q ||
-        [i.title, i.service_name, i.creator, i.channel, i.target, i.objective]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase()
-          .includes(q)
-
-      return stageMatch && queryMatch
+  const filtered = React.useMemo(() => {
+    return store.items.filter(item => {
+      const haystack = `${item.title} ${item.campaign} ${item.owner} ${item.reviewer} ${item.channel} ${item.objective} ${item.audience}`.toLowerCase()
+      const matchesQuery = query ? haystack.includes(query.toLowerCase()) : true
+      const matchesStatus = status === "all" ? true : item.status === status
+      const matchesChannel = channel === "all" ? true : item.channel === channel
+      const matchesFocus =
+        focus === "all" ? true :
+        focus === "urgent" ? isOverdue(item) || item.priority === "Critical" :
+        focus === "review" ? ["review", "revision"].includes(item.status) :
+        focus === "publishing" ? ["approved", "scheduled"].includes(item.status) :
+        focus === "brand" ? item.brandScore < 80 || item.assets.length === 0 :
+        focus === "planning" ? ["idea", "brief", "draft"].includes(item.status) : true
+      return matchesQuery && matchesStatus && matchesChannel && matchesFocus
     })
-  }, [items, filter, query])
+  }, [store.items, query, status, channel, focus])
 
-  const stats = useMemo(
-    () => ({
-      total: items.length,
-      review: items.filter((i) => i.stage === "review").length,
-      approved: items.filter((i) => i.stage === "approved").length,
-      published: items.filter((i) => i.stage === "published").length,
-      output: Math.round(items.reduce((s, i) => s + (i.production_score || 0), 0) / Math.max(1, items.length)),
-      attached: items.filter((i) => !!i.asset_url).length,
-    }),
-    [items],
-  )
+  const pending = store.items.filter(item => ["review", "revision"].includes(item.status))
+  const overdue = store.items.filter(isOverdue)
+  const publishable = store.items.filter(item => canPublish(item, store.tasks, store.rules))
 
-  async function apiAction(id: string, action: ContentAction | "smart_tool", patch: Partial<ContentWorkspaceItem> = {}) {
-    setBusy(true)
-    setMessage(`Syncing ${action.replace("_", " ")}...`)
+  const advance = React.useCallback((id: string) => {
+    commit(draft => {
+      draft.items = draft.items.map(item => item.id === id ? { ...item, status: nextStatus(item.status), updatedAt: new Date().toISOString() } : item)
+    }, "advance", `Moved content ${id} to next stage`)
+  }, [commit])
 
-    const previousItems = items
-    const nextItems = items.map((i) => (i.id === id ? { ...i, ...patch } : i))
+  const archive = React.useCallback((id: string) => {
+    commit(draft => {
+      draft.items = draft.items.map(item => item.id === id ? { ...item, status: "archived", updatedAt: new Date().toISOString() } : item)
+    }, "archive", `Archived content ${id}`)
+  }, [commit])
 
-    setItems(nextItems)
-    setSelected(nextItems.find((i) => i.id === id) || null)
-    persistItems(nextItems)
-
-    try {
-      const res = await fetch("/api/market-os/content-workspace/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, action, ...patch }),
-      })
-
-      if (!res.ok) throw new Error("Action failed")
-      setMessage(`${action.replace("_", " ")} synced.`)
-    } catch {
-      setItems(nextItems)
-      setSelected(nextItems.find((i) => i.id === id) || null)
-      persistItems(nextItems)
-      setMessage(`${action.replace("_", " ")} saved locally. API sync unavailable.`)
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  function actionPatch(action: ContentAction, item: ContentWorkspaceItem): Partial<ContentWorkspaceItem> {
-    if (action === "submit_review") {
-      return {
-        stage: "review" as ContentStage,
-        approval_status: "submitted" as any,
-        production_score: Math.max(item.production_score || 0, 75),
-      }
-    }
-
-    if (action === "approve") {
-      return {
-        stage: "approved" as ContentStage,
-        approval_status: "approved" as any,
-        production_score: Math.max(item.production_score || 0, 90),
-      }
-    }
-
-    if (action === "reject") {
-      return {
-        stage: "rejected" as ContentStage,
-        approval_status: "rejected" as any,
-      }
-    }
-
-    if (action === "publish") {
-      return {
-        stage: "published" as ContentStage,
-        approval_status: String(item.approval_status) === "approved" ? ("approved" as any) : (item.approval_status as any),
-        production_score: 100,
-      }
-    }
-
-    if (action === "pause") {
-      return {
-        stage: item.stage || ("planned" as ContentStage),
-        approval_status: "paused" as any,
-      }
-    }
-
-    if (action === "resume") {
-      return {
-        stage: "planned" as ContentStage,
-        approval_status: "none" as any,
-      }
-    }
-
-    if (action === "archive") {
-      return {
-        stage: item.stage || ("planned" as ContentStage),
-        approval_status: "archived" as any,
-      }
-    }
-
-    if (action === "cancel") {
-      return {
-        stage: "rejected" as ContentStage,
-        approval_status: "cancelled" as any,
-      }
-    }
-
-    return {}
-  }
-
-  function run(action: ContentAction, item?: ContentWorkspaceItem | null) {
-    const target = item || selected
-    if (!target || busy) return
-    apiAction(target.id, action, actionPatch(action, target))
-  }
-
-  function runSmartTool(kind: "brief" | "cta" | "tone" | "checklist" | "caption") {
-    if (!selected || busy) {
-      setMessage("Select a deliverable first.")
-      return
-    }
-
-    const service = selected.service_name || "AngelCare service"
-    const snippets = {
-      brief: `SMART BRIEF — ${service}\nClarifier le problème client, la preuve AngelCare, le bénéfice direct, le canal, le CTA et le livrable final attendu.`,
-      cta: `CTA RECOMMANDÉ\nEnvoyez-nous un message WhatsApp pour recevoir une orientation rapide et adaptée.`,
-      tone: `BRAND TONE CHECK\nTon rassurant, professionnel, humain, précis. Éviter les promesses excessives. Mettre en avant confiance, organisation et qualité.`,
-      checklist: `REVIEW CHECKLIST\n1. Service correctement lié.\n2. Message clair.\n3. CTA visible.\n4. Asset attaché.\n5. Manager peut approuver ou rejeter.`,
-      caption: `PUBLISHING CAPTION\nAngelCare accompagne les familles avec des solutions fiables, humaines et organisées. Contactez-nous pour une orientation rapide.`,
-    }
-
-    const output = `${selected.output_notes || ""}\n\n${snippets[kind]}`.trim()
-    apiAction(selected.id, "smart_tool", {
-      output_notes: output,
-      production_score: Math.max(selected.production_score || 0, 55),
-    })
-  }
-
-  const workflowPercent = Math.round(
-    (items.filter((i) => ["review", "approved", "published"].includes(i.stage)).length / Math.max(1, items.length)) * 100,
-  )
+  const remove = React.useCallback((id: string) => {
+    commit(draft => {
+      draft.items = draft.items.filter(item => item.id !== id)
+      draft.tasks = draft.tasks.filter(task => task.contentId !== id)
+      draft.assets = draft.assets.filter(asset => asset.linkedContentId !== id)
+    }, "delete", `Deleted content ${id}`)
+  }, [commit])
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#ffe4f0,transparent_30%),linear-gradient(180deg,#f8fafc,#eef2f7)] p-5 text-slate-950 md:p-8">
-      <section className="mx-auto max-w-[1700px] space-y-6">
-        <header className="overflow-hidden rounded-[2.6rem] bg-slate-950 text-white shadow-2xl">
-          <div className="relative grid gap-7 p-7 xl:grid-cols-[1.35fr_.9fr]">
-            <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-pink-500/25 blur-3xl" />
-            <div className="relative z-10">
-              <div className="flex flex-wrap gap-2">
-                <Badge tone="pink">MARKET-OS</Badge>
-                <Badge tone="violet">Content workspace</Badge>
-                <Badge tone="green">Agent execution</Badge>
-              </div>
-              <h1 className="mt-5 max-w-5xl text-4xl font-black tracking-tight !text-white drop-shadow-sm md:text-6xl">
-                Content Production & Deliverables Command Center
-              </h1>
-              <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 !text-white/85">
-                Plan, control, execute, review, approve, publish and track AngelCare content deliverables with a professional marketing production cockpit.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/market-os/content-command-center/create" className={cn(button, "bg-pink-500 !text-white shadow-lg shadow-pink-500/20")}>
-                  <Plus className="mr-2 h-4 w-4 text-white" /> <span className="!text-white">Create content task</span>
-                </Link>
-                <button onClick={() => setFilter("review")} className={cn(button, "border border-white/15 bg-white/10 !text-white hover:bg-white/15")}>
-                  <ClipboardCheck className="mr-2 h-4 w-4 text-white" /> <span className="!text-white">Review queue</span>
-                </button>
-                <button onClick={() => setFilter("published")} className={cn(button, "border border-white/15 bg-white/10 !text-white hover:bg-white/15")}>
-                  <PlayCircle className="mr-2 h-4 w-4 text-white" /> <span className="!text-white">Published outputs</span>
-                </button>
-              </div>
-            </div>
-            <div className="relative z-10 grid grid-cols-2 gap-3">
-              <StatCard label="Livrables" value={stats.total} icon={FileText} sub="active production load" />
-              <StatCard label="In review" value={stats.review} icon={ClipboardCheck} sub="manager validation" />
-              <StatCard label="Published" value={stats.published} icon={FileCheck2} sub="market-ready outputs" />
-              <StatCard label="Output score" value={`${stats.output}%`} icon={BarChart3} sub="production maturity" />
-            </div>
+    <Shell>
+      <style jsx global>{`
+        .market-os-content-command-contrast-fix ::selection {
+          background: rgba(15, 23, 42, 0.12);
+          color: inherit;
+        }
+        .market-os-content-command-contrast-fix .premium-no-select ::selection {
+          background: transparent;
+          color: inherit;
+        }
+        .market-os-content-command-contrast-fix a,
+        .market-os-content-command-contrast-fix button {
+          text-decoration: none;
+        }
+      `}</style>
+      <main className={cx(pageSurface, "mx-auto max-w-[1900px] space-y-6 p-4 lg:p-8")}>
+        <CorporateHero total={store.items.length} urgent={overdue.length} review={pending.length} publishable={publishable.length} onReset={reset} />
+        <CommandStatGrid store={store} />
+        <ControlStrip
+          query={query}
+          setQuery={setQuery}
+          status={status}
+          setStatus={setStatus}
+          channel={channel}
+          setChannel={setChannel}
+          view={view}
+          setView={setView}
+          focus={focus}
+          setFocus={setFocus}
+        />
+        <ExpertFocusLanes focus={focus} setFocus={setFocus} />
+        <WorkspaceNavigator />
+
+        {view === "command" ? (
+          <div className="space-y-5">
+            <PipelineBoard store={store} visibleItems={filtered} onAdvance={advance} onArchive={archive} />
+            <ExecutiveDecisionPanel store={store} />
           </div>
-        </header>
+        ) : null}
 
-        <div className="grid gap-5 xl:grid-cols-[.75fr_1.45fr_.85fr]">
-          <aside className="space-y-5">
-            <Panel title="1. Navigation & creation" subtitle="Use the dedicated creation page to build complete content tasks, then manage them here." icon={Plus}>
-              <Link href="/market-os/content-command-center/create" className={cn(button, "w-full bg-pink-600 !text-white shadow-lg shadow-pink-500/15")}>
-                <Plus className="mr-2 h-4 w-4 text-white" />
-                <span className="!text-white">Create new content properly</span>
-              </Link>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <Link href="/market-os/content-command-center" className={cn(button, "border border-slate-200 bg-white text-slate-800")}>
-                  Center
-                </Link>
-                <Link href="/market-os" className={cn(button, "border border-slate-200 bg-white text-slate-800")}>
-                  Market-OS
-                </Link>
-              </div>
-            </Panel>
+        {view === "pipeline" ? <PipelineBoard store={store} visibleItems={filtered} onAdvance={advance} onArchive={archive} /> : null}
+        {view === "calendar" ? <CalendarPreview items={filtered} /> : null}
+        {view === "queue" ? <WorkQueuePanel store={store} onAdvance={advance} /> : null}
 
-            <Panel title="2. Search & filter control" subtitle="Find work by service, creator, channel, audience or objective." icon={Search}>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
-                <input className={cn(input, "pl-10")} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search content tasks..." />
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button onClick={() => setFilter("all")} className={cn(button, filter === "all" ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700")}>
-                  All
-                </button>
-                {stageOrder.map((s) => (
-                  <button key={s} onClick={() => setFilter(s)} className={cn(button, filter === s ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700")}>
-                    {stageLabels[s]}
-                  </button>
-                ))}
-                <button onClick={() => setFilter("paused")} className={cn(button, filter === "paused" ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700")}>
-                  Paused
-                </button>
-                <button onClick={() => setFilter("archived")} className={cn(button, filter === "archived" ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700")}>
-                  Archived
-                </button>
-              </div>
-            </Panel>
-
-            <Panel title="3. Smart production tools" subtitle="These buttons now update the selected task notes and sync locally/API." icon={Sparkles} dark>
-              <div className="grid gap-2">
-                {[
-                  ["Generate brief angle", "brief"],
-                  ["Prepare CTA", "cta"],
-                  ["Check brand tone", "tone"],
-                  ["Create review checklist", "checklist"],
-                  ["Prepare publishing caption", "caption"],
-                ].map(([label, kind]) => (
-                  <button key={kind} onClick={() => runSmartTool(kind as any)} className={cn(button, "justify-start border border-white/10 bg-white/10 text-left !text-white hover:bg-white/15")}>
-                    <Wand2 className="mr-2 h-4 w-4 text-pink-200" />
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </Panel>
-          </aside>
-
-          <section className="space-y-5">
-            <Panel title="4. Pipeline board" subtitle={`${visible.length} visible deliverables. Select any card to operate it from the execution panel.`} icon={Layers3}>
-              <div className="grid gap-4 lg:grid-cols-2">
-                {visible.map((item) => {
-                  const operationalStage = getOperationalStage(item)
-
-                  return (
-                    <article
-                      key={item.id}
-                      onClick={() => setSelected(item)}
-                      className={cn(
-                        "cursor-pointer rounded-[2rem] border bg-white p-5 text-slate-950 shadow-sm transition hover:-translate-y-1 hover:shadow-xl",
-                        selected?.id === item.id ? "border-pink-300 ring-4 ring-pink-50" : "border-slate-200",
-                      )}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <div className="flex flex-wrap gap-2">
-                            <Badge tone={priorityTone(item.priority)}>{item.priority}</Badge>
-                            <Badge tone={stageTone(operationalStage)}>{safeStageLabel(operationalStage)}</Badge>
-                            <Badge tone="pink">{contentTypeLabels[item.content_type]}</Badge>
-                          </div>
-                          <h3 className="mt-3 text-lg font-black leading-snug text-slate-950">{item.title}</h3>
-                          <p className="mt-1 text-sm font-semibold text-slate-500">
-                            {item.service_name || "No service linked"} · {item.creator || "Unassigned"}
-                          </p>
-                        </div>
-                        <div className="rounded-2xl bg-pink-50 p-3 text-pink-600">
-                          <Layers3 className="h-5 w-5" />
-                        </div>
-                      </div>
-
-                      <div className="mt-4 grid grid-cols-3 gap-2 text-xs font-bold text-slate-700">
-                        <div className="rounded-2xl bg-slate-50 p-3">
-                          <Megaphone className="mb-1 h-4 w-4 text-slate-500" />
-                          {item.channel}
-                        </div>
-                        <div className="rounded-2xl bg-slate-50 p-3">
-                          <UserCheck className="mb-1 h-4 w-4 text-slate-500" />
-                          {item.target}
-                        </div>
-                        <div className="rounded-2xl bg-slate-50 p-3">
-                          <CalendarDays className="mb-1 h-4 w-4 text-slate-500" />
-                          {item.deadline || "No deadline"}
-                        </div>
-                      </div>
-
-                      <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
-                        <div className="h-full rounded-full bg-pink-500" style={{ width: `${Math.min(100, Math.max(0, item.production_score || 0))}%` }} />
-                      </div>
-                      <p className="mt-3 line-clamp-2 text-sm font-semibold text-slate-600">{item.objective || "No objective written yet."}</p>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <Link
-                          onClick={(e) => e.stopPropagation()}
-                          href={`/market-os/content-command-center/${item.id}`}
-                          className={cn(button, "border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800")}
-                        >
-                          <Eye className="mr-2 h-4 w-4" /> Open / edit
-                        </Link>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            run("submit_review", item)
-                          }}
-                          className={cn(button, "border border-violet-200 bg-violet-50 px-3 py-2 text-xs text-violet-700")}
-                        >
-                          <Send className="mr-2 h-4 w-4" /> Review
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            run("archive", item)
-                          }}
-                          className={cn(button, "border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700")}
-                        >
-                          <Archive className="mr-2 h-4 w-4" /> Archive
-                        </button>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </Panel>
-
-            <Panel title="5. Workflow command map" subtitle="Operational volume by lifecycle stage." icon={Filter}>
-              <div className="grid gap-3 md:grid-cols-4">
-                {[...stageOrder, "paused", "archived"].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setFilter(s as OperationalStage)}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left text-slate-900 transition hover:-translate-y-0.5 hover:bg-white"
-                  >
-                    <Badge tone={stageTone(s as OperationalStage)}>{safeStageLabel(s as OperationalStage)}</Badge>
-                    <p className="mt-3 text-2xl font-black">{items.filter((i) => getOperationalStage(i) === s).length}</p>
-                    <p className="text-xs font-bold text-slate-500">deliverables</p>
-                  </button>
-                ))}
-              </div>
-            </Panel>
-          </section>
-
-          <aside className="space-y-5">
-            <Panel title="6. Execution panel" subtitle={message} icon={Eye}>
-              {selected ? (
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge tone={stageTone(getOperationalStage(selected))}>{safeStageLabel(getOperationalStage(selected))}</Badge>
-                      <Badge tone={priorityTone(selected.priority)}>{selected.priority}</Badge>
-                    </div>
-                    <h3 className="mt-3 text-xl font-black text-slate-950">{selected.title}</h3>
-                    <p className="mt-1 text-sm font-semibold text-slate-500">{selected.service_name || "No service linked"}</p>
+        {view === "table" || view === "command" ? (
+          <Panel className="p-5">
+            <SectionHeader
+              eyebrow="Content inventory"
+              title="Operational work table"
+              description="Every row has real actions: open, edit, advance, archive and delete. These actions update the same local store used by all subpages."
+              action={<Button href="/market-os/content-command-center/create" kind="primary">+ Create content</Button>}
+            />
+            <div className="mt-5 space-y-3">
+              {filtered.map(item => (
+                <ContentRow key={item.id} item={item} tasks={store.tasks} onAdvance={() => advance(item.id)} onArchive={() => archive(item.id)} onDelete={() => remove(item.id)} />
+              ))}
+              {filtered.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center">
+                  <h3 className="text-2xl font-black text-slate-950">No content matches this view.</h3>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">Clear filters or create a new content item.</p>
+                  <div className="mt-5 flex justify-center">
+                    <Button href="/market-os/content-command-center/create" kind="primary">+ Create content</Button>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <button disabled={busy} onClick={() => run("submit_review")} className={cn(button, "bg-violet-600 !text-white")}>
-                      <Send className="mr-2 h-4 w-4" /> Submit
-                    </button>
-                    <button disabled={busy} onClick={() => run("approve")} className={cn(button, "bg-emerald-600 !text-white")}>
-                      <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
-                    </button>
-                    <button disabled={busy} onClick={() => run("reject")} className={cn(button, "bg-red-600 !text-white")}>
-                      <XCircle className="mr-2 h-4 w-4" /> Reject
-                    </button>
-                    <button disabled={busy} onClick={() => run("publish")} className={cn(button, "bg-slate-950 !text-white")}>
-                      <PlayCircle className="mr-2 h-4 w-4" /> Publish
-                    </button>
-                    <button disabled={busy} onClick={() => run("pause")} className={cn(button, "border border-blue-200 bg-blue-50 text-blue-700")}>
-                      <PauseCircle className="mr-2 h-4 w-4" /> Pause
-                    </button>
-                    <button disabled={busy} onClick={() => run("archive")} className={cn(button, "border border-slate-200 bg-slate-100 text-slate-700")}>
-                      <Archive className="mr-2 h-4 w-4" /> Archive
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link href={`/market-os/content-command-center/${selected.id}`} className={cn(button, "border border-slate-200 bg-white text-center text-slate-800")}>
-                      <FileText className="mr-2 h-4 w-4" /> Open editor
-                    </Link>
-                    <button disabled={busy} onClick={() => run("resume")} className={cn(button, "border border-slate-200 bg-white text-slate-800")}>
-                      <RotateCcw className="mr-2 h-4 w-4" /> Resume
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm font-semibold text-slate-500">Select a deliverable to execute.</p>
-              )}
-            </Panel>
-
-            <Panel title="7. Selected output intelligence" subtitle="Live brief, review and asset visibility." icon={Target}>
-              {selected ? (
-                <div className="space-y-3">
-                  <div className="rounded-2xl bg-slate-50 p-4">
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-500">Objective</p>
-                    <p className="mt-2 text-sm font-semibold text-slate-700">{selected.objective || "No objective yet."}</p>
-                  </div>
-                  <div className="rounded-2xl bg-pink-50 p-4">
-                    <p className="text-xs font-black uppercase tracking-widest text-pink-700">Review notes</p>
-                    <p className="mt-2 text-sm font-semibold text-slate-700">{selected.review_notes || "No review notes yet."}</p>
-                  </div>
-                  {selected.asset_url ? (
-                    <a href={selected.asset_url} target="_blank" className={cn(button, "w-full border border-slate-200 bg-white text-center text-slate-800")}>
-                      <ArrowUpRight className="mr-2 h-4 w-4" /> Open attached asset
-                    </a>
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-slate-300 p-5 text-center text-sm font-bold text-slate-500">
-                      <Image className="mx-auto mb-2 h-6 w-6" /> No asset attached yet
-                    </div>
-                  )}
                 </div>
               ) : null}
-            </Panel>
+            </div>
+          </Panel>
+        ) : null}
 
-            <Panel title="8. Production tracker" subtitle="Output health and operational pace." icon={BarChart3}>
-              <div className="space-y-4">
-                {[
-                  ["Workflow", workflowPercent],
-                  ["Asset coverage", Math.round((stats.attached / Math.max(1, stats.total)) * 100)],
-                  ["Output score", stats.output],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-500">
-                      <span>{label}</span>
-                      <span>{value}%</span>
-                    </div>
-                    <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full rounded-full bg-pink-500" style={{ width: `${Math.min(100, Math.max(0, Number(value)))}%` }} />
-                    </div>
-                  </div>
-                ))}
+        <WorkQueuePanel store={store} onAdvance={advance} />
+        <BrandGovernanceStrip store={store} />
+
+        <Panel className="p-5">
+          <SectionHeader eyebrow="Audit trail" title="Recent execution log" description="Visible trace of actions performed across the content command workspace." />
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {store.logs.slice(0, 8).map(log => (
+              <div key={log.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-black uppercase tracking-wider text-slate-400">{log.action}</p>
+                <p className="mt-2 text-sm font-black text-slate-950">{log.entity}</p>
+                <p className="mt-1 text-xs font-bold leading-5 text-slate-500">{log.detail}</p>
               </div>
-            </Panel>
-          </aside>
-        </div>
-      </section>
-    </main>
+            ))}
+          </div>
+        </Panel>
+      </main>
+    </Shell>
   )
 }

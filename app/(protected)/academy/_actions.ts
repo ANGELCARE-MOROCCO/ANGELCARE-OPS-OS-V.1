@@ -141,3 +141,201 @@ export async function createAlert(fd: FormData) {
   await audit('create', 'academy_alerts', data?.id, `Alert ${payload.title}`)
   revalidatePath('/academy/alerts-sales'); refresh()
 }
+
+const ACADEMY_EDITABLE_TABLES: Record<string, string[]> = {
+  academy_trainees: ['full_name','phone','email','city','source','status','eligibility_status','eligibility_score','eligibility_note','assigned_group_id','notes'],
+  academy_courses: ['title','category','level','duration_hours','price','status','description'],
+  academy_trainers: ['full_name','phone','email','specialty','status','notes'],
+  academy_locations: ['name','city','address','capacity','type','status'],
+  academy_groups: ['name','course_id','trainer_id','location_id','location','start_date','end_date','status','max_capacity'],
+  academy_enrollments: ['trainee_id','course_id','group_id','status','note'],
+  academy_payments: ['trainee_id','enrollment_id','amount','method','status','paid_at','due_at','reference'],
+  academy_attendance: ['trainee_id','group_id','session_date','status','note'],
+  academy_certificates: ['trainee_id','course_id','certificate_number','serial_number','verification_hash','status'],
+  academy_partners: ['name','type','city','contact_name','phone','email','status','notes'],
+  academy_alerts: ['title','message','severity','status','due_at','related_trainee_id'],
+  academy_graduation_followups: ['trainee_id','certificate_id','partner_id','opportunity_type','status','next_action','next_action_at','notes'],
+}
+
+const numericAcademyFields = new Set(['duration_hours','price','capacity','max_capacity','amount','eligibility_score'])
+
+export async function updateAcademyRecord(fd: FormData) {
+  const supabase = await createClient()
+  const table = v(fd, 'table') || ''
+  const id = v(fd, 'id')
+  const path = v(fd, 'path') || '/academy'
+  const allowed = ACADEMY_EDITABLE_TABLES[table]
+  if (!allowed || !id) throw new Error('Invalid Academy update request')
+  const payload: Record<string, any> = {}
+  for (const key of allowed) {
+    if (!fd.has(key)) continue
+    const raw = fd.get(key)
+    if (raw === null) continue
+    const value = typeof raw === 'string' && raw.trim() === '' ? null : raw
+    payload[key] = numericAcademyFields.has(key) ? Number(value || 0) : value
+  }
+  const { error } = await supabase.from(table).update(payload).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('production_update', table, id, `Updated ${Object.keys(payload).join(', ')}`)
+  revalidatePath(path); refresh()
+}
+
+export async function deleteAcademyRecord(fd: FormData) {
+  const supabase = await createClient()
+  const table = v(fd, 'table') || ''
+  const id = v(fd, 'id')
+  const path = v(fd, 'path') || '/academy'
+  if (!ACADEMY_EDITABLE_TABLES[table] || !id) throw new Error('Invalid Academy delete request')
+  const { error } = await supabase.from(table).delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('production_delete', table, id, `Deleted from ${table}`)
+  revalidatePath(path); refresh()
+}
+
+export async function createAcademyAuditNote(fd: FormData) {
+  const entity = v(fd, 'entity') || 'academy_operation'
+  const entity_id = v(fd, 'entity_id')
+  const note = v(fd, 'note')
+  await audit('manager_note', entity, entity_id, note)
+  revalidatePath(v(fd, 'path') || '/academy'); refresh()
+}
+
+
+export async function setAcademyTraineeDecision(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'trainee_id')
+  const decision = v(fd, 'decision') || 'needs_review'
+  const payload: Record<string, any> = {
+    status: decision === 'approved' ? 'eligible' : decision === 'rejected' ? 'rejected' : decision,
+    eligibility_status: decision,
+    eligibility_note: v(fd, 'note'),
+    updated_at: new Date().toISOString(),
+  }
+  if (fd.has('score')) payload.eligibility_score = n(fd, 'score')
+  const { error } = await supabase.from('academy_trainees').update(payload).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_control_decision', 'academy_trainees', id, `Decision=${decision}. ${v(fd, 'note') || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/trainees'); refresh()
+}
+
+export async function assignAcademyTraineeToGroup(fd: FormData) {
+  const supabase = await createClient()
+  const trainee_id = v(fd, 'trainee_id')
+  const group_id = v(fd, 'group_id')
+  const course_id = v(fd, 'course_id')
+  const note = v(fd, 'note')
+  if (!trainee_id || !group_id) throw new Error('Trainee and group are required')
+  const { data: existing } = await supabase.from('academy_enrollments').select('id').eq('trainee_id', trainee_id).eq('group_id', group_id).maybeSingle()
+  let enrollmentId = existing?.id
+  if (!enrollmentId) {
+    const { data, error } = await supabase.from('academy_enrollments').insert({ trainee_id, group_id, course_id, status: 'enrolled', note }).select('id').single()
+    if (error) throw new Error(error.message)
+    enrollmentId = data?.id
+  }
+  const { error: traineeError } = await supabase.from('academy_trainees').update({ status: 'enrolled', assigned_group_id: group_id, updated_at: new Date().toISOString() }).eq('id', trainee_id)
+  if (traineeError) throw new Error(traineeError.message)
+  await audit('academy_group_assignment', 'academy_enrollments', enrollmentId, `Assigned trainee ${trainee_id} to group ${group_id}. ${note || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/enrollments'); revalidatePath('/academy/trainees'); refresh()
+}
+
+export async function updateAcademyEnrollmentStage(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'enrollment_id')
+  const status = v(fd, 'status') || 'active'
+  const note = v(fd, 'note')
+  const { data: enrollment, error: readError } = await supabase.from('academy_enrollments').select('*').eq('id', id).maybeSingle()
+  if (readError) throw new Error(readError.message)
+  const { error } = await supabase.from('academy_enrollments').update({ status, note, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw new Error(error.message)
+  if (enrollment?.trainee_id && ['completed','graduated','certified','dropped'].includes(status)) {
+    await supabase.from('academy_trainees').update({ status: status === 'certified' ? 'certified' : status, updated_at: new Date().toISOString() }).eq('id', enrollment.trainee_id)
+  }
+  await audit('academy_enrollment_stage', 'academy_enrollments', id, `Enrollment moved to ${status}. ${note || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/enrollments'); revalidatePath('/academy/trainees'); refresh()
+}
+
+export async function reconcileAcademyPayment(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'payment_id')
+  const status = v(fd, 'status') || 'paid'
+  const amount = fd.has('amount') ? n(fd, 'amount') : null
+  const reference = v(fd, 'reference')
+  const method = v(fd, 'method')
+  const payload: Record<string, any> = { status, updated_at: new Date().toISOString() }
+  if (amount !== null) payload.amount = amount
+  if (reference !== null) payload.reference = reference
+  if (method !== null) payload.method = method
+  if (status === 'paid' && !fd.has('paid_at')) payload.paid_at = new Date().toISOString().slice(0, 10)
+  if (fd.has('paid_at')) payload.paid_at = v(fd, 'paid_at')
+  const { error } = await supabase.from('academy_payments').update(payload).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_payment_reconciliation', 'academy_payments', id, `Payment moved to ${status}. Ref=${reference || '—'}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/payments'); refresh()
+}
+
+export async function runAcademyTrainerControl(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'trainer_id')
+  const status = v(fd, 'status') || 'active'
+  const notes = v(fd, 'notes')
+  const { error } = await supabase.from('academy_trainers').update({ status, notes, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_trainer_control', 'academy_trainers', id, `Trainer status=${status}. ${notes || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/trainers'); refresh()
+}
+
+export async function runAcademyGroupControl(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'group_id')
+  const status = v(fd, 'status') || 'active'
+  const note = v(fd, 'note')
+  const { error } = await supabase.from('academy_groups').update({ status, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_group_control', 'academy_groups', id, `Group status=${status}. ${note || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/locations-groups'); revalidatePath('/academy/calendar'); refresh()
+}
+
+export async function runAcademyPartnerPipeline(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'partner_id')
+  const status = v(fd, 'status') || 'active'
+  const notes = v(fd, 'notes')
+  const { error } = await supabase.from('academy_partners').update({ status, notes, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_partner_pipeline', 'academy_partners', id, `Partner pipeline status=${status}. ${notes || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/partners'); refresh()
+}
+
+export async function resolveAcademyAlert(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'alert_id')
+  const status = v(fd, 'status') || 'resolved'
+  const note = v(fd, 'note')
+  const { error } = await supabase.from('academy_alerts').update({ status, message: note || undefined, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_alert_resolution', 'academy_alerts', id, `Alert moved to ${status}. ${note || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/alerts-sales'); refresh()
+}
+
+export async function governAcademyCertificate(fd: FormData) {
+  const supabase = await createClient()
+  const id = v(fd, 'certificate_id')
+  const status = v(fd, 'status') || 'issued'
+  const note = v(fd, 'note')
+  const { error } = await supabase.from('academy_certificates').update({ status, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw new Error(error.message)
+  await audit('academy_certificate_governance', 'academy_certificates', id, `Certificate status=${status}. ${note || ''}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/certificates'); refresh()
+}
+
+export async function createAcademyControlTicket(fd: FormData) {
+  const supabase = await createClient()
+  const title = v(fd, 'title') || 'Academy control ticket'
+  const message = v(fd, 'message') || 'Production action required'
+  const severity = v(fd, 'severity') || 'normal'
+  const related_trainee_id = v(fd, 'related_trainee_id')
+  const { data, error } = await supabase.from('academy_alerts').insert({ title, message, severity, status: 'open', due_at: v(fd, 'due_at'), related_trainee_id }).select('id').single()
+  if (error) throw new Error(error.message)
+  await audit('academy_control_ticket', 'academy_alerts', data?.id, `${title}: ${message}`)
+  revalidatePath(v(fd, 'path') || '/academy/action-control'); revalidatePath('/academy/alerts-sales'); refresh()
+}

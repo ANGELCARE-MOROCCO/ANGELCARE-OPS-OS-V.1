@@ -1,4 +1,5 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import EmailOsShell from '@/app/components/email-os/EmailOsShell'
-export const dynamic = 'force-dynamic'
-export default function Page(){return <AppShell title="Email OS" subtitle="AngelCare built-in communication command center." breadcrumbs={[{label:'Email OS'},{label:'automation'}]} actions={<><PageAction href="/email-os/composer">+ Compose</PageAction><PageAction href="/email-os" variant="light">Command</PageAction></>}><EmailOsShell mode="automation" /></AppShell>}
+import EmailOSV12Shell from '@/components/email-os/v12/EmailOSV12Shell';
+
+export default function Page() {
+  return <EmailOSV12Shell mode="automation" />;
+}

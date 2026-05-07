@@ -52,3 +52,13 @@ const input: React.CSSProperties = { width: '100%', boxSizing: 'border-box', pad
 const button: React.CSSProperties = { border: 0, borderRadius: 14, padding: '13px 16px', background: '#0f172a', color: '#fff', fontWeight: 950, cursor: 'pointer' }
 const badge: React.CSSProperties = { display: 'inline-flex', padding: '6px 9px', borderRadius: 999, border: '1px solid', fontSize: 12, fontWeight: 950 }
 const linkButton: React.CSSProperties = { display: 'inline-flex', padding: '11px 13px', borderRadius: 14, background: '#fff', color: '#0f172a', fontWeight: 950, textDecoration: 'none' }
+
+export function ActionStrip({ children }: { children: React.ReactNode }) { return <div style={actionStrip}>{children}</div> }
+export function MiniCard({ title, value, sub }: { title: string; value: React.ReactNode; sub?: React.ReactNode }) { return <div style={miniCard}><span style={small}>{title}</span><strong style={{fontSize:22}}>{value}</strong>{sub && <small style={muted}>{sub}</small>}</div> }
+export function SectionTitle({ title, subtitle }: { title: string; subtitle?: string }) { return <div><h2 style={{margin:'0 0 6px',fontSize:24}}>{title}</h2>{subtitle && <p style={{margin:0,color:'#64748b',fontWeight:800,lineHeight:1.5}}>{subtitle}</p>}</div> }
+export function DangerButton({ children }: { children: React.ReactNode }) { return <button style={dangerButton}>{children}</button> }
+export function PanelList({ items }: { items: string[] }) { return <div style={{display:'grid',gap:8}}>{items.map((x,i)=><div key={i} style={panelItem}>✓ {x}</div>)}</div> }
+const actionStrip: React.CSSProperties = {display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}
+const miniCard: React.CSSProperties = {background:'#f8fafc',border:'1px solid #e2e8f0',borderRadius:18,padding:14,display:'grid',gap:5}
+const dangerButton: React.CSSProperties = {border:0,borderRadius:14,padding:'13px 16px',background:'#991b1b',color:'#fff',fontWeight:950,cursor:'pointer'}
+const panelItem: React.CSSProperties = {padding:'11px 12px',borderRadius:14,background:'#f8fafc',border:'1px solid #e2e8f0',fontWeight:850,color:'#0f172a'}

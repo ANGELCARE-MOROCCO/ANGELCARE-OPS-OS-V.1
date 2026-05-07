@@ -1,5 +1,5 @@
-import UltimateRevenueCommandPage from './_v9/UltimateRevenueCommandPage'
+import RevenueCommandHQExecutionDepthWorkspace from './RevenueCommandHQExecutionDepthWorkspace'
 
 export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="home" />
+  return <RevenueCommandHQExecutionDepthWorkspace />
 }

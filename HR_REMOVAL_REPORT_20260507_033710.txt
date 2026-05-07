@@ -1,0 +1,108 @@
+HR module removal started at 20260507_033710
+Backup folder: /Users/user/Desktop/angelcare-opsos-app/_REMOVED_HR_MODULE_BACKUP_20260507_033710
+
+REMOVED: app/(protected)/hr
+REMOVED: app/api/hr
+REMOVED: app/api/hr-v2-max
+REMOVED: app/components/hr
+REMOVED: components/hr-v2
+REMOVED: components/hr-v2-max
+REMOVED: lib/hr-v2
+REMOVED: lib/hr-v2-max
+REMOVED BACKUP TRACE: .hr_v2_max_backup_20260504_162504
+
+Patched navigation/reference files:
+
+Remaining /hr route traces outside backup, node_modules and .next:
+app/(protected)/staff-home/page.tsx:154:    <section style={grid2}><ERPPanel title="AI Staff Assistant" subtitle="Useful logic to guide the agent by role, tasks and roster."><div style={aiBox}><div style={aiIcon}>✨</div><div><h3 style={aiTitle}>Recommended next move</h3><p style={aiText}>{todayWork.length?`You have ${todayWork.length} item(s) today. Start with the earliest or highest-risk card, then update progress.`:openWork.length?`You have ${openWork.length} open item(s). Clear urgent and overdue items first.`:'No direct task pressure detected. Check attendance, roster and authorized module queue.'}</p></div></div><div style={brief}>{['Confirm attendance status before execution.','Review roster duties and shift coverage.','Open every assigned task from the cards above, not from memory.','Document outcomes after each client, mission, lead or appointment.','Escalate incident or blocker immediately.'].map(x=><div key={x}>• {x}</div>)}</div></ERPPanel><ERPPanel title="Smart User-Type Widgets" subtitle="Cards adapt logically to module permissions."><div style={widgetGrid}><Quick show={canAccess(user,'sales.view')} href="/sales/orders" icon="💼" label="Sales execution" value={contracts.length} sub="Orders/contracts"/><Quick show={canAccess(user,'revenue.view')} href="/revenue-command-center/tasks" icon="🚀" label="Revenue tasks" value={tasks.length} sub="BD queue"/><Quick show={canAccess(user,'missions.view')} href="/missions" icon="🛫" label="Missions" value={missions.length} sub="Field operations"/><Quick show={canAccess(user,'hr.view')} href="/hr" icon="👥" label="HR desk" value={appUsers.length} sub="Staff visibility"/><Quick show={canAccess(user,'incidents.view')} href="/incidents" icon="🚨" label="Incidents" value={openIncidents.length} sub="Risk queue"/><Quick show={true} href="/profile" icon="👤" label="My profile" value="Open" sub="Account"/></div></ERPPanel></section>
+components/hr-production/HRProductionWorkspace.tsx:17:  ['Dashboard','/hr/command-dashboard'], ['Employees','/hr/employees'], ['Recruitment','/hr/recruitment'], ['Performance','/hr/performance'], ['Payroll','/hr/payroll'], ['Attendance','/hr/attendance'], ['Roles','/hr/roles'], ['Documents','/hr/documents'], ['Tasks','/hr/tasks'],
+lib/generated/app-routes.ts:401:    "href": "/hr/overview",
+lib/generated/app-routes.ts:404:    "permissionKey": "page:/hr/overview",
+lib/generated/app-routes.ts:419:    "href": "/hr/academy",
+lib/generated/app-routes.ts:422:    "permissionKey": "page:/hr/academy",
+lib/generated/app-routes.ts:428:    "href": "/hr/allocation",
+lib/generated/app-routes.ts:431:    "permissionKey": "page:/hr/allocation",
+lib/generated/app-routes.ts:437:    "href": "/hr/autonomous",
+lib/generated/app-routes.ts:440:    "permissionKey": "page:/hr/autonomous",
+lib/generated/app-routes.ts:446:    "href": "/hr/board-reports",
+lib/generated/app-routes.ts:449:    "permissionKey": "page:/hr/board-reports",
+lib/generated/app-routes.ts:455:    "href": "/hr/compliance",
+lib/generated/app-routes.ts:458:    "permissionKey": "page:/hr/compliance",
+lib/generated/app-routes.ts:464:    "href": "/hr/enterprise",
+lib/generated/app-routes.ts:467:    "permissionKey": "page:/hr/enterprise",
+lib/generated/app-routes.ts:473:    "href": "/hr/executive-ai",
+lib/generated/app-routes.ts:476:    "permissionKey": "page:/hr/executive-ai",
+lib/generated/app-routes.ts:482:    "href": "/hr/incidents",
+lib/generated/app-routes.ts:485:    "permissionKey": "page:/hr/incidents",
+lib/generated/app-routes.ts:491:    "href": "/hr/intelligence",
+lib/generated/app-routes.ts:494:    "permissionKey": "page:/hr/intelligence",
+lib/generated/app-routes.ts:500:    "href": "/hr/onboarding",
+lib/generated/app-routes.ts:503:    "permissionKey": "page:/hr/onboarding",
+lib/generated/app-routes.ts:509:    "href": "/hr/onboarding-smart",
+lib/generated/app-routes.ts:512:    "permissionKey": "page:/hr/onboarding-smart",
+lib/generated/app-routes.ts:518:    "href": "/hr/performance",
+lib/generated/app-routes.ts:521:    "permissionKey": "page:/hr/performance",
+lib/generated/app-routes.ts:527:    "href": "/hr/readiness",
+lib/generated/app-routes.ts:530:    "permissionKey": "page:/hr/readiness",
+lib/generated/app-routes.ts:536:    "href": "/hr/realtime",
+lib/generated/app-routes.ts:539:    "permissionKey": "page:/hr/realtime",
+lib/generated/app-routes.ts:545:    "href": "/hr/recruitment",
+lib/generated/app-routes.ts:548:    "permissionKey": "page:/hr/recruitment",
+lib/generated/app-routes.ts:554:    "href": "/hr/reports",
+lib/generated/app-routes.ts:557:    "permissionKey": "page:/hr/reports",
+lib/generated/app-routes.ts:563:    "href": "/hr/reports-advanced",
+lib/generated/app-routes.ts:566:    "permissionKey": "page:/hr/reports-advanced",
+lib/generated/app-routes.ts:572:    "href": "/hr/strategy",
+lib/generated/app-routes.ts:575:    "permissionKey": "page:/hr/strategy",
+lib/generated/app-routes.ts:581:    "href": "/hr/talent-dna",
+lib/generated/app-routes.ts:584:    "permissionKey": "page:/hr/talent-dna",
+lib/generated/app-routes.ts:590:    "href": "/hr/war-room",
+lib/generated/app-routes.ts:593:    "permissionKey": "page:/hr/war-room",
+lib/generated/app-routes.ts:1889:    "value": "page:/hr/overview",
+lib/generated/app-routes.ts:1893:    "href": "/hr/overview"
+lib/generated/app-routes.ts:1903:    "value": "page:/hr/academy",
+lib/generated/app-routes.ts:1907:    "href": "/hr/academy"
+lib/generated/app-routes.ts:1910:    "value": "page:/hr/allocation",
+lib/generated/app-routes.ts:1914:    "href": "/hr/allocation"
+lib/generated/app-routes.ts:1917:    "value": "page:/hr/autonomous",
+lib/generated/app-routes.ts:1921:    "href": "/hr/autonomous"
+lib/generated/app-routes.ts:1924:    "value": "page:/hr/board-reports",
+lib/generated/app-routes.ts:1928:    "href": "/hr/board-reports"
+lib/generated/app-routes.ts:1931:    "value": "page:/hr/compliance",
+lib/generated/app-routes.ts:1935:    "href": "/hr/compliance"
+lib/generated/app-routes.ts:1938:    "value": "page:/hr/enterprise",
+lib/generated/app-routes.ts:1942:    "href": "/hr/enterprise"
+lib/generated/app-routes.ts:1945:    "value": "page:/hr/executive-ai",
+lib/generated/app-routes.ts:1949:    "href": "/hr/executive-ai"
+lib/generated/app-routes.ts:1952:    "value": "page:/hr/incidents",
+lib/generated/app-routes.ts:1956:    "href": "/hr/incidents"
+lib/generated/app-routes.ts:1959:    "value": "page:/hr/intelligence",
+lib/generated/app-routes.ts:1963:    "href": "/hr/intelligence"
+lib/generated/app-routes.ts:1966:    "value": "page:/hr/onboarding",
+lib/generated/app-routes.ts:1970:    "href": "/hr/onboarding"
+lib/generated/app-routes.ts:1973:    "value": "page:/hr/onboarding-smart",
+lib/generated/app-routes.ts:1977:    "href": "/hr/onboarding-smart"
+lib/generated/app-routes.ts:1980:    "value": "page:/hr/performance",
+lib/generated/app-routes.ts:1984:    "href": "/hr/performance"
+lib/generated/app-routes.ts:1987:    "value": "page:/hr/readiness",
+lib/generated/app-routes.ts:1991:    "href": "/hr/readiness"
+lib/generated/app-routes.ts:1994:    "value": "page:/hr/realtime",
+lib/generated/app-routes.ts:1998:    "href": "/hr/realtime"
+lib/generated/app-routes.ts:2001:    "value": "page:/hr/recruitment",
+lib/generated/app-routes.ts:2005:    "href": "/hr/recruitment"
+lib/generated/app-routes.ts:2008:    "value": "page:/hr/reports",
+lib/generated/app-routes.ts:2012:    "href": "/hr/reports"
+lib/generated/app-routes.ts:2015:    "value": "page:/hr/reports-advanced",
+lib/generated/app-routes.ts:2019:    "href": "/hr/reports-advanced"
+lib/generated/app-routes.ts:2022:    "value": "page:/hr/strategy",
+lib/generated/app-routes.ts:2026:    "href": "/hr/strategy"
+lib/generated/app-routes.ts:2029:    "value": "page:/hr/talent-dna",
+lib/generated/app-routes.ts:2033:    "href": "/hr/talent-dna"
+lib/generated/app-routes.ts:2036:    "value": "page:/hr/war-room",
+lib/generated/app-routes.ts:2040:    "href": "/hr/war-room"
+lib/supabase/migrations/014_hr_v2_final_core_completion.sql:163:select 'system_ready','HR Final Core installed','Final HR core tables are ready: sync sources, payroll prep, compliance checks and intelligence alerts.','success','active','Open HR sync center and verify connected modules.','/hr/final-core'
+
+DONE. HR routes/API/components/libs were moved to backup, not permanently destroyed.
+Now run:
+rm -rf .next
+NODE_OPTIONS="--max-old-space-size=8192" npm run build

@@ -31,9 +31,10 @@ export default async function ProtectedLayout({
 
       {/* Global permission-based quick access menu */}
 
-      {/* Global sidebar shell */}
-  {children}
-
+      {/* Global protected content offset: keeps every logged-in page below the fixed overhead panel */}
+      <div style={{ paddingTop: 86, minHeight: '100vh' }}>
+        {children}
+      </div>
 
       {/* Global voice terminal */}
       <VoicePhoneWidget />

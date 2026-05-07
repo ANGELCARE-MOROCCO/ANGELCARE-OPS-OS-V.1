@@ -1,0 +1,24 @@
+
+> angelcare-opsos-app@0.1.0 build
+> next build
+
+▲ Next.js 16.2.3 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 19.5s
+  Running TypeScript ...
+Failed to type check.
+
+./app/api/email-os/attachments/upload/route.ts:32:28
+Type error: Argument of type '{ action: string; entity_type: string; entity_id: any; }' is not assignable to parameter of type 'string'.
+
+  [90m30 |[0m     }).select([32m'*'[0m).single();
+  [90m31 |[0m     [36mif[0m (error) [36mthrow[0m error;
+[31m[1m>[0m [90m32 |[0m     [36mawait[0m auditEmailAction({ action: [32m'attachment_uploaded'[0m, entity_type: [32m'email_attachment.[0m..
+  [90m   |[0m                            [31m[1m^[0m
+  [90m33 |[0m     [36mreturn[0m [33mNextResponse[0m.json({ ok: [36mtrue[0m, data });
+  [90m34 |[0m   } [36mcatch[0m (error: any) {
+  [90m35 |[0m     [36mreturn[0m [33mNextResponse[0m.json({ ok: [36mfalse[0m, error: error.message || [33mString[0m(error) }, { statu...
+Next.js build worker exited with code: 1 and signal: null

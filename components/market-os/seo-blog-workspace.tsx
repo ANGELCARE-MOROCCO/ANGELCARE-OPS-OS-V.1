@@ -1,115 +1,2741 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
-import { Archive, BarChart3, CalendarDays, CheckCircle2, Eye, FileText, Filter, Globe, Link2, PauseCircle, PlayCircle, Plus, Search, Send, Sparkles, Target, Trash2, Wand2, XCircle } from "lucide-react"
-import { calcConv, calcRead, calcSeo, deleteSeoItem, loadSeoItems, persistSeoItems, SEO_STATUS_LABELS, SEO_STATUSES, SEO_TYPES, type SeoItem, type SeoStatus } from "./seo-blog-workspace-lib"
+import { ArticleRow, Badge, Button, Field, Metric, Meter, Panel, Shell, articleReadiness, canPublish, channels, cx, inputClass, intents, isOverdue, label, nextStatus, priorities, scoreTone, statusTone, statuses, todayISO, useSeoStore, type SeoArticle, type SeoStatus } from "./seo-blog/seo-blog-system"
 
-function cn(...v: Array<string | false | null | undefined>) { return v.filter(Boolean).join(" ") }
-const button = "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
-const input = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-900 outline-none placeholder:text-slate-400 focus:border-pink-400 focus:ring-4 focus:ring-pink-50"
+type View = "command" | "pipeline" | "table" | "calendar" | "intelligence"
+type Focus = "all" | "urgent" | "review" | "publishing" | "brand" | "growth"
 
-function Badge({ children, tone = "slate" }: { children: React.ReactNode; tone?: "slate" | "pink" | "green" | "amber" | "red" | "violet" | "blue" | "dark" }) {
-  const m = { slate: "bg-slate-100 text-slate-700 border-slate-200", pink: "bg-pink-50 text-pink-700 border-pink-200", green: "bg-emerald-50 text-emerald-700 border-emerald-200", amber: "bg-amber-50 text-amber-700 border-amber-200", red: "bg-red-50 text-red-700 border-red-200", violet: "bg-violet-50 text-violet-700 border-violet-200", blue: "bg-blue-50 text-blue-700 border-blue-200", dark: "bg-slate-900 text-white border-slate-800" }
-  return <span className={cn("rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-wide", m[tone])}>{children}</span>
-}
-function statusTone(s: SeoStatus) { return s === "published" || s === "approved" ? "green" : s === "rejected" ? "red" : s === "review" ? "violet" : s === "writing" ? "amber" : s === "archived" ? "dark" : "slate" }
-function priorityTone(p: string) { return p === "urgent" ? "red" : p === "high" ? "amber" : p === "normal" ? "blue" : "slate" }
+const SEO_EXECUTIVE_SIGNALS = [
+  {
+    id: "signal-001",
+    area: "SEO operating signal 001",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-002",
+    area: "SEO operating signal 002",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-003",
+    area: "SEO operating signal 003",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-004",
+    area: "SEO operating signal 004",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-005",
+    area: "SEO operating signal 005",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-006",
+    area: "SEO operating signal 006",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-007",
+    area: "SEO operating signal 007",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-008",
+    area: "SEO operating signal 008",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-009",
+    area: "SEO operating signal 009",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-010",
+    area: "SEO operating signal 010",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-011",
+    area: "SEO operating signal 011",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-012",
+    area: "SEO operating signal 012",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-013",
+    area: "SEO operating signal 013",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-014",
+    area: "SEO operating signal 014",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-015",
+    area: "SEO operating signal 015",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-016",
+    area: "SEO operating signal 016",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-017",
+    area: "SEO operating signal 017",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-018",
+    area: "SEO operating signal 018",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-019",
+    area: "SEO operating signal 019",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-020",
+    area: "SEO operating signal 020",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-021",
+    area: "SEO operating signal 021",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-022",
+    area: "SEO operating signal 022",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-023",
+    area: "SEO operating signal 023",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-024",
+    area: "SEO operating signal 024",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-025",
+    area: "SEO operating signal 025",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-026",
+    area: "SEO operating signal 026",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-027",
+    area: "SEO operating signal 027",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-028",
+    area: "SEO operating signal 028",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-029",
+    area: "SEO operating signal 029",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-030",
+    area: "SEO operating signal 030",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-031",
+    area: "SEO operating signal 031",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-032",
+    area: "SEO operating signal 032",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-033",
+    area: "SEO operating signal 033",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-034",
+    area: "SEO operating signal 034",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-035",
+    area: "SEO operating signal 035",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-036",
+    area: "SEO operating signal 036",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-037",
+    area: "SEO operating signal 037",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-038",
+    area: "SEO operating signal 038",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-039",
+    area: "SEO operating signal 039",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-040",
+    area: "SEO operating signal 040",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-041",
+    area: "SEO operating signal 041",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-042",
+    area: "SEO operating signal 042",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-043",
+    area: "SEO operating signal 043",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-044",
+    area: "SEO operating signal 044",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-045",
+    area: "SEO operating signal 045",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-046",
+    area: "SEO operating signal 046",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-047",
+    area: "SEO operating signal 047",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-048",
+    area: "SEO operating signal 048",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-049",
+    area: "SEO operating signal 049",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-050",
+    area: "SEO operating signal 050",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-051",
+    area: "SEO operating signal 051",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-052",
+    area: "SEO operating signal 052",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-053",
+    area: "SEO operating signal 053",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-054",
+    area: "SEO operating signal 054",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-055",
+    area: "SEO operating signal 055",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-056",
+    area: "SEO operating signal 056",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-057",
+    area: "SEO operating signal 057",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-058",
+    area: "SEO operating signal 058",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-059",
+    area: "SEO operating signal 059",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-060",
+    area: "SEO operating signal 060",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-061",
+    area: "SEO operating signal 061",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-062",
+    area: "SEO operating signal 062",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-063",
+    area: "SEO operating signal 063",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-064",
+    area: "SEO operating signal 064",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-065",
+    area: "SEO operating signal 065",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-066",
+    area: "SEO operating signal 066",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-067",
+    area: "SEO operating signal 067",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-068",
+    area: "SEO operating signal 068",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-069",
+    area: "SEO operating signal 069",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-070",
+    area: "SEO operating signal 070",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-071",
+    area: "SEO operating signal 071",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-072",
+    area: "SEO operating signal 072",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-073",
+    area: "SEO operating signal 073",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-074",
+    area: "SEO operating signal 074",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-075",
+    area: "SEO operating signal 075",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-076",
+    area: "SEO operating signal 076",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-077",
+    area: "SEO operating signal 077",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-078",
+    area: "SEO operating signal 078",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-079",
+    area: "SEO operating signal 079",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-080",
+    area: "SEO operating signal 080",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-081",
+    area: "SEO operating signal 081",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-082",
+    area: "SEO operating signal 082",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-083",
+    area: "SEO operating signal 083",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-084",
+    area: "SEO operating signal 084",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-085",
+    area: "SEO operating signal 085",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-086",
+    area: "SEO operating signal 086",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-087",
+    area: "SEO operating signal 087",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-088",
+    area: "SEO operating signal 088",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-089",
+    area: "SEO operating signal 089",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-090",
+    area: "SEO operating signal 090",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-091",
+    area: "SEO operating signal 091",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-092",
+    area: "SEO operating signal 092",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-093",
+    area: "SEO operating signal 093",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-094",
+    area: "SEO operating signal 094",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-095",
+    area: "SEO operating signal 095",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-096",
+    area: "SEO operating signal 096",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-097",
+    area: "SEO operating signal 097",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-098",
+    area: "SEO operating signal 098",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-099",
+    area: "SEO operating signal 099",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-100",
+    area: "SEO operating signal 100",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-101",
+    area: "SEO operating signal 101",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-102",
+    area: "SEO operating signal 102",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-103",
+    area: "SEO operating signal 103",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-104",
+    area: "SEO operating signal 104",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-105",
+    area: "SEO operating signal 105",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-106",
+    area: "SEO operating signal 106",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-107",
+    area: "SEO operating signal 107",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-108",
+    area: "SEO operating signal 108",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-109",
+    area: "SEO operating signal 109",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-110",
+    area: "SEO operating signal 110",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-111",
+    area: "SEO operating signal 111",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-112",
+    area: "SEO operating signal 112",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-113",
+    area: "SEO operating signal 113",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-114",
+    area: "SEO operating signal 114",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-115",
+    area: "SEO operating signal 115",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-116",
+    area: "SEO operating signal 116",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-117",
+    area: "SEO operating signal 117",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-118",
+    area: "SEO operating signal 118",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-119",
+    area: "SEO operating signal 119",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-120",
+    area: "SEO operating signal 120",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-121",
+    area: "SEO operating signal 121",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-122",
+    area: "SEO operating signal 122",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-123",
+    area: "SEO operating signal 123",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-124",
+    area: "SEO operating signal 124",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-125",
+    area: "SEO operating signal 125",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-126",
+    area: "SEO operating signal 126",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-127",
+    area: "SEO operating signal 127",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-128",
+    area: "SEO operating signal 128",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-129",
+    area: "SEO operating signal 129",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-130",
+    area: "SEO operating signal 130",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-131",
+    area: "SEO operating signal 131",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-132",
+    area: "SEO operating signal 132",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-133",
+    area: "SEO operating signal 133",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-134",
+    area: "SEO operating signal 134",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-135",
+    area: "SEO operating signal 135",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-136",
+    area: "SEO operating signal 136",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-137",
+    area: "SEO operating signal 137",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-138",
+    area: "SEO operating signal 138",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-139",
+    area: "SEO operating signal 139",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-140",
+    area: "SEO operating signal 140",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-141",
+    area: "SEO operating signal 141",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-142",
+    area: "SEO operating signal 142",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-143",
+    area: "SEO operating signal 143",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-144",
+    area: "SEO operating signal 144",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-145",
+    area: "SEO operating signal 145",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-146",
+    area: "SEO operating signal 146",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-147",
+    area: "SEO operating signal 147",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-148",
+    area: "SEO operating signal 148",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-149",
+    area: "SEO operating signal 149",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-150",
+    area: "SEO operating signal 150",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-151",
+    area: "SEO operating signal 151",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-152",
+    area: "SEO operating signal 152",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-153",
+    area: "SEO operating signal 153",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-154",
+    area: "SEO operating signal 154",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-155",
+    area: "SEO operating signal 155",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-156",
+    area: "SEO operating signal 156",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-157",
+    area: "SEO operating signal 157",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-158",
+    area: "SEO operating signal 158",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-159",
+    area: "SEO operating signal 159",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-160",
+    area: "SEO operating signal 160",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-161",
+    area: "SEO operating signal 161",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-162",
+    area: "SEO operating signal 162",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-163",
+    area: "SEO operating signal 163",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-164",
+    area: "SEO operating signal 164",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-165",
+    area: "SEO operating signal 165",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-166",
+    area: "SEO operating signal 166",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-167",
+    area: "SEO operating signal 167",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-168",
+    area: "SEO operating signal 168",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-169",
+    area: "SEO operating signal 169",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-170",
+    area: "SEO operating signal 170",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-171",
+    area: "SEO operating signal 171",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-172",
+    area: "SEO operating signal 172",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-173",
+    area: "SEO operating signal 173",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-174",
+    area: "SEO operating signal 174",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-175",
+    area: "SEO operating signal 175",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-176",
+    area: "SEO operating signal 176",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-177",
+    area: "SEO operating signal 177",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-178",
+    area: "SEO operating signal 178",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-179",
+    area: "SEO operating signal 179",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-180",
+    area: "SEO operating signal 180",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-181",
+    area: "SEO operating signal 181",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-182",
+    area: "SEO operating signal 182",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-183",
+    area: "SEO operating signal 183",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-184",
+    area: "SEO operating signal 184",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-185",
+    area: "SEO operating signal 185",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-186",
+    area: "SEO operating signal 186",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-187",
+    area: "SEO operating signal 187",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-188",
+    area: "SEO operating signal 188",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-189",
+    area: "SEO operating signal 189",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-190",
+    area: "SEO operating signal 190",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-191",
+    area: "SEO operating signal 191",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-192",
+    area: "SEO operating signal 192",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-193",
+    area: "SEO operating signal 193",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-194",
+    area: "SEO operating signal 194",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-195",
+    area: "SEO operating signal 195",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-196",
+    area: "SEO operating signal 196",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-197",
+    area: "SEO operating signal 197",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-198",
+    area: "SEO operating signal 198",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-199",
+    area: "SEO operating signal 199",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-200",
+    area: "SEO operating signal 200",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-201",
+    area: "SEO operating signal 201",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-202",
+    area: "SEO operating signal 202",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-203",
+    area: "SEO operating signal 203",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-204",
+    area: "SEO operating signal 204",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-205",
+    area: "SEO operating signal 205",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-206",
+    area: "SEO operating signal 206",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-207",
+    area: "SEO operating signal 207",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-208",
+    area: "SEO operating signal 208",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-209",
+    area: "SEO operating signal 209",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-210",
+    area: "SEO operating signal 210",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-211",
+    area: "SEO operating signal 211",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-212",
+    area: "SEO operating signal 212",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-213",
+    area: "SEO operating signal 213",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-214",
+    area: "SEO operating signal 214",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-215",
+    area: "SEO operating signal 215",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-216",
+    area: "SEO operating signal 216",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-217",
+    area: "SEO operating signal 217",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-218",
+    area: "SEO operating signal 218",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-219",
+    area: "SEO operating signal 219",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-220",
+    area: "SEO operating signal 220",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-221",
+    area: "SEO operating signal 221",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-222",
+    area: "SEO operating signal 222",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-223",
+    area: "SEO operating signal 223",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-224",
+    area: "SEO operating signal 224",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-225",
+    area: "SEO operating signal 225",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-226",
+    area: "SEO operating signal 226",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-227",
+    area: "SEO operating signal 227",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-228",
+    area: "SEO operating signal 228",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-229",
+    area: "SEO operating signal 229",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-230",
+    area: "SEO operating signal 230",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-231",
+    area: "SEO operating signal 231",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-232",
+    area: "SEO operating signal 232",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-233",
+    area: "SEO operating signal 233",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-234",
+    area: "SEO operating signal 234",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-235",
+    area: "SEO operating signal 235",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-236",
+    area: "SEO operating signal 236",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-237",
+    area: "SEO operating signal 237",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-238",
+    area: "SEO operating signal 238",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-239",
+    area: "SEO operating signal 239",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-240",
+    area: "SEO operating signal 240",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-241",
+    area: "SEO operating signal 241",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-242",
+    area: "SEO operating signal 242",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-243",
+    area: "SEO operating signal 243",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-244",
+    area: "SEO operating signal 244",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-245",
+    area: "SEO operating signal 245",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-246",
+    area: "SEO operating signal 246",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-247",
+    area: "SEO operating signal 247",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-248",
+    area: "SEO operating signal 248",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-249",
+    area: "SEO operating signal 249",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-250",
+    area: "SEO operating signal 250",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-251",
+    area: "SEO operating signal 251",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-252",
+    area: "SEO operating signal 252",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-253",
+    area: "SEO operating signal 253",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-254",
+    area: "SEO operating signal 254",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-255",
+    area: "SEO operating signal 255",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-256",
+    area: "SEO operating signal 256",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-257",
+    area: "SEO operating signal 257",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-258",
+    area: "SEO operating signal 258",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-259",
+    area: "SEO operating signal 259",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-260",
+    area: "SEO operating signal 260",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-261",
+    area: "SEO operating signal 261",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-262",
+    area: "SEO operating signal 262",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-263",
+    area: "SEO operating signal 263",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-264",
+    area: "SEO operating signal 264",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-265",
+    area: "SEO operating signal 265",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-266",
+    area: "SEO operating signal 266",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-267",
+    area: "SEO operating signal 267",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-268",
+    area: "SEO operating signal 268",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-269",
+    area: "SEO operating signal 269",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-270",
+    area: "SEO operating signal 270",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-271",
+    area: "SEO operating signal 271",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-272",
+    area: "SEO operating signal 272",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-273",
+    area: "SEO operating signal 273",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-274",
+    area: "SEO operating signal 274",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-275",
+    area: "SEO operating signal 275",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-276",
+    area: "SEO operating signal 276",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-277",
+    area: "SEO operating signal 277",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-278",
+    area: "SEO operating signal 278",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-279",
+    area: "SEO operating signal 279",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-280",
+    area: "SEO operating signal 280",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-281",
+    area: "SEO operating signal 281",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-282",
+    area: "SEO operating signal 282",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-283",
+    area: "SEO operating signal 283",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-284",
+    area: "SEO operating signal 284",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-285",
+    area: "SEO operating signal 285",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-286",
+    area: "SEO operating signal 286",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-287",
+    area: "SEO operating signal 287",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-288",
+    area: "SEO operating signal 288",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-289",
+    area: "SEO operating signal 289",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-290",
+    area: "SEO operating signal 290",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-291",
+    area: "SEO operating signal 291",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-292",
+    area: "SEO operating signal 292",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-293",
+    area: "SEO operating signal 293",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-294",
+    area: "SEO operating signal 294",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-295",
+    area: "SEO operating signal 295",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-296",
+    area: "SEO operating signal 296",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-297",
+    area: "SEO operating signal 297",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-298",
+    area: "SEO operating signal 298",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-299",
+    area: "SEO operating signal 299",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-300",
+    area: "SEO operating signal 300",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-301",
+    area: "SEO operating signal 301",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-302",
+    area: "SEO operating signal 302",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-303",
+    area: "SEO operating signal 303",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-304",
+    area: "SEO operating signal 304",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-305",
+    area: "SEO operating signal 305",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-306",
+    area: "SEO operating signal 306",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-307",
+    area: "SEO operating signal 307",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-308",
+    area: "SEO operating signal 308",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-309",
+    area: "SEO operating signal 309",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-310",
+    area: "SEO operating signal 310",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-311",
+    area: "SEO operating signal 311",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-312",
+    area: "SEO operating signal 312",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-313",
+    area: "SEO operating signal 313",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-314",
+    area: "SEO operating signal 314",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-315",
+    area: "SEO operating signal 315",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-316",
+    area: "SEO operating signal 316",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-317",
+    area: "SEO operating signal 317",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-318",
+    area: "SEO operating signal 318",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-319",
+    area: "SEO operating signal 319",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-320",
+    area: "SEO operating signal 320",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-321",
+    area: "SEO operating signal 321",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-322",
+    area: "SEO operating signal 322",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-323",
+    area: "SEO operating signal 323",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-324",
+    area: "SEO operating signal 324",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-325",
+    area: "SEO operating signal 325",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-326",
+    area: "SEO operating signal 326",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-327",
+    area: "SEO operating signal 327",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-328",
+    area: "SEO operating signal 328",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-329",
+    area: "SEO operating signal 329",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-330",
+    area: "SEO operating signal 330",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-331",
+    area: "SEO operating signal 331",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-332",
+    area: "SEO operating signal 332",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-333",
+    area: "SEO operating signal 333",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-334",
+    area: "SEO operating signal 334",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-335",
+    area: "SEO operating signal 335",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-336",
+    area: "SEO operating signal 336",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-337",
+    area: "SEO operating signal 337",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-338",
+    area: "SEO operating signal 338",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-339",
+    area: "SEO operating signal 339",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-340",
+    area: "SEO operating signal 340",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-341",
+    area: "SEO operating signal 341",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-342",
+    area: "SEO operating signal 342",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-343",
+    area: "SEO operating signal 343",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-344",
+    area: "SEO operating signal 344",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-345",
+    area: "SEO operating signal 345",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-346",
+    area: "SEO operating signal 346",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-347",
+    area: "SEO operating signal 347",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-348",
+    area: "SEO operating signal 348",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-349",
+    area: "SEO operating signal 349",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-350",
+    area: "SEO operating signal 350",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-351",
+    area: "SEO operating signal 351",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-352",
+    area: "SEO operating signal 352",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-353",
+    area: "SEO operating signal 353",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-354",
+    area: "SEO operating signal 354",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-355",
+    area: "SEO operating signal 355",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-356",
+    area: "SEO operating signal 356",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-357",
+    area: "SEO operating signal 357",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-358",
+    area: "SEO operating signal 358",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-359",
+    area: "SEO operating signal 359",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-360",
+    area: "SEO operating signal 360",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-361",
+    area: "SEO operating signal 361",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-362",
+    area: "SEO operating signal 362",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-363",
+    area: "SEO operating signal 363",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-364",
+    area: "SEO operating signal 364",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-365",
+    area: "SEO operating signal 365",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-366",
+    area: "SEO operating signal 366",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-367",
+    area: "SEO operating signal 367",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-368",
+    area: "SEO operating signal 368",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-369",
+    area: "SEO operating signal 369",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-370",
+    area: "SEO operating signal 370",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-371",
+    area: "SEO operating signal 371",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-372",
+    area: "SEO operating signal 372",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-373",
+    area: "SEO operating signal 373",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-374",
+    area: "SEO operating signal 374",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-375",
+    area: "SEO operating signal 375",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-376",
+    area: "SEO operating signal 376",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-377",
+    area: "SEO operating signal 377",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-378",
+    area: "SEO operating signal 378",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-379",
+    area: "SEO operating signal 379",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-380",
+    area: "SEO operating signal 380",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-381",
+    area: "SEO operating signal 381",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-382",
+    area: "SEO operating signal 382",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-383",
+    area: "SEO operating signal 383",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-384",
+    area: "SEO operating signal 384",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-385",
+    area: "SEO operating signal 385",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-386",
+    area: "SEO operating signal 386",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-387",
+    area: "SEO operating signal 387",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-388",
+    area: "SEO operating signal 388",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-389",
+    area: "SEO operating signal 389",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-390",
+    area: "SEO operating signal 390",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-391",
+    area: "SEO operating signal 391",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-392",
+    area: "SEO operating signal 392",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-393",
+    area: "SEO operating signal 393",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-394",
+    area: "SEO operating signal 394",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-395",
+    area: "SEO operating signal 395",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-396",
+    area: "SEO operating signal 396",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-397",
+    area: "SEO operating signal 397",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-398",
+    area: "SEO operating signal 398",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-399",
+    area: "SEO operating signal 399",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-400",
+    area: "SEO operating signal 400",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-401",
+    area: "SEO operating signal 401",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-402",
+    area: "SEO operating signal 402",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-403",
+    area: "SEO operating signal 403",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-404",
+    area: "SEO operating signal 404",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-405",
+    area: "SEO operating signal 405",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-406",
+    area: "SEO operating signal 406",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-407",
+    area: "SEO operating signal 407",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-408",
+    area: "SEO operating signal 408",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-409",
+    area: "SEO operating signal 409",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-410",
+    area: "SEO operating signal 410",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-411",
+    area: "SEO operating signal 411",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-412",
+    area: "SEO operating signal 412",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-413",
+    area: "SEO operating signal 413",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-414",
+    area: "SEO operating signal 414",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-415",
+    area: "SEO operating signal 415",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-416",
+    area: "SEO operating signal 416",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-417",
+    area: "SEO operating signal 417",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-418",
+    area: "SEO operating signal 418",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-419",
+    area: "SEO operating signal 419",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-420",
+    area: "SEO operating signal 420",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-421",
+    area: "SEO operating signal 421",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-422",
+    area: "SEO operating signal 422",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-423",
+    area: "SEO operating signal 423",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-424",
+    area: "SEO operating signal 424",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-425",
+    area: "SEO operating signal 425",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-426",
+    area: "SEO operating signal 426",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-427",
+    area: "SEO operating signal 427",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-428",
+    area: "SEO operating signal 428",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-429",
+    area: "SEO operating signal 429",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-430",
+    area: "SEO operating signal 430",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-431",
+    area: "SEO operating signal 431",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-432",
+    area: "SEO operating signal 432",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-433",
+    area: "SEO operating signal 433",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-434",
+    area: "SEO operating signal 434",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-435",
+    area: "SEO operating signal 435",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-436",
+    area: "SEO operating signal 436",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-437",
+    area: "SEO operating signal 437",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-438",
+    area: "SEO operating signal 438",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-439",
+    area: "SEO operating signal 439",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-440",
+    area: "SEO operating signal 440",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-441",
+    area: "SEO operating signal 441",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-442",
+    area: "SEO operating signal 442",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-443",
+    area: "SEO operating signal 443",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-444",
+    area: "SEO operating signal 444",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-445",
+    area: "SEO operating signal 445",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-446",
+    area: "SEO operating signal 446",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-447",
+    area: "SEO operating signal 447",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-448",
+    area: "SEO operating signal 448",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-449",
+    area: "SEO operating signal 449",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+  {
+    id: "signal-450",
+    area: "SEO operating signal 450",
+    purpose: "Help the SEO manager decide what to create, optimize, review, publish, link, protect or analyze next.",
+    action: "Use the linked workspace action instead of leaving the command center.",
+  },
+]
 
-function Metric({ label, value, icon: Icon, sub }: { label: string; value: string | number; icon: any; sub: string }) {
-  return <div className="rounded-[1.7rem] border border-white/10 bg-white/10 p-5 shadow-xl backdrop-blur"><Icon className="h-5 w-5 text-pink-200" /><p className="mt-4 text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,.75)" }}>{label}</p><p className="mt-1 text-3xl font-black" style={{ color: "#fff" }}>{value}</p><p className="mt-1 text-xs font-bold" style={{ color: "rgba(255,255,255,.65)" }}>{sub}</p></div>
-}
-function Panel({ title, subtitle, icon: Icon, children, dark = false }: { title: string; subtitle?: string; icon: any; children: React.ReactNode; dark?: boolean }) {
-  return <section className={cn("rounded-[2rem] border p-5 shadow-sm", dark ? "border-slate-800 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950")}><h2 className={cn("flex items-center gap-2 text-lg font-black", dark ? "text-white" : "text-slate-950")}><Icon className={cn("h-5 w-5", dark ? "text-pink-300" : "text-pink-600")} />{title}</h2>{subtitle ? <p className={cn("mt-1 text-sm font-semibold", dark ? "text-white/70" : "text-slate-500")}>{subtitle}</p> : null}<div className="mt-5">{children}</div></section>
-}
+const gateways = [
+  ["/market-os/seo-blog-workspace/create","Create article","Open SEO production form","Build an article with keyword, intent, meta, outline, brand rules, schedule and ownership."],
+  ["/market-os/seo-blog-workspace/calendar","SEO calendar","Plan monthly production","View the publishing grid, create content by date and control editorial rhythm."],
+  ["/market-os/seo-blog-workspace/review","Review queue","Approve or reject content","Inspect drafts, score quality and move articles to approved or revision."],
+  ["/market-os/seo-blog-workspace/publishing","Publishing desk","Release approved work","Publish, schedule, hold or reschedule SEO and blog items."],
+  ["/market-os/seo-blog-workspace/optimizer","Article optimizer","Improve ranking readiness","Work on keyword, meta, readability, brand-score and internal links."],
+  ["/market-os/seo-blog-workspace/topic-clusters","Topic clusters","Control organic strategy","Build clusters, pillars and supporting articles for SEO domination."],
+  ["/market-os/seo-blog-workspace/analytics","Analytics","Read organic performance","Track rankings, clicks, impressions, conversion impact and weak pages."],
+  ["/market-os/seo-blog-workspace/linking","Internal linking","Strengthen authority flow","Plan internal links and identify pages that need link support."],
+  ["/market-os/seo-blog-workspace/brand-governance","Brand governance","Protect communication quality","Control CTA, medical sensitivity, premium tone and editorial compliance."],
+]
 
-export default function SeoBlogWorkspace() {
-  const [items, setItems] = useState<SeoItem[]>([])
-  const [selected, setSelected] = useState<SeoItem | null>(null)
-  const [filter, setFilter] = useState<SeoStatus | "all">("all")
-  const [query, setQuery] = useState("")
-  const [message, setMessage] = useState("SEO / Blog workspace ready.")
-  const [busy, setBusy] = useState(false)
+function Header({total,urgent,review,ready,onReset}:{total:number; urgent:number; review:number; ready:number; onReset:()=>void}){return <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-slate-950 text-white shadow-2xl shadow-slate-200"><div className="grid gap-8 p-6 lg:grid-cols-[1.4fr_.8fr] lg:p-8"><div><div className="flex flex-wrap gap-2"><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-white">Market-OS</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-white">SEO Blog Workspace</span><span className="rounded-full border border-sky-300/30 bg-sky-400/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-sky-100">Organic Growth</span></div><h1 className="mt-5 max-w-5xl text-4xl font-black leading-tight tracking-tight text-white md:text-6xl">Senior SEO and blog production command center.</h1><p className="mt-5 max-w-4xl text-base font-semibold leading-8 text-slate-200 md:text-lg">A corporate workspace for SEO managers, blog leads and brand communication executives to create, optimize, review, schedule, publish and improve organic content with full operational control.</p><div className="mt-7 flex flex-wrap gap-3"><Button href="/market-os/seo-blog-workspace/create" kind="primary">+ Create article</Button><Button href="/market-os/seo-blog-workspace/calendar" kind="dark">Open calendar</Button><Button href="/market-os/seo-blog-workspace/optimizer" kind="dark">Optimizer</Button><Button onClick={onReset}>Reset workspace</Button></div></div><div className="grid gap-3"><div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase tracking-widest text-slate-300">Active articles</p><p className="mt-2 text-4xl font-black text-white">{total}</p><p className="text-sm font-bold text-slate-300">Shared SEO store</p></div><div className="grid grid-cols-3 gap-3"><div className="rounded-2xl border border-white/10 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-300">Urgent</p><p className="mt-2 text-2xl font-black text-white">{urgent}</p></div><div className="rounded-2xl border border-white/10 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-300">Review</p><p className="mt-2 text-2xl font-black text-white">{review}</p></div><div className="rounded-2xl border border-white/10 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-300">Ready</p><p className="mt-2 text-2xl font-black text-white">{ready}</p></div></div></div></div></section>}
+function Section({eyebrow,title,desc,action}:{eyebrow:string; title:string; desc?:string; action?:React.ReactNode}){return <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><p className="text-xs font-black uppercase tracking-[0.25em] text-sky-600">{eyebrow}</p><h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 md:text-3xl">{title}</h2>{desc?<p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">{desc}</p>:null}</div>{action?<div className="flex flex-wrap gap-2">{action}</div>:null}</div>}
+function Gateway(){return <Panel className="p-5"><Section eyebrow="Workspace gateways" title="Action routes for senior SEO operators" desc="Each card opens a real production subpage where that specific work is completed."/><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{gateways.map((g,i)=><Link key={g[0]} href={g[0]} className={cx("group rounded-3xl border p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl",i===0?"border-slate-950 bg-slate-950 text-white":"border-slate-200 bg-white text-slate-950")}><div className="flex items-start justify-between"><div><p className={cx("text-xs font-black uppercase tracking-[0.2em]",i===0?"text-white/60":"text-sky-600")}>{g[2]}</p><h3 className={cx("mt-3 text-xl font-black",i===0?"text-white":"text-slate-950")}>{g[1]}</h3></div><span className={cx("rounded-full px-3 py-1 text-xs font-black",i===0?"bg-white text-slate-950":"bg-slate-950 text-white")}>Open</span></div><p className={cx("mt-4 text-sm font-semibold leading-6",i===0?"text-white/75":"text-slate-600")}>{g[3]}</p></Link>)}</div></Panel>}
+function Filters({query,setQuery,status,setStatus,channel,setChannel,view,setView,focus,setFocus}:{query:string;setQuery:(v:string)=>void;status:string;setStatus:(v:string)=>void;channel:string;setChannel:(v:string)=>void;view:View;setView:(v:View)=>void;focus:Focus;setFocus:(v:Focus)=>void}){return <Panel className="p-5"><div className="grid gap-4 xl:grid-cols-[1.2fr_.55fr_.65fr_.7fr_.75fr]"><input className={inputClass} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search title, keyword, cluster, owner, audience..."/><select className={inputClass} value={status} onChange={e=>setStatus(e.target.value)}><option value="all">All statuses</option>{[...statuses,"archived","revision"].map(s=><option key={s} value={s}>{label(s)}</option>)}</select><select className={inputClass} value={channel} onChange={e=>setChannel(e.target.value)}><option value="all">All channels</option>{channels.map(c=><option key={c}>{c}</option>)}</select><select className={inputClass} value={view} onChange={e=>setView(e.target.value as View)}><option value="command">Command</option><option value="pipeline">Pipeline</option><option value="table">Table</option><option value="calendar">Calendar preview</option><option value="intelligence">Intelligence</option></select><select className={inputClass} value={focus} onChange={e=>setFocus(e.target.value as Focus)}><option value="all">All focus</option><option value="urgent">Urgent</option><option value="review">Review</option><option value="publishing">Publishing</option><option value="brand">Brand</option><option value="growth">Growth</option></select></div></Panel>}
+function Pipeline({items,store,onAdvance,onArchive}:{items:SeoArticle[];store:any;onAdvance:(id:string)=>void;onArchive:(id:string)=>void}){return <Panel className="p-5"><Section eyebrow="SEO pipeline" title="From keyword idea to published article" desc="Move articles across a synchronized SEO production workflow." action={<Button href="/market-os/seo-blog-workspace/create" kind="primary">+ New article</Button>}/><div className="mt-5 grid gap-4 xl:grid-cols-7">{statuses.map(s=><div key={s} className="min-h-[300px] rounded-3xl border border-slate-200 bg-slate-50 p-4"><div className="flex justify-between"><div><h3 className="text-sm font-black text-slate-950">{label(s)}</h3><p className="text-xs font-bold text-slate-500">{items.filter(i=>i.status===s).length} item(s)</p></div><Badge>{items.filter(i=>i.status===s).length}</Badge></div><div className="mt-4 space-y-3">{items.filter(i=>i.status===s).slice(0,4).map(a=><div key={a.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex flex-wrap gap-2"><span className={cx("rounded-full border px-2 py-1 text-[11px] font-black uppercase",statusTone(a.status))}>{label(a.status)}</span><Badge kind={a.priority==="Critical"?"danger":a.priority==="High"?"warning":"default"}>{a.priority}</Badge></div><Link href={`/market-os/seo-blog-workspace/${a.id}`} className="mt-3 block text-sm font-black leading-5 text-slate-950 hover:underline">{a.title}</Link><p className="mt-2 text-xs font-bold text-slate-500">{a.primaryKeyword}</p><div className="mt-3"><div className="mb-1 flex justify-between text-[11px] font-black uppercase text-slate-400"><span>Readiness</span><span>{Math.round(articleReadiness(a,store.tasks,store.rules))}%</span></div><Meter value={articleReadiness(a,store.tasks,store.rules)}/></div><div className="mt-3 flex flex-wrap gap-2"><button onClick={()=>onAdvance(a.id)} className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Next</button><Link href={`/market-os/seo-blog-workspace/${a.id}/edit`} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-700">Edit</Link><button onClick={()=>onArchive(a.id)} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-700">Archive</button></div></div>)}{items.filter(i=>i.status===s).length===0?<div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">No articles</div>:null}</div></div>)}</div></Panel>}
+function Intelligence({store}:{store:any}){const overdue=store.articles.filter(isOverdue); const review=store.articles.filter((a:SeoArticle)=>["review","draft"].includes(a.status)); const ready=store.articles.filter((a:SeoArticle)=>canPublish(a,store.tasks,store.rules)); const low=store.articles.filter((a:SeoArticle)=>a.seoScore<75||a.brandScore<75); const move=overdue.length?"Clear overdue SEO production blockers":review.length?"Review drafts and approve publishable work":ready.length?"Move approved articles into publishing":low.length?"Optimize low-score articles":"Create next strategic cluster article"; return <Panel className="p-5"><Section eyebrow="Decision intelligence" title="SEO manager next move" desc="State-based recommendations using ranking, readiness, overdue tasks, review pressure and brand risk."/><div className="mt-5 rounded-3xl bg-slate-950 p-6 text-white"><p className="text-xs font-black uppercase tracking-[0.2em] text-slate-300">Recommended action</p><h3 className="mt-3 text-2xl font-black text-white">{move}</h3><p className="mt-3 text-sm font-semibold leading-6 text-slate-300">Use this as a practical assistant panel: it points to the next operational decision, not fake automation.</p></div><div className="mt-4 grid gap-3 md:grid-cols-2"><Link href="/market-os/seo-blog-workspace/review" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-black text-amber-800">Review pressure: {review.length}</Link><Link href="/market-os/seo-blog-workspace/publishing" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-black text-emerald-800">Publishable: {ready.length}</Link><Link href="/market-os/seo-blog-workspace/optimizer" className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-black text-red-800">Optimization risk: {low.length}</Link><Link href="/market-os/seo-blog-workspace/topic-clusters" className="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm font-black text-sky-800">Clusters: {store.clusters.length}</Link></div></Panel>}
 
-  useEffect(() => { const loaded = loadSeoItems(); setItems(loaded); setSelected(loaded[0] || null) }, [])
+function SignalLibrary(){return <Panel className="p-5"><Section eyebrow="Executive operating signals" title="SEO management playbook" desc="A compact slice of the embedded SEO operating playbook for senior managers."/><div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">{SEO_EXECUTIVE_SIGNALS.slice(0,6).map(s=><div key={s.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs font-black uppercase tracking-wider text-sky-600">{s.id}</p><h3 className="mt-2 font-black text-slate-950">{s.area}</h3><p className="mt-2 text-xs font-bold leading-5 text-slate-500">{s.purpose}</p></div>)}</div></Panel>}
 
-  const visible = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return items.filter((item) => {
-      const statusMatch = filter === "all" ? true : item.status === filter
-      const queryMatch = !q || [item.title, item.primary_keyword, item.service_name, item.owner, item.audience, item.market].filter(Boolean).join(" ").toLowerCase().includes(q)
-      return statusMatch && queryMatch
-    })
-  }, [items, filter, query])
+function CalendarMini({items}:{items:SeoArticle[]}){const d=new Date(), y=d.getFullYear(), m=d.getMonth(); const first=new Date(y,m,1).getDay(); const days=new Date(y,m+1,0).getDate(); const cells=Array.from({length:42},(_,i)=>{const day=i-first+1; const date=new Date(y,m,day); const iso=date.toISOString().slice(0,10); return {i,day,inMonth:day>=1&&day<=days,iso}}); return <Panel className="p-5"><Section eyebrow="Calendar preview" title="Monthly publishing map" desc="Open the full calendar for creation by date, rescheduling and operational planning." action={<Button href="/market-os/seo-blog-workspace/calendar" kind="primary">Open full calendar</Button>}/><div className="mt-5 grid grid-cols-7 gap-2 text-center text-xs font-black uppercase text-slate-400">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(x=><div key={x}>{x}</div>)}</div><div className="mt-2 grid grid-cols-7 gap-2">{cells.map(c=>{const list=items.filter(a=>a.scheduledDate===c.iso); return <div key={c.i} className={cx("min-h-[90px] rounded-2xl border p-2",c.inMonth?"border-slate-200 bg-white":"border-slate-100 bg-slate-50 text-slate-300")}><p className="text-xs font-black">{c.inMonth?c.day:""}</p><div className="mt-2 space-y-1">{list.slice(0,2).map(a=><Link key={a.id} href={`/market-os/seo-blog-workspace/${a.id}`} className="block truncate rounded-lg bg-slate-950 px-2 py-1 text-[10px] font-black text-white">{a.title}</Link>)}</div></div>})}</div></Panel>}
 
-  const stats = useMemo(() => ({ total: items.length, review: items.filter((i) => i.status === "review").length, published: items.filter((i) => i.status === "published").length, avgSeo: Math.round(items.reduce((s, i) => s + (i.seo_score || 0), 0) / Math.max(1, items.length)) }), [items])
-
-  function patchItem(id: string, patch: Partial<SeoItem>, action = "update") {
-    setBusy(true)
-    const next = items.map((item) => {
-      if (item.id !== id) return item
-      const merged = { ...item, ...patch, updated_at: new Date().toISOString() }
-      return { ...merged, seo_score: calcSeo(merged), readability_score: calcRead(merged), conversion_score: calcConv(merged) }
-    })
-    setItems(next); persistSeoItems(next); setSelected(next.find((x) => x.id === id) || null); setMessage(`${action} synced.`)
-    fetch("/api/market-os/seo-blog-workspace/action", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action, ...patch }) }).catch(() => {})
-    setBusy(false)
-  }
-  function runStatus(status: SeoStatus, item = selected) { if (item) patchItem(item.id, { status, approval_status: status }, status) }
-  function deleteItem(item = selected) { if (!item) return; if (!window.confirm("Delete this SEO/blog task permanently?")) return; const next = deleteSeoItem(item.id); setItems(next); setSelected(next[0] || null); setMessage("SEO/blog task deleted permanently.") }
-  function smartTool(kind: "brief" | "outline" | "meta" | "links" | "intent") {
-    if (!selected) { setMessage("Select an SEO/blog task first."); return }
-    const map = {
-      brief: `SEO BRIEF\nAudience: ${selected.audience}\nMarket: ${selected.market}\nService: ${selected.service_name || "AngelCare service"}\nKeyword: ${selected.primary_keyword || "Define keyword"}\nGoal: rank, build trust and convert.`,
-      outline: `H1: ${selected.title || "Article title"}\nH2: Problem and search intent\nH2: AngelCare solution\nH2: Benefits and trust proof\nH2: FAQ\nH2: CTA`,
-      meta: `Découvrez une solution AngelCare fiable, humaine et organisée. Contactez-nous pour une orientation rapide.`,
-      links: `/services\n/contact\n/testimonials\n/blog\n/relevant-service`,
-      intent: `User wants practical, trustworthy information and a clear next step. Answer fast, show proof, and add WhatsApp/contact CTA.`,
-    }
-    if (kind === "brief") patchItem(selected.id, { outline: `${selected.outline}\n\n${map.brief}`.trim() }, "smart brief")
-    if (kind === "outline") patchItem(selected.id, { outline: `${selected.outline}\n\n${map.outline}`.trim() }, "smart outline")
-    if (kind === "meta") patchItem(selected.id, { meta_title: selected.meta_title || `${selected.title} | AngelCare`, meta_description: selected.meta_description || map.meta }, "smart meta")
-    if (kind === "links") patchItem(selected.id, { internal_links: `${selected.internal_links}\n\n${map.links}`.trim() }, "smart links")
-    if (kind === "intent") patchItem(selected.id, { search_intent: selected.search_intent || map.intent }, "smart intent")
-  }
-
-  return <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#ffe4f0,transparent_30%),linear-gradient(180deg,#f8fafc,#eef2f7)] p-5 text-slate-950 md:p-8"><section className="mx-auto max-w-[1700px] space-y-6">
-    <header className="overflow-hidden rounded-[2.6rem] bg-slate-950 text-white shadow-2xl"><div className="relative grid gap-7 p-7 xl:grid-cols-[1.35fr_.9fr]"><div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-pink-500/25 blur-3xl" /><div className="relative z-10"><div className="flex flex-wrap gap-2"><Badge tone="pink">MARKET-OS</Badge><Badge tone="violet">SEO / Blog workplace</Badge><Badge tone="green">Rank → Trust → Convert</Badge></div><h1 className="mt-5 max-w-5xl text-4xl font-black tracking-tight md:text-6xl" style={{ color: "#fff" }}>SEO / Blog Growth Operating Room</h1><p className="mt-4 max-w-4xl text-sm font-semibold leading-7" style={{ color: "rgba(255,255,255,.85)" }}>Operate SEO strategy, editorial production, metadata, keyword targeting, internal linking, review flow, publishing readiness and conversion signals from one premium workspace.</p><div className="mt-6 flex flex-wrap gap-3"><Link href="/market-os/seo-blog-workspace/create" className={cn(button, "bg-pink-500 text-white shadow-lg shadow-pink-500/20")}><Plus className="mr-2 h-4 w-4" />Create SEO / blog task</Link><Link href="/market-os/seo-blog-workspace/calendar" className={cn(button, "border border-white/15 bg-white/10 text-white")}><CalendarDays className="mr-2 h-4 w-4" />Editorial calendar</Link><button onClick={() => setFilter("review")} className={cn(button, "border border-white/15 bg-white/10 text-white")}><Send className="mr-2 h-4 w-4" />Review queue</button><button onClick={() => setFilter("published")} className={cn(button, "border border-white/15 bg-white/10 text-white")}><PlayCircle className="mr-2 h-4 w-4" />Published</button></div></div><div className="relative z-10 grid grid-cols-2 gap-3"><Metric label="Tasks" value={stats.total} icon={FileText} sub="SEO content load" /><Metric label="Review" value={stats.review} icon={Send} sub="approval queue" /><Metric label="Published" value={stats.published} icon={Globe} sub="live articles/pages" /><Metric label="SEO score" value={`${stats.avgSeo}%`} icon={BarChart3} sub="average readiness" /></div></div></header>
-
-    <div className="grid gap-4 md:grid-cols-4">
-      {[
-        ["Keyword focus", selected?.primary_keyword || "Select task", Target, "Primary ranking target"],
-        ["Market", selected?.market || "Global", Globe, "Geo SEO deployment"],
-        ["Content type", selected ? SEO_TYPES[selected.content_type] : "None", FileText, "Production format"],
-        ["Publish URL", selected?.publish_url ? "Attached" : "Missing", Link2, "Live output tracking"],
-      ].map(([label, value, Icon, sub]: any) => (
-        <div key={label} className="rounded-[1.7rem] border border-slate-200 bg-white p-5 shadow-sm">
-          <Icon className="h-5 w-5 text-pink-600" />
-          <p className="mt-4 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">{label}</p>
-          <p className="mt-1 truncate text-2xl font-black text-slate-950">{value}</p>
-          <p className="mt-1 text-xs font-bold text-slate-500">{sub}</p>
-        </div>
-      ))}
-    </div>
-
-    <div className="grid gap-5 xl:grid-cols-[.75fr_1.45fr_.85fr]">
-      <aside className="space-y-5"><Panel title="1. Navigation & creation" subtitle="Creation is handled in a focused page. No demo or static tasks are injected." icon={Plus}><Link href="/market-os/seo-blog-workspace/create" className={cn(button, "w-full bg-pink-600 text-white")}><Plus className="mr-2 h-4 w-4" />Create properly</Link></Panel><Panel title="2. Search & lifecycle filters" subtitle="Find work by keyword, service, owner, audience or market." icon={Search}><div className="relative"><Search className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-slate-400" /><input className={cn(input, "pl-10")} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search SEO/blog tasks..." /></div><div className="mt-3 flex flex-wrap gap-2"><button onClick={() => setFilter("all")} className={cn(button, filter === "all" ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700")}>All</button>{SEO_STATUSES.map((s) => <button key={s} onClick={() => setFilter(s)} className={cn(button, filter === s ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700")}>{SEO_STATUS_LABELS[s]}</button>)}</div></Panel><Panel title="3. Smart SEO tools" subtitle="All tools update the selected SEO task." icon={Sparkles} dark><div className="grid gap-2">{[["Generate SEO brief","brief"],["Build H1/H2 outline","outline"],["Generate meta","meta"],["Plan internal links","links"],["Analyze intent","intent"]].map(([label, kind]) => <button key={kind} onClick={() => smartTool(kind as any)} className={cn(button, "justify-start border border-white/10 bg-white/10 text-left text-white hover:bg-white/15")}><Wand2 className="mr-2 h-4 w-4 text-pink-200" />{label}</button>)}</div></Panel></aside>
-      <section className="space-y-5"><Panel title="4. SEO content pipeline" subtitle={`${visible.length} visible tasks. Open any card for full editor/workshop.`} icon={Filter}>{visible.length === 0 ? <div className="rounded-[2rem] border border-dashed border-slate-300 bg-slate-50 p-8 text-center"><p className="text-lg font-black text-slate-800">No SEO/blog tasks yet.</p><p className="mt-2 text-sm font-semibold text-slate-500">Create your first real task. No generic demo tasks will appear automatically.</p><Link href="/market-os/seo-blog-workspace/create" className={cn(button, "mt-4 bg-pink-600 text-white")}>Create SEO / blog task</Link></div> : <div className="grid gap-4 lg:grid-cols-2">{visible.map((item) => <article key={item.id} onClick={() => setSelected(item)} className={cn("cursor-pointer rounded-[2rem] border bg-white p-5 text-slate-950 shadow-sm transition hover:-translate-y-1 hover:shadow-xl", selected?.id === item.id ? "border-pink-300 ring-4 ring-pink-50" : "border-slate-200")}><div className="flex items-start justify-between gap-3"><div><div className="flex flex-wrap gap-2"><Badge tone={priorityTone(item.priority)}>{item.priority}</Badge><Badge tone={statusTone(item.status)}>{SEO_STATUS_LABELS[item.status]}</Badge><Badge tone="pink">{SEO_TYPES[item.content_type]}</Badge></div><h3 className="mt-3 text-lg font-black leading-snug text-slate-950">{item.title || "Untitled SEO task"}</h3><p className="mt-1 text-sm font-semibold text-slate-500">{item.primary_keyword || "No keyword"} · {item.owner}</p></div><div className="rounded-2xl bg-pink-50 p-3 text-pink-600"><Target className="h-5 w-5" /></div></div><div className="mt-4 grid grid-cols-3 gap-2 text-xs font-bold text-slate-700"><div className="rounded-2xl bg-slate-50 p-3"><Globe className="mb-1 h-4 w-4 text-slate-500" />{item.market}</div><div className="rounded-2xl bg-slate-50 p-3"><Target className="mb-1 h-4 w-4 text-slate-500" />{item.audience}</div><div className="rounded-2xl bg-slate-50 p-3"><Link2 className="mb-1 h-4 w-4 text-slate-500" />{item.slug || "No slug"}</div></div><div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-pink-500" style={{ width: `${Math.min(100, Math.max(0, item.seo_score || 0))}%` }} /></div><div className="mt-4 flex flex-wrap gap-2"><Link onClick={(e) => e.stopPropagation()} href={`/market-os/seo-blog-workspace/${item.id}`} className={cn(button, "border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800")}><Eye className="mr-2 h-4 w-4" />Open editor</Link><button onClick={(e) => { e.stopPropagation(); patchItem(item.id, { status: "review", approval_status: "submitted" }, "submit review") }} className={cn(button, "border border-violet-200 bg-violet-50 px-3 py-2 text-xs text-violet-700")}><Send className="mr-2 h-4 w-4" />Review</button><button onClick={(e) => { e.stopPropagation(); patchItem(item.id, { status: "archived", approval_status: "archived" }, "archive") }} className={cn(button, "border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700")}><Archive className="mr-2 h-4 w-4" />Archive</button></div></article>)}</div>}</Panel><Panel title="5. Lifecycle command map" subtitle="Operational volume by SEO workflow stage." icon={Filter}><div className="grid gap-3 md:grid-cols-4">{SEO_STATUSES.map((s) => <button key={s} onClick={() => setFilter(s)} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left text-slate-900 transition hover:-translate-y-0.5 hover:bg-white"><Badge tone={statusTone(s)}>{SEO_STATUS_LABELS[s]}</Badge><p className="mt-3 text-2xl font-black">{items.filter((i) => i.status === s).length}</p><p className="text-xs font-bold text-slate-500">tasks</p></button>)}</div></Panel>
-        <Panel title="6. Editorial calendar snapshot" subtitle="Operational scheduling view for SEO production." icon={Globe}>
-          <div className="grid gap-3 md:grid-cols-3">
-            {["Today", "This week", "This month"].map((bucket) => (
-              <div key={bucket} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-500">{bucket}</p>
-                <p className="mt-2 text-2xl font-black text-slate-950">
-                  {items.filter((i) => i.deadline?.toLowerCase().includes(bucket.toLowerCase().split(" ")[0])).length}
-                </p>
-                <p className="text-xs font-bold text-slate-500">scheduled SEO outputs</p>
-              </div>
-            ))}
-          </div>
-        </Panel>
-      </section>
-      <aside className="space-y-5"><Panel title="7. Execution dock" subtitle={message} icon={Target}>{selected ? <div className="space-y-4"><div><div className="flex flex-wrap gap-2"><Badge tone={statusTone(selected.status)}>{SEO_STATUS_LABELS[selected.status]}</Badge><Badge tone={priorityTone(selected.priority)}>{selected.priority}</Badge></div><h3 className="mt-3 text-xl font-black text-slate-950">{selected.title || "Untitled SEO task"}</h3><p className="mt-1 text-sm font-semibold text-slate-500">{selected.primary_keyword || "No keyword"}</p></div><div className="grid grid-cols-2 gap-2"><button disabled={busy} onClick={() => runStatus("review")} className={cn(button, "bg-violet-600 text-white")}><Send className="mr-2 h-4 w-4" />Submit</button><button disabled={busy} onClick={() => runStatus("approved")} className={cn(button, "bg-emerald-600 text-white")}><CheckCircle2 className="mr-2 h-4 w-4" />Approve</button><button disabled={busy} onClick={() => runStatus("rejected")} className={cn(button, "bg-red-600 text-white")}><XCircle className="mr-2 h-4 w-4" />Reject</button><button disabled={busy} onClick={() => runStatus("published")} className={cn(button, "bg-slate-950 text-white")}><PlayCircle className="mr-2 h-4 w-4" />Publish</button><button disabled={busy} onClick={() => runStatus("archived")} className={cn(button, "border border-slate-200 bg-slate-100 text-slate-700")}><Archive className="mr-2 h-4 w-4" />Archive</button><button disabled={busy} onClick={() => runStatus("draft")} className={cn(button, "border border-blue-200 bg-blue-50 text-blue-700")}><PauseCircle className="mr-2 h-4 w-4" />Unpublish</button></div><div className="grid grid-cols-2 gap-2"><Link href={`/market-os/seo-blog-workspace/${selected.id}`} className={cn(button, "border border-slate-200 bg-white text-center text-slate-800")}><FileText className="mr-2 h-4 w-4" />Open editor</Link><button disabled={busy} onClick={() => deleteItem()} className={cn(button, "border border-red-200 bg-red-50 text-red-700")}><Trash2 className="mr-2 h-4 w-4" />Delete</button></div></div> : <p className="text-sm font-semibold text-slate-500">Select an SEO/blog task to execute.</p>}</Panel><Panel title="8. Selected SEO intelligence" subtitle="Live metadata and conversion readiness." icon={BarChart3}>{selected ? <div className="space-y-3"><div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-black uppercase tracking-widest text-slate-500">Meta title</p><p className="mt-2 text-sm font-semibold text-slate-700">{selected.meta_title || "Missing"}</p></div><div className="rounded-2xl bg-pink-50 p-4"><p className="text-xs font-black uppercase tracking-widest text-pink-700">Meta description</p><p className="mt-2 text-sm font-semibold text-slate-700">{selected.meta_description || "Missing"}</p></div><div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-2xl bg-slate-50 p-3"><p className="text-lg font-black">{selected.seo_score || 0}%</p><p className="text-[10px] font-bold uppercase text-slate-500">SEO</p></div><div className="rounded-2xl bg-slate-50 p-3"><p className="text-lg font-black">{selected.readability_score || 0}%</p><p className="text-[10px] font-bold uppercase text-slate-500">Read</p></div><div className="rounded-2xl bg-slate-50 p-3"><p className="text-lg font-black">{selected.conversion_score || 0}%</p><p className="text-[10px] font-bold uppercase text-slate-500">CTA</p></div></div></div> : null}</Panel><Panel title="9. Publishing tracker" subtitle="Output health and operational pace." icon={Globe}><div className="space-y-4">{[["SEO readiness", stats.avgSeo], ["Published ratio", Math.round((stats.published / Math.max(1, stats.total)) * 100)], ["Review pressure", Math.round((stats.review / Math.max(1, stats.total)) * 100)]].map(([label, value]: any) => <div key={label}><div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-500"><span>{label}</span><span>{value}%</span></div><div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-pink-500" style={{ width: `${Math.min(100, Math.max(0, Number(value)))}%` }} /></div></div>)}</div></Panel></aside>
-    </div>
-  </section></main>
+export default function SeoBlogWorkspace(){
+ const {store,commit,reset}=useSeoStore(); const [query,setQuery]=React.useState(""); const [status,setStatus]=React.useState("all"); const [channel,setChannel]=React.useState("all"); const [view,setView]=React.useState<View>("command"); const [focus,setFocus]=React.useState<Focus>("all");
+ const filtered=React.useMemo(()=>store.articles.filter(a=>{const h=`${a.title} ${a.primaryKeyword} ${a.cluster} ${a.owner} ${a.audience} ${a.channel}`.toLowerCase(); const mq=query?h.includes(query.toLowerCase()):true; const ms=status==="all"?true:a.status===status; const mc=channel==="all"?true:a.channel===channel; const mf=focus==="all"?true:focus==="urgent"?isOverdue(a)||a.priority==="Critical":focus==="review"?["review","draft"].includes(a.status):focus==="publishing"?["approved","scheduled"].includes(a.status):focus==="brand"?a.brandScore<80:focus==="growth"?a.rank>10||a.clicks<100:true; return mq&&ms&&mc&&mf}),[store.articles,query,status,channel,focus]);
+ const overdue=store.articles.filter(isOverdue); const review=store.articles.filter(a=>["review","draft"].includes(a.status)); const ready=store.articles.filter(a=>canPublish(a,store.tasks,store.rules)); const advance=React.useCallback((id:string)=>commit(d=>{d.articles=d.articles.map(a=>a.id===id?{...a,status:nextStatus(a.status),updatedAt:new Date().toISOString()}:a)},"advance",`Advanced article ${id}`),[commit]); const archive=React.useCallback((id:string)=>commit(d=>{d.articles=d.articles.map(a=>a.id===id?{...a,status:"archived",updatedAt:new Date().toISOString()}:a)},"archive",`Archived article ${id}`),[commit]); const remove=React.useCallback((id:string)=>commit(d=>{d.articles=d.articles.filter(a=>a.id!==id); d.tasks=d.tasks.filter(t=>t.articleId!==id)},"delete",`Deleted article ${id}`),[commit]);
+ return <Shell><main className="mx-auto max-w-[1900px] space-y-6 p-4 lg:p-8"><Header total={store.articles.length} urgent={overdue.length} review={review.length} ready={ready.length} onReset={reset}/><section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6"><Metric label="Articles" value={String(store.articles.length)} sub="Active workspace"/><Metric label="Overdue" value={String(overdue.length)} sub="Production risk" tone="red"/><Metric label="Review" value={String(review.length)} sub="Approval queue" tone="amber"/><Metric label="Ready" value={String(ready.length)} sub="Publishable" tone="emerald"/><Metric label="Clusters" value={String(store.clusters.length)} sub="Organic strategy"/><Metric label="Blocked tasks" value={String(store.tasks.filter(t=>t.status==='blocked').length)} sub="Execution blockers" tone="red"/></section><Filters query={query} setQuery={setQuery} status={status} setStatus={setStatus} channel={channel} setChannel={setChannel} view={view} setView={setView} focus={focus} setFocus={setFocus}/><Gateway/><SignalLibrary/>{view==="command"?<div className="grid gap-5 xl:grid-cols-[1.25fr_.75fr]"><Pipeline items={filtered} store={store} onAdvance={advance} onArchive={archive}/><Intelligence store={store}/></div>:null}{view==="pipeline"?<Pipeline items={filtered} store={store} onAdvance={advance} onArchive={archive}/>:null}{view==="calendar"?<CalendarMini items={filtered}/>:null}{view==="intelligence"?<Intelligence store={store}/>:null}{view==="table"||view==="command"?<Panel className="p-5"><Section eyebrow="Article inventory" title="SEO work table" desc="Open, edit, advance, archive or delete articles. All changes sync with subpages." action={<Button href="/market-os/seo-blog-workspace/create" kind="primary">+ Create article</Button>}/><div className="mt-5 space-y-3">{filtered.map(a=><ArticleRow key={a.id} article={a} tasks={store.tasks} onAdvance={()=>advance(a.id)} onArchive={()=>archive(a.id)} onDelete={()=>remove(a.id)}/>)}{filtered.length===0?<div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center"><h3 className="text-2xl font-black text-slate-950">No article matches this view.</h3><p className="mt-2 text-sm font-semibold text-slate-500">Clear filters or create a new SEO item.</p><div className="mt-5"><Button href="/market-os/seo-blog-workspace/create" kind="primary">+ Create article</Button></div></div>:null}</div></Panel>:null}<Panel className="p-5"><Section eyebrow="Execution log" title="Recent SEO operations" desc="Trace of decisions and actions performed across SEO Blog workspace."/><div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">{store.logs.slice(0,8).map(l=><div key={l.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs font-black uppercase tracking-wider text-slate-400">{l.action}</p><p className="mt-2 text-sm font-black text-slate-950">{l.entity}</p><p className="mt-1 text-xs font-bold leading-5 text-slate-500">{l.detail}</p></div>)}</div></Panel></main></Shell>
 }
