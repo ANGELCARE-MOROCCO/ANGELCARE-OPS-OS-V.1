@@ -1,5 +1,7 @@
-import RevenueCommandHQExecutionDepthWorkspace from './RevenueCommandHQExecutionDepthWorkspace'
+import RevenueCommandHQV11Cockpit from "@/components/revenue-command-center/RevenueCommandHQV11Cockpit"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueCommandHQExecutionDepthWorkspace />
+  return <RevenueCommandHQV11Cockpit />
 }

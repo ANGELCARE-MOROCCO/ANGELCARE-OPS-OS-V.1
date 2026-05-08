@@ -1,5 +1,7 @@
-import UltimateRevenueCommandPage from '../_v9/UltimateRevenueCommandPage'
+import RevenuePredictiveV11Workspace from "@/components/revenue-command-center/RevenuePredictiveV11Workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="meta-readiness" />
+  return <RevenuePredictiveV11Workspace mode="meta" />
 }

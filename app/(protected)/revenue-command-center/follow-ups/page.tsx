@@ -1,5 +1,7 @@
-import RevenueCommandFinalWorkspace from '../_final/RevenueCommandFinalWorkspace'
+import RevenueSDRV11Workspace from "@/components/revenue-command-center/RevenueSDRV11Workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueCommandFinalWorkspace workspace="followUps" />
+  return <RevenueSDRV11Workspace mode="followups" />
 }

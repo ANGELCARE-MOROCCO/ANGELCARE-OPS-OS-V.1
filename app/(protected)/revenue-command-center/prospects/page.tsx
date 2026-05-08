@@ -1,5 +1,7 @@
-import RevenueCommandFinalWorkspace from '../_final/RevenueCommandFinalWorkspace'
+import RevenueProspectsV12MegaWorkspace from "@/components/revenue-command-center/RevenueProspectsV12MegaWorkspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueCommandFinalWorkspace workspace="prospects" />
+  return <RevenueProspectsV12MegaWorkspace mode="dashboard" />
 }

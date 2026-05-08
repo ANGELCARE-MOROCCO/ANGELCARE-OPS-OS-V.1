@@ -39,7 +39,6 @@
   "exclude": [
     "_restore_*",
     ".angelcare_backups",
-    ".hr_v2_max_backup_20260504_162504",
     "node_modules",
     "recovery",
     ".next",

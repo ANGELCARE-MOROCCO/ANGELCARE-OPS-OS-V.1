@@ -1,4 +1,5 @@
 import { requireAccess } from '@/lib/auth/requireAccess'
+import RevenueCommandUnifiedLayout from './_shared/RevenueCommandUnifiedLayout'
 
 export default async function RevenueLayout({
   children,
@@ -7,5 +8,5 @@ export default async function RevenueLayout({
 }) {
   await requireAccess('revenue.view')
 
-  return <>{children}</>
+  return <RevenueCommandUnifiedLayout>{children}</RevenueCommandUnifiedLayout>
 }

@@ -1,5 +1,7 @@
-import UltimateRevenueCommandPage from '../_v9/UltimateRevenueCommandPage'
+import RevenueSDRV11Workspace from "@/components/revenue-command-center/RevenueSDRV11Workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="sdr-execution" />
+  return <RevenueSDRV11Workspace mode="workspace" />
 }
