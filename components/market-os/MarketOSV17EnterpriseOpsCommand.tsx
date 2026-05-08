@@ -53,11 +53,11 @@ const coreSubmodules = [
     kpis: ["21 briefs", "8 drafts", "6 ready"],
   },
   {
-    title: "Editorial Calendar",
-    route: "/market-os/editorial-calendar",
-    owner: "Publishing Lead",
-    purpose: "Planning calendar, deadlines, approvals, channel publishing and content recovery.",
-    kpis: ["16 deadlines", "5 overdue", "11 planned"],
+    title: "Ambassadors Engine",
+    route: "/market-os/ambassadors",
+    owner: "Community Lead",
+    purpose: "Ambassador missions, referral tracking, incentives, performance, content compliance and inactivity recovery.",
+    kpis: ["32 active", "8 missions", "5 inactive"],
   },
 ]
 
@@ -362,7 +362,13 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 <Link href="/market-os/campaign-lifecycle" className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white hover:bg-blue-800">Campaign Lifecycle</Link>
                 <Link href="/market-os/content-command-center" className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-black text-white hover:bg-slate-800">Content Command</Link>
                 <Link href="/market-os/seo-blog-workspace" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">SEO Blog Workspace</Link>
-                <Link href="/market-os/editorial-calendar" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">Editorial Calendar</Link>
+                <Link href="/market-os/ambassadors" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">Ambassadors</Link>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link href="/market-os/editorial-calendar" className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-slate-700 hover:bg-white">Editorial Calendar</Link>
+                <Link href="/market-os/attribution" className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-slate-700 hover:bg-white">Attribution</Link>
+                <Link href="/market-os/partnerships" className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-slate-700 hover:bg-white">Partnerships</Link>
               </div>
             </div>
 

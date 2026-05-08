@@ -1,0 +1,99 @@
+HR V3 MAX FINAL PRODUCTION REPORT
+App root: /Users/user/Desktop/angelcare-opsos-app
+Date: Fri May  8 04:24:40 +01 2026
+
+Phase 12 route check:
+OK  app/(protected)/hr/final-qa/page.tsx
+OK  app/(protected)/hr/deployment-readiness/page.tsx
+OK  app/(protected)/hr/final-route-audit/page.tsx
+OK  lib/hr-unified/max-phase12-final-routes.ts
+MISS lib/supabase/migrations/115_hr_v3_max_phase12_final_production_stabilization.sql
+
+Full HR route inventory:
+app/(protected)/hr/activity-timeline/page.tsx
+app/(protected)/hr/analytics-hub/page.tsx
+app/(protected)/hr/analytics/page.tsx
+app/(protected)/hr/approvals/page.tsx
+app/(protected)/hr/attendance/corrections/page.tsx
+app/(protected)/hr/attendance/page.tsx
+app/(protected)/hr/audit/page.tsx
+app/(protected)/hr/boardroom/page.tsx
+app/(protected)/hr/bulk-actions/page.tsx
+app/(protected)/hr/calendar/page.tsx
+app/(protected)/hr/command-center/page.tsx
+app/(protected)/hr/command-queue/page.tsx
+app/(protected)/hr/compliance-watch/page.tsx
+app/(protected)/hr/control-room/page.tsx
+app/(protected)/hr/crud-audit/page.tsx
+app/(protected)/hr/daily-ops/page.tsx
+app/(protected)/hr/data-quality/page.tsx
+app/(protected)/hr/departments/[id]/page.tsx
+app/(protected)/hr/departments/page.tsx
+app/(protected)/hr/deployment-readiness/page.tsx
+app/(protected)/hr/documents/page.tsx
+app/(protected)/hr/enterprise-dashboard/page.tsx
+app/(protected)/hr/escalations/page.tsx
+app/(protected)/hr/executive-automation/page.tsx
+app/(protected)/hr/executive/page.tsx
+app/(protected)/hr/final-qa/page.tsx
+app/(protected)/hr/final-route-audit/page.tsx
+app/(protected)/hr/kpi-drilldowns/page.tsx
+app/(protected)/hr/linked-records/page.tsx
+app/(protected)/hr/navigation/page.tsx
+app/(protected)/hr/notifications/page.tsx
+app/(protected)/hr/onboarding/[id]/page.tsx
+app/(protected)/hr/onboarding/checklists/page.tsx
+app/(protected)/hr/onboarding/page.tsx
+app/(protected)/hr/openings/[id]/page.tsx
+app/(protected)/hr/openings/new/page.tsx
+app/(protected)/hr/openings/page.tsx
+app/(protected)/hr/operations-console/page.tsx
+app/(protected)/hr/page.tsx
+app/(protected)/hr/performance-matrix/page.tsx
+app/(protected)/hr/playbooks/page.tsx
+app/(protected)/hr/positions/[id]/page.tsx
+app/(protected)/hr/positions/page.tsx
+app/(protected)/hr/quality/page.tsx
+app/(protected)/hr/quick-actions/page.tsx
+app/(protected)/hr/recruitment/candidates/[id]/page.tsx
+app/(protected)/hr/recruitment/candidates/page.tsx
+app/(protected)/hr/recruitment/kanban/page.tsx
+app/(protected)/hr/recruitment/page.tsx
+app/(protected)/hr/reports/page.tsx
+app/(protected)/hr/risk-center/page.tsx
+app/(protected)/hr/rosters/page.tsx
+app/(protected)/hr/rosters/planner/page.tsx
+app/(protected)/hr/route-map/page.tsx
+app/(protected)/hr/saved-views/page.tsx
+app/(protected)/hr/search/page.tsx
+app/(protected)/hr/service-requests/page.tsx
+app/(protected)/hr/settings/page.tsx
+app/(protected)/hr/sla-center/page.tsx
+app/(protected)/hr/staff/[id]/attendance/page.tsx
+app/(protected)/hr/staff/[id]/documents/page.tsx
+app/(protected)/hr/staff/[id]/page.tsx
+app/(protected)/hr/staff/[id]/performance/page.tsx
+app/(protected)/hr/staff/[id]/roster/page.tsx
+app/(protected)/hr/staff/new/page.tsx
+app/(protected)/hr/staff/page.tsx
+app/(protected)/hr/sync-center/page.tsx
+app/(protected)/hr/system-health/page.tsx
+app/(protected)/hr/tasks/page.tsx
+app/(protected)/hr/templates/page.tsx
+app/(protected)/hr/workforce-intelligence/page.tsx
+app/(protected)/hr/workforce-risks/page.tsx
+
+Known compatibility repairs:
+OK no compatibility repairs needed
+
+Run SQL:
+lib/supabase/migrations/115_hr_v3_max_phase12_final_production_stabilization.sql
+
+Then:
+rm -rf .next
+npm run build
+
+Final QA pages:
+/hr/final-qa
+/hr/final-route-audit
+/hr/deployment-readiness

@@ -39,7 +39,7 @@ export {
   formGrid,
 }
 
-export function V3Link({ href, children }: any) {
+export function V3Link({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
       href={href}
