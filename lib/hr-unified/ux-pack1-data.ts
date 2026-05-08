@@ -8,20 +8,20 @@ export async function getHRUXPack1Data() {
   const supabase = await createClient()
 
   const [
-    staff,
-    candidates,
-    openings,
-    tasks,
-    approvals,
-    docs,
-    conflicts,
-    corrections,
-    onboarding,
-    dailyOps,
-    escalations,
-    kpis,
-    timeline,
-    quality,
+    staffRes,
+    candidatesRes,
+    openingsRes,
+    tasksRes,
+    approvalsRes,
+    docsRes,
+    conflictsRes,
+    correctionsRes,
+    onboardingRes,
+    dailyOpsRes,
+    escalationsRes,
+    kpisRes,
+    timelineRes,
+    qualityRes,
   ] = await Promise.all([
     supabase.from('hr_staff').select('*').order('created_at', { ascending: false }).limit(700),
     supabase.from('hr_recruitment_candidates').select('*').order('created_at', { ascending: false }).limit(700),
@@ -40,23 +40,27 @@ export async function getHRUXPack1Data() {
   ])
 
   const data = {
-    staff: rows(staff),
-    candidates: rows(candidates),
-    openings: rows(openings),
-    tasks: rows(tasks),
-    approvals: rows(approvals),
-    docs: rows(docs),
-    conflicts: rows(conflicts),
-    corrections: rows(corrections),
-    onboarding: rows(onboarding),
-    dailyOps: rows(dailyOps),
-    escalations: rows(escalations),
-    kpis: rows(kpis),
-    timeline: rows(timeline),
-    quality: rows(quality),
+    staff: rows(staffRes),
+    candidates: rows(candidatesRes),
+    openings: rows(openingsRes),
+    tasks: rows(tasksRes),
+    approvals: rows(approvalsRes),
+    docs: rows(docsRes),
+    conflicts: rows(conflictsRes),
+    corrections: rows(correctionsRes),
+    onboarding: rows(onboardingRes),
+    dailyOps: rows(dailyOpsRes),
+    escalations: rows(escalationsRes),
+    kpis: rows(kpisRes),
+    timeline: rows(timelineRes),
+    quality: rows(qualityRes),
   }
 
-  const open = (x: any) => !['closed', 'completed', 'resolved', 'cancelled', 'archived', 'approved', 'ok', 'ready'].includes(String(x?.status || '').toLowerCase())
+  const open = (x: any) =>
+    !['closed', 'completed', 'resolved', 'cancelled', 'archived', 'approved', 'ok', 'ready'].includes(
+      String(x?.status || '').toLowerCase()
+    )
+
   const pendingDocs = data.docs.filter((d: any) => String(d?.verification_status || d?.status || 'pending') !== 'verified')
   const activeCandidates = data.candidates.filter(open)
   const activeOpenings = data.openings.filter(open)
@@ -78,7 +82,7 @@ export async function getHRUXPack1Data() {
     rosterRisks,
     attendanceRisks,
     onboardingBacklog,
-    escalations,
+    escalations: activeEscalations,
     qualityRisks,
     executivePulse: [
       { label: 'Workforce base', value: data.staff.length, detail: 'active staff records', tone: 'green', progress: Math.min(100, data.staff.length) },
