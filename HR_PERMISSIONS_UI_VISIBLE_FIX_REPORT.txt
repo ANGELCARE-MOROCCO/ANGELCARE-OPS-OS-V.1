@@ -1,0 +1,37 @@
+HR Permissions UI Visible Fix
+App root: /Users/user/Desktop/angelcare-opsos-app
+Date: Fri May  8 05:38:04 +01 2026
+
+Backup created for app/(protected)/users/_components/SmartPermissionsPanel.tsx
+OK inserted HR option constants and merge helper
+OK HR presets already present
+OK switched panel to merged HR-aware permissions
+OK added HR preset buttons
+OK wrote SmartPermissionsPanel HR UI patch
+
+Verification snippets:
+19:const HR_CORE_PERMISSION_OPTIONS: PermissionOption[] = [
+40:  { value: 'page:/hr', label: 'HR MAX', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr' },
+41:  { value: 'page:/hr/operations-console', label: 'HR Operations Console', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/operations-console' },
+42:  { value: 'page:/hr/boardroom', label: 'HR Boardroom', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/boardroom' },
+43:  { value: 'page:/hr/recruitment', label: 'HR Recruitment', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/recruitment' },
+44:  { value: 'page:/hr/recruitment/candidates', label: 'HR Candidates', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/recruitment/candidates' },
+45:  { value: 'page:/hr/openings', label: 'HR Openings', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/openings' },
+46:  { value: 'page:/hr/staff', label: 'HR Staff 360', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/staff' },
+47:  { value: 'page:/hr/staff/new', label: 'HR New Staff', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/staff/new' },
+48:  { value: 'page:/hr/onboarding', label: 'HR Onboarding', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/onboarding' },
+49:  { value: 'page:/hr/rosters', label: 'HR Rosters', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/rosters' },
+50:  { value: 'page:/hr/attendance', label: 'HR Attendance', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/attendance' },
+51:  { value: 'page:/hr/documents', label: 'HR Documents', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/documents' },
+52:  { value: 'page:/hr/approvals', label: 'HR Approvals', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/approvals' },
+53:  { value: 'page:/hr/tasks', label: 'HR Tasks', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/tasks' },
+54:  { value: 'page:/hr/final-qa', label: 'HR Final QA', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/final-qa' },
+117:  const mergedCorePermissions = useMemo(
+118:    () => mergePermissionOptions(corePermissions, HR_CORE_PERMISSION_OPTIONS),
+130:  const coreGroups = useMemo(() => groupByModule(mergedCorePermissions), [mergedCorePermissions])
+195:  const allCoreValues = mergedCorePermissions.map((item) => item.value)
+223:        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_admin')}>Preset HR Admin</button>
+
+Now run:
+rm -rf .next
+npm run build

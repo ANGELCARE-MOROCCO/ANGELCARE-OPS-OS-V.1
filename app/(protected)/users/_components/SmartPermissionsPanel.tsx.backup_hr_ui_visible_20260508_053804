@@ -16,54 +16,6 @@ type SmartPermissionsPanelProps = {
   defaultPermissions?: string[]
 }
 
-const HR_CORE_PERMISSION_OPTIONS: PermissionOption[] = [
-  { value: 'hr.view', label: 'Voir HR MAX', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.dashboard', label: 'Dashboard HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.recruitment.view', label: 'Voir recrutement', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.recruitment.manage', label: 'Gérer recrutement', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.openings.manage', label: 'Gérer postes ouverts', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.staff.view', label: 'Voir Staff 360', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.staff.manage', label: 'Gérer Staff 360', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.onboarding.manage', label: 'Gérer onboarding', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.rosters.manage', label: 'Gérer rosters/planning', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.attendance.manage', label: 'Gérer attendance', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.documents.manage', label: 'Gérer documents HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.approvals.manage', label: 'Gérer approvals HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.analytics.view', label: 'Voir analytics HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.audit.view', label: 'Voir audit HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.executive.view', label: 'Voir Boardroom HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.settings.manage', label: 'Gérer settings HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.admin', label: 'Admin HR complet', module: 'hr', moduleLabel: 'HR MAX' },
-]
-
-const HR_PAGE_PERMISSION_OPTIONS: PermissionOption[] = [
-  { value: 'page:/hr', label: 'HR MAX', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr' },
-  { value: 'page:/hr/operations-console', label: 'HR Operations Console', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/operations-console' },
-  { value: 'page:/hr/boardroom', label: 'HR Boardroom', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/boardroom' },
-  { value: 'page:/hr/recruitment', label: 'HR Recruitment', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/recruitment' },
-  { value: 'page:/hr/recruitment/candidates', label: 'HR Candidates', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/recruitment/candidates' },
-  { value: 'page:/hr/openings', label: 'HR Openings', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/openings' },
-  { value: 'page:/hr/staff', label: 'HR Staff 360', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/staff' },
-  { value: 'page:/hr/staff/new', label: 'HR New Staff', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/staff/new' },
-  { value: 'page:/hr/onboarding', label: 'HR Onboarding', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/onboarding' },
-  { value: 'page:/hr/rosters', label: 'HR Rosters', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/rosters' },
-  { value: 'page:/hr/attendance', label: 'HR Attendance', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/attendance' },
-  { value: 'page:/hr/documents', label: 'HR Documents', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/documents' },
-  { value: 'page:/hr/approvals', label: 'HR Approvals', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/approvals' },
-  { value: 'page:/hr/tasks', label: 'HR Tasks', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/tasks' },
-  { value: 'page:/hr/final-qa', label: 'HR Final QA', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/final-qa' },
-]
-
-function mergePermissionOptions(base: PermissionOption[], extra: PermissionOption[]) {
-  const byValue = new Map<string, PermissionOption>()
-  for (const item of base) byValue.set(item.value, item)
-  for (const item of extra) {
-    if (!byValue.has(item.value)) byValue.set(item.value, item)
-  }
-  return Array.from(byValue.values())
-}
-
-
 const PRESETS: Record<string, string[]> = {
   agent: ['profile.view', 'page:/profile', 'pointage.view', 'page:/pointage'],
   sales: ['profile.view', 'leads.view', 'leads.create', 'leads.edit', 'revenue.view', 'page:/profile', 'page:/leads', 'page:/leads/new', 'page:/revenue-command-center', 'page:/revenue-command-center/tasks'],
@@ -114,21 +66,12 @@ function groupByModule(items: PermissionOption[]) {
 }
 
 export default function SmartPermissionsPanel({ corePermissions, pagePermissions, defaultPermissions = [] }: SmartPermissionsPanelProps) {
-  const mergedCorePermissions = useMemo(
-    () => mergePermissionOptions(corePermissions, HR_CORE_PERMISSION_OPTIONS),
-    [corePermissions]
-  )
-  const mergedPagePermissions = useMemo(
-    () => mergePermissionOptions(pagePermissions, HR_PAGE_PERMISSION_OPTIONS),
-    [pagePermissions]
-  )
-
   const [selected, setSelected] = useState<Set<string>>(() => new Set(defaultPermissions))
   const [query, setQuery] = useState('')
   const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set(['Users', 'Market OS', 'Revenue Command Center', 'Leads', 'HR MAX', 'Missions']))
 
-  const coreGroups = useMemo(() => groupByModule(mergedCorePermissions), [mergedCorePermissions])
-  const pageGroups = useMemo(() => groupByModule(mergedPagePermissions), [mergedPagePermissions])
+  const coreGroups = useMemo(() => groupByModule(corePermissions), [corePermissions])
+  const pageGroups = useMemo(() => groupByModule(pagePermissions), [pagePermissions])
 
   const filteredCoreGroups = useMemo(() => filterGroups(coreGroups, query), [coreGroups, query])
   const filteredPageGroups = useMemo(() => filterGroups(pageGroups, query), [pageGroups, query])
@@ -192,8 +135,8 @@ export default function SmartPermissionsPanel({ corePermissions, pagePermissions
     })
   }
 
-  const allCoreValues = mergedCorePermissions.map((item) => item.value)
-  const allPageValues = mergedPagePermissions.map((item) => item.value)
+  const allCoreValues = corePermissions.map((item) => item.value)
+  const allPageValues = pagePermissions.map((item) => item.value)
 
   return (
     <section style={panelStyle}>
@@ -220,9 +163,6 @@ export default function SmartPermissionsPanel({ corePermissions, pagePermissions
         <button type="button" style={lightButtonStyle} onClick={() => applyPreset('agent')}>Preset Agent</button>
         <button type="button" style={lightButtonStyle} onClick={() => applyPreset('sales')}>Preset Sales</button>
         <button type="button" style={lightButtonStyle} onClick={() => applyPreset('manager')}>Preset Manager</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_admin')}>Preset HR Admin</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_executive')}>Preset HR Executive</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_ops')}>Preset HR Ops</button>
       </div>
 
       <div style={bulkBarStyle}>
@@ -315,7 +255,7 @@ const eyebrowStyle: React.CSSProperties = { fontSize: 12, color: '#6366f1', font
 const titleStyle: React.CSSProperties = { fontSize: 22, fontWeight: 950, color: '#0f172a', margin: '4px 0' }
 const hintStyle: React.CSSProperties = { color: '#64748b', margin: '4px 0 0', fontSize: 13, lineHeight: 1.5 }
 const scoreBoxStyle: React.CSSProperties = { minWidth: 132, borderRadius: 16, background: 'linear-gradient(180deg,#0f172a,#1e293b)', color: '#fff', padding: 14, display: 'grid', gap: 2, textAlign: 'right' }
-const toolbarStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr repeat(6, auto)', gap: 10, marginBottom: 10 }
+const toolbarStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: 10, marginBottom: 10 }
 const searchStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', border: '1px solid #cbd5e1', borderRadius: 12, color: '#0f172a', boxSizing: 'border-box' }
 const lightButtonStyle: React.CSSProperties = { border: '1px solid #cbd5e1', borderRadius: 12, background: '#f8fafc', color: '#0f172a', padding: '0 12px', fontWeight: 900, cursor: 'pointer' }
 const bulkBarStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }
