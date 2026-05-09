@@ -1,5 +1,10 @@
-import { EmailOSV12Shell } from '@/components/email-os/v12/EmailOSV12Shell';
+import RealWorkspaceShell from "@/components/email-os/real-workspace/RealWorkspaceShell"
+import ConfigurationLiveWorkspace from "@/components/email-os/real-workspace/ConfigurationLiveWorkspace"
 
 export default function Page() {
-  return <EmailOSV12Shell mode="configuration" />;
+  return (
+    <RealWorkspaceShell>
+      <ConfigurationLiveWorkspace />
+    </RealWorkspaceShell>
+  )
 }

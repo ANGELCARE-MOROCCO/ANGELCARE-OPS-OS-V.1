@@ -35,6 +35,16 @@ export const MODULE_PERMISSIONS = {
   'hr.admin',
 ],
   'voice-center': ['voice.view', 'voice.call', 'voice.manage'],
+  staff_portal: [
+    'staff_portal.view',
+    'staff_portal.manager',
+    'staff_portal.intelligence',
+    'staff_portal.admin',
+    'staff_services.view',
+    'staff_services.create',
+    'staff_services.admin',
+    'staff_memos.admin',
+  ],
 } as const
 
 export const MODULE_ACCESS_LINKS = [
@@ -97,6 +107,14 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Academy', href: '/academy', permission: 'academy.view' },
   { label: 'Services', href: '/services', permission: 'services.view' },
   { label: 'Sales', href: '/sales', permission: 'sales.view' },
+  { label: 'Staff Portal', href: '/staff-home', permission: 'staff_portal.view' },
+  { label: 'Staff Services', href: '/staff-services', permission: 'staff_services.view' },
+  { label: 'Staff Services Admin', href: '/staff-services/admin', permission: 'staff_services.admin' },
+  { label: 'Staff Memos', href: '/staff-memos', permission: 'staff_memos.admin' },
+  { label: 'Team Command', href: '/team-command', permission: 'staff_portal.manager' },
+  { label: 'Staff Portal Intelligence', href: '/staff-portal-intelligence', permission: 'staff_portal.intelligence' },
+  { label: 'Staff Portal Final QA', href: '/staff-portal-final-qa', permission: 'staff_portal.admin' },
+  { label: 'Staff Portal Access Check', href: '/staff-portal-access-check', permission: 'staff_portal.admin' },
 ] as const
 
 export type ModuleKey = keyof typeof MODULE_PERMISSIONS
@@ -127,6 +145,22 @@ export const MODULE_ACCESS = [
   {
     key: "users.view",
     href: "/users",
+  },
+  {
+    key: "staff_portal.view",
+    href: "/staff-home",
+  },
+  {
+    key: "staff_services.view",
+    href: "/staff-services",
+  },
+  {
+    key: "staff_portal.manager",
+    href: "/team-command",
+  },
+  {
+    key: "staff_memos.admin",
+    href: "/staff-memos",
   },
 ] as const;
 

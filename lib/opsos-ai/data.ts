@@ -1,0 +1,42 @@
+export const aiCopilots = [
+  {
+    key: 'executive',
+    title: 'Executive Copilot',
+    route: '/ai-command-center/executive-copilot',
+    mission: 'Strategic summaries, risks, priorities and executive visibility.',
+    actions: ['Executive Briefing', 'Risk Digest', 'Priority Alignment', 'Cross-Module Summary'],
+    tone: 'purple',
+  },
+  {
+    key: 'hr',
+    title: 'HR Copilot',
+    route: '/ai-command-center/hr-copilot',
+    mission: 'Recruitment, staffing pressure, onboarding and workforce analysis.',
+    actions: ['Roster Pressure', 'Hiring Funnel', 'Attendance Risks', 'Onboarding Review'],
+    tone: 'blue',
+  },
+  {
+    key: 'revenue',
+    title: 'Revenue Copilot',
+    route: '/ai-command-center/revenue-copilot',
+    mission: 'Commercial pipeline, appointments and conversion intelligence.',
+    actions: ['Pipeline Pressure', 'Client Follow-up', 'Conversion Review', 'Revenue Risks'],
+    tone: 'green',
+  },
+  {
+    key: 'market',
+    title: 'Market Copilot',
+    route: '/ai-command-center/market-copilot',
+    mission: 'Campaign intelligence, acquisition and publishing orchestration.',
+    actions: ['Campaign Review', 'SEO Signals', 'Content Queue', 'Growth Suggestions'],
+    tone: 'amber',
+  },
+  {
+    key: 'academy',
+    title: 'Academy Copilot',
+    route: '/ai-command-center/academy-copilot',
+    mission: 'Program readiness, cohorts and trainer operations.',
+    actions: ['Campus Readiness', 'Cohort Health', 'Trainer Allocation', 'Certification Watch'],
+    tone: 'cyan',
+  },
+]

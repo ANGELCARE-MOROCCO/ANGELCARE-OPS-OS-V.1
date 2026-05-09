@@ -29,13 +29,12 @@ export async function POST(req: NextRequest) {
       storage_path: storagePath,
     }).select('*').single();
     if (error) throw error;
-    await auditEmailAction(
-      JSON.stringify({
-        action: 'attachment_uploaded',
-        entity_type: 'email_attachment',
-        entity_id: '',
-      })
-    );
+    await auditEmailAction('attachment_uploaded', {
+      entity_type: 'email_attachment',
+      entity_id: data?.id || '',
+      file_name: file.name,
+      size_bytes: file.size,
+    });
     return NextResponse.json({ ok: true, data });
   } catch (error: any) {
     return NextResponse.json({ ok: false, error: error.message || String(error) }, { status: 500 });

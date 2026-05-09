@@ -6,7 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "scan:routes": "node scripts/scan-app-routes.mjs"
+    "scan:routes": "node scripts/scan-app-routes.mjs",
+    "verify:email-os": "node scripts/verify-email-os-production.mjs",
+    "audit:email-os": "node scripts/audit-email-os-routes.mjs",
+    "qa:email-os": "node scripts/email-os-final-qa.mjs",
+    "email-os:env": "node scripts/email-os-env-check.mjs",
+    "email-os:qa": "node scripts/email-os-production-qa.mjs",
+    "email-os:routes": "node scripts/email-os-route-audit.mjs",
+    "email-os:all": "npm run email-os:env && npm run email-os:qa && npm run email-os:routes",
+    "email-os:runtime": "node scripts/email-os-runtime-qa.mjs",
+    "email-os:full": "npm run email-os:all && npm run email-os:runtime",
+    "email-os:live": "node scripts/email-os-live-operationalization-qa.mjs",
+    "email-os:final": "node scripts/email-os-final-production-execution-qa.mjs",
+    "email-os:deploy-check": "npm run email-os:full && npm run email-os:live && npm run email-os:final && npm run build",
+    "email-os:clicks": "node scripts/email-os-click-execution-qa.mjs",
+    "email-os:submodules": "node scripts/email-os-submodules-execution-qa.mjs",
+    "email-os:real-final": "node scripts/email-os-real-workspace-final-qa.mjs"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",
