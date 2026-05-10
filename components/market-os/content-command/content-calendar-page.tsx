@@ -1,15 +1,230 @@
 "use client"
+
 import * as React from "react"
 import Link from "next/link"
-import { Badge, Button, ContentForm, PageHeader, Panel, Shell, channels, monthMatrix, statusLabel, todayISO, useContentStore } from "./content-command-system"
-export default function ContentCalendarPage(){
- const {store,commit}=useContentStore(); const [cursor,setCursor]=React.useState(new Date()); const [channel,setChannel]=React.useState("all"); const [selectedDate,setSelectedDate]=React.useState(todayISO(0)); const days=monthMatrix(cursor); const monthName=cursor.toLocaleString(undefined,{month:"long",year:"numeric"});
- const items=store.items.filter(i=>channel==="all"?true:i.channel===channel); const selectedItems=items.filter(i=>i.scheduledDate===selectedDate || i.dueDate===selectedDate)
- return <Shell><main className="mx-auto max-w-[1800px] space-y-6 p-4 lg:p-8"><PageHeader eyebrow="Content Command / Calendar" title="Monthly publishing calendar" description="Month-grid calendar for scheduled content, deadlines, overdue items, and date-based content creation. Click a day, inspect items, create content for that date, or reschedule by selecting a new date inside an item action." actions={<><Button href="/market-os/content-command-center">Back</Button><Button href="/market-os/content-command-center/create" kind="primary">+ New content</Button></>} />
- <Panel className="p-5"><div className="flex flex-wrap items-center justify-between gap-3"><div className="flex gap-2"><Button onClick={()=>setCursor(new Date(cursor.getFullYear(),cursor.getMonth()-1,1))}>Previous</Button><Button onClick={()=>setCursor(new Date())}>Today</Button><Button onClick={()=>setCursor(new Date(cursor.getFullYear(),cursor.getMonth()+1,1))}>Next</Button></div><h2 className="text-3xl font-black">{monthName}</h2><select value={channel} onChange={e=>setChannel(e.target.value)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold"><option value="all">All channels</option>{channels.map(c=><option key={c}>{c}</option>)}</select></div></Panel>
- <section className="grid gap-5 xl:grid-cols-[1.4fr_.8fr]"><Panel className="overflow-hidden"><div className="grid grid-cols-7 border-b border-slate-200 bg-slate-100 text-center text-xs font-black uppercase tracking-wider text-slate-500">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=><div key={d} className="p-3">{d}</div>)}</div><div className="grid grid-cols-7">{days.map((d,idx)=>{const iso=d.toISOString().slice(0,10); const dayItems=items.filter(i=>i.scheduledDate===iso || i.dueDate===iso); const current=d.getMonth()===cursor.getMonth(); return <button key={idx} onClick={()=>setSelectedDate(iso)} className={`min-h-[150px] border-b border-r border-slate-100 p-3 text-left transition hover:bg-rose-50 ${selectedDate===iso?"bg-rose-50 ring-2 ring-inset ring-rose-300":"bg-white"} ${current?"":"opacity-40"}`}><div className="flex items-center justify-between"><span className="text-sm font-black">{d.getDate()}</span>{dayItems.length?<span className="rounded-full bg-slate-950 px-2 py-1 text-xs font-black text-white">{dayItems.length}</span>:null}</div><div className="mt-2 space-y-1">{dayItems.slice(0,3).map(item=><div key={item.id} className="truncate rounded-xl bg-slate-100 px-2 py-1 text-xs font-black text-slate-700">{item.title}</div>)}</div></button>})}</div></Panel>
- <Panel className="p-5"><h2 className="text-2xl font-black">Selected date: {selectedDate}</h2><div className="mt-4 space-y-3">{selectedItems.map(item=><div key={item.id} className="rounded-2xl border border-slate-200 p-4"><div className="flex flex-wrap items-center gap-2"><Badge>{statusLabel(item.status)}</Badge><Badge>{item.channel}</Badge></div><Link href={`/market-os/content-command-center/${item.id}`} className="mt-3 block text-lg font-black hover:underline">{item.title}</Link><p className="mt-1 text-xs font-bold text-slate-500">Due: {item.dueDate} • Scheduled: {item.scheduledDate}</p><div className="mt-3 flex flex-wrap gap-2"><Button href={`/market-os/content-command-center/${item.id}/edit`}>Edit</Button><Button onClick={()=>commit(d=>{d.items=d.items.map(x=>x.id===item.id?{...x,scheduledDate:selectedDate,status:"scheduled",updatedAt:new Date().toISOString()}:x)},"schedule",`Scheduled ${item.title} for ${selectedDate}`)} kind="primary">Schedule here</Button></div></div>)}{selectedItems.length===0?<p className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm font-semibold text-slate-500">No items for this date. Use Create Content and set scheduled date to {selectedDate}.</p>:null}</div></Panel></section>
- </main></Shell>
+
+import {
+  Badge,
+  Button,
+  ContentForm,
+  PageHeader,
+  Panel,
+  Shell,
+  channels,
+  statusLabel,
+  todayISO,
+  useContentStore,
+} from "./content-command-system"
+
+function monthMatrix(cursor: Date): Date[] {
+  const year = cursor.getFullYear()
+  const month = cursor.getMonth()
+
+  const firstDayOfMonth = new Date(year, month, 1)
+  const start = new Date(firstDayOfMonth)
+  start.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay())
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const day = new Date(start)
+    day.setDate(start.getDate() + index)
+    return day
+  })
+}
+
+export default function ContentCalendarPage(): React.ReactElement {
+  const { store, commit } = useContentStore()
+  const [cursor, setCursor] = React.useState<Date>(new Date())
+  const [channel, setChannel] = React.useState<string>("all")
+  const [selectedDate, setSelectedDate] = React.useState<string>(todayISO(0))
+
+  const days = React.useMemo(() => monthMatrix(cursor), [cursor])
+  const monthName = cursor.toLocaleString(undefined, {
+    month: "long",
+    year: "numeric",
+  })
+
+  const items = store.items.filter((item) =>
+    channel === "all" ? true : item.channel === channel
+  )
+
+  const selectedItems = items.filter(
+    (item) => item.scheduledDate === selectedDate || item.dueDate === selectedDate
+  )
+
+  return (
+    <Shell>
+      <main className="mx-auto max-w-[1800px] space-y-6 p-4 lg:p-8">
+        <PageHeader
+          eyebrow="Content Command / Calendar"
+          title="Monthly publishing calendar"
+          description="Month-grid calendar for scheduled content, deadlines, overdue items, and date-based content creation. Click a day, inspect items, create content for that date, or reschedule by selecting a new date inside an item action."
+          actions={
+            <>
+              <Button href="/market-os/content-command-center">Back</Button>
+              <Button href="/market-os/content-command-center/create" kind="primary">
+                + New content
+              </Button>
+            </>
+          }
+        />
+
+        <Panel className="p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex gap-2">
+              <Button
+                onClick={() =>
+                  setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))
+                }
+              >
+                Previous
+              </Button>
+              <Button onClick={() => setCursor(new Date())}>Today</Button>
+              <Button
+                onClick={() =>
+                  setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))
+                }
+              >
+                Next
+              </Button>
+            </div>
+
+            <h2 className="text-3xl font-black">{monthName}</h2>
+
+            <select
+              value={channel}
+              onChange={(event) => setChannel(event.target.value)}
+              className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold"
+            >
+              <option value="all">All channels</option>
+              {channels.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+        </Panel>
+
+        <section className="grid gap-5 xl:grid-cols-[1.4fr_.8fr]">
+          <Panel className="overflow-hidden">
+            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-100 text-center text-xs font-black uppercase tracking-wider text-slate-500">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                <div key={day} className="p-3">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7">
+              {days.map((day, index) => {
+                const iso = day.toISOString().slice(0, 10)
+                const dayItems = items.filter(
+                  (item) => item.scheduledDate === iso || item.dueDate === iso
+                )
+                const current = day.getMonth() === cursor.getMonth()
+
+                return (
+                  <button
+                    key={`${iso}-${index}`}
+                    type="button"
+                    onClick={() => setSelectedDate(iso)}
+                    className={`min-h-[150px] border-b border-r border-slate-100 p-3 text-left transition hover:bg-rose-50 ${
+                      selectedDate === iso
+                        ? "bg-rose-50 ring-2 ring-inset ring-rose-300"
+                        : "bg-white"
+                    } ${current ? "" : "opacity-40"}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-black">{day.getDate()}</span>
+                      {dayItems.length > 0 ? (
+                        <span className="rounded-full bg-slate-950 px-2 py-1 text-xs font-black text-white">
+                          {dayItems.length}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-2 space-y-1">
+                      {dayItems.slice(0, 3).map((item) => (
+                        <div
+                          key={item.id}
+                          className="truncate rounded-xl bg-slate-100 px-2 py-1 text-xs font-black text-slate-700"
+                        >
+                          {item.title}
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </Panel>
+
+          <Panel className="p-5">
+            <h2 className="text-2xl font-black">Selected date: {selectedDate}</h2>
+
+            <div className="mt-4 space-y-3">
+              {selectedItems.map((item) => (
+                <div key={item.id} className="rounded-2xl border border-slate-200 p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge>{statusLabel(item.status)}</Badge>
+                    <Badge>{item.channel}</Badge>
+                  </div>
+
+                  <Link
+                    href={`/market-os/content-command-center/${item.id}`}
+                    className="mt-3 block text-lg font-black hover:underline"
+                  >
+                    {item.title}
+                  </Link>
+
+                  <p className="mt-1 text-xs font-bold text-slate-500">
+                    Due: {item.dueDate} • Scheduled: {item.scheduledDate}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button href={`/market-os/content-command-center/${item.id}/edit`}>
+                      Edit
+                    </Button>
+
+                    <Button
+                      onClick={() =>
+                        commit(
+                          (draft) => {
+                            draft.items = draft.items.map((entry) =>
+                              entry.id === item.id
+                                ? {
+                                    ...entry,
+                                    scheduledDate: selectedDate,
+                                    status: "scheduled",
+                                    updatedAt: new Date().toISOString(),
+                                  }
+                                : entry
+                            )
+                          },
+                          "schedule",
+                          `Scheduled ${item.title} for ${selectedDate}`
+                        )
+                      }
+                      kind="primary"
+                    >
+                      Schedule here
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {selectedItems.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm font-semibold text-slate-500">
+                  No items for this date. Use Create Content and set scheduled date to{" "}
+                  {selectedDate}.
+                </p>
+              ) : null}
+            </div>
+          </Panel>
+        </section>
+      </main>
+    </Shell>
+  )
 }
 
 /* Monthly calendar workflow operational reference library. Embedded as practical QA/playbook guidance. */

@@ -1,0 +1,15 @@
+export const productionQaChecklist = [
+  'Build passes',
+  'No client secret leakage',
+  'SQL reviewed',
+  'RLS tested',
+  'Read-only repository works',
+  'Create mutation writes audit',
+  'Update mutation rolls back on failure',
+  'Approval requires authority',
+  'Publishing remains human-approved',
+  'AI output remains review-gated',
+  'Realtime events do not duplicate',
+  'Error states visible',
+  'Loading states visible',
+];

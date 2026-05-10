@@ -1,7 +1,7 @@
-import AmbassadorProgramExecutiveSubpage from "@/components/market-os/ambassador-program-executive-subpage"
+import AmbassadorAssetsWorkspace from "@/components/market-os/ambassadors/ambassador-assets-workspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorProgramExecutiveSubpage kind="assets" title="Asset Library" />
+  return <AmbassadorAssetsWorkspace />
 }

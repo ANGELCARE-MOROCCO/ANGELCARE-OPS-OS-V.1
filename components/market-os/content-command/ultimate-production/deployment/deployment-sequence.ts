@@ -1,0 +1,18 @@
+export const deploymentSequence = [
+  'Inject final scaffolds',
+  'Run npm run build',
+  'Review SQL',
+  'Backup Supabase',
+  'Run schema SQL',
+  'Run indexes SQL',
+  'Configure RLS',
+  'Wire read-only repositories',
+  'Wire create/update repositories',
+  'Activate server actions',
+  'Activate audit persistence',
+  'Activate media storage',
+  'Activate AI runtime',
+  'Activate publishing queue',
+  'Activate realtime events',
+  'Deploy to Vercel',
+];
