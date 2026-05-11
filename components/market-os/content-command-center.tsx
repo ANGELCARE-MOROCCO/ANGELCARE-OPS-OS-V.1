@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { ContentCommandTrainingAccessButton } from "./content-command/ContentCommandTrainingAccessButton"
 import {
   Badge,
   Button,
@@ -31,6 +32,8 @@ const quickLinks = [
   ["Review", "/market-os/content-command-center/review", "Approve or request revision"],
   ["Publishing", "/market-os/content-command-center/publishing", "Control ready-to-publish items"],
   ["Brand", "/market-os/content-command-center/brand-governance", "Maintain content governance rules"],
+  ["CSV Import Workspace", "/market-os/imports", "Upload, validate and preview structured CSV datasets"],
+  ["Enterprise Import Ops", "/market-os/imports/operations", "Review schema, approve imports and control CSV governance"],
 ] as const
 
 function groupByStatus(items: ContentItem[]) {
@@ -67,8 +70,8 @@ export default function ContentCommandCenter() {
   const lanes = groupByStatus(activeItems)
 
   return <Shell>
-    <main className="mx-auto max-w-[1600px] space-y-6 p-4 lg:p-8">
-      <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-slate-950 text-white shadow-2xl shadow-slate-200">
+    <main className="mx-auto max-w-[1600px] space-y-6 p-4 lg:p-8"><div className="flex justify-end"><ContentCommandTrainingAccessButton /></div>
+      <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[radial-gradient(circle_at_top_right,rgba(244,63,94,0.30),transparent_30%),linear-gradient(135deg,#020617,#0f172a_52%,#312e81)] text-white shadow-2xl shadow-slate-300">
         <div className="grid gap-8 p-6 lg:grid-cols-[1.5fr_.8fr] lg:p-8">
           <div>
             <div className="flex flex-wrap gap-2">
@@ -77,7 +80,7 @@ export default function ContentCommandCenter() {
             </div>
             <h1 className="mt-5 max-w-5xl text-4xl font-black leading-tight tracking-tight md:text-5xl">Content production workspace, not a static dashboard.</h1>
             <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-slate-300 md:text-base">Create, organize, assign, review, approve, schedule and monitor every marketing content item from one controlled Content Command Center surface.</p>
-            <div className="mt-6 flex flex-wrap gap-3"><Button href="/market-os/content-command-center/create" kind="primary">Create content</Button><Button href="/market-os/content-command-center/assets" kind="dark">Asset library</Button><Button href="/market-os/content-command-center/tasks" kind="dark">Production tasks</Button><Button onClick={reset}>Reset local demo data</Button></div>
+            <div className="mt-6 flex flex-wrap gap-3"><Button href="/market-os/content-command-center/create" kind="primary">Create content</Button><Button href="/market-os/content-command-center/assets" kind="dark">Asset library</Button><Button href="/market-os/content-command-center/tasks" kind="dark">Production tasks</Button><Button href="/market-os/imports" kind="dark">CSV Import Workspace</Button><Button href="/market-os/imports/operations" kind="primary">Enterprise Import Ops</Button><ContentCommandTrainingAccessButton /><Button onClick={reset}>Reset local demo data</Button></div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase tracking-widest text-slate-300">Workspace readiness</p><p className="mt-2 text-4xl font-black">{averageReadiness}%</p><div className="mt-4"><Meter value={averageReadiness} /></div></div>
@@ -94,7 +97,7 @@ export default function ContentCommandCenter() {
       </section>
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {quickLinks.map(([label, href, detail]) => <a key={href} href={href} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><p className="text-xs font-black uppercase tracking-wider text-rose-600">Open workspace</p><h3 className="mt-2 text-xl font-black text-slate-950">{label}</h3><p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{detail}</p></a>)}
+        {quickLinks.map(([label, href, detail]) => <a key={href} href={href} className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-rose-200 hover:shadow-xl"><p className="text-xs font-black uppercase tracking-wider text-rose-600">Open workspace</p><h3 className="mt-2 text-xl font-black text-slate-950">{label}</h3><p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{detail}</p></a>)}
       </section>
 
       <Panel className="p-5">

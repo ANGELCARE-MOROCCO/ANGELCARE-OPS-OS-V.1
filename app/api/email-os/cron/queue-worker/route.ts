@@ -2,26 +2,14 @@ import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { nowIso } from "@/lib/email-os-core/schema"
+import { writeProviderLog } from "@/lib/email-os-core/provider-log"
 
-async function writeProviderLog(input: {
-  provider: string
-  status: string
-  message?: string
-  metadata?: Record<string, unknown>
-}) {
-  try {
-    const db = createEmailOSCoreDb()
-
-    await db.from("email_os_core_provider_logs").insert({
-      provider: input.provider,
-      status: input.status,
-      message: input.message || null,
-      metadata: input.metadata || {},
-      created_at: nowIso()
-    })
-  } catch {
-    // provider log is non-blocking
-  }
+function smtpReady() {
+  return Boolean(
+    process.env.EMAIL_OS_SMTP_HOST &&
+    process.env.EMAIL_OS_SMTP_USER &&
+    process.env.EMAIL_OS_SMTP_PASSWORD
+  )
 }
 
 function createTransporter() {
@@ -38,13 +26,7 @@ function createTransporter() {
 
 export async function POST() {
   try {
-    const smtpReady = Boolean(
-      process.env.EMAIL_OS_SMTP_HOST &&
-      process.env.EMAIL_OS_SMTP_USER &&
-      process.env.EMAIL_OS_SMTP_PASSWORD
-    )
-
-    if (!smtpReady) {
+    if (!smtpReady()) {
       return NextResponse.json(
         {
           ok: false,
@@ -59,8 +41,8 @@ export async function POST() {
     const { data: jobs, error } = await db
       .from("email_os_core_queue")
       .select("*")
-      .eq("status", "queued")
       .eq("type", "send")
+      .eq("status", "queued")
       .order("scheduled_at", { ascending: true })
       .limit(25)
 
@@ -70,7 +52,27 @@ export async function POST() {
     const results: Array<Record<string, unknown>> = []
 
     for (const job of jobs || []) {
+      const outboxId = job.outbox_id || job.payload?.outboxId || null
+
       try {
+        await db
+          .from("email_os_core_queue")
+          .update({
+            status: "sending",
+            updated_at: nowIso()
+          })
+          .eq("id", job.id)
+
+        if (outboxId) {
+          await db
+            .from("email_os_core_outbox")
+            .update({
+              status: "sending",
+              updated_at: nowIso()
+            })
+            .eq("id", outboxId)
+        }
+
         const payload = job.payload || {}
 
         const sent = await transporter.sendMail({
@@ -86,6 +88,7 @@ export async function POST() {
           .from("email_os_core_queue")
           .update({
             status: "completed",
+            attempts: Number(job.attempts || 0) + 1,
             last_error: null,
             result: {
               messageId: sent.messageId
@@ -94,27 +97,54 @@ export async function POST() {
           })
           .eq("id", job.id)
 
+        if (outboxId) {
+          await db
+            .from("email_os_core_outbox")
+            .update({
+              status: "sent",
+              provider_message_id: sent.messageId,
+              last_error: null,
+              sent_at: nowIso(),
+              updated_at: nowIso()
+            })
+            .eq("id", outboxId)
+        }
+
         results.push({
           id: job.id,
+          outboxId,
           ok: true,
           messageId: sent.messageId
         })
       } catch (jobError) {
-        const message = jobError instanceof Error ? jobError.message : "Send job failed"
+        const message = jobError instanceof Error ? jobError.message : "SMTP dispatch failed"
         const attempts = Number(job.attempts || 0) + 1
+        const finalStatus = attempts >= 3 ? "failed" : "queued"
 
         await db
           .from("email_os_core_queue")
           .update({
-            status: attempts >= 3 ? "failed" : "queued",
+            status: finalStatus,
             attempts,
             last_error: message,
             updated_at: nowIso()
           })
           .eq("id", job.id)
 
+        if (outboxId) {
+          await db
+            .from("email_os_core_outbox")
+            .update({
+              status: finalStatus === "failed" ? "failed" : "queued",
+              last_error: message,
+              updated_at: nowIso()
+            })
+            .eq("id", outboxId)
+        }
+
         results.push({
           id: job.id,
+          outboxId,
           ok: false,
           error: message
         })
@@ -125,7 +155,7 @@ export async function POST() {
       provider: "smtp",
       status: "queue-worker.completed",
       metadata: {
-        count: results.length
+        processed: results.length
       }
     })
 

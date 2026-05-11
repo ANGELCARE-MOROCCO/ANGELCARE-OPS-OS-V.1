@@ -64,8 +64,12 @@
     "email-os-core:qa-manifest": "node scripts/email-os-core-qa-manifest.mjs",
      "email-os-core:phase31": "node scripts/verify-email-os-core-phase31.mjs",
      "email-os-core:phase32": "node scripts/verify-email-os-core-phase32.mjs",
-     "email-os-core:phase33": "node scripts/verify-email-os-core-phase33.mjs"
-    
+     "email-os-core:phase33": "node scripts/verify-email-os-core-phase33.mjs",
+     "email-os:compose-production": "node scripts/verify-email-os-compose-production.mjs",
+     "email-os:send-outbox-align": "node scripts/verify-email-os-send-outbox-alignment.mjs",
+    "email-os:send-worker-proof": "node scripts/email-os-send-worker-proof.mjs",
+    "email-os:template-compose-sync": "node scripts/verify-email-os-template-compose-sync.mjs",
+     "email-os:real-inbox-sync": "node scripts/verify-email-os-real-inbox-sync.mjs"
 
   },
   "dependencies": {

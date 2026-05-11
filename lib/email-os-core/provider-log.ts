@@ -1,26 +1,24 @@
-import { createEmailOSCoreDb } from "./db"
-import { makeEmailOSId, nowIso } from "./schema"
+import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
 export async function writeProviderLog(input: {
   provider: string
-  action: string
   status: string
   message?: string
   metadata?: Record<string, unknown>
 }) {
-  const db = createEmailOSCoreDb()
+  try {
+    const db = createEmailOSCoreDb()
 
-  const row = {
-    id: makeEmailOSId(),
-    provider: input.provider,
-    action: input.action,
-    status: input.status,
-    message: input.message || null,
-    metadata: input.metadata || {},
-    created_at: nowIso()
+    await db.from("email_os_core_provider_logs").insert({
+      id: makeEmailOSId(),
+      provider: input.provider,
+      status: input.status,
+      message: input.message || null,
+      metadata: input.metadata || {},
+      created_at: nowIso()
+    })
+  } catch {
+    // non-blocking
   }
-
-  const { error } = await db.from("email_os_core_provider_logs").insert(row)
-  if (error) throw error
-  return row
 }

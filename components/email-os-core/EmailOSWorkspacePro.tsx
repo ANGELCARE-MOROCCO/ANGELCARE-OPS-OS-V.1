@@ -24,6 +24,8 @@ import {
   Zap
 } from "lucide-react"
 import ProviderActionsPanel from "@/components/email-os-core/ProviderActionsPanel"
+import ProductionComposeStudio from "@/components/email-os-core/ProductionComposeStudio"
+import RealInboxWorkspace from "@/components/email-os-core/RealInboxWorkspace"
 
 type Entity = "mailboxes" | "templates" | "threads" | "drafts" | "queue" | "audit" | "automation"
 type View = Entity | "compose" | "health"
@@ -502,11 +504,16 @@ export default function EmailOSWorkspacePro() {
         </header>
 
         <main className="min-h-0 flex-1 overflow-y-auto p-6">
-          {view === "threads" ? <ThreadsSplitPane toast={toast} /> :
-            view === "compose" ? <ComposePanel toast={toast} /> :
-            view === "health" ? <HealthPanel /> :
-            <EntityManager entity={view} toast={toast} />}
-        </main>
+  {view === "threads" ? (
+    <RealInboxWorkspace />
+  ) : view === "compose" ? (
+    <ProductionComposeStudio />
+  ) : view === "health" ? (
+    <HealthPanel />
+  ) : (
+    <EntityManager entity={view as Entity} toast={toast} />
+  )}
+</main>
       </div>
 
       {toastMessage ? (

@@ -334,11 +334,20 @@ export function isOverdue(date: string) {
 }
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-slate-50 text-slate-950"><ContentCommandNavigation />{children}</div>
+  return (
+    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef2ff_42%,#f8fafc_100%)] text-slate-950">
+      <ContentCommandNavigation />
+      {children}
+    </div>
+  )
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-3xl border border-slate-200 bg-white shadow-sm ${className}`}>{children}</section>
+  return (
+    <section className={`rounded-3xl border border-slate-200 bg-white shadow-sm shadow-slate-200/70 ${className}`}>
+      {children}
+    </section>
+  )
 }
 
 export function Badge({ children, kind = "soft" }: { children: React.ReactNode; kind?: "soft" | "priority" | "success" | "warning" | "danger" | "dark" }) {
@@ -348,14 +357,19 @@ export function Badge({ children, kind = "soft" }: { children: React.ReactNode; 
     success: "border-emerald-200 bg-emerald-50 text-emerald-700",
     warning: "border-amber-200 bg-amber-50 text-amber-700",
     danger: "border-red-200 bg-red-50 text-red-700",
-    dark: "border-slate-900 bg-slate-950 text-white",
+    dark: "border-white/15 bg-white/10 text-white",
   }
   return <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider ${styles[kind]}`}>{children}</span>
 }
 
 export function Button({ children, onClick, href, kind = "soft", type = "button", disabled = false }: { children: React.ReactNode; onClick?: () => void; href?: string; kind?: "primary" | "soft" | "danger" | "dark"; type?: "button" | "submit"; disabled?: boolean }) {
   const base = "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50"
-  const styles = { primary: "bg-rose-600 text-white hover:bg-rose-700", soft: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50", danger: "bg-red-600 text-white hover:bg-red-700", dark: "bg-slate-950 text-white hover:bg-slate-800" }
+  const styles = {
+    primary: "bg-rose-600 text-white shadow-lg shadow-rose-200 hover:bg-rose-700",
+    soft: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
+    danger: "bg-red-600 text-white hover:bg-red-700",
+    dark: "bg-slate-950 text-white hover:bg-slate-800",
+  }
   if (href) return <Link href={href} className={`${base} ${styles[kind]}`}>{children}</Link>
   return <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${styles[kind]}`}>{children}</button>
 }
@@ -377,7 +391,7 @@ export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
 }
 
 export function Meter({ value }: { value: number }) {
-  return <div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></div>
+  return <div className="h-2 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></div>
 }
 
 export function Metric({ label, value, sub }: { label: string; value: string; sub: string }) {

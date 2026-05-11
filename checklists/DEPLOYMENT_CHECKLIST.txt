@@ -1,0 +1,12 @@
+DEPLOYMENT CHECKLIST
+
+[ ] SMTP credentials configured
+[ ] IMAP credentials configured
+[ ] Supabase realtime enabled
+[ ] Queue worker operational
+[ ] Inbox sync operational
+[ ] Outbox persistence operational
+[ ] Health checks operational
+[ ] Production env variables validated
+[ ] Build passes
+[ ] Vercel deployment passes
