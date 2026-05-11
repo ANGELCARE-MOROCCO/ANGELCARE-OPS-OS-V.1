@@ -12,15 +12,27 @@ import {
   Mic,
   Volume2,
   Minus,
+  Maximize2,
 } from "lucide-react"
 
 type CallStatus = "idle" | "calling" | "active" | "hold"
+
+const VOICE_TERMINAL_MINIMIZED_KEY = "angelcare.voiceTerminal.minimized"
+
+function readStoredMinimizedState() {
+  try {
+    return window.localStorage.getItem(VOICE_TERMINAL_MINIMIZED_KEY) === "true"
+  } catch {
+    return false
+  }
+}
 
 export default function VoicePhoneWidget() {
   const [number, setNumber] = useState("")
   const [transferTo, setTransferTo] = useState("")
   const [status, setStatus] = useState<CallStatus>("idle")
   const [minimized, setMinimized] = useState(false)
+  const [storageReady, setStorageReady] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [lead, setLead] = useState<any>(null)
   const [note, setNote] = useState("")
@@ -30,6 +42,31 @@ export default function VoicePhoneWidget() {
   const [callControlId, setCallControlId] = useState<string | null>(null)
   const [webrtcReady, setWebrtcReady] = useState(false)
   const [micReady, setMicReady] = useState(false)
+
+
+  const setTerminalMinimized = (nextValue: boolean) => {
+    setMinimized(nextValue)
+
+    try {
+      window.localStorage.setItem(
+        VOICE_TERMINAL_MINIMIZED_KEY,
+        String(nextValue)
+      )
+    } catch {}
+  }
+
+  const toggleMinimized = () => {
+    setTerminalMinimized(!minimized)
+  }
+
+  const expandTerminal = () => {
+    if (minimized) setTerminalMinimized(false)
+  }
+
+  useEffect(() => {
+    setMinimized(readStoredMinimizedState())
+    setStorageReady(true)
+  }, [])
 
   const clientRef = useRef<any>(null)
   const activeCallRef = useRef<any>(null)
@@ -597,7 +634,20 @@ export default function VoicePhoneWidget() {
         </div>
       )}
 
-      <div className={`voice-terminal ${minimized ? "is-minimized" : ""}`}>
+      <div
+        className={`voice-terminal ${minimized ? "is-minimized" : ""} ${storageReady ? "" : "is-storage-loading"}`}
+        role={minimized ? "button" : undefined}
+        tabIndex={minimized ? 0 : undefined}
+        aria-label={minimized ? "Ouvrir Voice Terminal" : undefined}
+        onClick={expandTerminal}
+        onKeyDown={(event) => {
+          if (!minimized) return
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault()
+            expandTerminal()
+          }
+        }}
+      >
         <div className="vt-topbar">
           <div>
             <div className="vt-title">
@@ -609,8 +659,16 @@ export default function VoicePhoneWidget() {
             </div>
           </div>
 
-          <button className="vt-icon-btn" onClick={() => setMinimized(!minimized)}>
-            <Minus size={15} />
+          <button
+            className="vt-icon-btn"
+            type="button"
+            aria-label={minimized ? "Ouvrir Voice Terminal" : "Réduire Voice Terminal"}
+            onClick={(event) => {
+              event.stopPropagation()
+              toggleMinimized()
+            }}
+          >
+            {minimized ? <Maximize2 size={15} /> : <Minus size={15} />}
           </button>
         </div>
 

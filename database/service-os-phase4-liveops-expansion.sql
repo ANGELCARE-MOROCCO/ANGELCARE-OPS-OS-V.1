@@ -1,0 +1,3 @@
+create table if not exists service_city_deployments (id uuid primary key default gen_random_uuid(), service_code text, city text, active boolean default false, priority text, capacity int, staff_pool int, demand_score int, risk_score int, pricing_zone text, created_at timestamptz default now());
+create table if not exists service_live_operations (id text primary key, city text, service_code text, status text, staff text, client text, sla text, alert text, created_at timestamptz default now());
+create table if not exists service_capacity_snapshots (id uuid primary key default gen_random_uuid(), city text, service_code text, capacity int, demand_score int, staffing_gap int, created_at timestamptz default now());

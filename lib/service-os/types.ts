@@ -1,0 +1,10 @@
+export type ServiceFamily = 'Home care'|'Special needs'|'Postpartum'|'Events'|'Education'|'Training'|'Mobility'|'School support'|'Institutional'|'Hybrid'
+export type DeploymentMode = 'home'|'school'|'hybrid'|'academy'|'event'|'institution'|'remote'|'mobile'
+export type ServiceModuleKey = 'transport'|'school_support'|'meal_support'|'nurse_supervision'|'therapy_coordination'|'parent_reporting'|'emergency_protocol'|'montessori_activity'|'bilingual_support'|'overnight_support'|'postpartum_mother_support'|'newborn_support'|'academy_certification'|'institution_contract'|'quality_audit'|'ai_monitoring'
+export type RuleTrigger = 'client_profile'|'age'|'city'|'time'|'complexity'|'staffing'|'risk'|'contract'|'compliance'|'pricing'
+export type ServiceModule = { key: ServiceModuleKey; label: string; description: string; defaultEnabled: boolean; enterpriseImpact: string; requiredRole?: string; costWeight?: number }
+export type ServiceRule = { id:string; trigger:RuleTrigger; condition:string; action:string; pricingModifier?:number; requiredCertification?:string; escalation?:string; severity:'low'|'medium'|'high'|'critical' }
+export type ServiceWorkflowStep = { id:string; title:string; ownerRole:string; slaHours:number; required:boolean; automation?:string; exitCriteria:string }
+export type ServiceCityDeployment = { city:string; active:boolean; priority:'pilot'|'growth'|'core'|'premium'; capacity:number; staffPool:number; demandScore:number; riskScore:number; pricingZone:'standard'|'premium'|'institutional' }
+export type ServiceBlueprint = { id:string; serviceCode:string; name:string; family:ServiceFamily; deploymentModes:DeploymentMode[]; summary:string; modules:ServiceModuleKey[]; rules:ServiceRule[]; workflows:ServiceWorkflowStep[]; cityDeployments:ServiceCityDeployment[]; version:string; readiness:number; marginTarget:number; expansionPriority:number; complianceLevel:'basic'|'controlled'|'regulated'|'critical' }
+export type ServiceReadinessReport = { blueprintId:string; score:number; missing:string[]; risks:string[]; recommendedNextActions:string[] }

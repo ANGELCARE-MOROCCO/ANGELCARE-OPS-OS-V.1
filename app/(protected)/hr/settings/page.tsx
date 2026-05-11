@@ -1,18 +1,20 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { HRHero, HRPanel, HRRow } from '../_components/HRMaxUI'
+import AppShell from '@/app/components/erp/AppShell'
+import { HR_PRODUCTION_NAV } from '@/lib/hr-production/navigation'
+import { HRSection, HRTable } from '../_components/HRProductionUI'
 
-export default function HRSettingsPage() {
-  const settings = [
-    ['Recruitment stages','new, screening, interview, trial, offer, hired, rejected'],
-    ['Task priorities','low, medium, high, urgent, critical'],
-    ['Document statuses','pending, verified, rejected, expired'],
-    ['Attendance correction states','pending, approved, rejected, needs_more_info'],
-    ['Roster conflict severity','low, medium, high, critical'],
-  ]
-  return <AppShell title="HR Settings" subtitle="Operational configuration reference." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Settings'}]} actions={<PageAction href="/hr" variant="light">HR</PageAction>}>
-    <HRHero title="HR Operating Configuration" subtitle="Reference workspace for HR stages, statuses and configuration standards used across HR MAX." />
-    <HRPanel title="Configuration matrix" subtitle="Phase 3 gives visibility first; later phase can make these editable in database.">
-      {settings.map(([a,b])=><HRRow key={a} title={a} meta={b} status="configured"/>)}
-    </HRPanel>
+export default async function Page() {
+  return <AppShell title="HR Settings" subtitle="Operational settings map for roles, routes and governance." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Settings'}]}>
+    <div className="space-y-6">
+      <HRSection title="Recommended role model" subtitle="Use this to align page access and server actions.">
+        <HRTable headers={['Role','Scope','Sensitive actions']} rows={[
+          ['CEO','Full HR command, reports, approval overrides','All'],
+          ['HR Manager','Staff, recruitment, onboarding, documents, attendance, reports','Create/update/delete HR records'],
+          ['Coordinator','Rosters, attendance, tasks, service requests','Create/update operational records'],
+          ['Finance/Payroll','Approved attendance and compensation reports','Export payroll inputs'],
+          ['Staff','Own profile, requests and documents','Self-service only'],
+        ]} />
+      </HRSection>
+      <HRSection title="Active route registry"><HRTable headers={['Route','Label']} rows={HR_PRODUCTION_NAV.map((x)=>[x.href, x.label])} /></HRSection>
+    </div>
   </AppShell>
 }

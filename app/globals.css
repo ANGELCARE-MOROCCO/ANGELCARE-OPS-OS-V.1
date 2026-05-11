@@ -298,6 +298,12 @@ table {
   z-index: 9999;
   box-shadow: 0 24px 70px rgba(0, 0, 0, .42);
   font-family: Inter, system-ui, sans-serif;
+  transition: width .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.voice-terminal.is-storage-loading {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .voice-terminal,
@@ -307,6 +313,16 @@ table {
 
 .voice-terminal.is-minimized {
   width: 245px;
+  cursor: pointer;
+}
+
+.voice-terminal.is-minimized:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 78px rgba(0, 0, 0, .5);
+}
+
+.voice-terminal.is-minimized .vt-topbar {
+  margin-bottom: 0;
 }
 
 .vt-topbar,

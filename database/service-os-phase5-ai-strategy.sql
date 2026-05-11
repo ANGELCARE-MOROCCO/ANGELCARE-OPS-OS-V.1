@@ -1,0 +1,3 @@
+create table if not exists service_ai_recommendations (id text primary key, title text, impact text, confidence int, action text, service_codes jsonb default '[]', owner text, expected_outcome text, status text default 'open', created_at timestamptz default now());
+create table if not exists service_market_signals (id uuid primary key default gen_random_uuid(), signal text, trend text, cities jsonb default '[]', recommended_action text, confidence int default 0, created_at timestamptz default now());
+create table if not exists service_matching_cases (id uuid primary key default gen_random_uuid(), client_need jsonb default '{}', recommended_service_code text, recommended_staff_profile text, fit_score int, risk_level text, created_at timestamptz default now());

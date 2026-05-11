@@ -1,16 +1,24 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { getHRRestoreLists } from '@/lib/hr-unified/route-restore-data'
-import { HRHero, HRPanel, HRRow, HRButton } from '../_components/HRMaxUI'
+import AppShell from '@/app/components/erp/AppShell'
+import { getHRDashboardData } from '@/lib/hr-production/repository'
+import { HRAction, HRCard, HRSection, HRTable } from '../_components/HRProductionUI'
 
 export default async function Page() {
-  const data = await getHRRestoreLists()
-  const reportRows = [{title:'Staff',meta:`${data.staff.length} profiles`},{title:'Openings',meta:`${data.openings.length} openings`},{title:'Candidates',meta:`${data.candidates.length} candidates`},{title:'Tasks',meta:`${data.tasks.length} tasks`},{title:'Approvals',meta:`${data.approvals.length} approvals`},{title:'Documents',meta:`${data.docs.length} documents`}]
-
-  const rows = reportRows
-  return <AppShell title="HR Reports" subtitle="Executive HR reporting and operational visibility." breadcrumbs={[{label:'HR',href:'/hr'},{label:'HR Reports'}]} actions={<><PageAction href="/hr">HR Dashboard</PageAction><PageAction href="/hr/reports/export" variant="light">Export</PageAction></>}>
-    <HRHero title="HR Reports" subtitle="Executive HR reporting and operational visibility." actions={<><HRButton href="/hr/reports/export" variant="blue">Export</HRButton><HRButton href="/hr/tasks" variant="light">Tasks</HRButton></>} />
-    <HRPanel title="HR Reports records" subtitle="Restored base route. These records are synced with Supabase.">
-      {rows.slice(0,60).map((x:any,i:number)=><HRRow key={x.id || i} title={x.title} meta={x.meta} status={x.status || x.stage || 'active'} href={x.id && "" ? `{detail_base}${x.id}` : undefined} />)}
-    </HRPanel>
+  const data = await getHRDashboardData()
+  const reports = [
+    ['Staff register', data.staff.length, '/api/hr/export?type=staff'],
+    ['Recruitment pipeline', data.candidates.length, '/api/hr/export?type=candidates'],
+    ['Attendance ledger', data.attendance.length, '/api/hr/export?type=attendance'],
+    ['Roster ledger', data.rosters.length, '/api/hr/export?type=rosters'],
+    ['Document compliance', data.docs.length, '/api/hr/export?type=documents'],
+    ['Task execution', data.tasks.length, '/api/hr/export?type=tasks'],
+    ['Approval requests', data.approvals.length, '/api/hr/export?type=approvals'],
+  ]
+  return <AppShell title="HR Reports" subtitle="Export-ready operational HR reporting." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Reports'}]}>
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-4"><HRCard title="Reports" value={reports.length} /><HRCard title="Staff" value={data.staff.length} /><HRCard title="Attendance" value={data.attendance.length} /><HRCard title="Documents" value={data.docs.length} /></div>
+      <HRSection title="Export center" subtitle="Download CSV reports directly from the HR production repository." action={<HRAction href="/hr/reports/export">Report hub</HRAction>}>
+        <HRTable headers={['Report','Records','Download']} rows={reports.map(([name,count,href]:any)=>[name, String(count), <a className="font-black underline" href={href}>Download CSV</a>])} />
+      </HRSection>
+    </div>
   </AppShell>
 }

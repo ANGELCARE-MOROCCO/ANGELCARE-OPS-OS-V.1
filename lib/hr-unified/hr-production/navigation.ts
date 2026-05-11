@@ -1,0 +1,17 @@
+export const HR_PRODUCTION_NAV = [
+  { href: '/hr', label: 'Command center' },
+  { href: '/hr/staff', label: 'Staff 360' },
+  { href: '/hr/recruitment', label: 'Recruitment' },
+  { href: '/hr/onboarding', label: 'Onboarding' },
+  { href: '/hr/attendance', label: 'Attendance' },
+  { href: '/hr/rosters', label: 'Rosters' },
+  { href: '/hr/documents', label: 'Documents' },
+  { href: '/hr/approvals', label: 'Approvals' },
+  { href: '/hr/tasks', label: 'Tasks' },
+  { href: '/hr/payroll', label: 'Payroll prep' },
+  { href: '/hr/compliance', label: 'Compliance' },
+  { href: '/hr/reports', label: 'Reports' },
+  { href: '/hr/sync-center', label: 'Sync center' },
+  { href: '/hr/data-quality', label: 'Data quality' },
+  { href: '/hr/settings', label: 'Settings' },
+]
