@@ -1,129 +1,432 @@
-import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import AppShell, { PageAction } from '../components/erp/AppShell'
-import { ERPPanel, MetricCard, ModuleCard, StatusPill } from '../components/erp/ERPPrimitives'
+import AppShell from '@/app/components/erp/AppShell'
+import { getHRDashboardData } from '@/lib/hr-production/repository'
+import { getHRProductionMetrics, getHRProductionScore } from '@/lib/hr-production/metrics'
+import { HR_PRODUCTION_NAV } from '@/lib/hr-production/navigation'
+import { HRAction, HRCard, HRLightAction, HRSection, HRStatusPill, HRTable } from './hr/_components/HRProductionUI'
 
-function low(v: unknown) { return String(v || '').toLowerCase() }
-function todayISO() { return new Date().toISOString().slice(0, 10) }
+function rows(value: unknown): any[] {
+  return Array.isArray(value) ? value : []
+}
 
-export default async function DashboardPage() {
-  const supabase = await createClient()
-  const today = todayISO()
-  const [missionsRes, incidentsRes, contractsRes, caregiversRes, familiesRes, leadsRes] = await Promise.all([
-    supabase.from('missions').select('*').eq('is_archived', false).order('mission_date', { ascending: true }),
-    supabase.from('incidents').select('*').eq('is_archived', false).order('id', { ascending: false }),
-    supabase.from('contracts').select('*').eq('is_archived', false).order('id', { ascending: false }),
-    supabase.from('caregivers').select('*').eq('is_archived', false).order('id', { ascending: false }),
-    supabase.from('families').select('*').eq('is_archived', false).order('id', { ascending: false }),
-    supabase.from('leads').select('*').eq('is_archived', false).order('id', { ascending: false }),
-  ])
+function text(value: unknown): string {
+  return String(value || '').toLowerCase()
+}
 
-  const missions = missionsRes.data || []
-  const incidents = incidentsRes.data || []
-  const contracts = contractsRes.data || []
-  const caregivers = caregiversRes.data || []
-  const families = familiesRes.data || []
-  const leads = leadsRes.data || []
-  const missionsToday = missions.filter((m: any) => m.mission_date === today)
-  const activeIncidents = incidents.filter((i: any) => !['resolved','closed','archived'].includes(low(i.status)))
-  const unassigned = missions.filter((m: any) => !m.caregiver_id && !['completed','cancelled'].includes(low(m.status)))
-  const inProgress = missions.filter((m: any) => low(m.status) === 'in_progress')
-  const completedToday = missionsToday.filter((m: any) => low(m.status) === 'completed')
-  const activeContracts = contracts.filter((c: any) => low(c.status) === 'active')
-  const contractsLow = contracts.filter((c: any) => Number(c.total_sessions || 0) > 0 && Number(c.total_sessions || 0) - Number(c.sessions_used || 0) <= 2)
-  const pendingLeads = leads.filter((l: any) => ['new','pending'].includes(low(l.status)))
-  const availableCaregivers = caregivers.filter((c: any) => low(c.current_status || c.status) === 'available')
-  const totalTodayHours = missionsToday.reduce((sum: number, m: any) => sum + Number(m.duration_hours || 0), 0)
+function formatDate(value: unknown) {
+  if (!value) return '—'
+  try {
+    return new Date(String(value)).toLocaleDateString()
+  } catch {
+    return String(value)
+  }
+}
+
+function countUnvalidatedAttendance(attendance: any[]) {
+  return attendance.filter((row) => {
+    const status = text(row.validation_status || row.status || row.attendance_status)
+    return !['validated', 'approved', 'closed', 'complete', 'completed'].some((x) => status.includes(x))
+  }).length
+}
+
+function countRosterConflicts(rosters: any[]) {
+  return rosters.filter((row) => {
+    const status = text(row.status || row.conflict_status || row.type || row.notes)
+    return ['conflict', 'overlap', 'double', 'uncovered', 'missing'].some((x) => status.includes(x))
+  }).length
+}
+
+function countOpenQuality(data: any) {
+  const explicit = rows(data.dataQuality)
+  const errorCount = Object.keys(data.errors || {}).length
+  if (!explicit.length) return errorCount
+  return explicit.filter((row) => {
+    const status = text(row.status || row.quality_status || row.state)
+    return !['closed', 'resolved', 'fixed', 'done', 'completed', 'passed'].includes(status)
+  }).length + errorCount
+}
+
+function firstValue(row: any, fields: string[], fallback = '—') {
+  for (const field of fields) {
+    if (row?.[field] !== undefined && row?.[field] !== null && String(row[field]).trim() !== '') return row[field]
+  }
+  return fallback
+}
+
+function tableRows(items: any[]): any[][] {
+  return items.map((item) => {
+    if (Array.isArray(item)) return item
+    return Object.values(item || {}).map((value) => value === null || value === undefined ? '—' : String(value))
+  })
+}
+
+const EXECUTIVE_MODULES = [
+  {
+    title: 'Staff Command',
+    href: '/hr/staff',
+    eyebrow: 'People registry',
+    description: 'Employees, caregivers, contracts, profiles, availability, compliance and 360° staff visibility.',
+    accent: 'from-blue-600 to-cyan-500',
+  },
+  {
+    title: 'Recruitment Pipeline',
+    href: '/hr/recruitment',
+    eyebrow: 'Hiring engine',
+    description: 'Open roles, candidates, sourcing, interviews, shortlists and hiring execution.',
+    accent: 'from-violet-600 to-fuchsia-500',
+  },
+  {
+    title: 'Attendance Center',
+    href: '/hr/attendance',
+    eyebrow: 'Punch sync',
+    description: 'Punch in/out, validation, exceptions, late arrivals, missed punch-outs and agenda views.',
+    accent: 'from-emerald-600 to-teal-500',
+  },
+  {
+    title: 'Rosters & Coverage',
+    href: '/hr/rosters',
+    eyebrow: 'Workforce planning',
+    description: 'Schedules, mission coverage, conflicts, daily staffing gaps and field operations readiness.',
+    accent: 'from-orange-600 to-amber-500',
+  },
+  {
+    title: 'Approvals Desk',
+    href: '/hr/approvals',
+    eyebrow: 'Decision queue',
+    description: 'Leave, attendance corrections, contracts, documents and HR requests pending validation.',
+    accent: 'from-rose-600 to-pink-500',
+  },
+  {
+    title: 'Reports & Exports',
+    href: '/hr/reports',
+    eyebrow: 'Management reporting',
+    description: 'Attendance, payroll prep, compliance, recruitment funnel and executive reports.',
+    accent: 'from-slate-700 to-slate-500',
+  },
+]
+
+const CONTROL_MODULES = [
+  { label: 'Data Quality', href: '/hr/data-quality', description: 'Detect missing fields, schema gaps and broken HR records.' },
+  { label: 'Sync Center', href: '/hr/sync-center', description: 'Check HR links with users, attendance, rosters and operations.' },
+  { label: 'System Health', href: '/hr/system-health', description: 'Readiness score, risks and production stability indicators.' },
+  { label: 'Route Coverage', href: '/hr/route-coverage', description: 'See all HR routes and missing navigation coverage.' },
+  { label: 'Export Center', href: '/hr/reports/export', description: 'Prepare HR data extracts for payroll, compliance and leadership.' },
+  { label: 'Settings', href: '/hr/settings', description: 'Configure HR operating rules, standards and controls.' },
+]
+
+const ENTERPRISE_MODULES = [
+  { label: 'Contracts', href: '/hr/contracts' },
+  { label: 'Documents', href: '/hr/documents' },
+  { label: 'Compliance', href: '/hr/compliance' },
+  { label: 'Training', href: '/hr/training' },
+  { label: 'Payroll Inputs', href: '/hr/payroll' },
+  { label: 'Onboarding', href: '/hr/onboarding' },
+  { label: 'Departments', href: '/hr/departments' },
+  { label: 'Positions', href: '/hr/positions' },
+  { label: 'Tasks', href: '/hr/tasks' },
+  { label: 'Service Requests', href: '/hr/service-requests' },
+  { label: 'SLA Tracking', href: '/hr/sla' },
+  { label: 'Escalations', href: '/hr/escalations' },
+  { label: 'Daily Operations', href: '/hr/daily-operations' },
+  { label: 'Playbooks', href: '/hr/playbooks' },
+  { label: 'Templates', href: '/hr/templates' },
+  { label: 'Audit Trail', href: '/hr/audit' },
+  { label: 'Activity Timeline', href: '/hr/activity' },
+  { label: 'Incidents', href: '/hr/incidents' },
+  { label: 'Performance', href: '/hr/performance' },
+  { label: 'Workforce Missions', href: '/hr/workforce/missions' },
+  { label: 'Workforce Forecast', href: '/hr/workforce/forecast' },
+  { label: 'Roster Conflicts', href: '/hr/rosters/conflicts' },
+  { label: 'Interview Board', href: '/hr/recruitment/interviews' },
+  { label: 'Recruitment Sources', href: '/hr/recruitment/sources' },
+]
+
+export default async function Page() {
+  const data = await getHRDashboardData()
+  const metrics = getHRProductionMetrics(data)
+  const score = getHRProductionScore(data)
+
+  const attendance = rows(data.attendance)
+  const rosters = rows(data.rosters)
+  const staff = rows(data.staff)
+  const candidates = rows(data.candidates)
+  const approvals = rows(data.approvals)
+  const documents = rows(data.documents)
+  const contracts = rows(data.contracts)
+  const training = rows(data.training)
+  const errors = Object.entries(data.errors || {})
+
+  const unvalidatedAttendance =
+    (metrics as any).unvalidatedAttendance ??
+    (
+      Math.max(0, (metrics.attendanceRecords || attendance.length) - (metrics.validatedAttendance || 0)) ||
+      countUnvalidatedAttendance(attendance)
+    )
+
+  const rosterConflicts =
+    (metrics as any).rosterConflicts ??
+    (
+      (metrics as any).conflictsCount ??
+      countRosterConflicts(rosters)
+    )
+
+  const openQuality =
+    (metrics as any).openQuality ??
+    (
+      (metrics as any).qualityIssues ??
+      countOpenQuality(data)
+    )
+
+  const readinessStatus = score >= 85 ? 'healthy' : score >= 65 ? 'warning' : 'critical'
+  const activeRate = metrics.activeStaffRate || 0
+
+  const recentStaff = staff.slice(0, 8).map((row) => ({
+    staff: firstValue(row, ['full_name', 'name', 'display_name', 'email'], 'Unnamed staff'),
+    role: firstValue(row, ['position', 'job_title', 'role'], 'Staff'),
+    status: firstValue(row, ['employment_status', 'status'], 'active'),
+    city: firstValue(row, ['city', 'location'], '—'),
+  }))
+
+  const recentCandidates = candidates.slice(0, 8).map((row) => ({
+    candidate: firstValue(row, ['full_name', 'name', 'email'], 'Candidate'),
+    stage: firstValue(row, ['stage', 'pipeline_stage', 'status'], 'screening'),
+    role: firstValue(row, ['role', 'position', 'opening_title'], 'Open role'),
+    owner: firstValue(row, ['owner', 'recruiter'], 'HR'),
+  }))
+
+  const pendingApprovalsRows = approvals.slice(0, 8).map((row) => ({
+    item: firstValue(row, ['title', 'request_type', 'type'], 'Approval request'),
+    status: firstValue(row, ['status', 'approval_status'], 'pending'),
+    owner: firstValue(row, ['owner', 'requested_by', 'actor_label'], 'HR'),
+    date: formatDate(firstValue(row, ['created_at', 'requested_at'], '')),
+  }))
+
+  const documentRows = documents.slice(0, 8).map((row) => ({
+    document: firstValue(row, ['title', 'document_type', 'type'], 'Document'),
+    owner: firstValue(row, ['full_name', 'staff_name', 'employee_name', 'staff_id'], 'Staff'),
+    status: firstValue(row, ['status', 'compliance_status'], 'recorded'),
+    expiry: formatDate(firstValue(row, ['expires_at', 'expiry_date'], '')),
+  }))
+
+  const readinessItems = [
+    { label: 'Build stability', value: score >= 70 ? 'Controlled' : 'Review', status: score >= 70 ? 'healthy' : 'warning' },
+    { label: 'HR route coverage', value: `${HR_PRODUCTION_NAV.length + ENTERPRISE_MODULES.length}+ links`, status: 'healthy' },
+    { label: 'Attendance architecture', value: unvalidatedAttendance ? `${unvalidatedAttendance} to validate` : 'Validated', status: unvalidatedAttendance ? 'warning' : 'healthy' },
+    { label: 'ERP readiness', value: openQuality ? `${openQuality} quality items` : 'Clean', status: openQuality ? 'warning' : 'healthy' },
+    { label: 'Enterprise controls', value: errors.length ? `${errors.length} alerts` : 'Stable', status: errors.length ? 'warning' : 'healthy' },
+  ]
 
   return (
-    <AppShell
-      title="Executive Operations Command Center"
-      subtitle="Premium ERP cockpit for sales, operations, contracts, workforce, print templates and executive control."
-      breadcrumbs={[{ label: 'Control Center' }]}
-      actions={
-        <>
-          <PageAction href="/revenue-command-center">Revenue Command Center</PageAction>
-          <PageAction href="/sales">Sales Cockpit</PageAction>
-          <PageAction href="/services" variant="light">Service Catalog</PageAction>
-          <PageAction href="/print" variant="light">Print Center</PageAction>
-        </>
-      }
-    >
-      <section style={heroStyle}>
-        <div>
-          <div style={heroBadgeStyle}>AngelCare ERP 2026 • Multi-location / Multi-service Ready</div>
-          <h2 style={heroTitleStyle}>From daily operations to full corporate control.</h2>
-          <p style={heroTextStyle}>A structured operating system for families, institutions, caregivers, services, packages, contracts, missions, pointage, reports and printable documents.</p>
-        </div>
-        <div style={heroTilesStyle}>
-          <StatusPill tone="green">Casablanca</StatusPill>
-          <StatusPill tone="blue">Rabat</StatusPill>
-          <StatusPill tone="purple">Kénitra</StatusPill>
-          <StatusPill tone="amber">Future cities</StatusPill>
-        </div>
-      </section>
+    <AppShell>
+      <div className="space-y-7">
+        <section className="relative overflow-hidden rounded-[36px] border border-slate-200 bg-slate-950 p-6 text-white shadow-sm md:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.16),transparent_32%)]" />
+          <div className="relative z-10 flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
+            <div className="max-w-4xl space-y-5">
+              <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.28em] text-slate-200">
+                AngelCare Human Capital Operating System
+              </div>
+              <div className="space-y-3">
+                <h1 className="text-4xl font-black tracking-tight md:text-5xl">
+                  HR Command Center
+                </h1>
+                <p className="max-w-3xl text-sm leading-7 text-slate-300 md:text-base">
+                  Premium enterprise cockpit for staff, recruitment, attendance synchronization, workforce coverage,
+                  approvals, compliance, payroll inputs, operational quality and executive HR governance.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <HRAction href="/hr/staff">Manage staff</HRAction>
+                <HRAction href="/hr/attendance">Attendance cockpit</HRAction>
+                <HRAction href="/hr/recruitment">Recruitment pipeline</HRAction>
+                <HRLightAction href="/hr/sync-center">Sync center</HRLightAction>
+                <HRLightAction href="/hr/reports">Reports</HRLightAction>
+              </div>
+            </div>
 
-      <section style={metricGridStyle}>
-        <MetricCard label="Missions today" value={missionsToday.length} sub={`${totalTodayHours} hours planned`} icon="🛫" />
-        <MetricCard label="In progress" value={inProgress.length} sub="live field execution" icon="🟢" accent="#166534" />
-        <MetricCard label="Unassigned" value={unassigned.length} sub="dispatch attention" icon="⚠️" accent="#b45309" />
-        <MetricCard label="Open incidents" value={activeIncidents.length} sub="quality & risk" icon="🚨" accent="#991b1b" />
-        <MetricCard label="Active contracts" value={activeContracts.length} sub={`${contractsLow.length} low balance`} icon="📦" accent="#1d4ed8" />
-        <MetricCard label="Available caregivers" value={availableCaregivers.length} sub={`${caregivers.length} total workforce`} icon="👩‍👧" accent="#166534" />
-        <MetricCard label="Families CRM" value={families.length} sub="B2C customer base" icon="🏡" accent="#0f766e" />
-        <MetricCard label="Pending leads" value={pendingLeads.length} sub="sales follow-up" icon="📈" accent="#7c3aed" />
-        <MetricCard label="Completed today" value={completedToday.length} sub="daily delivery" icon="🏁" accent="#166534" />
-        <MetricCard label="ERP modules" value="11" sub="corporate navigation groups" icon="🧩" accent="#0f172a" />
-      </section>
+            <div className="grid min-w-[280px] gap-3 rounded-[28px] border border-white/15 bg-white/10 p-5 backdrop-blur">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-[0.22em] text-slate-300">Readiness</div>
+                  <div className="mt-1 text-4xl font-black">{score}%</div>
+                </div>
+                <HRStatusPill value={readinessStatus} />
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full rounded-full bg-white" style={{ width: `${Math.max(0, Math.min(100, score))}%` }} />
+              </div>
+              <div className="text-xs leading-5 text-slate-300">
+                Loaded {data.loadedAt ? new Date(data.loadedAt).toLocaleString() : '—'}
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <section style={moduleGridStyle}>
-        <ModuleCard href="/revenue-command-center" icon="🧠" title="Revenue Command Center" text="AI-guided strategic workspace for B2B, B2C, acquisition, daily directives, revenue prioritization and national growth control." badge="AI RevOps" />
-        <ModuleCard href="/sales" icon="🚀" title="Advanced Sales System" text="Pipeline, client types, institutions, quotations, proposals, follow-up reminders, campaign source and renewal view." badge="Sales CRM" />
-        <ModuleCard href="/services" icon="🧩" title="Products & Services Management" text="Flexible catalog for services, packages, pricing rules, cities, durations, skills, status and checklists." badge="Catalog" />
-        <ModuleCard href="/print" icon="🖨️" title="Print & Document Templates" text="Pre-installed corporate templates for contracts, mission orders, incident reports, quotes and certificates." badge="Print" />
-        <ModuleCard href="/locations" icon="📍" title="Multi-location Architecture" text="Branches, cities, zones, multi-service lines and client-type segmentation for scalable operations." badge="Cities" />
-        <ModuleCard href="/reports" icon="📊" title="Executive Reporting" text="Revenue projection, city performance, conversion, service profitability, renewals and staff activity." badge="Control" />
-        <ModuleCard href="/academy" icon="🎓" title="Academy Management" text="Training programs, certificates, B2B training and caregiver capability development." badge="Academy" />
-      </section>
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+          <HRCard title="Total staff" value={metrics.totalStaff} />
+          <HRCard title="Active staff" value={metrics.activeStaff} />
+          <HRCard title="Active rate" value={`${activeRate}%`} />
+          <HRCard title="Open roles" value={metrics.openRoles} />
+          <HRCard title="Pending approvals" value={metrics.pendingApprovals} />
+          <HRCard title="Quality alerts" value={openQuality} />
+          <HRCard title="Attendance records" value={metrics.attendanceRecords} />
+          <HRCard title="Not validated" value={unvalidatedAttendance} />
+          <HRCard title="Roster conflicts" value={rosterConflicts} />
+          <HRCard title="Missing documents" value={metrics.missingDocs} />
+          <HRCard title="Contracts" value={metrics.contractRecords} />
+          <HRCard title="Training records" value={metrics.trainingRecords} />
+        </section>
 
-      <div style={twoColStyle}>
-        <ERPPanel title="Operations Live Board" subtitle="High-signal overview for dispatch and daily supervision.">
-          <div style={{ display:'grid', gap:10 }}>
-            {missionsToday.slice(0, 8).map((m: any) => (
-              <Link key={m.id} href={`/missions/${m.id}`} style={rowStyle}>
-                <div><div style={rowTitleStyle}>{m.mission_code || `Mission #${m.id}`}</div><div style={rowMetaStyle}>{m.service_type || 'Service'} • {m.city || 'City'} • {m.start_time || '--:--'} → {m.end_time || '--:--'}</div></div>
-                <StatusPill tone={low(m.status) === 'incident' ? 'red' : low(m.status) === 'completed' ? 'green' : 'blue'}>{m.status || 'draft'}</StatusPill>
-              </Link>
+        <section className="grid gap-5 xl:grid-cols-3">
+          {EXECUTIVE_MODULES.map((module) => (
+            <a
+              key={module.href}
+              href={module.href}
+              className="group overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className={`h-2 bg-gradient-to-r ${module.accent}`} />
+              <div className="space-y-4 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.24em] text-slate-400">{module.eyebrow}</div>
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">{module.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{module.description}</p>
+                </div>
+                <div className="inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white transition group-hover:bg-slate-800">
+                  Open workspace →
+                </div>
+              </div>
+            </a>
+          ))}
+        </section>
+
+        <HRSection title="Executive control panels" subtitle="Premium access points for quality, synchronization, reporting, settings and readiness control.">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {CONTROL_MODULES.map((module) => (
+              <a
+                key={module.href}
+                href={module.href}
+                className="rounded-[24px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+              >
+                <div className="text-base font-black text-slate-950">{module.label}</div>
+                <div className="mt-2 text-sm leading-6 text-slate-600">{module.description}</div>
+              </a>
             ))}
-            {missionsToday.length === 0 ? <div style={emptyStyle}>No missions scheduled today.</div> : null}
           </div>
-        </ERPPanel>
+        </HRSection>
 
-        <ERPPanel title="Executive Alerts" subtitle="Priority signals from sales, operations, contracts and quality.">
-          <div style={{ display:'grid', gap:10 }}>
-            {unassigned.slice(0, 3).map((m: any) => <div key={`u-${m.id}`} style={alertStyle}>Unassigned mission • {m.mission_code || `Mission #${m.id}`}</div>)}
-            {activeIncidents.slice(0, 3).map((i: any) => <div key={`i-${i.id}`} style={dangerStyle}>Open incident • {i.incident_title || i.incident_type || `Incident #${i.id}`}</div>)}
-            {contractsLow.slice(0, 3).map((c: any) => <div key={`c-${c.id}`} style={warningStyle}>Low contract balance • {c.contract_reference || `Contract #${c.id}`}</div>)}
-            {unassigned.length + activeIncidents.length + contractsLow.length === 0 ? <div style={emptyStyle}>No critical signal active.</div> : null}
+        <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <HRSection title="Production readiness board" subtitle="The five critical areas that must remain controlled before push and deployment.">
+            <div className="grid gap-3">
+              {readinessItems.map((item) => (
+                <div key={item.label} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+                  <div>
+                    <div className="text-sm font-black text-slate-900">{item.label}</div>
+                    <div className="text-xs font-semibold text-slate-500">{item.value}</div>
+                  </div>
+                  <HRStatusPill value={item.status} />
+                </div>
+              ))}
+            </div>
+          </HRSection>
+
+          <HRSection title="Enterprise quick launch" subtitle="All HR submodules and operational destinations.">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {ENTERPRISE_MODULES.map((module) => (
+                <a
+                  key={module.href}
+                  href={module.href}
+                  className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-xs font-black text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  {module.label}
+                </a>
+              ))}
+            </div>
+          </HRSection>
+        </div>
+
+        <HRSection title="Full HR route map" subtitle="Navigation registry from the production HR layer.">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {HR_PRODUCTION_NAV.map((x) => (
+              <a
+                key={x.href}
+                href={x.href}
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+              >
+                <div>{x.label}</div>
+                <div className="mt-1 text-xs font-semibold text-slate-500">{x.href}</div>
+              </a>
+            ))}
           </div>
-        </ERPPanel>
+        </HRSection>
+
+        <div className="grid gap-6 xl:grid-cols-2">
+          <HRSection title="Recent staff" subtitle="Latest staff records from the unified HR repository.">
+            <HRTable headers={['Staff', 'Role', 'Status', 'City']} rows={tableRows(recentStaff)} />
+          </HRSection>
+
+          <HRSection title="Recruitment pipeline" subtitle="Candidate and open-role activity.">
+            <HRTable headers={['Candidate', 'Stage', 'Role', 'Owner']} rows={tableRows(recentCandidates)} />
+          </HRSection>
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-2">
+          <HRSection title="Pending approvals" subtitle="Approval queue requiring HR or management action.">
+            <HRTable headers={['Item', 'Status', 'Owner', 'Date']} rows={tableRows(pendingApprovalsRows)} />
+          </HRSection>
+
+          <HRSection title="Document control" subtitle="Employee document and compliance visibility.">
+            <HRTable headers={['Document', 'Owner', 'Status', 'Expiry']} rows={tableRows(documentRows)} />
+          </HRSection>
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-3">
+          <HRSection title="Attendance command" subtitle="Punch-in/out and validation intelligence.">
+            <div className="space-y-3">
+              <HRCard title="Attendance records" value={metrics.attendanceRecords} />
+              <HRCard title="Validated" value={metrics.validatedAttendance} />
+              <HRCard title="Not validated" value={unvalidatedAttendance} />
+              <div className="flex flex-wrap gap-2">
+                <HRAction href="/hr/attendance">Open attendance</HRAction>
+                <HRLightAction href="/hr/attendance?view=agenda">Agenda view</HRLightAction>
+              </div>
+            </div>
+          </HRSection>
+
+          <HRSection title="Workforce coverage" subtitle="Rosters, missions and field staffing risk.">
+            <div className="space-y-3">
+              <HRCard title="Roster records" value={rosters.length} />
+              <HRCard title="Conflicts" value={rosterConflicts} />
+              <HRCard title="Contracts" value={contracts.length} />
+              <div className="flex flex-wrap gap-2">
+                <HRAction href="/hr/rosters">Open rosters</HRAction>
+                <HRLightAction href="/hr/workforce/missions">Missions</HRLightAction>
+              </div>
+            </div>
+          </HRSection>
+
+          <HRSection title="Learning & performance" subtitle="Training, performance and staff development control.">
+            <div className="space-y-3">
+              <HRCard title="Training" value={training.length} />
+              <HRCard title="Performance" value={rows((data as any).performance).length} />
+              <HRCard title="Open tasks" value={metrics.openTasks} />
+              <div className="flex flex-wrap gap-2">
+                <HRAction href="/hr/training">Training</HRAction>
+                <HRLightAction href="/hr/performance">Performance</HRLightAction>
+              </div>
+            </div>
+          </HRSection>
+        </div>
+
+        <HRSection title="Repository quality alerts" subtitle="Tables or compatibility fallbacks that need review before enterprise production.">
+          <HRTable
+            headers={['Module', 'Status', 'Error']}
+            rows={tableRows(errors.map(([module, error]) => ({
+              module,
+              status: 'review',
+              error: String(error),
+            })))}
+          />
+        </HRSection>
       </div>
     </AppShell>
   )
 }
-
-const heroStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', gap:20, flexWrap:'wrap', alignItems:'flex-start', padding:26, borderRadius:28, background:'linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#075985 100%)', color:'#fff', marginBottom:18, boxShadow:'0 24px 70px rgba(15,23,42,.22)' }
-const heroBadgeStyle: React.CSSProperties = { display:'inline-flex', padding:'8px 12px', borderRadius:999, background:'rgba(255,255,255,.12)', color:'#dbeafe', fontSize:12, fontWeight:950, marginBottom:12 }
-const heroTitleStyle: React.CSSProperties = { margin:0, color:'#fff', fontSize:34, fontWeight:950, letterSpacing:-1.1, maxWidth:780 }
-const heroTextStyle: React.CSSProperties = { color:'#dbeafe', fontWeight:650, lineHeight:1.7, maxWidth:800, margin:'12px 0 0' }
-const heroTilesStyle: React.CSSProperties = { display:'flex', gap:10, flexWrap:'wrap', maxWidth:360, justifyContent:'flex-end' }
-const metricGridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:14, marginBottom:18 }
-const moduleGridStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:14, marginBottom:18 }
-const twoColStyle: React.CSSProperties = { display:'grid', gridTemplateColumns:'1.25fr .9fr', gap:18 }
-const rowStyle: React.CSSProperties = { display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:14, padding:14, border:'1px solid #e2e8f0', borderRadius:16, background:'#fff', textDecoration:'none' }
-const rowTitleStyle: React.CSSProperties = { color:'#0f172a', fontWeight:950, marginBottom:6 }
-const rowMetaStyle: React.CSSProperties = { color:'#64748b', fontSize:13, fontWeight:650, lineHeight:1.5 }
-const emptyStyle: React.CSSProperties = { padding:14, borderRadius:16, border:'1px dashed #cbd5e1', color:'#64748b', background:'#fff', fontWeight:700 }
-const alertStyle: React.CSSProperties = { padding:14, borderRadius:16, border:'1px solid #fed7aa', background:'#fff7ed', color:'#9a3412', fontWeight:900 }
-const dangerStyle: React.CSSProperties = { padding:14, borderRadius:16, border:'1px solid #fecaca', background:'#fff7f7', color:'#991b1b', fontWeight:900 }
-const warningStyle: React.CSSProperties = { padding:14, borderRadius:16, border:'1px solid #fde68a', background:'#fffbeb', color:'#92400e', fontWeight:900 }

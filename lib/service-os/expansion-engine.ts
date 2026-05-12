@@ -1,5 +1,173 @@
-import { listServiceBlueprints } from './blueprint-engine'
-export function getCityDeploymentMatrix(){ const rows=listServiceBlueprints().flatMap(bp=>bp.cityDeployments.map(c=>({serviceCode:bp.serviceCode,serviceName:bp.name,...c,readiness:bp.readiness,marginTarget:bp.marginTarget}))); return rows }
-export function getExpansionRecommendations(){ return getCityDeploymentMatrix().map(r=>({ ...r, opportunityScore: Math.round((r.demandScore*0.45)+(r.capacity*0.25)+((100-r.riskScore)*0.2)+(r.staffPool*0.1)), recommendation: r.demandScore>85 && r.staffPool<15?'Hire/certify staff before growth':r.riskScore>45?'Stabilize SOP and compliance':r.capacity>70?'Scale marketing now':'Pilot carefully'})).sort((a,b)=>b.opportunityScore-a.opportunityScore) }
-export const liveOps=[{id:'LIVE-001',city:'Rabat',service:'#H.S',status:'on-time',staff:'Nanny Team A',client:'Family Premium',sla:'OK',alert:'none'},{id:'LIVE-002',city:'Casablanca',service:'#S.H',status:'at-risk',staff:'Special Care Pool',client:'Special needs case',sla:'Watch',alert:'certification backup needed'},{id:'LIVE-003',city:'Rabat',service:'#P.P',status:'on-time',staff:'Postpartum Lead',client:'Newborn package',sla:'OK',alert:'nurse check scheduled'}]
-export function getLiveOpsSnapshot(){return {active:liveOps.length,atRisk:liveOps.filter(x=>x.status==='at-risk').length,cities:[...new Set(liveOps.map(x=>x.city))].length}}
+import { getServiceBlueprints, getCityDeployments } from "./engine"
+import type { ServiceBlueprint, ServiceCityDeployment } from "./types"
+
+function numberOr(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback
+}
+
+function text(value: unknown, fallback = ""): string {
+  return typeof value === "string" && value.trim() ? value : fallback
+}
+
+function codeOf(bp: ServiceBlueprint): string {
+  return text(bp.serviceCode ?? bp.code ?? bp.id, "SERVICE")
+}
+
+function readinessOf(bp: ServiceBlueprint, deployment?: ServiceCityDeployment): number {
+  const moduleScore = Math.min((bp.modules?.length ?? 0) * 10, 30)
+  const workflowScore = Math.min(((bp.defaultWorkflow?.length ?? 0) + (bp.workflows?.length ?? 0)) * 5, 25)
+  const complianceScore = (bp.requiredDocuments?.length ?? 0) > 0 || (bp.requiredCertifications?.length ?? 0) > 0 ? 15 : 5
+  const deploymentScore = deployment?.active ? 20 : 8
+  const riskPenalty = Math.round(numberOr(deployment?.riskScore, 25) * 0.25)
+
+  return Math.max(0, Math.min(100, moduleScore + workflowScore + complianceScore + deploymentScore - riskPenalty))
+}
+
+export function getExpansionMatrix() {
+  const blueprints = getServiceBlueprints()
+  const deployments = getCityDeployments()
+
+  return blueprints.flatMap((bp) => {
+    const blueprintDeployments =
+      deployments.filter((d: ServiceCityDeployment) => {
+        const depCode = text(d.blueprintCode ?? d.serviceCode)
+        return !depCode || depCode === codeOf(bp)
+      })
+
+    const safeDeployments = blueprintDeployments.length
+      ? blueprintDeployments
+      : (bp.cityDeployments ?? [])
+
+    return safeDeployments.map((deployment) => {
+      const demandScore = numberOr(deployment.demandScore, 65)
+      const capacity = numberOr(deployment.capacityScore ?? deployment.capacity, 50)
+      const riskScore = numberOr(deployment.riskScore, 25)
+      const staffPool = numberOr(deployment.staffAvailable, 10)
+      const expansionScore = Math.round(
+        demandScore * 0.45 +
+        capacity * 0.25 +
+        (100 - riskScore) * 0.2 +
+        staffPool * 0.1
+      )
+
+      return {
+        blueprintId: bp.id,
+        blueprintCode: codeOf(bp),
+        serviceCode: codeOf(bp),
+        serviceName: bp.name,
+        city: deployment.city,
+        active: deployment.active,
+        demandScore,
+        capacity,
+        capacityScore: capacity,
+        riskScore,
+        staffPool,
+        staffAvailable: staffPool,
+        readiness: readinessOf(bp, deployment),
+        marginTarget: numberOr(bp.marginTarget, 35),
+        expansionScore,
+        recommendation:
+          demandScore >= 85 && capacity >= 60
+            ? "Launch / scale priority"
+            : riskScore >= 45
+              ? "Stabilize operations before launch"
+              : "Prepare staffing and commercial activation",
+      }
+    })
+  })
+}
+
+export const liveOps = [
+  {
+    id: "LIVE-001",
+    city: "Rabat",
+    service: "#S.H",
+    status: "live",
+    staff: "Hybrid Care Team",
+    alert: "none",
+  },
+  {
+    id: "LIVE-002",
+    city: "Casablanca",
+    service: "#S.SN",
+    status: "at-risk",
+    staff: "Special Needs Team",
+    alert: "capacity pressure",
+  },
+]
+
+export function getExpansionSnapshot() {
+  const matrix = getExpansionMatrix()
+  const cities = Array.from(new Set(matrix.map((item) => item.city).filter(Boolean)))
+
+  return {
+    matrix,
+    liveOps,
+    kpis: {
+      opportunities: matrix.length,
+      activeCities: cities.length,
+      priorityLaunches: matrix.filter((item) => item.expansionScore >= 75).length,
+      riskZones: matrix.filter((item) => item.riskScore >= 45).length,
+    },
+  }
+}
+
+export function getCityExpansionReadiness(city: string) {
+  const cityKey = city.toLowerCase()
+  const matrix = getExpansionMatrix().filter((item) => item.city.toLowerCase() === cityKey)
+
+  const averageReadiness = matrix.length
+    ? Math.round(matrix.reduce((sum, item) => sum + item.readiness, 0) / matrix.length)
+    : 0
+
+  return {
+    city,
+    averageReadiness,
+    services: matrix,
+    recommendation:
+      averageReadiness >= 75
+        ? "Ready for structured expansion"
+        : averageReadiness >= 50
+          ? "Needs capacity preparation"
+          : "Not ready for launch",
+  }
+}
+
+
+export function getExpansionRecommendations() {
+  return getExpansionMatrix()
+    .sort((a, b) => b.expansionScore - a.expansionScore)
+    .slice(0, 12)
+    .map((item) => ({
+      id: `expansion-${item.city}-${item.serviceCode}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      city: item.city,
+      serviceCode: item.serviceCode,
+      serviceName: item.serviceName,
+      score: item.expansionScore,
+      readiness: item.readiness,
+      demandScore: item.demandScore,
+      capacityScore: item.capacityScore,
+      riskScore: item.riskScore,
+      recommendation: item.recommendation,
+      priority:
+        item.expansionScore >= 80
+          ? "critical"
+          : item.expansionScore >= 70
+            ? "high"
+            : item.expansionScore >= 55
+              ? "medium"
+              : "low",
+    }))
+}
+
+
+export function getLiveOpsSnapshot() {
+  return {
+    liveOps,
+    total: liveOps.length,
+    active: liveOps.filter((item) => item.status === "live").length,
+    atRisk: liveOps.filter((item) => item.status === "at-risk" || item.alert !== "none").length,
+    cities: Array.from(new Set(liveOps.map((item) => item.city).filter(Boolean))),
+    updatedAt: new Date().toISOString(),
+  }
+}

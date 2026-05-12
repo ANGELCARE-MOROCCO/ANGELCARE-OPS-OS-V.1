@@ -1,5 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-import { calculateDynamicPrice, getRevenueSnapshot, packages } from '@/lib/service-os/commercial-engine'
-const simulations=[calculateDynamicPrice(350,{serviceCode:'#H.S',city:'Rabat',urgency:'same_day',time:'night',complexity:'standard',subscription:'none'}),calculateDynamicPrice(650,{serviceCode:'#S.H',city:'Casablanca',urgency:'urgent',time:'day',complexity:'special',subscription:'family_premium'}),calculateDynamicPrice(900,{serviceCode:'#P.P',city:'Rabat',urgency:'normal',time:'weekend',complexity:'critical',subscription:'none'})]
-export default function ServiceCommercialPage(){const snap=getRevenueSnapshot(); return <AppShell title="Service Commercial & Revenue Engine" subtitle="Pricing dynamique, marges, packages, abonnements, upsell et contrats institutionnels." breadcrumbs={[{label:'Services',href:'/services'},{label:'Commercial'}]} actions={<><PageAction href="/services/pricing-engine" variant="light">Pricing Engine</PageAction><PageAction href="/services/subscriptions">Subscriptions</PageAction></>}><ServiceOSGrid><ServiceOSMetric label="Marge cible moyenne" value={`${snap.targetMargin}%`} accent="#166534"/><ServiceOSMetric label="Packages" value={packages.length}/><ServiceOSMetric label="Upsell prioritaires" value={snap.topUpsell.length} accent="#7c3aed"/></ServiceOSGrid><ServiceOSPanel title="Dynamic Pricing Simulations" subtitle="Remplace les prix figés par une logique adaptative contrôlée."><ServiceOSGrid>{simulations.map((s,i)=><ServiceOSCard key={i} title={`Simulation ${i+1}`} subtitle={s.notes.join(' • ')}><div style={{fontSize:30,fontWeight:950,color:'#166534'}}>{s.price} MAD</div><ServiceOSPill tone="green">marge estimée {s.marginEstimate} MAD</ServiceOSPill></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel><ServiceOSPanel title="Packages & Recurring Revenue" subtitle="Construire du revenu récurrent autour des services AngelCare."><ServiceOSGrid>{packages.map(p=><ServiceOSCard key={p.id} title={p.name} subtitle={p.target}><div style={{fontSize:26,fontWeight:950}}>{p.monthlyMad.toLocaleString()} MAD/mois</div><p style={{fontSize:13,color:'#475569'}}>{p.includes.join(' • ')}</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel></AppShell>}
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Commercial" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Commercial' }]}>
+      <ServiceOSHeader title="Commercial" subtitle="Real synchronized Commercial layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <><ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">Commercial cockpit</h2>
+          <p className="mt-1 text-sm text-slate-600">Packages, upsells, B2B contracts and service portfolio growth.</p>
+        </div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12}}><ServiceOSKpi label="Blueprints sellable" value={blueprints.length}/><ServiceOSKpi label="Subscription ready" value={blueprints.filter(b=>b.modules.includes('subscription_ready') || b.family === 'subscription').length}/><ServiceOSKpi label="B2B ready" value={blueprints.filter(b=>b.modules.includes('institution_contract') || b.modules.includes('sla_contract')).length}/></div></ServiceOSPanel></>
+    </AppShell>
+  )
+}

@@ -7,7 +7,7 @@ export async function getHRRestoreLists() {
   const data = await getHRDashboardData()
   return {
     ...data,
-    attendance_corrections: data.attendanceCorrections,
+    attendance_corrections: (data as any).attendanceCorrections || (data as any).attendance_corrections || [],
     checklists: data.onboarding,
   }
 }

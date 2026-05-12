@@ -17,7 +17,7 @@ export default async function Page() {
         <div className="mt-5 flex flex-wrap gap-2"><HRAction href="/hr/data-quality">Run quality control</HRAction><HRLightAction href="/hr/sync-center">Sync center</HRLightAction><HRLightAction href="/hr/reports">Export reports</HRLightAction></div>
       </div>
       <div className="grid gap-4 md:grid-cols-4"><HRCard title="Active staff" value={metrics.activeStaff} /><HRCard title="Open roles" value={metrics.openRoles} /><HRCard title="Pending approvals" value={metrics.pendingApprovals} /><HRCard title="Open quality issues" value={metrics.openQuality} /></div>
-      <div className="grid gap-4 md:grid-cols-4"><HRCard title="Attendance not validated" value={metrics.unvalidatedAttendance} /><HRCard title="Roster conflicts" value={metrics.rosterConflicts} /><HRCard title="Missing documents" value={metrics.missingDocs} /><HRCard title="Open tasks" value={metrics.openTasks} /></div>
+      <div className="grid gap-4 md:grid-cols-4"><HRCard title="Attendance not validated" value={Math.max(0, (metrics.attendanceRecords || 0) - (metrics.validatedAttendance || 0))} /><HRCard title="Roster conflicts" value={metrics.rosterConflicts} /><HRCard title="Missing documents" value={metrics.missingDocs} /><HRCard title="Open tasks" value={metrics.openTasks} /></div>
       <HRSection title="HR module map" subtitle="Core routes that should now be valid and synchronized.">
         <div className="grid gap-3 md:grid-cols-4">{HR_PRODUCTION_NAV.map((x)=><a key={x.href} href={x.href} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-800 hover:bg-white">{x.label}</a>)}</div>
       </HRSection>

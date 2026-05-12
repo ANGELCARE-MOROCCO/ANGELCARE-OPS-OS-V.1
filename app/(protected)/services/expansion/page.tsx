@@ -1,4 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-import { getExpansionRecommendations } from '@/lib/service-os/expansion-engine'
-export default function ExpansionPage(){const recs=getExpansionRecommendations(); return <AppShell title="Multi-City Expansion Center" subtitle="Déploiement ville par ville : capacité, staff, demande, risque, pricing zone et priorité." breadcrumbs={[{label:'Services',href:'/services'},{label:'Expansion'}]} actions={<><PageAction href="/services/live-ops" variant="light">Live Ops</PageAction><PageAction href="/services/capacity">Capacity</PageAction></>}><ServiceOSGrid><ServiceOSMetric label="Zones" value={recs.length}/><ServiceOSMetric label="Top score" value={recs[0]?.opportunityScore||0} accent="#166534"/><ServiceOSMetric label="Actions hiring" value={recs.filter(r=>r.recommendation.includes('Hire')).length} accent="#b45309"/></ServiceOSGrid><ServiceOSPanel title="Expansion Recommendations" subtitle="Prioriser croissance sans casser l’exécution."><ServiceOSGrid>{recs.map(r=><ServiceOSCard key={`${r.serviceCode}-${r.city}`} title={`${r.city} • ${r.serviceCode}`} subtitle={r.serviceName}><div style={{display:'flex',gap:8,flexWrap:'wrap'}}><ServiceOSPill tone={r.opportunityScore>75?'green':r.opportunityScore>60?'amber':'blue'}>Score {r.opportunityScore}</ServiceOSPill><ServiceOSPill tone={r.active?'green':'slate'}>{r.active?'active':'pilot/off'}</ServiceOSPill><ServiceOSPill tone="purple">{r.pricingZone}</ServiceOSPill></div><p style={{fontSize:13,color:'#475569'}}>Demand {r.demandScore} • Capacity {r.capacity} • Staff {r.staffPool} • Risk {r.riskScore}</p><p style={{fontSize:13,color:'#0f172a',fontWeight:800}}>{r.recommendation}</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel></AppShell>}
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Expansion" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Expansion' }]}>
+      <ServiceOSHeader title="Expansion" subtitle="Real synchronized Expansion layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">Expansion planning</h2>
+          <p className="mt-1 text-sm text-slate-600">Prioritize cities and service families based on demand, risk and staffing readiness.</p>
+        </div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:14}}>{['Rabat Domination','Casablanca Scale-Up','Marrakech Tourism Care','Tangier Bilingual Expansion','Online Academy Growth'].map((x: any)=><div key={x} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:20,padding:16}}><h3>{x}</h3><p>Launch plan includes staffing, pricing, market messaging, contracts and capacity gates.</p><StatusBadge text="Expansion-ready"/></div>)}</div></ServiceOSPanel>
+    </AppShell>
+  )
+}

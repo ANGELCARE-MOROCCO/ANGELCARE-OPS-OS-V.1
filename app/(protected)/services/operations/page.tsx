@@ -1,4 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-import { getEscalations, getOperationalSnapshot, serviceMissions } from '@/lib/service-os/execution-engine'
-export default function ServiceOperationsPage(){ const snap=getOperationalSnapshot(); const esc=getEscalations(); return <AppShell title="Service Operations Center" subtitle="Pilotage exécution missions : lead, qualification, staffing, contrats, live monitoring, qualité et escalades." breadcrumbs={[{label:'Services',href:'/services'},{label:'Operations'}]} actions={<><PageAction href="/services/workflows" variant="light">Workflows</PageAction><PageAction href="/services/incidents">Incidents</PageAction></>}><ServiceOSGrid><ServiceOSMetric label="Missions actives" value={snap.active} sub="pipeline opérationnel"/><ServiceOSMetric label="Risque élevé" value={snap.escalated} sub="à traiter" accent="#b45309"/><ServiceOSMetric label="Revenue pipeline" value={`${snap.revenue.toLocaleString()} MAD`} sub="missions visibles" accent="#166534"/><ServiceOSMetric label="Staff fit moyen" value={`${snap.avgStaffFit}%`} sub="matching" accent="#1d4ed8"/></ServiceOSGrid><ServiceOSPanel title="Mission Pipeline" subtitle="Chaque mission doit avancer dans un statut traçable, avec owner, SLA et prochaine action."><ServiceOSGrid>{serviceMissions.map(m=><ServiceOSCard key={m.id} title={`${m.id} • ${m.client}`} subtitle={`${m.serviceCode} • ${m.city} • Owner: ${m.owner}`}><div style={{display:'flex',gap:8,flexWrap:'wrap'}}><ServiceOSPill tone="blue">{m.status}</ServiceOSPill><ServiceOSPill tone={m.risk>50?'red':m.risk>30?'amber':'green'}>Risk {m.risk}</ServiceOSPill><ServiceOSPill tone="purple">Fit {m.staffFit}%</ServiceOSPill></div><p style={{fontSize:13,color:'#475569'}}><b>Next:</b> {m.nextAction}</p><p style={{fontSize:13,color:'#475569'}}><b>SLA:</b> {m.slaHoursLeft}h restantes • <b>CA:</b> {m.revenueMad} MAD</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel><ServiceOSPanel title="Escalation Queue" subtitle="Risque opérationnel visible avant incident client."><ServiceOSGrid>{esc.map(e=><ServiceOSCard key={e.id} title={e.client} subtitle={e.escalation}><ServiceOSPill tone={e.risk>50?'red':'amber'}>Risk {e.risk}</ServiceOSPill><p style={{fontSize:13,color:'#475569'}}>{e.nextAction}</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel></AppShell>}
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Operations" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Operations' }]}>
+      <ServiceOSHeader title="Operations" subtitle="Real synchronized Operations layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">Operational lifecycle</h2>
+          <p className="mt-1 text-sm text-slate-600">From request to launch to quality review, every mission follows an executable path.</p>
+        </div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(230px,1fr))',gap:12}}>{missions.map((m: any)=><div key={m.id} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:18,padding:14}}><b>{m.client}</b><p>{m.blueprintCode} • {m.city}</p><StatusBadge text={m.status}/><p>{m.valueMad} MAD • risk {m.risk}</p></div>)}</div></ServiceOSPanel>
+    </AppShell>
+  )
+}

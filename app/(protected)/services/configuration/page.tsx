@@ -1,4 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-import { angelcareServiceModules } from '@/lib/service-os/seed'
-export default function ServiceConfigurationPage(){return <AppShell title="Service Configuration Engine" subtitle="Bibliothèque de modules attachables à chaque service AngelCare." breadcrumbs={[{label:'Services',href:'/services'},{label:'Configuration'}]} actions={<PageAction href="/services/blueprints" variant="light">Blueprint Studio</PageAction>}><ServiceOSGrid><ServiceOSMetric label="Modules disponibles" value={angelcareServiceModules.length} sub="attachables aux services"/><ServiceOSMetric label="Modules par défaut" value={angelcareServiceModules.filter(m=>m.defaultEnabled).length} sub="base opérationnelle"/><ServiceOSMetric label="Modules premium" value={angelcareServiceModules.filter(m=>!m.defaultEnabled).length} sub="upsell / expansion"/></ServiceOSGrid><ServiceOSPanel title="Module Library" subtitle="À utiliser dans les blueprints pour composer des offres complexes sans recoder les pages."><ServiceOSGrid>{angelcareServiceModules.map(m=><ServiceOSCard key={m.key} title={m.label} subtitle={m.description}><ServiceOSPill tone={m.defaultEnabled?'green':'blue'}>{m.defaultEnabled?'default':'optionnel'}</ServiceOSPill><p style={{fontSize:13,color:'#475569',lineHeight:1.6}}>{m.enterpriseImpact}</p>{m.requiredRole&&<ServiceOSPill tone="purple">{m.requiredRole}</ServiceOSPill>}</ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel></AppShell>}
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Configuration" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Configuration' }]}>
+      <ServiceOSHeader title="Configuration" subtitle="Real synchronized Configuration layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12}}><ServiceOSKpi label="Modules" value={modules.length}/><ServiceOSKpi label="Rules" value={rules.length}/><ServiceOSKpi label="Blueprints" value={blueprints.length}/><ServiceOSKpi label="City deployments" value={deployments.length}/></div><ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">Configurable modules</h2>
+          <p className="mt-1 text-sm text-slate-600">Attachable capability blocks that make services flexible for the next 10 years.</p>
+        </div><div style={{columns:2}}>{modules.map((m: any)=><p key={m.key}><b>{m.label}</b> — {m.description}</p>)}</div></ServiceOSPanel></>
+    </AppShell>
+  )
+}

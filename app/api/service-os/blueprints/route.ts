@@ -1,3 +1,9 @@
 import { NextResponse } from 'next/server'
-import { buildExecutiveServiceSnapshot, listServiceBlueprints } from '@/lib/service-os/blueprint-engine'
-export async function GET(){ return NextResponse.json({ ok:true, snapshot:buildExecutiveServiceSnapshot(), blueprints:listServiceBlueprints() }) }
+import { listServiceOSBlueprints, upsertServiceOSRecord } from '@/lib/service-os/production/repository'
+
+export async function GET() { return NextResponse.json({ data: await listServiceOSBlueprints() }) }
+export async function POST(request: Request) {
+  const body = await request.json()
+  const saved = await upsertServiceOSRecord('serviceos_blueprints', body)
+  return NextResponse.json({ data: saved })
+}

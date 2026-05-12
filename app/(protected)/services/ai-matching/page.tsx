@@ -1,4 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-const matches=[{case:'Autistic child + school + Rabat',service:'#S.H',staff:'Special Care Certified',fit:92,price:'Premium hybrid',risk:'controlled'},{case:'Newborn + mother recovery + night',service:'#P.P',staff:'Postpartum Lead + nurse backup',fit:88,price:'Elite 30 jours',risk:'sensitive'},{case:'School ludique program',service:'#S.L',staff:'Academy certified animator',fit:84,price:'B2B monthly',risk:'low'}]
-export default function AIMatchingPage(){return <AppShell title="AI Service Matching" subtitle="Match besoin client → blueprint service → staff → pricing → risk." breadcrumbs={[{label:'Services',href:'/services'},{label:'AI Matching'}]} actions={<PageAction href="/services/ai-strategy" variant="light">AI Strategy</PageAction>}><ServiceOSGrid><ServiceOSMetric label="Cases" value={matches.length}/><ServiceOSMetric label="Best fit" value={`${Math.max(...matches.map(m=>m.fit))}%`} accent="#166534"/></ServiceOSGrid><ServiceOSPanel title="Matching Simulations" subtitle="Prépare le moteur de recommandation intelligent."><ServiceOSGrid>{matches.map(m=><ServiceOSCard key={m.case} title={m.case} subtitle={`${m.service} • ${m.staff}`}><ServiceOSPill tone={m.fit>90?'green':'blue'}>{m.fit}% fit</ServiceOSPill><p style={{fontSize:13,color:'#475569'}}>Pricing: {m.price} • Risk: {m.risk}</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel></AppShell>}
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Ai Matching" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Ai Matching' }]}>
+      <ServiceOSHeader title="Ai Matching" subtitle="Real synchronized Ai Matching layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">AI-style matching engine</h2>
+          <p className="mt-1 text-sm text-slate-600">Match client need to service blueprint, modules, staff logic and pricing.</p>
+        </div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:14}}>{matches.slice(0,6).map((x: any)=><div key={x.blueprint.code} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:20,padding:16}}><h3>{x.score}% — {x.blueprint.name}</h3><p>{x.blueprint.marketSegment}</p><p>{(Array.isArray(x.blueprint.modules) ? x.blueprint.modules : []).join(', ')}</p></div>)}</div></ServiceOSPanel>
+    </AppShell>
+  )
+}

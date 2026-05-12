@@ -1,96 +1,176 @@
 import { createClient } from '@/lib/supabase/server'
-import type { HRDashboardData } from './types'
+import type { HRActivityInput, HRDashboardData, HRResult, HRRow } from './types'
 
 export const HR_TABLES = {
-  openings: 'hr_job_openings',
-  candidates: 'hr_recruitment_candidates',
-  staff: 'hr_staff',
+  staff: 'hr_staff_profiles',
+  openings: 'hr_opening_jobs',
+  candidates: 'hr_candidates',
+  onboarding: 'hr_onboarding_tasks',
+  attendance: 'hr_attendance_records',
+  rosters: 'hr_roster_assignments',
   departments: 'hr_departments',
   positions: 'hr_positions',
-  rosters: 'hr_rosters',
-  attendance: 'hr_attendance',
-  attendanceCorrections: 'hr_attendance_corrections',
-  tasks: 'hr_execution_tasks',
+  documents: 'hr_documents',
+  docs: 'hr_documents',
   approvals: 'hr_approval_requests',
-  onboarding: 'hr_onboarding_cases',
-  docs: 'hr_staff_documents',
-  reviews: 'hr_staff_performance_reviews',
-  activity: 'hr_activity_log',
-  syncEvents: 'hr_sync_events',
-  qualityChecks: 'hr_data_quality_checks',
+  contracts: 'hr_contracts',
+  training: 'hr_training_records',
+  compliance: 'hr_compliance_items',
+  leave: 'hr_leave_requests',
+  payroll: 'hr_payroll_inputs',
+  tasks: 'hr_tasks',
   serviceRequests: 'hr_service_requests',
+  sla: 'hr_sla_tracking',
+  escalations: 'hr_escalations',
+  dailyOperations: 'hr_daily_operations',
+  dataQuality: 'hr_data_quality_checks',
   playbooks: 'hr_playbooks',
   templates: 'hr_templates',
+  syncEvents: 'hr_sync_events',
+  incidents: 'hr_incidents',
+  performance: 'hr_performance_reviews',
+  audit: 'hr_audit_logs',
+  activity: 'hr_activity_timeline',
 } as const
 
-export const HR_ALLOWED_WRITE_TABLES = new Set(Object.values(HR_TABLES))
+export const HR_ALLOWED_WRITE_TABLES = new Set<string>(Object.values(HR_TABLES))
 
-export function rows(res: any) {
-  return Array.isArray(res?.data) ? res.data : []
+const FALLBACK_TABLES: Record<string, string[]> = {
+  [HR_TABLES.staff]: ['hr_staff', 'staff_profiles', 'profiles'],
+  [HR_TABLES.openings]: ['hr_job_openings', 'hr_openings'],
+  [HR_TABLES.attendance]: ['hr_attendance', 'attendance_records', 'app_attendance_logs'],
+  [HR_TABLES.rosters]: ['hr_rosters', 'roster_assignments'],
+  [HR_TABLES.documents]: ['hr_employee_documents', 'staff_documents'],
+
+  [HR_TABLES.contracts]: ['hr_staff_contracts', 'contracts'],
+  [HR_TABLES.performance]: ['hr_reviews', 'performance_reviews'],
+  [HR_TABLES.audit]: ['hr_activity_log', 'hr_audit_trail'],
+  [HR_TABLES.activity]: ['hr_activity_log', 'hr_audit_trail'],
 }
 
-async function list(table: string, limit = 500) {
+async function safeSelect(table: string, limit = 200): Promise<HRResult> {
   const supabase = await createClient()
-  const res = await supabase.from(table).select('*').order('created_at', { ascending: false }).limit(limit)
-  return rows(res)
+  const attempts = [table, ...(FALLBACK_TABLES[table] || [])]
+  const errors: string[] = []
+
+  for (const t of attempts) {
+    try {
+      const { data, error } = await supabase.from(t).select('*').limit(limit)
+      if (!error) return { data: data || [], error: null, table: t }
+      errors.push(`${t}: ${error.message}`)
+    } catch (err: any) {
+      errors.push(`${t}: ${err?.message || String(err)}`)
+    }
+  }
+
+  return { data: [], error: errors.join(' | '), table }
 }
 
 export async function getHRDashboardData(): Promise<HRDashboardData> {
+  const keys = [
+    'staff',
+    'openings',
+    'candidates',
+    'onboarding',
+    'attendance',
+    'rosters',
+    'departments',
+    'positions',
+    'documents',
+    'docs',
+    'approvals',
+    'contracts',
+    'training',
+    'compliance',
+    'leave',
+    'payroll',
+    'tasks',
+    'serviceRequests',
+    'sla',
+    'escalations',
+    'dailyOperations',
+    'dataQuality',
+    'playbooks',
+    'templates',
+    'syncEvents',
+    'incidents',
+    'performance',
+    'audit',
+    'activity',
+  ] as const
+
+  const tables = keys.map((k) => HR_TABLES[k])
+  const results = await Promise.all(tables.map((t) => safeSelect(t)))
+
+  const data: any = { loadedAt: new Date().toISOString(), errors: {} }
+
+  keys.forEach((k, i) => {
+    data[k] = results[i]?.data || []
+    if (results[i]?.error) data.errors[k] = results[i].error
+  })
+
+  return data as HRDashboardData
+}
+
+export async function getHRRecord(table: string, id: string): Promise<HRRow | null> {
   const supabase = await createClient()
-  const [
-    openings, candidates, staff, departments, positions, rosters, attendance, attendanceCorrections,
-    tasks, approvals, onboarding, docs, reviews, syncEvents, qualityChecks, serviceRequests,
-  ] = await Promise.all([
-    supabase.from(HR_TABLES.openings).select('*').order('created_at', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.candidates).select('*').order('created_at', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.staff).select('*').order('created_at', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.departments).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.positions).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.rosters).select('*').order('shift_date', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.attendance).select('*').order('attendance_date', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.attendanceCorrections).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.tasks).select('*').order('created_at', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.approvals).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.onboarding).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.docs).select('*').order('created_at', { ascending:false }).limit(500),
-    supabase.from(HR_TABLES.reviews).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.syncEvents).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.qualityChecks).select('*').order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.serviceRequests).select('*').order('created_at', { ascending:false }).limit(300),
-  ])
+  const attempts = [table, ...(FALLBACK_TABLES[table] || [])]
+
+  for (const t of attempts) {
+    try {
+      const { data, error } = await supabase.from(t).select('*').eq('id', id).maybeSingle()
+      if (!error && data) return data
+    } catch {}
+  }
+
+  return null
+}
+
+export async function getStaff360(id: string) {
+  const staff = await getHRRecord(HR_TABLES.staff, id)
+  const dashboard = await getHRDashboardData()
+
+  const byStaff = (row: HRRow) =>
+    [row.id, row.staff_id, row.employee_id, row.user_id, row.profile_id].filter(Boolean).includes(id)
+
   return {
-    openings: rows(openings), candidates: rows(candidates), staff: rows(staff), departments: rows(departments),
-    positions: rows(positions), rosters: rows(rosters), attendance: rows(attendance), attendanceCorrections: rows(attendanceCorrections),
-    tasks: rows(tasks), approvals: rows(approvals), onboarding: rows(onboarding), docs: rows(docs), reviews: rows(reviews),
-    syncEvents: rows(syncEvents), qualityChecks: rows(qualityChecks), serviceRequests: rows(serviceRequests),
+    staff,
+    attendance: (dashboard.attendance || []).filter(byStaff),
+    rosters: (dashboard.rosters || []).filter(byStaff),
+    rosterAssignments: (dashboard.rosters || []).filter(byStaff),
+    documents: (dashboard.documents || []).filter(byStaff),
+    docs: (dashboard.documents || []).filter(byStaff),
+    contracts: (dashboard.contracts || []).filter(byStaff),
+    approvals: (dashboard.approvals || []).filter(byStaff),
+    tasks: (dashboard.tasks || []).filter(byStaff),
+    onboarding: (dashboard.onboarding || []).filter(byStaff),
+    incidents: (dashboard.incidents || []).filter(byStaff),
+    serviceRequests: (dashboard.serviceRequests || []).filter(byStaff),
+    training: (dashboard.training || []).filter(byStaff),
+    trainings: (dashboard.training || []).filter(byStaff),
+    performance: (dashboard.performance || []).filter(byStaff),
+    reviews: (dashboard.performance || []).filter(byStaff),
+    payroll: (dashboard.payroll || []).filter(byStaff),
+    leave: (dashboard.leave || []).filter(byStaff),
   }
 }
 
-export async function getHRList(key: keyof typeof HR_TABLES, limit = 500) {
-  return list(HR_TABLES[key], limit)
-}
-
-export async function getHRRecord(table: string, id: string) {
+export async function logHRActivity(input: HRActivityInput) {
   const supabase = await createClient()
-  const { data } = await supabase.from(table).select('*').eq('id', id).maybeSingle()
-  return data
-}
 
-export async function getStaff360(staffId: string) {
-  const supabase = await createClient()
-  const [staff, docs, attendance, reviews, rosters, onboarding, tasks] = await Promise.all([
-    supabase.from(HR_TABLES.staff).select('*').eq('id', staffId).maybeSingle(),
-    supabase.from(HR_TABLES.docs).select('*').eq('staff_id', staffId).order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.attendance).select('*').eq('staff_id', staffId).order('attendance_date', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.reviews).select('*').eq('staff_id', staffId).order('created_at', { ascending:false }).limit(200),
-    supabase.from(HR_TABLES.rosters).select('*').eq('staff_id', staffId).order('shift_date', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.onboarding).select('*').eq('staff_id', staffId).order('created_at', { ascending:false }).limit(300),
-    supabase.from(HR_TABLES.tasks).select('*').eq('related_staff_id', staffId).order('created_at', { ascending:false }).limit(300),
-  ])
-  return { staff: staff.data, docs: rows(docs), attendance: rows(attendance), reviews: rows(reviews), rosters: rows(rosters), onboarding: rows(onboarding), tasks: rows(tasks) }
-}
+  const row = {
+    ...input,
+    module: input.module || 'hr',
+    source: input.source || 'hr-production',
+    status: input.status || 'recorded',
+    created_at: new Date().toISOString(),
+  }
 
-export async function logHRActivity(input: { actor_user_id?: string | null; actor_label?: string | null; source_table: string; record_id?: string | null; action: string; details?: any }) {
-  const supabase = await createClient()
-  await supabase.from(HR_TABLES.activity).insert([{ ...input, details: input.details || {} }])
+  try {
+    await supabase.from(HR_TABLES.audit).insert(row)
+  } catch {}
+
+  try {
+    await supabase.from(HR_TABLES.activity).insert(row)
+  } catch {}
 }

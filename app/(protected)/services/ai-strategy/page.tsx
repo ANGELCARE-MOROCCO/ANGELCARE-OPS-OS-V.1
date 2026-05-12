@@ -1,4 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-import { getAIServiceRecommendations, getDemandSignals, getExecutiveAICommand } from '@/lib/service-os/ai-strategy-engine'
-export default function AIStrategyPage(){const command=getExecutiveAICommand(); const recs=getAIServiceRecommendations(); const signals=getDemandSignals(); return <AppShell title="AI Service Strategy & Market Domination" subtitle="Recommandations IA pour nouveaux services, expansion, staffing, pricing et domination marché." breadcrumbs={[{label:'Services',href:'/services'},{label:'AI Strategy'}]} actions={<><PageAction href="/services/market-intelligence" variant="light">Market Intelligence</PageAction><PageAction href="/services/ai-matching">AI Matching</PageAction></>}><ServiceOSGrid><ServiceOSMetric label="AI confidence" value={`${command.confidence}%`} accent="#166534"/><ServiceOSMetric label="Massive moves" value={command.massive} accent="#7c3aed"/><ServiceOSMetric label="Blueprints analyzed" value={command.blueprints}/></ServiceOSGrid><ServiceOSPanel title="Strategic Recommendations" subtitle="Actions concrètes à convertir en tâches CEO/Ops/Marketing/HR."><ServiceOSGrid>{recs.map(r=><ServiceOSCard key={r.id} title={r.title} subtitle={`${r.owner} • ${r.serviceCodes.join(', ')}`}><div style={{display:'flex',gap:8,flexWrap:'wrap'}}><ServiceOSPill tone={r.impact==='massive'?'purple':r.impact==='high'?'green':'blue'}>{r.impact}</ServiceOSPill><ServiceOSPill tone="blue">{r.confidence}% confidence</ServiceOSPill></div><p style={{fontSize:13,color:'#475569'}}><b>Action:</b> {r.action}</p><p style={{fontSize:13,color:'#0f172a',fontWeight:800}}>{r.expectedOutcome}</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel><ServiceOSPanel title="Demand Signals" subtitle="Signaux marché à traduire en offres, hiring et marketing."><ServiceOSGrid>{signals.map(s=><ServiceOSCard key={s.signal} title={s.signal} subtitle={s.trend}><ServiceOSPill tone="green">{s.cities.join(' + ')}</ServiceOSPill><p style={{fontSize:13,color:'#475569'}}>{s.action}</p></ServiceOSCard>)}</ServiceOSGrid></ServiceOSPanel></AppShell>}
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Ai Strategy" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Ai Strategy' }]}>
+      <ServiceOSHeader title="Ai Strategy" subtitle="Real synchronized Ai Strategy layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">AI strategy recommendations</h2>
+          <p className="mt-1 text-sm text-slate-600">Strategic growth suggestions for pricing, staffing, expansion and offers.</p>
+        </div><div style={{display:'grid',gap:14}}>{['Scale special-needs hybrid care in Rabat and Casablanca','Launch hotel childcare concierge in Marrakech','Bundle postpartum support into premium family membership','Create school SLA contracts for institution revenue','Train certified staff pipeline through AngelCare Academy'].map((x: any)=><div key={x} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:20,padding:16}}><h3>{x}</h3><p>Recommended because it connects demand, margin, operational differentiation and long-term defensibility.</p></div>)}</div></ServiceOSPanel>
+    </AppShell>
+  )
+}

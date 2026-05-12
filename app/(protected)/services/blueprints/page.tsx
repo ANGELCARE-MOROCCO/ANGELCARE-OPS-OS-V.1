@@ -1,12 +1,23 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ServiceOSButton, ServiceOSCard, ServiceOSGrid, ServiceOSMetric, ServiceOSPanel, ServiceOSPill } from '@/components/service-os/ServiceOSPrimitives'
-import { buildExecutiveServiceSnapshot, calculateReadiness, getModuleDetails, listServiceBlueprints } from '@/lib/service-os/blueprint-engine'
-export default function ServiceBlueprintsPage(){
- const blueprints=listServiceBlueprints(); const snap=buildExecutiveServiceSnapshot()
- return <AppShell title="Service Blueprint Studio" subtitle="Configuration enterprise des services AngelCare : modules, règles, workflows, versions, conformité et déploiement." breadcrumbs={[{label:'Products & Services',href:'/services'},{label:'Blueprint Studio'}]} actions={<><PageAction href="/services" variant="light">Retour services</PageAction><PageAction href="/services/blueprints/new">+ Blueprint</PageAction></>}>
-  <ServiceOSGrid><ServiceOSMetric label="Blueprints" value={snap.total} sub="services industrialisés"/><ServiceOSMetric label="Readiness moyenne" value={`${snap.avgReadiness}%`} sub="maturité enterprise" accent="#166534"/><ServiceOSMetric label="Services critiques" value={snap.critical} sub="compliance élevée" accent="#b45309"/><ServiceOSMetric label="Villes premium" value={snap.premiumCities.length} sub={snap.premiumCities.join(', ')} accent="#7c3aed"/></ServiceOSGrid>
-  <ServiceOSPanel title="Enterprise Blueprint Control" subtitle="Chaque service devient une architecture configurable, clonable, versionnée et extensible." right={<><ServiceOSButton href="/services/configuration" light>Configuration</ServiceOSButton><ServiceOSButton href="/services/rules" light>Rules Engine</ServiceOSButton></>}>
-   <ServiceOSGrid>{blueprints.map(bp=>{const report=calculateReadiness(bp); const mods=getModuleDetails(bp.modules); return <ServiceOSCard key={bp.id} title={`${bp.serviceCode} • ${bp.name}`} subtitle={bp.summary}><div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}><ServiceOSPill tone={report.score>=80?'green':report.score>=60?'amber':'red'}>{report.score}% ready</ServiceOSPill><ServiceOSPill tone="blue">v{bp.version}</ServiceOSPill><ServiceOSPill tone={bp.complianceLevel==='critical'?'red':'purple'}>{bp.complianceLevel}</ServiceOSPill></div><div style={{fontSize:13,color:'#475569',lineHeight:1.7}}><b>Modules:</b> {mods.map(m=>m.label).join(' • ')}<br/><b>Workflows:</b> {bp.workflows.length} étapes • <b>Règles:</b> {bp.rules.length} • <b>Déploiements:</b> {bp.cityDeployments.length}</div><div style={{marginTop:14,display:'flex',gap:8,flexWrap:'wrap'}}><ServiceOSButton href={`/services/${bp.serviceCode.replace('#','')}`} light>Ouvrir cockpit</ServiceOSButton><ServiceOSButton href={`/services/blueprints/${bp.id}`} light>Détails blueprint</ServiceOSButton></div></ServiceOSCard>})}</ServiceOSGrid>
-  </ServiceOSPanel>
- </AppShell>
+import AppShell from '@/app/components/erp/AppShell'
+import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
+import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+
+export default function Page() {
+  const blueprints = getServiceBlueprints()
+  const modules = getServiceModules()
+  const rules = getServiceRules()
+  const deployments = getCityDeployments()
+  const missions = getServiceMissions()
+  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
+  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
+  return (
+    <AppShell title="Blueprints" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Blueprints' }]}>
+      <ServiceOSHeader title="Blueprints" subtitle="Real synchronized Blueprints layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
+      <ServiceOSPanel>
+        <div className="mb-4">
+          <h2 className="text-xl font-black text-slate-950">Blueprint portfolio</h2>
+          <p className="mt-1 text-sm text-slate-600">Every AngelCare service becomes a configurable operating blueprint instead of a static card.</p>
+        </div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:14}}>{blueprints.map((b)=><div key={b.code} style={{border:'1px solid #e2e8f0',borderRadius:20,padding:16,background:'#fff'}}><div style={{display:'flex',justifyContent:'space-between',gap:12}}><b>{b.code}</b><StatusBadge text={b.status}/></div><h3>{b.name}</h3><p style={{color:'#64748b'}}>{b.marketSegment}</p><p><b>Modules:</b> {(b.modules ?? []).length} • <b>Cities:</b> {(b.cities ?? []).join(', ')}</p><p><b>Workflow:</b> {(b.defaultWorkflow ?? []).slice(0, 4).join(' → ')}...</p></div>)}</div></ServiceOSPanel>
+    </AppShell>
+  )
 }
