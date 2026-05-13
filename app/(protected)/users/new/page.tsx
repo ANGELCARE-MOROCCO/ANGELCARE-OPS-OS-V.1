@@ -4,64 +4,25 @@ import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
 import { APP_ROUTE_PERMISSIONS } from '@/lib/generated/app-routes'
 import SmartPermissionsPanel from '@/app/(protected)/users/_components/SmartPermissionsPanel'
+import {
+  MODULE_PERMISSIONS,
+  USER_ROLE_OPTIONS,
+  buildUserPermissionsForRole,
+  getRoleOption,
+} from '@/lib/auth/permissions'
 
-const CORE_PERMISSIONS = [
-  { value: 'academy.view', label: 'Academy - Voir', module: 'academy' },
-  { value: 'academy.manage', label: 'Academy - Gérer', module: 'academy' },
-  { value: 'admin.view', label: 'Admin - Voir', module: 'admin' },
-  { value: 'admin.manage', label: 'Admin - Gérer', module: 'admin' },
-  { value: 'billing.view', label: 'Facturation - Voir', module: 'billing' },
-  { value: 'billing.manage', label: 'Facturation - Gérer', module: 'billing' },
-  { value: 'caregivers.view', label: 'Intervenantes - Voir', module: 'caregivers' },
-  { value: 'caregivers.create', label: 'Intervenantes - Créer', module: 'caregivers' },
-  { value: 'caregivers.edit', label: 'Intervenantes - Modifier', module: 'caregivers' },
-  { value: 'caregivers.delete', label: 'Intervenantes - Supprimer', module: 'caregivers' },
-  { value: 'contracts.view', label: 'Contrats - Voir', module: 'contracts' },
-  { value: 'contracts.create', label: 'Contrats - Créer', module: 'contracts' },
-  { value: 'contracts.edit', label: 'Contrats - Modifier', module: 'contracts' },
-  { value: 'contracts.delete', label: 'Contrats - Supprimer', module: 'contracts' },
-  { value: 'families.view', label: 'Familles - Voir', module: 'families' },
-  { value: 'families.create', label: 'Familles - Créer', module: 'families' },
-  { value: 'families.edit', label: 'Familles - Modifier', module: 'families' },
-  { value: 'families.delete', label: 'Familles - Supprimer', module: 'families' },  { value: 'incidents.view', label: 'Incidents - Voir', module: 'incidents' },
-  { value: 'incidents.create', label: 'Incidents - Créer', module: 'incidents' },
-  { value: 'incidents.edit', label: 'Incidents - Modifier', module: 'incidents' },
-  { value: 'incidents.close', label: 'Incidents - Clôturer', module: 'incidents' },
-  { value: 'leads.view', label: 'Leads - Voir', module: 'leads' },
-  { value: 'leads.create', label: 'Leads - Créer', module: 'leads' },
-  { value: 'leads.edit', label: 'Leads - Modifier', module: 'leads' },
-  { value: 'leads.delete', label: 'Leads - Supprimer', module: 'leads' },
-  { value: 'locations.view', label: 'Localisations - Voir', module: 'locations' },
-  { value: 'locations.manage', label: 'Localisations - Gérer', module: 'locations' },
-  { value: 'missions.view', label: 'Missions - Voir', module: 'missions' },
-  { value: 'missions.create', label: 'Missions - Créer', module: 'missions' },
-  { value: 'missions.edit', label: 'Missions - Modifier', module: 'missions' },
-  { value: 'missions.assign', label: 'Missions - Assigner', module: 'missions' },
-  { value: 'missions.delete', label: 'Missions - Supprimer', module: 'missions' },
-  { value: 'operations.view', label: 'Operations - Voir', module: 'operations' },
-  { value: 'operations.manage', label: 'Operations - Gérer', module: 'operations' },
-  { value: 'pointage.view', label: 'Pointage - Voir', module: 'pointage' },
-  { value: 'pointage.manage', label: 'Pointage - Gérer', module: 'pointage' },
-  { value: 'print.view', label: 'Print Center - Voir', module: 'print' },
-  { value: 'print.create', label: 'Print Center - Créer', module: 'print' },
-  { value: 'reports.view', label: 'Rapports - Voir', module: 'reports' },
-  { value: 'reports.export', label: 'Rapports - Exporter', module: 'reports' },
-  { value: 'revenue.view', label: 'Revenue Center - Voir', module: 'revenue-command-center' },
-  { value: 'revenue.manage', label: 'Revenue Center - Gérer', module: 'revenue-command-center' },
-  { value: 'sales.view', label: 'Sales - Voir', module: 'sales' },
-  { value: 'sales.manage', label: 'Sales - Gérer', module: 'sales' },
-  { value: 'services.view', label: 'Services - Voir', module: 'services' },
-  { value: 'services.create', label: 'Services - Créer', module: 'services' },
-  { value: 'services.edit', label: 'Services - Modifier', module: 'services' },
-  { value: 'services.delete', label: 'Services - Supprimer', module: 'services' },
-  { value: 'users.view', label: 'Utilisateurs - Voir', module: 'users' },
-  { value: 'users.create', label: 'Utilisateurs - Créer', module: 'users' },
-  { value: 'users.edit', label: 'Utilisateurs - Modifier', module: 'users' },
-  { value: 'users.delete', label: 'Utilisateurs - Supprimer', module: 'users' },
-  { value: 'voice.view', label: 'Voice Center - Voir', module: 'voice-center' },
-  { value: 'voice.call', label: 'Voice Center - Appeler', module: 'voice-center' },
-  { value: 'voice.manage', label: 'Voice Center - Gérer', module: 'voice-center' },
-]
+const CORE_PERMISSIONS = Object.entries(MODULE_PERMISSIONS).flatMap(([moduleKey, permissions]) =>
+  permissions.map((permission) => ({
+    value: permission,
+    label: permission,
+    module: moduleKey,
+  }))
+)
+
+const ROLE_OPTIONS = USER_ROLE_OPTIONS.map((role) => ({
+  value: role.value,
+  label: `${role.label} · ${role.department}`,
+}))
 
 export default async function NewUserPage() {
   await requireRole(['ceo', 'manager'])
@@ -75,7 +36,10 @@ export default async function NewUserPage() {
     const password = String(formData.get('password') || '')
     if (password.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.')
 
-    const permissions = Array.from(new Set(formData.getAll('permissions').map(String)))
+    const role = String(formData.get('role') || 'staff').trim().toLowerCase()
+    const selectedPermissions = Array.from(new Set(formData.getAll('permissions').map(String)))
+    const permissions = buildUserPermissionsForRole(role, selectedPermissions)
+    const roleOption = getRoleOption(role)
 
     const { data: passwordHash, error: hashError } = await supabase.rpc('hash_app_password', {
       input_password: password,
@@ -88,12 +52,12 @@ export default async function NewUserPage() {
       full_name: String(formData.get('full_name') || ''),
       username: String(formData.get('username') || '').trim().toLowerCase(),
       password_hash: passwordHash,
-      role: String(formData.get('role') || 'agent'),
+      role,
       status: String(formData.get('status') || 'active'),
       language: String(formData.get('language') || 'fr'),
       phone: String(formData.get('phone') || ''),
       email: String(formData.get('email') || ''),
-      department: String(formData.get('department') || ''),
+      department: String(formData.get('department') || roleOption?.department || ''),
       job_title: String(formData.get('job_title') || ''),
       created_by: actor.id,
       must_change_password: true,
@@ -108,7 +72,12 @@ export default async function NewUserPage() {
         actor_user_id: actor.id,
         action: 'create_user',
         target_table: 'app_users',
-        details: { username: payload.username, role: payload.role, permissions_count: permissions.length },
+        details: {
+          username: payload.username,
+          role: payload.role,
+          department: payload.department,
+          permissions_count: permissions.length,
+        },
       },
     ])
 
@@ -147,17 +116,22 @@ export default async function NewUserPage() {
             </div>
 
             <div style={gridStyle}>
-              <Select name="role" label="Rôle" options={['ceo', 'manager', 'agent']} />
+              <Select name="role" label="Rôle" options={ROLE_OPTIONS} defaultValue="staff" />
               <Select name="language" label="Langue" options={['fr', 'en', 'ar']} />
               <Select name="status" label="Statut" options={['active', 'inactive']} />
               <Field name="department" label="Département" />
             </div>
+
+            <p style={hintStyle}>
+              Les permissions de base du rôle sélectionné sont appliquées automatiquement au moment de la création.
+              Les cases ci-dessous ajoutent des accès supplémentaires.
+            </p>
           </section>
 
           <SmartPermissionsPanel
             corePermissions={CORE_PERMISSIONS}
             pagePermissions={[...APP_ROUTE_PERMISSIONS]}
-            defaultPermissions={['profile.view', 'page:/profile']}
+            defaultPermissions={['profile.view', 'staff_portal.view', 'page:/profile']}
           />
         </main>
 
@@ -166,7 +140,8 @@ export default async function NewUserPage() {
           <ul>
             <li>Mot de passe ≥ 6 caractères</li>
             <li>Username unique</li>
-            <li>Permissions métier adaptées</li>
+            <li>Rôle standardisé AngelCare</li>
+            <li>Permissions de base appliquées automatiquement</li>
             <li>Pages exactes visibles dans le panel</li>
           </ul>
           <button type="submit" style={buttonStyle}>Créer le compte</button>
@@ -185,14 +160,16 @@ function Field({ name, label, type = 'text' }: any) {
   )
 }
 
-function Select({ name, label, options }: any) {
+function Select({ name, label, options, defaultValue }: any) {
   return (
     <label style={fieldStyle}>
       <span>{label}</span>
-      <select name={name} style={inputStyle}>
-        {options.map((option: string) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
+      <select name={name} defaultValue={defaultValue} style={inputStyle}>
+        {options.map((option: any) => {
+          const value = typeof option === 'string' ? option : option.value
+          const label = typeof option === 'string' ? option : option.label
+          return <option key={value} value={value}>{label}</option>
+        })}
       </select>
     </label>
   )
@@ -206,5 +183,6 @@ const sectionTitleStyle: React.CSSProperties = { fontSize: 20, fontWeight: 950, 
 const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }
 const fieldStyle: React.CSSProperties = { display: 'grid', gap: 4, color: '#0f172a', fontWeight: 850 }
 const inputStyle: React.CSSProperties = { padding: 10, border: '1px solid #cbd5e1', borderRadius: 8, background: '#fff', color: '#0f172a' }
+const hintStyle: React.CSSProperties = { margin: '14px 0 0', color: '#475569', fontWeight: 750, fontSize: 13, lineHeight: 1.6 }
 const sidePanelStyle: React.CSSProperties = { position: 'sticky', top: 104, background: '#0f172a', color: '#fff', padding: 20, borderRadius: 16 }
 const buttonStyle: React.CSSProperties = { marginTop: 20, width: '100%', padding: 12, background: '#fff', color: '#0f172a', borderRadius: 10, border: 'none', fontWeight: 950, cursor: 'pointer' }

@@ -1,11 +1,7 @@
-import RealOutboxQueue from "@/components/email-os-core/RealOutboxQueue"
+import CorporateOutboxCommandCenter from "@/components/email-os-core/CorporateOutboxCommandCenter"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return (
-    <main className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        <RealOutboxQueue />
-      </div>
-    </main>
-  )
+  return <CorporateOutboxCommandCenter />
 }

@@ -44,6 +44,8 @@ export const MODULE_PERMISSIONS = {
     'market_os.ambassadors.view',
     'market_os.partners.view',
     'market_os.admin',
+    'marketing.home',
+    'marketing.view',
   ],
   staff_portal: [
     'staff_portal.view',
@@ -56,6 +58,178 @@ export const MODULE_PERMISSIONS = {
     'staff_memos.admin',
   ],
 } as const
+
+export const USER_ROLE_OPTIONS = [
+  { label: 'CEO', value: 'ceo', department: 'Direction', defaultHome: '/command-center' },
+  { label: 'Direction', value: 'direction', department: 'Direction', defaultHome: '/command-center' },
+  { label: 'Admin', value: 'admin', department: 'Administration', defaultHome: '/command-center' },
+
+  { label: 'Marketing', value: 'marketing', department: 'Marketing', defaultHome: '/market-os/marketing-home' },
+  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/staff-home' },
+  { label: 'Operations', value: 'operations', department: 'Operations', defaultHome: '/operations' },
+  { label: 'HR', value: 'hr', department: 'Human Resources', defaultHome: '/hr' },
+  { label: 'Session Leader', value: 'session_leader', department: 'Operations', defaultHome: '/team-command' },
+  { label: 'Finance', value: 'finance', department: 'Finance', defaultHome: '/billing' },
+  { label: 'Academy Admin', value: 'academy_admin', department: 'Academy', defaultHome: '/academy' },
+  { label: 'Academy Trainer', value: 'academy_trainer', department: 'Academy', defaultHome: '/academy' },
+
+  { label: 'Staff', value: 'staff', department: 'Staff Portal', defaultHome: '/staff-home' },
+  { label: 'Caregiver', value: 'caregiver', department: 'Field Staff', defaultHome: '/staff-home' },
+] as const
+
+export type UserRoleKey = typeof USER_ROLE_OPTIONS[number]['value']
+
+export const ROLE_HOME_ROUTES: Record<string, string> = {
+  ceo: '/command-center',
+  direction: '/command-center',
+  admin: '/command-center',
+
+  marketing: '/market-os/marketing-home',
+  csa: '/staff-home',
+  operations: '/operations',
+  hr: '/hr',
+  session_leader: '/team-command',
+  finance: '/billing',
+  academy_admin: '/academy',
+  academy_trainer: '/academy',
+
+  staff: '/staff-home',
+  caregiver: '/staff-home',
+  employee: '/staff-home',
+}
+
+export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
+  ceo: ['*'],
+  direction: ['*'],
+  admin: ['*'],
+
+  marketing: [
+    'profile.view',
+    'reports.view',
+    'market_os.view',
+    'marketing.home',
+    'marketing.view',
+    'market_os.campaigns.view',
+    'market_os.content.view',
+    'market_os.automation.view',
+    'market_os.ambassadors.view',
+    'market_os.partners.view',
+    'revenue.view',
+    'leads.view',
+    'sales.view',
+    'voice.view',
+    'staff_portal.view',
+  ],
+
+  csa: [
+    'profile.view',
+    'staff_portal.view',
+    'staff_services.view',
+    'families.view',
+    'leads.view',
+    'incidents.view',
+    'services.view',
+    'voice.view',
+  ],
+
+  operations: [
+    'profile.view',
+    'reports.view',
+    'operations.view',
+    'operations.manage',
+    'missions.view',
+    'missions.create',
+    'missions.edit',
+    'missions.assign',
+    'pointage.view',
+    'pointage.manage',
+    'caregivers.view',
+    'contracts.view',
+    'services.view',
+    'voice.view',
+    'staff_portal.view',
+  ],
+
+  hr: [
+    'profile.view',
+    'reports.view',
+    'hr.view',
+    'hr.dashboard',
+    'hr.recruitment.view',
+    'hr.recruitment.manage',
+    'hr.staff.view',
+    'hr.staff.manage',
+    'hr.onboarding.manage',
+    'hr.rosters.manage',
+    'hr.attendance.manage',
+    'hr.documents.manage',
+    'hr.approvals.manage',
+    'hr.analytics.view',
+    'hr.executive.view',
+    'caregivers.view',
+    'staff_portal.view',
+  ],
+
+  session_leader: [
+    'profile.view',
+    'staff_portal.view',
+    'staff_portal.manager',
+    'team_command.view',
+    'operations.view',
+    'missions.view',
+    'missions.assign',
+    'pointage.view',
+    'caregivers.view',
+    'incidents.view',
+    'voice.view',
+  ],
+
+  finance: [
+    'profile.view',
+    'reports.view',
+    'billing.view',
+    'billing.manage',
+    'contracts.view',
+    'contracts.edit',
+    'print.view',
+    'print.create',
+    'families.view',
+    'revenue.view',
+    'staff_portal.view',
+  ],
+
+  academy_admin: [
+    'profile.view',
+    'reports.view',
+    'academy.view',
+    'academy.manage',
+    'hr.staff.view',
+    'caregivers.view',
+    'services.view',
+    'staff_portal.view',
+  ],
+
+  academy_trainer: [
+    'profile.view',
+    'academy.view',
+    'staff_portal.view',
+    'staff_services.view',
+    'caregivers.view',
+  ],
+
+  staff: [
+    'profile.view',
+    'staff_portal.view',
+    'staff_services.view',
+  ],
+
+  caregiver: [
+    'profile.view',
+    'staff_portal.view',
+    'staff_services.view',
+    'pointage.view',
+  ],
+}
 
 export const MODULE_ACCESS_LINKS = [
   { label: 'Executive Dashboard', href: '/', permission: 'profile.view', group: 'Control Center', icon: '📡', badge: 'Home', order: 1 },
@@ -82,6 +256,7 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'B2C Workflow', href: '/revenue-command-center/b2c-workflow', permission: 'revenue.view', group: 'Revenue Command', icon: '🔁', order: 31 },
   { label: 'Leads Impact', href: '/revenue-command-center/leads-impact', permission: 'revenue.view', group: 'Revenue Command', icon: '⚡', order: 32 },
 
+  { label: 'Marketing Department Home', href: '/market-os/marketing-home', permission: 'marketing.home', group: 'Market OS', icon: '🏢', badge: 'HOME', order: 39 },
   { label: 'Market OS Home', href: '/market-os', permission: 'market_os.view', group: 'Market OS', icon: '🌐', badge: 'MKT', order: 40 },
   { label: 'Campaign Lifecycle', href: '/market-os/campaign-lifecycle', permission: 'market_os.campaigns.view', group: 'Market OS', icon: '🎯', order: 41 },
   { label: 'SEO Blog Workspace', href: '/market-os/seo-blog-workspace', permission: 'market_os.content.view', group: 'Market OS', icon: '✍️', order: 42 },
@@ -138,42 +313,85 @@ export const MODULE_ACCESS_LINKS = [
 export type ModuleKey = keyof typeof MODULE_PERMISSIONS
 
 export const MODULE_ACCESS = [
+  { key: 'marketing.home', href: '/market-os/marketing-home' },
   { key: 'profile.view', href: '/profile' },
+  { key: 'staff_portal.view', href: '/staff-home' },
+  { key: 'market_os.view', href: '/market-os' },
   { key: 'hr.view', href: '/hr' },
   { key: 'operations.view', href: '/operations' },
   { key: 'voice.view', href: '/voice-center' },
   { key: 'revenue.view', href: '/revenue-command-center' },
+  { key: 'billing.view', href: '/billing' },
+  { key: 'academy.view', href: '/academy' },
   { key: 'users.view', href: '/users' },
-  { key: 'staff_portal.view', href: '/staff-home' },
   { key: 'staff_services.view', href: '/staff-services' },
   { key: 'staff_portal.manager', href: '/team-command' },
   { key: 'staff_memos.admin', href: '/staff-memos' },
 ] as const
 
+function normalizeRole(userOrRole: any) {
+  const value =
+    typeof userOrRole === 'string'
+      ? userOrRole
+      : userOrRole?.role_key || userOrRole?.role || userOrRole?.roleKey || ''
+  return String(value).trim().toLowerCase()
+}
+
+export function getRoleOption(role: string) {
+  const normalized = normalizeRole(role)
+  return USER_ROLE_OPTIONS.find((option) => option.value === normalized)
+}
+
+export function getRoleTemplatePermissions(role: string) {
+  const normalized = normalizeRole(role)
+  return ROLE_PERMISSION_TEMPLATES[normalized] || ROLE_PERMISSION_TEMPLATES.staff
+}
+
+export function buildUserPermissionsForRole(role: string, extraPermissions: string[] = []) {
+  return Array.from(new Set([...getRoleTemplatePermissions(role), ...extraPermissions]))
+}
+
 export function hasPermission(user: any, permission: string) {
   if (!user) return false
 
-  if (user.role === 'ceo' || user.role_key === 'ceo') {
-    return true
-  }
+  const role = normalizeRole(user)
+  if (role === 'ceo' || role === 'admin' || role === 'direction') return true
 
-  const permissions = user.permissions ?? []
-  return Array.isArray(permissions) && permissions.includes(permission)
+  const permissions = Array.isArray(user.permissions) ? user.permissions : []
+  return permissions.includes('*') || permissions.includes(permission)
 }
 
 export function getAllowedModuleLinks(user: any) {
   if (!user) return []
 
-  const allowed = user.role === 'ceo' || user.role_key === 'ceo'
-    ? MODULE_ACCESS_LINKS
-    : MODULE_ACCESS_LINKS.filter((link) => hasPermission(user, link.permission))
+  const role = normalizeRole(user)
+  const allowed =
+    role === 'ceo' || role === 'admin' || role === 'direction' || (Array.isArray(user.permissions) && user.permissions.includes('*'))
+      ? MODULE_ACCESS_LINKS
+      : MODULE_ACCESS_LINKS.filter((link) => hasPermission(user, link.permission))
 
   return [...allowed].sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+}
+
+export function getDefaultHomeForRole(user: any) {
+  const role = normalizeRole(user)
+  return ROLE_HOME_ROUTES[role]
 }
 
 export function getFirstAllowedRoute(user: any) {
   if (!user) return '/login'
 
-  const first = getAllowedModuleLinks(user)[0]
+  const roleDefault = getDefaultHomeForRole(user)
+  const allowedLinks = getAllowedModuleLinks(user)
+
+  if (roleDefault) {
+    const canOpenDefault =
+      roleDefault === '/command-center' ||
+      allowedLinks.some((link) => link.href === roleDefault || roleDefault.startsWith(`${link.href}/`))
+
+    if (canOpenDefault) return roleDefault
+  }
+
+  const first = allowedLinks[0]
   return first?.href || '/staff-home'
 }
