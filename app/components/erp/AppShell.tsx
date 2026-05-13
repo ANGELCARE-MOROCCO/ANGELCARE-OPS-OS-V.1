@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { usePermissionNavigation } from '@/components/navigation/PermissionNavigationProvider'
 
 type PermissionLink = {
   label?: string
@@ -232,12 +233,13 @@ export default function AppShell({
   links?: PermissionLink[]
 }) {
   const pathname = usePathname()
+  const contextLinks = usePermissionNavigation()
   const [search, setSearch] = useState('')
   const [quickOpen, setQuickOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
 
-  const navGroups = useMemo(() => normalizePermissionLinks(links) || NAV_GROUPS, [links])
+  const navGroups = useMemo(() => normalizePermissionLinks(contextLinks.length ? contextLinks : links) || NAV_GROUPS, [contextLinks, links])
 
   const smartStats = useMemo(() => {
     const totalItems = navGroups.reduce((sum, group) => sum + group.items.length, 0)

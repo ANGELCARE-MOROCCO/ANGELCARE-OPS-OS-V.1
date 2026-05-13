@@ -4,7 +4,8 @@ export const MODULE_PERMISSIONS = {
   billing: ['billing.view', 'billing.manage'],
   caregivers: ['caregivers.view', 'caregivers.create', 'caregivers.edit', 'caregivers.delete'],
   contracts: ['contracts.view', 'contracts.create', 'contracts.edit', 'contracts.delete'],
-  families: ['families.view', 'families.create', 'families.edit', 'families.delete'],  incidents: ['incidents.view', 'incidents.create', 'incidents.edit', 'incidents.close'],
+  families: ['families.view', 'families.create', 'families.edit', 'families.delete'],
+  incidents: ['incidents.view', 'incidents.create', 'incidents.edit', 'incidents.close'],
   leads: ['leads.view', 'leads.create', 'leads.edit', 'leads.delete'],
   locations: ['locations.view', 'locations.manage'],
   missions: ['missions.view', 'missions.create', 'missions.edit', 'missions.assign', 'missions.delete'],
@@ -18,23 +19,32 @@ export const MODULE_PERMISSIONS = {
   services: ['services.view', 'services.create', 'services.edit', 'services.delete'],
   users: ['users.view', 'users.create', 'users.edit', 'users.delete'],
   hr: [
-  'hr.view',
-  'hr.dashboard',
-  'hr.recruitment.view',
-  'hr.recruitment.manage',
-  'hr.staff.view',
-  'hr.staff.manage',
-  'hr.onboarding.manage',
-  'hr.rosters.manage',
-  'hr.attendance.manage',
-  'hr.documents.manage',
-  'hr.approvals.manage',
-  'hr.analytics.view',
-  'hr.executive.view',
-  'hr.settings.manage',
-  'hr.admin',
-],
+    'hr.view',
+    'hr.dashboard',
+    'hr.recruitment.view',
+    'hr.recruitment.manage',
+    'hr.staff.view',
+    'hr.staff.manage',
+    'hr.onboarding.manage',
+    'hr.rosters.manage',
+    'hr.attendance.manage',
+    'hr.documents.manage',
+    'hr.approvals.manage',
+    'hr.analytics.view',
+    'hr.executive.view',
+    'hr.settings.manage',
+    'hr.admin',
+  ],
   'voice-center': ['voice.view', 'voice.call', 'voice.manage'],
+  market_os: [
+    'market_os.view',
+    'market_os.campaigns.view',
+    'market_os.content.view',
+    'market_os.automation.view',
+    'market_os.ambassadors.view',
+    'market_os.partners.view',
+    'market_os.admin',
+  ],
   staff_portal: [
     'staff_portal.view',
     'staff_portal.manager',
@@ -48,138 +58,122 @@ export const MODULE_PERMISSIONS = {
 } as const
 
 export const MODULE_ACCESS_LINKS = [
-  { label: 'Profile', href: '/profile', permission: 'profile.view' },
+  { label: 'Executive Dashboard', href: '/', permission: 'profile.view', group: 'Control Center', icon: '📡', badge: 'Home', order: 1 },
+  { label: 'Profile', href: '/profile', permission: 'profile.view', group: 'Control Center', icon: '👤', order: 2 },
+  { label: 'Reports', href: '/reports', permission: 'reports.view', group: 'Control Center', icon: '📊', order: 3 },
 
-  { label: 'Administration', href: '/users', permission: 'users.view' },
-  { label: 'Admin Archive Center', href: '/admin/archive-center', permission: 'admin.view' },
+  { label: 'Sales Cockpit', href: '/sales', permission: 'sales.view', group: 'Sales CRM', icon: '🚀', order: 10 },
+  { label: 'Leads', href: '/leads', permission: 'leads.view', group: 'Sales CRM', icon: '📈', order: 11 },
+  { label: 'Leads Command Center', href: '/leads/command-center', permission: 'leads.view', group: 'Sales CRM', icon: '🎯', order: 12 },
+  { label: 'Familles', href: '/families', permission: 'families.view', group: 'Sales CRM', icon: '🏡', order: 13 },
+  { label: 'Family Intelligence', href: '/families/intelligence', permission: 'families.view', group: 'Sales CRM', icon: '🧠', order: 14 },
 
-  { label: 'Operations', href: '/operations', permission: 'operations.view' },
-  { label: 'Disponibilités', href: '/operations/availability', permission: 'operations.view' },
-  { label: 'Remplacements', href: '/operations/replacements', permission: 'operations.view' },
+  { label: 'Revenue Command Center', href: '/revenue-command-center', permission: 'revenue.view', group: 'Revenue Command', icon: '💎', badge: 'OS', order: 20 },
+  { label: 'Revenue Cockpit', href: '/revenue-command-center/cockpit', permission: 'revenue.view', group: 'Revenue Command', icon: '🧭', order: 21 },
+  { label: 'Prospects', href: '/revenue-command-center/prospects', permission: 'revenue.view', group: 'Revenue Command', icon: '🎯', order: 22 },
+  { label: 'SDR Execution', href: '/revenue-command-center/sdr-execution', permission: 'revenue.view', group: 'Revenue Command', icon: '☎️', order: 23 },
+  { label: 'Tasks Revenue', href: '/revenue-command-center/tasks', permission: 'revenue.view', group: 'Revenue Command', icon: '✅', order: 24 },
+  { label: 'Campaigns', href: '/revenue-command-center/campaigns', permission: 'revenue.view', group: 'Revenue Command', icon: '📣', order: 25 },
+  { label: 'Appointments', href: '/revenue-command-center/appointments', permission: 'revenue.view', group: 'Revenue Command', icon: '📅', order: 26 },
+  { label: 'Business Development', href: '/revenue-command-center/business-development', permission: 'revenue.view', group: 'Revenue Command', icon: '🤝', order: 27 },
+  { label: 'Strategy Room', href: '/revenue-command-center/strategy-room', permission: 'revenue.view', group: 'Revenue Command', icon: '🧬', order: 28 },
+  { label: 'Market Mapping', href: '/revenue-command-center/market-mapping', permission: 'revenue.view', group: 'Revenue Command', icon: '🗺️', order: 29 },
+  { label: 'Partnerships', href: '/revenue-command-center/partnerships', permission: 'revenue.view', group: 'Revenue Command', icon: '🏢', order: 30 },
+  { label: 'B2C Workflow', href: '/revenue-command-center/b2c-workflow', permission: 'revenue.view', group: 'Revenue Command', icon: '🔁', order: 31 },
+  { label: 'Leads Impact', href: '/revenue-command-center/leads-impact', permission: 'revenue.view', group: 'Revenue Command', icon: '⚡', order: 32 },
 
-  { label: 'Voice Center', href: '/voice-center', permission: 'voice.view' },
-  { label: 'AngelCare Connect', href: '/voice-center', permission: 'voice.view' },
+  { label: 'Market OS Home', href: '/market-os', permission: 'market_os.view', group: 'Market OS', icon: '🌐', badge: 'MKT', order: 40 },
+  { label: 'Campaign Lifecycle', href: '/market-os/campaign-lifecycle', permission: 'market_os.campaigns.view', group: 'Market OS', icon: '🎯', order: 41 },
+  { label: 'SEO Blog Workspace', href: '/market-os/seo-blog-workspace', permission: 'market_os.content.view', group: 'Market OS', icon: '✍️', order: 42 },
+  { label: 'Content Command', href: '/market-os/content-command-center', permission: 'market_os.content.view', group: 'Market OS', icon: '🧠', order: 43 },
+  { label: 'Automation Control', href: '/market-os/automation-control', permission: 'market_os.automation.view', group: 'Market OS', icon: '⚙️', order: 44 },
+  { label: 'Ambassadors', href: '/market-os/ambassador-program', permission: 'market_os.ambassadors.view', group: 'Market OS', icon: '🤝', order: 45 },
+  { label: 'Partners Network', href: '/market-os/partners-network', permission: 'market_os.partners.view', group: 'Market OS', icon: '🏢', order: 46 },
+  { label: 'Marketing Calendar', href: '/market-os/calendar', permission: 'market_os.view', group: 'Market OS', icon: '🗓️', order: 47 },
+  { label: 'Config Admin', href: '/market-os/config-admin-control', permission: 'market_os.admin', group: 'Market OS', icon: '🧰', order: 48 },
 
-  { label: 'HR MAX', href: '/hr', permission: 'hr.view' },
-{ label: 'HR Operations', href: '/hr/operations-console', permission: 'hr.view' },
-{ label: 'HR Boardroom', href: '/hr/boardroom', permission: 'hr.executive.view' },
-{ label: 'Recruitment', href: '/hr/recruitment', permission: 'hr.recruitment.view' },
-{ label: 'Staff 360', href: '/hr/staff', permission: 'hr.staff.view' },
+  { label: 'Operations', href: '/operations', permission: 'operations.view', group: 'Operations', icon: '🧭', order: 50 },
+  { label: 'Disponibilités', href: '/operations/availability', permission: 'operations.view', group: 'Operations', icon: '🟢', order: 51 },
+  { label: 'Remplacements', href: '/operations/replacements', permission: 'operations.view', group: 'Operations', icon: '🔄', order: 52 },
+  { label: 'Missions', href: '/missions', permission: 'missions.view', group: 'Operations', icon: '🛫', order: 53 },
+  { label: 'Mission Command Center', href: '/missions/command-center', permission: 'missions.view', group: 'Operations', icon: '📍', order: 54 },
+  { label: 'Pointage', href: '/pointage', permission: 'pointage.view', group: 'Operations', icon: '🕒', order: 55 },
 
-  { label: 'Revenue Command Center', href: '/revenue-command-center', permission: 'revenue.view' },
-  { label: 'Revenue Cockpit', href: '/revenue-command-center/cockpit', permission: 'revenue.view' },
-  { label: 'Prospects', href: '/revenue-command-center/prospects', permission: 'revenue.view' },
-  { label: 'SDR Execution', href: '/revenue-command-center/sdr-execution', permission: 'revenue.view' },
-  { label: 'Tasks Revenue', href: '/revenue-command-center/tasks', permission: 'revenue.view' },
-  { label: 'Campaigns', href: '/revenue-command-center/campaigns', permission: 'revenue.view' },
-  { label: 'Appointments', href: '/revenue-command-center/appointments', permission: 'revenue.view' },
-  { label: 'Business Development', href: '/revenue-command-center/business-development', permission: 'revenue.view' },
-  { label: 'Strategy Room', href: '/revenue-command-center/strategy-room', permission: 'revenue.view' },
-  { label: 'Market Mapping', href: '/revenue-command-center/market-mapping', permission: 'revenue.view' },
-  { label: 'Partnerships', href: '/revenue-command-center/partnerships', permission: 'revenue.view' },
-  { label: 'B2C Workflow', href: '/revenue-command-center/b2c-workflow', permission: 'revenue.view' },
-  { label: 'Leads Impact', href: '/revenue-command-center/leads-impact', permission: 'revenue.view' },
+  { label: 'Contrats', href: '/contracts', permission: 'contracts.view', group: 'Contracts & Billing', icon: '📦', order: 60 },
+  { label: 'Contracts Command Center', href: '/contracts/command-center', permission: 'contracts.view', group: 'Contracts & Billing', icon: '🏛️', order: 61 },
+  { label: 'Facturation', href: '/billing', permission: 'billing.view', group: 'Contracts & Billing', icon: '🧾', order: 62 },
+  { label: 'Billing Overview', href: '/billing/overview', permission: 'billing.view', group: 'Contracts & Billing', icon: '📊', order: 63 },
+  { label: 'Billing Activation', href: '/billing/activation', permission: 'billing.view', group: 'Contracts & Billing', icon: '⚡', order: 64 },
+  { label: 'Print', href: '/print', permission: 'print.view', group: 'Contracts & Billing', icon: '🖨️', order: 65 },
 
-  { label: 'Leads', href: '/leads', permission: 'leads.view' },
-  { label: 'Leads Command Center', href: '/leads/command-center', permission: 'leads.view' },
+  { label: 'HR MAX', href: '/hr', permission: 'hr.view', group: 'Workforce & HR', icon: '👥', badge: 'HR', order: 70 },
+  { label: 'HR Operations', href: '/hr/operations-console', permission: 'hr.view', group: 'Workforce & HR', icon: '🧭', order: 71 },
+  { label: 'HR Boardroom', href: '/hr/boardroom', permission: 'hr.executive.view', group: 'Workforce & HR', icon: '🏛️', order: 72 },
+  { label: 'Recruitment', href: '/hr/recruitment', permission: 'hr.recruitment.view', group: 'Workforce & HR', icon: '🧲', order: 73 },
+  { label: 'Staff 360', href: '/hr/staff', permission: 'hr.staff.view', group: 'Workforce & HR', icon: '🪪', order: 74 },
+  { label: 'Intervenantes', href: '/caregivers', permission: 'caregivers.view', group: 'Workforce & HR', icon: '👩‍👧', order: 75 },
+  { label: 'Workforce', href: '/caregivers/workforce', permission: 'caregivers.view', group: 'Workforce & HR', icon: '📋', order: 76 },
+  { label: 'Academy', href: '/academy', permission: 'academy.view', group: 'Workforce & HR', icon: '🎓', order: 77 },
 
-  { label: 'Familles', href: '/families', permission: 'families.view' },
-  { label: 'Family Intelligence', href: '/families/intelligence', permission: 'families.view' },
+  { label: 'Services', href: '/services', permission: 'services.view', group: 'Products & Services', icon: '🧩', order: 80 },
+  { label: 'Voice Center', href: '/voice-center', permission: 'voice.view', group: 'Products & Services', icon: '☎️', order: 81 },
+  { label: 'AngelCare Connect', href: '/voice-center', permission: 'voice.view', group: 'Products & Services', icon: '💬', order: 82 },
 
-  { label: 'Intervenantes', href: '/caregivers', permission: 'caregivers.view' },
-  { label: 'Workforce', href: '/caregivers/workforce', permission: 'caregivers.view' },
+  { label: 'Incidents', href: '/incidents', permission: 'incidents.view', group: 'Quality & Risk', icon: '🚨', order: 90 },
+  { label: 'Admin Archive Center', href: '/admin/archive-center', permission: 'admin.view', group: 'Quality & Risk', icon: '🗄️', order: 91 },
 
-  { label: 'Missions', href: '/missions', permission: 'missions.view' },
-  { label: 'Mission Command Center', href: '/missions/command-center', permission: 'missions.view' },
+  { label: 'Staff Portal', href: '/staff-home', permission: 'staff_portal.view', group: 'Staff Portal', icon: '🏠', order: 100 },
+  { label: 'Staff Services', href: '/staff-services', permission: 'staff_services.view', group: 'Staff Portal', icon: '🧰', order: 101 },
+  { label: 'Staff Services Admin', href: '/staff-services/admin', permission: 'staff_services.admin', group: 'Staff Portal', icon: '🔧', order: 102 },
+  { label: 'Staff Memos', href: '/staff-memos', permission: 'staff_memos.admin', group: 'Staff Portal', icon: '📝', order: 103 },
+  { label: 'Team Command', href: '/team-command', permission: 'staff_portal.manager', group: 'Staff Portal', icon: '🧑‍💼', order: 104 },
+  { label: 'Staff Portal Intelligence', href: '/staff-portal-intelligence', permission: 'staff_portal.intelligence', group: 'Staff Portal', icon: '🧠', order: 105 },
+  { label: 'Staff Portal Final QA', href: '/staff-portal-final-qa', permission: 'staff_portal.admin', group: 'Staff Portal', icon: '✅', order: 106 },
+  { label: 'Staff Portal Access Check', href: '/staff-portal-access-check', permission: 'staff_portal.admin', group: 'Staff Portal', icon: '🔎', order: 107 },
 
-  { label: 'Contrats', href: '/contracts', permission: 'contracts.view' },
-  { label: 'Contracts Command Center', href: '/contracts/command-center', permission: 'contracts.view' },
-
-  { label: 'Facturation', href: '/billing', permission: 'billing.view' },
-  { label: 'Billing Overview', href: '/billing/overview', permission: 'billing.view' },
-  { label: 'Billing Activation', href: '/billing/activation', permission: 'billing.view' },
-
-  { label: 'Incidents', href: '/incidents', permission: 'incidents.view' },
-  { label: 'Locations', href: '/locations', permission: 'locations.view' },
-  { label: 'Pointage', href: '/pointage', permission: 'pointage.view' },
-  { label: 'Print', href: '/print', permission: 'print.view' },
-  { label: 'Rapports', href: '/reports', permission: 'reports.view' },
-  { label: 'Academy', href: '/academy', permission: 'academy.view' },
-  { label: 'Services', href: '/services', permission: 'services.view' },
-  { label: 'Sales', href: '/sales', permission: 'sales.view' },
-  { label: 'Staff Portal', href: '/staff-home', permission: 'staff_portal.view' },
-  { label: 'Staff Services', href: '/staff-services', permission: 'staff_services.view' },
-  { label: 'Staff Services Admin', href: '/staff-services/admin', permission: 'staff_services.admin' },
-  { label: 'Staff Memos', href: '/staff-memos', permission: 'staff_memos.admin' },
-  { label: 'Team Command', href: '/team-command', permission: 'staff_portal.manager' },
-  { label: 'Staff Portal Intelligence', href: '/staff-portal-intelligence', permission: 'staff_portal.intelligence' },
-  { label: 'Staff Portal Final QA', href: '/staff-portal-final-qa', permission: 'staff_portal.admin' },
-  { label: 'Staff Portal Access Check', href: '/staff-portal-access-check', permission: 'staff_portal.admin' },
+  { label: 'Administration', href: '/users', permission: 'users.view', group: 'Administration', icon: '🔐', order: 120 },
+  { label: 'Locations', href: '/locations', permission: 'locations.view', group: 'Administration', icon: '📍', order: 121 },
 ] as const
 
 export type ModuleKey = keyof typeof MODULE_PERMISSIONS
 
 export const MODULE_ACCESS = [
-  {
-    key: "profile.view",
-    href: "/profile",
-  },
-
-  {
-  key: "hr.view",
-  href: "/hr",
-},
-
-  {
-    key: "operations.view",
-    href: "/operations",
-  },
-  {
-    key: "voice.view",
-    href: "/voice-center",
-  },
-  {
-    key: "revenue.view",
-    href: "/revenue-command-center",
-  },
-  {
-    key: "users.view",
-    href: "/users",
-  },
-  {
-    key: "staff_portal.view",
-    href: "/staff-home",
-  },
-  {
-    key: "staff_services.view",
-    href: "/staff-services",
-  },
-  {
-    key: "staff_portal.manager",
-    href: "/team-command",
-  },
-  {
-    key: "staff_memos.admin",
-    href: "/staff-memos",
-  },
-] as const;
+  { key: 'profile.view', href: '/profile' },
+  { key: 'hr.view', href: '/hr' },
+  { key: 'operations.view', href: '/operations' },
+  { key: 'voice.view', href: '/voice-center' },
+  { key: 'revenue.view', href: '/revenue-command-center' },
+  { key: 'users.view', href: '/users' },
+  { key: 'staff_portal.view', href: '/staff-home' },
+  { key: 'staff_services.view', href: '/staff-services' },
+  { key: 'staff_portal.manager', href: '/team-command' },
+  { key: 'staff_memos.admin', href: '/staff-memos' },
+] as const
 
 export function hasPermission(user: any, permission: string) {
-  if (!user) return false;
+  if (!user) return false
 
-  if (user.role === "ceo" || user.role_key === "ceo") {
-    return true;
+  if (user.role === 'ceo' || user.role_key === 'ceo') {
+    return true
   }
 
-  const permissions = user.permissions ?? [];
+  const permissions = user.permissions ?? []
+  return Array.isArray(permissions) && permissions.includes(permission)
+}
 
-  return Array.isArray(permissions) && permissions.includes(permission);
+export function getAllowedModuleLinks(user: any) {
+  if (!user) return []
+
+  const allowed = user.role === 'ceo' || user.role_key === 'ceo'
+    ? MODULE_ACCESS_LINKS
+    : MODULE_ACCESS_LINKS.filter((link) => hasPermission(user, link.permission))
+
+  return [...allowed].sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
 }
 
 export function getFirstAllowedRoute(user: any) {
-  if (!user) return "/login";
+  if (!user) return '/login'
 
-  // Standard post-login operating desk for every authenticated staff user.
-  return "/staff-home";
+  const first = getAllowedModuleLinks(user)[0]
+  return first?.href || '/staff-home'
 }
-

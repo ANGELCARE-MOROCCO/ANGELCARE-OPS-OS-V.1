@@ -69,7 +69,8 @@
      "email-os:send-outbox-align": "node scripts/verify-email-os-send-outbox-alignment.mjs",
     "email-os:send-worker-proof": "node scripts/email-os-send-worker-proof.mjs",
     "email-os:template-compose-sync": "node scripts/verify-email-os-template-compose-sync.mjs",
-     "email-os:real-inbox-sync": "node scripts/verify-email-os-real-inbox-sync.mjs"
+     "email-os:real-inbox-sync": "node scripts/verify-email-os-real-inbox-sync.mjs",
+     "email-os:corporate-compose-ux": "node scripts/verify-email-os-corporate-compose-ux.mjs"
 
   },
   "dependencies": {

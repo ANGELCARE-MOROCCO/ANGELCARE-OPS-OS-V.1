@@ -1,16 +1,25 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { getStaffRestore } from '@/lib/hr-unified/route-restore-data'
-import { HRHero, HRPanel, HRRow } from '../../../_components/HRMaxUI'
+import AppShell from '@/app/components/erp/AppShell'
+import { getStaff360 } from '@/lib/hr-production/staff-enterprise'
+import { StaffHero, StaffPanel, StaffShell, StaffTable, StaffButton } from '../../../_components/StaffEnterpriseUI'
 
-export default async function StaffSubPage({ params }: any) {
-  const data = await getStaffRestore(params.id)
+const fieldMap: Record<string,string[]> = {
+  attendance: ['work_date','status','punch_in_at','punch_out_at'],
+  documents: ['document_type','status','expires_at','created_at'],
+  contracts: ['contract_type','status','start_date','end_date'],
+  training: ['title','status','score','created_at'],
+  performance: ['title','status','score','created_at'],
+}
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const data: any = await getStaff360(id)
   const staff = data.staff
-  if (!staff) return <AppShell title="Staff not found" subtitle="Missing staff." breadcrumbs={[{label:'HR',href:'/hr'}]}><div>Staff not found.</div></AppShell>
-  const rows = data.reviews
-  return <AppShell title="Staff Performance" subtitle="Staff Performance records." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Staff',href:'/hr/staff'},{label:staff.full_name || 'Staff',href:`/hr/staff/${staff.id}`},{label:'Staff Performance'}]} actions={<PageAction href={`/hr/staff/${staff.id}`} variant="light">Staff 360</PageAction>}>
-    <HRHero title="Staff Performance" subtitle={`${staff.full_name || staff.name || 'Staff'} • restored subpage`} />
-    <HRPanel title="Records" subtitle="Staff synced records.">
-      {rows.slice(0,60).map((x:any)=><HRRow key={x.id} title={x.title || x.document_type || x.attendance_date || x.shift_date || 'Record'} meta={`${x.status || x.stage || 'active'} • ${x.created_at || ''}`} status={x.status || x.stage} />)}
-    </HRPanel>
-  </AppShell>
+  const rows = (data['performance'] || data.docs || data.reviews || []).slice(0,100)
+  const fields = fieldMap['performance'] || ['title','status','created_at']
+  return <AppShell><StaffShell>
+    <StaffHero eyebrow="Staff 360" title="Staff Performance" subtitle={staff?.full_name || staff?.name || 'Staff record'} actions={<><StaffButton href={`/hr/staff/${id}`}>Back to 360</StaffButton><StaffButton href={`/hr/staff/${id}/edit`} variant="light">Edit profile</StaffButton></>} />
+    <StaffPanel title="Staff Performance" subtitle="Synchronized staff records.">
+      <StaffTable headers={fields.map(f => f.replaceAll('_',' '))} rows={rows.map((x:any)=>fields.map(f=>x?.[f] || '—'))} />
+    </StaffPanel>
+  </StaffShell></AppShell>
 }

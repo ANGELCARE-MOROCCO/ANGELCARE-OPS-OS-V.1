@@ -1,31 +1,43 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { createHrRecord } from '../_lib/actions'
-import { HR_TABLES, getHRDashboardData } from '@/lib/hr-production/repository'
-import { HRAction, HRCard, HRSection, HRStatusPill, HRTable } from '../_components/HRProductionUI'
+import AppShell from '@/app/components/erp/AppShell'
+import Link from 'next/link'
+import { getRosterCommandData } from '@/lib/hr-production/roster-enterprise'
+import { RosterButton, RosterHero, RosterMetric, RosterPanel, RosterShell, RosterStatus, RosterTable } from '../_components/RosterEnterpriseUI'
 
-export default async function Page() {
-  const data = await getHRDashboardData()
-  return <AppShell title="Roster Planner" subtitle="Shift planning, mission coverage and conflict control." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Rosters'}]} actions={<><PageAction href="/hr/rosters/planner" variant="light">Planner</PageAction><PageAction href="/hr/rosters/conflicts" variant="light">Conflicts</PageAction></>}>
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4"><HRCard title="Shifts" value={data.rosters.length} /><HRCard title="Conflicts" value={data.rosters.filter((x:any)=>String(x.conflict_status||'clear')!=='clear').length} /><HRCard title="Confirmed" value={data.rosters.filter((x:any)=>String(x.status||'')==='confirmed').length} /><HRCard title="Planned" value={data.rosters.filter((x:any)=>String(x.status||'planned')==='planned').length} /></div>
-      <HRSection title="Create shift" subtitle="Creates a shift linked to staff and optionally mission reference.">
-        <form action={createHrRecord} className="grid gap-3 md:grid-cols-4">
-          <input type="hidden" name="_table" value={HR_TABLES.rosters} /><input type="hidden" name="_redirect" value="/hr/rosters" />
-          <select name="staff_id" className="rounded-2xl border p-3"><option value="">Select staff</option>{data.staff.map((s:any)=><option key={s.id} value={s.id}>{s.full_name}</option>)}</select>
-          <input name="staff_name" placeholder="Staff name fallback" className="rounded-2xl border p-3" />
-          <input name="shift_date" type="date" required className="rounded-2xl border p-3" />
-          <input name="start_time" type="time" className="rounded-2xl border p-3" />
-          <input name="end_time" type="time" className="rounded-2xl border p-3" />
-          <input name="location" placeholder="Location" className="rounded-2xl border p-3" />
-          <input name="mission_ref" placeholder="Mission ref" className="rounded-2xl border p-3" />
-          <button className="rounded-2xl bg-slate-950 p-3 font-black text-white">Create shift</button>
-        </form>
-      </HRSection>
-      <HRSection title="Roster ledger" action={<HRAction href="/hr/rosters/conflicts">Conflict center</HRAction>}>
-        <HRTable headers={['Staff','Date','Time','Location','Status']} rows={data.rosters.map((x:any)=>[
-          x.staff_name || data.staff.find((s:any)=>s.id===x.staff_id)?.full_name || 'Staff', x.shift_date, `${x.start_time || '-'} → ${x.end_time || '-'}`, x.location || x.area || '-', <div className="flex gap-2"><HRStatusPill value={x.status || 'planned'} /><HRStatusPill value={x.conflict_status || 'clear'} /></div>
-        ])} />
-      </HRSection>
-    </div>
-  </AppShell>
+function fmt(x: any) { return x ? String(x) : '—' }
+function dateOf(x: any) { return fmt(x.work_date || x.date || x.shift_date) }
+function timeOf(x: any) { return `${fmt(x.start_time)} → ${fmt(x.end_time)}` }
+
+export default async function Page({ searchParams }: { searchParams?: Promise<Record<string,string>> }) {
+  const params = searchParams ? await searchParams : {}
+  const view = params?.view || 'command'
+  const { rosters, staff, conflicts, covered, errors } = await getRosterCommandData()
+  const active = rosters.filter((x:any)=>String(x.status || '').toLowerCase() !== 'deleted')
+  const coverageScore = active.length ? Math.round((covered.length / active.length) * 100) : 0
+  const rows = active.slice(0, 140).map((x:any)=>[
+    <Link key="shift" href={`/hr/rosters/${x.id}`} className="font-black text-slate-950 hover:underline">{x.title || x.shift_title || 'Shift'}</Link>,
+    dateOf(x),
+    timeOf(x),
+    x.staff_name || x.staff_id || 'Unassigned',
+    x.location || x.city || '—',
+    <RosterStatus key="status" value={x.status || 'planned'} />,
+    <div key="actions" className="flex flex-wrap gap-2"><Link className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white" href={`/hr/rosters/${x.id}`}>Open</Link><Link className="rounded-full border border-slate-200 px-3 py-1 text-xs font-black text-slate-700" href={`/hr/rosters/${x.id}/edit`}>Edit</Link></div>
+  ])
+
+  return <AppShell><RosterShell>
+    <RosterHero title="Roster Command Center" subtitle="Premium scheduling layer with monthly, weekly, daily, agenda, people and conflict views; configurable shifts; repetition; full create/edit/delete control." score={coverageScore} actions={<><RosterButton href="/hr/rosters/new">+ Create shift</RosterButton><RosterButton href="/hr/rosters/repeat" variant="light">Repeat scheduler</RosterButton><RosterButton href="/hr/rosters/templates" variant="light">Templates</RosterButton><RosterButton href="/hr/rosters/conflicts" variant="light">Conflicts</RosterButton></>} />
+    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <RosterMetric title="Total shifts" value={active.length} detail="Active roster records" />
+      <RosterMetric title="Covered" value={covered.length} detail="Confirmed / approved" />
+      <RosterMetric title="Conflicts" value={conflicts.length} detail="Requires action" />
+      <RosterMetric title="Staff pool" value={staff.length} detail="Available HR staff" />
+      <RosterMetric title="Coverage" value={`${coverageScore}%`} detail="Readiness rate" />
+      <RosterMetric title="Data alerts" value={Object.keys(errors || {}).length} detail="Repository alerts" />
+    </section>
+    <RosterPanel title="View controls" subtitle="Switch between roster views.">
+      <div className="flex flex-wrap gap-2">{['command','month','week','day','agenda','people','conflicts'].map(v => <Link key={v} href={`/hr/rosters?view=${v}`} className={`rounded-full px-4 py-2 text-xs font-black ${view === v ? 'bg-slate-950 text-white' : 'border border-slate-200 bg-white text-slate-700'}`}>{v.toUpperCase()}</Link>)}</div>
+    </RosterPanel>
+    <RosterPanel title="Roster execution table" subtitle="Create, open, edit and control every synchronized shift.">
+      <RosterTable headers={['Shift','Date','Time','Staff','Location','Status','Actions']} rows={rows} />
+    </RosterPanel>
+  </RosterShell></AppShell>
 }

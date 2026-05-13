@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import {
+  AlertCircle,
   Bot,
   CheckCircle2,
   Copy,
@@ -14,15 +15,14 @@ import {
   Save,
   Search,
   Send,
+  ShieldCheck,
   Sparkles,
-  X
+  X,
+  Zap
 } from "lucide-react"
 
-type ApiResult = {
-  ok?: boolean
-  data?: any
-  error?: string
-}
+type ApiResult = { ok?: boolean; data?: any; error?: string }
+type SendLifecycle = "idle" | "validating" | "queueing" | "queued" | "failed"
 
 async function api(path: string, options?: RequestInit): Promise<ApiResult> {
   const res = await fetch(path, {
@@ -51,6 +51,21 @@ function templateSubject(template: any) {
   return template.subject || template.name || template.title || ""
 }
 
+function lifecycleLabel(lifecycle: SendLifecycle) {
+  if (lifecycle === "validating") return "Validation opérationnelle"
+  if (lifecycle === "queueing") return "Mise en file d’envoi"
+  if (lifecycle === "queued") return "Email ajouté à l’outbox"
+  if (lifecycle === "failed") return "Échec opérationnel"
+  return "Prêt pour exécution"
+}
+
+function lifecycleColor(lifecycle: SendLifecycle) {
+  if (lifecycle === "queued") return "border-emerald-200 bg-emerald-50 text-emerald-700"
+  if (lifecycle === "failed") return "border-red-200 bg-red-50 text-red-700"
+  if (lifecycle === "queueing" || lifecycle === "validating") return "border-blue-200 bg-blue-50 text-blue-700"
+  return "border-slate-200 bg-slate-50 text-slate-700"
+}
+
 export default function ProductionComposeStudio() {
   const [mailboxes, setMailboxes] = useState<any[]>([])
   const [templates, setTemplates] = useState<any[]>([])
@@ -71,6 +86,9 @@ export default function ProductionComposeStudio() {
   const [status, setStatus] = useState("Prêt")
   const [busy, setBusy] = useState(false)
   const [lastResult, setLastResult] = useState<any>(null)
+  const [lifecycle, setLifecycle] = useState<SendLifecycle>("idle")
+  const [successOpen, setSuccessOpen] = useState(false)
+  const [lastQueued, setLastQueued] = useState<any>(null)
 
   const selectedMailbox = useMemo(
     () => mailboxes.find((mailbox) => mailbox.id === mailboxId),
@@ -86,9 +104,7 @@ export default function ProductionComposeStudio() {
     const q = templateQuery.toLowerCase().trim()
 
     return templates.filter((template) => {
-      const matchesCategory =
-        templateCategory === "all" || template.category === templateCategory
-
+      const matchesCategory = templateCategory === "all" || template.category === templateCategory
       const haystack = [
         template.name,
         template.title,
@@ -105,13 +121,13 @@ export default function ProductionComposeStudio() {
     })
   }, [templates, templateCategory, templateQuery])
 
+  const canSend = Boolean(mailboxId && toEmail && subject && body && !busy)
+
   async function loadMailboxes() {
     const result = await api("/api/email-os/mailboxes")
-
     if (result.ok) {
       const rows = result.data || []
       setMailboxes(rows)
-
       if (!mailboxId && rows.length > 0) {
         const defaultMailbox = rows.find((row: any) => row.is_default) || rows[0]
         setMailboxId(defaultMailbox.id)
@@ -121,7 +137,6 @@ export default function ProductionComposeStudio() {
 
   async function loadTemplates() {
     const result = await api("/api/email-os/templates")
-
     if (result.ok) {
       setTemplates(result.data || [])
       setStatus(`Modèles chargés : ${(result.data || []).length}`)
@@ -132,10 +147,7 @@ export default function ProductionComposeStudio() {
 
   async function loadDiagnostics() {
     const result = await api("/api/email-os/compose/diagnostics")
-
-    if (result.ok) {
-      setDiagnostics(result.data)
-    }
+    if (result.ok) setDiagnostics(result.data)
   }
 
   useEffect(() => {
@@ -165,17 +177,26 @@ export default function ProductionComposeStudio() {
     setStatus(`${next.length} pièce(s) jointe(s) ajoutée(s)`)
   }
 
+  function resetCompose() {
+    setToEmail("")
+    setCcEmail("")
+    setBccEmail("")
+    setSubject("")
+    setBody("")
+    setPriority("normal")
+    setTemplateKey("")
+    setAttachments([])
+    setLifecycle("idle")
+    setStatus("Nouveau message prêt")
+  }
+
   async function runAi(action: "improve" | "summary" | "subject") {
     setBusy(true)
     setStatus("Assistant IA en cours...")
 
     const result = await api("/api/email-os/compose/ai-assist", {
       method: "POST",
-      body: JSON.stringify({
-        action,
-        subject,
-        body
-      })
+      body: JSON.stringify({ action, subject, body })
     })
 
     setBusy(false)
@@ -191,10 +212,7 @@ export default function ProductionComposeStudio() {
     }
 
     if (action === "summary") {
-      setLastResult({
-        type: "summary",
-        value: result.data.summary
-      })
+      setLastResult({ type: "summary", value: result.data.summary })
       setStatus("Résumé généré")
     }
 
@@ -220,19 +238,14 @@ export default function ProductionComposeStudio() {
         body,
         priority,
         templateKey,
-        diagnostics: {
-          attachmentCount: attachments.length
-        }
+        diagnostics: { attachmentCount: attachments.length }
       })
     })
 
     if (result.ok && attachments.length > 0) {
       await api("/api/email-os/compose/attachments", {
         method: "POST",
-        body: JSON.stringify({
-          draftId: result.data?.id,
-          attachments
-        })
+        body: JSON.stringify({ draftId: result.data?.id, attachments })
       })
     }
 
@@ -242,18 +255,23 @@ export default function ProductionComposeStudio() {
   }
 
   async function sendQueue() {
+    setLifecycle("validating")
+
     if (!mailboxId) {
+      setLifecycle("failed")
       setStatus("Veuillez sélectionner une boîte mail")
       return
     }
 
     if (!toEmail || !subject || !body) {
+      setLifecycle("failed")
       setStatus("Destinataire, objet et message sont obligatoires")
       return
     }
 
     setBusy(true)
-    setStatus("Envoi / mise en file...")
+    setLifecycle("queueing")
+    setStatus("Création de l’ordre d’envoi...")
 
     const result = await api("/api/email-os/send", {
       method: "POST",
@@ -267,9 +285,7 @@ export default function ProductionComposeStudio() {
         body,
         priority,
         templateKey,
-        diagnostics: {
-          attachmentCount: attachments.length
-        }
+        diagnostics: { attachmentCount: attachments.length }
       })
     })
 
@@ -285,7 +301,26 @@ export default function ProductionComposeStudio() {
 
     setBusy(false)
     setLastResult(result)
-    setStatus(result.ok ? "Email ajouté à l’outbox / file d’envoi" : result.error || "Échec envoi")
+
+    if (!result.ok) {
+      setLifecycle("failed")
+      setStatus(result.error || "Échec envoi")
+      return
+    }
+
+    const queuedPayload = {
+      ...result.data,
+      toEmail,
+      subject,
+      mailbox: selectedMailbox?.email_address || selectedMailbox?.address || mailboxId
+    }
+
+    setLastQueued(queuedPayload)
+    setLifecycle("queued")
+    setStatus("Email ajouté à l’outbox. Prêt pour exécution SMTP.")
+    setSuccessOpen(true)
+
+    window.setTimeout(() => resetCompose(), 900)
   }
 
   async function copyMessage() {
@@ -295,17 +330,61 @@ export default function ProductionComposeStudio() {
 
   return (
     <section className="min-h-full bg-slate-50">
+      {successOpen ? (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/40 p-4">
+          <div className="w-full max-w-xl rounded-[32px] border border-emerald-200 bg-white p-6 shadow-2xl">
+            <div className="flex items-start gap-4">
+              <div className="rounded-3xl bg-emerald-50 p-4 text-emerald-700">
+                <CheckCircle2 className="h-8 w-8" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h2 className="text-2xl font-black text-slate-950">Email ajouté à l’outbox</h2>
+                <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+                  Le message est enregistré, traçable, et prêt pour l’exécution SMTP.
+                </p>
+
+                <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm">
+                  <div className="font-black text-slate-950">{lastQueued?.subject}</div>
+                  <div className="mt-1 text-slate-500">Vers : {lastQueued?.toEmail}</div>
+                  <div className="mt-1 text-slate-500">Boîte : {lastQueued?.mailbox}</div>
+                  <div className="mt-1 text-slate-500">Outbox ID : {lastQueued?.outboxId || "N/A"}</div>
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <a href="/email-os/outbox-real" className="inline-flex h-11 items-center gap-2 rounded-2xl bg-slate-950 px-5 text-sm font-black text-white">
+                    <Inbox className="h-4 w-4" />
+                    Ouvrir Outbox
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSuccessOpen(false)
+                      resetCompose()
+                    }}
+                    className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 px-5 text-sm font-black hover:bg-slate-50"
+                  >
+                    Composer un autre
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-slate-950 p-3 text-white">
-                  <Mail className="h-5 w-5" />
+              <div className="flex items-center gap-4">
+                <div className="rounded-3xl bg-slate-950 p-4 text-white">
+                  <Mail className="h-6 w-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-slate-950">Compose Production</h1>
-                  <p className="text-sm font-semibold text-slate-500">{status}</p>
+                  <h1 className="text-3xl font-black tracking-tight text-slate-950">Compose Command Center</h1>
+                  <p className="mt-1 text-sm font-semibold text-slate-500">{status}</p>
                 </div>
               </div>
 
@@ -332,26 +411,53 @@ export default function ProductionComposeStudio() {
                   {showTemplates ? "Masquer modèles" : "Afficher modèles"}
                 </button>
 
-                <a
-                  href="/email-os/outbox-real"
-                  className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-black hover:bg-slate-50"
-                >
+                <a href="/email-os/outbox-real" className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-black hover:bg-slate-50">
                   <Inbox className="h-4 w-4" />
                   Outbox
                 </a>
               </div>
             </div>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-4">
+              <div className={`rounded-2xl border p-4 ${lifecycleColor(lifecycle)}`}>
+                <div className="text-xs font-black uppercase opacity-70">Lifecycle</div>
+                <div className="mt-2 flex items-center gap-2 font-black">
+                  {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                  {lifecycleLabel(lifecycle)}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-xs font-black uppercase text-slate-400">Boîtes</div>
+                <div className="mt-2 font-black text-slate-950">{mailboxes.length}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-xs font-black uppercase text-slate-400">Modèles</div>
+                <div className="mt-2 font-black text-slate-950">{templates.length}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-xs font-black uppercase text-slate-400">SMTP</div>
+                <div className={`mt-2 font-black ${diagnostics?.smtpConfigured ? "text-emerald-700" : "text-amber-700"}`}>
+                  {diagnostics?.smtpConfigured ? "Configuré" : "À vérifier"}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
+                <Zap className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-slate-950">Ordre d’envoi</h2>
+                <p className="text-sm font-semibold text-slate-500">Validation, queue, outbox et traçabilité opérationnelle.</p>
+              </div>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block">
                 <div className="mb-2 text-sm font-black text-slate-900">Boîte d’envoi</div>
-                <select
-                  value={mailboxId}
-                  onChange={(event) => setMailboxId(event.target.value)}
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none"
-                >
+                <select value={mailboxId} onChange={(event) => setMailboxId(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
                   <option value="">Sélectionner une boîte mail</option>
                   {mailboxes.map((mailbox) => (
                     <option key={mailbox.id} value={mailbox.id}>
@@ -363,11 +469,7 @@ export default function ProductionComposeStudio() {
 
               <label className="block">
                 <div className="mb-2 text-sm font-black text-slate-900">Priorité</div>
-                <select
-                  value={priority}
-                  onChange={(event) => setPriority(event.target.value)}
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none"
-                >
+                <select value={priority} onChange={(event) => setPriority(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
                   <option value="low">Priorité basse</option>
                   <option value="normal">Priorité normale</option>
                   <option value="high">Priorité haute</option>
@@ -377,69 +479,31 @@ export default function ProductionComposeStudio() {
             </div>
 
             <div className="mt-4 grid gap-4">
-              <input
-                value={toEmail}
-                onChange={(event) => setToEmail(event.target.value)}
-                placeholder="Destinataire"
-                className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none"
-              />
+              <input value={toEmail} onChange={(event) => setToEmail(event.target.value)} placeholder="Destinataire" className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none" />
 
               {showAdvanced ? (
                 <div className="grid gap-4 md:grid-cols-2">
-                  <input
-                    value={ccEmail}
-                    onChange={(event) => setCcEmail(event.target.value)}
-                    placeholder="CC"
-                    className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none"
-                  />
-                  <input
-                    value={bccEmail}
-                    onChange={(event) => setBccEmail(event.target.value)}
-                    placeholder="BCC"
-                    className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none"
-                  />
+                  <input value={ccEmail} onChange={(event) => setCcEmail(event.target.value)} placeholder="CC" className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none" />
+                  <input value={bccEmail} onChange={(event) => setBccEmail(event.target.value)} placeholder="BCC" className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none" />
                 </div>
               ) : null}
 
-              <button
-                type="button"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className="w-fit rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50"
-              >
+              <button type="button" onClick={() => setShowAdvanced(!showAdvanced)} className="w-fit rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">
                 {showAdvanced ? "Masquer CC/BCC" : "Afficher CC/BCC"}
               </button>
 
-              <input
-                value={subject}
-                onChange={(event) => setSubject(event.target.value)}
-                placeholder="Objet"
-                className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none"
-              />
+              <input value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Objet" className="h-12 rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none" />
 
-              <textarea
-                value={body}
-                onChange={(event) => setBody(event.target.value)}
-                placeholder="Message"
-                className="min-h-[340px] rounded-2xl border border-slate-200 p-4 text-sm font-semibold leading-6 outline-none"
-              />
+              <textarea value={body} onChange={(event) => setBody(event.target.value)} placeholder="Message" className="min-h-[340px] rounded-2xl border border-slate-200 p-4 text-sm font-semibold leading-6 outline-none" />
 
               <div className="flex flex-wrap items-center gap-2">
                 <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-black hover:bg-slate-50">
                   <Paperclip className="h-4 w-4" />
                   Pièces jointes
-                  <input
-                    type="file"
-                    multiple
-                    className="hidden"
-                    onChange={(event) => registerLocalAttachments(event.target.files)}
-                  />
+                  <input type="file" multiple className="hidden" onChange={(event) => registerLocalAttachments(event.target.files)} />
                 </label>
 
-                <button
-                  type="button"
-                  onClick={copyMessage}
-                  className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-black hover:bg-slate-50"
-                >
+                <button type="button" onClick={copyMessage} className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-black hover:bg-slate-50">
                   <Copy className="h-4 w-4" />
                   Copier
                 </button>
@@ -452,11 +516,7 @@ export default function ProductionComposeStudio() {
                     {attachments.map((file) => (
                       <div key={file.id} className="flex items-center justify-between rounded-xl bg-white p-3 text-sm">
                         <span className="font-bold text-slate-700">{file.filename}</span>
-                        <button
-                          type="button"
-                          onClick={() => setAttachments((prev) => prev.filter((item) => item.id !== file.id))}
-                          className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-900"
-                        >
+                        <button type="button" onClick={() => setAttachments((prev) => prev.filter((item) => item.id !== file.id))} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-900">
                           <X className="h-4 w-4" />
                         </button>
                       </div>
@@ -466,24 +526,18 @@ export default function ProductionComposeStudio() {
               ) : null}
 
               <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-5">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={sendQueue}
-                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-slate-950 px-5 text-sm font-black text-white disabled:opacity-50"
-                >
+                <button type="button" disabled={!canSend} onClick={sendQueue} className="inline-flex h-12 items-center gap-2 rounded-2xl bg-slate-950 px-6 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
                   {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                  Envoyer / File
+                  {busy ? "Exécution..." : "Envoyer vers Outbox"}
                 </button>
 
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={saveDraft}
-                  className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 px-5 text-sm font-black hover:bg-slate-50 disabled:opacity-50"
-                >
+                <button type="button" disabled={busy} onClick={saveDraft} className="inline-flex h-12 items-center gap-2 rounded-2xl border border-slate-200 px-6 text-sm font-black hover:bg-slate-50 disabled:opacity-50">
                   <Save className="h-4 w-4" />
                   Enregistrer brouillon
+                </button>
+
+                <button type="button" disabled={busy} onClick={resetCompose} className="inline-flex h-12 items-center gap-2 rounded-2xl border border-slate-200 px-6 text-sm font-black hover:bg-slate-50 disabled:opacity-50">
+                  Nouveau message
                 </button>
               </div>
             </div>
@@ -492,25 +546,16 @@ export default function ProductionComposeStudio() {
 
         <aside className="space-y-6">
           {showTemplates ? (
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center gap-3">
                 <Search className="h-5 w-5 text-slate-500" />
-                <h2 className="text-lg font-black text-slate-950">Modèles</h2>
+                <h2 className="text-lg font-black text-slate-950">Modèles opérationnels</h2>
               </div>
 
               <div className="mt-4 grid gap-3">
-                <input
-                  value={templateQuery}
-                  onChange={(event) => setTemplateQuery(event.target.value)}
-                  placeholder="Rechercher un modèle..."
-                  className="h-10 rounded-xl border border-slate-200 px-3 text-sm font-semibold outline-none"
-                />
+                <input value={templateQuery} onChange={(event) => setTemplateQuery(event.target.value)} placeholder="Rechercher un modèle..." className="h-10 rounded-xl border border-slate-200 px-3 text-sm font-semibold outline-none" />
 
-                <select
-                  value={templateCategory}
-                  onChange={(event) => setTemplateCategory(event.target.value)}
-                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none"
-                >
+                <select value={templateCategory} onChange={(event) => setTemplateCategory(event.target.value)} className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
                   <option value="all">Toutes catégories</option>
                   {templateCategories.map((category) => (
                     <option key={category} value={category}>{category}</option>
@@ -520,30 +565,17 @@ export default function ProductionComposeStudio() {
 
               <div className="mt-4 max-h-[430px] space-y-2 overflow-y-auto">
                 {filteredTemplates.map((template) => (
-                  <button
-                    type="button"
-                    key={template.id}
-                    onClick={() => applyTemplate(template)}
-                    className={`w-full rounded-2xl border p-3 text-left transition hover:bg-slate-50 ${
-                      templateKey === template.id ? "border-slate-950 bg-slate-50" : "border-slate-200"
-                    }`}
-                  >
+                  <button type="button" key={template.id} onClick={() => applyTemplate(template)} className={`w-full rounded-2xl border p-3 text-left transition hover:bg-slate-50 ${templateKey === template.id ? "border-slate-950 bg-slate-50" : "border-slate-200"}`}>
                     <div className="font-black text-slate-950">{templateTitle(template)}</div>
                     <div className="mt-1 text-xs font-bold text-slate-500">{template.category}</div>
                     <div className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">{templateSubject(template)}</div>
                   </button>
                 ))}
-
-                {filteredTemplates.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 p-5 text-center text-sm font-bold text-slate-500">
-                    Aucun modèle trouvé.
-                  </div>
-                ) : null}
               </div>
             </div>
           ) : null}
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center gap-3">
               <Sparkles className="h-5 w-5 text-slate-500" />
               <h2 className="text-lg font-black text-slate-950">Assistant IA</h2>
@@ -567,34 +599,21 @@ export default function ProductionComposeStudio() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-black text-slate-950">Diagnostics</h2>
+          <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-lg font-black text-slate-950">Execution Control</h2>
 
             <div className="mt-4 space-y-3 text-sm">
-              <div className="rounded-xl bg-slate-50 p-3">
-                Boîtes mail : <strong>{diagnostics?.mailboxCount ?? mailboxes.length}</strong>
-              </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                Modèles : <strong>{templates.length}</strong>
-              </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                SMTP : <strong>{diagnostics?.smtpConfigured ? "Configuré" : "Non configuré"}</strong>
-              </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                IMAP : <strong>{diagnostics?.imapConfigured ? "Configuré" : "Non configuré"}</strong>
-              </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                Expéditeur : <strong>{selectedMailbox?.email_address || selectedMailbox?.address || diagnostics?.defaultFrom || "Non sélectionné"}</strong>
-              </div>
+              <div className="rounded-xl bg-slate-50 p-3">État : <strong>{lifecycleLabel(lifecycle)}</strong></div>
+              <div className="rounded-xl bg-slate-50 p-3">Boîte : <strong>{selectedMailbox?.email_address || selectedMailbox?.address || "Non sélectionnée"}</strong></div>
+              <div className="rounded-xl bg-slate-50 p-3">SMTP : <strong>{diagnostics?.smtpConfigured ? "Configuré" : "Non configuré"}</strong></div>
+              <div className="rounded-xl bg-slate-50 p-3">Dernier outbox : <strong>{lastQueued?.outboxId || "Aucun"}</strong></div>
             </div>
           </div>
 
           {lastResult ? (
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="text-lg font-black text-slate-950">Dernier résultat</h2>
-              <pre className="mt-4 max-h-[260px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-white">
-                {JSON.stringify(lastResult, null, 2)}
-              </pre>
+              <pre className="mt-4 max-h-[260px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-white">{JSON.stringify(lastResult, null, 2)}</pre>
             </div>
           ) : null}
         </aside>
