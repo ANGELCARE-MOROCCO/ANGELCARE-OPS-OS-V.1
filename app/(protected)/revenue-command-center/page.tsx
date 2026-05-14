@@ -1,7 +1,7 @@
-import RevenueCommandHQV11Cockpit from "@/components/revenue-command-center/RevenueCommandHQV11Cockpit"
+import CentralRevenueCoreDashboard from './_central-core/CentralRevenueCoreDashboard'
 
-export const dynamic = "force-dynamic"
+export const dynamic = 'force-dynamic'
 
 export default function Page() {
-  return <RevenueCommandHQV11Cockpit />
+  return <CentralRevenueCoreDashboard />
 }
