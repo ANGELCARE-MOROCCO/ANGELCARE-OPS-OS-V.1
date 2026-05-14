@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
 import { HR_ALLOWED_WRITE_TABLES, HR_TABLES, logHRActivity } from '@/lib/hr-production/repository'
+import { ensureStaffIdentityContract } from '@/lib/hr-production/identity-contract'
 
 const redirectByTable: Record<string,string> = {
   [HR_TABLES.openings]: '/hr/openings',
@@ -55,6 +56,16 @@ export async function createHrRecord(formData: FormData) {
   const payload = payloadFor(t, formData)
   const { data, error } = await supabase.from(t).insert([payload]).select('id').single()
   if (error) throw new Error(error.message)
+
+  if (t === HR_TABLES.staff && data?.id) {
+    await ensureStaffIdentityContract({
+      staff_id: data.id,
+      email: payload.email,
+      full_name: payload.full_name || payload.name,
+      user_id: payload.user_id,
+      source: 'identity.contract.auto_from_createHrRecord',
+    })
+  }
   await logHRActivity({ actor_user_id:user?.id, actor_label:user?.full_name || user?.email || user?.role, source_table:t, record_id:data?.id, action:'create', details:payload })
   revalidatePath('/hr')
   redirect(text(formData, '_redirect') || redirectByTable[t] || '/hr')

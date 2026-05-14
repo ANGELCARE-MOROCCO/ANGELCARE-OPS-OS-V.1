@@ -1,111 +1,224 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { getHRDashboardData, HR_TABLES, getHRRecord, logHRActivity } from './repository'
+import { redirect } from 'next/navigation'
+import { getHRDashboardData, getHRRecord, HR_TABLES, logHRActivity } from './repository'
 
-function lower(v: unknown) { return String(v || '').toLowerCase() }
-function safe(v: unknown, fallback = '') { const s = String(v || '').trim(); return s || fallback }
+type AnyRow = Record<string, any>
 
-export async function getIdentityLinks() {
+function clean(value: unknown, fallback = '') {
+  const s = String(value ?? '').trim()
+  return s.length ? s : fallback
+}
+
+function low(value: unknown) {
+  return clean(value).toLowerCase()
+}
+
+function first(row: AnyRow, keys: string[], fallback: any = null) {
+  for (const key of keys) {
+    const v = row?.[key]
+    if (v !== undefined && v !== null && String(v).trim() !== '') return v
+  }
+  return fallback
+}
+
+function minutesBetween(a?: string | null, b?: string | null) {
+  if (!a || !b) return 0
+  const start = new Date(a).getTime()
+  const end = new Date(b).getTime()
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0
+  return Math.round((end - start) / 60000)
+}
+
+async function safeSelect(table: string, orderColumn?: string, limit = 800) {
   const supabase = await createClient()
   try {
-    const { data } = await supabase
-      .from('hr_identity_links')
-      .select('*, staff:hr_staff_profiles(id, full_name, email, department, position, city)')
-      .order('created_at', { ascending: false })
-      .limit(500)
+    let q = supabase.from(table).select('*').limit(limit)
+    if (orderColumn) q = q.order(orderColumn, { ascending: false })
+    const { data, error } = await q
+    if (error) return []
     return data || []
   } catch {
     return []
   }
 }
 
-export async function getResolvedAttendanceRows() {
-  const supabase = await createClient()
-  try {
-    const { data } = await supabase
-      .from('v_hr_attendance_resolved_live')
-      .select('*')
-      .limit(800)
-    return data || []
-  } catch {
-    return []
+function ids(row: AnyRow) {
+  const meta = row.metadata || row.payload || row.raw || {}
+  return [
+    row.id,
+    row.staff_id,
+    row.employee_id,
+    row.user_id,
+    row.profile_id,
+    row.auth_user_id,
+    row.created_by,
+    row.owner_id,
+    row.person_id,
+    meta.staff_id,
+    meta.employee_id,
+    meta.user_id,
+    meta.profile_id,
+    meta.auth_user_id,
+    meta.person_id,
+  ].filter(Boolean).map(String)
+}
+
+function emails(row: AnyRow) {
+  const meta = row.metadata || row.payload || row.raw || {}
+  return [
+    row.email,
+    row.staff_email,
+    row.employee_email,
+    meta.email,
+    meta.staff_email,
+    meta.employee_email,
+  ].filter(Boolean).map((x:any)=>String(x).toLowerCase())
+}
+
+function resolveIdentity(row: AnyRow, staff: AnyRow[], links: AnyRow[]) {
+  const rowIds = ids(row)
+  const rowEmails = emails(row)
+
+  const directStaff = staff.find((s:any) => ids(s).some(id => rowIds.includes(id)) || emails(s).some(email => rowEmails.includes(email)))
+
+  const link = links.find((l:any) =>
+    [l.source_user_id, l.source_staff_id, l.user_id, l.staff_id].filter(Boolean).map(String).some((id:string)=>rowIds.includes(id))
+  )
+
+  const linkedStaff = link?.staff_id ? staff.find((s:any)=>String(s.id) === String(link.staff_id)) : null
+  const s = directStaff || linkedStaff || null
+
+  const meta = row.metadata || row.payload || row.raw || {}
+
+  const fallbackName =
+    first(row, ['staff_name','employee_name','full_name','name','display_name'], '') ||
+    first(meta, ['staff_name','employee_name','full_name','name','display_name'], '') ||
+    link?.label ||
+    'Unmapped staff'
+
+  return {
+    id: String(s?.id || link?.staff_id || row.staff_id || row.user_id || row.profile_id || fallbackName),
+    name: clean(s?.full_name || s?.name || s?.display_name || s?.email || fallbackName, 'Unmapped staff'),
+    role: clean(s?.position || s?.job_title || row.position || row.role || meta.position || meta.role, 'Staff'),
+    department: clean(s?.department || row.department || meta.department, 'Unmapped department'),
+    location: clean(s?.city || s?.location || row.city || row.location || meta.city || meta.location, 'Head Office'),
+    staff_id: s?.id || link?.staff_id || row.staff_id || null,
+    user_id: s?.user_id || row.user_id || link?.source_user_id || null,
+    profile_id: s?.profile_id || row.profile_id || null,
+    resolution_source: s ? (directStaff ? 'direct_or_profile_match' : 'identity_bridge') : (fallbackName !== 'Unmapped staff' ? 'row_metadata' : 'unmapped'),
   }
+}
+
+function normalizeStatus(row: AnyRow) {
+  const raw = low(first(row, ['validation_status','attendance_status','status','state','event_type'], 'pending'))
+  if (raw.includes('out')) return 'completed'
+  if (raw.includes('in')) return 'present'
+  if (raw.includes('valid') || raw.includes('approved') || raw.includes('complete')) return 'completed'
+  if (raw.includes('auto')) return 'auto_synced'
+  if (raw.includes('late')) return 'late'
+  if (raw.includes('absent')) return 'absent'
+  if (raw.includes('review') || raw.includes('pending') || raw.includes('open')) return 'needs_review'
+  return raw || 'pending'
+}
+
+function normalizeAttendanceRow(row: AnyRow, staff: AnyRow[], links: AnyRow[], sourceTable: string) {
+  const identity = resolveIdentity(row, staff, links)
+
+  const punchIn =
+    first(row, ['punch_in_at','check_in_at','clock_in_at','started_at','start_at','start_time'], null) ||
+    (low(row.event_type).includes('in') ? row.event_at : null)
+
+  const punchOut =
+    first(row, ['punch_out_at','check_out_at','clock_out_at','ended_at','end_at','end_time'], null) ||
+    (low(row.event_type).includes('out') ? row.event_at : null)
+
+  const workDate =
+    clean(first(row, ['work_date','attendance_date','date','day'], '')) ||
+    clean(first(row, ['event_at','created_at','started_at','punch_in_at'], '')).slice(0, 10)
+
+  const total = Number(first(row, ['total_minutes','work_minutes','duration_minutes','minutes'], 0)) || minutesBetween(punchIn, punchOut)
+
+  return {
+    id: String(row.id || `${sourceTable}-${identity.id}-${workDate}-${Math.random()}`),
+    source_table: sourceTable,
+    identity,
+    work_date: workDate,
+    punch_in_at: punchIn,
+    punch_out_at: punchOut,
+    break_start_at: first(row, ['break_start_at','pause_start_at'], null),
+    break_end_at: first(row, ['break_end_at','pause_end_at'], null),
+    status: normalizeStatus(row),
+    validation_status: clean(first(row, ['validation_status','attendance_status','status'], ''), normalizeStatus(row)),
+    source: clean(row.source, sourceTable),
+    payroll_status: clean(row.payroll_status, 'not_ready'),
+    late_minutes: Number(first(row, ['late_minutes','delay_minutes'], 0)) || 0,
+    overtime_minutes: Number(first(row, ['overtime_minutes'], 0)) || Math.max(0, total - 480),
+    total_minutes: total,
+    raw: row,
+  }
+}
+
+function dedupe(rows: AnyRow[]) {
+  const seen = new Map<string, AnyRow>()
+  for (const row of rows) {
+    const key = [
+      row.identity?.staff_id || row.identity?.user_id || row.identity?.name,
+      row.work_date,
+      row.punch_in_at || '',
+      row.punch_out_at || '',
+      row.source_table,
+    ].join('|')
+
+    if (!seen.has(key)) seen.set(key, row)
+  }
+  return Array.from(seen.values())
 }
 
 export async function getAttendanceEnterpriseData() {
   const dashboard = await getHRDashboardData()
   const staff = Array.isArray(dashboard.staff) ? dashboard.staff : []
-  let resolvedRows: any[] = await getResolvedAttendanceRows()
 
-  if (!resolvedRows.length) {
-    const attendance = Array.isArray(dashboard.attendance) ? dashboard.attendance : []
-    resolvedRows = attendance.map((x: any) => ({
-      ...x,
-      resolved_staff_name: x.staff_name || x.full_name || x.name || 'Unmapped overhead identity',
-      resolved_department: x.department || 'Unmapped department',
-      resolved_position: x.position || 'Staff',
-      resolved_city: x.city || x.location || 'Head Office',
-      identity_resolution_source: 'fallback',
-    }))
-  }
+  const links = await safeSelect('hr_identity_links', 'created_at', 700)
 
-  const records = resolvedRows.map((row: any) => {
-    const status = safe(row.validation_status || row.attendance_status || row.status, 'pending')
-    const total = Number(row.total_minutes || 0)
-    return {
-      id: String(row.id),
-      identity: {
-        id: String(row.resolved_staff_id || row.staff_id || row.user_id || row.resolved_staff_name),
-        name: safe(row.resolved_staff_name, 'Unmapped overhead identity'),
-        role: safe(row.resolved_position, 'Staff'),
-        department: safe(row.resolved_department, 'Unmapped department'),
-        location: safe(row.resolved_city || row.location, 'Head Office'),
-        staff_id: row.resolved_staff_id || row.staff_id || null,
-        user_id: row.user_id || null,
-        profile_id: row.profile_id || null,
-      },
-      work_date: safe(row.work_date || row.created_at, '').slice(0, 10),
-      punch_in_at: row.punch_in_at || row.check_in_at || row.clock_in_at || null,
-      punch_out_at: row.punch_out_at || row.check_out_at || row.clock_out_at || null,
-      break_start_at: row.break_start_at || null,
-      break_end_at: row.break_end_at || null,
-      status,
-      validation_status: safe(row.validation_status, status),
-      source: safe(row.source, 'hr'),
-      payroll_status: safe(row.payroll_status, 'not_ready'),
-      late_minutes: Number(row.late_minutes || 0),
-      overtime_minutes: Number(row.overtime_minutes || Math.max(0, total - 480)),
-      total_minutes: total,
-      identity_resolution_source: row.identity_resolution_source,
-      raw: row,
-    }
-  })
+  const sources: { table: string; order?: string; rows: AnyRow[] }[] = [
+    { table: 'v_hr_attendance_resolved_live', rows: await safeSelect('v_hr_attendance_resolved_live', 'created_at', 900) },
+    { table: 'hr_attendance_records', rows: Array.isArray(dashboard.attendance) ? dashboard.attendance : [] },
+    { table: 'app_attendance_logs', order: 'event_at', rows: await safeSelect('app_attendance_logs', 'event_at', 900) },
 
-  let logs: any[] = []
-  const supabase = await createClient()
-  try {
-    const { data } = await supabase.from('app_attendance_logs').select('*').order('event_at', { ascending: false }).limit(500)
-    logs = data || []
-  } catch {}
+    // User profile / app profile likely attendance sources.
+    { table: 'user_attendance_records', order: 'created_at', rows: await safeSelect('user_attendance_records', 'created_at', 900) },
+    { table: 'profile_attendance_records', order: 'created_at', rows: await safeSelect('profile_attendance_records', 'created_at', 900) },
+    { table: 'user_attendance', order: 'created_at', rows: await safeSelect('user_attendance', 'created_at', 900) },
+    { table: 'profile_attendance', order: 'created_at', rows: await safeSelect('profile_attendance', 'created_at', 900) },
+    { table: 'attendance_records', order: 'created_at', rows: await safeSelect('attendance_records', 'created_at', 900) },
+    { table: 'app_user_attendance', order: 'created_at', rows: await safeSelect('app_user_attendance', 'created_at', 900) },
+    { table: 'user_time_entries', order: 'created_at', rows: await safeSelect('user_time_entries', 'created_at', 900) },
+    { table: 'time_entries', order: 'created_at', rows: await safeSelect('time_entries', 'created_at', 900) },
+  ]
 
-  const mapped = records.filter(x => x.identity_resolution_source === 'identity_bridge' || x.identity_resolution_source === 'direct_staff_id')
-  const present = records.filter(x => /present|valid|complete|approved|auto/i.test(x.status))
-  const late = records.filter(x => /late/i.test(x.status) || x.late_minutes > 0)
-  const absent = records.filter(x => /absent|missing/i.test(x.status))
-  const exceptions = records.filter(x => /review|pending|late|absent|missing|exception|open/i.test(x.status))
-  const overtime = records.filter(x => x.overtime_minutes > 0 || /overtime/i.test(x.status))
-  const unmapped = records.filter(x => x.identity_resolution_source === 'bridge_unmapped' || x.identity.name === 'Unmapped overhead identity')
+  const normalized = sources.flatMap(src => (src.rows || []).map(row => normalizeAttendanceRow(row, staff, links, src.table)))
+  const records = dedupe(normalized)
 
-  const byPerson = new Map<string, any[]>()
+  const logs = sources.find(s => s.table === 'app_attendance_logs')?.rows || []
+  const mapped = records.filter(r => r.identity.resolution_source !== 'unmapped')
+  const present = records.filter(r => /present|completed|auto|valid|approved/i.test(r.status))
+  const late = records.filter(r => /late/i.test(r.status) || r.late_minutes > 0)
+  const absent = records.filter(r => /absent|missing/i.test(r.status))
+  const exceptions = records.filter(r => /review|pending|late|absent|missing|exception|open/i.test(r.status))
+  const overtime = records.filter(r => r.overtime_minutes > 0 || /overtime/i.test(r.status))
+  const unmapped = records.filter(r => r.identity.resolution_source === 'unmapped')
+
+  const byPerson = new Map<string, AnyRow[]>()
   for (const r of records) {
     const key = r.identity.staff_id || r.identity.user_id || r.identity.name
     if (!byPerson.has(String(key))) byPerson.set(String(key), [])
     byPerson.get(String(key))!.push(r)
   }
 
-  const departments = new Map<string, {total:number; present:number; late:number; absent:number; overtime:number}>()
+  const departments = new Map<string, { total: number; present: number; late: number; absent: number; overtime: number }>()
   for (const r of records) {
-    const k = r.identity.department
+    const k = r.identity.department || 'Unmapped department'
     if (!departments.has(k)) departments.set(k, { total: 0, present: 0, late: 0, absent: 0, overtime: 0 })
     const d = departments.get(k)!
     d.total++
@@ -115,42 +228,28 @@ export async function getAttendanceEnterpriseData() {
     if (overtime.includes(r)) d.overtime++
   }
 
+  const sourceBreakdown = sources.map(s => ({ table: s.table, count: s.rows.length })).filter(s => s.count > 0)
   const score = records.length ? Math.max(0, Math.round(((records.length - exceptions.length - unmapped.length) / records.length) * 100)) : 0
-  return { dashboard, staff, records, logs, liveState: [], mapped, present, late, absent, exceptions, overtime, unmapped, byPerson, departments, score, loadedAt: new Date().toISOString() }
-}
 
-export async function mapIdentityToStaffAction(formData: FormData) {
-  'use server'
-  const supabase = await createClient()
-  const link_id = String(formData.get('link_id') || '')
-  const staff_id = String(formData.get('staff_id') || '')
-  if (!link_id || !staff_id) throw new Error('Missing link_id or staff_id')
-
-  const { data: staff } = await supabase.from(HR_TABLES.staff).select('id, full_name').eq('id', staff_id).maybeSingle()
-
-  const { error } = await supabase
-    .from('hr_identity_links')
-    .update({
-      staff_id,
-      label: staff?.full_name || 'Mapped staff',
-      status: 'mapped',
-      confidence: 'manual',
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', link_id)
-
-  if (error) throw new Error(error.message)
-
-  const { data: link } = await supabase.from('hr_identity_links').select('*').eq('id', link_id).maybeSingle()
-
-  if (link?.source_user_id) {
-    await supabase.from(HR_TABLES.attendance).update({ staff_id }).eq('user_id', link.source_user_id).is('staff_id', null)
-    await supabase.from('app_attendance_logs').update({ staff_id }).eq('user_id', link.source_user_id).is('staff_id', null)
+  return {
+    dashboard,
+    staff,
+    records,
+    logs,
+    liveState: [],
+    mapped,
+    present,
+    late,
+    absent,
+    exceptions,
+    overtime,
+    unmapped,
+    byPerson,
+    departments,
+    score,
+    sourceBreakdown,
+    loadedAt: new Date().toISOString(),
   }
-
-  await logHRActivity({ action: 'attendance.identity.mapped', source_table: 'hr_identity_links', record_id: link_id, payload: { staff_id, link } })
-  revalidatePath('/hr/attendance')
-  revalidatePath('/hr/attendance/identity-map')
 }
 
 export async function approveAttendanceAction(id: string) {
@@ -172,7 +271,6 @@ export async function markReviewAttendanceAction(id: string) {
   if (error) throw new Error(error.message)
   revalidatePath('/hr/attendance')
 }
-
 
 export async function createAttendanceAction(formData: FormData) {
   'use server'
@@ -201,4 +299,101 @@ export async function createAttendanceAction(formData: FormData) {
 
   revalidatePath('/hr/attendance')
   revalidatePath('/hr/attendance/actions')
+}
+
+export async function redirectToStaffAttendance(formData: FormData) {
+  'use server'
+  const staffId = String(formData.get('staff_id') || '')
+  redirect(staffId ? `/hr/attendance/staff/${staffId}` : '/hr/attendance')
+}
+
+
+export async function getIdentityLinks() {
+  const supabase = await createClient()
+  try {
+    const { data } = await supabase
+      .from('hr_identity_links')
+      .select('*, staff:hr_staff_profiles(id, full_name, email, department, position, city)')
+      .order('created_at', { ascending: false })
+      .limit(700)
+
+    return data || []
+  } catch {
+    return []
+  }
+}
+
+
+export async function mapIdentityToStaffAction(formData: FormData) {
+  'use server'
+
+  const supabase = await createClient()
+  const link_id = String(formData.get('link_id') || '')
+  const staff_id = String(formData.get('staff_id') || '')
+
+  if (!link_id || !staff_id) {
+    throw new Error('Missing link_id or staff_id')
+  }
+
+  const { data: staff } = await supabase
+    .from(HR_TABLES.staff)
+    .select('id, full_name, email, department, position, city')
+    .eq('id', staff_id)
+    .maybeSingle()
+
+  const { error } = await supabase
+    .from('hr_identity_links')
+    .update({
+      staff_id,
+      label: staff?.full_name || staff?.email || 'Mapped staff',
+      status: 'mapped',
+      confidence: 'manual',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', link_id)
+
+  if (error) throw new Error(error.message)
+
+  const { data: link } = await supabase
+    .from('hr_identity_links')
+    .select('*')
+    .eq('id', link_id)
+    .maybeSingle()
+
+  if (link?.source_user_id) {
+    await supabase
+      .from(HR_TABLES.attendance)
+      .update({ staff_id })
+      .eq('user_id', link.source_user_id)
+
+    await supabase
+      .from('app_attendance_logs')
+      .update({ staff_id })
+      .eq('user_id', link.source_user_id)
+  }
+
+  try {
+    await supabase
+      .from('hr_user_identity_contracts')
+      .upsert({
+        staff_id,
+        user_id: link?.source_user_id || null,
+        email: staff?.email || null,
+        full_name: staff?.full_name || null,
+        source: 'manual_identity_map',
+        status: 'active',
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'staff_id' })
+  } catch {}
+
+  await logHRActivity({
+    action: 'attendance.identity.mapped',
+    source_table: 'hr_identity_links',
+    record_id: link_id,
+    entity_type: 'identity_link',
+    payload: { link_id, staff_id, source_user_id: link?.source_user_id },
+  })
+
+  revalidatePath('/hr/attendance')
+  revalidatePath('/hr/attendance/identity-map')
 }
