@@ -1,0 +1,65 @@
+export const marketingCommandData = {
+  kpis: [
+    { label: 'Total Campaigns', value: '24', trend: '+12%', href: '/market-os/campaign-lifecycle', icon: '🎯' },
+    { label: 'Total Leads Generated', value: '1,284', trend: '+18.6%', href: '/leads', icon: '👥' },
+    { label: 'Revenue Influenced', value: '2.48M MAD', trend: '+22.4%', href: '/revenue-command-center', icon: '💰' },
+    { label: 'Content Published', value: '48', trend: '+14%', href: '/market-os/content-command-center', icon: '📄' },
+    { label: 'Engagement Rate', value: '8.7%', trend: '+9.3%', href: '/reports', icon: '💜' },
+  ],
+  coreModules: [
+    { label: 'Marketing Home', href: '/market-os/marketing-home', icon: '🏠' },
+    { label: 'Campaign Lifecycle', href: '/market-os/campaign-lifecycle', icon: '🎯' },
+    { label: 'Content Command', href: '/market-os/content-command-center', icon: '🧠' },
+    { label: 'SEO Blog Workspace', href: '/market-os/seo-blog-workspace', icon: '✍️' },
+    { label: 'Automation Control', href: '/market-os/automation-control', icon: '⚙️' },
+    { label: 'Ambassador Program', href: '/market-os/ambassador-program', icon: '🤝' },
+    { label: 'Partners Network', href: '/market-os/partners-network', icon: '🏢' },
+    { label: 'Calendar', href: '/market-os/calendar', icon: '🗓️' },
+    { label: 'Market Intelligence', href: '/market-os', icon: '📊' },
+  ],
+  integratedModules: [
+    { label: 'Revenue Command', href: '/revenue-command-center', icon: '💎' },
+    { label: 'Sales CRM', href: '/sales', icon: '🚀' },
+    { label: 'Leads', href: '/leads', icon: '📈' },
+    { label: 'Services', href: '/services', icon: '🧩' },
+    { label: 'Families CRM', href: '/families', icon: '🏡' },
+    { label: 'Voice Center', href: '/voice-center', icon: '☎️' },
+  ],
+  opsModules: [
+    { label: 'Tasks & Approvals', href: '/revenue-command-center/tasks', icon: '✅' },
+    { label: 'Team Command', href: '/team-command', icon: '👥' },
+    { label: 'Documents', href: '/print', icon: '📁' },
+    { label: 'Reports', href: '/reports', icon: '📊' },
+  ],
+  campaigns: [
+    { title: 'Summer Enrollment 2025', type: 'Lead Generation', leads: '512 Leads', growth: '+24%', href: '/market-os/campaign-lifecycle' },
+    { title: 'Partnership Schools Drive', type: 'B2B Outreach', leads: '328 Leads', growth: '+18%', href: '/market-os/partners-network' },
+    { title: 'SEO Content Boost', type: 'Organic Traffic', leads: '156 Leads', growth: '+12%', href: '/market-os/seo-blog-workspace' },
+    { title: 'Community Engagement', type: 'Social Campaign', leads: '98 Leads', growth: '+9%', href: '/market-os/calendar' },
+  ],
+  channels: [
+    ['Facebook', '38%', '488'], ['Instagram', '24%', '308'], ['Google Ads', '18%', '231'], ['Organic Search', '12%', '154'], ['LinkedIn', '8%', '103']
+  ],
+  priorities: [
+    { title: 'Approve Rabat Preschool Campaign', priority: 'High', href: '/market-os/campaign-lifecycle' },
+    { title: 'Review Partnerships Proposals', priority: 'High', href: '/market-os/partners-network' },
+    { title: 'Content Calendar Planning', priority: 'Medium', href: '/market-os/calendar' },
+    { title: 'Analyse Weekly Performance', priority: 'Medium', href: '/reports' },
+    { title: 'Team Stand-up Meeting', priority: 'Low', href: '/team-command' },
+  ],
+  activity: [
+    { title: 'New lead from Facebook Ad', time: '2 min ago', href: '/leads' },
+    { title: 'Campaign “Summer 2025” published', time: '15 min ago', href: '/market-os/campaign-lifecycle' },
+    { title: 'New partnership proposal received', time: '1 hour ago', href: '/market-os/partners-network' },
+    { title: 'Content “Blog: Childcare Tips” published', time: '2 hours ago', href: '/market-os/content-command-center' },
+  ],
+  quick: [
+    { label: 'Create Campaign', href: '/market-os/campaign-lifecycle', icon: '🎯', detail: 'Launch campaign' },
+    { label: 'Content Studio', href: '/market-os/content-command-center', icon: '📄', detail: 'Manage content' },
+    { label: 'Automation', href: '/market-os/automation-control', icon: '⚙️', detail: 'Workflows' },
+    { label: 'Partners', href: '/market-os/partners-network', icon: '🤝', detail: 'Partnerships' },
+    { label: 'Analytics', href: '/reports', icon: '📊', detail: 'Insights' },
+    { label: 'Approvals', href: '/revenue-command-center/tasks', icon: '✅', detail: 'Pending tasks' },
+    { label: 'Team Chat', href: '/voice-center', icon: '💬', detail: 'Connect room' },
+  ],
+}

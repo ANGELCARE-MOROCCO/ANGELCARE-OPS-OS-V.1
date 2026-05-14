@@ -65,7 +65,7 @@ export const USER_ROLE_OPTIONS = [
   { label: 'Admin', value: 'admin', department: 'Administration', defaultHome: '/command-center' },
 
   { label: 'Marketing', value: 'marketing', department: 'Marketing', defaultHome: '/market-os/marketing-home' },
-  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/staff-home' },
+  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/csa-home' },
   { label: 'Operations', value: 'operations', department: 'Operations', defaultHome: '/operations' },
   { label: 'HR', value: 'hr', department: 'Human Resources', defaultHome: '/hr' },
   { label: 'Session Leader', value: 'session_leader', department: 'Operations', defaultHome: '/team-command' },
@@ -85,7 +85,7 @@ export const ROLE_HOME_ROUTES: Record<string, string> = {
   admin: '/command-center',
 
   marketing: '/market-os/marketing-home',
-  csa: '/staff-home',
+  csa: '/csa-home',
   operations: '/operations',
   hr: '/hr',
   session_leader: '/team-command',
@@ -125,8 +125,17 @@ export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
     'profile.view',
     'staff_portal.view',
     'staff_services.view',
+    'csa.home',
+    'csa.view',
+    'csa.leads.followup',
+    'csa.families.manage',
+    'csa.services.activate',
+    'csa.revenue.recover',
+    'csa.escalations.manage',
     'families.view',
     'leads.view',
+    'sales.view',
+    'revenue.view',
     'incidents.view',
     'services.view',
     'voice.view',
@@ -256,6 +265,7 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'B2C Workflow', href: '/revenue-command-center/b2c-workflow', permission: 'revenue.view', group: 'Revenue Command', icon: '🔁', order: 31 },
   { label: 'Leads Impact', href: '/revenue-command-center/leads-impact', permission: 'revenue.view', group: 'Revenue Command', icon: '⚡', order: 32 },
 
+  { label: 'C.S.A Command Home', href: '/csa-home', permission: 'csa.home', group: 'C.S.A Command', icon: '🎧', badge: 'CSA', order: 33 },
   { label: 'Marketing Department Home', href: '/market-os/marketing-home', permission: 'marketing.home', group: 'Market OS', icon: '🏢', badge: 'HOME', order: 39 },
   { label: 'Market OS Home', href: '/market-os', permission: 'market_os.view', group: 'Market OS', icon: '🌐', badge: 'MKT', order: 40 },
   { label: 'Campaign Lifecycle', href: '/market-os/campaign-lifecycle', permission: 'market_os.campaigns.view', group: 'Market OS', icon: '🎯', order: 41 },
@@ -313,6 +323,7 @@ export const MODULE_ACCESS_LINKS = [
 export type ModuleKey = keyof typeof MODULE_PERMISSIONS
 
 export const MODULE_ACCESS = [
+  { key: 'csa.home', href: '/csa-home' },
   { key: 'marketing.home', href: '/market-os/marketing-home' },
   { key: 'profile.view', href: '/profile' },
   { key: 'staff_portal.view', href: '/staff-home' },
@@ -381,6 +392,17 @@ export function getDefaultHomeForRole(user: any) {
 export function getFirstAllowedRoute(user: any) {
   if (!user) return '/login'
 
+  const role = normalizeRole(user)
+  const permissions = Array.isArray(user.permissions) ? user.permissions : []
+
+  // Department homes must win before generic staff portal permissions.
+  if (role === 'csa' || permissions.includes('csa.home')) return '/csa-home'
+  if (role === 'marketing' || permissions.includes('marketing.home')) return '/market-os/marketing-home'
+
+  if (role === 'ceo' || role === 'admin' || role === 'direction' || permissions.includes('*')) {
+    return '/command-center'
+  }
+
   const roleDefault = getDefaultHomeForRole(user)
   const allowedLinks = getAllowedModuleLinks(user)
 
@@ -391,6 +413,9 @@ export function getFirstAllowedRoute(user: any) {
 
     if (canOpenDefault) return roleDefault
   }
+
+  if (role === 'staff' || role === 'caregiver' || role === 'employee') return '/staff-home'
+  if (permissions.includes('staff_portal.view')) return '/staff-home'
 
   const first = allowedLinks[0]
   return first?.href || '/staff-home'

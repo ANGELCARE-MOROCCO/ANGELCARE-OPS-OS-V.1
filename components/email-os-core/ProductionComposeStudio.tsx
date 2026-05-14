@@ -273,7 +273,7 @@ export default function ProductionComposeStudio() {
     setLifecycle("queueing")
     setStatus("Création de l’ordre d’envoi...")
 
-    const result = await api("/api/email-os/send", {
+    const result = await api("/api/email-os/send-direct", {
       method: "POST",
       body: JSON.stringify({
         mailboxId,

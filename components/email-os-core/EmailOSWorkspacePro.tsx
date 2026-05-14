@@ -26,6 +26,7 @@ import {
 import ProviderActionsPanel from "@/components/email-os-core/ProviderActionsPanel"
 import ProductionComposeStudio from "@/components/email-os-core/ProductionComposeStudio"
 import RealInboxWorkspace from "@/components/email-os-core/RealInboxWorkspace"
+import CorporateOutboxCommandCenter from "@/components/email-os-core/CorporateOutboxCommandCenter"
 
 type Entity = "mailboxes" | "templates" | "threads" | "drafts" | "queue" | "audit" | "automation"
 type View = Entity | "compose" | "health"
@@ -504,16 +505,18 @@ export default function EmailOSWorkspacePro() {
         </header>
 
         <main className="min-h-0 flex-1 overflow-y-auto p-6">
-  {view === "threads" ? (
-    <RealInboxWorkspace />
-  ) : view === "compose" ? (
-    <ProductionComposeStudio />
-  ) : view === "health" ? (
-    <HealthPanel />
-  ) : (
-    <EntityManager entity={view as Entity} toast={toast} />
-  )}
-</main>
+          {view === "threads" ? (
+            <RealInboxWorkspace />
+          ) : view === "compose" ? (
+            <ProductionComposeStudio />
+          ) : view === "queue" ? (
+            <CorporateOutboxCommandCenter />
+          ) : view === "health" ? (
+            <HealthPanel />
+          ) : (
+            <EntityManager entity={view as Entity} toast={toast} />
+          )}
+        </main>
       </div>
 
       {toastMessage ? (

@@ -1,145 +1,74 @@
+import AppShell from '@/app/components/erp/AppShell'
 import Link from 'next/link'
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { getAttendanceCommandData, minutesToHours, timeOnly, todayCasablanca } from '@/lib/hr-attendance-sync/repository'
-import type { AttendanceView } from '@/lib/hr-attendance-sync/types'
+import { getAttendanceEnterpriseData, markReviewAttendanceAction } from '@/lib/hr-production/attendance-enterprise'
+import { AttendanceEnterpriseShell, AttendanceTopbar, AttendanceSidebar, MetricCard, Panel, StatusBadge, TimelineRow, MiniTable } from '../_components/AttendanceEnterpriseUI'
 
-const VIEWS: { key: AttendanceView; label: string; desc: string }[] = [
-  { key: 'dashboard', label: 'Dashboard', desc: 'Executive KPIs' },
-  { key: 'day', label: 'Day View', desc: 'Today clocking' },
-  { key: 'week', label: 'Week View', desc: '7-day rhythm' },
-  { key: 'agenda', label: 'Agenda', desc: 'Chronological planning' },
-  { key: 'people', label: 'People', desc: 'Staff-by-staff' },
-  { key: 'exceptions', label: 'Exceptions', desc: 'Missing punches' },
-]
+function time(v:any){ return v ? String(v).slice(11,16) : '—' }
+function schedule(r:any){ return `${time(r.punch_in_at)}    ${time(r.punch_out_at)}` }
+function startPct(i:number){ return 6 + ((i * 7) % 28) }
+function widthPct(i:number, status:string){ return /absent|missing/i.test(status) ? 45 : 42 + ((i * 5) % 28) }
 
-export default async function Page({ searchParams }: { searchParams?: Promise<{ view?: AttendanceView; from?: string; to?: string }> }) {
-  const params = await searchParams
-  const today = todayCasablanca()
-  const view = VIEWS.some((v) => v.key === params?.view) ? params?.view || 'dashboard' : 'dashboard'
-  const data = await getAttendanceCommandData({ from: params?.from, to: params?.to || today })
-  const todayRows = data.records.filter((r) => r.attendance_date === today)
-  const exceptionRows = data.records.filter((r) => r.missing_punch || r.status === 'needs_review' || r.anomaly_reason)
-
+export default async function Page({ searchParams }: { searchParams?: Promise<Record<string,string>> }) {
+  const params = searchParams ? await searchParams : {}
+  const view = params?.view || 'timeline'
+  const q = String(params?.q || '').toLowerCase()
+  const data = await getAttendanceEnterpriseData()
+  const records = q ? data.records.filter(r=>[r.identity.name,r.identity.role,r.identity.department,r.identity.location,r.status].join(' ').toLowerCase().includes(q)) : data.records
+  const selected = records[0]
+  const deptRows = Array.from(data.departments.entries()).map(([name,d]: any)=>[name,d.present,d.late,d.absent,d.total, `${d.total ? Math.round((d.present/d.total)*100) : 0}%`])
+  const feedRows = data.logs.slice(0,6).map((x:any)=>[String(x.event_at || x.created_at || '').slice(11,16), x.event_type || 'punch', <StatusBadge key="b" value={x.source || 'live'} />])
+  const exceptionRows = data.exceptions.slice(0,80).map(r=>[r.work_date, <Link key="s" href={`/hr/attendance/staff/${r.identity.staff_id || r.identity.user_id || encodeURIComponent(r.identity.name)}`} className="font-black text-white underline">{r.identity.name}</Link>, r.identity.department, <StatusBadge key="st" value={r.status}/>, <form key="f" action={markReviewAttendanceAction.bind(null,r.id)}><button className="rounded-full border border-amber-400/40 px-3 py-1 text-xs font-black text-amber-300">Review</button></form>])
   return (
-    <AppShell
-      title="Enterprise Attendance"
-      subtitle="Synchronized HR attendance from Overhead Panel punch-in / punch-out, user profiles, and staff attendance records."
-      breadcrumbs={[{ label: 'HR', href: '/hr' }, { label: 'Attendance' }]}
-      actions={
-        <>
-          <PageAction href="/hr">HR Dashboard</PageAction>
-          <PageAction href="/hr/attendance/corrections" variant="light">Corrections</PageAction>
-          <PageAction href="/hr/reports/export" variant="light">Export</PageAction>
-        </>
-      }
-    >
-      <div style={page}>
-        <section style={hero}>
-          <div>
-            <div style={eyebrow}>LIVE HR TIME CONTROL</div>
-            <h1 style={h1}>Attendance Command Center</h1>
-            <p style={subtitle}>Every punch from the Overhead Panel writes to <b>app_attendance_logs</b> and synchronizes into <b>hr_attendance_records</b> for HR reporting, profiles, corrections, and payroll readiness.</p>
-          </div>
-          <div style={scoreBox}>
-            <span>Readiness</span>
-            <strong>{data.metrics.exceptions === 0 ? 'Clean' : 'Review'}</strong>
-            <small>{data.metrics.exceptions} exception(s)</small>
-          </div>
-        </section>
-
-        <section style={kpiGrid}>
-          <Kpi label="Records" value={String(data.metrics.records)} detail={`${data.from} → ${data.to}`} />
-          <Kpi label="People tracked" value={String(data.metrics.people)} detail="unique staff/users" />
-          <Kpi label="In progress" value={String(data.metrics.inProgress)} detail="currently open shifts" />
-          <Kpi label="Completed" value={String(data.metrics.completed)} detail="closed shifts" />
-          <Kpi label="Total time" value={minutesToHours(data.metrics.totalMinutes)} detail="worked time" />
-          <Kpi label="Overtime" value={minutesToHours(data.metrics.overtimeMinutes)} detail="above 8h/day" />
-        </section>
-
-        <nav style={viewsBar}>
-          {VIEWS.map((item) => (
-            <Link key={item.key} href={`/hr/attendance?view=${item.key}&from=${data.from}&to=${data.to}`} style={viewLink(item.key === view)}>
-              <strong>{item.label}</strong>
-              <small>{item.desc}</small>
-            </Link>
-          ))}
-        </nav>
-
-        <form style={filters}>
-          <input type="hidden" name="view" value={view} />
-          <label style={field}>From <input name="from" type="date" defaultValue={data.from} style={input} /></label>
-          <label style={field}>To <input name="to" type="date" defaultValue={data.to} style={input} /></label>
-          <button style={button}>Apply period</button>
-        </form>
-
-        {view === 'dashboard' && <RecordsTable title="Latest synchronized records" rows={data.records.slice(0, 80)} />}
-        {view === 'day' && <RecordsTable title={`Today • ${today}`} rows={todayRows} />}
-        {view === 'week' && <WeekBoard rows={data.records} />}
-        {view === 'agenda' && <Agenda rows={data.records} />}
-        {view === 'people' && <PeopleBoard rows={data.records} />}
-        {view === 'exceptions' && <RecordsTable title="Exceptions requiring HR control" rows={exceptionRows} />}
-      </div>
+    <AppShell>
+      <AttendanceEnterpriseShell>
+        <AttendanceTopbar />
+        <div className="flex">
+          <AttendanceSidebar />
+          <main className="min-w-0 flex-1 p-5">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div><h1 className="text-2xl font-black text-white">Attendance Live Monitor <span className="rounded-full bg-emerald-500 px-2 py-1 text-xs text-slate-950">LIVE</span></h1><p className="mt-1 text-sm text-slate-400">Real-time attendance tracking and workforce status overview</p></div>
+              <form className="flex gap-2"><input name="q" defaultValue={q} placeholder="Search staff, department..." className="rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm text-white" /><button className="rounded-xl bg-white px-4 py-2 text-xs font-black text-slate-950">Filter</button></form>
+            </div>
+            <section className="mb-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              <MetricCard tone="purple" label="Total Staff" value={data.staff.length || data.records.length} detail={`${data.mapped.length} mapped identities`} />
+              <MetricCard tone="green" label="Present Now" value={data.present.length} detail={`${data.records.length ? Math.round((data.present.length/data.records.length)*100) : 0}% of records`} />
+              <MetricCard tone="blue" label="On Time" value={Math.max(0,data.present.length - data.late.length)} detail="validated / auto synced" />
+              <MetricCard tone="amber" label="Late" value={data.late.length} detail="needs review" />
+              <MetricCard tone="red" label="Absent" value={data.absent.length} detail="absence signals" />
+            </section>
+            <div className="mb-5 flex flex-wrap gap-2">
+              {['timeline','people','exceptions','departments','payroll','live'].map(v=><Link key={v} href={`/hr/attendance?view=${v}`} className={`rounded-full px-4 py-2 text-xs font-black ${view===v?'bg-white text-slate-950':'border border-slate-700 text-white'}`}>{v.toUpperCase()}</Link>)}
+            </div>
+            {view === 'exceptions' ? (
+              <Panel title="Exception Command Board" subtitle="Late, missing, pending and review signals with HR action buttons."><MiniTable headers={['Date','Staff','Department','Status','Action']} rows={exceptionRows}/></Panel>
+            ) : view === 'people' ? (
+              <Panel title="Individual Attendance Panels" subtitle="Every person opens into a dedicated attendance control profile.">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  {Array.from(data.byPerson.entries()).slice(0,80).map(([key,items])=>{ const first=items[0]; return <Link key={key} href={`/hr/attendance/staff/${first.identity.staff_id || first.identity.user_id || encodeURIComponent(first.identity.name)}`} className="rounded-2xl border border-slate-800 bg-slate-900 p-4 hover:border-emerald-400/50"><div className="flex items-start justify-between gap-3"><div><div className="font-black text-white">{first.identity.name}</div><div className="mt-1 text-xs text-slate-500">{first.identity.role} · {first.identity.department}</div></div><StatusBadge value={first.status}/></div><div className="mt-4 grid grid-cols-3 gap-2 text-center"><div className="rounded-xl bg-slate-950 p-2"><b className="text-white">{items.length}</b><div className="text-[10px] text-slate-500">records</div></div><div className="rounded-xl bg-slate-950 p-2"><b className="text-emerald-300">{items.filter(x=>/present|auto|valid/i.test(x.status)).length}</b><div className="text-[10px] text-slate-500">valid</div></div><div className="rounded-xl bg-slate-950 p-2"><b className="text-rose-300">{items.filter(x=>/review|late|absent/i.test(x.status)).length}</b><div className="text-[10px] text-slate-500">risk</div></div></div></Link>})}
+                </div>
+              </Panel>
+            ) : (
+              <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+                <Panel title="Live Attendance Timeline" subtitle="Staff lane scheduler with punch status, identity, and clickable profiles.">
+                  <div className="overflow-hidden rounded-2xl border border-slate-800">
+                    <div className="grid grid-cols-[42px_240px_110px_1fr_130px] bg-slate-900 px-3 py-3 text-xs font-black uppercase tracking-[.14em] text-slate-500"><div></div><div>Staff</div><div>Schedule</div><div className="grid grid-cols-6 text-center"><span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span></div><div>Status</div></div>
+                    {records.slice(0,14).map((r,i)=><TimelineRow key={r.id+i} name={r.identity.name} role={`${r.identity.role} · ${r.identity.department}`} schedule={schedule(r)} status={r.status} startPct={startPct(i)} widthPct={widthPct(i,r.status)} href={`/hr/attendance/staff/${r.identity.staff_id || r.identity.user_id || encodeURIComponent(r.identity.name)}`} />)}
+                  </div>
+                  <div className="mt-4 flex flex-wrap justify-center gap-5 text-xs font-bold text-slate-400"><span>🟩 Present</span><span>🟧 Late</span><span>🟥 Absent</span><span>🟪 Overtime</span><span>⬛ Not In</span></div>
+                </Panel>
+                <Panel title={selected?.identity.name || 'Select Staff'} subtitle={selected ? `${selected.identity.role} · ${selected.identity.department}` : 'No selected attendance profile'}>
+                  {selected ? <div className="space-y-4"><div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-2xl font-black text-slate-950">{selected.identity.name.slice(0,1)}</div><div><div className="text-xl font-black text-white">{selected.identity.name}</div><StatusBadge value={selected.status}/></div></div><div className="grid grid-cols-2 gap-2 text-sm"><div className="rounded-xl bg-slate-950 p-3"><div className="text-slate-500">Check in</div><div className="text-xl font-black text-emerald-300">{time(selected.punch_in_at)}</div></div><div className="rounded-xl bg-slate-950 p-3"><div className="text-slate-500">Check out</div><div className="text-xl font-black text-sky-300">{time(selected.punch_out_at)}</div></div><div className="rounded-xl bg-slate-950 p-3"><div className="text-slate-500">Location</div><div className="font-black text-white">{selected.identity.location}</div></div><div className="rounded-xl bg-slate-950 p-3"><div className="text-slate-500">Department</div><div className="font-black text-white">{selected.identity.department}</div></div></div><div className="grid gap-2"><Link className="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-black text-white" href={`/hr/attendance/staff/${selected.identity.staff_id || selected.identity.user_id || encodeURIComponent(selected.identity.name)}`}>View Full Attendance Profile</Link><Link className="rounded-xl border border-slate-700 px-4 py-3 text-center text-sm font-black text-white" href="/hr/staff">Open Staff Command</Link></div></div> : null}
+                </Panel>
+              </div>
+            )}
+            <div className="mt-5 grid gap-5 xl:grid-cols-3">
+              <Panel title="Attendance Summary Today"><div className="grid place-items-center rounded-2xl bg-slate-950 p-6"><div className="grid h-40 w-40 place-items-center rounded-full border-[18px] border-emerald-500 text-center"><div><div className="text-3xl font-black text-white">{data.records.length}</div><div className="text-xs text-slate-500">Total</div></div></div></div></Panel>
+              <Panel title="Department Overview"><MiniTable headers={['Department','Present','Late','Absent','Total','Rate']} rows={deptRows} /></Panel>
+              <Panel title="Live Activity Feed"><MiniTable headers={['Time','Event','Source']} rows={feedRows} /></Panel>
+            </div>
+          </main>
+        </div>
+      </AttendanceEnterpriseShell>
     </AppShell>
   )
 }
-
-function Kpi({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return <div style={card}><span style={muted}>{label}</span><strong style={kpiValue}>{value}</strong><small style={muted}>{detail}</small></div>
-}
-
-function RecordsTable({ title, rows }: { title: string; rows: any[] }) {
-  return <section style={panel}><Header title={title} subtitle="Enterprise template: staff, date, punch pairs, status, worked time, source, anomaly." />
-    <div style={{ overflowX: 'auto' }}><table style={table}><thead><tr>{['Staff','Date','IN','Lunch','Back','OUT','Worked','Status','Source','Issue'].map((h) => <th key={h} style={th}>{h}</th>)}</tr></thead><tbody>
-      {rows.length ? rows.map((r) => <tr key={r.id} style={tr}>
-        <td style={td}><strong>{r.staff_name || 'Staff member'}</strong><br/><small>{r.user_id || r.staff_profile_id || 'no-id'}</small></td>
-        <td style={td}>{r.attendance_date}</td><td style={td}>{timeOnly(r.check_in)}</td><td style={td}>{timeOnly(r.lunch_start)}</td><td style={td}>{timeOnly(r.lunch_end)}</td><td style={td}>{timeOnly(r.check_out)}</td>
-        <td style={td}>{minutesToHours(r.total_minutes)}</td><td style={td}><Badge value={r.status || 'pending'} /></td><td style={td}>{r.source || '—'}</td><td style={td}>{r.anomaly_reason || (r.missing_punch ? 'missing punch' : '—')}</td>
-      </tr>) : <tr><td colSpan={10} style={empty}>No attendance records for this view.</td></tr>}
-    </tbody></table></div></section>
-}
-
-function WeekBoard({ rows }: { rows: any[] }) {
-  const days = Array.from(new Set(rows.map((r) => r.attendance_date))).sort().reverse()
-  return <section style={grid2}>{days.map((day) => <div key={day} style={panel}><Header title={day} subtitle={`${rows.filter((r) => r.attendance_date === day).length} record(s)`} />{rows.filter((r) => r.attendance_date === day).slice(0, 12).map((r) => <Mini key={r.id} r={r} />)}</div>)}</section>
-}
-
-function Agenda({ rows }: { rows: any[] }) {
-  return <section style={panel}><Header title="Agenda timeline" subtitle="Chronological HR attendance view." />{rows.map((r) => <div key={r.id} style={agendaRow}><div><strong>{r.attendance_date}</strong><br/><small>{timeOnly(r.check_in)} → {timeOnly(r.check_out)}</small></div><div><strong>{r.staff_name || 'Staff member'}</strong><br/><small>{minutesToHours(r.total_minutes)} • {r.status}</small></div><Badge value={r.anomaly_reason ? 'review' : r.status || 'pending'} /></div>)}</section>
-}
-
-function PeopleBoard({ rows }: { rows: any[] }) {
-  const names = Array.from(new Set(rows.map((r) => r.staff_name || r.user_id || 'Staff member')))
-  return <section style={grid2}>{names.map((name) => { const mine = rows.filter((r) => (r.staff_name || r.user_id || 'Staff member') === name); return <div key={name} style={panel}><Header title={name} subtitle={`${mine.length} attendance record(s)`} /><Kpi label="Worked" value={minutesToHours(mine.reduce((s, r) => s + Number(r.total_minutes || 0), 0))} detail="period total" />{mine.slice(0, 8).map((r) => <Mini key={r.id} r={r} />)}</div> })}</section>
-}
-
-function Mini({ r }: { r: any }) { return <div style={mini}><span>{r.attendance_date}</span><strong>{timeOnly(r.check_in)} → {timeOnly(r.check_out)}</strong><Badge value={r.status || 'pending'} /></div> }
-function Header({ title, subtitle }: { title: string; subtitle: string }) { return <div style={{ marginBottom: 14 }}><h2 style={h2}>{title}</h2><p style={muted}>{subtitle}</p></div> }
-function Badge({ value }: { value: string }) { return <span style={badge}>{value}</span> }
-
-const page: React.CSSProperties = { display: 'grid', gap: 18 }
-const hero: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 18, padding: 24, borderRadius: 28, background: 'linear-gradient(135deg,#07111f,#0f766e)', color: 'white', boxShadow: '0 22px 50px rgba(15,23,42,.18)' }
-const eyebrow: React.CSSProperties = { fontSize: 12, fontWeight: 900, letterSpacing: 1.4, color: '#99f6e4' }
-const h1: React.CSSProperties = { fontSize: 34, margin: '8px 0', letterSpacing: -1 }
-const subtitle: React.CSSProperties = { maxWidth: 900, color: '#dbeafe', lineHeight: 1.65, margin: 0 }
-const scoreBox: React.CSSProperties = { minWidth: 170, border: '1px solid rgba(255,255,255,.24)', borderRadius: 22, padding: 18, background: 'rgba(255,255,255,.1)' }
-const kpiGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 12 }
-const card: React.CSSProperties = { padding: 16, borderRadius: 22, background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 10px 24px rgba(15,23,42,.06)', display: 'grid', gap: 6 }
-const kpiValue: React.CSSProperties = { fontSize: 25, color: '#0f172a' }
-const muted: React.CSSProperties = { color: '#64748b', lineHeight: 1.45 }
-const viewsBar: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 10 }
-const viewLink = (active: boolean): React.CSSProperties => ({ textDecoration: 'none', padding: 14, borderRadius: 18, display: 'grid', gap: 4, border: active ? '1px solid #0f766e' : '1px solid #e2e8f0', background: active ? '#ecfdf5' : 'white', color: '#0f172a' })
-const filters: React.CSSProperties = { display: 'flex', gap: 12, alignItems: 'end', padding: 14, borderRadius: 18, background: '#f8fafc', border: '1px solid #e2e8f0' }
-const field: React.CSSProperties = { display: 'grid', gap: 6, color: '#334155', fontWeight: 800 }
-const input: React.CSSProperties = { border: '1px solid #cbd5e1', borderRadius: 12, padding: '10px 12px', background: 'white' }
-const button: React.CSSProperties = { border: 0, borderRadius: 12, padding: '11px 16px', background: '#0f766e', color: 'white', fontWeight: 900 }
-const panel: React.CSSProperties = { padding: 18, borderRadius: 24, background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 10px 28px rgba(15,23,42,.05)' }
-const grid2: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 14 }
-const h2: React.CSSProperties = { margin: 0, fontSize: 20, color: '#0f172a' }
-const table: React.CSSProperties = { width: '100%', borderCollapse: 'separate', borderSpacing: 0 }
-const th: React.CSSProperties = { textAlign: 'left', padding: 12, background: '#f8fafc', color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: .5 }
-const tr: React.CSSProperties = { verticalAlign: 'top' }
-const td: React.CSSProperties = { padding: 12, borderTop: '1px solid #e2e8f0', color: '#0f172a' }
-const empty: React.CSSProperties = { padding: 24, textAlign: 'center', color: '#64748b' }
-const badge: React.CSSProperties = { display: 'inline-flex', width: 'fit-content', padding: '5px 9px', borderRadius: 999, background: '#f1f5f9', color: '#0f172a', fontSize: 12, fontWeight: 900 }
-const mini: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: 10, borderTop: '1px solid #e2e8f0' }
-const agendaRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '170px 1fr auto', gap: 14, alignItems: 'center', padding: 12, borderTop: '1px solid #e2e8f0' }
