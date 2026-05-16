@@ -397,7 +397,23 @@ function writeStore(store: AppointmentStore) {
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>{children}</section>
+  return <section className={`rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
+      <style jsx global>{`
+        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
+        .rcc-shell-main,
+        .rcc-shell-content,
+        .rcc-shell-content > *,
+        main.rcc-shell-main > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+        [class*="revenue-command-center"] {
+          max-width: none !important;
+        }
+      `}</style>
+
+      {children}</section>
 }
 
 function Panel({ children, title, subtitle }: { children: React.ReactNode; title: string; subtitle?: string }) {
@@ -797,8 +813,8 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
   }))
 
   return (
-    <main className="min-h-screen bg-violet-50/60 text-slate-950 selection:bg-violet-200 selection:text-slate-950">
-      <div className="mx-auto max-w-[1900px] space-y-6 p-4 lg:p-8">
+    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-violet-50/60 text-slate-950 selection:bg-violet-200 selection:text-slate-950">
+      <div className="w-full max-w-none min-w-0 space-y-6 p-4 lg:p-8">
         <section className="overflow-hidden rounded-[2.4rem] bg-gradient-to-br from-slate-950 via-violet-950 to-black p-7 text-white shadow-2xl lg:p-10">
           <div className="grid gap-8 xl:grid-cols-[1.28fr_.72fr]">
             <div>

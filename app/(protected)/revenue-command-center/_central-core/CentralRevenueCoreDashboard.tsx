@@ -219,7 +219,23 @@ export default function CentralRevenueCoreDashboard({ focus }: { focus?: string 
   </main>
 }
 
-function Card({ title, subtitle, action, children }: { title: string; subtitle?: string; action?: ReactNode; children: ReactNode }) { return <section style={{ ...s.card, padding: 18 }}><div style={{ display:'flex', justifyContent:'space-between', gap:14, alignItems:'start' }}><div><h2 style={{ margin:0, color:C.text, fontSize:18, fontWeight:950 }}>{title}</h2>{subtitle && <p style={{ margin:'4px 0 0', color:C.muted, fontWeight:700 }}>{subtitle}</p>}</div>{action || <Link href="/revenue-command-center" style={{ color:C.cyan, fontWeight:900 }}>View all</Link>}</div>{children}</section> }
+function Card({ title, subtitle, action, children }: { title: string; subtitle?: string; action?: ReactNode; children: ReactNode }) { return <section style={{ ...s.card, padding: 18 }}><div style={{ display:'flex', justifyContent:'space-between', gap:14, alignItems:'start' }}><div><h2 style={{ margin:0, color:C.text, fontSize:18, fontWeight:950 }}>{title}</h2>{subtitle && <p style={{ margin:'4px 0 0', color:C.muted, fontWeight:700 }}>{subtitle}</p>}</div>{action || <Link href="/revenue-command-center" style={{ color:C.cyan, fontWeight:900 }}>View all</Link>}</div>
+      <style jsx global>{`
+        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
+        .rcc-shell-main,
+        .rcc-shell-content,
+        .rcc-shell-content > *,
+        main.rcc-shell-main > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+        [class*="revenue-command-center"] {
+          max-width: none !important;
+        }
+      `}</style>
+
+      {children}</section> }
 function NavGroup({ title, items }: { title: string; items: Array<{ href: string; label: string; icon: any }> }) { return <div><p style={s.navLabel}>{title}</p><div style={{ display:'grid', gap:4 }}>{items.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 12px', borderRadius:13, color:C.text2, fontWeight:900 }}><Icon size={18}/>{item.label}</Link> })}</div></div> }
 function Kpi({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub: string }) { return <div style={{ ...s.card, padding:16 }}><div style={{ display:'flex', gap:12, alignItems:'center' }}><div style={{ width:42,height:42,borderRadius:13,display:'grid',placeItems:'center',background:'rgba(37,99,235,.24)', color:C.cyan }}><Icon size={19}/></div><div><p style={{ margin:0, color:C.muted, fontSize:11, fontWeight:950, textTransform:'uppercase', letterSpacing:'.08em' }}>{label}</p><p style={{ margin:'3px 0', color:C.text, fontSize:22, fontWeight:950 }}>{value}</p><p style={{ margin:0, color:C.green, fontSize:12, fontWeight:850 }}>{sub}</p></div></div></div> }
 function List({ rows, compact=false }: { rows: RecordRow[]; compact?: boolean }) { return <div style={{ display:'grid', gap:10, marginTop:14 }}>{rows.slice(0, compact ? 4 : 5).map(r=><Link key={r.id} href={`/revenue-command-center/${r.module}`} style={{ display:'flex', alignItems:'center', gap:10, border:`1px solid ${C.border}`, background:'rgba(255,255,255,.07)', borderRadius:16, padding:12, color:C.text }}><span style={{ width:34,height:34,borderRadius:999,display:'grid',placeItems:'center',background:'rgba(167,139,250,.22)' }}><Zap size={16} color={C.violet}/></span><span style={{ minWidth:0, flex:1 }}><b style={{ display:'block', color:C.text, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.title}</b><small style={{ color:C.text2, fontWeight:800 }}>{r.account} · {mad(r.value_mad)}</small></span><strong style={{ color:C.cyan }}>{r.probability}%</strong></Link>)}</div> }

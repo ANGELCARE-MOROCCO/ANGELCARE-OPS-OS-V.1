@@ -303,7 +303,7 @@ export default function CentralRevenueCore({ initialFocus = "prospects" }: { ini
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
       <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-[1500px] px-6 py-7">
+        <div className="w-full min-w-0 px-6 py-7">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.36em] text-emerald-700">Revenue Command Center / Central Core</p>
@@ -321,7 +321,7 @@ export default function CentralRevenueCore({ initialFocus = "prospects" }: { ini
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-[1500px] gap-5 px-6 py-6 lg:grid-cols-[320px_1fr_360px]">
+      <section className=" grid max-w-[1500px] gap-5 px-6 py-6 lg:grid-cols-[320px_1fr_360px]">
         <aside className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-4 flex items-center gap-2 text-sm font-black text-slate-700"><Target className="h-4 w-4" /> Core sections</div>
           <div className="space-y-2">

@@ -116,6 +116,22 @@ function Button({ children, onClick, disabled, tone = 'default', title }: { chil
   }
   return (
     <button title={title} onClick={onClick} disabled={disabled} className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${tones[tone]} ${disabled ? 'cursor-not-allowed opacity-40' : ''}`}>
+      
+      <style jsx global>{`
+        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
+        .rcc-shell-main,
+        .rcc-shell-content,
+        .rcc-shell-content > *,
+        main.rcc-shell-main > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+        [class*="revenue-command-center"] {
+          max-width: none !important;
+        }
+      `}</style>
+
       {children}
     </button>
   )
@@ -384,7 +400,7 @@ export default function RevenueCommandHQWorkspace() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#070b16] px-4 py-6 text-white md:px-8">
+    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-[#070b16] px-4 py-6 text-white md:px-8">
       <section className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-slate-950 via-indigo-950/70 to-slate-950 p-6 shadow-2xl shadow-cyan-950/40 md:p-8">
         <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl" />
         <div className="absolute -bottom-24 left-24 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl" />

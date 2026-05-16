@@ -17,6 +17,22 @@ export function Panel({ title, subtitle, children, action, dense = false }: { ti
           {action}
         </div>
       ) : null}
+      
+      <style jsx global>{`
+        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
+        .rcc-shell-main,
+        .rcc-shell-content,
+        .rcc-shell-content > *,
+        main.rcc-shell-main > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+        [class*="revenue-command-center"] {
+          max-width: none !important;
+        }
+      `}</style>
+
       {children}
     </section>
   )

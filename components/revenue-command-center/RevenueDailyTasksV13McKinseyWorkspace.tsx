@@ -352,7 +352,23 @@ function writeStore(store: Store) {
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>{children}</section>
+  return <section className={`rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
+      <style jsx global>{`
+        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
+        .rcc-shell-main,
+        .rcc-shell-content,
+        .rcc-shell-content > *,
+        main.rcc-shell-main > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+        [class*="revenue-command-center"] {
+          max-width: none !important;
+        }
+      `}</style>
+
+      {children}</section>
 }
 
 function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement> & { tone?: "dark" | "blue" | "red" | "green" | "soft" }) {
@@ -648,8 +664,8 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
   }, [store.tasks])
 
   return (
-    <main className="min-h-screen bg-[#F3F5F8] text-slate-950">
-      <div className="mx-auto max-w-[1900px] space-y-6 p-5 lg:p-8">
+    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-[#F3F5F8] text-slate-950">
+      <div className="w-full max-w-none min-w-0 space-y-6 p-5 lg:p-8">
 
         <section className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
           <div className="grid gap-8 xl:grid-cols-[1.12fr_.88fr]">

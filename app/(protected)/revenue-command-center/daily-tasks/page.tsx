@@ -1,7 +1,7 @@
-import RevenueDailyTasksV13McKinseyWorkspace from "@/components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace"
+import RevenueDailyTasksProductionCommandCenter from "@/components/revenue-command-center/RevenueDailyTasksProductionCommandCenter"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueDailyTasksV13McKinseyWorkspace mode="dashboard" />
+  return <RevenueDailyTasksProductionCommandCenter />
 }

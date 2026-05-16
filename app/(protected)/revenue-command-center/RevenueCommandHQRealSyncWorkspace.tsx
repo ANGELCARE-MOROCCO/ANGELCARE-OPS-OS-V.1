@@ -130,7 +130,23 @@ function riskClass(risk?: string | null) {
 }
 
 function Badge({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${className}`}>{children}</span>
+  return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${className}`}>
+      <style jsx global>{`
+        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
+        .rcc-shell-main,
+        .rcc-shell-content,
+        .rcc-shell-content > *,
+        main.rcc-shell-main > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+        [class*="revenue-command-center"] {
+          max-width: none !important;
+        }
+      `}</style>
+
+      {children}</span>
 }
 
 function Section({ title, subtitle, children, action }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode }) {
@@ -272,8 +288,8 @@ export default function RevenueCommandHQRealSyncWorkspace() {
   const selectedAll = filtered.length > 0 && filtered.every((r) => selected.includes(r.id))
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 text-slate-950 md:p-8">
-      <div className="mx-auto max-w-[1800px] space-y-6">
+    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-slate-100 p-4 text-slate-950 md:p-8">
+      <div className="w-full max-w-none min-w-0 space-y-6">
         <div className="overflow-hidden rounded-[36px] border border-slate-800 bg-slate-950 shadow-2xl">
           <div className="grid gap-6 p-6 md:grid-cols-[1.35fr_.65fr] md:p-8">
             <div>
@@ -406,5 +422,5 @@ function AgendaRow({ record, onNext, onDone }: { record: RevenueRecord; onNext: 
 
 function EditDrawer({ record, onClose, onSave }: { record: RevenueRecord; onClose: () => void; onSave: (updates: Partial<RevenueRecord>) => void }) {
   const [draft, setDraft] = useState({ title: record.title || '', description: record.description || '', owner_name: record.owner_name || '', status: record.status || 'open', priority: record.priority || 'medium', risk_level: record.risk_level || 'low', value_mad: Number(record.value_mad || 0), due_at: record.due_at ? record.due_at.slice(0,16) : '' })
-  return <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/50 p-4"><div className="h-full w-full max-w-xl overflow-y-auto rounded-[32px] bg-white p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><h2 className="text-2xl font-black text-slate-950">Edit command record</h2><p className="mt-1 text-sm font-bold text-slate-500">Changes are saved through the V11 records API and refresh the live HQ.</p></div><Button onClick={onClose} tone="light">Close</Button></div><div className="mt-6 grid gap-3"><input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /><input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.owner_name} onChange={(e) => setDraft({ ...draft, owner_name: e.target.value })} placeholder="Owner" /><textarea className="min-h-[140px] rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /><select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.status as string} onChange={(e) => setDraft({ ...draft, status: e.target.value })}>{['open','active','in_progress','done','blocked','escalated','archived','won','lost'].map((x) => <option key={x}>{x}</option>)}</select><select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.priority as string} onChange={(e) => setDraft({ ...draft, priority: e.target.value })}>{['low','medium','high','critical'].map((x) => <option key={x}>{x}</option>)}</select><select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.risk_level as string} onChange={(e) => setDraft({ ...draft, risk_level: e.target.value })}>{['low','medium','high','critical'].map((x) => <option key={x}>{x}</option>)}</select><input type="number" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.value_mad} onChange={(e) => setDraft({ ...draft, value_mad: Number(e.target.value) })} /><input type="datetime-local" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.due_at} onChange={(e) => setDraft({ ...draft, due_at: e.target.value })} /><Button onClick={() => onSave(draft as any)} tone="dark">Save real update</Button></div></div></div>
+  return <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/50 p-4"><div className="rcc-shell-content w-full max-w-none min-w-0 h-full w-full max-w-xl overflow-y-auto rounded-[32px] bg-white p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><h2 className="text-2xl font-black text-slate-950">Edit command record</h2><p className="mt-1 text-sm font-bold text-slate-500">Changes are saved through the V11 records API and refresh the live HQ.</p></div><Button onClick={onClose} tone="light">Close</Button></div><div className="mt-6 grid gap-3"><input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /><input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.owner_name} onChange={(e) => setDraft({ ...draft, owner_name: e.target.value })} placeholder="Owner" /><textarea className="min-h-[140px] rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /><select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.status as string} onChange={(e) => setDraft({ ...draft, status: e.target.value })}>{['open','active','in_progress','done','blocked','escalated','archived','won','lost'].map((x) => <option key={x}>{x}</option>)}</select><select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.priority as string} onChange={(e) => setDraft({ ...draft, priority: e.target.value })}>{['low','medium','high','critical'].map((x) => <option key={x}>{x}</option>)}</select><select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.risk_level as string} onChange={(e) => setDraft({ ...draft, risk_level: e.target.value })}>{['low','medium','high','critical'].map((x) => <option key={x}>{x}</option>)}</select><input type="number" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.value_mad} onChange={(e) => setDraft({ ...draft, value_mad: Number(e.target.value) })} /><input type="datetime-local" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold" value={draft.due_at} onChange={(e) => setDraft({ ...draft, due_at: e.target.value })} /><Button onClick={() => onSave(draft as any)} tone="dark">Save real update</Button></div></div></div>
 }

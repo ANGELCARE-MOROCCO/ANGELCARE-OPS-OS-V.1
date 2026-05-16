@@ -1,7 +1,7 @@
-import CentralRevenueCoreDashboard from '../_central-core/CentralRevenueCoreDashboard'
+import RevenueCommandAnalyticsSourceOfTruthWorkspace from "@/components/revenue-command-center/RevenueCommandAnalyticsSourceOfTruthWorkspace"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <CentralRevenueCoreDashboard focus="revenue-analytics" />
+  return <RevenueCommandAnalyticsSourceOfTruthWorkspace />
 }

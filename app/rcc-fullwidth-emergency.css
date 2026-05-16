@@ -1,0 +1,23 @@
+/* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 emergency CSS */
+body:has([data-rcc-root]),
+body:has([data-rcc-shell]) {
+  overflow-x: hidden;
+}
+
+[data-rcc-root],
+[data-rcc-shell],
+.rcc-route-fullwidth,
+.rcc-shell-main,
+.rcc-shell-content,
+.rcc-shell-content > *,
+main.rcc-shell-main > * {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+[class*="max-w-"][class*="revenue"],
+[class*="max-w-"][class*="Revenue"],
+[class*="max-w-"][class*="rcc"] {
+  max-width: none !important;
+}
