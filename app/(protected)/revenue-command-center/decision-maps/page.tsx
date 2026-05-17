@@ -3,5 +3,5 @@ import CentralRevenueCoreDashboard from '../_central-core/CentralRevenueCoreDash
 export const dynamic = 'force-dynamic'
 
 export default function Page() {
-  return <CentralRevenueCoreDashboard focus="decision-maps" />
+return <CentralRevenueCoreDashboard />
 }

@@ -1,242 +1,1057 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
-import { Activity, AlertTriangle, BarChart3, Bell, BriefcaseBusiness, CalendarDays, CheckSquare, ChevronRight, Command, Filter, GitBranch, Handshake, LayoutDashboard, Megaphone, Mic, Network, Plus, RefreshCcw, Search, ShieldCheck, Target, Users, Zap } from 'lucide-react'
+import Link from "next/link";
+import { useMemo } from "react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  BarChart3,
+  Bell,
+  BriefcaseBusiness,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  DatabaseZap,
+  FileText,
+  Gauge,
+  Globe2,
+  Handshake,
+  Layers3,
+  LineChart,
+  MapPinned,
+  Megaphone,
+  MessageCircle,
+  PhoneCall,
+  RefreshCcw,
+  ShieldCheck,
+  Sparkles,
+  Settings,
+  Target,
+  Users,
+  Workflow,
+  Zap,
+} from "lucide-react";
 
-type ModuleKey = 'prospects' | 'appointments' | 'sdr' | 'daily-tasks' | 'campaigns' | 'partnerships' | 'analytics' | 'executive-briefing' | 'follow-ups' | 'b2c-workflow' | 'decision-maps'
-type StageKey = 'prospecting' | 'qualified' | 'proposal' | 'negotiation' | 'closed-won' | 'blocked' | 'lost'
+import {
+  useLiveActivities,
+  useLiveAppointments,
+  useLiveProspects,
+  useLiveTasks,
+  type RCCAppointment,
+  type RCCProspect,
+  type RCCTask,
+} from "@/lib/revenue-command-center/live-sync";
 
-type RecordRow = {
-  id: string
-  module: ModuleKey
-  title: string
-  account: string
-  owner: string
-  stage: StageKey
-  status: string
-  priority: string
-  value_mad: number
-  probability: number
-  due_at: string | null
-  updated_at: string
+function cn(...items: Array<string | false | null | undefined>) {
+  return items.filter(Boolean).join(" ");
 }
 
-type Snapshot = {
-  records: RecordRow[]
-  totals: { pipelineMad: number; openRecords: number; wonMad: number; forecastMad: number; meetingsToday: number; winRate: number; avgDealSizeMad: number; salesCycleDays: number; forecastAccuracy: number }
-  stageTotals: Array<{ stage: StageKey; label: string; valueMad: number; count: number }>
-  moduleTotals: Array<{ module: ModuleKey; label: string; count: number; valueMad: number; critical: number }>
-  alerts: RecordRow[]
-  schedule: RecordRow[]
-  activity: RecordRow[]
-  opportunities: RecordRow[]
+function money(value: number) {
+  if (Math.abs(value) >= 1_000_000)
+    return `${(value / 1_000_000).toFixed(2)}M MAD`;
+  if (Math.abs(value) >= 1_000) return `${Math.round(value / 1000)}K MAD`;
+  return `${Math.round(value || 0)} MAD`;
 }
 
-const blank: Snapshot = {
-  records: [],
-  totals: { pipelineMad: 0, openRecords: 0, wonMad: 0, forecastMad: 0, meetingsToday: 0, winRate: 0, avgDealSizeMad: 0, salesCycleDays: 0, forecastAccuracy: 0 },
-  stageTotals: [], moduleTotals: [], alerts: [], schedule: [], activity: [], opportunities: []
+function pct(value: number) {
+  return `${Math.max(0, Math.min(100, Math.round(value || 0)))}%`;
 }
 
-const moduleMeta: Array<{ key: ModuleKey; label: string; href: string; icon: any; description: string; gradient: string; accent: string }> = [
-  { key: 'prospects', label: 'Prospects', href: '/revenue-command-center/prospects', icon: Users, description: 'Create, qualify, score and move prospects through the live pipeline.', gradient: 'linear-gradient(135deg,#22d3ee,#2563eb)', accent: '#38bdf8' },
-  { key: 'appointments', label: 'Appointments', href: '/revenue-command-center/appointments', icon: CalendarDays, description: 'Schedule meetings, conversion calls and revenue follow-through.', gradient: 'linear-gradient(135deg,#60a5fa,#4f46e5)', accent: '#60a5fa' },
-  { key: 'sdr', label: 'SDR Hub', href: '/revenue-command-center/sdr-execution', icon: Network, description: 'Operate SDR actions, ownership, recovery and qualification velocity.', gradient: 'linear-gradient(135deg,#a78bfa,#7c3aed)', accent: '#a78bfa' },
-  { key: 'daily-tasks', label: 'Daily Tasks', href: '/revenue-command-center/daily-desk', icon: CheckSquare, description: 'Live task queue, execution discipline, blockers and next actions.', gradient: 'linear-gradient(135deg,#facc15,#f97316)', accent: '#fbbf24' },
-  { key: 'campaigns', label: 'Campaigns', href: '/revenue-command-center/campaigns', icon: Megaphone, description: 'Campaign production, activation, pipeline source and revenue impact.', gradient: 'linear-gradient(135deg,#f472b6,#be123c)', accent: '#fb7185' },
-  { key: 'partnerships', label: 'Partnerships', href: '/revenue-command-center/partnerships', icon: Handshake, description: 'Strategic B2B partnerships, channel conversion and account growth.', gradient: 'linear-gradient(135deg,#fde047,#ea580c)', accent: '#f59e0b' },
-  { key: 'follow-ups', label: 'Follow-Ups', href: '/revenue-command-center/follow-ups', icon: RefreshCcw, description: 'Automated follow-up control, overdue recovery and retention pressure.', gradient: 'linear-gradient(135deg,#34d399,#059669)', accent: '#34d399' },
-  { key: 'b2c-workflow', label: 'B2C Workflow', href: '/revenue-command-center/b2c-workflow', icon: GitBranch, description: 'B2C journey flow, conversion movement and customer routing.', gradient: 'linear-gradient(135deg,#c084fc,#a21caf)', accent: '#d946ef' },
-  { key: 'decision-maps', label: 'Decision Maps', href: '/revenue-command-center/decision-maps', icon: Target, description: 'Decision makers, influence paths, blockers and approval mapping.', gradient: 'linear-gradient(135deg,#fb7185,#e11d48)', accent: '#f43f5e' },
-  { key: 'executive-briefing', label: 'Executive Briefing', href: '/revenue-command-center/executive-briefing', icon: BriefcaseBusiness, description: 'Executive reports, risks, forecasts and action briefings.', gradient: 'linear-gradient(135deg,#818cf8,#2563eb)', accent: '#818cf8' },
-]
-
-const C = {
-  bg: '#020817', panel: '#081522', card: '#0d1b2b', card2: '#112235', border: 'rgba(148, 211, 255, .22)',
-  text: '#f8fafc', text2: '#dbeafe', muted: '#b8c7dc', faint: '#94a3b8', cyan: '#67e8f9', green: '#34d399', red: '#fb7185', violet: '#a78bfa'
+function isToday(value?: string | null) {
+  if (!value) return false;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return false;
+  return d.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10);
 }
 
-const s: Record<string, CSSProperties> = {
-  root: { minHeight: '100vh', background: C.bg, color: C.text, fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif' },
-  glow: { position: 'fixed', inset: 0, background: 'radial-gradient(circle at 17% 2%, rgba(59,130,246,.22), transparent 30%), radial-gradient(circle at 82% 0%, rgba(168,85,247,.24), transparent 35%), linear-gradient(135deg,#020817,#071426 52%,#030712)', pointerEvents: 'none' },
-  layout: { position: 'relative', display: 'grid', gridTemplateColumns: '292px minmax(0,1fr)', minHeight: '100vh' },
-  aside: { position: 'sticky', top: 0, height: '100vh', borderRight: '1px solid rgba(255,255,255,.10)', background: 'rgba(4,16,29,.96)', padding: 18, backdropFilter: 'blur(22px)' },
-  page: { padding: '18px 22px 34px' },
-  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18, borderBottom: '1px solid rgba(255,255,255,.10)', paddingBottom: 16, marginBottom: 16 },
-  input: { height: 42, width: 560, borderRadius: 14, border: `1px solid ${C.border}`, background: '#050b18', color: C.text, padding: '0 16px 0 44px', outline: 'none', fontWeight: 700 },
-  btn: { height: 42, borderRadius: 14, border: `1px solid ${C.border}`, background: 'rgba(255,255,255,.08)', color: C.text, padding: '0 14px', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', textDecoration: 'none' },
-  primaryBtn: { height: 42, borderRadius: 14, border: '1px solid rgba(124,58,237,.55)', background: 'linear-gradient(135deg,#7c3aed,#2563eb)', color: '#fff', padding: '0 16px', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', textDecoration: 'none' },
-  grid: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 350px', gap: 16 },
-  card: { borderRadius: 24, border: `1px solid ${C.border}`, background: 'linear-gradient(180deg,rgba(13,27,43,.98),rgba(8,21,34,.98))', boxShadow: '0 24px 80px rgba(0,0,0,.34)', color: C.text },
-  cardPad: { padding: 18 },
-  title: { margin: 0, color: C.text, fontWeight: 950, letterSpacing: '-.03em' },
-  subtitle: { margin: '4px 0 0', color: C.muted, fontWeight: 700 },
-  navLabel: { margin: '22px 8px 10px', color: C.muted, fontSize: 11, fontWeight: 950, textTransform: 'uppercase', letterSpacing: '.22em' },
-  tableHead: { position: 'sticky', top: 0, background: '#0d1b2b', color: C.text2, fontSize: 12, textTransform: 'uppercase', letterSpacing: '.18em' }
+function isOpenTask(task: RCCTask) {
+  return !["done", "completed", "cancelled", "canceled"].includes(
+    String(task.status || "").toLowerCase(),
+  );
 }
 
-function mad(value: number) {
-  if (!Number.isFinite(value)) return '0 MAD'
-  if (Math.abs(value) >= 1000000) return `${(value / 1000000).toFixed(2)}M MAD`
-  if (Math.abs(value) >= 1000) return `${Math.round(value / 1000)}K MAD`
-  return `${Math.round(value)} MAD`
+function prospectStageValue(prospect: RCCProspect) {
+  return Number(prospect.valueMad || 0);
 }
-function timeLabel(value: string | null) { if (!value) return 'No date'; return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }).format(new Date(value)) }
-function safeRows<T>(rows: T[] | undefined, fallback: T[] = []) { return Array.isArray(rows) && rows.length ? rows : fallback }
 
-export default function CentralRevenueCoreDashboard({ focus }: { focus?: string }) {
-  const [snapshot, setSnapshot] = useState<Snapshot>(blank)
-  const [loading, setLoading] = useState(true)
-  const [syncedAt, setSyncedAt] = useState('')
-  const [query, setQuery] = useState('')
-  const [quick, setQuick] = useState('')
-  const [view, setView] = useState<'forecast' | 'pipeline' | 'modules' | 'owners'>('forecast')
-  const [moduleFilter, setModuleFilter] = useState<ModuleKey | 'all'>('all')
+function stageLabel(stage: string) {
+  const labels: Record<string, string> = {
+    new_lead: "Prospecting",
+    discovery: "Discovery",
+    qualification: "Qualified",
+    decision_map: "Decision Map",
+    appointment_ready: "Appointment Ready",
+    proposal: "Proposal",
+    negotiation: "Negotiation",
+    contracting: "Contracting",
+    closed_won: "Closed Won",
+    won: "Closed Won",
+    closed_lost: "Closed Lost",
+    lost: "Closed Lost",
+    recovery: "Recovery",
+  };
+  return labels[stage] || stage.replaceAll("_", " ") || "Unassigned";
+}
 
-  async function load() {
-    const response = await fetch('/api/revenue-command-center/central-core', { cache: 'no-store' })
-    const json = await response.json()
-    if (json?.snapshot) setSnapshot(json.snapshot)
-    if (json?.syncedAt) setSyncedAt(json.syncedAt)
-    setLoading(false)
-  }
-  useEffect(() => { load().catch(() => setLoading(false)); const interval = window.setInterval(() => load().catch(() => null), 9000); return () => window.clearInterval(interval) }, [])
+function moduleHref(id: string) {
+  const map: Record<string, string> = {
+    prospects: "/revenue-command-center/prospects",
+    appointments: "/revenue-command-center/appointments",
+    sdr: "/revenue-command-center/sdr",
+    "daily-tasks": "/revenue-command-center/daily-tasks",
+    campaigns: "/revenue-command-center/campaigns",
+    partnerships: "/revenue-command-center/partnerships",
+    "follow-ups": "/revenue-command-center/follow-ups",
+    "b2c-workflow": "/revenue-command-center/b2c-workflow",
+    "decision-maps": "/revenue-command-center/prospects/decision-map",
+    "executive-briefing": "/revenue-command-center/executive-briefing",
+  };
+  return map[id] || "/revenue-command-center/prospects";
+}
 
-  async function createQuick() {
-    if (!quick.trim()) return
-    await fetch('/api/revenue-command-center/central-core', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ title: quick.trim(), account: 'Quick revenue action', owner: 'Central Revenue Core', module: (focus as ModuleKey) || (moduleFilter === 'all' ? 'prospects' : moduleFilter), stage: 'prospecting', status: 'open', priority: 'high', value_mad: 25000, probability: 35 }) })
-    setQuick('')
-    await load()
-  }
+const moduleCards = [
+  {
+    id: "prospects",
+    title: "Prospects",
+    icon: Users,
+    subtitle: "Live qualification, ownership and pipeline movement.",
+  },
+  {
+    id: "appointments",
+    title: "Appointments",
+    icon: CalendarDays,
+    subtitle: "Meetings, conversion calls and revenue follow-through.",
+  },
+  {
+    id: "sdr",
+    title: "SDR Hub",
+    icon: PhoneCall,
+    subtitle: "Outbound actions, recovery and qualification velocity.",
+  },
+  {
+    id: "daily-tasks",
+    title: "Daily Tasks",
+    icon: CheckCircle2,
+    subtitle: "Live task queue, blockers and next actions.",
+  },
+  {
+    id: "campaigns",
+    title: "Campaigns",
+    icon: Megaphone,
+    subtitle: "Activation, source tracking and campaign revenue impact.",
+  },
+  {
+    id: "partnerships",
+    title: "Partnerships",
+    icon: Handshake,
+    subtitle: "B2B channel growth and partnership conversion.",
+  },
+  {
+    id: "follow-ups",
+    title: "Follow-Ups",
+    icon: RefreshCcw,
+    subtitle: "Overdue recovery and retention pressure.",
+  },
+  {
+    id: "b2c-workflow",
+    title: "B2C Workflow",
+    icon: Workflow,
+    subtitle: "Family conversion movement and customer routing.",
+  },
+  {
+    id: "decision-maps",
+    title: "Decision Maps",
+    icon: MapPinned,
+    subtitle: "Decision makers, blockers and influence mapping.",
+  },
+  {
+    id: "executive-briefing",
+    title: "Executive Briefing",
+    icon: BriefcaseBusiness,
+    subtitle: "Risks, forecasts and action briefings.",
+  },
+];
 
-  const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim()
-    return snapshot.records.filter((r) => (moduleFilter === 'all' || r.module === moduleFilter) && (!q || [r.title, r.account, r.owner, r.module, r.stage, r.status].join(' ').toLowerCase().includes(q)))
-  }, [snapshot.records, query, moduleFilter])
 
-  const maxStage = Math.max(...snapshot.stageTotals.map(s => s.valueMad), 1)
-  const ownerRows = useMemo(() => {
-    const map = new Map<string, { label: string; value: number; count: number }>()
-    snapshot.records.forEach(r => { const prev = map.get(r.owner) || { label: r.owner || 'Unassigned', value: 0, count: 0 }; prev.value += r.value_mad || 0; prev.count += 1; map.set(prev.label, prev) })
-    return Array.from(map.values()).sort((a,b)=>b.value-a.value).slice(0,8)
-  }, [snapshot.records])
-  const performanceRows = useMemo(() => {
-    if (view === 'modules') return snapshot.moduleTotals.map(m => ({ label: m.label, value: m.valueMad, count: m.count, href: moduleMeta.find(x=>x.key===m.module)?.href || '/revenue-command-center', score: Math.max(14, Math.round((m.valueMad / Math.max(snapshot.totals.pipelineMad,1))*100)) }))
-    if (view === 'pipeline') return snapshot.stageTotals.map(st => ({ label: st.label, value: st.valueMad, count: st.count, href: `/revenue-command-center/prospects?stage=${st.stage}`, score: Math.max(14, Math.round((st.valueMad / maxStage)*100)) }))
-    if (view === 'owners') return ownerRows.map(o => ({ ...o, href: `/revenue-command-center?owner=${encodeURIComponent(o.label)}`, score: Math.max(14, Math.round((o.value / Math.max(ownerRows[0]?.value || 1,1))*100)) }))
-    const base = Math.max(snapshot.totals.forecastMad, snapshot.totals.pipelineMad, 1)
-    return ['Baseline','Qualified','Proposal','Negotiation','Weighted','Committed','Best Case'].map((label, i) => ({ label, value: Math.round(base * [.28,.38,.48,.58,.70,.84,1][i]), count: i+1, href: '/revenue-command-center/revenue-analytics', score: [24,34,44,55,67,80,94][i] }))
-  }, [view, snapshot, ownerRows, maxStage])
+function RevenueDashboardSidebar({
+  prospectCount,
+  taskCount,
+  appointmentCount,
+  alertCount,
+}: {
+  prospectCount: number;
+  taskCount: number;
+  appointmentCount: number;
+  alertCount: number;
+}) {
+  const item = (
+    href: string,
+    icon: React.ReactNode,
+    label: string,
+    active = false,
+    badge?: number | string,
+  ) => (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition",
+        active
+          ? "bg-violet-600/30 text-white ring-1 ring-violet-400/30"
+          : "text-white/78 hover:bg-[#1a2b42] hover:text-white",
+      )}
+    >
+      <span className="grid h-5 w-5 place-items-center [&_svg]:h-5 [&_svg]:w-5">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {badge !== undefined && (
+        <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">
+          {badge}
+        </span>
+      )}
+    </Link>
+  );
 
-  const activeModules = moduleMeta.map(m => ({ ...m, total: snapshot.moduleTotals.find(t => t.module === m.key) }))
-
-  return <main style={s.root} className="rcc-force-contrast">
-    <style>{`
-      .rcc-force-contrast, .rcc-force-contrast * { box-sizing: border-box; }
-      .rcc-force-contrast h1, .rcc-force-contrast h2, .rcc-force-contrast h3, .rcc-force-contrast p, .rcc-force-contrast span, .rcc-force-contrast b, .rcc-force-contrast strong, .rcc-force-contrast td, .rcc-force-contrast th, .rcc-force-contrast a, .rcc-force-contrast button, .rcc-force-contrast input { color: inherit; }
-      .rcc-force-contrast a { text-decoration: none; }
-      .rcc-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
-      .rcc-scroll::-webkit-scrollbar-thumb { background: rgba(103,232,249,.42); border-radius: 999px; }
-      .rcc-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,.06); }
-    `}</style>
-    <div style={s.glow} />
-    <div style={s.layout}>
-      <aside style={s.aside}>
-        <Link href="/revenue-command-center" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 30, color: C.text }}>
-          <div style={{ width: 48, height: 48, borderRadius: 16, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#d946ef,#7c3aed,#22d3ee)', fontWeight: 950, fontSize: 22 }}>A</div>
-          <div><div style={{ fontSize: 18, fontWeight: 950, letterSpacing: '.04em' }}>ANGELCARE</div><div style={{ color: C.text2, fontSize: 12, fontWeight: 800 }}>Strategic Business Development</div></div>
-        </Link>
-        <NavGroup title="Command HQ" items={[{ href: '/revenue-command-center', label: 'Command Center', icon: Command }]} />
-        <NavGroup title="Central Revenue Core" items={moduleMeta.slice(0,9).map(m=>({ href: m.href, label: m.label, icon: m.icon }))} />
-        <NavGroup title="Intelligence" items={[{ href: '/revenue-command-center/revenue-analytics', label: 'Revenue Analytics', icon: BarChart3 }, { href: '/revenue-command-center/executive-briefing', label: 'Executive Briefing', icon: ShieldCheck }]} />
-        <div style={{ position: 'absolute', left: 18, right: 18, bottom: 18 }}>
-          <div style={{ ...s.card, padding: 14, borderColor: 'rgba(52,211,153,.28)' }}><div style={{ display: 'flex', gap: 10, alignItems: 'center' }}><ShieldCheck style={{ color: C.green }} /><div><p style={{ margin: 0, color: C.text, fontWeight: 950 }}>System Status</p><p style={{ margin: 0, color: C.green, fontWeight: 900 }}>Live central core</p><p style={{ margin: 0, color: C.muted, fontSize: 12 }}>{syncedAt ? `Synced ${timeLabel(syncedAt)}` : loading ? 'Syncing now' : 'Ready'}</p></div></div></div>
-        </div>
-      </aside>
-
-      <section style={s.page}>
-        <header style={s.header}>
-          <div style={{ position: 'relative' }}><Search size={18} style={{ position: 'absolute', left: 15, top: 12, color: C.muted }} /><input style={s.input} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search prospects, accounts, deals, tasks..." /></div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}><button onClick={load} style={s.btn}><RefreshCcw size={16}/>Refresh live</button><Link href="/revenue-command-center/daily-desk" style={s.primaryBtn}><Plus size={17}/>Create action</Link><Bell style={{ color: C.text2 }}/><span style={{ display: 'grid', placeItems: 'center', width: 40, height: 40, borderRadius: 999, background: '#4f46e5', fontWeight: 950 }}>AE</span></div>
-        </header>
-
-        <div style={s.grid}>
-          <div style={{ display: 'grid', gap: 16 }}>
-            <section><h1 style={{ ...s.title, fontSize: 26 }}>Angelcare Strategic Business Development Command Center 🛡️</h1><p style={{ ...s.subtitle, fontSize: 15 }}>Live MAD revenue intelligence, pipeline movement and execution control connected to the central revenue core.</p></section>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: 12 }}>
-              <Kpi icon={Target} label="Pipeline Value" value={mad(snapshot.totals.pipelineMad)} sub="live central baseline" />
-              <Kpi icon={BriefcaseBusiness} label="Open Records" value={String(snapshot.totals.openRecords)} sub={`${filtered.length} visible records`} />
-              <Kpi icon={Megaphone} label="Won This Month" value={mad(snapshot.totals.wonMad)} sub="synced from closed-won" />
-              <Kpi icon={BarChart3} label="Forecast" value={mad(snapshot.totals.forecastMad)} sub="weighted MAD forecast" />
-              <Kpi icon={CalendarDays} label="Meetings Today" value={String(snapshot.totals.meetingsToday)} sub="view agenda →" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr .9fr', gap: 14 }}>
-              <Card title="Revenue Pipeline Overview" action={<Link href="/revenue-command-center/prospects" style={{ color: C.cyan, fontWeight: 900 }}>Open pipeline</Link>}>
-                <h3 style={{ margin: '4px 0', color: C.text, fontSize: 28 }}>{mad(snapshot.totals.pipelineMad)}</h3><p style={{ margin: 0, color: C.green, fontWeight: 900 }}>↑ live MAD pipeline by stage</p>
-                <div style={{ height: 145, display: 'flex', alignItems: 'end', gap: 14, marginTop: 14 }}>{snapshot.stageTotals.slice(0,5).map((st,i)=><Link key={st.stage} href={`/revenue-command-center/prospects?stage=${st.stage}`} style={{ flex: 1, color: C.text, textAlign: 'center' }}><div style={{ height: `${Math.max(34, (st.valueMad/maxStage)*118)}px`, borderRadius: '10px 10px 0 0', background: ['linear-gradient(#60a5fa,#2563eb)','linear-gradient(#34d399,#059669)','linear-gradient(#fde047,#f97316)','linear-gradient(#f472b6,#be185d)','linear-gradient(#c084fc,#7c3aed)'][i], boxShadow: '0 12px 30px rgba(0,0,0,.25)' }} /><p style={{ margin: '8px 0 0', color: C.text2, fontSize: 12, fontWeight: 900 }}>{st.label}</p><b style={{ color: C.text }}>{mad(st.valueMad)}</b></Link>)}</div>
-              </Card>
-              <Card title="Revenue Performance Control Room" action={<Link href="/revenue-command-center/revenue-analytics" style={{ color: C.cyan, fontWeight: 900 }}>Open analytics</Link>}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'end' }}><div><h3 style={{ margin: '4px 0', color: C.text, fontSize: 28 }}>{mad(view === 'forecast' ? snapshot.totals.forecastMad : performanceRows.reduce((a,b)=>a+b.value,0))}</h3><p style={{ margin: 0, color: C.green, fontWeight: 900 }}>↑ live, clickable and synced</p></div><div style={{ display: 'flex', gap: 6 }}>{(['forecast','pipeline','modules','owners'] as const).map(v=><button key={v} onClick={()=>setView(v)} style={{ ...s.btn, height: 34, padding: '0 10px', background: view===v ? 'rgba(103,232,249,.18)' : 'rgba(255,255,255,.06)', borderColor: view===v ? 'rgba(103,232,249,.55)' : C.border, color: C.text }}>{v}</button>)}</div></div>
-                <div style={{ marginTop: 16, padding: 14, borderRadius: 18, background: 'linear-gradient(135deg,rgba(76,29,149,.8),rgba(14,22,44,.9))', border: `1px solid ${C.border}` }}>
-                  <div style={{ display: 'grid', gap: 8 }}>{performanceRows.slice(0,7).map((row,i)=><Link key={row.label} href={row.href} style={{ display: 'grid', gridTemplateColumns: '130px 1fr 98px', gap: 12, alignItems: 'center', color: C.text }}><span style={{ color: C.text2, fontWeight: 900 }}>{row.label}</span><span style={{ height: 12, borderRadius: 999, background: 'rgba(255,255,255,.11)', overflow: 'hidden' }}><span style={{ display:'block', width: `${Math.min(100,row.score)}%`, height: '100%', borderRadius: 999, background: ['#60a5fa','#22c55e','#f59e0b','#ec4899','#8b5cf6','#67e8f9','#f97316'][i%7] }} /></span><b style={{ textAlign: 'right', color: C.text }}>{mad(row.value)}</b></Link>)}</div>
-                </div>
-              </Card>
-            </div>
-
-            <Card title="Core Modules Gateway" subtitle="No invisible text. Every card is clickable and opens the restored expert workspace." action={<select value={moduleFilter} onChange={e=>setModuleFilter(e.target.value as any)} style={{ ...s.btn, color: C.text, background: '#071426' }}><option value="all">All modules</option>{moduleMeta.map(m=><option key={m.key} value={m.key}>{m.label}</option>)}</select>}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: 12, marginTop: 16 }}>{activeModules.map(m => { const Icon = m.icon; return <Link key={m.key} href={m.href} style={{ minHeight: 158, borderRadius: 20, border: `1px solid ${m.accent}55`, background: 'linear-gradient(180deg,rgba(22,37,55,.98),rgba(11,25,40,.98))', padding: 16, color: C.text, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxShadow: '0 18px 45px rgba(0,0,0,.22)' }}><div><div style={{ width: 52, height: 52, display: 'grid', placeItems: 'center', borderRadius: 14, background: m.gradient, color: '#03101d', marginBottom: 12 }}><Icon size={23}/></div><div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8 }}><h3 style={{ margin: 0, color: C.text, fontSize: 17, fontWeight: 950 }}>{m.label}</h3><ChevronRight size={19} style={{ color: C.text2 }}/></div><p style={{ margin: '6px 0 0', color: C.text2, fontWeight: 700, lineHeight: 1.35 }}>{m.description}</p></div><p style={{ margin: '10px 0 0', color: C.cyan, fontSize: 13, fontWeight: 950 }}>{m.total?.count ?? 0} synced · {mad(m.total?.valueMad ?? 0)}</p></Link> })}</div>
-            </Card>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 14 }}>
-              <Card title="Pipeline by Stage (MAD)" action={<Link href="/revenue-command-center/prospects" style={{ color: C.cyan, fontWeight: 900 }}>Manage</Link>}><div style={{ display:'grid', gridTemplateColumns:'150px 1fr', gap:16, alignItems:'center', marginTop: 12 }}><div style={{ width:150,height:150,borderRadius:999,display:'grid',placeItems:'center',background:'conic-gradient(#0ea5e9 0 18%,#10b981 18% 44%,#f59e0b 44% 67%,#ec4899 67% 86%,#8b5cf6 86% 100%)' }}><div style={{ width:94,height:94,borderRadius:999,display:'grid',placeItems:'center',background:C.panel,textAlign:'center',fontWeight:950,color:C.text }}>{mad(snapshot.totals.pipelineMad)}</div></div><div>{snapshot.stageTotals.slice(0,5).map(st=><Link href={`/revenue-command-center/prospects?stage=${st.stage}`} key={st.stage} style={{ display:'flex', justifyContent:'space-between', color:C.text, padding:'7px 0', borderBottom:'1px solid rgba(255,255,255,.08)' }}><span style={{ color:C.text2, fontWeight:900 }}>{st.label}</span><b>{mad(st.valueMad)}</b></Link>)}</div></div></Card>
-              <Card title="Top Opportunities"><List rows={snapshot.opportunities}/></Card>
-              <Card title="SDR + Owner Performance"><div style={{ marginTop: 14, display:'grid', gap: 13 }}>{safeRows(ownerRows).slice(0,5).map((row,i)=><Link href={`/revenue-command-center?owner=${encodeURIComponent(row.label)}`} key={row.label} style={{ color:C.text }}><div style={{ display:'flex', justifyContent:'space-between', marginBottom:5 }}><b>{row.label}</b><span style={{ color:C.text2, fontWeight:900 }}>{mad(row.value)}</span></div><div style={{ height:9,borderRadius:999,background:'rgba(255,255,255,.12)' }}><div style={{ width:`${Math.max(12,Math.round((row.value/(ownerRows[0]?.value || 1))*100))}%`, height:9,borderRadius:999,background:i%2?'linear-gradient(90deg,#60a5fa,#818cf8)':'linear-gradient(90deg,#22c55e,#2dd4bf)' }} /></div></Link>)}</div></Card>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-              <Card title="Recent Activity Feed"><List rows={snapshot.activity} compact /></Card>
-              <Card title="Tasks & Follow-Ups Overview"><div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginTop:16 }}><MiniMetric value={String(snapshot.moduleTotals.find(m=>m.module==='daily-tasks')?.count ?? 0)} label="Tasks"/><MiniMetric value={String(snapshot.alerts.length)} label="Critical"/><MiniMetric value={String(snapshot.moduleTotals.find(m=>m.module==='follow-ups')?.count ?? 0)} label="Follow-ups"/><MiniMetric value={`${snapshot.totals.forecastAccuracy}%`} label="Accuracy"/></div></Card>
-              <Card title="Quick Add to Central Core"><div style={{ marginTop: 14, display:'grid', gap:10 }}><input value={quick} onChange={e=>setQuick(e.target.value)} style={{ ...s.input, width:'100%', padding:'0 14px' }} placeholder="Add live prospect or action"/><button onClick={createQuick} style={{ ...s.primaryBtn, justifyContent:'center' }}><Plus size={18}/>Create synced record</button></div></Card>
-            </div>
-
-            <Card title="Unified Record Ledger" subtitle={`${filtered.length} live records from central revenue_core_records`} action={<button onClick={load} style={s.btn}><RefreshCcw size={16}/>Sync</button>}>
-              <div className="rcc-scroll" style={{ marginTop: 14, maxHeight: 380, overflow: 'auto', border: `1px solid ${C.border}`, borderRadius: 18 }}><table style={{ width:'100%', borderCollapse:'collapse', color:C.text }}><thead style={s.tableHead}><tr><th style={{ padding: 13, textAlign:'left' }}>Record</th><th style={{ textAlign:'left' }}>Module</th><th style={{ textAlign:'left' }}>Stage</th><th style={{ textAlign:'left' }}>Status</th><th style={{ textAlign:'left' }}>Value</th><th style={{ textAlign:'left' }}>Owner</th></tr></thead><tbody>{filtered.slice(0,40).map(r=><tr key={r.id} style={{ borderTop:'1px solid rgba(255,255,255,.09)' }}><td style={{ padding:13 }}><b style={{ color:C.text }}>{r.title}</b><p style={{ margin: '3px 0 0', color:C.text2 }}>{r.account}</p></td><td style={{ color:C.text2, fontWeight:900 }}>{r.module}</td><td style={{ color:C.text2, fontWeight:900 }}>{r.stage}</td><td><span style={{ borderRadius:999, padding:'5px 9px', background:'rgba(103,232,249,.13)', color:C.text, fontWeight:900 }}>{r.status}</span></td><td style={{ color:C.text, fontWeight:950 }}>{mad(r.value_mad)}</td><td style={{ color:C.text2, fontWeight:900 }}>{r.owner}</td></tr>)}</tbody></table></div>
-            </Card>
-          </div>
-
-          <aside style={{ display: 'grid', gap: 16, alignContent: 'start' }}>
-            <Card title="Critical Alerts"><div style={{ display:'grid', gap:10, marginTop:14 }}>{snapshot.alerts.slice(0,5).map(r=><Link href={`/revenue-command-center/${r.module}`} key={r.id} style={{ border:'1px solid rgba(251,113,133,.35)', background:'rgba(127,29,29,.30)', borderRadius:16, padding:13, color:C.text }}><div style={{ display:'flex', gap:10 }}><AlertTriangle color={C.red} size={18}/><div><b style={{ color:'#fecaca' }}>{r.title}</b><p style={{ margin:'4px 0 0', color:C.text2 }}>{r.account} · {mad(r.value_mad)}</p></div></div></Link>)}</div></Card>
-            <Card title="Today's Schedule"><div style={{ display:'grid', gap:10, marginTop:14 }}>{snapshot.schedule.slice(0,5).map(r=><Link href="/revenue-command-center/appointments" key={r.id} style={{ border:`1px solid ${C.border}`, background:'rgba(255,255,255,.07)', borderRadius:16, padding:13, color:C.text }}><p style={{ margin:0, color:C.cyan, fontWeight:950 }}>{timeLabel(r.due_at)}</p><b>{r.title}</b><p style={{ margin:'4px 0 0', color:C.text2 }}>{r.account}</p></Link>)}</div></Card>
-            <Card title="Smart Navigation Control"><div style={{ marginTop:14, display:'grid', gap:10 }}>{moduleMeta.slice(0,6).map(m=><Link key={m.key} href={m.href} style={{ ...s.btn, height: 42, justifyContent:'space-between' }}><span>{m.label}</span><ChevronRight size={17}/></Link>)}</div></Card>
-          </aside>
-        </div>
-      </section>
+  const group = (title: string, children: React.ReactNode) => (
+    <div className="mb-5">
+      <div className="mb-2 text-[11px] font-black uppercase tracking-[.16em] text-white/65">
+        {title}
+      </div>
+      <div className="space-y-1">{children}</div>
     </div>
-    <div style={{ position:'fixed', right:28, bottom:28, display:'flex', gap:12, alignItems:'center', border:`1px solid ${C.border}`, background:'rgba(8,15,30,.94)', borderRadius:28, padding:'14px 20px', boxShadow:'0 0 44px rgba(124,58,237,.42)', color:C.text }}><Mic color={C.cyan}/><div><b>Voice Terminal</b><p style={{ margin:0, color:C.muted, fontSize:12 }}>Ready for revenue command</p></div></div>
-  </main>
+  );
+
+  return (
+    <aside className="sticky top-[76px] hidden h-[calc(100vh-76px)] w-[318px] shrink-0 overflow-y-auto border-r border-cyan-400/20 bg-[linear-gradient(180deg,rgba(7,17,31,.98),rgba(3,8,20,.98))] px-5 py-6 shadow-[28px_0_90px_rgba(0,0,0,.55)] backdrop-blur-2xl xl:block">
+      <Link href="/revenue-command-center" className="mb-7 flex items-center gap-3">
+        <div className="grid h-14 w-14 place-items-center rounded-[22px] bg-gradient-to-br from-amber-200 via-yellow-400 to-orange-600 text-black shadow-[0_0_40px_rgba(245,158,11,.35)] ring-1 ring-white/30">
+          <Sparkles className="h-6 w-6" />
+        </div>
+        <div>
+          <div className="text-2xl font-black tracking-[.22em] text-white">ANGELCARE</div>
+          <div className="text-[10px] font-bold uppercase tracking-[.14em] text-white/80">
+            PROSPECT CENTER
+          </div>
+        </div>
+      </Link>
+
+      {group("Command HQ", item("/revenue-command-center", <BarChart3 />, "Command Center", true))}
+      {group(
+        "Prospect Management",
+        <>
+          {item("/revenue-command-center/prospects", <Users />, "All Prospects", false, prospectCount)}
+          {item("/revenue-command-center/prospects/directory", <MapPinned />, "Prospects Directory")}
+          {item("/revenue-command-center/prospects/high-value", <Zap />, "Hot Prospects", false, alertCount)}
+          {item("/revenue-command-center/prospects/pipeline", <Layers3 />, "Pipeline")}
+          {item("/revenue-command-center/prospects/decision-map", <Handshake />, "Partner Program")}
+        </>,
+      )}
+      {group(
+        "Execution",
+        <>
+          {item("/revenue-command-center/daily-tasks", <CheckCircle2 />, "Tasks & Actions", false, taskCount)}
+          {item("/revenue-command-center/appointments", <CalendarDays />, "Appointments", false, appointmentCount)}
+          {item("/revenue-command-center/activity-timeline", <Clock3 />, "Activity Timeline")}
+          {item("/revenue-command-center/automation", <Zap />, "Automations")}
+          {item("/revenue-command-center/campaigns", <Megaphone />, "Email Campaigns")}
+          {item("/revenue-command-center/follow-ups", <MessageCircle />, "WhatsApp Center")}
+        </>,
+      )}
+      {group(
+        "Intelligence",
+        <>
+          {item("/revenue-command-center/market-mapping", <Globe2 />, "Market Map")}
+          {item("/revenue-command-center/revenue-analytics", <BarChart3 />, "Analytics & Reports")}
+          {item("/revenue-command-center/competitors", <Gauge />, "Competitors")}
+          {item("/revenue-command-center/executive-briefing", <ShieldCheck />, "Executive Briefing")}
+        </>,
+      )}
+      {group(
+        "System",
+        <>
+          {item("/revenue-command-center/management", <Users />, "Team")}
+          {item("/production-persistence-center", <DatabaseZap />, "Integrations")}
+          {item("/revenue-command-center/settings", <Settings />, "Settings")}
+        </>,
+      )}
+
+      <div className="mt-6 rounded-2xl border border-[#244365] bg-[#10223a] p-4">
+        <div className="text-xs font-black uppercase tracking-[.14em] text-white/60">
+          Live Sync Health
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+          <div>
+            <div className="text-lg font-black text-white">{prospectCount}</div>
+            <div className="text-[10px] text-white/60">prospects</div>
+          </div>
+          <div>
+            <div className="text-lg font-black text-emerald-300">{taskCount}</div>
+            <div className="text-[10px] text-white/60">tasks</div>
+          </div>
+          <div>
+            <div className="text-lg font-black text-red-300">{alertCount}</div>
+            <div className="text-[10px] text-white/60">alerts</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
 }
 
-function Card({ title, subtitle, action, children }: { title: string; subtitle?: string; action?: ReactNode; children: ReactNode }) { return <section style={{ ...s.card, padding: 18 }}><div style={{ display:'flex', justifyContent:'space-between', gap:14, alignItems:'start' }}><div><h2 style={{ margin:0, color:C.text, fontSize:18, fontWeight:950 }}>{title}</h2>{subtitle && <p style={{ margin:'4px 0 0', color:C.muted, fontWeight:700 }}>{subtitle}</p>}</div>{action || <Link href="/revenue-command-center" style={{ color:C.cyan, fontWeight:900 }}>View all</Link>}</div>
-      <style jsx global>{`
-        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
-        .rcc-shell-main,
-        .rcc-shell-content,
-        .rcc-shell-content > *,
-        main.rcc-shell-main > * {
-          width: 100% !important;
-          max-width: none !important;
-          min-width: 0 !important;
-        }
-        [class*="revenue-command-center"] {
-          max-width: none !important;
-        }
-      `}</style>
 
-      {children}</section> }
-function NavGroup({ title, items }: { title: string; items: Array<{ href: string; label: string; icon: any }> }) { return <div><p style={s.navLabel}>{title}</p><div style={{ display:'grid', gap:4 }}>{items.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 12px', borderRadius:13, color:C.text2, fontWeight:900 }}><Icon size={18}/>{item.label}</Link> })}</div></div> }
-function Kpi({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub: string }) { return <div style={{ ...s.card, padding:16 }}><div style={{ display:'flex', gap:12, alignItems:'center' }}><div style={{ width:42,height:42,borderRadius:13,display:'grid',placeItems:'center',background:'rgba(37,99,235,.24)', color:C.cyan }}><Icon size={19}/></div><div><p style={{ margin:0, color:C.muted, fontSize:11, fontWeight:950, textTransform:'uppercase', letterSpacing:'.08em' }}>{label}</p><p style={{ margin:'3px 0', color:C.text, fontSize:22, fontWeight:950 }}>{value}</p><p style={{ margin:0, color:C.green, fontSize:12, fontWeight:850 }}>{sub}</p></div></div></div> }
-function List({ rows, compact=false }: { rows: RecordRow[]; compact?: boolean }) { return <div style={{ display:'grid', gap:10, marginTop:14 }}>{rows.slice(0, compact ? 4 : 5).map(r=><Link key={r.id} href={`/revenue-command-center/${r.module}`} style={{ display:'flex', alignItems:'center', gap:10, border:`1px solid ${C.border}`, background:'rgba(255,255,255,.07)', borderRadius:16, padding:12, color:C.text }}><span style={{ width:34,height:34,borderRadius:999,display:'grid',placeItems:'center',background:'rgba(167,139,250,.22)' }}><Zap size={16} color={C.violet}/></span><span style={{ minWidth:0, flex:1 }}><b style={{ display:'block', color:C.text, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.title}</b><small style={{ color:C.text2, fontWeight:800 }}>{r.account} · {mad(r.value_mad)}</small></span><strong style={{ color:C.cyan }}>{r.probability}%</strong></Link>)}</div> }
-function MiniMetric({ value, label }: { value: string; label: string }) { return <div style={{ border:`1px solid ${C.border}`, background:'rgba(255,255,255,.07)', borderRadius:16, padding:12 }}><p style={{ margin:0, color:C.text, fontSize:24, fontWeight:950 }}>{value}</p><p style={{ margin:0, color:C.muted, fontSize:12, fontWeight:900 }}>{label}</p></div> }
+export default function CentralRevenueCoreDashboard() {
+  const {
+    prospects,
+    loading: prospectsLoading,
+    error: prospectsError,
+    refresh: refreshProspects,
+    lastSync: prospectLastSync,
+  } = useLiveProspects();
+  const {
+    tasks,
+    loading: tasksLoading,
+    error: tasksError,
+    refresh: refreshTasks,
+    byEntityId: tasksByProspect,
+  } = useLiveTasks();
+  const {
+    appointments,
+    loading: appointmentsLoading,
+    error: appointmentsError,
+    refresh: refreshAppointments,
+    byEntityId: appointmentsByProspect,
+  } = useLiveAppointments();
+  const {
+    activities,
+    loading: activitiesLoading,
+    error: activitiesError,
+    refresh: refreshActivities,
+  } = useLiveActivities();
+
+  const loading =
+    prospectsLoading ||
+    tasksLoading ||
+    appointmentsLoading ||
+    activitiesLoading;
+  const error =
+    prospectsError || tasksError || appointmentsError || activitiesError;
+
+  const metrics = useMemo(() => {
+    const totalPipeline = prospects.reduce(
+      (sum, p) => sum + prospectStageValue(p),
+      0,
+    );
+    const won = prospects
+      .filter((p) => ["closed_won", "won"].includes(String(p.stage)))
+      .reduce((sum, p) => sum + prospectStageValue(p), 0);
+    const forecast = prospects.reduce(
+      (sum, p) =>
+        sum +
+        prospectStageValue(p) * (Math.max(10, Number(p.score || 0)) / 100),
+      0,
+    );
+    const meetingsToday = appointments.filter((a) =>
+      isToday(a.appointmentAt),
+    ).length;
+    const openTasks = tasks.filter(isOpenTask).length;
+    const highPriority = prospects.filter((p) =>
+      ["critical", "high"].includes(String(p.priority)),
+    ).length;
+    return {
+      totalPipeline,
+      won,
+      forecast,
+      meetingsToday,
+      openTasks,
+      highPriority,
+    };
+  }, [prospects, tasks, appointments]);
+
+  const stageBars = useMemo(() => {
+    const wanted = [
+      "new_lead",
+      "qualification",
+      "proposal",
+      "negotiation",
+      "closed_won",
+    ];
+    const rows = wanted.map((stage) => {
+      const value = prospects
+        .filter((p) => String(p.stage) === stage)
+        .reduce((sum, p) => sum + prospectStageValue(p), 0);
+      return { stage, label: stageLabel(stage), value };
+    });
+    const max = Math.max(...rows.map((r) => r.value), 1);
+    return rows.map((r) => ({
+      ...r,
+      width: Math.max(8, Math.round((r.value / max) * 100)),
+    }));
+  }, [prospects]);
+
+  const forecastRows = useMemo(() => {
+    const base = metrics.forecast;
+    return [
+      { label: "Baseline", value: base * 0.48 },
+      { label: "Qualified", value: base * 0.65 },
+      { label: "Proposal", value: base * 0.82 },
+      { label: "Negotiation", value: base },
+      { label: "Weighted", value: base * 1.2 },
+      { label: "Best Case", value: metrics.totalPipeline },
+    ];
+  }, [metrics.forecast, metrics.totalPipeline]);
+
+  const topProspects = useMemo(() => {
+    return [...prospects]
+      .sort(
+        (a, b) =>
+          Number(b.valueMad || 0) +
+          Number(b.score || 0) * 1000 -
+          (Number(a.valueMad || 0) + Number(a.score || 0) * 1000),
+      )
+      .slice(0, 5);
+  }, [prospects]);
+
+  const alerts = useMemo(() => {
+    const overdueTasks = tasks
+      .filter(
+        (t) =>
+          isOpenTask(t) &&
+          t.dueDate &&
+          new Date(t.dueDate).getTime() < Date.now(),
+      )
+      .slice(0, 3)
+      .map((t) => ({
+        title: t.title,
+        detail: t.entityName || t.owner || "Revenue task",
+        href: "/revenue-command-center/daily-tasks",
+      }));
+    const highProspects = prospects
+      .filter((p) => ["critical", "high"].includes(String(p.priority)))
+      .slice(0, 4)
+      .map((p) => ({
+        title: p.name,
+        detail: `${p.city} · ${money(p.valueMad)}`,
+        href: `/revenue-command-center/prospects/${p.id}`,
+      }));
+    return [...overdueTasks, ...highProspects].slice(0, 5);
+  }, [prospects, tasks]);
+
+  const todaysSchedule = useMemo(() => {
+    return appointments
+      .filter((a) => isToday(a.appointmentAt))
+      .sort(
+        (a, b) =>
+          new Date(a.appointmentAt).getTime() -
+          new Date(b.appointmentAt).getTime(),
+      )
+      .slice(0, 6);
+  }, [appointments]);
+
+  const moduleCounts = useMemo(() => {
+    const synced = (id: string) => {
+      if (id === "prospects") return prospects.length;
+      if (id === "appointments") return appointments.length;
+      if (id === "daily-tasks") return tasks.length;
+      if (id === "follow-ups")
+        return tasks.filter(
+          (t) => isOpenTask(t) && String(t.taskType).includes("follow"),
+        ).length;
+      if (id === "executive-briefing") return alerts.length;
+      if (id === "decision-maps")
+        return prospects.filter(
+          (p) => String(p.contactName || "").trim() && p.contactName !== "N/A",
+        ).length;
+      if (id === "partnerships")
+        return prospects.filter((p) =>
+          String(p.raw?.type || p.raw?.data?.type || "").includes("partner"),
+        ).length;
+      if (id === "campaigns")
+        return prospects.filter((p) =>
+          String(p.raw?.source || p.raw?.data?.source || "")
+            .toLowerCase()
+            .includes("campaign"),
+        ).length;
+      if (id === "sdr")
+        return tasks.filter((t) =>
+          ["open", "pending"].includes(String(t.status)),
+        ).length;
+      if (id === "b2c-workflow")
+        return prospects.filter((p) =>
+          String(p.raw?.type || p.raw?.data?.type || "").includes("family"),
+        ).length;
+      return 0;
+    };
+    const value = (id: string) => {
+      if (
+        [
+          "prospects",
+          "sdr",
+          "partnerships",
+          "campaigns",
+          "follow-ups",
+          "b2c-workflow",
+          "decision-maps",
+          "executive-briefing",
+        ].includes(id)
+      )
+        return metrics.totalPipeline;
+      if (id === "appointments")
+        return appointments.reduce(
+          (sum, a) => sum + Number(a.raw?.entity_value_mad || 0),
+          0,
+        );
+      if (id === "daily-tasks")
+        return tasks.reduce(
+          (sum, t) => sum + Number(t.raw?.entity_value_mad || 0),
+          0,
+        );
+      return 0;
+    };
+    return { synced, value };
+  }, [prospects, appointments, tasks, alerts.length, metrics.totalPipeline]);
+
+  async function refreshAll() {
+    await Promise.all([
+      refreshProspects(),
+      refreshTasks(),
+      refreshAppointments(),
+      refreshActivities(),
+    ]);
+  }
+
+  const lastSyncText = prospectLastSync
+    ? prospectLastSync.toLocaleTimeString()
+    : loading
+      ? "syncing"
+      : "live";
+
+  return (
+    <main
+      data-rcc-main-dashboard="true"
+      className="min-h-screen overflow-x-hidden bg-[#050b16] text-white"
+    >
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        [data-rcc-main-dashboard],
+        [data-rcc-main-dashboard] * { color: #ffffff; }
+        [data-rcc-main-dashboard] .muted { color: rgba(226, 232, 240, .78) !important; }
+        [data-rcc-main-dashboard] .soft { color: rgba(203, 213, 225, .88) !important; }
+        [data-rcc-main-dashboard] .premium-glass {
+          background: linear-gradient(145deg, rgba(17,34,58,.96), rgba(6,16,33,.88));
+          border: 1px solid rgba(103,232,249,.18);
+          box-shadow: 0 30px 90px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.08);
+        }
+        [data-rcc-main-dashboard] .neon-edge { box-shadow: 0 0 0 1px rgba(34,211,238,.18), 0 24px 80px rgba(14,165,233,.12); }
+        [data-rcc-main-dashboard] .orb { filter: blur(52px); opacity: .44; }
+      `,
+        }}
+      />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(124,58,237,.34),transparent_29%),radial-gradient(circle_at_55%_0%,rgba(14,165,233,.26),transparent_24%),radial-gradient(circle_at_88%_12%,rgba(16,185,129,.18),transparent_26%),linear-gradient(180deg,#07111f_0%,#030814_63%,#01040b_100%)]" />
+      <div className="orb pointer-events-none fixed left-[20%] top-20 h-72 w-72 rounded-full bg-cyan-500/25" />
+      <div className="orb pointer-events-none fixed right-[18%] top-10 h-80 w-80 rounded-full bg-violet-500/25" />
+      <div className="orb pointer-events-none fixed bottom-10 right-10 h-72 w-72 rounded-full bg-emerald-500/15" />
+
+      <div className="relative flex min-h-screen w-full min-w-0">
+        <RevenueDashboardSidebar
+          prospectCount={prospects.length}
+          taskCount={tasks.length}
+          appointmentCount={appointments.length}
+          alertCount={alerts.length}
+        />
+
+        <section className="min-w-0 flex-1 px-4 py-4 xl:px-6">
+          <header className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            <div>
+              <div className="mb-3 flex max-w-[560px] items-center gap-3 rounded-2xl border border-cyan-300/25 bg-cyan-500/10 px-4 py-3 shadow-[0_0_40px_rgba(14,165,233,.12)]">
+                <DatabaseZap className="h-4 w-4 text-cyan-300" />
+                <span className="text-sm font-black text-white">
+                  Live DB sync · {lastSyncText}
+                </span>
+              </div>
+              <h1 className="max-w-[980px] text-4xl font-black tracking-tight text-white xl:text-5xl">
+                AngelCare Strategic Business Development Command Center 🛡️
+              </h1>
+              <p className="mt-2 text-sm font-bold muted">
+                Live MAD revenue intelligence, pipeline movement and execution
+                control from the canonical revenue tables.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => void refreshAll()}
+                className="inline-flex items-center gap-2 rounded-xl border border-[#315474] bg-[#10223a] px-4 py-3 text-sm font-black text-white hover:bg-[#172942]"
+              >
+                <RefreshCcw className="h-4 w-4" /> Refresh live
+              </button>
+              <Link
+                href="/revenue-command-center/daily-tasks"
+                className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-black text-white hover:bg-violet-500"
+              >
+                <Zap className="h-4 w-4" /> Create action
+              </Link>
+              <Bell className="mt-3 h-5 w-5 text-slate-200" />
+            </div>
+          </header>
+
+          {error && (
+            <div className="mb-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-black text-red-100">
+              Live sync warning: {error}
+            </div>
+          )}
+
+          <section className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <Kpi
+              icon={<Target />}
+              label="Pipeline Value"
+              value={money(metrics.totalPipeline)}
+              detail="live central baseline"
+            />
+            <Kpi
+              icon={<BriefcaseBusiness />}
+              label="Open Records"
+              value={String(prospects.length)}
+              detail={`${prospects.length} visible records`}
+            />
+            <Kpi
+              icon={<Megaphone />}
+              label="Won This Month"
+              value={money(metrics.won)}
+              detail="synced from closed-won"
+            />
+            <Kpi
+              icon={<LineChart />}
+              label="Forecast"
+              value={money(metrics.forecast)}
+              detail="weighted MAD forecast"
+            />
+            <Kpi
+              icon={<CalendarDays />}
+              label="Meetings Today"
+              value={String(metrics.meetingsToday)}
+              detail="view agenda →"
+            />
+          </section>
+
+          <section className="mb-5 grid grid-cols-1 gap-4 xl:grid-cols-4">
+            <CommandSignal icon={<ShieldCheck />} label="Execution Integrity" value={loading ? "Syncing" : "Live"} detail="canonical revenue tables" tone="emerald" />
+            <CommandSignal icon={<DatabaseZap />} label="Data Source" value="Supabase" detail="zero demo counters" tone="cyan" />
+            <CommandSignal icon={<Zap />} label="Action Engine" value="Active" detail="tasks + appointments + activities" tone="violet" />
+            <CommandSignal icon={<Bell />} label="Critical Watch" value={String(alerts.length)} detail="live risk radar" tone="amber" />
+          </section>
+
+          <section className="mb-4 grid grid-cols-1 gap-4 2xl:grid-cols-[1.1fr_.9fr]">
+            <Panel
+              title="Revenue Pipeline Overview"
+              action={
+                <Link href="/revenue-command-center/prospects/pipeline">
+                  Open pipeline
+                </Link>
+              }
+            >
+              <div className="mb-3 text-3xl font-black text-white">
+                {money(metrics.totalPipeline)}
+              </div>
+              <div className="mb-6 text-sm font-black text-emerald-300">
+                ↑ live MAD pipeline by stage
+              </div>
+              <div className="grid h-[180px] grid-cols-5 items-end gap-3">
+                {stageBars.map((bar, index) => (
+                  <div
+                    key={bar.stage}
+                    className="flex h-full flex-col justify-end gap-2"
+                  >
+                    <div
+                      className={cn(
+                        "rounded-t-xl",
+                        [
+                          "bg-blue-500",
+                          "bg-emerald-500",
+                          "bg-amber-400",
+                          "bg-pink-500",
+                          "bg-violet-500",
+                        ][index],
+                      )}
+                      style={{ height: `${bar.width}%` }}
+                    />
+                    <div className="text-center text-[11px] font-black text-white">
+                      {bar.label}
+                    </div>
+                    <div className="text-center text-[11px] font-bold muted">
+                      {money(bar.value)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+
+            <Panel
+              title="Revenue Performance Control Room"
+              action={
+                <Link href="/revenue-command-center/revenue-analytics">
+                  Open analytics
+                </Link>
+              }
+            >
+              <div className="mb-2 text-3xl font-black text-white">
+                {money(metrics.forecast)}
+              </div>
+              <div className="mb-5 text-sm font-black text-emerald-300">
+                ↑ live, clickable and synced
+              </div>
+              <div className="space-y-3">
+                {forecastRows.map((row, index) => (
+                  <div
+                    key={row.label}
+                    className="grid grid-cols-[100px_1fr_110px] items-center gap-3 text-sm font-black"
+                  >
+                    <span>{row.label}</span>
+                    <div className="h-3 rounded-full bg-white/10">
+                      <div
+                        className={cn(
+                          "h-full rounded-full",
+                          [
+                            "bg-blue-400",
+                            "bg-emerald-400",
+                            "bg-amber-400",
+                            "bg-pink-400",
+                            "bg-violet-400",
+                            "bg-orange-400",
+                          ][index],
+                        )}
+                        style={{
+                          width: `${Math.min(100, (row.value / Math.max(metrics.totalPipeline, 1)) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="text-right">{money(row.value)}</span>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          </section>
+
+          <Panel title="Core Modules Gateway" action={<span>All modules</span>}>
+            <p className="mb-4 text-sm font-bold muted">
+              No invisible text. Every card is clickable and derives its
+              counters from live revenue tables.
+            </p>
+            <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-5">
+              {moduleCards.map((card) => {
+                const Icon = card.icon;
+                const synced = moduleCounts.synced(card.id);
+                const value = moduleCounts.value(card.id);
+                return (
+                  <Link
+                    key={card.id}
+                    href={moduleHref(card.id)}
+                    className="group relative overflow-hidden rounded-[26px] border border-cyan-300/15 bg-[linear-gradient(145deg,rgba(16,34,58,.96),rgba(9,20,36,.9))] p-5 shadow-[0_22px_70px_rgba(0,0,0,.28)] transition hover:-translate-y-1 hover:border-cyan-300/45 hover:shadow-[0_30px_90px_rgba(14,165,233,.18)]"
+                  >
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,.18),transparent_38%)] opacity-0 transition group-hover:opacity-100" />
+                    <div className="relative mb-4 flex items-center justify-between">
+                      <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-400 text-white shadow-[0_0_35px_rgba(168,85,247,.25)]">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-1" />
+                    </div>
+                    <div className="text-lg font-black text-white">
+                      {card.title}
+                    </div>
+                    <p className="mt-2 min-h-[44px] text-sm font-bold muted">
+                      {card.subtitle}
+                    </p>
+                    <div className="mt-3 text-xs font-black text-cyan-300">
+                      {synced} synced · {money(value)}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </Panel>
+
+          <section className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <Panel
+              title="Pipeline by Stage (MAD)"
+              action={
+                <Link href="/revenue-command-center/prospects/pipeline">
+                  Manage
+                </Link>
+              }
+            >
+              <div className="space-y-3">
+                {stageBars.map((bar) => (
+                  <MetricRow
+                    key={bar.stage}
+                    label={bar.label}
+                    value={money(bar.value)}
+                  />
+                ))}
+              </div>
+            </Panel>
+            <Panel
+              title="Top Opportunities"
+              action={
+                <Link href="/revenue-command-center/prospects/directory">
+                  View all
+                </Link>
+              }
+            >
+              <div className="space-y-3">
+                {topProspects.map((p) => (
+                  <Link
+                    href={`/revenue-command-center/prospects/${p.id}`}
+                    key={p.id}
+                    className="flex items-center gap-3 rounded-2xl border border-white/5 bg-[#172942]/90 p-3 shadow-[0_14px_36px_rgba(0,0,0,.18)] hover:border-cyan-300/25 hover:bg-[#203a5a]"
+                  >
+                    <div className="grid h-9 w-9 place-items-center rounded-xl bg-violet-500/25 text-xs font-black">
+                      {String(p.name).slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-black text-white">
+                        {p.name}
+                      </div>
+                      <div className="truncate text-xs font-bold muted">
+                        {p.city} · {money(p.valueMad)}
+                      </div>
+                    </div>
+                    <div className="text-sm font-black text-emerald-300">
+                      {pct(p.score)}
+                    </div>
+                  </Link>
+                ))}
+                {!topProspects.length && (
+                  <Empty text="No live prospects found." />
+                )}
+              </div>
+            </Panel>
+            <Panel
+              title="SDR + Owner Performance"
+              action={
+                <Link href="/revenue-command-center/daily-tasks">View all</Link>
+              }
+            >
+              <MetricRow label="Open tasks" value={String(metrics.openTasks)} />
+              <MetricRow
+                label="High priority prospects"
+                value={String(metrics.highPriority)}
+              />
+              <MetricRow
+                label="Activity logs"
+                value={String(activities.length)}
+              />
+              <MetricRow
+                label="Linked task entities"
+                value={String(tasksByProspect.size)}
+              />
+              <MetricRow
+                label="Linked appointment entities"
+                value={String(appointmentsByProspect.size)}
+              />
+            </Panel>
+          </section>
+        </section>
+
+        <aside className="hidden w-[360px] shrink-0 space-y-4 border-l border-cyan-400/15 bg-[linear-gradient(180deg,rgba(6,16,29,.96),rgba(2,6,17,.98))] p-4 shadow-[-20px_0_80px_rgba(0,0,0,.35)] 2xl:block">
+          <SideBox
+            title="Critical Alerts"
+            href="/revenue-command-center/executive-briefing"
+          >
+            <div className="space-y-3">
+              {alerts.map((a) => (
+                <Link
+                  href={a.href}
+                  key={`${a.href}-${a.title}`}
+                  className="block rounded-2xl border border-red-400/20 bg-red-500/15 p-4 hover:bg-red-500/20"
+                >
+                  <div className="flex gap-2 text-sm font-black text-red-100">
+                    <AlertTriangle className="h-4 w-4" />
+                    {a.title}
+                  </div>
+                  <div className="mt-1 text-xs font-bold muted">{a.detail}</div>
+                </Link>
+              ))}
+              {!alerts.length && <Empty text="No critical live alerts." />}
+            </div>
+          </SideBox>
+
+          <SideBox
+            title="Today's Schedule"
+            href="/revenue-command-center/appointments"
+          >
+            <div className="space-y-3">
+              {todaysSchedule.map((a: RCCAppointment) => (
+                <Link
+                  href="/revenue-command-center/appointments"
+                  key={a.id}
+                  className="block rounded-2xl bg-[#172942] p-4 hover:bg-[#203a5a]"
+                >
+                  <div className="text-sm font-black text-cyan-200">
+                    {new Date(a.appointmentAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                  <div className="mt-1 text-sm font-black text-white">
+                    {a.title}
+                  </div>
+                  <div className="mt-1 text-xs font-bold muted">
+                    {a.entityName || a.owner}
+                  </div>
+                </Link>
+              ))}
+              {!todaysSchedule.length && <Empty text="No meetings today." />}
+            </div>
+          </SideBox>
+
+          <SideBox
+            title="Smart Navigation Control"
+            href="/revenue-command-center/prospects"
+          >
+            <Link
+              href="/revenue-command-center/prospects"
+              className="flex justify-between rounded-xl bg-[#172942] p-3 text-sm font-black"
+            >
+              Prospects <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/revenue-command-center/daily-tasks"
+              className="mt-2 flex justify-between rounded-xl bg-[#172942] p-3 text-sm font-black"
+            >
+              Tasks <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/revenue-command-center/appointments"
+              className="mt-2 flex justify-between rounded-xl bg-[#172942] p-3 text-sm font-black"
+            >
+              Appointments <ArrowRight className="h-4 w-4" />
+            </Link>
+          </SideBox>
+        </aside>
+      </div>
+    </main>
+  );
+}
+
+function CommandSignal({
+  icon,
+  label,
+  value,
+  detail,
+  tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  detail: string;
+  tone: "emerald" | "cyan" | "violet" | "amber";
+}) {
+  const tones = {
+    emerald: "from-emerald-400/25 to-green-500/10 border-emerald-300/20 text-emerald-200",
+    cyan: "from-cyan-400/25 to-blue-500/10 border-cyan-300/20 text-cyan-200",
+    violet: "from-violet-400/25 to-fuchsia-500/10 border-violet-300/20 text-violet-200",
+    amber: "from-amber-400/25 to-orange-500/10 border-amber-300/20 text-amber-200",
+  };
+  return (
+    <div className={cn("rounded-[24px] border bg-gradient-to-br p-4 shadow-[0_18px_55px_rgba(0,0,0,.24)]", tones[tone])}>
+      <div className="flex items-center gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/10 [&_svg]:h-5 [&_svg]:w-5">{icon}</div>
+        <div className="min-w-0">
+          <div className="text-[10px] font-black uppercase tracking-[.16em] muted">{label}</div>
+          <div className="text-xl font-black text-white">{value}</div>
+          <div className="text-xs font-bold muted">{detail}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Kpi({
+  icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="group relative overflow-hidden rounded-[28px] border border-cyan-300/15 bg-[linear-gradient(145deg,rgba(16,34,58,.98),rgba(7,17,31,.92))] p-5 shadow-[0_24px_75px_rgba(0,0,0,.30)] transition hover:-translate-y-0.5 hover:border-cyan-300/35 hover:shadow-[0_30px_95px_rgba(14,165,233,.16)]">
+      <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-400/10 blur-2xl transition group-hover:bg-violet-400/20" />
+      <div className="relative flex items-center gap-4">
+        <div className="grid h-[52px] w-[52px] place-items-center rounded-[20px] bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-600 p-3 text-white shadow-[0_0_38px_rgba(14,165,233,.28)] [&_svg]:h-6 [&_svg]:w-6">
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <div className="text-[10px] font-black uppercase tracking-[.18em] muted">
+            {label}
+          </div>
+          <div className="mt-1 truncate text-2xl font-black text-white xl:text-[26px]">{value}</div>
+          <div className="mt-1 text-xs font-black text-emerald-300">
+            {detail}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Panel({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="premium-glass neon-edge rounded-[30px] p-5 transition hover:border-cyan-300/35 hover:shadow-[0_34px_110px_rgba(14,165,233,.16)]">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <h2 className="text-lg font-black text-white">{title}</h2>
+        <div className="text-sm font-black text-cyan-300">{action}</div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function SideBox({
+  title,
+  href,
+  children,
+}: {
+  title: string;
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="premium-glass rounded-[28px] p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-base font-black text-white">{title}</h3>
+        <Link href={href} className="text-xs font-black text-cyan-300">
+          View all
+        </Link>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function MetricRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-[#172942]/90 px-4 py-3 shadow-[0_12px_32px_rgba(0,0,0,.16)]">
+      <span className="text-sm font-black muted">{label}</span>
+      <span className="text-sm font-black text-white">{value}</span>
+    </div>
+  );
+}
+
+function Empty({ text }: { text: string }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 p-5 text-center text-sm font-black muted">
+      {text}
+    </div>
+  );
+}

@@ -335,9 +335,12 @@ export function isOverdue(date: string) {
 
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef2ff_42%,#f8fafc_100%)] text-slate-950">
+    <div className="min-h-screen overflow-x-hidden bg-[#02040d] text-white">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(124,58,237,.22),transparent_30%),radial-gradient(circle_at_84%_4%,rgba(6,182,212,.18),transparent_28%),radial-gradient(circle_at_75%_86%,rgba(245,158,11,.10),transparent_30%),linear-gradient(180deg,#070b18_0%,#030612_58%,#01030a_100%)]" />
       <ContentCommandNavigation />
-      {children}
+      <div className="relative min-w-0 xl:pl-[330px]">
+        {children}
+      </div>
     </div>
   )
 }

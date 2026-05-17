@@ -1,7 +1,7 @@
-import MarketOSV17EnterpriseOpsCommand from "@/components/market-os/MarketOSV17EnterpriseOpsCommand"
+import MarketingCommandCenter from '@/app/components/market-os/MarketingCommandCenter'
 
-export const dynamic = "force-dynamic"
+export const dynamic = 'force-dynamic'
 
 export default function MarketOSPage() {
-  return <MarketOSV17EnterpriseOpsCommand />
+  return <MarketingCommandCenter />
 }

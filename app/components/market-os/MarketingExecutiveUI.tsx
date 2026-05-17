@@ -38,10 +38,7 @@ const marketNav: NavItem[] = [
   ['Campaign Lifecycle', '/market-os/campaign-lifecycle', '🎯', ''],
   ['Content Command', '/market-os/content-command-center', '🧠', ''],
   ['SEO Blog Workspace', '/market-os/seo-blog-workspace', '✍️', ''],
-  ['Automation Control', '/market-os/automation-control', '⚙️', ''],
   ['Ambassador Program', '/market-os/ambassadors', '🤝', ''],
-  ['Partners Network', '/market-os/partners-network', '🏢', ''],
-  ['Calendar', '/market-os/calendar', '🗓️', ''],
 ]
 
 const syncNav: NavItem[] = [
@@ -81,9 +78,9 @@ const channelRows = [
 
 const aiActions = [
   ['Budget Reallocation', 'Shift 15% from weak generic ads to high-intent Google/Meta search demand.', 'High impact', '+22% ROI', '/revenue-command-center'],
-  ['B2B Kindergarten Push', 'Activate partner decision-makers in Rabat and Casablanca this week.', 'Strategic', '+18% leads', '/market-os/partners-network'],
+  ['B2B Kindergarten Push', 'Activate partner decision-makers in Rabat and Casablanca this week.', 'Strategic', '+18% leads', '/market-os/ambassadors'],
   ['Content Authority Gap', 'Prioritize proof-based family trust reels and caregiver credibility assets.', 'Content', '+32% engagement', '/market-os/content-command-center'],
-  ['Lead Recovery Sequence', 'Re-engage dormant family leads through WhatsApp and voice follow-up.', 'Automation', '+15% conversion', '/market-os/automation-control'],
+  ['Lead Recovery Sequence', 'Re-engage dormant family leads through WhatsApp and voice follow-up.', 'Automation', '+15% conversion', '/market-os/campaign-lifecycle'],
 ]
 
 const funnel = [
@@ -334,12 +331,12 @@ export default function MarketingExecutiveUI() {
             <LiveList items={expansion?.ambassadors.applicationQueue || []} empty="No ambassador applications detected yet." />
             <div style={sectionDock}>
               <Link href="/market-os/ambassadors">Ambassador Backoffice</Link>
-              <Link href="/market-os/partners-network">Partners Network</Link>
+              <Link href="/market-os/ambassadors">Partners Network</Link>
               <Link href="/reports">Ambassador Report</Link>
             </div>
           </Panel>
 
-          <Panel title="Activation Missions & Field Influence" action={<Link href="/market-os/partners-network">Partner Activation</Link>}>
+          <Panel title="Activation Missions & Field Influence" action={<Link href="/market-os/ambassadors">Partner Activation</Link>}>
             <LiveList items={expansion?.ambassadors.activationTasks || []} empty="No live ambassador activation tasks found yet." />
             <div style={qaMatrix}>
               <span>Activation</span><b>{(expansion?.ambassadors.tasks ?? 0) > 0 ? 'In motion' : 'No tasks'}</b>
@@ -463,7 +460,7 @@ export default function MarketingExecutiveUI() {
                 ['New Campaign', '/market-os/campaign-lifecycle', '📣'],
                 ['Create Audience', '/leads', '👥'],
                 ['Content Studio', '/market-os/content-command-center', '📝'],
-                ['Automation Rule', '/market-os/automation-control', '⚙️'],
+                ['Automation Rule', '/market-os/campaign-lifecycle', '⚙️'],
                 ['Generate Report', '/reports', '📄'],
                 ['All Workspaces', '/market-os', '▦'],
               ].map(([label, href, icon]) => (

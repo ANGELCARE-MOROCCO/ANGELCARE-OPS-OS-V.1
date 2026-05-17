@@ -1,60 +1,108 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import * as React from "react"
+import {
+  Archive,
+  BookOpenCheck,
+  CalendarDays,
+  ClipboardList,
+  FileStack,
+  FolderKanban,
+  Layers3,
+  Sparkles,
+  Zap,
+} from "lucide-react"
 
 export type ContentCommandRouteKey =
-  | "dashboard"
-  | "create"
-  | "briefs"
+  | "contentsManagement"
   | "tasks"
   | "assets"
   | "calendar"
-  | "review"
-  | "publishing"
-  | "brandGovernance"
+  | "activeAssets"
+  | "briefings"
+  | "academy"
 
 export type ContentCommandRoute = {
   key: ContentCommandRouteKey
   href: string
   label: string
   description: string
-  section: "Command" | "Production" | "Governance"
+  section: "Command" | "Execution" | "Knowledge"
+  icon: React.ReactNode
+  external?: boolean
 }
 
 export const contentCommandRoutes: readonly ContentCommandRoute[] = [
-  { key: "dashboard", href: "/market-os/content-command-center", label: "Dashboard", description: "Main operating surface", section: "Command" },
-  { key: "create", href: "/market-os/content-command-center/create", label: "Create", description: "Create a content item", section: "Production" },
-  { key: "briefs", href: "/market-os/content-command-center/briefs", label: "Briefs", description: "Build briefs and convert to work", section: "Production" },
-  { key: "tasks", href: "/market-os/content-command-center/tasks", label: "Tasks", description: "Assign production work", section: "Production" },
-  { key: "assets", href: "/market-os/content-command-center/assets", label: "Assets", description: "Register and link assets", section: "Production" },
-  { key: "calendar", href: "/market-os/content-command-center/calendar", label: "Calendar", description: "Plan publishing dates", section: "Production" },
-  { key: "review", href: "/market-os/content-command-center/review", label: "Review", description: "Approve or request revision", section: "Governance" },
-  { key: "publishing", href: "/market-os/content-command-center/publishing", label: "Publishing", description: "Schedule and publish ready work", section: "Governance" },
-  { key: "brandGovernance", href: "/market-os/content-command-center/brand-governance", label: "Brand", description: "Manage brand rules", section: "Governance" },
+  { key: "contentsManagement", href: "/market-os/content-command-center", label: "Contents management", description: "Master command surface for all content operations", section: "Command", icon: <Layers3 className="h-5 w-5" /> },
+  { key: "tasks", href: "/market-os/content-command-center/tasks", label: "Tasks", description: "Production execution, assignments and blockers", section: "Execution", icon: <ClipboardList className="h-5 w-5" /> },
+  { key: "assets", href: "/market-os/content-command-center/assets", label: "assets", description: "Creative, scripts, PDFs and production references", section: "Execution", icon: <FolderKanban className="h-5 w-5" /> },
+  { key: "calendar", href: "/market-os/content-command-center/calendar", label: "Callendar", description: "Publishing schedule, launch timing and calendar control", section: "Execution", icon: <CalendarDays className="h-5 w-5" /> },
+  { key: "activeAssets", href: "/market-os/content-command-center/active-assets", label: "Active assets", description: "Approved assets ready for campaign use", section: "Execution", icon: <Archive className="h-5 w-5" /> },
+  { key: "briefings", href: "/market-os/content-command-center/briefs", label: "briefings", description: "Strategic briefs, message angles and production instructions", section: "Knowledge", icon: <FileStack className="h-5 w-5" /> },
+  { key: "academy", href: "/training/content-command-center-training.html", label: "academie interne formation complète", description: "Internal training academy and complete operating guide", section: "Knowledge", icon: <BookOpenCheck className="h-5 w-5" />, external: true },
 ] as const
 
+function groupedRoutes() {
+  return contentCommandRoutes.reduce<Record<ContentCommandRoute["section"], ContentCommandRoute[]>>((acc, route) => {
+    acc[route.section].push(route)
+    return acc
+  }, { Command: [], Execution: [], Knowledge: [] })
+}
+
 export function ContentCommandNavigation() {
+  const pathname = usePathname()
+  const groups = groupedRoutes()
+
   return (
-    <nav className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur lg:px-8" aria-label="Content Command Center navigation">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">Market-OS submodule</p>
-          <h2 className="text-lg font-black tracking-tight text-slate-950">Content Command Center</h2>
+    <aside className="z-40 border-b border-white/10 bg-[#050814]/95 text-white shadow-[0_28px_80px_rgba(0,0,0,.45)] backdrop-blur-2xl xl:fixed xl:inset-y-0 xl:left-0 xl:w-[330px] xl:border-b-0 xl:border-r xl:border-white/10">
+      <div className="flex h-full flex-col overflow-y-auto px-4 py-5 xl:px-5 xl:py-6">
+        <Link href="/market-os/marketing-home" className="group mb-5 flex items-center gap-4 rounded-[28px] border border-amber-300/20 bg-gradient-to-br from-white/10 via-white/[.04] to-amber-300/10 p-4 shadow-[0_18px_50px_rgba(245,158,11,.12)]">
+          <div className="grid h-14 w-14 place-items-center rounded-[22px] bg-gradient-to-br from-amber-200 via-yellow-400 to-orange-600 text-slate-950 shadow-lg shadow-amber-500/25 transition group-hover:scale-105">
+            <Sparkles className="h-7 w-7" />
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[11px] font-black uppercase tracking-[.22em] text-amber-100">Market OS</div>
+            <div className="truncate text-xl font-black tracking-tight text-white">Content Command</div>
+            <div className="mt-1 truncate text-xs font-bold text-white/60">Brand · Content · Execution</div>
+          </div>
+        </Link>
+
+        <div className="mb-5 rounded-[26px] border border-cyan-300/15 bg-cyan-400/[.07] p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">Submodule mode</p>
+              <p className="mt-1 text-sm font-black text-white">Futuristic workspace</p>
+            </div>
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-300/15 text-cyan-100"><Zap className="h-5 w-5" /></div>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-black uppercase tracking-[.08em] text-white/70">
+            <span className="rounded-xl bg-white/10 px-2 py-2">Live</span><span className="rounded-xl bg-white/10 px-2 py-2">Brand</span><span className="rounded-xl bg-white/10 px-2 py-2">Ops</span>
+          </div>
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-1 xl:flex-wrap xl:justify-end xl:overflow-visible xl:pb-0">
-          {contentCommandRoutes.map((route) => (
-            <Link
-              key={route.key}
-              href={route.href}
-              className="whitespace-nowrap rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-950 hover:text-white"
-              title={route.description}
-            >
-              {route.label}
-            </Link>
+
+        <nav className="space-y-5" aria-label="Content Command Center sidebar">
+          {(Object.keys(groups) as Array<keyof typeof groups>).map((section) => (
+            <div key={section}>
+              <div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[.2em] text-white/40">{section}</div>
+              <div className="space-y-2">
+                {groups[section].map((route) => {
+                  const active = !route.external && (pathname === route.href || pathname.startsWith(`${route.href}/`))
+                  const className = active ? "border-violet-300/40 bg-gradient-to-r from-violet-600/80 via-fuchsia-600/50 to-cyan-500/30 text-white shadow-[0_14px_42px_rgba(124,58,237,.28)]" : "border-white/10 bg-white/[.045] text-white/78 hover:border-cyan-300/30 hover:bg-white/[.08] hover:text-white"
+                  const content = <><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl ${active ? "bg-white/20 text-white" : "bg-white/10 text-cyan-100"}`}>{route.icon}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-black">{route.label}</span><span className="mt-0.5 block truncate text-[11px] font-semibold text-white/48">{route.description}</span></span><span className={`h-2.5 w-2.5 rounded-full ${active ? "bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,.75)]" : "bg-white/20"}`} /></>
+                  return route.external ? <Link key={route.key} href={route.href} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 transition ${className}`} title={route.description}>{content}</Link> : <Link key={route.key} href={route.href} className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 transition ${className}`} title={route.description}>{content}</Link>
+                })}
+              </div>
+            </div>
           ))}
+        </nav>
+
+        <div className="mt-6 rounded-[26px] border border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,.18),transparent_35%),rgba(255,255,255,.045)] p-4">
+          <p className="text-[10px] font-black uppercase tracking-[.18em] text-white/45">Operating doctrine</p>
+          <p className="mt-2 text-sm font-bold leading-6 text-white/75">Every content action must connect to assets, tasks, briefings, calendar timing and internal training quality.</p>
         </div>
       </div>
-    </nav>
+    </aside>
   )
 }
