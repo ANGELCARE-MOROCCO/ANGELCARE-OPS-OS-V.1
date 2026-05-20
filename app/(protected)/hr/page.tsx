@@ -48,7 +48,7 @@ const sidebarGroups = [
     { label: 'Alerts', href: '/hr/notifications', icon: Bell },
   ]},
   { label: 'People', items: [
-    { label: 'Employees', href: '/hr/employees', icon: Users },
+    { label: 'Employees', href: '/hr/staff', icon: Users },
     { label: 'Organization', href: '/hr/departments', icon: Network },
     { label: 'Teams & Departments', href: '/hr/departments', icon: Building2 },
     { label: 'Positions & Roles', href: '/hr/positions', icon: BriefcaseBusiness },
@@ -214,8 +214,8 @@ export default async function Page() {
   ]
 
   return (
-    <main className="fixed inset-0 z-[9999] overflow-hidden bg-[#f8fafc] text-slate-900">
-      <div className="grid h-screen grid-cols-[250px_1fr]">
+    <main className="fixed inset-x-0 bottom-0 top-[112px] z-[40] overflow-hidden bg-[#f8fafc] text-slate-900">
+      <div className="grid h-full grid-cols-[250px_1fr]">
         <aside className="flex min-h-0 flex-col border-r border-slate-200/80 bg-white/95 px-3 py-4 shadow-[24px_0_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
           <div className="mb-5 flex items-center gap-3 px-2">
             <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-500 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div>

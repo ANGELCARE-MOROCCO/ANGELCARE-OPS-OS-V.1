@@ -1,5 +1,5 @@
-import AmbassadorTrainingCertificationWorkspace from "@/components/market-os/ambassadors/phase11/AmbassadorTrainingCertificationWorkspace";
+import AmbassadorTrainingCertificationWorkspace from "@/components/market-os/ambassadors/training-certification-workspace"
 
-export default function AmbassadorTrainingCertificationPage() {
-  return <AmbassadorTrainingCertificationWorkspace />;
+export default function Page() {
+  return <AmbassadorTrainingCertificationWorkspace />
 }

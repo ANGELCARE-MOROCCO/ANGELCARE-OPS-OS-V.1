@@ -1,7 +1,5 @@
-import AmbassadorPhase2ExecutionWorkspace from "@/components/market-os/ambassadors/ambassador-phase2-execution-workspace"
-
-export const dynamic = "force-dynamic"
+import AmbassadorMissionsCommandCenter from "@/components/market-os/ambassadors/missions-command-center"
 
 export default function Page() {
-  return <AmbassadorPhase2ExecutionWorkspace mode="missions" />
+  return <AmbassadorMissionsCommandCenter />
 }

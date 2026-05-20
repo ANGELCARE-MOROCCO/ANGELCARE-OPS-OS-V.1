@@ -1,7 +1,6 @@
-import AmbassadorPhase2ExecutionWorkspace from "@/components/market-os/ambassadors/ambassador-phase2-execution-workspace"
 
-export const dynamic = "force-dynamic"
+import AmbassadorTerritoriesUltraPage from "@/components/market-os/ambassadors/ambassador-territories-ultra-page"
 
 export default function Page() {
-  return <AmbassadorPhase2ExecutionWorkspace mode="territories" />
+  return <AmbassadorTerritoriesUltraPage />
 }

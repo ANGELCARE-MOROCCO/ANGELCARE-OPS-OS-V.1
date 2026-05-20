@@ -1,8 +1,8 @@
-import Link from 'next/link'
+import Link from "next/link";
 import {
   Activity,
   AlertTriangle,
-  ArrowUpRight,
+  ArrowRight,
   BadgeCheck,
   BarChart3,
   Bell,
@@ -10,6 +10,7 @@ import {
   Building2,
   CalendarCheck,
   CheckCircle2,
+  ChevronDown,
   ClipboardCheck,
   Clock3,
   FileBadge2,
@@ -17,9 +18,8 @@ import {
   Filter,
   Gauge,
   GraduationCap,
-  Home,
   LayoutDashboard,
-  MapPinned,
+  MessageSquareText,
   Network,
   Plus,
   Search,
@@ -32,281 +32,1689 @@ import {
   Users,
   WalletCards,
   Workflow,
-} from 'lucide-react'
-import { createHrRecord, advanceHrStatus } from '../_lib/actions'
-import { HR_TABLES, getHRDashboardData } from '@/lib/hr-production/repository'
+  X,
+} from "lucide-react";
+import { createHrRecord, advanceHrStatus } from "../_lib/actions";
+import {
+  addRecruitmentComment,
+  createRecruitmentTask,
+  scheduleRecruitmentInterview,
+} from "./_actions";
+import { HR_TABLES, getHRDashboardData } from "@/lib/hr-production/repository";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-type Row = Record<string, any>
-
+type Row = Record<string, any>;
+const stages = [
+  "applied",
+  "screening",
+  "interview",
+  "assessment",
+  "offer",
+  "hired",
+];
+const interviewTypes = [
+  "Screening",
+  "Technical",
+  "HR Interview",
+  "Assessment",
+  "Final Interview",
+  "Panel Interview",
+];
+const defaultInterviewers = [
+  "Salma El Alami",
+  "Ahmed Benali",
+  "Imane Lahlou",
+  "Youssef El Fassi",
+  "Fatima Zahra Ait",
+  "Omar Kabbaj",
+];
+const toDateTimeLocal = (isoDate: string, hour = "9:00 AM") => {
+  const [hRaw, meridiem] = hour.split(" ");
+  const [h, m = "00"] = hRaw.split(":");
+  let hour24 = Number(h);
+  if (meridiem === "PM" && hour24 !== 12) hour24 += 12;
+  if (meridiem === "AM" && hour24 === 12) hour24 = 0;
+  return `${isoDate}T${String(hour24).padStart(2, "0")}:${m}`;
+};
+const stageLabel: Record<string, string> = {
+  applied: "Applied",
+  new: "Applied",
+  screening: "Screening",
+  interview: "Interview",
+  assessment: "Assessment",
+  offer: "Offer",
+  hired: "Hired",
+  rejected: "Rejected",
+  on_hold: "On Hold",
+  pending: "Pending",
+};
 const sidebarGroups = [
-  { label: 'Overview', items: [
-    { label: 'Dashboard', href: '/hr', icon: LayoutDashboard },
-    { label: 'Analytics', href: '/hr/analytics', icon: BarChart3 },
-    { label: 'Reports', href: '/hr/reports', icon: FileText },
-    { label: 'Alerts', href: '/hr/notifications', icon: Bell },
-  ]},
-  { label: 'People', items: [
-    { label: 'Employees', href: '/hr/employees', icon: Users },
-    { label: 'Organization', href: '/hr/departments', icon: Network },
-    { label: 'Teams & Departments', href: '/hr/departments', icon: Building2 },
-    { label: 'Positions & Roles', href: '/hr/positions', icon: BriefcaseBusiness },
-    { label: 'Recruitment', href: '/hr/recruitment', icon: UserCheck },
-    { label: 'Onboarding', href: '/hr/onboarding', icon: ClipboardCheck },
-    { label: 'Performance', href: '/hr/performance-matrix', icon: Gauge },
-    { label: 'Learning & Development', href: '/hr/training', icon: GraduationCap },
-  ]},
-  { label: 'Operations', items: [
-    { label: 'Attendance', href: '/hr/attendance', icon: CalendarCheck },
-    { label: 'Leave Management', href: '/hr/approvals', icon: Clock3 },
-    { label: 'Work Schedules', href: '/hr/rosters', icon: Workflow },
-    { label: 'Time Tracking', href: '/hr/workforce-ops', icon: Activity },
-    { label: 'Overtime & Approvals', href: '/hr/approvals', icon: CheckCircle2 },
-  ]},
-  { label: 'Compensation & Benefits', items: [
-    { label: 'Payroll', href: '/hr/payroll', icon: WalletCards },
-    { label: 'Compensation', href: '/hr/compensation', icon: BadgeCheck },
-    { label: 'Benefits & Insurance', href: '/hr/benefits', icon: ShieldCheck },
-  ]},
-  { label: 'Compliance & Documents', items: [
-    { label: 'Policies & Procedures', href: '/hr/templates', icon: ShieldCheck },
-    { label: 'Documents', href: '/hr/documents', icon: FileBadge2 },
-    { label: 'Compliance Dashboard', href: '/hr/compliance', icon: AlertTriangle },
-  ]},
-  { label: 'System', items: [
-    { label: 'Integrations', href: '/hr/sync-center', icon: Sparkles },
-    { label: 'Settings', href: '/hr/settings', icon: Settings },
-    { label: 'Access & Permissions', href: '/hr/permissions', icon: ShieldCheck },
-  ]},
-] as const
+  {
+    label: "Overview",
+    items: [
+      ["Dashboard", "/hr", LayoutDashboard],
+      ["Analytics", "/hr/analytics", BarChart3],
+      ["Reports", "/hr/reports", FileText],
+      ["Alerts", "/hr/notifications", Bell],
+    ],
+  },
+  {
+    label: "People",
+    items: [
+      ["Employees", "/hr/employees", Users],
+      ["Organization", "/hr/departments", Network],
+      ["Teams & Departments", "/hr/departments", Building2],
+      ["Positions & Roles", "/hr/positions", BriefcaseBusiness],
+      ["Recruitment", "/hr/recruitment", UserCheck],
+      ["Interviews", "/hr/recruitment/interviews", CalendarCheck],
+      ["Onboarding", "/hr/onboarding", ClipboardCheck],
+      ["Performance", "/hr/performance-matrix", Gauge],
+      ["Learning & Development", "/hr/training", GraduationCap],
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      ["Attendance", "/hr/attendance", CalendarCheck],
+      ["Leave Management", "/hr/approvals", Clock3],
+      ["Work Schedules", "/hr/rosters", Workflow],
+      ["Time Tracking", "/hr/workforce-ops", Activity],
+      ["Overtime & Approvals", "/hr/approvals", CheckCircle2],
+    ],
+  },
+  {
+    label: "Compensation & Benefits",
+    items: [
+      ["Payroll", "/hr/payroll", WalletCards],
+      ["Compensation", "/hr/compensation", BadgeCheck],
+      ["Benefits & Insurance", "/hr/benefits", ShieldCheck],
+    ],
+  },
+  {
+    label: "Compliance & Documents",
+    items: [
+      ["Policies & Procedures", "/hr/templates", ShieldCheck],
+      ["Documents", "/hr/documents", FileBadge2],
+      ["Compliance Dashboard", "/hr/compliance", AlertTriangle],
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      ["Integrations", "/hr/sync-center", Sparkles],
+      ["Settings", "/hr/settings", Settings],
+      ["Access & Permissions", "/hr/permissions", ShieldCheck],
+    ],
+  },
+] as const;
 
-const stages = ['applied', 'screening', 'interview', 'assessment', 'offer', 'hired'] as const
-const stageLabel: Record<string, string> = { applied: 'Applied', new: 'Applied', screening: 'Screening', interview: 'Interview', assessment: 'Assessment', offer: 'Offer', hired: 'Hired', rejected: 'Rejected', on_hold: 'On Hold', pending: 'Pending' }
-
-function text(row: Row, keys: string[], fallback = '—') {
-  for (const key of keys) {
-    const value = row?.[key]
-    if (value !== null && value !== undefined && String(value).trim()) return String(value)
+function text(row: Row, keys: string[], fallback = "—") {
+  for (const k of keys) {
+    const v = row?.[k];
+    if (v !== undefined && v !== null && String(v).trim()) return String(v);
   }
-  return fallback
+  return fallback;
 }
 function num(row: Row, keys: string[], fallback = 0) {
-  const raw = text(row, keys, '')
-  const n = Number(raw)
-  return Number.isFinite(n) ? n : fallback
+  const n = Number(text(row, keys, ""));
+  return Number.isFinite(n) ? n : fallback;
 }
-function normalizeStage(candidate: Row) {
-  const s = text(candidate, ['pipeline_stage', 'stage', 'status', 'decision'], 'applied').toLowerCase().replace(/\s+/g, '_')
-  if (s === 'new') return 'applied'
-  return s
+function norm(v: any) {
+  return String(v || "")
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .trim();
 }
-function pct(value: number, total: number) { return total ? Math.round((value / total) * 100) : 0 }
-function dateText(value: any) {
-  if (!value) return '—'
-  try { return new Intl.DateTimeFormat('en', { month: 'short', day: '2-digit', year: 'numeric' }).format(new Date(value)) } catch { return String(value) }
+function normalizeStage(c: Row) {
+  const s = norm(
+    text(c, ["pipeline_stage", "stage", "status", "decision"], "applied"),
+  );
+  return s === "new" ? "applied" : s;
 }
-function cityOf(row: Row) { return text(row, ['city', 'location', 'work_city'], 'Morocco') }
-function sourceOf(row: Row) { return text(row, ['source', 'candidate_source', 'channel'], 'manual') }
-function positionOf(row: Row) { return text(row, ['desired_position', 'job_title', 'position', 'title'], 'Open role') }
-function toneByStage(stage: string) {
-  const s = stage.toLowerCase()
-  if (s.includes('hired')) return 'border-emerald-200 bg-emerald-50 text-emerald-700'
-  if (s.includes('reject')) return 'border-rose-200 bg-rose-50 text-rose-700'
-  if (s.includes('hold')) return 'border-amber-200 bg-amber-50 text-amber-700'
-  if (s.includes('interview') || s.includes('assessment')) return 'border-violet-200 bg-violet-50 text-violet-700'
-  return 'border-blue-200 bg-blue-50 text-blue-700'
+function pct(value: number, total: number) {
+  return total ? Math.round((value / total) * 100) : 0;
 }
-function initials(name: string) { return name.split(' ').map((x) => x[0]).join('').slice(0, 2).toUpperCase() || 'AC' }
+function dateText(v: any) {
+  if (!v) return "—";
+  try {
+    return new Intl.DateTimeFormat("en", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }).format(new Date(v));
+  } catch {
+    return String(v);
+  }
+}
+function cityOf(row: Row) {
+  return text(row, ["city", "location", "work_city"], "Morocco");
+}
+function sourceOf(row: Row) {
+  return text(row, ["source", "candidate_source", "channel"], "Manual");
+}
+function positionOf(row: Row) {
+  return text(
+    row,
+    ["desired_position", "job_title", "position", "title"],
+    "Open role",
+  );
+}
+function tone(stage: string) {
+  const s = norm(stage);
+  if (s.includes("hired"))
+    return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (s.includes("reject")) return "border-rose-200 bg-rose-50 text-rose-700";
+  if (s.includes("hold")) return "border-amber-200 bg-amber-50 text-amber-700";
+  if (s.includes("interview") || s.includes("assessment"))
+    return "border-violet-200 bg-violet-50 text-violet-700";
+  return "border-blue-200 bg-blue-50 text-blue-700";
+}
+function nextStage(stage: string) {
+  return stage === "offer"
+    ? "hired"
+    : stage === "assessment"
+      ? "offer"
+      : stage === "interview"
+        ? "assessment"
+        : stage === "screening"
+          ? "interview"
+          : "screening";
+}
 
-function Sidebar() {
-  return <aside className="sticky top-0 hidden h-screen w-[292px] shrink-0 overflow-y-auto border-r border-slate-200/80 bg-white/95 px-5 py-6 shadow-[20px_0_60px_rgba(15,23,42,0.04)] backdrop-blur xl:block">
-    <div className="mb-6 flex items-center gap-3 px-2">
-      <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div>
-      <div><p className="text-sm font-black text-slate-950">Angelcare HR</p><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Morocco ops</p></div>
-    </div>
-    <div className="space-y-6">
-      {sidebarGroups.map((group) => <div key={group.label}>
-        <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{group.label}</p>
-        <div className="space-y-1">
-          {group.items.map((item) => {
-            const active = item.href === '/hr/recruitment'
-            const Icon = item.icon
-            return <Link key={`${group.label}-${item.label}`} href={item.href} className={`group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-extrabold transition ${active ? 'bg-violet-50 text-violet-700 ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}>
-              <Icon className={`h-4 w-4 ${active ? 'text-violet-600' : 'text-slate-400 group-hover:text-violet-500'}`} />
-              <span>{item.label}</span>
-            </Link>
-          })}
+function Pill({ children, className = "" }: any) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-black ${className}`}
+    >
+      {children}
+    </span>
+  );
+}
+function Card({ title, subtitle, action, children, className = "" }: any) {
+  return (
+    <section
+      className={`rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm ${className}`}
+    >
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-base font-black text-slate-950">{title}</h2>
+          {subtitle && (
+            <p className="mt-1 text-xs font-bold text-slate-500">{subtitle}</p>
+          )}
         </div>
-      </div>)}
-    </div>
-    <div className="mt-8 rounded-[28px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-black text-violet-700"><Sparkles className="h-4 w-4" /> Angel AI Recruiting</div>
-      <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">Pipeline intelligence, conversion risk, interviews and hiring execution in one synced workspace.</p>
-      <Link href="/hr/sync-center" className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-xs font-black text-violet-700 shadow-sm ring-1 ring-violet-100">Check sync <ArrowUpRight className="h-3.5 w-3.5" /></Link>
-    </div>
-  </aside>
-}
-function MetricCard({ icon: Icon, title, value, delta, danger }: any) {
-  return <div className="relative overflow-hidden rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-slate-200/70">
-    <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-violet-100/70 blur-2xl" />
-    <div className="relative flex items-center gap-4">
-      <div className="grid h-14 w-14 place-items-center rounded-[22px] bg-gradient-to-br from-violet-50 to-cyan-50 text-violet-600 ring-1 ring-violet-100"><Icon className="h-6 w-6" /></div>
-      <div><p className="text-xs font-black text-slate-400">{title}</p><p className="mt-1 text-3xl font-black tracking-tight text-slate-950">{value}</p><p className={`mt-1 text-xs font-black ${danger ? 'text-rose-500' : 'text-emerald-600'}`}>{delta}</p></div>
-    </div>
-  </div>
-}
-function Card({ title, subtitle, action, children, className = '' }: any) {
-  return <section className={`rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
-    <div className="mb-5 flex items-start justify-between gap-4"><div><h2 className="text-base font-black text-slate-950">{title}</h2>{subtitle && <p className="mt-1 text-xs font-semibold text-slate-500">{subtitle}</p>}</div>{action}</div>
-    {children}
-  </section>
-}
-function Pill({ children, className = '' }: any) { return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-black ${className}`}>{children}</span> }
-function Progress({ value, className = '' }: { value: number; className?: string }) { return <div className="h-2 rounded-full bg-slate-100"><div className={`h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-400 ${className}`} style={{ width: `${Math.max(3, Math.min(100, value))}%` }} /></div> }
-function Input({ name, placeholder, type = 'text', required = false }: any) { return <input name={name} type={type} required={required} placeholder={placeholder} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-violet-300 focus:ring-4 focus:ring-violet-100" /> }
-function Select({ name, children }: any) { return <select name={name} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800 outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-100">{children}</select> }
-
-function MoroccoRecruitmentMap({ locations }: { locations: { city: string; count: number }[] }) {
-  const max = Math.max(1, ...locations.map((x) => x.count))
-  const points: Record<string, { x: number; y: number }> = { Casablanca: { x: 42, y: 54 }, Rabat: { x: 45, y: 41 }, Tanger: { x: 48, y: 20 }, Fes: { x: 62, y: 38 }, Marrakech: { x: 52, y: 66 }, Agadir: { x: 35, y: 79 }, Oujda: { x: 76, y: 39 }, Remote: { x: 68, y: 68 } }
-  return <div className="relative h-[280px] overflow-hidden rounded-[26px] bg-gradient-to-br from-violet-50 via-white to-cyan-50 ring-1 ring-violet-100">
-    <svg viewBox="0 0 420 300" className="absolute inset-0 h-full w-full">
-      <path d="M201 17 L226 31 L245 57 L266 73 L299 84 L317 112 L307 142 L331 174 L316 204 L277 218 L258 247 L215 261 L178 247 L154 225 L132 206 L105 178 L89 151 L104 121 L132 93 L153 68 L174 44 Z" fill="rgb(237 233 254)" stroke="rgb(196 181 253)" strokeWidth="2" />
-      <path d="M205 37 L223 67 L211 98 L226 127 L206 160 L219 194 L199 226" fill="none" stroke="rgb(196 181 253)" strokeWidth="1.2" strokeDasharray="5 5" />
-      <path d="M145 96 L183 111 L225 127 L276 123" fill="none" stroke="rgb(196 181 253)" strokeWidth="1" />
-      <path d="M114 169 L160 173 L206 160 L279 181" fill="none" stroke="rgb(196 181 253)" strokeWidth="1" />
-    </svg>
-    {locations.slice(0, 8).map((loc) => {
-      const p = points[loc.city] || points.Casablanca
-      const size = 22 + Math.round((loc.count / max) * 18)
-      return <div key={loc.city} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${p.x}%`, top: `${p.y}%` }}>
-        <div className="relative grid place-items-center rounded-full bg-violet-600 text-[11px] font-black text-white shadow-xl shadow-violet-300" style={{ width: size, height: size }}>
-          <span className="absolute inset-0 animate-ping rounded-full bg-violet-400/40" />
-          <span className="relative">{loc.count}</span>
-        </div>
-        <div className="mt-1 rounded-full bg-white/95 px-2 py-1 text-[10px] font-black text-violet-700 shadow-sm ring-1 ring-violet-100">{loc.city}</div>
+        {action}
       </div>
-    })}
-  </div>
+      {children}
+    </section>
+  );
+}
+function Input(props: any) {
+  return (
+    <input
+      {...props}
+      className={`h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100 ${props.className || ""}`}
+    />
+  );
+}
+function Select(props: any) {
+  return (
+    <select
+      {...props}
+      className={`h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100 ${props.className || ""}`}
+    >
+      {props.children}
+    </select>
+  );
+}
+function Textarea(props: any) {
+  return (
+    <textarea
+      {...props}
+      className={`rounded-2xl border border-slate-200 bg-white p-4 text-sm font-bold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100 ${props.className || ""}`}
+    />
+  );
 }
 
-export default async function Page() {
-  const data = await getHRDashboardData()
-  const candidates: Row[] = data.candidates || []
-  const openings: Row[] = data.openings || []
-  const hired = candidates.filter((c) => normalizeStage(c) === 'hired' || text(c, ['decision'], '').toLowerCase() === 'hired')
-  const inProgress = candidates.filter((c) => ['screening', 'interview', 'assessment', 'offer'].includes(normalizeStage(c)))
-  const openReqs = openings.filter((x) => text(x, ['status'], 'open').toLowerCase() === 'open')
-  const totalReqs = openings.length
-  const acceptanceRate = candidates.length ? Math.round((hired.length / Math.max(1, candidates.filter((c) => ['offer','hired'].includes(normalizeStage(c)) || text(c, ['decision'], '').toLowerCase() === 'hired').length)) * 100) : 0
-  const avgTime = Math.max(1, Math.round((openReqs.reduce((sum, x) => sum + num(x, ['days_open'], 18), 0) || 24) / Math.max(1, openReqs.length || 1)))
-  const stageCounts = stages.map((s) => ({ stage: s, count: candidates.filter((c) => normalizeStage(c) === s || (s === 'applied' && normalizeStage(c) === 'new')).length }))
-  const topStage = Math.max(1, ...stageCounts.map((x) => x.count))
-  const sources = Array.from(candidates.reduce((map, c) => map.set(sourceOf(c), (map.get(sourceOf(c)) || 0) + 1), new Map<string, number>())).sort((a, b) => b[1] - a[1]).slice(0, 6)
-  const locations = Array.from([...candidates, ...openings].reduce((map, r) => map.set(cityOf(r), (map.get(cityOf(r)) || 0) + 1), new Map<string, number>())).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([city, count]) => ({ city, count }))
-  const recent = [...candidates].sort((a, b) => String(b.created_at || b.applied_on || '').localeCompare(String(a.created_at || a.applied_on || ''))).slice(0, 7)
-  const interviews = candidates.filter((c) => text(c, ['interview_date'], '') !== '').slice(0, 5)
-  const conversion = pct(hired.length, Math.max(1, candidates.length))
+function MoroccoMap({
+  locations,
+}: {
+  locations: Array<{ city: string; count: number }>;
+}) {
+  const max = Math.max(1, ...locations.map((x) => x.count || 0));
+  const points: any = {
+    casablanca: [37, 58],
+    rabat: [45, 43],
+    kenitra: [46, 38],
+    tangier: [52, 20],
+    tanger: [52, 20],
+    fes: [61, 42],
+    fez: [61, 42],
+    marrakech: [42, 70],
+    agadir: [34, 82],
+    oujda: [76, 40],
+  };
+  return (
+    <div className="relative h-64 overflow-hidden rounded-[28px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4">
+      <svg viewBox="0 0 320 240" className="absolute inset-0 h-full w-full">
+        <path
+          d="M170 20 L205 55 L244 70 L265 100 L250 126 L275 150 L238 165 L218 195 L180 214 L140 199 L104 170 L84 135 L104 100 L132 76 Z"
+          fill="#ede9fe"
+          stroke="#a78bfa"
+          strokeWidth="3"
+        />
+        <path
+          d="M160 38 C185 75 190 105 170 132 C150 158 145 184 158 206"
+          fill="none"
+          stroke="#c4b5fd"
+          strokeDasharray="7 8"
+        />
+        <path
+          d="M115 118 L228 107 M105 150 L220 140 M142 76 L194 183"
+          stroke="#c4b5fd"
+          strokeWidth="2"
+          opacity=".7"
+        />
+      </svg>
+      {locations.slice(0, 8).map((l, i) => {
+        const [x, y] = points[norm(l.city)] || [
+          38 + ((i * 13) % 38),
+          34 + ((i * 17) % 50),
+        ];
+        const size = 28 + ((l.count || 1) / max) * 34;
+        return (
+          <div
+            key={l.city}
+            className="absolute -translate-x-1/2 -translate-y-1/2 text-center"
+            style={{ left: `${x}%`, top: `${y}%` }}
+          >
+            <span
+              className="absolute left-1/2 top-1/2 rounded-full bg-violet-500/15 blur-xl"
+              style={{
+                width: size + 18,
+                height: size + 18,
+                transform: "translate(-50%,-50%)",
+              }}
+            />
+            <span
+              className="relative grid place-items-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-xs font-black text-white shadow-xl shadow-violet-300"
+              style={{ width: size, height: size }}
+            >
+              {l.count}
+            </span>
+            <span className="relative mt-1 inline-flex rounded-full bg-white/90 px-2 py-1 text-[10px] font-black uppercase text-slate-600 shadow">
+              {l.city}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
-  return <div className="min-h-screen bg-[#f8f9ff] text-slate-900">
-    <div className="flex">
-      <Sidebar />
-      <main className="min-w-0 flex-1">
-        <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/88 px-5 py-4 backdrop-blur-xl md:px-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+function ModalShell({ title, subtitle, children }: any) {
+  return (
+    <section
+      id="recruitment-create-workflow"
+      className="relative z-[80] mx-5 mt-6 md:mx-8"
+    >
+      <div className="overflow-hidden rounded-[34px] border border-white/80 bg-white shadow-2xl shadow-slate-300/60 ring-1 ring-slate-200/70">
+        <div className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-7 py-5 backdrop-blur-xl">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-500">
+              Recruitment live workflow
+            </p>
+            <h2 className="mt-1 text-2xl font-black text-slate-950">{title}</h2>
+            <p className="mt-1 text-sm font-bold text-slate-500">{subtitle}</p>
+          </div>
+          <Link
+            href="/hr/recruitment"
+            className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            Close
+          </Link>
+        </div>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function CreateModal({ candidates }: { candidates: Row[] }) {
+  const candidateOptions = candidates.slice(0, 60);
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 16);
+  return (
+    <div className="relative">
+      <details className="group/create relative">
+        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-200 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-300">
+          <Plus className="h-4 w-4" /> Create{" "}
+          <ChevronDown className="h-4 w-4 transition group-open/create:rotate-180" />
+        </summary>
+        <div className="absolute right-0 top-[calc(100%+12px)] z-[99990] hidden w-[390px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-300/50 group-open/create:block">
+          <div className="px-4 py-3">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-500">
+              Recruitment command
+            </p>
+            <p className="mt-1 text-sm font-bold text-slate-500">
+              Choose the workflow you want to launch.
+            </p>
+          </div>
+          <Link
+            href="/hr/recruitment?create=candidate"
+            className="flex items-center gap-3 rounded-2xl p-3 transition hover:bg-violet-50"
+          >
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-100 text-violet-700">
+              <Users className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-black text-slate-950">
+                Create a candidate
+              </span>
+              <span className="block text-xs font-bold text-slate-500">
+                Profile, score, tasks, comments, follow-up.
+              </span>
+            </span>
+          </Link>
+          <Link
+            href="/hr/recruitment?create=interview"
+            className="flex items-center gap-3 rounded-2xl p-3 transition hover:bg-blue-50"
+          >
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-100 text-blue-700">
+              <CalendarCheck className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-black text-slate-950">
+                Create an interview
+              </span>
+              <span className="block text-xs font-bold text-slate-500">
+                Schedule directly into interview calendar.
+              </span>
+            </span>
+          </Link>
+          <Link
+            href="/hr/recruitment?create=requisition"
+            className="flex items-center gap-3 rounded-2xl p-3 transition hover:bg-emerald-50"
+          >
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-100 text-emerald-700">
+              <BriefcaseBusiness className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-black text-slate-950">
+                Create a new requisition
+              </span>
+              <span className="block text-xs font-bold text-slate-500">
+                Broad Angelcare hiring request.
+              </span>
+            </span>
+          </Link>
+        </div>
+      </details>
+    </div>
+  );
+}
+
+function CreateWorkflowPanel({
+  candidates,
+  mode,
+}: {
+  candidates: Row[];
+  mode?: string;
+}) {
+  const candidateOptions = candidates.slice(0, 60);
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 16);
+  if (!mode) return null;
+  return (
+    <>
+      {mode === "candidate" && (
+        <ModalShell
+          title="Create Candidate"
+          subtitle="Modern live candidate workspace with dedicated tasks and comments."
+        >
+          <div className="grid gap-6 p-7 xl:grid-cols-[1.3fr_.7fr]">
+            <form
+              action={createHrRecord}
+              className="rounded-[30px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-white p-6 shadow-sm"
+            >
+              <input type="hidden" name="_table" value={HR_TABLES.candidates} />
+              <input type="hidden" name="_redirect" value="/hr/recruitment" />
+              <div className="mb-6 flex items-center gap-3">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-600 text-white">
+                  <UserCheck className="h-6 w-6" />
+                </span>
+                <div>
+                  <h3 className="text-lg font-black">
+                    Candidate identity & pipeline
+                  </h3>
+                  <p className="text-xs font-bold text-slate-500">
+                    Everything needed to make the candidate immediately
+                    operational.
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                <Input name="full_name" required placeholder="Full name" />
+                <Input name="email" type="email" placeholder="Email" />
+                <Input name="phone" placeholder="Phone" />
+                <Input
+                  name="desired_position"
+                  required
+                  placeholder="Target position"
+                />
+                <Input name="city" placeholder="City / branch" />
+                <Input
+                  name="source"
+                  placeholder="Source: website, referral, LinkedIn"
+                />
+                <Select name="pipeline_stage">
+                  <option value="applied">Applied</option>
+                  <option value="screening">Screening</option>
+                  <option value="interview">Interview</option>
+                  <option value="assessment">Assessment</option>
+                  <option value="offer">Offer</option>
+                </Select>
+                <Input
+                  name="score"
+                  type="number"
+                  min="0"
+                  max="5"
+                  placeholder="Rating / 5"
+                />
+                <Input
+                  name="expected_salary"
+                  type="number"
+                  placeholder="Expected salary MAD"
+                />
+                <Input name="availability_date" type="date" />
+                <Input name="interview_date" type="datetime-local" />
+                <Select name="decision">
+                  <option value="pending">Pending decision</option>
+                  <option value="shortlisted">Shortlisted</option>
+                  <option value="on_hold">On hold</option>
+                  <option value="rejected">Rejected</option>
+                </Select>
+                <Textarea
+                  name="notes"
+                  rows={7}
+                  placeholder="Candidate summary, experience, strengths, risks, salary expectation, language level, availability, compliance notes..."
+                  className="md:col-span-3"
+                />
+                <button className="md:col-span-3 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-4 text-sm font-black text-white shadow-lg shadow-violet-200 transition hover:-translate-y-0.5">
+                  Save candidate live
+                </button>
+              </div>
+            </form>
+            <div className="grid gap-6">
+              <form
+                action={createRecruitmentTask}
+                className="rounded-[30px] border border-emerald-100 bg-white p-6 shadow-sm"
+              >
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
+                    <ClipboardCheck className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-black">Candidate tasks</h3>
+                    <p className="text-xs font-bold text-slate-500">
+                      ClickUp-style ownership, priority and deadlines.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-3">
+                  <Input name="title" required placeholder="Task title" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input name="owner" placeholder="Owner" />
+                    <Input name="due_date" type="date" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Select name="priority">
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                      <option value="low">Low</option>
+                    </Select>
+                    <Select name="related_record_id">
+                      <option value="">Link to candidate</option>
+                      {candidateOptions.map((c) => (
+                        <option
+                          key={`task-${text(c, ["id", "full_name"])}`}
+                          value={text(c, ["id"], "")}
+                        >
+                          {text(c, ["full_name", "name"])}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <Textarea
+                    name="description"
+                    rows={4}
+                    placeholder="Checklist, dependency, instruction..."
+                  />
+                  <button className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white">
+                    Create task
+                  </button>
+                </div>
+              </form>
+              <form
+                action={addRecruitmentComment}
+                className="rounded-[30px] border border-blue-100 bg-white p-6 shadow-sm"
+              >
+                <input
+                  type="hidden"
+                  name="source_table"
+                  value={HR_TABLES.candidates}
+                />
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-50 text-blue-600">
+                    <MessageSquareText className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-black">Candidate comments</h3>
+                    <p className="text-xs font-bold text-slate-500">
+                      Decision log, mentions and timeline.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-3">
+                  <Select name="record_id">
+                    <option value="">General / link to candidate</option>
+                    {candidateOptions.map((c) => (
+                      <option
+                        key={`comment-${text(c, ["id", "full_name"])}`}
+                        value={text(c, ["id"], "")}
+                      >
+                        {text(c, ["full_name", "name"])}
+                      </option>
+                    ))}
+                  </Select>
+                  <Textarea
+                    name="comment"
+                    rows={6}
+                    required
+                    placeholder="Write note, decision reason, risk, blocker, next action..."
+                  />
+                  <Input name="next_step" placeholder="Next step" />
+                  <button className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">
+                    Add comment
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </ModalShell>
+      )}
+
+      {mode === "interview" && (
+        <ModalShell
+          title="Create Interview"
+          subtitle="Same production interview modal logic as the interview calendar. Saved interviews appear automatically in /hr/recruitment/interviews."
+        >
+          <div className="p-7">
+            <form
+              action={scheduleRecruitmentInterview}
+              className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]"
+            >
+              <section className="rounded-[30px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 p-5 shadow-sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-violet-100 bg-white/80 px-3 py-1 text-[11px] font-black uppercase tracking-[.18em] text-violet-700">
+                      <Sparkles className="h-3.5 w-3.5" /> Live interview
+                      orchestration
+                    </div>
+                    <h4 className="mt-4 text-lg font-black text-slate-950">
+                      Candidate & schedule
+                    </h4>
+                    <p className="mt-1 text-xs font-bold text-slate-500">
+                      Choose an existing candidate or create a new one, then
+                      write the interview directly into the synced calendar
+                      agenda.
+                    </p>
+                  </div>
+                  <Link
+                    href="/hr/recruitment"
+                    className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-500 shadow-sm"
+                  >
+                    <X className="h-4 w-4" />
+                  </Link>
+                </div>
+                <div className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-violet-100 bg-white/80 p-3 text-xs font-black text-violet-700">
+                  <CalendarCheck className="h-4 w-4" /> Live sync target:
+                  recruitment candidates database + interview calendar agenda
+                </div>
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  <Select name="candidate_id" className="md:col-span-2">
+                    <option value="">New candidate or choose existing</option>
+                    {candidateOptions.map((c) => (
+                      <option
+                        key={`interview-sync-${text(c, ["id", "full_name"])}`}
+                        value={text(c, ["id"], "")}
+                      >
+                        {text(c, ["full_name", "name"], "Candidate")} •{" "}
+                        {positionOf(c)}
+                      </option>
+                    ))}
+                  </Select>
+                  <Input name="full_name" placeholder="Candidate full name" />
+                  <Input
+                    name="desired_position"
+                    required
+                    placeholder="Role / position"
+                  />
+                  <Input
+                    name="email"
+                    type="email"
+                    placeholder="candidate@email.com"
+                  />
+                  <Input name="phone" placeholder="+212 ..." />
+                  <Input
+                    name="city"
+                    placeholder="Casablanca, Rabat, Remote..."
+                  />
+                  <Input
+                    name="interview_date"
+                    required
+                    type="datetime-local"
+                    defaultValue={tomorrow}
+                  />
+                  <Select name="interview_type" defaultValue="HR Interview">
+                    {interviewTypes.map((t) => (
+                      <option key={t}>{t}</option>
+                    ))}
+                  </Select>
+                  <Select name="owner" defaultValue="Salma El Alami">
+                    {defaultInterviewers.map((name) => (
+                      <option key={name}>{name}</option>
+                    ))}
+                  </Select>
+                  <Input
+                    name="meeting_url"
+                    placeholder="Google Meet / Zoom / Teams link"
+                  />
+                  <Select name="priority" defaultValue="high">
+                    <option value="medium">Medium priority</option>
+                    <option value="high">High priority</option>
+                    <option value="urgent">Urgent priority</option>
+                  </Select>
+                  <Select name="pipeline_stage" defaultValue="interview">
+                    <option value="interview">
+                      Move candidate to Interview
+                    </option>
+                    <option value="assessment">
+                      Move candidate to Assessment
+                    </option>
+                    <option value="offer">Move candidate to Offer</option>
+                  </Select>
+                </div>
+              </section>
+              <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm">
+                <h4 className="text-base font-black text-slate-950">
+                  Execution controls
+                </h4>
+                <p className="mt-1 text-xs font-bold text-slate-500">
+                  Every control writes useful HR execution data and triggers
+                  page revalidation.
+                </p>
+                <div className="mt-5 grid gap-4">
+                  <Input
+                    name="score"
+                    type="number"
+                    min="0"
+                    max="100"
+                    placeholder="Target score / readiness"
+                  />
+                  <Input
+                    name="expected_salary"
+                    type="number"
+                    placeholder="Expected salary MAD"
+                  />
+                  <Input
+                    name="task_title"
+                    placeholder="Preparation task title"
+                    defaultValue="Prepare interview scorecard and candidate file"
+                  />
+                  <Select name="decision" defaultValue="pending">
+                    <option value="pending">Pending decision</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="on_hold">On hold</option>
+                    <option value="rejected">Rejected after interview</option>
+                  </Select>
+                  <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                    <p className="text-xs font-black uppercase tracking-[.16em] text-emerald-700">
+                      Auto-sync included
+                    </p>
+                    <div className="mt-3 grid gap-2 text-sm font-black text-slate-700">
+                      {[
+                        "Create or update candidate record",
+                        "Set candidate stage to interview",
+                        "Create preparation task",
+                        "Revalidate recruitment dashboard",
+                        "Revalidate interview agenda",
+                      ].map((x) => (
+                        <span key={x} className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-600" />{" "}
+                          {x}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section className="rounded-[30px] border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-3">
+                  <Target className="h-5 w-5 text-violet-600" />
+                  <h4 className="text-base font-black text-slate-950">
+                    Interview plan
+                  </h4>
+                </div>
+                <Textarea
+                  name="notes"
+                  rows={8}
+                  placeholder="Score competencies, culture fit, availability, salary expectation, risk factors, interview questions, technical checks, legal/compliance notes and next-step rules..."
+                />
+              </section>
+              <section className="rounded-[30px] border border-violet-100 bg-violet-50/60 p-5">
+                <h4 className="text-base font-black text-slate-950">
+                  Calendar readiness
+                </h4>
+                <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
+                  Once saved, this interview becomes a live candidate interview
+                  record. The interview page reads the same candidate source and
+                  will immediately show it in the correct day agenda after
+                  refresh/revalidation.
+                </p>
+                <Link
+                  href="/hr/recruitment/interviews"
+                  className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-white px-4 py-3 text-sm font-black text-violet-700"
+                >
+                  Open interview calendar <ArrowRight className="h-4 w-4" />
+                </Link>
+              </section>
+              <div className="xl:col-span-2 flex flex-wrap justify-end gap-3 border-t border-slate-200 pt-5">
+                <Link
+                  href="/hr/recruitment"
+                  className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-black"
+                >
+                  Cancel
+                </Link>
+                <button className="rounded-2xl bg-violet-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-violet-200 transition hover:-translate-y-0.5 hover:shadow-xl">
+                  Save & Sync Interview
+                </button>
+              </div>
+            </form>
+          </div>
+        </ModalShell>
+      )}
+
+      {mode === "requisition" && (
+        <ModalShell
+          title="Create New Requisition"
+          subtitle="Broadened requisition control for Angelcare hiring across Morocco."
+        >
+          <form
+            action={createHrRecord}
+            className="grid gap-6 p-7 xl:grid-cols-3"
+          >
+            <input type="hidden" name="_table" value={HR_TABLES.openings} />
+            <input type="hidden" name="_redirect" value="/hr/recruitment" />
+            <section className="rounded-[30px] border border-violet-100 bg-violet-50/40 p-5">
+              <h3 className="mb-4 text-lg font-black">Role definition</h3>
+              <div className="grid gap-3">
+                <Input name="title" required placeholder="Job title" />
+                <Input name="department" placeholder="Department" />
+                <Input name="position" placeholder="Position family" />
+                <Input name="city" placeholder="City / branch / remote" />
+                <Select name="contract_type">
+                  <option value="full_time">Full-time</option>
+                  <option value="part_time">Part-time</option>
+                  <option value="fixed_term">Fixed-term</option>
+                  <option value="internship">Internship</option>
+                  <option value="contractor">Contractor</option>
+                </Select>
+                <Input
+                  name="openings_count"
+                  type="number"
+                  placeholder="Number of hires"
+                />
+              </div>
+            </section>
+            <section className="rounded-[30px] border border-emerald-100 bg-emerald-50/40 p-5">
+              <h3 className="mb-4 text-lg font-black">Budget & urgency</h3>
+              <div className="grid gap-3">
+                <Input
+                  name="salary_min"
+                  type="number"
+                  placeholder="Salary min MAD"
+                />
+                <Input
+                  name="salary_max"
+                  type="number"
+                  placeholder="Salary max MAD"
+                />
+                <Input name="target_start_date" type="date" />
+                <Input
+                  name="approval_owner"
+                  placeholder="Approver / budget owner"
+                />
+                <Select name="hiring_priority">
+                  <option value="normal">Normal priority</option>
+                  <option value="high">High priority</option>
+                  <option value="urgent">Urgent / critical</option>
+                </Select>
+                <Select name="status">
+                  <option value="open">Open</option>
+                  <option value="in_progress">In progress</option>
+                  <option value="on_hold">On hold</option>
+                </Select>
+              </div>
+            </section>
+            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="mb-4 text-lg font-black">Execution coverage</h3>
+              <div className="grid gap-3">
+                <Textarea
+                  name="mission_context"
+                  rows={5}
+                  placeholder="Why this role is needed, business impact, city coverage..."
+                />
+                <Textarea
+                  name="required_skills"
+                  rows={5}
+                  placeholder="Skills, languages, certifications, legal/compliance requirements..."
+                />
+                <Textarea
+                  name="notes"
+                  rows={4}
+                  placeholder="Hiring plan, sourcing channels, screening rules, interview panel, risks..."
+                />
+                <button className="rounded-2xl bg-gradient-to-r from-emerald-600 to-violet-600 px-5 py-4 text-sm font-black text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5">
+                  Save requisition live
+                </button>
+              </div>
+            </section>
+          </form>
+        </ModalShell>
+      )}
+    </>
+  );
+}
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: Promise<{ create?: string }>;
+}) {
+  const params = await searchParams;
+  const createMode = params?.create;
+  const data = await getHRDashboardData();
+  const candidates: Row[] = data.candidates || [];
+  const openings: Row[] = data.openings || [];
+  const tasks: Row[] = data.tasks || [];
+  const activity: Row[] = data.activity || data.audit || [];
+  const stageCounts = stages.map((s) => ({
+    stage: s,
+    count: candidates.filter(
+      (c) =>
+        normalizeStage(c) === s ||
+        (s === "applied" && normalizeStage(c) === "new"),
+    ).length,
+  }));
+  const topStage = Math.max(1, ...stageCounts.map((x) => x.count));
+  const sources = Array.from(
+    candidates.reduce<Map<string, number>>(
+      (m, c) => m.set(sourceOf(c), (m.get(sourceOf(c)) || 0) + 1),
+      new Map(),
+    ),
+  ).map(([source, count]) => ({ source, count }));
+  const locations = Array.from(
+    [...candidates, ...openings].reduce<Map<string, number>>(
+      (m, r) => m.set(cityOf(r), (m.get(cityOf(r)) || 0) + 1),
+      new Map(),
+    ),
+  ).map(([city, count]) => ({ city, count }));
+  const recent = [...candidates]
+    .sort((a, b) =>
+      String(b.created_at || b.applied_on || "").localeCompare(
+        String(a.created_at || a.applied_on || ""),
+      ),
+    )
+    .slice(0, 8);
+  const interviews = candidates
+    .filter((c) => text(c, ["interview_date"], "") !== "")
+    .slice(0, 5);
+  const hired = candidates.filter((c) => normalizeStage(c) === "hired").length;
+  return (
+    <div className="min-h-screen bg-[#f7f8fc] text-slate-900">
+      <div className="flex">
+        <aside className="sticky top-0 hidden h-screen w-[248px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white/95 p-4 lg:block">
+          <Link
+            href="/hr"
+            className="mb-6 flex items-center gap-3 rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-600 p-4 text-white shadow-lg shadow-violet-200"
+          >
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15">
+              <Sparkles className="h-5 w-5" />
+            </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-950">Recruitment</h1>
-              <p className="mt-1 text-sm font-semibold text-slate-500">Manage candidates, requisitions, interviews and hiring conversion from your live HR database.</p>
+              <p className="text-sm font-black">Angelcare HR</p>
+              <p className="text-[11px] font-bold text-violet-100">
+                People Operating System
+              </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex h-11 min-w-[320px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-sm"><Search className="h-4 w-4 text-slate-400" /><span className="text-xs font-bold text-slate-400">Search candidates, jobs, skills, departments...</span><kbd className="ml-auto rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-400">⌘K</kbd></div>
-              <Link href="/hr/recruitment/candidates" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 shadow-sm">Candidates</Link>
-              <Link href="/hr/recruitment/kanban" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 shadow-sm">Pipeline</Link>
-              <a href="#create" className="rounded-2xl bg-violet-600 px-4 py-3 text-xs font-black text-white shadow-lg shadow-violet-200"><Plus className="mr-1 inline h-4 w-4" /> Create</a>
+          </Link>
+          <nav className="space-y-6">
+            {sidebarGroups.map((g: any) => (
+              <div key={g.label}>
+                <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                  {g.label}
+                </p>
+                <div className="space-y-1">
+                  {g.items.map(([label, href, Icon]: any) => (
+                    <Link
+                      key={label}
+                      href={href}
+                      className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-black transition ${href === "/hr/recruitment" ? "bg-violet-50 text-violet-700 ring-1 ring-violet-100" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"}`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </nav>
+        </aside>
+        <main className="min-w-0 flex-1">
+          <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-5 py-4 backdrop-blur-xl md:px-8">
+            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+              <div>
+                <h1 className="text-2xl font-black tracking-tight text-slate-950">
+                  Recruitment
+                </h1>
+                <p className="mt-1 text-sm font-semibold text-slate-500">
+                  Manage candidates, requisitions, interviews, tasks and hiring
+                  decisions from your live HR database.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href="#candidates"
+                  className="flex h-11 min-w-[340px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-400 shadow-sm"
+                >
+                  <Search className="h-4 w-4" /> Search candidates, jobs,
+                  skills, departments...
+                </a>
+                <Link
+                  href="/hr/recruitment/candidates"
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700"
+                >
+                  Candidates
+                </Link>
+                <Link
+                  href="/hr/recruitment/kanban"
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700"
+                >
+                  Pipeline
+                </Link>
+                <Link
+                  href="/hr/recruitment/interviews"
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-violet-700"
+                >
+                  Interviews
+                </Link>
+                <CreateModal candidates={candidates} />
+              </div>
             </div>
-          </div>
-        </header>
-
-        <div className="space-y-6 p-5 md:p-8">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-            <MetricCard icon={BriefcaseBusiness} title="Total Requisitions" value={totalReqs} delta="Live from openings" />
-            <MetricCard icon={ClipboardCheck} title="Open Requisitions" value={openReqs.length} delta="Ready to hire" />
-            <MetricCard icon={Users} title="Total Candidates" value={candidates.length} delta="Synced candidates" />
-            <MetricCard icon={UserCheck} title="In Progress" value={inProgress.length} delta="Active pipeline" />
-            <MetricCard icon={BadgeCheck} title="Hired This Month" value={hired.length} delta="Converted profiles" />
-            <MetricCard icon={Clock3} title="Avg. Time to Hire" value={`${avgTime} Days`} delta="Based on requisitions" danger={avgTime > 30} />
-          </div>
-
-          <div className="grid gap-6 xl:grid-cols-4">
-            <Card title="Recruitment Pipeline" subtitle="Stage conversion using existing candidates." action={<Link href="/hr/recruitment/kanban" className="text-xs font-black text-violet-600">View full pipeline →</Link>}>
-              <div className="space-y-3">
-                {stageCounts.map((s, i) => <div key={s.stage} className="grid grid-cols-[92px_1fr_64px] items-center gap-3 text-xs font-black">
-                  <span className="text-slate-500">{stageLabel[s.stage]}</span>
-                  <div className="relative h-9 overflow-hidden rounded-xl bg-slate-50"><div className="h-full rounded-xl bg-gradient-to-r from-violet-300 via-violet-500 to-indigo-700" style={{ width: `${Math.max(10, (s.count / topStage) * 100)}%`, opacity: 1 - i * 0.07 }} /><span className="absolute inset-0 grid place-items-center text-white drop-shadow">{s.count}</span></div>
-                  <span className="text-right text-slate-400">{pct(s.count, Math.max(1, candidates.length))}%</span>
-                </div>)}
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3 text-sm"><div><p className="text-xs font-bold text-slate-400">Overall Conversion Rate</p><p className="text-2xl font-black text-slate-950">{conversion}%</p></div><div><p className="text-xs font-bold text-slate-400">Total Drop-off</p><p className="text-2xl font-black text-rose-500">{Math.max(0, candidates.length - hired.length)}</p></div></div>
-            </Card>
-
-            <Card title="Candidates Overview" subtitle="Live candidate status distribution." action={<Link href="/hr/recruitment/candidates" className="text-xs font-black text-violet-600">View candidates →</Link>}>
-              <div className="flex items-center justify-center gap-8">
-                <div className="grid h-44 w-44 place-items-center rounded-full bg-[conic-gradient(from_90deg,#7c3aed_0_32%,#2563eb_32%_76%,#a78bfa_76%_86%,#f43f5e_86%_94%,#22c55e_94%_100%)] p-5 shadow-inner"><div className="grid h-full w-full place-items-center rounded-full bg-white text-center"><div><p className="text-3xl font-black text-slate-950">{candidates.length}</p><p className="text-xs font-black text-slate-400">Total</p></div></div></div>
-                <div className="space-y-3 text-xs font-black">{['applied','screening','interview','offer','hired'].map((s) => { const count = stageCounts.find((x) => x.stage === s)?.count || 0; return <div key={s} className="flex min-w-40 items-center justify-between gap-5"><span className="text-slate-500">{stageLabel[s]}</span><span>{count} ({pct(count, Math.max(1, candidates.length))}%)</span></div> })}</div>
-              </div>
-            </Card>
-
-            <Card title="Candidates by Source" subtitle="Acquisition channels from real candidate records." action={<Link href="/hr/recruitment/sources" className="text-xs font-black text-violet-600">View source report →</Link>}>
-              <div className="space-y-4">{(sources.length ? sources : [['manual',0]]).map(([source, count]) => <div key={source} className="grid grid-cols-[110px_1fr_72px] items-center gap-3 text-xs font-black"><span className="capitalize text-slate-500">{source}</span><Progress value={pct(count, Math.max(1, candidates.length))} /><span className="text-right text-slate-500">{pct(count, Math.max(1, candidates.length))}% ({count})</span></div>)}</div>
-            </Card>
-
-            <Card title="Requisitions by Location" subtitle="Morocco hiring density." action={<a href="#locations" className="text-xs font-black text-violet-600">View all locations →</a>}>
-              <MoroccoRecruitmentMap locations={locations.length ? locations : [{ city: 'Casablanca', count: 1 }, { city: 'Rabat', count: 1 }]} />
-            </Card>
-          </div>
-
-          <div id="create" className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-            <Card title="Open Requisitions" subtitle="Create and monitor live job openings." action={<details className="relative"><summary className="cursor-pointer list-none rounded-2xl bg-violet-600 px-4 py-2 text-xs font-black text-white shadow-lg shadow-violet-200"><Plus className="mr-1 inline h-4 w-4" /> Create Requisition</summary><div className="absolute right-0 top-12 z-20 w-[720px] rounded-[28px] border border-slate-200 bg-white p-5 shadow-2xl"><form action={createHrRecord} className="grid gap-3 md:grid-cols-2"><input type="hidden" name="_table" value={HR_TABLES.openings} /><input type="hidden" name="_redirect" value="/hr/recruitment" /><Input name="title" required placeholder="Job title" /><Input name="department" placeholder="Department" /><Input name="city" placeholder="City" /><Input name="openings_count" type="number" placeholder="Openings count" /><Select name="status"><option value="open">Open</option><option value="in_progress">In Progress</option><option value="on_hold">On Hold</option><option value="closed">Closed</option></Select><Select name="hiring_priority"><option value="normal">Normal priority</option><option value="high">High priority</option><option value="urgent">Urgent</option></Select><Input name="required_skills" placeholder="Required skills" /><Input name="target_start_date" type="date" placeholder="Target start date" /><button className="md:col-span-2 rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save live requisition</button></form></div></details>}>
-              <div className="overflow-hidden rounded-2xl border border-slate-100">
-                <table className="w-full text-left text-xs"><thead className="bg-slate-50 text-slate-400"><tr>{['Job Title','Department','Location','Applicants','Status','Actions'].map((h) => <th key={h} className="px-4 py-3 font-black">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100">{openings.slice(0, 8).map((job) => <tr key={text(job, ['id', 'title'])} className="bg-white font-bold text-slate-600"><td className="px-4 py-3 font-black text-slate-950">{text(job, ['title','position','job_title'])}</td><td className="px-4 py-3">{text(job, ['department'])}</td><td className="px-4 py-3">{cityOf(job)}</td><td className="px-4 py-3">{candidates.filter((c) => text(c, ['job_id'], '') === text(job, ['id'], 'x') || positionOf(c) === text(job, ['title','position','job_title'])).length}</td><td className="px-4 py-3"><Pill className={toneByStage(text(job, ['status'], 'open'))}>{text(job, ['status'], 'open')}</Pill></td><td className="px-4 py-3"><Link href="/hr/openings" className="font-black text-violet-600">Open</Link></td></tr>)}{openings.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center font-bold text-slate-400">No live requisitions yet. Create one above.</td></tr>}</tbody></table>
-              </div>
-            </Card>
-
-            <Card title="Upcoming Interviews" subtitle="Live interview dates from candidates." action={<Link href="/hr/recruitment/interviews" className="text-xs font-black text-violet-600">View all</Link>}>
-              <div className="space-y-3">{interviews.length ? interviews.map((c) => <div key={text(c, ['id', 'full_name'])} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/60 p-3"><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-xs font-black text-violet-600 ring-1 ring-violet-100">{dateText(text(c, ['interview_date'])).split(' ').slice(0,2).join(' ')}</div><div><p className="text-sm font-black text-slate-950">{text(c, ['full_name'])}</p><p className="text-xs font-bold text-slate-500">{positionOf(c)}</p></div></div><Pill className="border-violet-200 bg-violet-50 text-violet-700">Interview</Pill></div>) : <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400">No interview dates found in the synced candidate records.</p>}</div>
-            </Card>
-          </div>
-
-          <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-            <Card title="Recent Candidates" subtitle="Real candidates with direct actions." action={<details className="relative"><summary className="cursor-pointer list-none rounded-2xl bg-violet-600 px-4 py-2 text-xs font-black text-white"><Plus className="mr-1 inline h-4 w-4" /> Add Candidate</summary><div className="absolute right-0 top-12 z-20 w-[720px] rounded-[28px] border border-slate-200 bg-white p-5 shadow-2xl"><form action={createHrRecord} className="grid gap-3 md:grid-cols-2"><input type="hidden" name="_table" value={HR_TABLES.candidates} /><input type="hidden" name="_redirect" value="/hr/recruitment" /><Input name="full_name" required placeholder="Candidate full name" /><Input name="email" placeholder="Email" /><Input name="phone" placeholder="Phone" /><Input name="city" placeholder="City" /><Input name="desired_position" placeholder="Desired position" /><Select name="source"><option value="linkedin">LinkedIn</option><option value="website">Website</option><option value="referral">Referral</option><option value="indeed">Indeed</option><option value="manual">Manual</option></Select><Select name="pipeline_stage"><option value="applied">Applied</option><option value="screening">Screening</option><option value="interview">Interview</option><option value="assessment">Assessment</option><option value="offer">Offer</option><option value="hired">Hired</option></Select><Input name="score" type="number" placeholder="Score / rating" /><Input name="interview_date" type="datetime-local" placeholder="Interview date" /><Input name="notes" placeholder="Notes" /><button className="md:col-span-2 rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save live candidate</button></form></div></details>}>
-              <div className="overflow-hidden rounded-2xl border border-slate-100"><table className="w-full text-left text-xs"><thead className="bg-slate-50 text-slate-400"><tr>{['Candidate','Job Title','Stage','Source','Rating','Actions'].map((h) => <th key={h} className="px-4 py-3 font-black">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100">{recent.map((c) => { const stage = normalizeStage(c); const id = text(c, ['id'], ''); return <tr key={id || text(c, ['full_name'])} className="bg-white font-bold text-slate-600"><td className="px-4 py-3"><div className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-violet-100 to-cyan-100 text-[11px] font-black text-violet-700">{initials(text(c, ['full_name']))}</div><div><p className="font-black text-slate-950">{text(c, ['full_name'])}</p><p className="text-[11px] text-slate-400">{cityOf(c)}</p></div></div></td><td className="px-4 py-3">{positionOf(c)}</td><td className="px-4 py-3"><Pill className={toneByStage(stage)}>{stageLabel[stage] || stage}</Pill></td><td className="px-4 py-3 capitalize">{sourceOf(c)}</td><td className="px-4 py-3"><span className="inline-flex items-center gap-0.5 text-amber-400">{Array.from({ length: 5 }).map((_, i) => <Star key={i} className={`h-3 w-3 ${i < Math.min(5, Math.round(num(c, ['score','rating'], 4))) ? 'fill-current' : ''}`} />)}</span></td><td className="px-4 py-3"><div className="flex items-center gap-2"><Link href={id ? `/hr/recruitment/candidates/${id}` : '/hr/recruitment/candidates'} className="font-black text-violet-600">Open</Link>{id && stage !== 'hired' && <form action={advanceHrStatus}><input type="hidden" name="_table" value={HR_TABLES.candidates} /><input type="hidden" name="_redirect" value="/hr/recruitment" /><input type="hidden" name="_id" value={id} /><input type="hidden" name="_field" value="pipeline_stage" /><input type="hidden" name="status" value={stage === 'offer' ? 'hired' : stage === 'assessment' ? 'offer' : stage === 'interview' ? 'assessment' : stage === 'screening' ? 'interview' : 'screening'} /><button className="font-black text-emerald-600">Advance</button></form>}</div></td></tr> })}{recent.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center font-bold text-slate-400">No candidates found. Add the first live candidate.</td></tr>}</tbody></table></div>
-            </Card>
-
-            <div className="space-y-6">
-              <Card title="Candidate Status" subtitle="Synced pipeline health.">
-                <div className="grid grid-cols-[150px_1fr] items-center gap-6"><div className="grid h-36 w-36 place-items-center rounded-full bg-[conic-gradient(from_90deg,#7c3aed_0_40%,#2563eb_40%_76%,#a78bfa_76%_88%,#f43f5e_88%_94%,#22c55e_94%_100%)] p-4"><div className="grid h-full w-full place-items-center rounded-full bg-white text-center"><div><p className="text-2xl font-black">{candidates.length}</p><p className="text-xs font-black text-slate-400">Total</p></div></div></div><div className="space-y-3">{stageCounts.map((s) => <div key={s.stage} className="flex justify-between text-xs font-black"><span className="text-slate-500">{stageLabel[s.stage]}</span><span>{s.count} ({pct(s.count, Math.max(1, candidates.length))}%)</span></div>)}</div></div>
+          </header>
+          <CreateWorkflowPanel candidates={candidates} mode={createMode} />
+          <div className="space-y-6 p-5 md:p-8">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+              {[
+                [
+                  "Total Requisitions",
+                  openings.length,
+                  "Live from openings",
+                  BriefcaseBusiness,
+                ],
+                [
+                  "Open Requisitions",
+                  openings.filter(
+                    (j) => norm(text(j, ["status"], "open")) === "open",
+                  ).length,
+                  "Ready to hire",
+                  ClipboardCheck,
+                ],
+                [
+                  "Total Candidates",
+                  candidates.length,
+                  "Synced candidates",
+                  Users,
+                ],
+                [
+                  "In Progress",
+                  candidates.length - hired,
+                  "Active pipeline",
+                  UserCheck,
+                ],
+                ["Hired This Month", hired, "Converted profiles", BadgeCheck],
+                [
+                  "Avg. Time to Hire",
+                  "24 Days",
+                  "Based on requisitions",
+                  Clock3,
+                ],
+              ].map(([label, value, sub, Icon]: any) => (
+                <Card key={label} title="" className="p-5">
+                  <div className="flex items-center gap-4">
+                    <div className="grid h-14 w-14 place-items-center rounded-2xl bg-violet-50 text-violet-700">
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-slate-500">
+                        {label}
+                      </p>
+                      <p className="mt-1 text-3xl font-black text-slate-950">
+                        {value}
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-slate-500">
+                        {sub}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <div className="grid gap-6 xl:grid-cols-4">
+              <Card
+                title="Recruitment Pipeline"
+                subtitle="Stage conversion using existing candidates."
+              >
+                {stageCounts.map((s) => (
+                  <div
+                    key={s.stage}
+                    className="mb-4 grid grid-cols-[90px_1fr_44px] items-center gap-3 text-xs font-black"
+                  >
+                    <span>{stageLabel[s.stage]}</span>
+                    <div className="h-8 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="grid h-full place-items-center rounded-full bg-gradient-to-r from-violet-300 to-violet-700 text-white"
+                        style={{
+                          width: `${Math.max(10, pct(s.count, topStage))}%`,
+                        }}
+                      >
+                        {s.count}
+                      </div>
+                    </div>
+                    <span className="text-right text-slate-500">
+                      {pct(s.count, candidates.length)}%
+                    </span>
+                  </div>
+                ))}
+                <div className="mt-5 grid grid-cols-2 gap-4 border-t pt-4">
+                  <div>
+                    <p className="text-xs font-bold text-slate-500">
+                      Conversion
+                    </p>
+                    <p className="text-2xl font-black">
+                      {pct(hired, candidates.length)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-500">Drop-off</p>
+                    <p className="text-2xl font-black text-rose-500">
+                      {Math.max(0, candidates.length - hired)}
+                    </p>
+                  </div>
+                </div>
               </Card>
-              <Card title="Tasks & Reminders" subtitle="Execution prompts based on live pipeline." action={<Link href="/hr/tasks" className="text-xs font-black text-violet-600">View all</Link>}>
+              <Card
+                title="Candidates Overview"
+                subtitle="Live candidate status distribution."
+              >
+                <div className="grid grid-cols-[150px_1fr] items-center gap-6">
+                  <div className="grid h-36 w-36 place-items-center rounded-full bg-[conic-gradient(from_90deg,#7c3aed_0_40%,#2563eb_40%_76%,#a78bfa_76%_88%,#f43f5e_88%_94%,#22c55e_94%_100%)] p-4">
+                    <div className="grid h-full w-full place-items-center rounded-full bg-white text-center">
+                      <p className="text-3xl font-black">{candidates.length}</p>
+                      <p className="text-xs font-black text-slate-400">Total</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {stageCounts.map((s) => (
+                      <p
+                        key={s.stage}
+                        className="flex justify-between text-xs font-black"
+                      >
+                        <span>{stageLabel[s.stage]}</span>
+                        <span>
+                          {s.count} ({pct(s.count, candidates.length)}%)
+                        </span>
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+              <Card
+                title="Candidates by Source"
+                subtitle="Acquisition channels from records."
+              >
+                {sources.length ? (
+                  sources.map((s) => (
+                    <div
+                      key={s.source}
+                      className="mb-4 grid grid-cols-[90px_1fr_48px] items-center gap-3 text-xs font-black"
+                    >
+                      <span>{s.source}</span>
+                      <div className="h-3 rounded-full bg-slate-100">
+                        <div
+                          className="h-3 rounded-full bg-gradient-to-r from-violet-600 to-cyan-400"
+                          style={{
+                            width: `${pct(s.count, candidates.length)}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-right">{s.count}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400">
+                    No source data yet.
+                  </p>
+                )}
+              </Card>
+              <Card
+                title="Requisitions by Location"
+                subtitle="Morocco hiring density."
+              >
+                <MoroccoMap
+                  locations={
+                    locations.length
+                      ? locations
+                      : [{ city: "Casablanca", count: 1 }]
+                  }
+                />
+              </Card>
+            </div>
+            <div className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+              <Card
+                title="Open Requisitions"
+                subtitle="Create and monitor live job openings."
+                action={
+                  <a
+                    href="#create"
+                    className="rounded-2xl bg-violet-600 px-4 py-2 text-xs font-black text-white"
+                  >
+                    <Plus className="mr-1 inline h-4 w-4" /> Create Requisition
+                  </a>
+                }
+              >
+                <div
+                  id="create"
+                  className="overflow-hidden rounded-2xl border border-slate-100"
+                >
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-400">
+                      <tr>
+                        {[
+                          "Job Title",
+                          "Department",
+                          "Location",
+                          "Applicants",
+                          "Status",
+                          "Actions",
+                        ].map((h) => (
+                          <th key={h} className="px-4 py-3 font-black">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {openings.slice(0, 8).map((job) => (
+                        <tr
+                          key={text(job, ["id", "title"])}
+                          className="bg-white font-bold"
+                        >
+                          <td className="px-4 py-3 font-black">
+                            {text(job, ["title", "position", "job_title"])}
+                          </td>
+                          <td className="px-4 py-3">
+                            {text(job, ["department"])}
+                          </td>
+                          <td className="px-4 py-3">{cityOf(job)}</td>
+                          <td className="px-4 py-3">
+                            {
+                              candidates.filter(
+                                (c) =>
+                                  text(c, ["job_id"], "") ===
+                                    text(job, ["id"], "x") ||
+                                  positionOf(c) ===
+                                    text(job, [
+                                      "title",
+                                      "position",
+                                      "job_title",
+                                    ]),
+                              ).length
+                            }
+                          </td>
+                          <td className="px-4 py-3">
+                            <Pill
+                              className={tone(text(job, ["status"], "open"))}
+                            >
+                              {text(job, ["status"], "open")}
+                            </Pill>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex gap-2">
+                              <Link
+                                href="/hr/openings"
+                                className="font-black text-violet-600"
+                              >
+                                Open
+                              </Link>
+                              <form action={advanceHrStatus}>
+                                <input
+                                  type="hidden"
+                                  name="_table"
+                                  value={HR_TABLES.openings}
+                                />
+                                <input
+                                  type="hidden"
+                                  name="_redirect"
+                                  value="/hr/recruitment"
+                                />
+                                <input
+                                  type="hidden"
+                                  name="_id"
+                                  value={text(job, ["id"], "")}
+                                />
+                                <input
+                                  type="hidden"
+                                  name="status"
+                                  value="in_progress"
+                                />
+                                <button className="font-black text-emerald-600">
+                                  Activate
+                                </button>
+                              </form>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {!openings.length && (
+                        <tr>
+                          <td
+                            colSpan={6}
+                            className="px-4 py-8 text-center font-bold text-slate-400"
+                          >
+                            No live requisitions yet. Use + Create above.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+              <Card
+                title="Upcoming Interviews"
+                subtitle="Live interview dates from candidates."
+                action={
+                  <Link
+                    href="/hr/recruitment/interviews"
+                    className="text-xs font-black text-violet-600"
+                  >
+                    View calendar →
+                  </Link>
+                }
+              >
                 <div className="space-y-3">
-                  <div className="rounded-2xl border border-rose-100 bg-rose-50 p-3 text-sm"><b className="text-rose-700">Review {stageCounts.find((x) => x.stage === 'applied')?.count || 0} new applications</b><p className="text-xs font-bold text-rose-500">Due today</p></div>
-                  <div className="rounded-2xl border border-blue-100 bg-blue-50 p-3 text-sm"><b className="text-blue-700">Schedule interviews for {stageCounts.find((x) => x.stage === 'screening')?.count || 0} screened candidates</b><p className="text-xs font-bold text-blue-500">Due tomorrow</p></div>
-                  <div className="rounded-2xl border border-amber-100 bg-amber-50 p-3 text-sm"><b className="text-amber-700">Follow up with hiring managers</b><p className="text-xs font-bold text-amber-500">Keep requisitions moving</p></div>
+                  {interviews.length ? (
+                    interviews.map((c) => (
+                      <div
+                        key={text(c, ["id", "full_name"])}
+                        className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/60 p-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-xs font-black text-violet-600 ring-1 ring-violet-100">
+                            {dateText(text(c, ["interview_date"]))
+                              .split(" ")
+                              .slice(0, 2)
+                              .join(" ")}
+                          </div>
+                          <div>
+                            <p className="text-sm font-black">
+                              {text(c, ["full_name", "name"])}
+                            </p>
+                            <p className="text-xs font-bold text-slate-500">
+                              {positionOf(c)}
+                            </p>
+                          </div>
+                        </div>
+                        <Link
+                          href="/hr/recruitment/interviews"
+                          className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-black text-white"
+                        >
+                          Manage
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400">
+                      No interview dates found in synced candidate records.
+                    </p>
+                  )}
                 </div>
               </Card>
             </div>
-          </div>
-
-          <Card id="locations" title="Recruitment Control Center" subtitle="Every action here writes through existing HR server actions and refreshes the live recruitment workspace.">
-            <div className="grid gap-4 md:grid-cols-4">
-              <Link href="/hr/recruitment/candidates" className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><Users className="mb-3 h-6 w-6 text-violet-600" /> Full candidate directory</Link>
-              <Link href="/hr/recruitment/interviews" className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><CalendarCheck className="mb-3 h-6 w-6 text-violet-600" /> Interview calendar</Link>
-              <Link href="/hr/recruitment/sources" className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><Target className="mb-3 h-6 w-6 text-violet-600" /> Source analytics</Link>
-              <Link href="/hr/sync-center" className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><Filter className="mb-3 h-6 w-6 text-violet-600" /> Sync diagnostics</Link>
+            <div
+              id="candidates"
+              className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]"
+            >
+              <Card
+                title="Recent Candidates"
+                subtitle="Real candidates with direct actions."
+              >
+                <div className="overflow-hidden rounded-2xl border border-slate-100">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-400">
+                      <tr>
+                        {[
+                          "Candidate",
+                          "Job Title",
+                          "Stage",
+                          "Source",
+                          "Rating",
+                          "Actions",
+                        ].map((h) => (
+                          <th key={h} className="px-4 py-3 font-black">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {recent.map((c) => {
+                        const id = text(c, ["id"], "");
+                        const st = normalizeStage(c);
+                        return (
+                          <tr
+                            key={id || text(c, ["full_name"])}
+                            className="font-bold"
+                          >
+                            <td className="px-4 py-3 font-black">
+                              {text(c, ["full_name", "name", "candidate_name"])}
+                            </td>
+                            <td className="px-4 py-3">{positionOf(c)}</td>
+                            <td className="px-4 py-3">
+                              <Pill className={tone(st)}>
+                                {stageLabel[st] || st}
+                              </Pill>
+                            </td>
+                            <td className="px-4 py-3">{sourceOf(c)}</td>
+                            <td className="px-4 py-3">
+                              <span className="inline-flex text-amber-400">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-3 w-3 ${i < Math.min(5, Math.round(num(c, ["score", "rating"], 4))) ? "fill-current" : ""}`}
+                                  />
+                                ))}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex flex-wrap gap-2">
+                                <Link
+                                  href={
+                                    id
+                                      ? `/hr/recruitment/candidates/${id}`
+                                      : "/hr/recruitment/candidates"
+                                  }
+                                  className="font-black text-violet-600"
+                                >
+                                  Open
+                                </Link>
+                                {id && st !== "hired" && (
+                                  <form action={advanceHrStatus}>
+                                    <input
+                                      type="hidden"
+                                      name="_table"
+                                      value={HR_TABLES.candidates}
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="_redirect"
+                                      value="/hr/recruitment"
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="_id"
+                                      value={id}
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="_field"
+                                      value="pipeline_stage"
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="status"
+                                      value={nextStage(st)}
+                                    />
+                                    <button className="font-black text-emerald-600">
+                                      Advance
+                                    </button>
+                                  </form>
+                                )}
+                                <form action={scheduleRecruitmentInterview}>
+                                  <input
+                                    type="hidden"
+                                    name="candidate_id"
+                                    value={id}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="full_name"
+                                    value={text(c, ["full_name", "name"], "")}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="desired_position"
+                                    value={positionOf(c)}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="email"
+                                    value={text(c, ["email"], "")}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="city"
+                                    value={cityOf(c)}
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="interview_type"
+                                    value="HR Interview"
+                                  />
+                                  <input
+                                    type="hidden"
+                                    name="interview_date"
+                                    value={new Date(Date.now() + 86400000)
+                                      .toISOString()
+                                      .slice(0, 16)}
+                                  />
+                                  <button className="font-black text-blue-600">
+                                    Schedule
+                                  </button>
+                                </form>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {!recent.length && (
+                        <tr>
+                          <td
+                            colSpan={6}
+                            className="px-4 py-8 text-center font-bold text-slate-400"
+                          >
+                            No candidates found. Use + Create to add the first
+                            live candidate.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+              <div className="space-y-6">
+                <Card
+                  title="Tasks & Reminders"
+                  subtitle="Live tasks and instant task creation."
+                  action={
+                    <Link
+                      href="/hr/tasks"
+                      className="text-xs font-black text-violet-600"
+                    >
+                      View all
+                    </Link>
+                  }
+                >
+                  <div className="space-y-3">
+                    {tasks
+                      .filter(
+                        (t) =>
+                          text(t, ["related_module"], "").includes(
+                            "recruitment",
+                          ) || text(t, ["task_type"], "").includes("interview"),
+                      )
+                      .slice(0, 4)
+                      .map((t) => (
+                        <div
+                          key={text(t, ["id", "title"])}
+                          className="rounded-2xl border border-slate-200 bg-slate-50 p-3"
+                        >
+                          <p className="text-sm font-black">
+                            {text(t, ["title"])}
+                          </p>
+                          <p className="text-xs font-bold text-slate-500">
+                            {text(t, ["owner"], "Unassigned")} •{" "}
+                            {text(t, ["priority"], "medium")} •{" "}
+                            {text(t, ["status"], "open")}
+                          </p>
+                        </div>
+                      ))}
+                    <form
+                      action={createRecruitmentTask}
+                      className="grid gap-2 rounded-2xl border border-violet-100 bg-violet-50 p-3"
+                    >
+                      <Input
+                        name="title"
+                        required
+                        placeholder="New recruitment task"
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input name="owner" placeholder="Owner" />
+                        <Input name="due_date" type="date" />
+                      </div>
+                      <button className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-black text-white">
+                        Add task
+                      </button>
+                    </form>
+                  </div>
+                </Card>
+                <Card
+                  title="Comments & Activity"
+                  subtitle="Candidate decisions, notes and timeline."
+                  action={
+                    <Link
+                      href="/hr/audit"
+                      className="text-xs font-black text-violet-600"
+                    >
+                      Audit trail
+                    </Link>
+                  }
+                >
+                  <div className="space-y-3">
+                    {activity
+                      .filter(
+                        (a) =>
+                          text(a, ["module", "source_table"], "").includes(
+                            "recruitment",
+                          ) ||
+                          text(a, ["source_table"], "") ===
+                            HR_TABLES.candidates,
+                      )
+                      .slice(0, 3)
+                      .map((a) => (
+                        <div
+                          key={text(a, ["id", "created_at"])}
+                          className="rounded-2xl border border-slate-200 bg-white p-3"
+                        >
+                          <p className="text-xs font-black text-slate-500">
+                            {text(a, ["action"])}
+                          </p>
+                          <p className="text-sm font-bold text-slate-700">
+                            {text(a, ["actor_label", "created_by"], "HR")}
+                          </p>
+                        </div>
+                      ))}
+                    <form
+                      action={addRecruitmentComment}
+                      className="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3"
+                    >
+                      <input
+                        type="hidden"
+                        name="source_table"
+                        value={HR_TABLES.candidates}
+                      />
+                      <Textarea
+                        name="comment"
+                        rows={3}
+                        required
+                        placeholder="Add recruitment comment..."
+                      />
+                      <button className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">
+                        Save comment
+                      </button>
+                    </form>
+                  </div>
+                </Card>
+              </div>
             </div>
-          </Card>
-        </div>
-      </main>
+            <Card
+              title="Recruitment Control Center"
+              subtitle="Every tile is a live navigation or server action entry point."
+            >
+              <div className="grid gap-4 md:grid-cols-4">
+                <Link
+                  href="/hr/recruitment/candidates"
+                  className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black shadow-sm hover:shadow-xl"
+                >
+                  <Users className="mb-3 h-6 w-6 text-violet-600" />
+                  Full candidate directory
+                </Link>
+                <Link
+                  href="/hr/recruitment/interviews"
+                  className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black shadow-sm hover:shadow-xl"
+                >
+                  <CalendarCheck className="mb-3 h-6 w-6 text-violet-600" />
+                  Interview calendar
+                </Link>
+                <Link
+                  href="/hr/recruitment/sources"
+                  className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black shadow-sm hover:shadow-xl"
+                >
+                  <Target className="mb-3 h-6 w-6 text-violet-600" />
+                  Source analytics
+                </Link>
+                <Link
+                  href="/hr/sync-center"
+                  className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black shadow-sm hover:shadow-xl"
+                >
+                  <Filter className="mb-3 h-6 w-6 text-violet-600" />
+                  Sync diagnostics
+                </Link>
+              </div>
+            </Card>
+          </div>
+        </main>
+      </div>
     </div>
-  </div>
+  );
 }
