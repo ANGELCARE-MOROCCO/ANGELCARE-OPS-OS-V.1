@@ -1,5 +1,6 @@
 export type AttendanceAction = 'shift_in' | 'shift_out' | 'lunch_start' | 'lunch_end'
 export type AttendanceView = 'dashboard' | 'day' | 'week' | 'agenda' | 'people' | 'exceptions'
+export type LiveAttendanceStatus = 'none' | 'in' | 'out' | 'pause' | 'back' | 'error'
 
 export type AttendanceRecord = {
   id: string
@@ -33,4 +34,34 @@ export type AttendanceLog = {
   note?: string | null
   source?: string | null
   created_at: string
+}
+
+export type PunchResult = {
+  ok: true
+  attendance_date: string
+  action: AttendanceAction
+  status: LiveAttendanceStatus
+  message: string
+  record: AttendanceRecord | null
+  canPunch: Record<AttendanceAction, boolean>
+  workedMinutes: number
+  breakMinutes: number
+}
+
+export type AttendanceLiveState = {
+  ok: true
+  attendance_date: string
+  status: LiveAttendanceStatus
+  message: string
+  record: AttendanceRecord | null
+  canPunch: Record<AttendanceAction, boolean>
+  workedMinutes: number
+  breakMinutes: number
+  staff: {
+    id: string | null
+    user_id: string
+    full_name: string
+    department?: string | null
+    position?: string | null
+  } | null
 }

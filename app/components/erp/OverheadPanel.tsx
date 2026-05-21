@@ -14,6 +14,17 @@ type AppRoute = {
 
 type PunchAction = "shift_in" | "shift_out" | "lunch_start" | "lunch_end"
 type AttendanceStatus = "none" | "in" | "out" | "pause" | "back" | "error"
+type PunchAvailability = Record<PunchAction, boolean>
+
+type AttendanceLivePayload = {
+  ok?: boolean
+  status?: AttendanceStatus
+  message?: string
+  canPunch?: PunchAvailability
+  workedMinutes?: number
+  breakMinutes?: number
+  record?: { check_in?: string | null; check_out?: string | null; lunch_start?: string | null; lunch_end?: string | null } | null
+}
 type SystemSignal = {
   label: string
   value: string
@@ -146,6 +157,8 @@ export default function OverheadPanel() {
   const [online, setOnline] = useState(true)
   const [status, setStatus] = useState<AttendanceStatus>("none")
   const [busy, setBusy] = useState<PunchAction | null>(null)
+  const [canPunch, setCanPunch] = useState<PunchAvailability>({ shift_in: true, shift_out: false, lunch_start: false, lunch_end: false })
+  const [attendanceHint, setAttendanceHint] = useState("Attendance status syncing...")
   const [terminalMessage, setTerminalMessage] = useState("SYSTEM READY • VOICE READY • CONNECT READY")
   const [voiceState, setVoiceState] = useState<"ready" | "incoming" | "offline">("ready")
   const [connectState, setConnectState] = useState<"online" | "message" | "offline">("online")
@@ -168,6 +181,28 @@ export default function OverheadPanel() {
     }
 
     setUserAlerts((current) => [nextAlert, ...current].slice(0, 8))
+  }
+
+
+  function applyAttendancePayload(payload: AttendanceLivePayload) {
+    if (!payload?.ok) return
+    if (payload.status) setStatus(payload.status)
+    if (payload.canPunch) setCanPunch(payload.canPunch)
+    if (payload.message) setAttendanceHint(payload.message)
+    const worked = typeof payload.workedMinutes === "number" ? ` • ${Math.floor(payload.workedMinutes / 60)}h${String(payload.workedMinutes % 60).padStart(2, "0")}` : ""
+    setTerminalMessage(`HR ATTENDANCE LIVE • ${payload.message || "STATE SYNCED"}${worked}`)
+  }
+
+  async function refreshAttendanceStatus(silent = false) {
+    try {
+      if (!silent) setTerminalMessage("HR ATTENDANCE • REFRESHING LIVE STATUS...")
+      const res = await fetch("/api/attendance/status", { cache: "no-store" })
+      const payload = (await res.json().catch(() => ({}))) as AttendanceLivePayload
+      if (!res.ok || !payload.ok) throw new Error("Attendance status unavailable")
+      applyAttendancePayload(payload)
+    } catch {
+      if (!silent) setTerminalMessage("HR ATTENDANCE • STATUS SYNC UNAVAILABLE")
+    }
   }
 
   useEffect(() => {
@@ -365,6 +400,11 @@ export default function OverheadPanel() {
   const hasUserAlerts = userAlerts.length > 0
 
   async function punch(action: PunchAction, nextStatus: AttendanceStatus) {
+    if (!canPunch[action]) {
+      setTerminalMessage(`HR ACTION BLOCKED • CURRENT STATUS DOES NOT ALLOW ${action.toUpperCase()}`)
+      return
+    }
+
     try {
       setBusy(action)
       setTerminalMessage(`HR ACTION • ${action.toUpperCase()} SENDING...`)
@@ -372,16 +412,19 @@ export default function OverheadPanel() {
       const res = await fetch("/api/attendance/punch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, source: "overhead_panel" }),
       })
 
-      if (!res.ok) throw new Error("Punch failed")
+      const payload = (await res.json().catch(() => ({}))) as AttendanceLivePayload & { error?: string }
+      if (!res.ok || !payload.ok) throw new Error(payload.error || "Punch failed")
 
-      setStatus(nextStatus)
-      setTerminalMessage(`HR ACTION CONFIRMED • ${action.toUpperCase()}`)
-    } catch {
+      setStatus(payload.status || nextStatus)
+      applyAttendancePayload(payload)
+      setTerminalMessage(`HR ACTION CONFIRMED • ${action.toUpperCase()} • ${payload.message || "SYNCED"}`)
+    } catch (error) {
       setStatus("error")
-      setTerminalMessage("HR ACTION ERROR • CHECK API OR SESSION")
+      setTerminalMessage(`HR ACTION ERROR • ${error instanceof Error ? error.message : "CHECK API OR SESSION"}`)
+      await refreshAttendanceStatus(true)
     } finally {
       setBusy(null)
     }
@@ -446,16 +489,17 @@ export default function OverheadPanel() {
           <div style={timeStyle}>{time}</div>
         </div>
 
-        <div style={statusPillStyle(status)}>{statusText}</div>
+        <div style={statusPillStyle(status)} title={attendanceHint}>{statusText}</div>
 
         <div style={punchGridStyle}>
           {PUNCHES.map((item) => (
             <button
               key={item.action}
               type="button"
-              disabled={busy !== null}
+              disabled={busy !== null || !canPunch[item.action]}
               onClick={() => punch(item.action, item.nextStatus)}
-              style={punchButtonStyle(item.nextStatus, busy === item.action)}
+              title={canPunch[item.action] ? attendanceHint : `Blocked by current attendance state: ${attendanceHint}`}
+              style={punchButtonStyle(item.nextStatus, busy === item.action || !canPunch[item.action])}
             >
               <span>{item.icon}</span>
               {item.label}

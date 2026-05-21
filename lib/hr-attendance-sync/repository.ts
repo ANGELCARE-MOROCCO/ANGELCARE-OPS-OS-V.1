@@ -1,11 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
-import type { AttendanceAction, AttendanceRecord } from './types'
+import type { AttendanceAction, AttendanceLiveState, AttendanceRecord, LiveAttendanceStatus, PunchResult } from './types'
 
 const ACTION_TO_COLUMN: Record<AttendanceAction, 'check_in' | 'check_out' | 'lunch_start' | 'lunch_end'> = {
   shift_in: 'check_in',
   shift_out: 'check_out',
   lunch_start: 'lunch_start',
   lunch_end: 'lunch_end',
+}
+
+const NEXT_STATUS: Record<AttendanceAction, LiveAttendanceStatus> = {
+  shift_in: 'in',
+  shift_out: 'out',
+  lunch_start: 'pause',
+  lunch_end: 'back',
 }
 
 export function todayCasablanca() {
@@ -39,6 +46,54 @@ export function timeOnly(value?: string | null) {
   }
 }
 
+function minutesBetween(a?: string | null, b?: string | null) {
+  if (!a || !b) return 0
+  const start = new Date(a).getTime()
+  const end = new Date(b).getTime()
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return 0
+  return Math.floor((end - start) / 60000)
+}
+
+function deriveLiveStatus(record?: AttendanceRecord | null): LiveAttendanceStatus {
+  if (!record?.id) return 'none'
+  if (record.check_in && record.check_out) return 'out'
+  if (record.lunch_start && !record.lunch_end) return 'pause'
+  if (record.lunch_start && record.lunch_end && record.check_in && !record.check_out) return 'back'
+  if (record.check_in && !record.check_out) return 'in'
+  return 'none'
+}
+
+function deriveCanPunch(record?: AttendanceRecord | null): Record<AttendanceAction, boolean> {
+  const status = deriveLiveStatus(record)
+  return {
+    shift_in: status === 'none' || status === 'out',
+    shift_out: status === 'in' || status === 'back',
+    lunch_start: status === 'in' || status === 'back',
+    lunch_end: status === 'pause',
+  }
+}
+
+function deriveMessage(status: LiveAttendanceStatus, record?: AttendanceRecord | null) {
+  if (status === 'none') return 'Ready to punch in.'
+  if (status === 'in') return `Shift active since ${timeOnly(record?.check_in)}.`
+  if (status === 'pause') return `Break active since ${timeOnly(record?.lunch_start)}.`
+  if (status === 'back') return `Back from break. Shift remains active.`
+  if (status === 'out') return `Shift completed at ${timeOnly(record?.check_out)}.`
+  return 'Attendance status needs review.'
+}
+
+function computeWorkedMinutes(record?: AttendanceRecord | null) {
+  if (!record?.check_in) return Number(record?.total_minutes || 0)
+  const end = record.check_out || new Date().toISOString()
+  return Math.max(0, minutesBetween(record.check_in, end) - computeBreakMinutes(record))
+}
+
+function computeBreakMinutes(record?: AttendanceRecord | null) {
+  if (!record?.lunch_start) return Number(record?.break_minutes || 0)
+  const end = record.lunch_end || new Date().toISOString()
+  return minutesBetween(record.lunch_start, end)
+}
+
 export async function resolveStaffProfileForUser(userId: string) {
   const supabase = await createClient()
   const { data: direct } = await supabase
@@ -60,18 +115,76 @@ export async function resolveStaffProfileForUser(userId: string) {
     : null
 }
 
+async function logHrActivity(input: { entityId?: string | null; title: string; description?: string | null; actorId?: string | null }) {
+  const supabase = await createClient()
+  await supabase.from('hr_activity_timeline').insert({
+    entity_type: 'attendance',
+    entity_id: input.entityId || input.actorId || null,
+    title: input.title,
+    description: input.description || null,
+    actor_id: input.actorId || null,
+    created_at: new Date().toISOString(),
+  }).then(() => null, () => null)
+}
+
+async function readTodayRecord(userId: string, day = todayCasablanca()) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('hr_attendance_records')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('attendance_date', day)
+    .maybeSingle()
+  if (error) throw new Error(error.message)
+  return (data || null) as AttendanceRecord | null
+}
+
+export async function getLiveAttendanceState(userId: string): Promise<AttendanceLiveState> {
+  const day = todayCasablanca()
+  const [staff, record] = await Promise.all([resolveStaffProfileForUser(userId), readTodayRecord(userId, day)])
+  const status = deriveLiveStatus(record)
+  return {
+    ok: true,
+    attendance_date: day,
+    status,
+    message: deriveMessage(status, record),
+    record,
+    canPunch: deriveCanPunch(record),
+    workedMinutes: computeWorkedMinutes(record),
+    breakMinutes: computeBreakMinutes(record),
+    staff: staff ? { id: staff.id || null, user_id: userId, full_name: staff.full_name || 'Staff member', department: staff.department, position: staff.position } : null,
+  }
+}
+
+function assertValidTransition(action: AttendanceAction, record?: AttendanceRecord | null) {
+  const canPunch = deriveCanPunch(record)
+  if (canPunch[action]) return
+  const status = deriveLiveStatus(record)
+  const labels: Record<AttendanceAction, string> = {
+    shift_in: 'punch in',
+    shift_out: 'punch out',
+    lunch_start: 'start break',
+    lunch_end: 'return from break',
+  }
+  throw new Error(`Cannot ${labels[action]} while attendance status is ${status}. Refresh the page if another device was used.`)
+}
+
 export async function syncPunchToHrAttendance(input: {
   userId: string
   action: AttendanceAction
   note?: string | null
   source?: string
   deviceContext?: Record<string, unknown>
-}) {
+  force?: boolean
+}): Promise<PunchResult> {
   const supabase = await createClient()
   const now = new Date().toISOString()
   const day = todayCasablanca()
   const column = ACTION_TO_COLUMN[input.action]
   const staff = await resolveStaffProfileForUser(input.userId)
+  const existing = await readTodayRecord(input.userId, day)
+
+  if (!input.force) assertValidTransition(input.action, existing)
 
   const { error: logError } = await supabase.from('app_attendance_logs').insert({
     user_id: input.userId,
@@ -80,16 +193,10 @@ export async function syncPunchToHrAttendance(input: {
     note: input.note || null,
     source: input.source || 'overhead_panel',
     device_context: input.deviceContext || {},
+    validation_status: input.force ? 'forced' : 'auto_accepted',
     created_at: now,
   })
   if (logError) throw new Error(logError.message)
-
-  const { data: existing } = await supabase
-    .from('hr_attendance_records')
-    .select('*')
-    .eq('user_id', input.userId)
-    .eq('attendance_date', day)
-    .maybeSingle()
 
   const patch: Record<string, unknown> = {
     user_id: input.userId,
@@ -97,10 +204,21 @@ export async function syncPunchToHrAttendance(input: {
     staff_name: staff?.full_name || 'Staff member',
     attendance_date: day,
     source: input.source || 'overhead_panel',
-    validation_status: 'auto_synced',
-    status: input.action === 'shift_out' ? 'completed' : 'in_progress',
+    validation_status: input.force ? 'forced_sync' : 'auto_synced',
+    status: NEXT_STATUS[input.action] === 'out' ? 'completed' : 'in_progress',
     updated_at: now,
     [column]: now,
+  }
+
+  if (input.action === 'shift_in') {
+    patch.check_out = null
+    patch.lunch_start = null
+    patch.lunch_end = null
+  }
+
+  if (input.action === 'shift_out' && existing?.lunch_start && !existing?.lunch_end) {
+    patch.lunch_end = now
+    patch.notes = [existing.notes, 'Auto-closed active break during punch out.'].filter(Boolean).join('\n')
   }
 
   let recordId = existing?.id as string | undefined
@@ -113,8 +231,30 @@ export async function syncPunchToHrAttendance(input: {
     recordId = data?.id
   }
 
-  if (recordId) await supabase.rpc('hr_recalculate_attendance_record', { record_id: recordId })
-  return { ok: true, attendance_date: day, action: input.action }
+  if (recordId) {
+    await supabase.rpc('hr_recalculate_attendance_record', { record_id: recordId }).then(() => null, () => null)
+    await logHrActivity({
+      entityId: recordId,
+      actorId: input.userId,
+      title: `Attendance ${input.action.replaceAll('_', ' ')}`,
+      description: `${staff?.full_name || 'Staff member'} used ${input.source || 'overhead_panel'} at ${now}.`,
+    })
+  }
+
+  const fresh = await readTodayRecord(input.userId, day)
+  const status = deriveLiveStatus(fresh)
+
+  return {
+    ok: true,
+    attendance_date: day,
+    action: input.action,
+    status,
+    message: deriveMessage(status, fresh),
+    record: fresh,
+    canPunch: deriveCanPunch(fresh),
+    workedMinutes: computeWorkedMinutes(fresh),
+    breakMinutes: computeBreakMinutes(fresh),
+  }
 }
 
 export async function getAttendanceCommandData(options?: { from?: string; to?: string; userId?: string }) {
