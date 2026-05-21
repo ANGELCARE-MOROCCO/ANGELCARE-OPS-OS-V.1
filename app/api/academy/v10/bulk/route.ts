@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
   if (!ids.length) return NextResponse.json({ ok: false, error: "No record ids selected" }, { status: 400 })
   const supabase = await createClient()
   const updates = { ...(payload.updates || {}), updated_at: new Date().toISOString() }
-  const { data, error } = await supabase.from("revenue_command_records").update(updates).in("id", ids).select("id")
-  await supabase.from("revenue_command_action_logs").insert({
-    module_key: payload.module_key || "revenue_hq",
+  const { data, error } = await supabase.from("academy_command_records").update(updates).in("id", ids).select("id")
+  await supabase.from("academy_action_logs").insert({
+    module_key: payload.module_key || "academy",
     page_key: payload.page_key || null,
     action_key: `bulk_${payload.action || "update"}`,
     selected_count: ids.length,

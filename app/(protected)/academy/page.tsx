@@ -20,6 +20,15 @@ const modules = [
   { title: 'Reports', href: '/academy/reports', icon: '📈', priority: 'strategic' as const, description: 'Board-ready reporting, audit evidence and print-ready documents.', signal: 'Executive documentation center.' },
   { title: 'Command Center', href: '/academy/command-center', icon: '🧠', priority: 'critical' as const, description: 'Control layer, exceptions, workflow gates and priority actions.', signal: 'Decision cockpit.' },
   { title: 'Workbench', href: '/academy/workbench', icon: '🏛️', priority: 'strategic' as const, description: 'Enterprise hardening, governance and integration readiness.', signal: 'Scale and quality system.' },
+  { title: 'Notifications', href: '/academy/notifications', icon: '🔔', priority: 'high' as const, description: 'Queued staff, trainee and partner communications from live Academy events.', signal: 'Email OS and internal notification readiness.' },
+  { title: 'Control Tickets', href: '/academy/control-tickets', icon: '🎛️', priority: 'critical' as const, description: 'Escalations, blockers and manager decision tickets.', signal: 'No risk hidden.' },
+  { title: 'Evaluations', href: '/academy/evaluations', icon: '🧪', priority: 'critical' as const, description: 'Training scores, completion evidence and certificate readiness.', signal: 'Quality gate before certificate.' },
+  { title: 'Job Placement', href: '/academy/job-placement', icon: '🧭', priority: 'strategic' as const, description: 'Graduate matching with nurseries, preschools, events and home-care partners.', signal: 'Outcome and insertion engine.' },
+  { title: 'Revenue Sync', href: '/academy/revenue-sync', icon: '💳', priority: 'critical' as const, description: 'Academy payment sync with Revenue Command Center.', signal: 'No lost revenue.' },
+  { title: 'Email Templates', href: '/academy/email-templates', icon: '✉️', priority: 'high' as const, description: 'Enrollment, payment, attendance, certificate and partner communication templates.', signal: 'Email OS bridge.' },
+  { title: 'Import / Export', href: '/academy/import-export', icon: '📤', priority: 'normal' as const, description: 'Controlled data movement for reports and operations.', signal: 'Clean migration and evidence.' },
+  { title: 'Role Matrix', href: '/academy/role-matrix', icon: '🔐', priority: 'critical' as const, description: 'Permission design for Academy staff and managers.', signal: 'Secure access.' },
+  { title: 'Settings', href: '/academy/settings', icon: '⚙️', priority: 'normal' as const, description: 'Production rules and lifecycle settings.', signal: 'Configuration hub.' },
 ]
 
 export default async function AcademyCommandDashboard() {

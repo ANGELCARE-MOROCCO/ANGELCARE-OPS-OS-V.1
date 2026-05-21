@@ -1,5 +1,3 @@
-import UltimateRevenueCommandPage from '../_v9/UltimateRevenueCommandPage'
-
-export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="my-work" />
-}
+import RevenueDailyTasksProductionCommandCenter from "@/components/revenue-command-center/RevenueDailyTasksProductionCommandCenter"
+export const dynamic = "force-dynamic"
+export default function Page(){ return <RevenueDailyTasksProductionCommandCenter /> }

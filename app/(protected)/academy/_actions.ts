@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { generateAcademySerial, generateCertificateNumber } from './_lib/academyWorkflow'
+import { academyProductionSync } from './_lib/productionSync'
 
 function v(fd: FormData, key: string) { const x = fd.get(key); return typeof x === 'string' && x.trim() ? x.trim() : null }
 function n(fd: FormData, key: string) { const x = Number(fd.get(key)); return Number.isFinite(x) ? x : 0 }
@@ -19,6 +20,7 @@ export async function createTrainee(fd: FormData) {
   const { data, error } = await supabase.from('academy_trainees').insert(payload).select('id').single()
   if (error) throw new Error(error.message)
   await audit('create', 'academy_trainees', data?.id, `Created trainee ${payload.full_name}`)
+  await academyProductionSync({ event_key: 'trainee_created', entity: 'academy_trainees', entity_id: data?.id, title: `New Academy trainee: ${payload.full_name}`, note: 'New trainee requires eligibility validation and follow-up.', priority: 'high', payload: { trainee: payload, next_action: 'Validate eligibility and assign owner' } })
   revalidatePath('/academy/trainees'); refresh()
 }
 
@@ -36,6 +38,7 @@ export async function validateEligibility(fd: FormData) {
   const { error } = await supabase.from('academy_trainees').update({ eligibility_status: status, eligibility_score: score, eligibility_note: v(fd, 'note'), status: status === 'approved' ? 'eligible' : status === 'rejected' ? 'rejected' : 'prospect', updated_at: new Date().toISOString() }).eq('id', id)
   if (error) throw new Error(error.message)
   await audit('eligibility_decision', 'academy_trainees', id, `${status} with score ${score}. ${v(fd, 'note') || ''}`)
+  await academyProductionSync({ event_key: 'eligibility_decision', entity: 'academy_trainees', entity_id: id, title: `Eligibility ${status}`, note: v(fd, 'note'), priority: status === 'approved' ? 'high' : 'medium', payload: { status, score, next_action: status === 'approved' ? 'Create enrollment and payment plan' : 'Review trainee file' } })
   revalidatePath('/academy/eligibility'); revalidatePath('/academy/trainees'); refresh()
 }
 
@@ -82,6 +85,7 @@ export async function createEnrollment(fd: FormData) {
   if (error) throw new Error(error.message)
   await supabase.from('academy_trainees').update({ status: 'enrolled', assigned_group_id: payload.group_id, updated_at: new Date().toISOString() }).eq('id', trainee_id)
   await audit('create', 'academy_enrollments', data?.id, `Enrollment created for trainee ${trainee_id}`)
+  await academyProductionSync({ event_key: 'enrollment_created', entity: 'academy_enrollments', entity_id: data?.id, title: 'Academy enrollment created', note: `Enrollment created for trainee ${trainee_id}`, priority: 'high', payload: { enrollment: payload, next_action: 'Confirm payment and first attendance session' } })
   revalidatePath('/academy/enrollments'); revalidatePath('/academy/trainees'); refresh()
 }
 
@@ -91,6 +95,7 @@ export async function addPayment(fd: FormData) {
   const { data, error } = await supabase.from('academy_payments').insert(payload).select('id').single()
   if (error) throw new Error(error.message)
   await audit('create', 'academy_payments', data?.id, `Payment ${payload.status} amount ${payload.amount}`)
+  await academyProductionSync({ event_key: 'payment_recorded', entity: 'academy_payments', entity_id: data?.id, title: `Academy payment ${payload.status}`, note: `Payment amount ${payload.amount} MAD`, value_mad: payload.amount, priority: payload.status === 'paid' ? 'medium' : 'high', risk_level: payload.status === 'paid' ? 'low' : 'high', due_at: payload.due_at, payload: { payment: payload, next_action: payload.status === 'paid' ? 'Validate receipt' : 'Recover unpaid balance' } })
   revalidatePath('/academy/payments'); refresh()
 }
 
@@ -100,6 +105,7 @@ export async function markAttendance(fd: FormData) {
   const { data, error } = await supabase.from('academy_attendance').insert(payload).select('id').single()
   if (error) throw new Error(error.message)
   await audit('create', 'academy_attendance', data?.id, `Attendance ${payload.status}`)
+  await academyProductionSync({ event_key: 'attendance_marked', entity: 'academy_attendance', entity_id: data?.id, title: `Attendance ${payload.status}`, note: payload.note, priority: payload.status === 'absent' ? 'high' : 'low', risk_level: payload.status === 'absent' ? 'high' : 'low', payload: { attendance: payload, next_action: payload.status === 'absent' ? 'Call trainee and prevent dropout' : 'No action required' } })
   revalidatePath('/academy/attendance'); refresh()
 }
 
