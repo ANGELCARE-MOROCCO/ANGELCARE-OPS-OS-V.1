@@ -1,68 +1,153 @@
-import Link from 'next/link'
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ERPPanel, MetricCard, StatusPill } from '@/app/components/erp/ERPPrimitives'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
+import UsersEmployeeCommandClient, { type UserStaffRecord } from './_components/UsersEmployeeCommandClient'
+
+export const dynamic = 'force-dynamic'
+
+type Row = Record<string, any>
+
+async function readTable(table: string, columns = '*', limit = 500) {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase.from(table).select(columns).limit(limit)
+    return (data || []) as Row[]
+  } catch {
+    return [] as Row[]
+  }
+}
+
+function key(value: unknown) {
+  return String(value || '').trim().toLowerCase()
+}
+
+function pick(row: Row | undefined, keys: string[], fallback: any = null) {
+  if (!row) return fallback
+  for (const name of keys) {
+    if (row[name] !== undefined && row[name] !== null && row[name] !== '') return row[name]
+  }
+  return fallback
+}
+
+function normalizeStatus(value: unknown) {
+  const raw = key(value)
+  if (['active', 'enabled', 'available', 'actif'].includes(raw)) return 'active'
+  if (['inactive', 'disabled', 'suspended', 'archived'].includes(raw)) return raw
+  return raw || 'active'
+}
+
+function initials(name: string) {
+  return name.split(' ').filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'U'
+}
+
+function countRelated(rows: Row[], staff: Row | undefined, user: Row) {
+  const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
+  const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
+  const email = key(pick(user, ['email']))
+  return rows.filter((row) => {
+    const rowStaff = key(pick(row, ['staff_id', 'employee_id', 'profile_id', 'user_id']))
+    const rowEmail = key(pick(row, ['email', 'staff_email', 'employee_email']))
+    return (staffId && rowStaff === staffId) || (userId && rowStaff === userId) || (email && rowEmail === email)
+  }).length
+}
+
+function latestAttendance(rows: Row[], staff: Row | undefined, user: Row) {
+  const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
+  const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
+  const email = key(pick(user, ['email']))
+  const matched = rows.filter((row) => {
+    const rowStaff = key(pick(row, ['staff_id', 'employee_id', 'profile_id', 'user_id']))
+    const rowEmail = key(pick(row, ['email', 'staff_email', 'employee_email']))
+    return (staffId && rowStaff === staffId) || (userId && rowStaff === userId) || (email && rowEmail === email)
+  })
+  return matched.sort((a, b) => String(pick(b, ['work_date', 'created_at', 'punch_in_at'], '')).localeCompare(String(pick(a, ['work_date', 'created_at', 'punch_in_at'], ''))))[0]
+}
+
+function readiness(record: UserStaffRecord) {
+  let score = 28
+  if (record.status === 'active') score += 12
+  if (record.email) score += 8
+  if (record.department && record.department !== '—') score += 10
+  if (record.position && record.position !== '—') score += 8
+  if (record.coverage.documents > 0) score += 8
+  if (record.coverage.contracts > 0) score += 8
+  if (record.coverage.training > 0) score += 6
+  if (record.coverage.rosters > 0) score += 5
+  if (record.coverage.attendance > 0) score += 7
+  return Math.max(0, Math.min(100, score))
+}
 
 export default async function UsersPage() {
-  await requireRole(['ceo', 'manager'])
-  const supabase = await createClient()
-  const { data } = await supabase.from('app_users').select('*').order('created_at', { ascending: false })
-  const users = data || []
-  const active = users.filter((u: any) => u.status === 'active').length
-  const managers = users.filter((u: any) => ['ceo', 'manager'].includes(u.role)).length
+  await requireRole(['ceo', 'manager', 'hr_admin', 'hr_manager', 'operations_manager'])
 
-  return (
-    <AppShell title="User Management" subtitle="Création, contrôle et gouvernance des comptes utilisateurs AngelCare." breadcrumbs={[{ label: 'Administration' }, { label: 'Users' }]} actions={<PageAction href="/users/new">+ Nouvel utilisateur</PageAction>}>
-      <section style={metricGridStyle}>
-        <MetricCard label="Utilisateurs" value={users.length} sub="comptes système" icon="👥" />
-        <MetricCard label="Actifs" value={active} sub="peuvent se connecter" icon="✅" accent="#166534" />
-        <MetricCard label="Managers" value={managers} sub="CEO / Manager" icon="👑" accent="#7c3aed" />
-        <MetricCard label="Sécurité" value="Active" sub="username + password" icon="🔐" accent="#1d4ed8" />
-      </section>
+  const [usersRaw, staffRaw, attendance, documents, contracts, training, rosters, payroll, leave] = await Promise.all([
+    readTable('app_users'),
+    readTable('hr_staff_profiles'),
+    readTable('hr_attendance_records'),
+    readTable('hr_documents'),
+    readTable('hr_contracts'),
+    readTable('hr_training_records'),
+    readTable('hr_roster_assignments'),
+    readTable('hr_payroll_inputs'),
+    readTable('hr_leave_requests'),
+  ])
 
-      <ERPPanel title="Comptes utilisateurs" subtitle="Chaque utilisateur doit être créé par CEO ou Manager avec rôle, langue et statut.">
-        <div style={gridStyle}>
-          {users.map((user: any) => (
-            <article key={user.id} style={cardStyle}>
-              <div style={topStyle}>
-                <div>
-                  <h3 style={nameStyle}>{user.full_name}</h3>
-                  <p style={metaStyle}>@{user.username}</p>
-                </div>
-                <StatusPill tone={user.status === 'active' ? 'green' : 'red'}>{user.status}</StatusPill>
-              </div>
-              <div style={infoGridStyle}>
-                <Mini label="Rôle" value={user.role} />
-                <Mini label="Langue" value={user.language || 'fr'} />
-                <Mini label="Département" value={user.department || '—'} />
-              </div>
-              <div style={footerStyle}>
-                <Link href={`/users/${user.id}`} style={buttonLightStyle}>Profil</Link>
-                <span style={dateStyle}>{user.last_login_at ? 'Déjà connecté' : 'Jamais connecté'}</span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </ERPPanel>
-    </AppShell>
+  const staffByEmail = new Map<string, Row>(
+    staffRaw
+      .map((row): [string, Row] => [key(pick(row, ['email', 'work_email', 'personal_email'])), row])
+      .filter(([email]) => Boolean(email)),
   )
-}
+  const staffByUser = new Map<string, Row>(
+    staffRaw
+      .map((row): [string, Row] => [key(pick(row, ['user_id', 'profile_id', 'app_user_id'])), row])
+      .filter(([id]) => Boolean(id)),
+  )
 
-function Mini({ label, value }: { label: string; value: string }) {
-  return <div style={miniStyle}><span style={miniLabelStyle}>{label}</span><strong style={miniValueStyle}>{value}</strong></div>
-}
+  const users = usersRaw.map((user): UserStaffRecord => {
+    const staff = staffByUser.get(key(pick(user, ['id', 'user_id', 'profile_id']))) || staffByEmail.get(key(pick(user, ['email'])))
+    const name = String(pick(user, ['full_name', 'name', 'display_name'], pick(staff, ['full_name', 'name', 'display_name'], 'Unnamed user')))
+    const department = String(pick(user, ['department', 'department_name'], pick(staff, ['department', 'department_name'], '—')))
+    const position = String(pick(user, ['position', 'job_title', 'role_title'], pick(staff, ['position', 'job_title', 'title'], '—')))
+    const status = normalizeStatus(pick(user, ['status'], pick(staff, ['status'], 'active')))
+    const attendanceRow = latestAttendance(attendance, staff, user)
+    const record: UserStaffRecord = {
+      id: String(pick(user, ['id', 'user_id', 'profile_id'])),
+      staffId: staff ? String(pick(staff, ['id', 'staff_id', 'profile_id'])) : null,
+      initials: initials(name),
+      fullName: name,
+      email: String(pick(user, ['email'], pick(staff, ['email', 'work_email'], '')) || ''),
+      username: String(pick(user, ['username'], '')),
+      role: String(pick(user, ['role'], 'agent')),
+      department,
+      position,
+      city: String(pick(user, ['city', 'location', 'work_location'], pick(staff, ['city', 'location', 'work_location'], '—'))),
+      status,
+      language: String(pick(user, ['language'], 'fr')),
+      startDate: String(pick(staff, ['start_date', 'hire_date', 'created_at'], pick(user, ['created_at'], '')) || ''),
+      manager: String(pick(staff, ['manager_name', 'reports_to_name', 'supervisor'], '—')),
+      phone: String(pick(user, ['phone', 'phone_number'], pick(staff, ['phone', 'phone_number'], '')) || ''),
+      lastLoginAt: String(pick(user, ['last_login_at'], '') || ''),
+      createdAt: String(pick(user, ['created_at'], '') || ''),
+      attendanceStatus: String(pick(attendanceRow, ['status'], 'not_pointed')),
+      punchInAt: String(pick(attendanceRow, ['punch_in_at'], '') || ''),
+      punchOutAt: String(pick(attendanceRow, ['punch_out_at'], '') || ''),
+      coverage: {
+        attendance: countRelated(attendance, staff, user),
+        documents: countRelated(documents, staff, user),
+        contracts: countRelated(contracts, staff, user),
+        training: countRelated(training, staff, user),
+        rosters: countRelated(rosters, staff, user),
+        payroll: countRelated(payroll, staff, user),
+        leave: countRelated(leave, staff, user),
+      },
+      rawUser: user,
+      rawStaff: staff || null,
+      readiness: 0,
+      risk: 0,
+    }
+    record.readiness = readiness(record)
+    record.risk = Math.max(0, 100 - record.readiness)
+    return record
+  })
 
-const metricGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 14, marginBottom: 18 }
-const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 14 }
-const cardStyle: React.CSSProperties = { padding: 18, borderRadius: 22, border: '1px solid #dbe3ee', background: 'linear-gradient(180deg,#fff 0%,#f8fafc 100%)', boxShadow: '0 16px 34px rgba(15,23,42,.06)' }
-const topStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 14 }
-const nameStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontWeight: 950, fontSize: 18 }
-const metaStyle: React.CSSProperties = { margin: '6px 0 0', color: '#64748b', fontWeight: 750 }
-const infoGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 8, marginBottom: 14 }
-const miniStyle: React.CSSProperties = { padding: 10, borderRadius: 14, background: '#fff', border: '1px solid #e2e8f0' }
-const miniLabelStyle: React.CSSProperties = { display: 'block', color: '#94a3b8', fontSize: 11, fontWeight: 950, marginBottom: 4 }
-const miniValueStyle: React.CSSProperties = { color: '#0f172a', fontWeight: 950, fontSize: 13 }
-const footerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }
-const buttonLightStyle: React.CSSProperties = { textDecoration: 'none', padding: '10px 12px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a', fontWeight: 900 }
-const dateStyle: React.CSSProperties = { color: '#94a3b8', fontSize: 12, fontWeight: 850 }
+  return <UsersEmployeeCommandClient initialUsers={users} loadedAt={new Date().toISOString()} />
+}

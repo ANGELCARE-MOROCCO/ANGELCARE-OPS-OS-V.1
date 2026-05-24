@@ -1,11 +1,22 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { getMissingSupabaseServerEnv, isSupabaseServerConfigured } from "@/lib/supabase/env"
 
 type SnapshotInput = {
   key: string
   value: string
   source?: string
   origin?: string
+}
+
+type SnapshotRow = {
+  storage_key: string
+  payload_text: string
+  payload_size: number
+  checksum: string
+  updated_at: string
+  source: string
+  last_origin: string | null
 }
 
 const MANAGED_PREFIXES = [
@@ -58,6 +69,17 @@ async function checksum(value: string) {
 }
 
 export async function GET() {
+  if (!isSupabaseServerConfigured()) {
+    return NextResponse.json({
+      ok: true,
+      disabled: true,
+      reason: "supabase_env_missing",
+      missing: getMissingSupabaseServerEnv(),
+      workspaceId: workspaceId(),
+      snapshots: [],
+    })
+  }
+
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("app_local_storage_snapshots")
@@ -73,7 +95,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     workspaceId: workspaceId(),
-    snapshots: (data || []).map((row) => ({
+    snapshots: ((data || []) as SnapshotRow[]).map((row) => ({
       key: row.storage_key,
       value: row.payload_text,
       size: row.payload_size,
@@ -93,6 +115,18 @@ export async function POST(request: Request) {
     .filter((item) => item && typeof item.key === "string" && typeof item.value === "string")
     .filter((item) => isManagedKey(item.key))
     .slice(0, 500)
+
+  if (!isSupabaseServerConfigured()) {
+    return NextResponse.json({
+      ok: true,
+      disabled: true,
+      reason: "supabase_env_missing",
+      missing: getMissingSupabaseServerEnv(),
+      workspaceId: workspaceId(),
+      received: cleaned.length,
+      snapshots: [],
+    })
+  }
 
   const supabase = await createClient()
 
@@ -134,7 +168,7 @@ export async function POST(request: Request) {
     ok: true,
     workspaceId: workspaceId(),
     received: cleaned.length,
-    snapshots: (data || []).map((row) => ({
+    snapshots: ((data || []) as SnapshotRow[]).map((row) => ({
       key: row.storage_key,
       value: row.payload_text,
       size: row.payload_size,

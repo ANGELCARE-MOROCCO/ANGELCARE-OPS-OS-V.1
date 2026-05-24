@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Activity, AlertTriangle, ArrowUpRight, BadgeCheck, BarChart3, BriefcaseBusiness, CalendarCheck, CheckCircle2, ChevronRight, ClipboardCheck, Clock3, DatabaseZap, FileBadge2, FileText, Fingerprint, Gauge, GraduationCap, Home, Layers3, MapPinned, Network, Plus, Search, ShieldCheck, Sparkles, UserCheck, UserCog, UserRoundCheck, Users, WalletCards, Workflow, Zap, X, Save, Mail, Phone, MapPin, CalendarDays, IdCard, Building2, Banknote, FileUp, Check, Bell, Settings, LayoutDashboard } from 'lucide-react'
 
 type Command = {
@@ -144,17 +144,72 @@ function SelectField({ label, value, onChange, children, required }: any) {
 }
 function MiniSummary({ icon: Icon, label, value }: any) { return <div className="flex items-center gap-2 text-xs font-bold text-slate-600"><Icon className="h-3.5 w-3.5 text-violet-500" /><span className="text-slate-400">{label}:</span><span className="truncate text-slate-800">{value || '—'}</span></div> }
 
-function AddEmployeeModal({ open, onClose, departments, cities }: { open: boolean; onClose: () => void; departments: string[]; cities: string[] }) {
+function splitNameFromRow(row: any) {
+  const full = value(row, ['full_name', 'name', 'display_name'], '').trim()
+  const parts = full && full !== '—' ? full.split(/\s+/) : []
+  return { first: value(row, ['first_name'], parts[0] || ''), last: value(row, ['last_name'], parts.slice(1).join(' ') || '') }
+}
+
+function employeeToForm(row: any): EmployeeFormState {
+  const names = splitNameFromRow(row || {})
+  return {
+    ...initialEmployeeForm,
+    first_name: names.first,
+    last_name: names.last,
+    preferred_name: value(row, ['preferred_name', 'nickname'], ''),
+    email: value(row, ['email'], ''),
+    phone: value(row, ['phone', 'phone_number', 'mobile'], ''),
+    national_id: value(row, ['national_id', 'cin', 'id_number'], ''),
+    date_of_birth: value(row, ['date_of_birth', 'birth_date'], ''),
+    place_of_birth: value(row, ['place_of_birth'], ''),
+    nationality: value(row, ['nationality'], 'Moroccan'),
+    gender: value(row, ['gender'], 'Male'),
+    marital_status: value(row, ['marital_status'], 'Single'),
+    children_count: value(row, ['children_count', 'number_of_children'], '0'),
+    address: value(row, ['address', 'home_address'], ''),
+    city: value(row, ['city'], 'Casablanca'),
+    postal_code: value(row, ['postal_code', 'zip_code'], ''),
+    country: value(row, ['country'], 'Morocco'),
+    branch_office: value(row, ['branch_office', 'office', 'location'], 'Casablanca Head Office'),
+    work_city: value(row, ['work_city', 'city', 'location'], 'Casablanca'),
+    remote_option: value(row, ['remote_option', 'remote'], 'No'),
+    position: value(row, ['position', 'job_title', 'role'], ''),
+    department: value(row, ['department'], 'Human Resources'),
+    manager: value(row, ['manager', 'reports_to', 'manager_name'], ''),
+    employment_status: value(row, ['employment_status', 'status'], 'Active'),
+    employment_type: value(row, ['employment_type'], 'Full-time'),
+    start_date: value(row, ['start_date', 'hire_date'], ''),
+    probation_end_date: value(row, ['probation_end_date'], ''),
+    contract_type: value(row, ['contract_type'], 'CDI'),
+    salary: value(row, ['salary', 'monthly_salary'], ''),
+    currency: value(row, ['currency'], 'MAD'),
+    payment_method: value(row, ['payment_method'], 'Bank transfer'),
+    cnss_number: value(row, ['cnss_number', 'cnss'], ''),
+    amo_number: value(row, ['amo_number', 'amo'], ''),
+    emergency_name: value(row, ['emergency_contact_name', 'emergency_name'], ''),
+    emergency_phone: value(row, ['emergency_contact_phone', 'emergency_phone'], ''),
+    emergency_relation: value(row, ['emergency_contact_relation', 'emergency_relation'], ''),
+    create_login_account: Boolean(row?.create_login_account ?? true),
+    send_welcome_email: Boolean(row?.send_welcome_email ?? true),
+  }
+}
+
+function AddEmployeeModal({ open, onClose, departments, cities, employee, mode = 'create' }: { open: boolean; onClose: () => void; departments: string[]; cities: string[]; employee?: any; mode?: 'create' | 'edit' }) {
   const [form, setForm] = useState<EmployeeFormState>(initialEmployeeForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const update = (key: keyof EmployeeFormState, value: any) => setForm((prev) => ({ ...prev, [key]: value }))
+  useEffect(() => {
+    if (!open) return
+    setError('')
+    setForm(mode === 'edit' && employee ? employeeToForm(employee) : initialEmployeeForm)
+  }, [open, mode, employee])
   const fullName = [form.first_name, form.last_name].filter(Boolean).join(' ')
 
   async function saveEmployee(saveAsDraft = false) {
     setSaving(true); setError('')
     try {
-      const response = await fetch('/api/hr/employees', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, save_as_draft: saveAsDraft }) })
+      const response = await fetch('/api/hr/employees', { method: mode === 'edit' ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, id: employee?.id, source_email: employee?.email, save_as_draft: saveAsDraft }) })
       const payload = await response.json().catch(() => ({}))
       if (!response.ok || !payload?.ok) throw new Error(payload?.error || `Employee save failed (${response.status})`)
       onClose()
@@ -164,11 +219,27 @@ function AddEmployeeModal({ open, onClose, departments, cities }: { open: boolea
     } finally { setSaving(false) }
   }
 
+
+  async function deleteEmployee() {
+    if (mode !== 'edit' || !employee?.id) return
+    if (!window.confirm(`Delete ${fullName || employee.email || 'this employee'} completely from HR records? This cannot be undone.`)) return
+    setSaving(true); setError('')
+    try {
+      const response = await fetch('/api/hr/employees', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: employee.id, email: employee.email }) })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok || !payload?.ok) throw new Error(payload?.error || `Employee delete failed (${response.status})`)
+      onClose()
+      window.location.reload()
+    } catch (err: any) {
+      setError(err?.message || 'Unable to delete employee')
+    } finally { setSaving(false) }
+  }
+
   if (!open) return null
-  return <div className="fixed inset-0 z-[100] bg-slate-950/55 p-3 backdrop-blur-md lg:p-6">
+  return <div className="fixed inset-0 z-[9999] bg-slate-950/55 p-3 backdrop-blur-md lg:p-6">
     <div className="mx-auto flex h-[calc(100vh-24px)] max-w-[1500px] flex-col overflow-hidden rounded-[34px] border border-white/80 bg-white shadow-2xl lg:h-[calc(100vh-48px)]">
       <div className="flex items-start justify-between border-b border-slate-100 px-5 py-4 lg:px-8">
-        <div><h2 className="text-2xl font-black tracking-tight text-slate-950">Add New Employee</h2><p className="mt-1 text-sm font-semibold text-slate-500">Create a real employee profile. Scroll down to complete identity, job, compensation, compliance, emergency contact and onboarding.</p></div>
+        <div><h2 className="text-2xl font-black tracking-tight text-slate-950">{mode === 'edit' ? (fullName || value(employee, ['full_name','name','email'], 'Employee file')) : 'Add New Employee'}</h2><p className="mt-1 text-sm font-semibold text-slate-500">{mode === 'edit' ? 'View and edit the existing employee using the exact same complete employee file structure as creation.' : 'Create a real employee profile. Scroll down to complete identity, job, compensation, compliance, emergency contact and onboarding.'}</p></div>
         <button onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm hover:bg-slate-50"><X className="h-5 w-5" /></button>
       </div>
 
@@ -225,7 +296,7 @@ function AddEmployeeModal({ open, onClose, departments, cities }: { open: boolea
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-white px-5 py-4 lg:px-8">
         <button onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">Cancel</button>
-        <div className="flex gap-3"><button disabled={saving} onClick={() => saveEmployee(true)} className="rounded-2xl border border-violet-200 bg-white px-5 py-3 text-sm font-black text-violet-700 disabled:opacity-50"><Save className="mr-2 inline h-4 w-4" />Save as Draft</button><button disabled={saving} onClick={() => saveEmployee(false)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-violet-200 disabled:opacity-50">{saving ? 'Saving...' : 'Save Employee'} <Check className="ml-2 inline h-4 w-4" /></button></div>
+        <div className="flex gap-3">{mode === 'edit' && <button disabled={saving} onClick={deleteEmployee} className="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-black text-rose-700 disabled:opacity-50">Delete Employee</button>}{mode === 'create' && <button disabled={saving} onClick={() => saveEmployee(true)} className="rounded-2xl border border-violet-200 bg-white px-5 py-3 text-sm font-black text-violet-700 disabled:opacity-50"><Save className="mr-2 inline h-4 w-4" />Save as Draft</button>}<button disabled={saving} onClick={() => saveEmployee(false)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-violet-200 disabled:opacity-50">{saving ? 'Saving...' : (mode === 'edit' ? 'Save Changes' : 'Save Employee')} <Check className="ml-2 inline h-4 w-4" /></button></div>
       </div>
     </div>
   </div>
@@ -236,6 +307,7 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
   const [department, setDepartment] = useState('all')
   const [status, setStatus] = useState('all')
   const [addOpen, setAddOpen] = useState(false)
+  const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -251,7 +323,7 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
   const errorCount = Object.keys(command.errors || {}).length
 
   return <>
-  <AddEmployeeModal open={addOpen} onClose={() => setAddOpen(false)} departments={command.departments || []} cities={command.cities || []} />
+  <AddEmployeeModal open={addOpen || Boolean(selectedEmployee)} mode={selectedEmployee ? 'edit' : 'create'} employee={selectedEmployee || undefined} onClose={() => { setAddOpen(false); setSelectedEmployee(null) }} departments={command.departments || []} cities={command.cities || []} />
   <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#ede9fe,transparent_34%),linear-gradient(135deg,#f8fafc,#eef2ff_45%,#f8fafc)] text-slate-950">
     <div className="flex min-h-screen">
       <aside className="sticky top-0 hidden h-screen w-[286px] shrink-0 overflow-y-auto border-r border-white/70 bg-white/92 p-4 shadow-2xl shadow-slate-200/60 backdrop-blur-2xl xl:block">
@@ -296,7 +368,7 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
 
       <section className="min-w-0 flex-1 p-4 lg:p-6">
         <header className="sticky top-0 z-40 rounded-[30px] border border-white/80 bg-white/88 p-4 shadow-2xl shadow-slate-200/70 backdrop-blur-2xl">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between"><div><div className="flex flex-wrap items-center gap-2"><Pill className="border-emerald-200 bg-emerald-50 text-emerald-700">Real synced data</Pill><Pill className="border-violet-200 bg-violet-50 text-violet-700">Loaded {new Date(command.loadedAt).toLocaleString()}</Pill>{errorCount > 0 && <Pill className="border-amber-200 bg-amber-50 text-amber-700">{errorCount} fallback warning(s)</Pill>}</div><h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 lg:text-5xl">Employees Command Center</h1><p className="mt-1 max-w-4xl text-sm font-semibold leading-6 text-slate-500">One-page operational workspace for employee control, profile quality, attendance mapping, leave pressure, payroll readiness, documents, contracts, training, rosters and performance.</p></div><div className="flex flex-wrap gap-2"><button onClick={() => setAddOpen(true)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-xl"><Plus className="mr-2 inline h-4 w-4" />Add employee</button><Link href="/hr/sync-center" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Sync center</Link><Link href="/hr/reports/export" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Export</Link></div></div>
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between"><div><div className="flex flex-wrap items-center gap-2"><Pill className="border-emerald-200 bg-emerald-50 text-emerald-700">Real synced data</Pill><Pill className="border-violet-200 bg-violet-50 text-violet-700">Loaded {new Date(command.loadedAt).toLocaleString()}</Pill>{errorCount > 0 && <Pill className="border-amber-200 bg-amber-50 text-amber-700">{errorCount} fallback warning(s)</Pill>}</div><h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 lg:text-5xl">Employees Command Center</h1><p className="mt-1 max-w-4xl text-sm font-semibold leading-6 text-slate-500">One-page operational workspace for employee control, profile quality, attendance mapping, leave pressure, payroll readiness, documents, contracts, training, rosters and performance.</p></div><div className="flex flex-wrap gap-2"><button onClick={() => { setSelectedEmployee(null); setAddOpen(true) }} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-xl"><Plus className="mr-2 inline h-4 w-4" />Add employee</button><Link href="/hr/sync-center" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Sync center</Link><Link href="/hr/reports/export" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Export</Link></div></div>
           <nav className="mt-4 flex gap-2 overflow-x-auto pb-1">{nav.map(([href, label, Icon]) => <a key={href} href={href} className="shrink-0 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"><Icon className="mr-2 inline h-4 w-4" />{label}</a>)}</nav>
         </header>
 
@@ -312,7 +384,7 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
         <section className="mt-6 grid gap-5 2xl:grid-cols-12">
           <div id="directory" className="rounded-[34px] border border-white/80 bg-white/90 p-5 shadow-2xl shadow-slate-200/70 2xl:col-span-8">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><SectionTitle eyebrow="Execution directory" title="Live employee table" subtitle="Search, filter and open each real staff profile while seeing its synced operating records." /><div className="flex flex-col gap-2 sm:flex-row"><label className="relative"><Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search employee..." className="h-10 rounded-2xl border border-slate-200 bg-white pl-9 pr-3 text-sm font-bold outline-none ring-violet-200 focus:ring-4" /></label><select value={department} onChange={(e) => setDepartment(e.target.value)} className="h-10 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold"><option value="all">All departments</option>{command.departments.map((d) => <option key={d} value={d}>{d}</option>)}</select><select value={status} onChange={(e) => setStatus(e.target.value)} className="h-10 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold"><option value="all">All status</option><option value="active">Active</option><option value="archiv">Archived</option><option value="pending">Pending</option></select></div></div>
-            <div className="mt-5 overflow-hidden rounded-[26px] border border-slate-200"><div className="max-h-[620px] overflow-auto"><table className="w-full min-w-[980px] text-left text-sm"><thead className="sticky top-0 bg-slate-950 text-xs font-black uppercase tracking-[0.12em] text-white"><tr>{['Employee','Role','Dept / City','Status','Readiness','Sync coverage','Actions'].map((h) => <th key={h} className="px-4 py-3">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100 bg-white">{filtered.map((e) => { const id = value(e, ['id'], ''); const ready = Number(e.__sync?.readiness || 0); return <tr key={id || value(e, ['email','full_name'])} className="hover:bg-violet-50/40"><td className="px-4 py-4"><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-cyan-500 text-sm font-black text-white">{value(e, ['full_name','name','email'], '?').slice(0,2).toUpperCase()}</div><div><Link href={id ? `/hr/staff/${id}` : '/hr/staff'} className="font-black text-slate-950 hover:text-violet-700">{value(e, ['full_name','name','email'], 'Unnamed employee')}</Link><div className="text-xs font-bold text-slate-500">{value(e, ['email','phone'], 'No contact')}</div></div></div></td><td className="px-4 py-4 font-bold text-slate-700">{value(e, ['position','job_title','role'])}</td><td className="px-4 py-4"><div className="font-black text-slate-800">{value(e, ['department'])}</div><div className="text-xs font-bold text-slate-500">{value(e, ['city','location'])}</div></td><td className="px-4 py-4"><Pill className={statusTone(value(e, ['employment_status','status'], 'active'))}>{value(e, ['employment_status','status'], 'active')}</Pill></td><td className="px-4 py-4"><div className="w-32"><div className="mb-1 flex justify-between text-xs font-black"><span>{pct(ready)}</span><span className="text-slate-400">risk {pct(e.__sync?.risk)}</span></div><Progress value={ready} /></div></td><td className="px-4 py-4"><div className="grid grid-cols-4 gap-1 text-[10px] font-black text-slate-600"><span>A:{e.__sync?.attendance}</span><span>L:{e.__sync?.leave}</span><span>P:{e.__sync?.payroll}</span><span>D:{e.__sync?.documents}</span><span>C:{e.__sync?.contracts}</span><span>R:{e.__sync?.roster}</span><span>T:{e.__sync?.training}</span><span>Q:{e.__sync?.performance}</span></div></td><td className="px-4 py-4"><div className="flex gap-2"><Link href={id ? `/hr/staff/${id}` : '/hr/staff'} className="rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white">Open</Link><Link href={id ? `/hr/staff/${id}/attendance` : '/hr/attendance'} className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-black text-slate-700">Ops</Link></div></td></tr> })}</tbody></table></div></div>
+            <div className="mt-5 overflow-hidden rounded-[26px] border border-slate-200"><div className="max-h-[620px] overflow-auto"><table className="w-full min-w-[980px] text-left text-sm"><thead className="sticky top-0 bg-slate-950 text-xs font-black uppercase tracking-[0.12em] text-white"><tr>{['Employee','Role','Dept / City','Status','Readiness','Sync coverage','Actions'].map((h) => <th key={h} className="px-4 py-3">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100 bg-white">{filtered.map((e) => { const id = value(e, ['id'], ''); const ready = Number(e.__sync?.readiness || 0); return <tr key={id || value(e, ['email','full_name'])} className="hover:bg-violet-50/40"><td className="px-4 py-4"><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-cyan-500 text-sm font-black text-white">{value(e, ['full_name','name','email'], '?').slice(0,2).toUpperCase()}</div><div><button type="button" onClick={() => setSelectedEmployee(e)} className="text-left font-black text-slate-950 hover:text-violet-700">{value(e, ['full_name','name','email'], 'Unnamed employee')}</button><div className="text-xs font-bold text-slate-500">{value(e, ['email','phone'], 'No contact')}</div></div></div></td><td className="px-4 py-4 font-bold text-slate-700">{value(e, ['position','job_title','role'])}</td><td className="px-4 py-4"><div className="font-black text-slate-800">{value(e, ['department'])}</div><div className="text-xs font-bold text-slate-500">{value(e, ['city','location'])}</div></td><td className="px-4 py-4"><Pill className={statusTone(value(e, ['employment_status','status'], 'active'))}>{value(e, ['employment_status','status'], 'active')}</Pill></td><td className="px-4 py-4"><div className="w-32"><div className="mb-1 flex justify-between text-xs font-black"><span>{pct(ready)}</span><span className="text-slate-400">risk {pct(e.__sync?.risk)}</span></div><Progress value={ready} /></div></td><td className="px-4 py-4"><div className="grid grid-cols-4 gap-1 text-[10px] font-black text-slate-600"><span>A:{e.__sync?.attendance}</span><span>L:{e.__sync?.leave}</span><span>P:{e.__sync?.payroll}</span><span>D:{e.__sync?.documents}</span><span>C:{e.__sync?.contracts}</span><span>R:{e.__sync?.roster}</span><span>T:{e.__sync?.training}</span><span>Q:{e.__sync?.performance}</span></div></td><td className="px-4 py-4"><div className="flex gap-2"><button type="button" onClick={() => setSelectedEmployee(e)} className="rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white">Open</button><Link href={id ? `/hr/staff/${id}/attendance` : '/hr/attendance'} className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-black text-slate-700">Ops</Link></div></td></tr> })}</tbody></table></div></div>
           </div>
 
           <div id="control" className="space-y-5 2xl:col-span-4">

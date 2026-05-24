@@ -1,0 +1,3875 @@
+{
+  "generatedAt": "2026-05-22T03:39:01.280Z",
+  "totals": {
+    "actions": 428,
+    "files": 203,
+    "routes": 109,
+    "live": 164,
+    "partial": 247,
+    "static": 0,
+    "broken": 0,
+    "missing_api": 0,
+    "missing_route": 13,
+    "unknown": 4
+  },
+  "actions": [
+    {
+      "file": "app/(protected)/hr/_components/AttendanceEnterpriseUI.tsx",
+      "route": "/hr/_components/AttendanceEnterpriseUI.tsx",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/_components/AttendanceEnterpriseUI.tsx",
+      "route": "/hr/_components/AttendanceEnterpriseUI.tsx",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "route": "/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=timeline",
+      "target": "/hr/attendance?view=timeline",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=timeline."
+    },
+    {
+      "file": "app/(protected)/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "route": "/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=people",
+      "target": "/hr/attendance?view=people",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=people."
+    },
+    {
+      "file": "app/(protected)/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "route": "/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=exceptions",
+      "target": "/hr/attendance?view=exceptions",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=exceptions."
+    },
+    {
+      "file": "app/(protected)/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "route": "/hr/_components/AttendanceLiveMonitorUI.tsx",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/_components/AttendanceMonitorExactUI.tsx",
+      "route": "/hr/_components/AttendanceMonitorExactUI.tsx",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/_components/HRMaxUI.tsx",
+      "route": "/hr/_components/HRMaxUI.tsx",
+      "kind": "button",
+      "label": "{children}",
+      "target": "inline_button",
+      "status": "unknown",
+      "reason": "Clickable element detected but no reliable action signal found."
+    },
+    {
+      "file": "app/(protected)/hr/_components/WorkforceOperationsUI.tsx",
+      "route": "/hr/_components/WorkforceOperationsUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=agenda",
+      "target": "/hr/attendance?view=agenda",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=agenda."
+    },
+    {
+      "file": "app/(protected)/hr/_components/WorkforceOperationsUI.tsx",
+      "route": "/hr/_components/WorkforceOperationsUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=day",
+      "target": "/hr/attendance?view=day",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=day."
+    },
+    {
+      "file": "app/(protected)/hr/_components/WorkforceOperationsUI.tsx",
+      "route": "/hr/_components/WorkforceOperationsUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=week",
+      "target": "/hr/attendance?view=week",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=week."
+    },
+    {
+      "file": "app/(protected)/hr/_components/WorkforceOperationsUI.tsx",
+      "route": "/hr/_components/WorkforceOperationsUI.tsx",
+      "kind": "link",
+      "label": "/hr/attendance?view=people",
+      "target": "/hr/attendance?view=people",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=people."
+    },
+    {
+      "file": "app/(protected)/hr/_components/WorkforceOperationsUI.tsx",
+      "route": "/hr/_components/WorkforceOperationsUI.tsx",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/actionability-audit/page.tsx",
+      "route": "/hr/actionability-audit",
+      "kind": "link",
+      "label": "/api/hr/actionability-audit",
+      "target": "/api/hr/actionability-audit",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/activity-timeline/page.tsx",
+      "route": "/hr/activity-timeline",
+      "kind": "link",
+      "label": "/hr/enterprise-dashboard",
+      "target": "/hr/enterprise-dashboard",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/activity-timeline/page.tsx",
+      "route": "/hr/activity-timeline",
+      "kind": "form",
+      "label": "createHRActivityTimelinePhase11",
+      "target": "createHRActivityTimelinePhase11",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/adoption-tracker/page.tsx",
+      "route": "/hr/adoption-tracker",
+      "kind": "link",
+      "label": "/hr/launch-center",
+      "target": "/hr/launch-center",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/adoption-tracker/page.tsx",
+      "route": "/hr/adoption-tracker",
+      "kind": "form",
+      "label": "createHRAdoptionItemPhase13",
+      "target": "createHRAdoptionItemPhase13",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/command-center",
+      "target": "/hr/command-center",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/analytics",
+      "target": "/hr/analytics",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/departments",
+      "target": "/hr/departments",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/departments/positions",
+      "target": "/hr/departments/positions",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/analytics/page.tsx",
+      "route": "/hr/analytics",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/approvals/page.tsx",
+      "route": "/hr/approvals",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/approvals/page.tsx",
+      "route": "/hr/approvals",
+      "kind": "form",
+      "label": "decideApprovalMax",
+      "target": "decideApprovalMax",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/approvals/page.tsx",
+      "route": "/hr/approvals",
+      "kind": "form",
+      "label": "createApprovalMax",
+      "target": "createApprovalMax",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/actions/page.tsx",
+      "route": "/hr/attendance/actions",
+      "kind": "form",
+      "label": "createAttendanceAction",
+      "target": "createAttendanceAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/actions/page.tsx",
+      "route": "/hr/attendance/actions",
+      "kind": "button",
+      "label": "Create action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/corrections/page.tsx",
+      "route": "/hr/attendance/corrections",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/corrections/page.tsx",
+      "route": "/hr/attendance/corrections",
+      "kind": "form",
+      "label": "createCorrectionRestore",
+      "target": "createCorrectionRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/identity-map/page.tsx",
+      "route": "/hr/attendance/identity-map",
+      "kind": "form",
+      "label": "mapIdentityToStaffAction",
+      "target": "mapIdentityToStaffAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/identity-map/page.tsx",
+      "route": "/hr/attendance/identity-map",
+      "kind": "button",
+      "label": "Save mapping",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "link",
+      "label": "/hr/attendance/actions",
+      "target": "/hr/attendance/actions",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "link",
+      "label": "/hr/attendance/corrections",
+      "target": "/hr/attendance/corrections",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "approveAttendanceAction.bind(null,",
+      "target": "approveAttendanceAction.bind(null,",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "markReviewAttendanceAction.bind(null,",
+      "target": "markReviewAttendanceAction.bind(null,",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "\"/hr/attendance/report\"",
+      "target": "\"/hr/attendance/report\"",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "approveAttendanceAction.bind(null,",
+      "target": "approveAttendanceAction.bind(null,",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "markReviewAttendanceAction.bind(null,",
+      "target": "markReviewAttendanceAction.bind(null,",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "createAttendanceAction",
+      "target": "createAttendanceAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "createAttendanceAction",
+      "target": "createAttendanceAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "createAttendanceAction",
+      "target": "createAttendanceAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "form",
+      "label": "createAttendanceAction",
+      "target": "createAttendanceAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Open",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Search",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Approve",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Review",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Open report table",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Approve record live",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Mark for manager review",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Save action live",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Create controlled action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Launch bulk control",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/page.tsx",
+      "route": "/hr/attendance",
+      "kind": "button",
+      "label": "Save action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/report/page.tsx",
+      "route": "/hr/attendance/report",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "form",
+      "label": "approveAttendanceAction.bind(null,r.id)",
+      "target": "approveAttendanceAction.bind(null,r.id)",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "form",
+      "label": "markReviewAttendanceAction.bind(null,r.id)",
+      "target": "markReviewAttendanceAction.bind(null,r.id)",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "button",
+      "label": "Approve",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/attendance/staff/[id]/page.tsx",
+      "route": "/hr/attendance/staff/:id",
+      "kind": "button",
+      "label": "Review",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/command-center",
+      "target": "/hr/command-center",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/analytics",
+      "target": "/hr/analytics",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/departments",
+      "target": "/hr/departments",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/departments/positions",
+      "target": "/hr/departments/positions",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/audit/page.tsx",
+      "route": "/hr/audit",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/boardroom/page.tsx",
+      "route": "/hr/boardroom",
+      "kind": "link",
+      "label": "/hr/enterprise-dashboard",
+      "target": "/hr/enterprise-dashboard",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/boardroom/page.tsx",
+      "route": "/hr/boardroom",
+      "kind": "link",
+      "label": "/hr/kpi-drilldowns",
+      "target": "/hr/kpi-drilldowns",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/boardroom/page.tsx",
+      "route": "/hr/boardroom",
+      "kind": "link",
+      "label": "/hr/risk-center",
+      "target": "/hr/risk-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/boardroom/page.tsx",
+      "route": "/hr/boardroom",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/bulk-actions/page.tsx",
+      "route": "/hr/bulk-actions",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/bulk-actions/page.tsx",
+      "route": "/hr/bulk-actions",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/bulk-actions/page.tsx",
+      "route": "/hr/bulk-actions",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/bulk-actions/page.tsx",
+      "route": "/hr/bulk-actions",
+      "kind": "link",
+      "label": "/hr/search",
+      "target": "/hr/search",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/bulk-actions/page.tsx",
+      "route": "/hr/bulk-actions",
+      "kind": "form",
+      "label": "createBulkActionPhase5",
+      "target": "createBulkActionPhase5",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/calendar/page.tsx",
+      "route": "/hr/calendar",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/calendar/page.tsx",
+      "route": "/hr/calendar",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/calendar/page.tsx",
+      "route": "/hr/calendar",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/calendar/page.tsx",
+      "route": "/hr/calendar",
+      "kind": "link",
+      "label": "/hr/search",
+      "target": "/hr/search",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/calendar/page.tsx",
+      "route": "/hr/calendar",
+      "kind": "form",
+      "label": "createCalendarEventPhase5",
+      "target": "createCalendarEventPhase5",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/command-center",
+      "target": "/hr/command-center",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/analytics",
+      "target": "/hr/analytics",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/departments",
+      "target": "/hr/departments",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/departments/positions",
+      "target": "/hr/departments/positions",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-center/page.tsx",
+      "route": "/hr/command-center",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/command-queue/page.tsx",
+      "route": "/hr/command-queue",
+      "kind": "link",
+      "label": "/hr/operations-console",
+      "target": "/hr/operations-console",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/compliance/page.tsx",
+      "route": "/hr/compliance",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/contracts/page.tsx",
+      "route": "/hr/contracts",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/control-room/page.tsx",
+      "route": "/hr/control-room",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/crud-audit/page.tsx",
+      "route": "/hr/crud-audit",
+      "kind": "link",
+      "label": "/hr/audit",
+      "target": "/hr/audit",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/daily-ops/page.tsx",
+      "route": "/hr/daily-ops",
+      "kind": "link",
+      "label": "/hr/operations-console",
+      "target": "/hr/operations-console",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/daily-ops/page.tsx",
+      "route": "/hr/daily-ops",
+      "kind": "form",
+      "label": "updateDailyOperationStatusPhase7",
+      "target": "updateDailyOperationStatusPhase7",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/daily-ops/page.tsx",
+      "route": "/hr/daily-ops",
+      "kind": "form",
+      "label": "createDailyOperationPhase7",
+      "target": "createDailyOperationPhase7",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/departments/[id]/page.tsx",
+      "route": "/hr/departments/:id",
+      "kind": "link",
+      "label": "/hr/departments",
+      "target": "/hr/departments",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/departments/[id]/page.tsx",
+      "route": "/hr/departments/:id",
+      "kind": "form",
+      "label": "updateRestore",
+      "target": "updateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/analytics",
+      "target": "/hr/analytics",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/employees",
+      "target": "/hr/employees",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/positions",
+      "target": "/hr/positions",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/departments",
+      "target": "/hr/departments",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "link",
+      "label": "/hr/audit",
+      "target": "/hr/audit",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "form",
+      "label": "createHrRecord",
+      "target": "createHrRecord",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "form",
+      "label": "createHrRecord",
+      "target": "createHrRecord",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "form",
+      "label": "createHrRecord",
+      "target": "createHrRecord",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Expand All",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "↗",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "May 1 – May 31, 2025",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Filters",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Expand All",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "↗",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Export",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Unlabeled action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Unlabeled action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "‹",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "1",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "›",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "10 / page⌄",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Create Department",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Create Team",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/departments/page.tsx",
+      "route": "/hr/departments",
+      "kind": "button",
+      "label": "Save Department",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/deployment-readiness/page.tsx",
+      "route": "/hr/deployment-readiness",
+      "kind": "link",
+      "label": "/hr/final-qa",
+      "target": "/hr/final-qa",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/documentation/page.tsx",
+      "route": "/hr/documentation",
+      "kind": "link",
+      "label": "/hr/launch-center",
+      "target": "/hr/launch-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/documents/page.tsx",
+      "route": "/hr/documents",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/documents/page.tsx",
+      "route": "/hr/documents",
+      "kind": "form",
+      "label": "verifyDocumentPhase3",
+      "target": "verifyDocumentPhase3",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "link",
+      "label": "/hr/sync-center",
+      "target": "/hr/sync-center",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "link",
+      "label": "/hr/reports/export",
+      "target": "/hr/reports/export",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "api_call",
+      "label": "/api/hr/employees",
+      "target": "/api/hr/employees",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "button",
+      "label": "Unlabeled action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "button",
+      "label": "Cancel",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "button",
+      "label": "saveEmployee(true)} className=\"rounded-2xl border border-violet-200 bg-white px-5 py-3 text-sm font-black text-violet-70",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "button",
+      "label": "saveEmployee(false)} className=\"rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-black",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "button",
+      "label": "setAddOpen(true)} className=\"rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-xl\"> Add employee",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "route": "/hr/employees/_components/EmployeesCommandCenter.tsx",
+      "kind": "button",
+      "label": "setAddOpen(true)} className=\"text-left rounded-2xl border border-slate-200 bg-white p-4 font-black text-slate-800 transi",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/enterprise-dashboard/page.tsx",
+      "route": "/hr/enterprise-dashboard",
+      "kind": "link",
+      "label": "/hr/boardroom",
+      "target": "/hr/boardroom",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/enterprise-dashboard/page.tsx",
+      "route": "/hr/enterprise-dashboard",
+      "kind": "link",
+      "label": "/hr/kpi-drilldowns",
+      "target": "/hr/kpi-drilldowns",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/enterprise-dashboard/page.tsx",
+      "route": "/hr/enterprise-dashboard",
+      "kind": "link",
+      "label": "/hr/activity-timeline",
+      "target": "/hr/activity-timeline",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/enterprise-dashboard/page.tsx",
+      "route": "/hr/enterprise-dashboard",
+      "kind": "link",
+      "label": "/hr/saved-views",
+      "target": "/hr/saved-views",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/escalations/page.tsx",
+      "route": "/hr/escalations",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/escalations/page.tsx",
+      "route": "/hr/escalations",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/escalations/page.tsx",
+      "route": "/hr/escalations",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/escalations/page.tsx",
+      "route": "/hr/escalations",
+      "kind": "link",
+      "label": "/hr/search",
+      "target": "/hr/search",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/escalations/page.tsx",
+      "route": "/hr/escalations",
+      "kind": "form",
+      "label": "createEscalationPhase5",
+      "target": "createEscalationPhase5",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/executive/page.tsx",
+      "route": "/hr/executive",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/executive/page.tsx",
+      "route": "/hr/executive",
+      "kind": "link",
+      "label": "/hr/recruitment/kanban",
+      "target": "/hr/recruitment/kanban",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/executive/page.tsx",
+      "route": "/hr/executive",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/executive/page.tsx",
+      "route": "/hr/executive",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/executive-automation/page.tsx",
+      "route": "/hr/executive-automation",
+      "kind": "link",
+      "label": "/hr/operations-console",
+      "target": "/hr/operations-console",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/executive-automation/page.tsx",
+      "route": "/hr/executive-automation",
+      "kind": "link",
+      "label": "/hr/sla-center",
+      "target": "/hr/sla-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/executive-automation/page.tsx",
+      "route": "/hr/executive-automation",
+      "kind": "link",
+      "label": "/hr/compliance-watch",
+      "target": "/hr/compliance-watch",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/export/page.tsx",
+      "route": "/hr/export",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/final-qa/page.tsx",
+      "route": "/hr/final-qa",
+      "kind": "link",
+      "label": "/hr/deployment-readiness",
+      "target": "/hr/deployment-readiness",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/final-qa/page.tsx",
+      "route": "/hr/final-qa",
+      "kind": "link",
+      "label": "/hr/final-route-audit",
+      "target": "/hr/final-route-audit",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/final-qa/page.tsx",
+      "route": "/hr/final-qa",
+      "kind": "link",
+      "label": "/hr/deployment-readiness",
+      "target": "/hr/deployment-readiness",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/final-route-audit/page.tsx",
+      "route": "/hr/final-route-audit",
+      "kind": "link",
+      "label": "/hr/final-qa",
+      "target": "/hr/final-qa",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/kpi-drilldowns/page.tsx",
+      "route": "/hr/kpi-drilldowns",
+      "kind": "link",
+      "label": "/hr/enterprise-dashboard",
+      "target": "/hr/enterprise-dashboard",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/kpi-drilldowns/page.tsx",
+      "route": "/hr/kpi-drilldowns",
+      "kind": "form",
+      "label": "createHRKPIDrilldownPhase11",
+      "target": "createHRKPIDrilldownPhase11",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/launch-center/page.tsx",
+      "route": "/hr/launch-center",
+      "kind": "link",
+      "label": "/hr/final-qa",
+      "target": "/hr/final-qa",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/launch-center/page.tsx",
+      "route": "/hr/launch-center",
+      "kind": "link",
+      "label": "/hr/adoption-tracker",
+      "target": "/hr/adoption-tracker",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/launch-center/page.tsx",
+      "route": "/hr/launch-center",
+      "kind": "link",
+      "label": "/hr/documentation",
+      "target": "/hr/documentation",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/launch-center/page.tsx",
+      "route": "/hr/launch-center",
+      "kind": "link",
+      "label": "/hr/operator-training",
+      "target": "/hr/operator-training",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/launch-center/page.tsx",
+      "route": "/hr/launch-center",
+      "kind": "form",
+      "label": "updateHRLaunchCheckPhase13",
+      "target": "updateHRLaunchCheckPhase13",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/launch-center/page.tsx",
+      "route": "/hr/launch-center",
+      "kind": "form",
+      "label": "createHRLaunchCheckPhase13",
+      "target": "createHRLaunchCheckPhase13",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/linked-records/page.tsx",
+      "route": "/hr/linked-records",
+      "kind": "link",
+      "label": "/hr/sync-center",
+      "target": "/hr/sync-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/navigation/page.tsx",
+      "route": "/hr/navigation",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/executive",
+      "target": "/hr/executive",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/workforce-intelligence",
+      "target": "/hr/workforce-intelligence",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/documents",
+      "target": "/hr/documents",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/notifications/page.tsx",
+      "route": "/hr/notifications",
+      "kind": "link",
+      "label": "/hr/notifications",
+      "target": "/hr/notifications",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/[id]/page.tsx",
+      "route": "/hr/onboarding/:id",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/[id]/page.tsx",
+      "route": "/hr/onboarding/:id",
+      "kind": "form",
+      "label": "updateRestore",
+      "target": "updateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"timeline\")} className=\"btn-lite\" > View Timeline",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"editJourney\")} className=\"btn-lite\" > Edit Journey",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"journey\")} className=\"btn-lite\" > New Journey",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"task\")} className=\"btn-primary\" > Add Task",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "All Onboardings",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setQuery(selected.owner)} className=\"rounded-xl py-2 text-slate-500 hover:bg-white\" > My Onboardings",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setQuery(\"\")} className=\"rounded-2xl border px-3\" >",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setSelectedId(j.id)} className={cn( \"group w-full rounded-[26px] border p-3 text-left transition hover:-translate-y-0.5 ",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setActiveTab(t)} className={cn( \"rounded-2xl px-4 py-2 text-sm font-black transition\", activeTab === t ? \"bg-violet-600 ",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "{ setToast(\"Refreshing live onboarding data...\"); window.location.reload(); }} className=\"btn-mini\" > Refresh",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"note\")} className=\"btn-mini\" > Comment",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "Archive journey",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "Advance Phase",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setFilter(f)} className={cn( \"rounded-xl px-3 py-1.5 text-xs font-black\", filter === f ? \"bg-violet-100 text-violet-700\"",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"task\")} className=\"text-xs font-black text-violet-600\" > + add",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "{ toggleTask(task); }} className=\"flex items-center gap-3 text-left\" > {task.title} {task.status} · {task.priority || \"N",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "{ toggleTask(task); }} className=\"rounded-xl bg-slate-50 p-2 transition hover:bg-emerald-50 hover:text-emerald-600\" >",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "{ deleteTask(task); }} className=\"rounded-xl bg-rose-50 p-2 text-rose-600 transition hover:bg-rose-100\" >",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"task\")} className=\"mt-4 w-full rounded-2xl border border-violet-200 py-3 text-sm font-black text-violet-700 ho",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"document\")} className=\"text-xs font-black text-violet-600\" > Add",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "updateOnboardingDocument(String(doc.id), { status: \"Downloaded\", }) } className=\"rounded-xl bg-slate-50 p-2\" >",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "del(doc)} className=\"rounded-xl bg-rose-50 p-2 text-rose-600\" >",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"note\")} className=\"text-xs font-black text-violet-600\" > Add note",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"reminder\")} className=\"qa\"> Send Reminder",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"document\")} className=\"qa\"> Add Document",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"reassign\")} className=\"qa\"> Reassign Owner",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"profile\")} className=\"qa\"> View Profile",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(tab === \"Notes\" ? \"note\" : \"timeline\")} className=\"btn-primary\" > Launch action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setModal(\"document\")} className=\"btn-lite\"> Attach",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "Unlabeled action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "pushEvent( \"Timeline synced\", \"Manual timeline sync completed from control room.\", \"sync\", ) } className=\"btn-mini\" > Sy",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "timelineAction(\"evidence\", String(name)) } className=\"btn-mini\" > Open evidence",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "timelineAction(\"comment\", String(name)) } className=\"btn-mini\" > Add comment",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "timelineAction(\"escalate\", String(name)) } className=\"btn-mini\" > Escalate",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "{ setEvidenceOpen(null); setCommentOpen(null); setEscalationOpen(null); }} className=\"btn-mini\" > Close panel",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "pushEvent( \"Panel action confirmed\", \"Operational panel action confirmed and attached to the audit trail.\", \"panel\", ) }",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "selectReminderTemplate(template.id)} className={cn( \"rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setStageAndProgress(m.name)} className={cn( \"rounded-3xl border p-4 text-left transition\", stage === m.name ? \"border-vi",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "setActivePanel(p)} className={cn( \"rounded-2xl px-3 py-2 text-xs font-black\", activePanel === p ? \"bg-violet-600 text-wh",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "Cancel",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "route": "/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+      "kind": "button",
+      "label": "{isTimeline ? \"Save Timeline Note\" : isDocument ? \"Add Document Live\" : isReminder ? \"Envoyer via WhatsApp\" : isReassign",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/onboarding/checklists/page.tsx",
+      "route": "/hr/onboarding/checklists",
+      "kind": "link",
+      "label": "/hr/onboarding",
+      "target": "/hr/onboarding",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/openings/[id]/page.tsx",
+      "route": "/hr/openings/:id",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/openings/[id]/page.tsx",
+      "route": "/hr/openings/:id",
+      "kind": "form",
+      "label": "updateRestore",
+      "target": "updateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/openings/new/page.tsx",
+      "route": "/hr/openings/new",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/openings/new/page.tsx",
+      "route": "/hr/openings/new",
+      "kind": "form",
+      "label": "createOpeningRestore",
+      "target": "createOpeningRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/openings/page.tsx",
+      "route": "/hr/openings",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/openings/page.tsx",
+      "route": "/hr/openings",
+      "kind": "link",
+      "label": "/hr/openings/new",
+      "target": "/hr/openings/new",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/openings/page.tsx",
+      "route": "/hr/openings",
+      "kind": "link",
+      "label": "/hr/openings/new",
+      "target": "/hr/openings/new",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/openings/page.tsx",
+      "route": "/hr/openings",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/quick-actions",
+      "target": "/hr/quick-actions",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/daily-ops",
+      "target": "/hr/daily-ops",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/rosters/conflicts",
+      "target": "/hr/rosters/conflicts",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/attendance/corrections",
+      "target": "/hr/attendance/corrections",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/documents",
+      "target": "/hr/documents",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/onboarding/board",
+      "target": "/hr/onboarding/board",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operations-console/page.tsx",
+      "route": "/hr/operations-console",
+      "kind": "link",
+      "label": "/hr/data-quality",
+      "target": "/hr/data-quality",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/operator-training/page.tsx",
+      "route": "/hr/operator-training",
+      "kind": "link",
+      "label": "/hr/launch-center",
+      "target": "/hr/launch-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/page.tsx",
+      "route": "/hr",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/page.tsx",
+      "route": "/hr",
+      "kind": "link",
+      "label": "/hr/settings",
+      "target": "/hr/settings",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/page.tsx",
+      "route": "/hr",
+      "kind": "link",
+      "label": "/hr/notifications",
+      "target": "/hr/notifications",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/page.tsx",
+      "route": "/hr",
+      "kind": "button",
+      "label": "May 1 – May 31, 2026",
+      "target": "inline_button",
+      "status": "unknown",
+      "reason": "Clickable element detected but no reliable action signal found."
+    },
+    {
+      "file": "app/(protected)/hr/page.tsx",
+      "route": "/hr",
+      "kind": "button",
+      "label": "Unlabeled action",
+      "target": "inline_button",
+      "status": "unknown",
+      "reason": "Clickable element detected but no reliable action signal found."
+    },
+    {
+      "file": "app/(protected)/hr/payroll/page.tsx",
+      "route": "/hr/payroll",
+      "kind": "link",
+      "label": "/hr/employees",
+      "target": "/hr/employees",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/payroll/page.tsx",
+      "route": "/hr/payroll",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/payroll/page.tsx",
+      "route": "/hr/payroll",
+      "kind": "link",
+      "label": "/hr/reports/export",
+      "target": "/hr/reports/export",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/playbooks/page.tsx",
+      "route": "/hr/playbooks",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/playbooks/page.tsx",
+      "route": "/hr/playbooks",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/playbooks/page.tsx",
+      "route": "/hr/playbooks",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/playbooks/page.tsx",
+      "route": "/hr/playbooks",
+      "kind": "link",
+      "label": "/hr/search",
+      "target": "/hr/search",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/playbooks/page.tsx",
+      "route": "/hr/playbooks",
+      "kind": "form",
+      "label": "createPlaybookPhase5",
+      "target": "createPlaybookPhase5",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/positions/[id]/page.tsx",
+      "route": "/hr/positions/:id",
+      "kind": "link",
+      "label": "/hr/positions",
+      "target": "/hr/positions",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/positions/[id]/page.tsx",
+      "route": "/hr/positions/:id",
+      "kind": "form",
+      "label": "updateRestore",
+      "target": "updateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/positions/page.tsx",
+      "route": "/hr/positions",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/positions/page.tsx",
+      "route": "/hr/positions",
+      "kind": "link",
+      "label": "/hr/settings",
+      "target": "/hr/settings",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/positions/page.tsx",
+      "route": "/hr/positions",
+      "kind": "link",
+      "label": "/hr/settings",
+      "target": "/hr/settings",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/positions/page.tsx",
+      "route": "/hr/positions",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/quality/page.tsx",
+      "route": "/hr/quality",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/quality/page.tsx",
+      "route": "/hr/quality",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/quality/page.tsx",
+      "route": "/hr/quality",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/quality/page.tsx",
+      "route": "/hr/quality",
+      "kind": "link",
+      "label": "/hr/search",
+      "target": "/hr/search",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/quality/page.tsx",
+      "route": "/hr/quality",
+      "kind": "form",
+      "label": "createQualityReviewPhase5",
+      "target": "createQualityReviewPhase5",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/quick-actions/page.tsx",
+      "route": "/hr/quick-actions",
+      "kind": "link",
+      "label": "/hr/operations-console",
+      "target": "/hr/operations-console",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/candidates/[id]/page.tsx",
+      "route": "/hr/recruitment/candidates/:id",
+      "kind": "link",
+      "label": "/hr/recruitment/candidates",
+      "target": "/hr/recruitment/candidates",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/candidates/[id]/page.tsx",
+      "route": "/hr/recruitment/candidates/:id",
+      "kind": "form",
+      "label": "updateRestore",
+      "target": "updateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/candidates/page.tsx",
+      "route": "/hr/recruitment/candidates",
+      "kind": "link",
+      "label": "/hr/recruitment/kanban",
+      "target": "/hr/recruitment/kanban",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/candidates/page.tsx",
+      "route": "/hr/recruitment/candidates",
+      "kind": "form",
+      "label": "createCandidateRestore",
+      "target": "createCandidateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "link",
+      "label": "/hr/recruitment?create=1",
+      "target": "/hr/recruitment?create=1",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/recruitment?create=1."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "form",
+      "label": "scheduleRecruitmentInterview",
+      "target": "scheduleRecruitmentInterview",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "form",
+      "label": "deleteRecruitmentInterview",
+      "target": "deleteRecruitmentInterview",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "form",
+      "label": "createRecruitmentTask",
+      "target": "createRecruitmentTask",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "form",
+      "label": "addRecruitmentComment",
+      "target": "addRecruitmentComment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "button",
+      "label": "Save & Sync Interview",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "button",
+      "label": "Delete Interview",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "button",
+      "label": "Create Task",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "button",
+      "label": "Add Comment",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/interviews/page.tsx",
+      "route": "/hr/recruitment/interviews",
+      "kind": "button",
+      "label": "View Options",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/kanban/page.tsx",
+      "route": "/hr/recruitment/kanban",
+      "kind": "link",
+      "label": "/hr/recruitment/candidates",
+      "target": "/hr/recruitment/candidates",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/kanban/page.tsx",
+      "route": "/hr/recruitment/kanban",
+      "kind": "form",
+      "label": "moveCandidateRestore",
+      "target": "moveCandidateRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment?create=candidate",
+      "target": "/hr/recruitment?create=candidate",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/recruitment?create=candidate."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment?create=interview",
+      "target": "/hr/recruitment?create=interview",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/recruitment?create=interview."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment?create=requisition",
+      "target": "/hr/recruitment?create=requisition",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/recruitment?create=requisition."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment",
+      "target": "/hr/recruitment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/candidates",
+      "target": "/hr/recruitment/candidates",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/kanban",
+      "target": "/hr/recruitment/kanban",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/openings",
+      "target": "/hr/openings",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/tasks",
+      "target": "/hr/tasks",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/audit",
+      "target": "/hr/audit",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/candidates",
+      "target": "/hr/recruitment/candidates",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/interviews",
+      "target": "/hr/recruitment/interviews",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/recruitment/sources",
+      "target": "/hr/recruitment/sources",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "link",
+      "label": "/hr/sync-center",
+      "target": "/hr/sync-center",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "createHrRecord",
+      "target": "createHrRecord",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "createRecruitmentTask",
+      "target": "createRecruitmentTask",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "addRecruitmentComment",
+      "target": "addRecruitmentComment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "scheduleRecruitmentInterview",
+      "target": "scheduleRecruitmentInterview",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "createHrRecord",
+      "target": "createHrRecord",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "advanceHrStatus",
+      "target": "advanceHrStatus",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "advanceHrStatus",
+      "target": "advanceHrStatus",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "scheduleRecruitmentInterview",
+      "target": "scheduleRecruitmentInterview",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "createRecruitmentTask",
+      "target": "createRecruitmentTask",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "form",
+      "label": "addRecruitmentComment",
+      "target": "addRecruitmentComment",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Save candidate live",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Create task",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Add comment",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Save & Sync Interview",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Save requisition live",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Activate",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Advance",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Schedule",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Add task",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/page.tsx",
+      "route": "/hr/recruitment",
+      "kind": "button",
+      "label": "Save comment",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/recruitment/sources/page.tsx",
+      "route": "/hr/recruitment/sources",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/reports/page.tsx",
+      "route": "/hr/reports",
+      "kind": "link",
+      "label": "/hr/reports/export",
+      "target": "/hr/reports/export",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/risk-center/page.tsx",
+      "route": "/hr/risk-center",
+      "kind": "link",
+      "label": "/hr/operations-console",
+      "target": "/hr/operations-console",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/[id]/edit/page.tsx",
+      "route": "/hr/rosters/:id/edit",
+      "kind": "form",
+      "label": "action",
+      "target": "action",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/[id]/edit/page.tsx",
+      "route": "/hr/rosters/:id/edit",
+      "kind": "button",
+      "label": "Save shift",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/[id]/page.tsx",
+      "route": "/hr/rosters/:id",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/[id]/page.tsx",
+      "route": "/hr/rosters/:id",
+      "kind": "form",
+      "label": "del",
+      "target": "del",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/[id]/page.tsx",
+      "route": "/hr/rosters/:id",
+      "kind": "button",
+      "label": "Delete / archive shift",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/new/page.tsx",
+      "route": "/hr/rosters/new",
+      "kind": "form",
+      "label": "createRosterShiftAction",
+      "target": "createRosterShiftAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/new/page.tsx",
+      "route": "/hr/rosters/new",
+      "kind": "button",
+      "label": "Create shift",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/page.tsx",
+      "route": "/hr/rosters",
+      "kind": "link",
+      "label": "/hr/rosters/new",
+      "target": "/hr/rosters/new",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/page.tsx",
+      "route": "/hr/rosters",
+      "kind": "link",
+      "label": "/hr/rosters/repeat",
+      "target": "/hr/rosters/repeat",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/page.tsx",
+      "route": "/hr/rosters",
+      "kind": "link",
+      "label": "/hr/rosters/templates",
+      "target": "/hr/rosters/templates",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/page.tsx",
+      "route": "/hr/rosters",
+      "kind": "link",
+      "label": "/hr/rosters/conflicts",
+      "target": "/hr/rosters/conflicts",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/planner/page.tsx",
+      "route": "/hr/rosters/planner",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/planner/page.tsx",
+      "route": "/hr/rosters/planner",
+      "kind": "form",
+      "label": "createRosterRestore",
+      "target": "createRosterRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/repeat/page.tsx",
+      "route": "/hr/rosters/repeat",
+      "kind": "form",
+      "label": "createRepeatedRosterAction",
+      "target": "createRepeatedRosterAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/repeat/page.tsx",
+      "route": "/hr/rosters/repeat",
+      "kind": "button",
+      "label": "Generate repeated shifts",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/templates/page.tsx",
+      "route": "/hr/rosters/templates",
+      "kind": "form",
+      "label": "createRosterTemplateAction",
+      "target": "createRosterTemplateAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/rosters/templates/page.tsx",
+      "route": "/hr/rosters/templates",
+      "kind": "button",
+      "label": "Create template",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/route-map/page.tsx",
+      "route": "/hr/route-map",
+      "kind": "link",
+      "label": "/hr/navigation",
+      "target": "/hr/navigation",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/saved-views/page.tsx",
+      "route": "/hr/saved-views",
+      "kind": "link",
+      "label": "/hr/enterprise-dashboard",
+      "target": "/hr/enterprise-dashboard",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/saved-views/page.tsx",
+      "route": "/hr/saved-views",
+      "kind": "form",
+      "label": "createHRSavedViewPhase11",
+      "target": "createHRSavedViewPhase11",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/search/page.tsx",
+      "route": "/hr/search",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/staff/new/page.tsx",
+      "route": "/hr/staff/new",
+      "kind": "link",
+      "label": "/hr/staff",
+      "target": "/hr/staff",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/staff/new/page.tsx",
+      "route": "/hr/staff/new",
+      "kind": "form",
+      "label": "createStaffRestore",
+      "target": "createStaffRestore",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/staff/page.tsx",
+      "route": "/hr/staff",
+      "kind": "link",
+      "label": "/hr/staff/new",
+      "target": "/hr/staff/new",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/staff/page.tsx",
+      "route": "/hr/staff",
+      "kind": "link",
+      "label": "/hr/staff?view=import",
+      "target": "/hr/staff?view=import",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/staff?view=import."
+    },
+    {
+      "file": "app/(protected)/hr/staff/page.tsx",
+      "route": "/hr/staff",
+      "kind": "link",
+      "label": "/hr/sync-center",
+      "target": "/hr/sync-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/staff/page.tsx",
+      "route": "/hr/staff",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/tasks/page.tsx",
+      "route": "/hr/tasks",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/tasks/page.tsx",
+      "route": "/hr/tasks",
+      "kind": "form",
+      "label": "updateHRTaskStatusMax",
+      "target": "updateHRTaskStatusMax",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/tasks/page.tsx",
+      "route": "/hr/tasks",
+      "kind": "form",
+      "label": "createHRTaskMax",
+      "target": "createHRTaskMax",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/templates/page.tsx",
+      "route": "/hr/templates",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/templates/page.tsx",
+      "route": "/hr/templates",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/templates/page.tsx",
+      "route": "/hr/templates",
+      "kind": "link",
+      "label": "/hr/control-room",
+      "target": "/hr/control-room",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/templates/page.tsx",
+      "route": "/hr/templates",
+      "kind": "link",
+      "label": "/hr/search",
+      "target": "/hr/search",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/templates/page.tsx",
+      "route": "/hr/templates",
+      "kind": "form",
+      "label": "createTemplatePhase5",
+      "target": "createTemplatePhase5",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/training/page.tsx",
+      "route": "/hr/training",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce/forecast/page.tsx",
+      "route": "/hr/workforce/forecast",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce/missions/page.tsx",
+      "route": "/hr/workforce/missions",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr",
+      "target": "/hr",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/executive",
+      "target": "/hr/executive",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/approvals",
+      "target": "/hr/approvals",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/workforce-intelligence",
+      "target": "/hr/workforce-intelligence",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/documents",
+      "target": "/hr/documents",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/reports",
+      "target": "/hr/reports",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-intelligence/page.tsx",
+      "route": "/hr/workforce-intelligence",
+      "kind": "link",
+      "label": "/hr/notifications",
+      "target": "/hr/notifications",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/actions/page.tsx",
+      "route": "/hr/workforce-ops/actions",
+      "kind": "form",
+      "label": "createWorkforceAction",
+      "target": "createWorkforceAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/actions/page.tsx",
+      "route": "/hr/workforce-ops/actions",
+      "kind": "button",
+      "label": "Create action",
+      "target": "inline_button",
+      "status": "partial",
+      "reason": "Placeholder/demo/TODO marker present in same file."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/page.tsx",
+      "route": "/hr/workforce-ops",
+      "kind": "link",
+      "label": "/hr/rosters/new",
+      "target": "/hr/rosters/new",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/page.tsx",
+      "route": "/hr/workforce-ops",
+      "kind": "link",
+      "label": "/hr/rosters/repeat",
+      "target": "/hr/rosters/repeat",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/page.tsx",
+      "route": "/hr/workforce-ops",
+      "kind": "link",
+      "label": "/hr/attendance?view=exceptions",
+      "target": "/hr/attendance?view=exceptions",
+      "status": "missing_route",
+      "reason": "Page route not found for /hr/attendance?view=exceptions."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/page.tsx",
+      "route": "/hr/workforce-ops",
+      "kind": "link",
+      "label": "/hr/workforce-ops/actions",
+      "target": "/hr/workforce-ops/actions",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/page.tsx",
+      "route": "/hr/workforce-ops",
+      "kind": "form",
+      "label": "publishRosterAction",
+      "target": "publishRosterAction",
+      "status": "live",
+      "reason": "Form is wired to server action reference."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/page.tsx",
+      "route": "/hr/workforce-ops",
+      "kind": "button",
+      "label": "Publish roster plan",
+      "target": "inline_button",
+      "status": "live",
+      "reason": "Has route/API/server-action/database mutation indicators."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/readiness/page.tsx",
+      "route": "/hr/workforce-ops/readiness",
+      "kind": "link",
+      "label": "/hr/attendance",
+      "target": "/hr/attendance",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "app/(protected)/hr/workforce-ops/readiness/page.tsx",
+      "route": "/hr/workforce-ops/readiness",
+      "kind": "link",
+      "label": "/hr/rosters",
+      "target": "/hr/rosters",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "components/hr/attendance/AttendancePrintButton.tsx",
+      "route": "components/hr/attendance/AttendancePrintButton.tsx",
+      "kind": "button",
+      "label": "window.print()} className=\"rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-wh",
+      "target": "inline_button",
+      "status": "unknown",
+      "reason": "Clickable element detected but no reliable action signal found."
+    },
+    {
+      "file": "components/hr-production/Staff360ProductionView.tsx",
+      "route": "components/hr-production/Staff360ProductionView.tsx",
+      "kind": "link",
+      "label": "/hr/sync-center",
+      "target": "/hr/sync-center",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    },
+    {
+      "file": "components/hr-production/Staff360ProductionView.tsx",
+      "route": "components/hr-production/Staff360ProductionView.tsx",
+      "kind": "link",
+      "label": "/hr/employees",
+      "target": "/hr/employees",
+      "status": "partial",
+      "reason": "Navigation exists; action liveliness depends on destination."
+    }
+  ],
+  "recommendations": [
+    "Create missing APIs/routes before exposing buttons.",
+    "Convert static/modal-only HR actions into server actions or API mutations.",
+    "Wire mutations to lib/hr-production repository and audit logs.",
+    "Refresh affected screens and sync-center after writes."
+  ]
+}

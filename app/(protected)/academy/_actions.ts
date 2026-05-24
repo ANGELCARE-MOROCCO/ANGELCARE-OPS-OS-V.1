@@ -79,14 +79,97 @@ export async function createGroup(fd: FormData) {
 }
 
 export async function createEnrollment(fd: FormData) {
-  const supabase = await createClient(); const trainee_id = v(fd, 'trainee_id')
-  const payload = { trainee_id, course_id: v(fd, 'course_id'), group_id: v(fd, 'group_id'), status: v(fd, 'status') || 'enrolled', note: v(fd, 'note') }
-  const { data, error } = await supabase.from('academy_enrollments').insert(payload).select('id').single()
-  if (error) throw new Error(error.message)
-  await supabase.from('academy_trainees').update({ status: 'enrolled', assigned_group_id: payload.group_id, updated_at: new Date().toISOString() }).eq('id', trainee_id)
-  await audit('create', 'academy_enrollments', data?.id, `Enrollment created for trainee ${trainee_id}`)
-  await academyProductionSync({ event_key: 'enrollment_created', entity: 'academy_enrollments', entity_id: data?.id, title: 'Academy enrollment created', note: `Enrollment created for trainee ${trainee_id}`, priority: 'high', payload: { enrollment: payload, next_action: 'Confirm payment and first attendance session' } })
-  revalidatePath('/academy/enrollments'); revalidatePath('/academy/trainees'); refresh()
+  const supabase = await createClient()
+  const trainee_id = v(fd, 'trainee_id')
+  if (!trainee_id) throw new Error('Approved trainee is required')
+
+  const desiredStatus = v(fd, 'status') || 'enrolled'
+  const basePayload = {
+    trainee_id,
+    course_id: v(fd, 'course_id'),
+    group_id: v(fd, 'group_id'),
+    note: v(fd, 'note'),
+  }
+
+  // Production-safe enrollment write:
+  // A trainee must not receive a new active enrollment every time the manager saves.
+  // We update the current operational enrollment when it exists, otherwise we insert once.
+  const activeStatuses = ['pending', 'enrolled', 'active', 'ongoing', 'on_hold']
+  const { data: existingEnrollment, error: lookupError } = await supabase
+    .from('academy_enrollments')
+    .select('id')
+    .eq('trainee_id', trainee_id)
+    .in('status', activeStatuses)
+    .order('updated_at', { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (lookupError) throw new Error(lookupError.message)
+
+  let data: { id?: string } | null = existingEnrollment || null
+  let writeError: string | null = null
+
+  const productionPayload = {
+    ...basePayload,
+    status: desiredStatus,
+    updated_at: new Date().toISOString(),
+  }
+
+  if (existingEnrollment?.id) {
+    const update = await supabase
+      .from('academy_enrollments')
+      .update(productionPayload)
+      .eq('id', existingEnrollment.id)
+      .select('id')
+      .single()
+    if (update.error) throw new Error(update.error.message)
+    data = update.data
+  } else {
+    const first = await supabase
+      .from('academy_enrollments')
+      .insert(productionPayload)
+      .select('id')
+      .single()
+
+    if (first.error) {
+      const missingStatus = String(first.error.message || '').toLowerCase().includes('status')
+      if (!missingStatus) throw new Error(first.error.message)
+
+      const fallback = await supabase
+        .from('academy_enrollments')
+        .insert(basePayload)
+        .select('id')
+        .single()
+
+      if (fallback.error) throw new Error(fallback.error.message)
+      data = fallback.data
+      writeError = 'academy_enrollments.status is missing in database; fallback insert succeeded. Run the included status migration.'
+    } else {
+      data = first.data
+    }
+  }
+
+  const traineeUpdate = await supabase
+    .from('academy_trainees')
+    .update({ status: 'enrolled', assigned_group_id: basePayload.group_id, updated_at: new Date().toISOString() })
+    .eq('id', trainee_id)
+
+  if (traineeUpdate.error) throw new Error(traineeUpdate.error.message)
+
+  await audit(existingEnrollment?.id ? 'update' : 'create', 'academy_enrollments', data?.id, `${existingEnrollment?.id ? 'Enrollment updated' : 'Enrollment created'} for trainee ${trainee_id}${writeError ? ` (${writeError})` : ''}`)
+  await academyProductionSync({
+    event_key: existingEnrollment?.id ? 'enrollment_updated' : 'enrollment_created',
+    entity: 'academy_enrollments',
+    entity_id: data?.id,
+    title: existingEnrollment?.id ? 'Academy enrollment updated' : 'Academy enrollment created',
+    note: `${existingEnrollment?.id ? 'Enrollment updated' : 'Enrollment created'} for trainee ${trainee_id}`,
+    priority: 'high',
+    payload: { enrollment: { ...basePayload, status: desiredStatus }, next_action: 'Confirm payment and first attendance session' },
+  })
+
+  revalidatePath('/academy/enrollments')
+  revalidatePath('/academy/trainees')
+  refresh()
 }
 
 export async function addPayment(fd: FormData) {
@@ -154,7 +237,7 @@ const ACADEMY_EDITABLE_TABLES: Record<string, string[]> = {
   academy_trainers: ['full_name','phone','email','specialty','status','notes'],
   academy_locations: ['name','city','address','capacity','type','status'],
   academy_groups: ['name','course_id','trainer_id','location_id','location','start_date','end_date','status','max_capacity'],
-  academy_enrollments: ['trainee_id','course_id','group_id','status','note'],
+  academy_enrollments: ['trainee_id','course_id','group_id','note'],
   academy_payments: ['trainee_id','enrollment_id','amount','method','status','paid_at','due_at','reference'],
   academy_attendance: ['trainee_id','group_id','session_date','status','note'],
   academy_certificates: ['trainee_id','course_id','certificate_number','serial_number','verification_hash','status'],

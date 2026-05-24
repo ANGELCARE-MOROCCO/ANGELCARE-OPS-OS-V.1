@@ -138,32 +138,29 @@ function buildTypeStats(appointments: AppointmentRecord[]) {
 
 function UniformRevenueSidebar({
   active = "appointments",
-  taskCount = 1,
-  prospectCount = 78,
-  hotCount = 77,
 }: {
-  active?: "appointments" | "tasks" | "prospects"
+  active?: "appointments" | "tasks" | "prospects" | "directory" | "partner" | "calendar" | "email" | "whatsapp" | "map" | "analytics" | "insights"
   taskCount?: number
   prospectCount?: number
   hotCount?: number
 }) {
-  const item = (href: string, icon: React.ReactNode, label: string, isActive = false, badge?: number | string) => (
+  const item = (href: string, icon: React.ReactNode, label: string, key: NonNullable<Parameters<typeof UniformRevenueSidebar>[0]["active"]>) => (
     <a
       href={href}
-      className={`flex items-center justify-between gap-4 rounded-[22px] px-5 py-3.5 text-[16px] font-black transition ${
-        isActive
+      className={`flex items-center gap-4 rounded-[22px] px-5 py-3.5 text-[16px] font-black transition ${
+        active === key
           ? "bg-violet-800/80 text-white shadow-[0_10px_35px_rgba(124,58,237,.3)]"
           : "text-[#e5eefc] hover:bg-[#10223a]"
       }`}
     >
-      <span className="flex items-center gap-4">{icon}<span className="whitespace-nowrap">{label}</span></span>
-      {badge !== undefined && <span className="rounded-full bg-[#1f2937] px-3 py-1 text-sm text-[#dbeafe]">{badge}</span>}
+      <span className="grid h-7 w-7 place-items-center [&_svg]:h-7 [&_svg]:w-7">{icon}</span>
+      <span className="whitespace-nowrap">{label}</span>
     </a>
   )
 
   return (
-    <aside className="sticky top-4 flex h-[calc(100vh-32px)] w-[372px] min-w-[372px] max-w-[372px] shrink-0 flex-col overflow-y-auto rounded-[28px] border border-[#244365] bg-[#07111f]/95 px-7 py-8 shadow-[18px_0_70px_rgba(0,0,0,.38)] backdrop-blur-xl">
-      <a href="/revenue-command-center/prospects" className="mb-8 flex items-center gap-4">
+    <aside className="sticky top-4 flex h-[calc(100vh-32px)] w-[292px] min-w-[292px] max-w-[292px] shrink-0 flex-col overflow-y-auto border-r border-[#244365] bg-[#07111f]/95 px-5 py-7 shadow-[18px_0_70px_rgba(0,0,0,.38)] backdrop-blur-xl">
+      <a href="/revenue-command-center" className="mb-8 flex items-center gap-4">
         <div className="grid h-16 w-16 place-items-center rounded-[24px] bg-gradient-to-br from-amber-300 via-yellow-500 to-orange-600 text-black shadow-lg shadow-yellow-500/25">
           <Sparkles className="h-9 w-9" />
         </div>
@@ -173,38 +170,18 @@ function UniformRevenueSidebar({
         </div>
       </a>
 
-      <div className="space-y-8">
-        <div>
-          <div className="mb-3 text-[12px] font-black uppercase tracking-[.22em] text-[#dbeafe]">Command HQ</div>
-          {item("/revenue-command-center/prospects", <Radar className="h-7 w-7" />, "Command Center")}
-        </div>
-
-        <div>
-          <div className="mb-3 text-[12px] font-black uppercase tracking-[.22em] text-[#dbeafe]">Prospect Management</div>
-          {item("/revenue-command-center/prospects", <Users className="h-7 w-7" />, "All Prospects", false, prospectCount)}
-          {item("/revenue-command-center/prospects/directory", <MapPinned className="h-7 w-7" />, "Prospects Directory")}
-          {item("/revenue-command-center/prospects/high-value", <Flame className="h-7 w-7" />, "Hot Prospects", false, hotCount)}
-          {item("/revenue-command-center/prospects/pipeline", <Layers3 className="h-7 w-7" />, "Pipeline")}
-          {item("/revenue-command-center/partnerships", <Handshake className="h-7 w-7" />, "Partner Program")}
-        </div>
-
-        <div>
-          <div className="mb-3 text-[12px] font-black uppercase tracking-[.22em] text-[#dbeafe]">Execution</div>
-          {item("/revenue-command-center/daily-tasks", <CircleCheck className="h-7 w-7" />, "Tasks & Actions", active === "tasks", taskCount)}
-          {item("/revenue-command-center/appointments", <CalendarDays className="h-7 w-7" />, "Appointments", active === "appointments")}
-          {item("/revenue-command-center/automation", <Zap className="h-7 w-7" />, "Automations")}
-          {item("/revenue-command-center/campaigns", <Mail className="h-7 w-7" />, "Email Campaigns")}
-          {item("/revenue-command-center/follow-ups", <MessageCircle className="h-7 w-7" />, "WhatsApp Center")}
-        </div>
-
-        <div>
-          <div className="mb-3 text-[12px] font-black uppercase tracking-[.22em] text-[#dbeafe]">Intelligence</div>
-          {item("/revenue-command-center/market-mapping", <Globe2 className="h-7 w-7" />, "Market Map")}
-          {item("/revenue-command-center/revenue-analytics", <BarChart3 className="h-7 w-7" />, "Analytics & Reports")}
-          {item("/revenue-command-center/competitors", <Gauge className="h-7 w-7" />, "Competitors")}
-          {item("/revenue-command-center/executive-briefing", <ShieldCheck className="h-7 w-7" />, "Market Insights")}
-        </div>
-      </div>
+      <nav className="space-y-2">
+        {item("/revenue-command-center", <Radar />, "Command Center", "prospects")}
+        {item("/revenue-command-center/prospects/directory", <MapPinned />, "Prospects Directory", "directory")}
+        {item("/revenue-command-center/partnerships", <Handshake />, "Partner Program", "partner")}
+        {item("/revenue-command-center/daily-tasks", <CircleCheck />, "Tasks & Actions", "tasks")}
+        {item("/revenue-command-center/appointments", <CalendarDays />, "Calendar", "appointments")}
+        {item("/revenue-command-center/campaigns", <Mail />, "Email Campaigns", "email")}
+        {item("/revenue-command-center/follow-ups", <MessageCircle />, "WhatsApp Center", "whatsapp")}
+        {item("/revenue-command-center/market-mapping", <Globe2 />, "Market Map", "map")}
+        {item("/revenue-command-center/revenue-analytics", <BarChart3 />, "Analytics & Reports", "analytics")}
+        {item("/revenue-command-center/executive-briefing", <ShieldCheck />, "Market Insights", "insights")}
+      </nav>
     </aside>
   )
 }

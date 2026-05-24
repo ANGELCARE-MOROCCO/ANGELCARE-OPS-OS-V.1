@@ -1,0 +1,15 @@
+{
+  "name": "angelcare-shopify-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Shopify OAuth callback server for the AngelCare dashboard integration.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/router.js && node --check src/config/env.js && node --check src/http/responses.js && node --check src/lib/body.js && node --check src/lib/security.js && node --check src/services/shopify.js && node --check src/services/analytics.js && node --check src/services/dashboard.js && node --check src/services/token.js && node --check src/services/traffic.js && node --check src/services/webhooks.js && node --check src/views/dashboard.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

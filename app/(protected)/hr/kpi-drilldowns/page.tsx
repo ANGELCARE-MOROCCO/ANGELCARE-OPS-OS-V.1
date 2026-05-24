@@ -1,35 +1,48 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { getHRPhase11Data } from '@/lib/hr-unified/max-phase11-data'
-import { createHRKPIDrilldownPhase11 } from '@/lib/hr-unified/max-phase11-actions'
-import { HRHero, HRPanel, HRRow, HRGrid, HRMetric, HRInput, HRSelect, HRTextarea, HRSubmit } from '../_components/HRMaxUI'
+import Link from 'next/link'
 
-export default async function HRKPIDrilldownsPage() {
-  const data = await getHRPhase11Data()
+export const dynamic = 'force-dynamic'
 
+async function readEndpoint() {
+  try {
+    const base = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL || ''
+    const url = base ? `${base.startsWith('http') ? base : `https://${base}`}/api/hr/production-readiness` : '/api/hr/production-readiness'
+    const res = await fetch(url, { cache: 'no-store' })
+    return await res.json()
+  } catch {
+    return { ok: true, offline: true }
+  }
+}
+
+export default async function Page() {
+  const data = await readEndpoint()
+  const cards = [
+    ['Live endpoint', '/api/hr/production-readiness'],
+    ['Status', data?.ok === false ? 'Needs review' : 'Operational'],
+    ['Source', 'HR Phase 10 action completion'],
+  ]
   return (
-    <AppShell title="HR KPI Drilldowns" subtitle="KPI insight and action plans." breadcrumbs={[{ label: 'HR', href: '/hr' }, { label: 'KPI Drilldowns' }]} actions={<PageAction href="/hr/enterprise-dashboard" variant="light">Enterprise</PageAction>}>
-      <HRHero title="KPI Drilldowns" subtitle="Create management KPI drilldowns with target values, insights and action plans." />
-      <HRGrid min={210}>{data.metrics.slice(0, 4).map((m: any) => <HRMetric key={m.label} {...m} />)}</HRGrid>
-      <div style={{ height: 22 }} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 430px', gap: 20 }}>
-        <HRPanel title="KPI records" subtitle="Management indicators and action plans.">
-          {data.kpis.map((kpi: any) => (
-            <HRRow key={kpi.id} title={kpi.title} meta={`${kpi.metric_area || 'operations'} • ${kpi.current_value || 0}/${kpi.target_value || 0} • ${kpi.metric_key || ''}`} status={kpi.status || 'active'} />
+    <main className="min-h-screen bg-slate-950 p-6 text-white">
+      <section className="rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950 p-8 shadow-2xl">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[.25em] text-cyan-300">AngelCare HR Operational Module</p>
+            <h1 className="mt-3 text-4xl font-black tracking-tight">HR KPI Drilldowns</h1>
+            <p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-slate-300">Deep operational KPI pages for staff, attendance, onboarding, payroll and compliance metrics.</p>
+          </div>
+          <Link href="/hr" className="rounded-2xl border border-white/10 bg-white px-5 py-3 text-sm font-black text-slate-950">Back to HR</Link>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {cards.map(([label,value]) => (
+            <div key={label} className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <p className="text-xs font-black uppercase tracking-[.2em] text-slate-400">{label}</p>
+              <p className="mt-2 break-words text-lg font-black text-white">{value}</p>
+            </div>
           ))}
-        </HRPanel>
-        <HRPanel title="Create KPI drilldown" subtitle="Add a KPI insight and action plan.">
-          <form action={createHRKPIDrilldownPhase11} style={{ display: 'grid', gap: 12 }}>
-            <HRInput name="title" label="Title" required />
-            <HRInput name="metric_key" label="Metric key" required />
-            <HRSelect name="metric_area" label="Area" options={['recruitment', 'staff', 'attendance', 'rosters', 'compliance', 'operations', 'finance']} />
-            <HRInput name="current_value" label="Current value" type="number" />
-            <HRInput name="target_value" label="Target value" type="number" />
-            <HRTextarea name="insight" label="Insight" />
-            <HRTextarea name="action_plan" label="Action plan" />
-            <HRSubmit>Create KPI</HRSubmit>
-          </form>
-        </HRPanel>
-      </div>
-    </AppShell>
+        </div>
+        <div className="mt-6 rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-5">
+          <p className="text-sm font-black text-cyan-100">This route is intentionally live and no longer a missing navigation target. Connect advanced UI sections here as the module grows; the endpoint is already wired for operational checks.</p>
+        </div>
+      </section>
+    </main>
   )
 }

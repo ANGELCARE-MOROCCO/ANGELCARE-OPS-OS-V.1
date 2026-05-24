@@ -172,44 +172,59 @@ const initials = (name: string) =>
     .toUpperCase() || "AC";
 const pct = (a: number, b: number) =>
   `${Math.round((a / Math.max(1, b)) * 100)}%`;
+const pad2 = (n: number) => String(n).padStart(2, "0");
 const dateOnly = (value: any) => {
   const raw = String(value || "").trim();
   if (!raw) return "";
+  const m = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (m?.[1]) return m[1];
   const d = new Date(raw);
   if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
   return raw.slice(0, 10);
 };
-const timeLabel = (value: any) => {
+const time24FromAny = (value: any, fallback = "09:00") => {
   const raw = String(value || "").trim();
-  const d = new Date(raw);
-  if (!Number.isNaN(d.getTime()))
-    return d.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  return raw.slice(11, 16) || "09:00";
+  if (!raw) return fallback;
+  const iso = raw.match(/T(\d{2}:\d{2})/) || raw.match(/\s(\d{2}:\d{2})/);
+  if (iso?.[1]) return iso[1];
+  if (/^\d{2}:\d{2}/.test(raw)) return raw.slice(0, 5);
+  const m = raw.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+  if (m) {
+    let h = Number(m[1]);
+    const min = m[2] || "00";
+    const ap = m[3].toUpperCase();
+    if (ap === "PM" && h < 12) h += 12;
+    if (ap === "AM" && h === 12) h = 0;
+    return `${pad2(h)}:${min}`;
+  }
+  return fallback;
 };
-const hourKey = (value: any) => {
-  const label = timeLabel(value);
-  const d = new Date(`2025-01-01 ${label}`);
-  if (!Number.isNaN(d.getTime()))
-    return d
-      .toLocaleTimeString("en-US", { hour: "numeric", hour12: true })
-      .replace(" ", ":00 ");
-  const h = label.slice(0, 2);
-  return `${Number(h) || 9}:00 AM`;
+const timeLabelFrom24 = (value: any) => {
+  const t = time24FromAny(value, "09:00");
+  const [hh, mm] = t.split(":").map(Number);
+  const suffix = hh >= 12 ? "PM" : "AM";
+  const hour = hh % 12 || 12;
+  return `${hour}:${pad2(mm || 0)} ${suffix}`;
 };
+const interviewDateOf = (row: Row) =>
+  dateOnly(text(row, ["interview_date", "interview_datetime", "scheduled_at"]));
+const interviewTime24Of = (row: Row) =>
+  time24FromAny(
+    text(row, ["interview_time", "scheduled_time"]) ||
+      text(row, ["interview_datetime", "scheduled_at", "interview_date"]),
+    "09:00",
+  );
+const interviewTimeLabel = (row: Row) => timeLabelFrom24(interviewTime24Of(row));
+const hourKeyFrom24 = (value: any) => {
+  const [hh] = time24FromAny(value, "09:00").split(":").map(Number);
+  const suffix = hh >= 12 ? "PM" : "AM";
+  const hour = hh % 12 || 12;
+  return `${hour}:00 ${suffix}`;
+};
+const hourKeyForInterview = (row: Row) => hourKeyFrom24(interviewTime24Of(row));
 
 const toDateTimeLocal = (isoDate: string, hour: string) => {
-  const match = String(hour || "9:00 AM").match(
-    /(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i,
-  );
-  let h = match ? Number(match[1]) : 9;
-  const m = match?.[2] || "00";
-  const ap = (match?.[3] || "AM").toUpperCase();
-  if (ap === "PM" && h < 12) h += 12;
-  if (ap === "AM" && h === 12) h = 0;
-  return `${isoDate}T${String(h).padStart(2, "0")}:${m}`;
+  return `${isoDate}T${time24FromAny(hour, "09:00")}`;
 };
 const encodeQ = (v: string) => encodeURIComponent(v);
 
@@ -461,6 +476,9 @@ function ScheduleModal({
               name="candidate_id"
               value={text(edit, ["id"])}
             />
+            <input type="hidden" name="selected_date" value={defaultDate} />
+            <input type="hidden" name="selected_time" value={defaultHour} />
+            <input type="hidden" name="selected_interviewer" value={defaultInterviewer} />
             <section className="rounded-[30px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 p-5 shadow-sm">
               <h4 className="text-base font-black text-slate-950">
                 Candidate & schedule
@@ -524,8 +542,9 @@ function ScheduleModal({
                   required
                   type="datetime-local"
                   defaultValue={
-                    text(edit, ["interview_date"]).slice(0, 16) ||
-                    toDateTimeLocal(defaultDate, defaultHour)
+                    edit
+                      ? `${interviewDateOf(edit) || defaultDate}T${interviewTime24Of(edit)}`
+                      : toDateTimeLocal(defaultDate, defaultHour)
                   }
                 />
                 <Select
@@ -540,7 +559,7 @@ function ScheduleModal({
                   name="owner"
                   placeholder="Lead interviewer"
                   defaultValue={
-                    interviewerOf(edit || {}, 0) || defaultInterviewer
+                    edit ? interviewerOf(edit, 0) : defaultInterviewer
                   }
                 />
                 <Input
@@ -685,7 +704,7 @@ function PreviewModal({ interview }: { interview?: Row }) {
                 </span>
                 <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600">
                   <Clock3 className="mr-1 inline h-3.5 w-3.5" />
-                  {timeLabel(text(interview, ["interview_date"]))}
+                  {interviewTimeLabel(interview)}
                 </span>
                 <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600">
                   <MapPin className="mr-1 inline h-3.5 w-3.5" />
@@ -711,7 +730,7 @@ function PreviewModal({ interview }: { interview?: Row }) {
                 [
                   "Date",
                   longDate(
-                    dateOnly(text(interview, ["interview_date"])) ||
+                    interviewDateOf(interview) ||
                       new Date().toISOString().slice(0, 10),
                   ),
                 ],
@@ -825,7 +844,7 @@ export default async function RecruitmentInterviewsPage({
   const interviewCandidates = candidates.filter(isInterview);
   const activeDates = new Set(
     interviewCandidates
-      .map((c) => dateOnly(text(c, ["interview_date"])))
+      .map((c) => interviewDateOf(c))
       .filter(Boolean),
   );
   const selectedDate =
@@ -833,7 +852,7 @@ export default async function RecruitmentInterviewsPage({
     Array.from(activeDates).sort()[0] ||
     new Date().toISOString().slice(0, 10);
   const dayInterviews = interviewCandidates.filter(
-    (c) => dateOnly(text(c, ["interview_date"])) === selectedDate,
+    (c) => interviewDateOf(c) === selectedDate,
   );
   const selectedId = String(sp.interview || "");
   const editId = String(sp.edit || "");
@@ -851,7 +870,7 @@ export default async function RecruitmentInterviewsPage({
   const byHourAndInterviewer = (hour: string, interviewer: string) =>
     dayInterviews.filter(
       (c, i) =>
-        hourKey(text(c, ["interview_date"])) === hour &&
+        hourKeyForInterview(c) === hour &&
         interviewerOf(c, i) === interviewer,
     );
   const counts = interviewTypes.map((t) => ({
@@ -863,10 +882,10 @@ export default async function RecruitmentInterviewsPage({
     ).length,
   }));
   const upcoming = interviewCandidates
-    .filter((c) => dateOnly(text(c, ["interview_date"])) >= selectedDate)
+    .filter((c) => interviewDateOf(c) >= selectedDate)
     .sort((a, b) =>
-      String(text(a, ["interview_date"])).localeCompare(
-        String(text(b, ["interview_date"])),
+      `${interviewDateOf(a)}T${interviewTime24Of(a)}`.localeCompare(
+        `${interviewDateOf(b)}T${interviewTime24Of(b)}`,
       ),
     );
 
@@ -987,7 +1006,7 @@ export default async function RecruitmentInterviewsPage({
                 value={
                   candidates.filter(
                     (c) =>
-                      !text(c, ["interview_date"]) &&
+                      !interviewDateOf(c) &&
                       norm(text(c, ["pipeline_stage"])).includes("interview"),
                   ).length
                 }
@@ -1157,9 +1176,7 @@ export default async function RecruitmentInterviewsPage({
                                     <div className="mb-2 flex items-center justify-between">
                                       <span className="inline-flex items-center gap-1 text-[11px] font-black">
                                         <Clock3 className="h-3 w-3" />
-                                        {timeLabel(
-                                          text(interview, ["interview_date"]),
-                                        )}
+                                        {interviewTimeLabel(interview)}
                                       </span>
                                       <Eye className="h-3.5 w-3.5" />
                                     </div>
@@ -1240,7 +1257,7 @@ export default async function RecruitmentInterviewsPage({
                             {text(c, ["full_name", "name"], "Candidate")}
                           </p>
                           <p className="text-xs font-bold text-slate-500">
-                            {timeLabel(text(c, ["interview_date"]))} •{" "}
+                            {interviewTimeLabel(c)} •{" "}
                             {interviewerOf(c, i)}
                           </p>
                         </div>
@@ -1259,7 +1276,7 @@ export default async function RecruitmentInterviewsPage({
                     <div className="rounded-3xl bg-gradient-to-br from-violet-50 to-white p-4">
                       <p className="text-xs font-black text-violet-600">
                         {longDate(
-                          dateOnly(text(upcoming[0], ["interview_date"])) ||
+                          interviewDateOf(upcoming[0]) ||
                             selectedDate,
                         )}
                       </p>
@@ -1299,7 +1316,7 @@ export default async function RecruitmentInterviewsPage({
                           Join
                         </a>
                         <Link
-                          href={`/hr/recruitment/interviews?date=${dateOnly(text(upcoming[0], ["interview_date"]))}&interview=${idOf(upcoming[0])}`}
+                          href={`/hr/recruitment/interviews?date=${interviewDateOf(upcoming[0])}&interview=${idOf(upcoming[0])}`}
                           className="rounded-2xl border border-slate-200 px-4 py-3 text-center text-xs font-black"
                         >
                           Preview

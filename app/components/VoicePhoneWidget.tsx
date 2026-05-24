@@ -203,8 +203,9 @@ export default function VoicePhoneWidget() {
       if (incomingNumber || status !== "idle") return
 
       try {
-        const res = await fetch("/api/voice/incoming/latest")
-        const json = await res.json()
+        const res = await fetch('/api/voice/incoming/latest', { cache: 'no-store' }).catch(() => null)
+        if (!res || !res.ok) return
+      const json = await res.json().catch(() => ({ call: null }))
         const call = json.call
 
         const incomingId = call?.telnyx_call_control_id || null
@@ -245,7 +246,8 @@ export default function VoicePhoneWidget() {
         const res = await fetch(
           `/api/voice/leads/lookup?phone=${encodeURIComponent(number)}`
         )
-        const json = await res.json()
+        if (!res || !res.ok) return
+      const json = await res.json().catch(() => ({ call: null }))
         setLead(json.lead || null)
       } catch (error) {
         console.error("Lead lookup error:", error)
@@ -395,7 +397,8 @@ export default function VoicePhoneWidget() {
         body: JSON.stringify({ to: number }),
       })
 
-      const json = await res.json().catch(() => ({}))
+      if (!res || !res.ok) return
+      const json = await res.json().catch(() => ({ call: null })).catch(() => ({}))
 
       if (!res.ok) {
         console.error("Outbound call failed:", json)

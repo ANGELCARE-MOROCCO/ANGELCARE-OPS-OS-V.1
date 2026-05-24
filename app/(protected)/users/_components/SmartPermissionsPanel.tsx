@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 
 type PermissionOption = {
   value: string
@@ -8,327 +8,208 @@ type PermissionOption = {
   module?: string
   moduleLabel?: string
   href?: string
+  area?: string
+  category?: string
+  modulePermissionKey?: string
 }
 
-type SmartPermissionsPanelProps = {
+type Props = {
   corePermissions: PermissionOption[]
   pagePermissions: PermissionOption[]
   defaultPermissions?: string[]
+  roleTemplates?: Record<string, string[]>
 }
 
-const HR_CORE_PERMISSION_OPTIONS: PermissionOption[] = [
-  { value: 'hr.view', label: 'Voir HR MAX', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.dashboard', label: 'Dashboard HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.recruitment.view', label: 'Voir recrutement', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.recruitment.manage', label: 'Gérer recrutement', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.openings.manage', label: 'Gérer postes ouverts', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.staff.view', label: 'Voir Staff 360', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.staff.manage', label: 'Gérer Staff 360', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.onboarding.manage', label: 'Gérer onboarding', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.rosters.manage', label: 'Gérer rosters/planning', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.attendance.manage', label: 'Gérer attendance', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.documents.manage', label: 'Gérer documents HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.approvals.manage', label: 'Gérer approvals HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.analytics.view', label: 'Voir analytics HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.audit.view', label: 'Voir audit HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.executive.view', label: 'Voir Boardroom HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.settings.manage', label: 'Gérer settings HR', module: 'hr', moduleLabel: 'HR MAX' },
-  { value: 'hr.admin', label: 'Admin HR complet', module: 'hr', moduleLabel: 'HR MAX' },
-]
-
-const HR_PAGE_PERMISSION_OPTIONS: PermissionOption[] = [
-  { value: 'page:/hr', label: 'HR MAX', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr' },
-  { value: 'page:/hr/operations-console', label: 'HR Operations Console', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/operations-console' },
-  { value: 'page:/hr/boardroom', label: 'HR Boardroom', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/boardroom' },
-  { value: 'page:/hr/recruitment', label: 'HR Recruitment', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/recruitment' },
-  { value: 'page:/hr/recruitment/candidates', label: 'HR Candidates', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/recruitment/candidates' },
-  { value: 'page:/hr/openings', label: 'HR Openings', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/openings' },
-  { value: 'page:/hr/staff', label: 'HR Staff 360', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/staff' },
-  { value: 'page:/hr/staff/new', label: 'HR New Staff', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/staff/new' },
-  { value: 'page:/hr/onboarding', label: 'HR Onboarding', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/onboarding' },
-  { value: 'page:/hr/rosters', label: 'HR Rosters', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/rosters' },
-  { value: 'page:/hr/attendance', label: 'HR Attendance', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/attendance' },
-  { value: 'page:/hr/documents', label: 'HR Documents', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/documents' },
-  { value: 'page:/hr/approvals', label: 'HR Approvals', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/approvals' },
-  { value: 'page:/hr/tasks', label: 'HR Tasks', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/tasks' },
-  { value: 'page:/hr/final-qa', label: 'HR Final QA', module: 'hr-pages', moduleLabel: 'HR MAX Pages', href: '/hr/final-qa' },
-]
-
-function mergePermissionOptions(base: PermissionOption[], extra: PermissionOption[]) {
-  const byValue = new Map<string, PermissionOption>()
-  for (const item of base) byValue.set(item.value, item)
-  for (const item of extra) {
-    if (!byValue.has(item.value)) byValue.set(item.value, item)
-  }
-  return Array.from(byValue.values())
+const MODULE_ICONS: Record<string, string> = {
+  academy: '🎓', admin: '🛡️', billing: '💳', caregivers: '🧸', contracts: '📄', families: '🏡', hr: '👥', incidents: '🚨', leads: '🎯', locations: '📍', market_os: '📣', 'market-os': '📣', missions: '🗺️', operations: '⚙️', pointage: '⏱️', print: '🖨️', profile: '👤', reports: '📊', revenue: '💎', 'revenue-command-center': '💎', sales: '🚀', services: '🧩', settings: '🔧', users: '🔐', 'voice-center': '☎️', voice: '☎️', staff_portal: '🏢', unknown: '✨'
 }
 
-
-const PRESETS: Record<string, string[]> = {
-  agent: ['profile.view', 'page:/profile', 'pointage.view', 'page:/pointage'],
-  sales: ['profile.view', 'leads.view', 'leads.create', 'leads.edit', 'revenue.view', 'page:/profile', 'page:/leads', 'page:/leads/new', 'page:/revenue-command-center', 'page:/revenue-command-center/tasks'],
-  manager: ['profile.view', 'users.view', 'leads.view', 'leads.create', 'leads.edit', 'missions.view', 'missions.create', 'missions.edit', 'operations.view', 'reports.view', 'revenue.view', 'revenue.manage', 'page:/profile', 'page:/users', 'page:/leads', 'page:/missions', 'page:/operations', 'page:/reports', 'page:/revenue-command-center'],
-  hr_admin: [
-  'hr.view',
-  'hr.dashboard',
-  'hr.recruitment.view',
-  'hr.recruitment.manage',
-  'hr.staff.view',
-  'hr.staff.manage',
-  'hr.onboarding.manage',
-  'hr.rosters.manage',
-  'hr.attendance.manage',
-  'hr.documents.manage',
-  'hr.approvals.manage',
-  'hr.analytics.view',
-  'hr.settings.manage',
-  'page:/hr',
-  'page:/hr/operations-console',
-  'page:/hr/recruitment',
-  'page:/hr/staff',
-  'page:/hr/documents',
-  'page:/hr/attendance/corrections',
-  'page:/hr/rosters/conflicts',
-],
-hr_executive: [
-  'hr.view',
-  'hr.dashboard',
-  'hr.executive.view',
-  'hr.analytics.view',
-  'page:/hr',
-  'page:/hr/boardroom',
-],
+function nice(text?: string) {
+  return String(text || 'General').replaceAll('_', ' ').replaceAll('-', ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
 
-function normalize(value: unknown) {
-  return String(value || '').toLowerCase()
+function moduleOf(option: PermissionOption) {
+  if (option.module) return option.module
+  const value = option.value || ''
+  if (value.startsWith('page:/')) return value.split('/')[1] || 'root'
+  return value.split('.')[0] || 'unknown'
 }
 
-function groupByModule(items: PermissionOption[]) {
-  return items.reduce<Record<string, PermissionOption[]>>((acc, item) => {
-    const group = item.moduleLabel || item.module || 'General'
-    if (!acc[group]) acc[group] = []
-    acc[group].push(item)
+function groupOptions(options: PermissionOption[]) {
+  return options.reduce<Record<string, PermissionOption[]>>((acc, option) => {
+    const key = moduleOf(option)
+    if (!acc[key]) acc[key] = []
+    acc[key].push(option)
     return acc
   }, {})
 }
 
-export default function SmartPermissionsPanel({ corePermissions, pagePermissions, defaultPermissions = [] }: SmartPermissionsPanelProps) {
-  const mergedCorePermissions = useMemo(
-    () => mergePermissionOptions(corePermissions, HR_CORE_PERMISSION_OPTIONS),
-    [corePermissions]
-  )
-  const mergedPagePermissions = useMemo(
-    () => mergePermissionOptions(pagePermissions, HR_PAGE_PERMISSION_OPTIONS),
-    [pagePermissions]
-  )
+function matches(option: PermissionOption, query: string) {
+  if (!query) return true
+  const haystack = `${option.value} ${option.label} ${option.module} ${option.moduleLabel} ${option.href}`.toLowerCase()
+  return haystack.includes(query.toLowerCase())
+}
 
+export default function SmartPermissionsPanel({ corePermissions, pagePermissions, defaultPermissions = [], roleTemplates = {} }: Props) {
   const [selected, setSelected] = useState<Set<string>>(() => new Set(defaultPermissions))
   const [query, setQuery] = useState('')
-  const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set(['Users', 'Market OS', 'Revenue Command Center', 'Leads', 'HR MAX', 'Missions']))
+  const [mode, setMode] = useState<'all' | 'selected' | 'core' | 'pages'>('all')
+  const [open, setOpen] = useState<Set<string>>(() => new Set(['hr', 'users', 'market-os', 'market_os', 'revenue-command-center', 'academy']))
 
-  const coreGroups = useMemo(() => groupByModule(mergedCorePermissions), [mergedCorePermissions])
-  const pageGroups = useMemo(() => groupByModule(mergedPagePermissions), [mergedPagePermissions])
+  const normalizedCore = useMemo(() => corePermissions.map(p => ({ ...p, moduleLabel: p.moduleLabel || nice(moduleOf(p)) })), [corePermissions])
+  const normalizedPages = useMemo(() => pagePermissions.map(p => ({ ...p, moduleLabel: p.moduleLabel || nice(moduleOf(p)) })), [pagePermissions])
 
-  const filteredCoreGroups = useMemo(() => filterGroups(coreGroups, query), [coreGroups, query])
-  const filteredPageGroups = useMemo(() => filterGroups(pageGroups, query), [pageGroups, query])
+  const visibleCore = normalizedCore.filter((p) => matches(p, query) && (mode === 'all' || mode === 'core' || (mode === 'selected' && selected.has(p.value))))
+  const visiblePages = normalizedPages.filter((p) => matches(p, query) && (mode === 'all' || mode === 'pages' || (mode === 'selected' && selected.has(p.value))))
 
-  const selectedCount = selected.size
-  const pageSelectedCount = Array.from(selected).filter((item) => item.startsWith('page:')).length
-
-  function filterGroups(groups: Record<string, PermissionOption[]>, search: string) {
-    const q = normalize(search)
-    if (!q) return groups
-
-    return Object.fromEntries(
-      Object.entries(groups)
-        .map(([group, items]) => [
-          group,
-          items.filter((item) =>
-            normalize(item.label).includes(q) ||
-            normalize(item.value).includes(q) ||
-            normalize(item.href).includes(q) ||
-            normalize(group).includes(q)
-          ),
-        ] as const)
-        .filter(([, items]) => items.length > 0)
-    )
-  }
+  const coreGroups = groupOptions(visibleCore)
+  const pageGroups = groupOptions(visiblePages)
+  const allValues = [...normalizedCore, ...normalizedPages].map(p => p.value)
+  const selectedCore = normalizedCore.filter(p => selected.has(p.value)).length
+  const selectedPages = normalizedPages.filter(p => selected.has(p.value)).length
+  const moduleCoverage = new Set([...normalizedCore, ...normalizedPages].filter(p => selected.has(p.value)).map(moduleOf)).size
+  const totalModules = new Set([...normalizedCore, ...normalizedPages].map(moduleOf)).size
 
   function toggle(value: string) {
-    setSelected((current) => {
-      const next = new Set(current)
-      if (next.has(value)) next.delete(value)
-      else next.add(value)
+    setSelected(prev => {
+      const next = new Set(prev)
+      next.has(value) ? next.delete(value) : next.add(value)
       return next
     })
   }
 
-  function setValues(values: string[], checked: boolean) {
-    setSelected((current) => {
-      const next = new Set(current)
-      for (const value of values) {
-        if (checked) next.add(value)
-        else next.delete(value)
-      }
+  function bulk(values: string[], checked: boolean) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      values.forEach(value => checked ? next.add(value) : next.delete(value))
       return next
     })
   }
 
-  function applyPreset(preset: keyof typeof PRESETS) {
-    setSelected((current) => {
-      const next = new Set(current)
-      for (const value of PRESETS[preset]) next.add(value)
+  function applyTemplate(name: string) {
+    const template = roleTemplates[name] || []
+    if (!template.length) return
+    if (template.includes('*')) return bulk(allValues, true)
+    const pageValues = normalizedPages.filter(p => template.includes(p.modulePermissionKey as any) || template.includes(moduleOf(p) + '.view')).map(p => p.value)
+    bulk([...template, ...pageValues], true)
+  }
+
+  function toggleGroup(key: string) {
+    setOpen(prev => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
       return next
     })
   }
-
-  function toggleGroup(group: string) {
-    setOpenGroups((current) => {
-      const next = new Set(current)
-      if (next.has(group)) next.delete(group)
-      else next.add(group)
-      return next
-    })
-  }
-
-  const allCoreValues = mergedCorePermissions.map((item) => item.value)
-  const allPageValues = mergedPagePermissions.map((item) => item.value)
 
   return (
     <section style={panelStyle}>
-      <div style={topBarStyle}>
+      {[...selected].map(value => <input key={value} type="hidden" name="permissions" value={value} />)}
+
+      <div style={topStyle}>
         <div>
-          <div style={eyebrowStyle}>Permission Engine V2</div>
-          <h2 style={titleStyle}>Accès utilisateur intelligent</h2>
-          <p style={hintStyle}>Contrôle combiné des capacités métier et des pages visibles dans l’OverheadPanel.</p>
+          <div style={eyebrowStyle}>Full app permission matrix</div>
+          <h2 style={titleStyle}>100% module & submodule coverage</h2>
+          <p style={textStyle}>Grant capability permissions and exact page access across AngelCare OS. Every route from the app map is represented as a page permission.</p>
         </div>
-        <div style={scoreBoxStyle}>
-          <strong>{selectedCount}</strong>
-          <span>permissions</span>
-          <small>{pageSelectedCount} pages visibles</small>
+        <div style={statsGridStyle}>
+          <Stat label="Selected" value={selected.size} />
+          <Stat label="Capabilities" value={selectedCore} />
+          <Stat label="Pages" value={selectedPages} />
+          <Stat label="Modules" value={`${moduleCoverage}/${totalModules}`} />
         </div>
       </div>
 
       <div style={toolbarStyle}>
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Rechercher permission, page, module..."
-          style={searchStyle}
-        />
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('agent')}>Preset Agent</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('sales')}>Preset Sales</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('manager')}>Preset Manager</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_admin')}>Preset HR Admin</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_executive')}>Preset HR Executive</button>
-        <button type="button" style={lightButtonStyle} onClick={() => applyPreset('hr_ops')}>Preset HR Ops</button>
+        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search modules, pages, permissions, routes..." style={searchStyle} />
+        <select style={selectStyle} onChange={e => applyTemplate(e.target.value)} defaultValue="">
+          <option value="">Apply role template</option>
+          {Object.keys(roleTemplates).sort().map(key => <option key={key} value={key}>{nice(key)}</option>)}
+        </select>
+        <button type="button" style={darkButtonStyle} onClick={() => bulk(allValues, true)}>Select all app</button>
+        <button type="button" style={lightButtonStyle} onClick={() => setSelected(new Set(defaultPermissions))}>Reset</button>
       </div>
 
-      <div style={bulkBarStyle}>
-        <button type="button" style={miniButtonStyle} onClick={() => setValues(allCoreValues, true)}>Tout métier</button>
-        <button type="button" style={miniButtonStyle} onClick={() => setValues(allCoreValues, false)}>Vider métier</button>
-        <button type="button" style={miniButtonStyle} onClick={() => setValues(allPageValues, true)}>Toutes pages</button>
-        <button type="button" style={miniButtonStyle} onClick={() => setValues(allPageValues, false)}>Vider pages</button>
+      <div style={modeBarStyle}>
+        {(['all','core','pages','selected'] as const).map(item => <button key={item} type="button" onClick={() => setMode(item)} style={mode === item ? activeModeStyle : modeStyle}>{nice(item)}</button>)}
       </div>
-
-      {Array.from(selected).map((value) => (
-        <input key={value} type="hidden" name="permissions" value={value} />
-      ))}
 
       <div style={columnsStyle}>
-        <div style={columnStyle}>
-          <div style={columnHeaderStyle}>Capacités métier</div>
-          <PermissionGroups groups={filteredCoreGroups} selected={selected} onToggle={toggle} onBulk={setValues} openGroups={openGroups} onToggleGroup={toggleGroup} />
-        </div>
-
-        <div style={columnStyle}>
-          <div style={columnHeaderStyle}>Pages visibles dans le panel</div>
-          <PermissionGroups groups={filteredPageGroups} selected={selected} onToggle={toggle} onBulk={setValues} openGroups={openGroups} onToggleGroup={toggleGroup} showHref />
-        </div>
+        <PermissionColumn title="Operational capabilities" subtitle="Create, manage, approve, export and admin permissions." groups={coreGroups} selected={selected} open={open} onToggle={toggle} onBulk={bulk} onToggleGroup={toggleGroup} />
+        <PermissionColumn title="Exact page access" subtitle="Every live route/submodule available in the app navigation map." groups={pageGroups} selected={selected} open={open} onToggle={toggle} onBulk={bulk} onToggleGroup={toggleGroup} showHref />
       </div>
     </section>
   )
 }
 
-function PermissionGroups({ groups, selected, onToggle, onBulk, openGroups, onToggleGroup, showHref = false }: {
-  groups: Record<string, PermissionOption[]>
-  selected: Set<string>
-  onToggle: (value: string) => void
-  onBulk: (values: string[], checked: boolean) => void
-  openGroups: Set<string>
-  onToggleGroup: (group: string) => void
-  showHref?: boolean
-}) {
-  const entries = Object.entries(groups)
+function Stat({ label, value }: { label: string; value: string | number }) {
+  return <div style={statStyle}><strong>{value}</strong><span>{label}</span></div>
+}
 
-  if (entries.length === 0) {
-    return <div style={emptyStyle}>Aucun résultat.</div>
-  }
-
+function PermissionColumn({ title, subtitle, groups, selected, open, onToggle, onBulk, onToggleGroup, showHref = false }: any) {
+  const keys = Object.keys(groups).sort((a, b) => a.localeCompare(b))
   return (
-    <div style={groupsStyle}>
-      {entries.map(([group, items]) => {
-        const values = items.map((item) => item.value)
-        const checkedCount = values.filter((value) => selected.has(value)).length
-        const isOpen = openGroups.has(group)
-
-        return (
-          <div key={group} style={groupStyle}>
-            <div style={groupHeaderStyle}>
-              <button type="button" onClick={() => onToggleGroup(group)} style={groupTitleButtonStyle}>
-                <span>{isOpen ? '▾' : '▸'} {group}</span>
-                <small>{checkedCount}/{items.length}</small>
+    <div style={columnStyle}>
+      <div style={columnHeaderStyle}><strong>{title}</strong><span>{subtitle}</span></div>
+      <div style={groupListStyle}>
+        {keys.map(key => {
+          const options: PermissionOption[] = groups[key]
+          const values = options.map(o => o.value)
+          const checked = values.filter(v => selected.has(v)).length
+          const isOpen = open.has(key)
+          return (
+            <div key={key} style={groupStyle}>
+              <button type="button" style={groupHeaderStyle} onClick={() => onToggleGroup(key)}>
+                <span style={groupIconStyle}>{MODULE_ICONS[key] || MODULE_ICONS[nice(key).toLowerCase()] || '✨'}</span>
+                <span style={{ flex: 1 }}><strong>{nice(key)}</strong><small>{checked}/{values.length} selected</small></span>
+                <span>{isOpen ? '−' : '+'}</span>
               </button>
-              <div style={groupActionsStyle}>
-                <button type="button" style={tinyButtonStyle} onClick={() => onBulk(values, true)}>Tout</button>
-                <button type="button" style={tinyButtonStyle} onClick={() => onBulk(values, false)}>Vider</button>
-              </div>
+              {isOpen ? <>
+                <div style={bulkRowStyle}>
+                  <button type="button" onClick={() => onBulk(values, true)} style={tinyButtonStyle}>Select module</button>
+                  <button type="button" onClick={() => onBulk(values, false)} style={tinyLightButtonStyle}>Clear</button>
+                </div>
+                <div style={optionListStyle}>
+                  {options.map(option => <label key={option.value} style={optionStyle}>
+                    <input type="checkbox" checked={selected.has(option.value)} onChange={() => onToggle(option.value)} />
+                    <span><strong>{option.label || option.value}</strong>{showHref ? <small>{option.href || option.value}</small> : <small>{option.value}</small>}</span>
+                  </label>)}
+                </div>
+              </> : null}
             </div>
-
-            {isOpen && (
-              <div style={cardsGridStyle}>
-                {items.map((item) => {
-                  const checked = selected.has(item.value)
-                  return (
-                    <label key={item.value} style={permissionCardStyle(checked)}>
-                      <input type="checkbox" checked={checked} onChange={() => onToggle(item.value)} />
-                      <span>
-                        <strong>{item.label}</strong>
-                        <small>{showHref ? item.href : item.value}</small>
-                      </span>
-                    </label>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        )
-      })}
+          )
+        })}
+        {!keys.length ? <div style={emptyStyle}>No permissions match this filter.</div> : null}
+      </div>
     </div>
   )
 }
 
-const panelStyle: React.CSSProperties = { background: '#fff', padding: 20, borderRadius: 18, marginBottom: 18, border: '1px solid #e2e8f0', boxShadow: '0 18px 38px rgba(15,23,42,.05)' }
-const topBarStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 18, alignItems: 'flex-start', marginBottom: 16 }
-const eyebrowStyle: React.CSSProperties = { fontSize: 12, color: '#6366f1', fontWeight: 950, textTransform: 'uppercase', letterSpacing: .6 }
-const titleStyle: React.CSSProperties = { fontSize: 22, fontWeight: 950, color: '#0f172a', margin: '4px 0' }
-const hintStyle: React.CSSProperties = { color: '#64748b', margin: '4px 0 0', fontSize: 13, lineHeight: 1.5 }
-const scoreBoxStyle: React.CSSProperties = { minWidth: 132, borderRadius: 16, background: 'linear-gradient(180deg,#0f172a,#1e293b)', color: '#fff', padding: 14, display: 'grid', gap: 2, textAlign: 'right' }
-const toolbarStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr repeat(6, auto)', gap: 10, marginBottom: 10 }
-const searchStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', border: '1px solid #cbd5e1', borderRadius: 12, color: '#0f172a', boxSizing: 'border-box' }
-const lightButtonStyle: React.CSSProperties = { border: '1px solid #cbd5e1', borderRadius: 12, background: '#f8fafc', color: '#0f172a', padding: '0 12px', fontWeight: 900, cursor: 'pointer' }
-const bulkBarStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }
-const miniButtonStyle: React.CSSProperties = { border: '1px solid #dbe3ee', background: '#fff', color: '#334155', borderRadius: 999, padding: '8px 11px', fontWeight: 900, cursor: 'pointer', fontSize: 12 }
-const columnsStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1.25fr', gap: 14, alignItems: 'start' }
-const columnStyle: React.CSSProperties = { border: '1px solid #e2e8f0', borderRadius: 16, padding: 12, background: '#f8fafc' }
-const columnHeaderStyle: React.CSSProperties = { color: '#0f172a', fontWeight: 950, marginBottom: 10, textTransform: 'uppercase', fontSize: 12, letterSpacing: .6 }
-const groupsStyle: React.CSSProperties = { display: 'grid', gap: 10 }
-const groupStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: '#fff', borderRadius: 14, padding: 10 }
-const groupHeaderStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', marginBottom: 8 }
-const groupTitleButtonStyle: React.CSSProperties = { border: 'none', background: 'transparent', color: '#0f172a', display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: 950, cursor: 'pointer', textAlign: 'left' }
-const groupActionsStyle: React.CSSProperties = { display: 'flex', gap: 6 }
-const tinyButtonStyle: React.CSSProperties = { border: '1px solid #dbe3ee', background: '#f8fafc', borderRadius: 999, padding: '5px 8px', fontSize: 11, fontWeight: 900, cursor: 'pointer', color: '#334155' }
-const cardsGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 8 }
-const permissionCardStyle = (checked: boolean): React.CSSProperties => ({ display: 'flex', gap: 9, padding: 10, border: checked ? '1px solid #6366f1' : '1px solid #dbe3ee', borderRadius: 12, background: checked ? '#eef2ff' : '#fff', color: '#0f172a' })
-const emptyStyle: React.CSSProperties = { padding: 16, borderRadius: 14, background: '#fff', border: '1px dashed #cbd5e1', color: '#64748b', fontWeight: 800 }
+const panelStyle: CSSProperties = { borderRadius: 30, padding: 22, background: 'linear-gradient(180deg,#ffffff,#f8fafc)', border: '1px solid #e2e8f0', boxShadow: '0 24px 60px rgba(15,23,42,.08)', marginTop: 18 }
+const topStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1.1fr .9fr', gap: 16, alignItems: 'start', marginBottom: 16 }
+const eyebrowStyle: CSSProperties = { color: '#7c3aed', fontSize: 11, fontWeight: 1000, textTransform: 'uppercase', letterSpacing: '.14em' }
+const titleStyle: CSSProperties = { margin: '6px 0', fontSize: 28, lineHeight: 1.05, fontWeight: 1000, letterSpacing: '-.04em', color: '#0f172a' }
+const textStyle: CSSProperties = { margin: 0, color: '#64748b', fontWeight: 750, lineHeight: 1.7 }
+const statsGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }
+const statStyle: CSSProperties = { display: 'grid', gap: 4, padding: 14, borderRadius: 20, background: '#fff', border: '1px solid #e2e8f0', textAlign: 'center', color: '#0f172a' }
+const toolbarStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 220px auto auto', gap: 10, padding: 12, borderRadius: 24, background: '#eef2ff', border: '1px solid #ddd6fe', marginBottom: 12 }
+const searchStyle: CSSProperties = { minWidth: 0, border: '1px solid #c7d2fe', borderRadius: 16, padding: '12px 14px', fontWeight: 850, outline: 'none', background: '#fff', color: '#0f172a' }
+const selectStyle: CSSProperties = { border: '1px solid #c7d2fe', borderRadius: 16, padding: '12px 14px', fontWeight: 850, background: '#fff', color: '#0f172a' }
+const darkButtonStyle: CSSProperties = { border: 0, borderRadius: 16, padding: '12px 14px', background: '#4c1d95', color: '#fff', fontWeight: 950, cursor: 'pointer' }
+const lightButtonStyle: CSSProperties = { border: '1px solid #cbd5e1', borderRadius: 16, padding: '12px 14px', background: '#fff', color: '#0f172a', fontWeight: 950, cursor: 'pointer' }
+const modeBarStyle: CSSProperties = { display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }
+const modeStyle: CSSProperties = { border: '1px solid #e2e8f0', borderRadius: 999, background: '#fff', padding: '9px 13px', fontWeight: 950, color: '#475569', cursor: 'pointer' }
+const activeModeStyle: CSSProperties = { ...modeStyle, background: '#0f172a', color: '#fff', borderColor: '#0f172a' }
+const columnsStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }
+const columnStyle: CSSProperties = { minWidth: 0, borderRadius: 24, background: '#fff', border: '1px solid #e2e8f0', overflow: 'hidden' }
+const columnHeaderStyle: CSSProperties = { display: 'grid', gap: 4, padding: 16, background: 'linear-gradient(135deg,#f8fafc,#eef2ff)', color: '#0f172a' }
+const groupListStyle: CSSProperties = { display: 'grid', gap: 10, padding: 12, maxHeight: 720, overflow: 'auto' }
+const groupStyle: CSSProperties = { borderRadius: 20, border: '1px solid #e2e8f0', overflow: 'hidden', background: '#fff' }
+const groupHeaderStyle: CSSProperties = { width: '100%', border: 0, background: '#fff', padding: 13, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', textAlign: 'left', color: '#0f172a' }
+const groupIconStyle: CSSProperties = { width: 38, height: 38, display: 'grid', placeItems: 'center', borderRadius: 14, background: '#f1f5f9' }
+const bulkRowStyle: CSSProperties = { display: 'flex', gap: 8, padding: '0 13px 10px' }
+const tinyButtonStyle: CSSProperties = { border: 0, borderRadius: 999, background: '#ede9fe', color: '#5b21b6', padding: '7px 10px', fontSize: 11, fontWeight: 950, cursor: 'pointer' }
+const tinyLightButtonStyle: CSSProperties = { ...tinyButtonStyle, background: '#f1f5f9', color: '#475569' }
+const optionListStyle: CSSProperties = { display: 'grid', gap: 6, padding: '0 13px 13px' }
+const optionStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '18px 1fr', gap: 10, alignItems: 'start', borderRadius: 14, padding: 10, background: '#f8fafc', color: '#0f172a', fontSize: 13 }
+const emptyStyle: CSSProperties = { padding: 24, textAlign: 'center', borderRadius: 18, border: '1px dashed #cbd5e1', color: '#64748b', fontWeight: 850 }

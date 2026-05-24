@@ -176,8 +176,6 @@ const moduleCards = [
 function RevenueDashboardSidebar({
   prospectCount,
   taskCount,
-  appointmentCount,
-  alertCount,
 }: {
   prospectCount: number;
   taskCount: number;
@@ -200,25 +198,12 @@ function RevenueDashboardSidebar({
           : "text-white/78 hover:bg-[#1a2b42] hover:text-white",
       )}
     >
-      <span className="grid h-5 w-5 place-items-center [&_svg]:h-5 [&_svg]:w-5">
-        {icon}
-      </span>
+      <span className="grid h-5 w-5 place-items-center [&_svg]:h-5 [&_svg]:w-5">{icon}</span>
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {badge !== undefined && (
-        <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">
-          {badge}
-        </span>
+        <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">{badge}</span>
       )}
     </Link>
-  );
-
-  const group = (title: string, children: React.ReactNode) => (
-    <div className="mb-5">
-      <div className="mb-2 text-[11px] font-black uppercase tracking-[.16em] text-white/65">
-        {title}
-      </div>
-      <div className="space-y-1">{children}</div>
-    </div>
   );
 
   return (
@@ -229,75 +214,25 @@ function RevenueDashboardSidebar({
         </div>
         <div>
           <div className="text-2xl font-black tracking-[.22em] text-white">ANGELCARE</div>
-          <div className="text-[10px] font-bold uppercase tracking-[.14em] text-white/80">
-            PROSPECT CENTER
-          </div>
+          <div className="text-[10px] font-bold uppercase tracking-[.14em] text-white/80">PROSPECT CENTER</div>
         </div>
       </Link>
 
-      {group("Command HQ", item("/revenue-command-center", <BarChart3 />, "Command Center", true))}
-      {group(
-        "Prospect Management",
-        <>
-          {item("/revenue-command-center/prospects", <Users />, "All Prospects", false, prospectCount)}
-          {item("/revenue-command-center/prospects/directory", <MapPinned />, "Prospects Directory")}
-          {item("/revenue-command-center/prospects/high-value", <Zap />, "Hot Prospects", false, alertCount)}
-          {item("/revenue-command-center/prospects/pipeline", <Layers3 />, "Pipeline")}
-          {item("/revenue-command-center/prospects/decision-map", <Handshake />, "Partner Program")}
-        </>,
-      )}
-      {group(
-        "Execution",
-        <>
-          {item("/revenue-command-center/daily-tasks", <CheckCircle2 />, "Tasks & Actions", false, taskCount)}
-          {item("/revenue-command-center/appointments", <CalendarDays />, "Appointments", false, appointmentCount)}
-          {item("/revenue-command-center/activity-timeline", <Clock3 />, "Activity Timeline")}
-          {item("/revenue-command-center/automation", <Zap />, "Automations")}
-          {item("/revenue-command-center/campaigns", <Megaphone />, "Email Campaigns")}
-          {item("/revenue-command-center/follow-ups", <MessageCircle />, "WhatsApp Center")}
-        </>,
-      )}
-      {group(
-        "Intelligence",
-        <>
-          {item("/revenue-command-center/market-mapping", <Globe2 />, "Market Map")}
-          {item("/revenue-command-center/revenue-analytics", <BarChart3 />, "Analytics & Reports")}
-          {item("/revenue-command-center/competitors", <Gauge />, "Competitors")}
-          {item("/revenue-command-center/executive-briefing", <ShieldCheck />, "Executive Briefing")}
-        </>,
-      )}
-      {group(
-        "System",
-        <>
-          {item("/revenue-command-center/management", <Users />, "Team")}
-          {item("/production-persistence-center", <DatabaseZap />, "Integrations")}
-          {item("/revenue-command-center/settings", <Settings />, "Settings")}
-        </>,
-      )}
-
-      <div className="mt-6 rounded-2xl border border-[#244365] bg-[#10223a] p-4">
-        <div className="text-xs font-black uppercase tracking-[.14em] text-white/60">
-          Live Sync Health
-        </div>
-        <div className="mt-2 grid grid-cols-3 gap-2 text-center">
-          <div>
-            <div className="text-lg font-black text-white">{prospectCount}</div>
-            <div className="text-[10px] text-white/60">prospects</div>
-          </div>
-          <div>
-            <div className="text-lg font-black text-emerald-300">{taskCount}</div>
-            <div className="text-[10px] text-white/60">tasks</div>
-          </div>
-          <div>
-            <div className="text-lg font-black text-red-300">{alertCount}</div>
-            <div className="text-[10px] text-white/60">alerts</div>
-          </div>
-        </div>
+      <div className="space-y-1">
+        {item("/revenue-command-center", <BarChart3 />, "Command Center", true)}
+        {item("/revenue-command-center/prospects/directory", <MapPinned />, "Prospects Directory", false, prospectCount)}
+        {item("/revenue-command-center/partnerships", <Handshake />, "Partner Program")}
+        {item("/revenue-command-center/daily-tasks", <CheckCircle2 />, "Tasks & Actions", false, taskCount)}
+        {item("/revenue-command-center/appointments", <CalendarDays />, "Calendar")}
+        {item("/revenue-command-center/campaigns", <Megaphone />, "Email Campaigns")}
+        {item("/revenue-command-center/follow-ups", <MessageCircle />, "WhatsApp Center")}
+        {item("/revenue-command-center/market-mapping", <Globe2 />, "Market Map")}
+        {item("/revenue-command-center/revenue-analytics", <BarChart3 />, "Analytics and Reports")}
+        {item("/revenue-command-center/executive-briefing", <FileText />, "Market Insights")}
       </div>
     </aside>
   );
 }
-
 
 export default function CentralRevenueCoreDashboard() {
   const {

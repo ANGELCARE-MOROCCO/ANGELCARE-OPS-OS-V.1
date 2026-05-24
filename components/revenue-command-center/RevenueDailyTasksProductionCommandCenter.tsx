@@ -353,12 +353,11 @@ function NavGroup({ title, children }: { title: string; children: React.ReactNod
   )
 }
 
-function NavItem({ href, icon, label, badge, active }: { href: string; icon: React.ReactNode; label: string; badge?: string; active?: boolean }) {
+function NavItem({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
   return (
     <Link href={href} className={cn("flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition", active ? "bg-violet-600/30 text-white ring-1 ring-violet-400/30" : "text-white/78 hover:bg-[#1a2b42] hover:text-white")}>
       <span className="grid h-5 w-5 place-items-center [&_svg]:h-5 [&_svg]:w-5">{icon}</span>
       <span className="flex-1">{label}</span>
-      {badge && <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">{badge}</span>}
     </Link>
   )
 }
@@ -376,39 +375,18 @@ function RevenueSidebar({ totalTasks, activeTasks, overdueTasks }: { totalTasks:
         </div>
       </Link>
 
-      <NavGroup title="Command HQ">
+      <div className="space-y-2">
         <NavItem href="/revenue-command-center" icon={<BarChart3 />} label="Command Center" />
-      </NavGroup>
-
-      <NavGroup title="Prospect Management">
-        <NavItem href="/revenue-command-center/prospects" icon={<Users />} label="All Prospects" />
         <NavItem href="/revenue-command-center/prospects/directory" icon={<Target />} label="Prospects Directory" />
-        <NavItem href="/revenue-command-center/prospects/high-value" icon={<Zap />} label="Hot Prospects" />
-        <NavItem href="/revenue-command-center/prospects/pipeline" icon={<GitPipelineIcon />} label="Pipeline" />
-        <NavItem href="/revenue-command-center/prospects/decision-map" icon={<Handshake />} label="Partner Program" />
-      </NavGroup>
-
-      <NavGroup title="Execution">
-        <NavItem href="/revenue-command-center/daily-tasks" icon={<CheckCircle2 />} label="Tasks & Actions" active badge={String(activeTasks)} />
+        <NavItem href="/revenue-command-center/partnerships" icon={<Handshake />} label="Partner Program" />
+        <NavItem href="/revenue-command-center/daily-tasks" icon={<CheckCircle2 />} label="Tasks & Actions" active />
         <NavItem href="/revenue-command-center/appointments" icon={<CalendarDays />} label="Calendar" />
-        <NavItem href="/revenue-command-center/activity-timeline" icon={<Clock3 />} label="Activity Timeline" />
-        <NavItem href="/revenue-command-center/automation" icon={<Zap />} label="Automations" />
         <NavItem href="/revenue-command-center/campaigns" icon={<Mail />} label="Email Campaigns" />
         <NavItem href="/revenue-command-center/follow-ups" icon={<MessageCircle />} label="WhatsApp Center" />
-      </NavGroup>
-
-      <NavGroup title="Intelligence">
         <NavItem href="/revenue-command-center/market-mapping" icon={<Globe2 />} label="Market Map" />
         <NavItem href="/revenue-command-center/revenue-analytics" icon={<BarChart3 />} label="Analytics & Reports" />
-        <NavItem href="/revenue-command-center/predictive" icon={<Gauge />} label="Competitors" />
-        <NavItem href="/revenue-command-center/executive-briefing" icon={<ShieldCheck />} label="Executive Briefing" />
-      </NavGroup>
-
-      <NavGroup title="System">
-        <NavItem href="/revenue-command-center/management" icon={<Users />} label="Team" />
-        <NavItem href="/production-persistence-center" icon={<DatabaseZap />} label="Integrations" />
-        <NavItem href="/revenue-command-center/settings" icon={<Settings />} label="Settings" />
-      </NavGroup>
+        <NavItem href="/revenue-command-center/executive-briefing" icon={<ShieldCheck />} label="Market Insights" />
+      </div>
 
       <div className="absolute bottom-6 left-5 right-5 rounded-2xl border border-[#244365] bg-[#10223a] p-4">
         <div className="text-xs font-black uppercase tracking-[.14em] text-white/60">Execution Health</div>

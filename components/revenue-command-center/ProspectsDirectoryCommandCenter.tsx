@@ -650,7 +650,7 @@ export default function ProspectsDirectoryCommandCenter() {
       <main className="relative flex w-full min-w-0 max-w-none items-start gap-4 px-4 py-4">
 
         <aside className="sticky top-4 flex h-[calc(100vh-32px)] w-[270px] min-w-[270px] max-w-[270px] shrink-0 flex-col rounded-[24px] border border-[#244365] bg-[#07111f]/95 px-5 py-6 shadow-[16px_0_60px_rgba(0,0,0,.35)] backdrop-blur-xl">
-          <Link href="/revenue-command-center/prospects" className="mb-7 flex items-center gap-3">
+          <Link href="/revenue-command-center" className="mb-7 flex items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-amber-300 via-yellow-500 to-orange-600 text-black shadow-lg shadow-yellow-500/20">
               <Sparkles className="h-6 w-6" />
             </div>
@@ -660,36 +660,17 @@ export default function ProspectsDirectoryCommandCenter() {
             </div>
           </Link>
 
-          <DirectoryNavGroup title="Command HQ">
-            <DirectoryNavItem href="/revenue-command-center/prospects" icon={<Radar />} label="Command Center" />
-          </DirectoryNavGroup>
-          <DirectoryNavGroup title="Prospect Management">
-            <DirectoryNavItem href="/revenue-command-center/prospects" icon={<Users />} label="All Prospects" badge={String(prospects.length)} />
-            <DirectoryNavItem href="/revenue-command-center/prospects/directory" icon={<MapPinned />} label="Prospects Directory" active />
-            <DirectoryNavItem href="/revenue-command-center/prospects/high-value" icon={<Flame />} label="Hot Prospects" badge={String(totals.high)} />
-            <DirectoryNavItem href="/revenue-command-center/prospects/pipeline" icon={<Layers3 />} label="Pipeline" />
+          <div className="space-y-1">
+            <DirectoryNavItem href="/revenue-command-center" icon={<Radar />} label="Command Center" />
+            <DirectoryNavItem href="/revenue-command-center/prospects/directory" icon={<MapPinned />} label="Prospects Directory" badge={String(prospects.length)} active />
             <DirectoryNavItem href="/revenue-command-center/partnerships" icon={<Handshake />} label="Partner Program" />
-          </DirectoryNavGroup>
-          <DirectoryNavGroup title="Execution">
             <DirectoryNavItem href="/revenue-command-center/daily-tasks" icon={<ShieldCheck />} label="Tasks & Actions" badge={String(selectedCityStats.count)} />
             <DirectoryNavItem href="/revenue-command-center/appointments" icon={<CalendarDays />} label="Calendar" />
-            <DirectoryNavItem href="/revenue-command-center/automation" icon={<Zap />} label="Automations" />
             <DirectoryNavItem href="/revenue-command-center/campaigns" icon={<Mail />} label="Email Campaigns" />
             <DirectoryNavItem href="/revenue-command-center/follow-ups" icon={<MessageCircle />} label="WhatsApp Center" />
-          </DirectoryNavGroup>
-          <DirectoryNavGroup title="Intelligence">
             <DirectoryNavItem href="/revenue-command-center/market-mapping" icon={<Globe2 />} label="Market Map" />
-            <DirectoryNavItem href="/revenue-command-center/revenue-analytics" icon={<BarChart3 />} label="Analytics & Reports" />
+            <DirectoryNavItem href="/revenue-command-center/revenue-analytics" icon={<BarChart3 />} label="Analytics and Reports" />
             <DirectoryNavItem href="/revenue-command-center/executive-briefing" icon={<FileText />} label="Market Insights" />
-          </DirectoryNavGroup>
-          <DirectoryNavGroup title="Settings">
-            <DirectoryNavItem href="/production-persistence-center" icon={<DatabaseZap />} label="Integrations" />
-            <DirectoryNavItem href="/revenue-command-center/settings" icon={<Settings />} label="Settings" />
-          </DirectoryNavGroup>
-
-          <div className="absolute bottom-6 left-5 right-5 rounded-2xl border border-[#244365] bg-[#10223a] p-4 text-xs font-bold text-[#cbd5e1]">
-            <div className="text-emerald-300">● Live Sync</div>
-            <div>{lastSync ? lastSync.toLocaleTimeString() : "Syncing"} · {prospects.length} prospects</div>
           </div>
         </aside>
 

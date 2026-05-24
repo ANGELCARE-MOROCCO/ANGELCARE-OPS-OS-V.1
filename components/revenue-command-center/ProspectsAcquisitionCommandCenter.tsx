@@ -756,38 +756,17 @@ async function refreshAllLiveRevenueData() {
             </div>
           </Link>
 
-          <NavGroup title="Command HQ">
-            <NavItem href="/revenue-command-center/prospects" icon={<Radar />} label="Command Center" active />
-          </NavGroup>
-          <NavGroup title="Prospect Management">
-            <NavItem href="/revenue-command-center/prospects" icon={<Users />} label="All Prospects" badge={String(metrics.active)} />
-            <NavItem href="/revenue-command-center/prospects/directory" icon={<MapPinned />} label="Prospects Directory" active={false} />
-            <NavItem href="/revenue-command-center/prospects/high-value" icon={<Flame />} label="Hot Prospects" badge={String(metrics.hot)} />
-            <NavItem href="/revenue-command-center/prospects/pipeline" icon={<GitPipelineIcon />} label="Pipeline" />
-            <NavItem href="/revenue-command-center/prospects/decision-map" icon={<Handshake />} label="Partner Program" />
-          </NavGroup>
-          <NavGroup title="Execution">
+          <div className="space-y-1">
+            <NavItem href="/revenue-command-center" icon={<Radar />} label="Command Center" active />
+            <NavItem href="/revenue-command-center/prospects/directory" icon={<MapPinned />} label="Prospects Directory" badge={String(metrics.active)} />
+            <NavItem href="/revenue-command-center/partnerships" icon={<Handshake />} label="Partner Program" />
             <NavItem href="/revenue-command-center/daily-tasks" icon={<CheckCircle2 />} label="Tasks & Actions" badge={String(metrics.thisWeek)} />
             <NavItem href="/revenue-command-center/appointments" icon={<CalendarDays />} label="Calendar" />
-            <NavItem href="/revenue-command-center/automation" icon={<Zap />} label="Automations" />
             <NavItem href="/revenue-command-center/campaigns" icon={<Mail />} label="Email Campaigns" />
             <NavItem href="/revenue-command-center/follow-ups" icon={<MessageCircle />} label="WhatsApp Center" />
-          </NavGroup>
-          <NavGroup title="Intelligence">
             <NavItem href="/revenue-command-center/market-mapping" icon={<Globe2 />} label="Market Map" />
-            <NavItem href="/revenue-command-center/revenue-analytics" icon={<BarChart3 />} label="Analytics & Reports" />
-            <NavItem href="/revenue-command-center/predictive" icon={<Gauge />} label="Competitors" />
-            <NavItem href="/revenue-command-center/executive-briefing" icon={<ShieldCheck />} label="Market Insights" />
-          </NavGroup>
-          <NavGroup title="Settings">
-            <NavItem href="/revenue-command-center/management" icon={<Users />} label="Team" />
-            <NavItem href="/production-persistence-center" icon={<DatabaseZap />} label="Integrations" />
-            <NavItem href="/revenue-command-center/settings" icon={<Settings />} label="Settings" />
-          </NavGroup>
-
-          <div className="absolute bottom-6 left-5 right-5 rounded-2xl border border-[#244365] bg-[#172942] p-4 text-xs text-[#dbeafe]">
-            <div>AngelCare © 2026</div>
-            <div>All rights reserved</div>
+            <NavItem href="/revenue-command-center/revenue-analytics" icon={<BarChart3 />} label="Analytics and Reports" />
+            <NavItem href="/revenue-command-center/executive-briefing" icon={<FileText />} label="Market Insights" />
           </div>
         </aside>
 

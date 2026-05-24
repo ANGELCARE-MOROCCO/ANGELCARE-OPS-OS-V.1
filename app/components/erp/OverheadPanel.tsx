@@ -184,10 +184,28 @@ export default function OverheadPanel() {
   }
 
 
+  function safeCanPunchFor(nextStatus: AttendanceStatus, server?: Partial<PunchAvailability>): PunchAvailability {
+    const derived: PunchAvailability = {
+      shift_in: nextStatus === "none" || nextStatus === "out" || nextStatus === "error",
+      shift_out: nextStatus === "in" || nextStatus === "back" || nextStatus === "pause",
+      lunch_start: nextStatus === "in" || nextStatus === "back",
+      lunch_end: nextStatus === "pause",
+    }
+
+    // Never let a stale backend state hard-disable the whole overhead panel.
+    // Server values can narrow a button only when at least one action remains available.
+    if (server && Object.values(server).some(Boolean)) {
+      return { ...derived, ...server }
+    }
+
+    return derived
+  }
+
   function applyAttendancePayload(payload: AttendanceLivePayload) {
     if (!payload?.ok) return
+    const nextStatus = payload.status || status
     if (payload.status) setStatus(payload.status)
-    if (payload.canPunch) setCanPunch(payload.canPunch)
+    setCanPunch(safeCanPunchFor(nextStatus, payload.canPunch))
     if (payload.message) setAttendanceHint(payload.message)
     const worked = typeof payload.workedMinutes === "number" ? ` • ${Math.floor(payload.workedMinutes / 60)}h${String(payload.workedMinutes % 60).padStart(2, "0")}` : ""
     setTerminalMessage(`HR ATTENDANCE LIVE • ${payload.message || "STATE SYNCED"}${worked}`)
@@ -400,11 +418,6 @@ export default function OverheadPanel() {
   const hasUserAlerts = userAlerts.length > 0
 
   async function punch(action: PunchAction, nextStatus: AttendanceStatus) {
-    if (!canPunch[action]) {
-      setTerminalMessage(`HR ACTION BLOCKED • CURRENT STATUS DOES NOT ALLOW ${action.toUpperCase()}`)
-      return
-    }
-
     try {
       setBusy(action)
       setTerminalMessage(`HR ACTION • ${action.toUpperCase()} SENDING...`)
@@ -412,7 +425,7 @@ export default function OverheadPanel() {
       const res = await fetch("/api/attendance/punch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, source: "overhead_panel" }),
+        body: JSON.stringify({ action, source: "overhead_panel", force: true }),
       })
 
       const payload = (await res.json().catch(() => ({}))) as AttendanceLivePayload & { error?: string }
@@ -496,10 +509,10 @@ export default function OverheadPanel() {
             <button
               key={item.action}
               type="button"
-              disabled={busy !== null || !canPunch[item.action]}
+              disabled={busy !== null}
               onClick={() => punch(item.action, item.nextStatus)}
-              title={canPunch[item.action] ? attendanceHint : `Blocked by current attendance state: ${attendanceHint}`}
-              style={punchButtonStyle(item.nextStatus, busy === item.action || !canPunch[item.action])}
+              title={canPunch[item.action] ? attendanceHint : `State repair mode: click to resync ${item.label}`}
+              style={punchButtonStyle(item.nextStatus, busy === item.action, !canPunch[item.action])}
             >
               <span>{item.icon}</span>
               {item.label}
@@ -788,8 +801,8 @@ const punchGridStyle: CSSProperties = {
   gap: 5,
 }
 
-const punchButtonStyle = (status: AttendanceStatus, active: boolean): CSSProperties => ({
-  border: "1px solid rgba(255,255,255,.12)",
+const punchButtonStyle = (status: AttendanceStatus, active: boolean, softBlocked = false): CSSProperties => ({
+  border: softBlocked ? "1px dashed rgba(255,255,255,.26)" : "1px solid rgba(255,255,255,.12)",
   borderRadius: 11,
   padding: "7px 6px",
   background: active
@@ -803,6 +816,7 @@ const punchButtonStyle = (status: AttendanceStatus, active: boolean): CSSPropert
   fontWeight: 950,
   fontSize: 10.5,
   cursor: active ? "wait" : "pointer",
+  opacity: softBlocked ? 0.78 : 1,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
