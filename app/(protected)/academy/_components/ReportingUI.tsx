@@ -18,7 +18,7 @@ export function ReportHub({ counts }: { counts?: Record<string, number> }) {
       </section>
 
       <section style={grid}>
-        {REPORT_CATALOG.map((report) => (
+        {REPORT_CATALOG.map((report: any) => (
           <Link key={report.type} href={`/academy/reports?type=${report.type}`} style={card}>
             <span style={pill}>{report.output}</span>
             <h3 style={cardTitle}>{report.title}</h3>

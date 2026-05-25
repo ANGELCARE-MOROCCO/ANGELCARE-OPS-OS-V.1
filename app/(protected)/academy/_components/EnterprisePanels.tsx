@@ -37,11 +37,11 @@ export function EnterpriseTable({ rows }: { rows: Array<Record<string, any>> }) 
     <div style={tableWrapStyle}>
       <table style={tableStyle}>
         <thead>
-          <tr>{headers.map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
+          <tr>{headers.map((h: any) => <th key={h} style={thStyle}>{h}</th>)}</tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i}>{headers.map((h) => <td key={h} style={tdStyle}>{String(row[h] ?? '—')}</td>)}</tr>
+            <tr key={i}>{headers.map((h: any) => <td key={h} style={tdStyle}>{String(row[h] ?? '—')}</td>)}</tr>
           ))}
         </tbody>
       </table>
@@ -52,7 +52,7 @@ export function EnterpriseTable({ rows }: { rows: Array<Record<string, any>> }) 
 export function EnterpriseActionList({ actions }: { actions: { title: string; detail: string; href: string; priority?: string }[] }) {
   return (
     <div style={listStyle}>
-      {actions.map((a) => (
+      {actions.map((a: any) => (
         <Link key={a.title} href={a.href} style={actionStyle}>
           <div>
             <strong>{a.title}</strong>

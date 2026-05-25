@@ -46,7 +46,7 @@ export function paymentRisk(payment: any) {
 
 export function attendanceRisk(logs: any[]) {
   if (!logs?.length) return { label: 'No attendance', tone: '#64748b', rate: 0 }
-  const present = logs.filter((l) => l.status === 'present' || l.status === 'late').length
+  const present = logs.filter((l: any) => l.status === 'present' || l.status === 'late').length
   const rate = Math.round((present / logs.length) * 100)
   if (rate < 70) return { label: 'High risk', tone: '#dc2626', rate }
   if (rate < 85) return { label: 'Watch', tone: '#f59e0b', rate }

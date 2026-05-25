@@ -22,7 +22,7 @@ export default async function AcademyDataQualityPage() {
         <EnterpriseHero title="Academy Data Quality Control" subtitle="Identify missing data, weak records and operational blockers before they contaminate reports, certificates or automation." badge="DATA DISCIPLINE" />
         <EnterpriseGrid>
           <EnterpriseCard title="Checks passed" value={`${passed}/${checks.length}`} subtitle="Current quality rule compliance." />
-          <EnterpriseCard title="Open issues" value={String(checks.reduce((s,c)=>s+c.count,0))} subtitle="Records requiring correction." />
+          <EnterpriseCard title="Open issues" value={String(checks.reduce((s: any,c: any)=>s+c.count,0))} subtitle="Records requiring correction." />
           <EnterpriseCard title="Compliance issues" value={String(checks.filter(c=>c.impact==='compliance' && !c.passed).length)} subtitle="Audit-sensitive data defects." />
           <EnterpriseCard title="Financial issues" value={String(checks.filter(c=>c.impact==='financial' && !c.passed).length)} subtitle="Revenue/reporting defects." />
         </EnterpriseGrid>

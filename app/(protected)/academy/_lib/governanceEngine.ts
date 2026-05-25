@@ -24,7 +24,7 @@ export function buildAcademyGovernanceFindings(input: {
 
   const findings: GovernanceFinding[] = []
 
-  const traineesWithoutSerial = trainees.filter((t) => !t.serial_number)
+  const traineesWithoutSerial = trainees.filter((t: any) => !t.serial_number)
   if (traineesWithoutSerial.length) {
     findings.push({
       id: 'trainees-without-serial',
@@ -36,7 +36,7 @@ export function buildAcademyGovernanceFindings(input: {
     })
   }
 
-  const approvedNotEnrolled = trainees.filter((t) => t.eligibility_status === 'approved' && !enrollments.some((e) => e.trainee_id === t.id))
+  const approvedNotEnrolled = trainees.filter((t: any) => t.eligibility_status === 'approved' && !enrollments.some((e: any) => e.trainee_id === t.id))
   if (approvedNotEnrolled.length) {
     findings.push({
       id: 'approved-not-enrolled',
@@ -48,7 +48,7 @@ export function buildAcademyGovernanceFindings(input: {
     })
   }
 
-  const unpaidEnrolled = enrollments.filter((e) => !payments.some((p) => p.trainee_id === e.trainee_id && p.status === 'paid'))
+  const unpaidEnrolled = enrollments.filter((e: any) => !payments.some((p: any) => p.trainee_id === e.trainee_id && p.status === 'paid'))
   if (unpaidEnrolled.length) {
     findings.push({
       id: 'enrolled-unpaid',
@@ -60,7 +60,7 @@ export function buildAcademyGovernanceFindings(input: {
     })
   }
 
-  const certifiedWithoutAttendance = certificates.filter((c) => !attendance.some((a) => a.trainee_id === c.trainee_id))
+  const certifiedWithoutAttendance = certificates.filter((c: any) => !attendance.some((a: any) => a.trainee_id === c.trainee_id))
   if (certifiedWithoutAttendance.length) {
     findings.push({
       id: 'certificate-without-attendance',
@@ -76,7 +76,7 @@ export function buildAcademyGovernanceFindings(input: {
 }
 
 export function governanceScore(findings: GovernanceFinding[]) {
-  const penalty = findings.reduce((sum, finding) => {
+  const penalty = findings.reduce((sum: any, finding: any) => {
     if (finding.severity === 'critical') return sum + 25
     if (finding.severity === 'high') return sum + 15
     if (finding.severity === 'medium') return sum + 8

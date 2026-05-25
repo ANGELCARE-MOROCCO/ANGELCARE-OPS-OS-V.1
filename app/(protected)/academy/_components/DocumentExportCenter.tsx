@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { DOCUMENT_CATALOG, EXPORT_REASONS, getCategoryLabel, type AcademyDocumentTemplate } from '../_lib/documentCatalog'
 
 export function DocumentExportCenter({ counts }: { counts: { templates: number; exports: number; audit: number } }) {
-  const categories = Array.from(new Set(DOCUMENT_CATALOG.map((doc) => doc.category)))
+  const categories = Array.from(new Set(DOCUMENT_CATALOG.map((doc: any) => doc.category)))
 
   return (
     <div style={page}>
@@ -25,17 +25,17 @@ export function DocumentExportCenter({ counts }: { counts: { templates: number; 
         <Policy title="Audit-ready traceability" text="Document exports are logged with actor, filters, reason, time and entity reference." />
       </section>
 
-      {categories.map((category) => (
+      {categories.map((category: any) => (
         <section key={category} style={panel}>
           <div style={sectionHead}>
             <div>
               <h2 style={sectionTitle}>{getCategoryLabel(category)}</h2>
               <p style={sectionText}>Controlled templates available for this Academy governance area.</p>
             </div>
-            <span style={countBadge}>{DOCUMENT_CATALOG.filter((d) => d.category === category).length} templates</span>
+            <span style={countBadge}>{DOCUMENT_CATALOG.filter((d: any) => d.category === category).length} templates</span>
           </div>
           <div style={catalogGrid}>
-            {DOCUMENT_CATALOG.filter((doc) => doc.category === category).map((doc) => <DocumentCard key={doc.type} doc={doc} />)}
+            {DOCUMENT_CATALOG.filter((doc: any) => doc.category === category).map((doc: any) => <DocumentCard key={doc.type} doc={doc} />)}
           </div>
         </section>
       ))}
@@ -52,7 +52,7 @@ export function DocumentCard({ doc }: { doc: AcademyDocumentTemplate }) {
       </div>
       <h3 style={cardTitle}>{doc.title}</h3>
       <p style={cardText}>{doc.description}</p>
-      <div style={miniList}>{doc.sections.slice(0, 4).map((s) => <span key={s}>✓ {s}</span>)}</div>
+      <div style={miniList}>{doc.sections.slice(0, 4).map((s: any) => <span key={s}>✓ {s}</span>)}</div>
       <strong style={action}>Configure export →</strong>
     </Link>
   )
@@ -65,7 +65,7 @@ export function ExportReasonForm({ type, defaultReason }: { type: string; defaul
       <p style={sectionText}>Before generating the document, select the operational purpose and filters. This will be saved in the export log.</p>
       <input type="hidden" name="type" value={type} />
       <div style={formGrid}>
-        <label style={field}>Export reason<select name="reason" defaultValue={defaultReason || ''} required style={input}><option value="">Select reason</option>{EXPORT_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}</select></label>
+        <label style={field}>Export reason<select name="reason" defaultValue={defaultReason || ''} required style={input}><option value="">Select reason</option>{EXPORT_REASONS.map((r: any) => <option key={r} value={r}>{r}</option>)}</select></label>
         <label style={field}>Start<input name="start" type="datetime-local" style={input} /></label>
         <label style={field}>End<input name="end" type="datetime-local" style={input} /></label>
         <label style={field}>City / cities<input name="city" placeholder="Rabat, Casa, Kénitra..." style={input} /></label>

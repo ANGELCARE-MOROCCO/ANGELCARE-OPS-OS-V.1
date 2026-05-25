@@ -40,7 +40,7 @@ export function MasterNavigation({ modules }: { modules: AcademyModule[] }) {
     <section style={panel}>
       <PanelHeader title="Academy Master Panel" subtitle="All operational sections, executive signals and direct actions in one place." />
       <div style={moduleGrid}>
-        {modules.map((m) => (
+        {modules.map((m: any) => (
           <Link key={m.href} href={m.href} style={moduleCard(m.priority)}>
             <div style={moduleTop}>
               <span style={moduleIcon}>{m.icon}</span>
@@ -51,7 +51,7 @@ export function MasterNavigation({ modules }: { modules: AcademyModule[] }) {
             <div style={signalBox}>{m.signal}</div>
             {m.actions?.length ? (
               <div style={miniActions}>
-                {m.actions.slice(0, 3).map((a) => <span key={a.href}>{a.label}</span>)}
+                {m.actions.slice(0, 3).map((a: any) => <span key={a.href}>{a.label}</span>)}
               </div>
             ) : null}
           </Link>
@@ -66,7 +66,7 @@ export function CommandPanel({ items }: { items: { title: string; detail: string
     <section style={panelDark}>
       <PanelHeader title="Manager Command Priorities" subtitle="Board-style action queue: what must be executed next." dark />
       <div style={{ display: 'grid', gap: 12 }}>
-        {items.map((item) => (
+        {items.map((item: any) => (
           <Link key={item.href + item.title} href={item.href} style={commandItem(item.tone || '#60a5fa')}>
             <strong>{item.title}</strong>
             <span>{item.detail}</span>
@@ -82,7 +82,7 @@ export function QuickActions({ actions }: { actions: { label: string; href: stri
     <section style={quickPanel}>
       <PanelHeader title="Quick Actions" subtitle="Direct execution shortcuts for Academy managers." />
       <div style={quickGrid}>
-        {actions.map((a) => <Link key={a.href + a.label} href={a.href} style={{ ...quickButton, background: a.tone || '#0f172a' }}>{a.label}</Link>)}
+        {actions.map((a: any) => <Link key={a.href + a.label} href={a.href} style={{ ...quickButton, background: a.tone || '#0f172a' }}>{a.label}</Link>)}
       </div>
     </section>
   )
@@ -93,7 +93,7 @@ export function RiskRadar({ rows }: { rows: { label: string; value: string | num
     <section style={panel}>
       <PanelHeader title="Risk & Compliance Radar" subtitle="Signals that require management attention before they become operational failures." />
       <div style={{ display: 'grid', gap: 10 }}>
-        {rows.map((r) => (
+        {rows.map((r: any) => (
           <div key={r.label} style={riskRow(r.tone)}>
             <span>{r.label}</span>
             <strong>{r.value}</strong>

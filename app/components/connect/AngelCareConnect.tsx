@@ -1,229 +1,396 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type React from "react"
 import {
-  AlertTriangle,
   Archive,
+  Eraser,
   Bell,
-  BriefcaseBusiness,
-  Building2,
-  CheckCircle2,
+  Check,
+  ChevronDown,
   ChevronRight,
   Circle,
   ClipboardCheck,
-  Command,
-  Crown,
+  ClipboardList,
+  Pencil,
+  Save,
+  Download,
   EyeOff,
   FileText,
-  Headphones,
-  Inbox,
-  LockKeyhole,
+  Image as ImageIcon,
+  Loader2,
   Maximize2,
   MessageCircle,
   Mic,
-  Minus,
+  Minimize2,
   MoreHorizontal,
+  Pin,
+  PinOff,
   Paperclip,
   Phone,
-  Pin,
   Plus,
+  Trash2,
   Search,
   Send,
-  ShieldCheck,
+  Settings2,
+  Smile,
   Sparkles,
-  Star,
+  UserRound,
   Users,
+  UserPlus,
   Video,
   X,
-  Zap,
 } from "lucide-react"
+import ConnectLiveRoom from "./ConnectLiveRoom"
 
-type ConnectMode = "private" | "rooms" | "broadcasts" | "actions"
-type RoomKind = "private" | "department" | "executive" | "project" | "context"
+type ConnectMode = "direct" | "rooms" | "broadcasts" | "actions"
 type Priority = "normal" | "important" | "urgent"
+type PanelSize = "narrow" | "expanded"
+
+type StaffUser = {
+  id: string
+  name: string
+  email?: string | null
+  phone?: string | null
+  role?: string | null
+  department?: string | null
+  job_title?: string | null
+  status?: "online" | "busy" | "away" | "offline"
+}
 
 type Conversation = {
   id: string
   title: string
-  subtitle: string
-  kind: RoomKind
-  privacy: string
-  unread: number
-  priority: Priority
-  routeContext?: string
-  members: string[]
-  lastMessage: string
-  lastAt: string
+  type: "direct" | "room" | "broadcast" | "context"
+  privacy_level: "private" | "department" | "executive" | "module" | "public_readonly"
+  department?: string | null
+  module_key?: string | null
+  members?: StaffUser[]
+  member_count?: number
+  last_message?: string | null
+  last_message_at?: string | null
+  unread_count?: number
   pinned?: boolean
+  muted?: boolean
+  my_role?: "owner" | "admin" | "member" | "viewer"
 }
 
 type Message = {
   id: string
-  conversationId: string
-  author: string
+  conversation_id: string
+  sender_id: string
+  sender_name?: string
+  sender_role?: string | null
   body: string
-  at: string
-  mine?: boolean
-  confidential?: boolean
-  action?: "task" | "approval" | "call"
+  message_type: "text" | "system" | "task" | "approval" | "call" | "file"
+  priority: Priority
+  confidential: boolean
+  created_at: string
+  metadata?: Record<string, unknown> | null
+}
+
+type ConnectAction = {
+  id: string
+  title: string
+  description?: string | null
+  status: string
+  priority: Priority
+  owner_id?: string | null
+  conversation_id?: string | null
+  due_at?: string | null
+  created_by?: string | null
+  created_at: string
+  assignee_ids?: string[]
+  assignees?: Array<{ user_id: string; user?: StaffUser | null; completed_at?: string | null }>
+}
+
+type Notice = {
+  id: string
+  title: string
+  body?: string | null
+  priority: Priority
+  read: boolean
+  created_at: string
+}
+
+type CallSession = {
+  id: string
+  conversation_id?: string | null
+  room_name: string
+  call_type: "audio" | "video"
+  status: "ringing" | "active" | "missed" | "ended" | "rejected" | "created"
+  started_by?: string | null
+  receiver_id?: string | null
+  started_at?: string
 }
 
 const CONNECT_OPEN_KEY = "angelcare.connect.open"
+const CONNECT_SIZE_KEY = "angelcare.connect.panelSize"
 const CONNECT_MODE_KEY = "angelcare.connect.mode"
+const CONNECT_SELECTED_KEY = "angelcare.connect.selected"
 
-const conversations: Conversation[] = [
-  {
-    id: "dm-direction",
-    title: "Direction Rabat ↔ You",
-    subtitle: "Closed one-to-one executive thread",
-    kind: "private",
-    privacy: "Only selected participants",
-    unread: 3,
-    priority: "urgent",
-    members: ["Direction Rabat", "You"],
-    lastMessage: "Confidential decision note ready for validation.",
-    lastAt: "09:42",
-    pinned: true,
-  },
-  {
-    id: "dm-hr",
-    title: "HR Manager",
-    subtitle: "Private HR coordination",
-    kind: "private",
-    privacy: "One-to-one private",
-    unread: 1,
-    priority: "important",
-    members: ["HR Manager", "You"],
-    lastMessage: "Staff profile escalation needs a decision.",
-    lastAt: "10:15",
-  },
-  {
-    id: "room-revenue",
-    title: "Revenue Command Room",
-    subtitle: "Sales, CRM, billing and objections",
-    kind: "department",
-    privacy: "Revenue permission required",
-    unread: 8,
-    priority: "urgent",
-    members: ["Direction", "Sales", "CRM", "Billing"],
-    lastMessage: "Two leads require same-day follow-up and owner assignment.",
-    lastAt: "11:02",
-    pinned: true,
-  },
-  {
-    id: "room-ops",
-    title: "Operations Control Room",
-    subtitle: "Missions, incidents, staffing and execution",
-    kind: "department",
-    privacy: "Operations permission required",
-    unread: 4,
-    priority: "important",
-    members: ["Ops", "Care Coordinators", "Direction"],
-    lastMessage: "Coverage gap detected for afternoon mission block.",
-    lastAt: "11:26",
-  },
-  {
-    id: "room-direction",
-    title: "Direction Room",
-    subtitle: "Executive-only decisions and broadcasts",
-    kind: "executive",
-    privacy: "CEO / Direction / Admin only",
-    unread: 2,
-    priority: "urgent",
-    members: ["Direction Rabat", "CEO", "Admin"],
-    lastMessage: "Weekly activation priorities locked for execution.",
-    lastAt: "12:00",
-    pinned: true,
-  },
-  {
-    id: "context-current",
-    title: "Current Page Discussion",
-    subtitle: "Context-aware conversation for this workspace",
-    kind: "context",
-    privacy: "Visible only to users allowed on this page",
-    unread: 0,
-    priority: "normal",
-    routeContext: "Auto-detects current module",
-    members: ["Module team", "Authorized users"],
-    lastMessage: "Attach notes, blockers, decisions and follow-ups to the page.",
-    lastAt: "Now",
-  },
-]
-
-const seedMessages: Message[] = [
-  {
-    id: "m1",
-    conversationId: "dm-direction",
-    author: "Direction Rabat",
-    body: "This thread is private. Use it for decisions, sensitive approvals, and executive escalations only.",
-    at: "09:40",
-    confidential: true,
-  },
-  {
-    id: "m2",
-    conversationId: "dm-direction",
-    author: "You",
-    body: "Received. I will keep this conversation closed and action-focused.",
-    at: "09:41",
-    mine: true,
-  },
-  {
-    id: "m3",
-    conversationId: "room-revenue",
-    author: "CRM Desk",
-    body: "New objection cluster detected: pricing, trust, and schedule availability. Need sales script update.",
-    at: "11:01",
-    action: "task",
-  },
-  {
-    id: "m4",
-    conversationId: "room-revenue",
-    author: "Direction Rabat",
-    body: "Convert this into an execution task with owner, deadline, and validation proof.",
-    at: "11:02",
-    action: "approval",
-    confidential: true,
-  },
-]
-
-function cx(...items: Array<string | false | undefined>) {
+function cx(...items: Array<string | false | null | undefined>) {
   return items.filter(Boolean).join(" ")
 }
 
-function badgeTone(priority: Priority) {
-  if (priority === "urgent") return "border-rose-300 bg-rose-50 text-rose-700"
-  if (priority === "important") return "border-amber-300 bg-amber-50 text-amber-700"
-  return "border-slate-200 bg-slate-50 text-slate-600"
+async function readJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers || {}),
+    },
+  })
+  const payload = (await response.json().catch(() => ({}))) as T & { error?: string }
+  if (!response.ok) throw new Error(payload.error || `Connect API failed with ${response.status}`)
+  return payload
 }
 
-function iconFor(kind: RoomKind) {
-  if (kind === "private") return LockKeyhole
-  if (kind === "executive") return Crown
-  if (kind === "department") return Building2
-  if (kind === "project") return BriefcaseBusiness
-  return Command
+function initials(name?: string | null) {
+  const clean = (name || "AC").trim()
+  const parts = clean.split(/\s+/).filter(Boolean)
+  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "AC"
 }
 
-export default function AngelCareConnect() {
-  const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<ConnectMode>("private")
-  const [selectedId, setSelectedId] = useState("dm-direction")
+function formatTime(value?: string | null) {
+  if (!value) return "—"
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return "—"
+  const now = new Date()
+  const sameDay = date.toDateString() === now.toDateString()
+  if (sameDay) return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  const yesterday = new Date(now)
+  yesterday.setDate(now.getDate() - 1)
+  if (date.toDateString() === yesterday.toDateString()) return "Yesterday"
+  return date.toLocaleDateString([], { month: "short", day: "numeric" })
+}
+
+function statusTone(status?: StaffUser["status"]) {
+  if (status === "online") return "bg-emerald-500"
+  if (status === "busy") return "bg-amber-500"
+  if (status === "away") return "bg-orange-400"
+  return "bg-slate-300"
+}
+
+function priorityTone(priority?: Priority) {
+  if (priority === "urgent") return "bg-rose-600 text-white"
+  if (priority === "important") return "bg-amber-100 text-amber-700"
+  return "bg-slate-100 text-slate-600"
+}
+
+function modeForConversation(conversation: Conversation): ConnectMode {
+  if (conversation.type === "direct") return "direct"
+  if (conversation.type === "broadcast") return "broadcasts"
+  return "rooms"
+}
+
+function otherMember(conversation: Conversation | null, currentUserId?: string) {
+  if (!conversation?.members?.length) return null
+  return conversation.members.find((member) => member.id !== currentUserId) || conversation.members[0] || null
+}
+
+function fileMessages(messages: Message[]) {
+  return messages.filter((message) => message.message_type === "file" || Boolean(message.metadata && (message.metadata.filename || message.metadata.fileName || message.metadata.url)))
+}
+
+export default function AngelCareConnect({
+  embedded = false,
+  defaultOpen = false,
+  forceFloating = false,
+}: {
+  embedded?: boolean
+  defaultOpen?: boolean
+  forceFloating?: boolean
+} = {}) {
+  const floating = !embedded || forceFloating
+  const [open, setOpen] = useState(embedded || defaultOpen)
+  const [panelSize, setPanelSize] = useState<PanelSize>("expanded")
+  const [mode, setMode] = useState<ConnectMode>("direct")
+  const [selectedId, setSelectedId] = useState("")
+  const [query, setQuery] = useState("")
   const [draft, setDraft] = useState("")
-  const [messages, setMessages] = useState<Message[]>(seedMessages)
-  const [compact, setCompact] = useState(false)
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
+  const [staff, setStaff] = useState<StaffUser[]>([])
+  const [actions, setActions] = useState<ConnectAction[]>([])
+  const [notifications, setNotifications] = useState<Notice[]>([])
+  const [calls, setCalls] = useState<CallSession[]>([])
+  const [currentUser, setCurrentUser] = useState<StaffUser | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [threadLoading, setThreadLoading] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [composerPriority, setComposerPriority] = useState<Priority>("normal")
+  const [confidential, setConfidential] = useState(false)
+  const [typingPulse, setTypingPulse] = useState(false)
+  const [rightPanelOpen, setRightPanelOpen] = useState(true)
+  const [activeCall, setActiveCall] = useState<{ roomName: string; type: "audio" | "video" } | null>(null)
+  const [callView, setCallView] = useState<"inline" | "fullscreen" | "mini">("inline")
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false)
+  const [roomModalOpen, setRoomModalOpen] = useState(false)
+  const [roomTitle, setRoomTitle] = useState("AngelCare private room")
+  const [roomSearch, setRoomSearch] = useState("")
+  const [selectedRoomMembers, setSelectedRoomMembers] = useState<string[]>([])
+  const [taskManagerOpen, setTaskManagerOpen] = useState(false)
+  const [taskEditorOpen, setTaskEditorOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState<ConnectAction | null>(null)
+  const [taskTitle, setTaskTitle] = useState("")
+  const [taskDescription, setTaskDescription] = useState("")
+  const [taskPriority, setTaskPriority] = useState<Priority>("normal")
+  const [taskStatus, setTaskStatus] = useState("open")
+  const [taskDueAt, setTaskDueAt] = useState("")
+  const [taskSearch, setTaskSearch] = useState("")
+  const [selectedTaskAssignees, setSelectedTaskAssignees] = useState<string[]>([])
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const notificationSeenRef = useRef<Set<string>>(new Set())
+  const browserNotificationBootedRef = useRef(false)
+  const [browserNotificationsEnabled, setBrowserNotificationsEnabled] = useState(false)
 
   useEffect(() => {
     try {
-      setOpen(window.localStorage.getItem(CONNECT_OPEN_KEY) === "true")
-      const stored = window.localStorage.getItem(CONNECT_MODE_KEY) as ConnectMode | null
-      if (stored) setMode(stored)
+      if (floating) setOpen(defaultOpen || window.localStorage.getItem(CONNECT_OPEN_KEY) === "true")
+      const storedSize = window.localStorage.getItem(CONNECT_SIZE_KEY) as PanelSize | null
+      if (storedSize === "narrow" || storedSize === "expanded") setPanelSize(storedSize)
+      const storedMode = window.localStorage.getItem(CONNECT_MODE_KEY) as ConnectMode | null
+      if (storedMode) setMode(storedMode)
+      const storedSelected = window.localStorage.getItem(CONNECT_SELECTED_KEY)
+      if (storedSelected) setSelectedId(storedSelected)
+      setBrowserNotificationsEnabled(typeof Notification !== "undefined" && Notification.permission === "granted")
     } catch {}
+  }, [floating, defaultOpen])
+
+  useEffect(() => {
+    void loadConnectShell()
+    const interval = window.setInterval(() => void loadConnectShell(false), 25000)
+    return () => window.clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    if (!selectedId) return
+    try { window.localStorage.setItem(CONNECT_SELECTED_KEY, selectedId) } catch {}
+    void loadMessages(selectedId)
+  }, [selectedId])
+
+  useEffect(() => {
+    if (!scrollRef.current) return
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+  }, [messages.length, selectedId])
+
+  useEffect(() => {
+    if (!draft.trim()) {
+      setTypingPulse(false)
+      return
+    }
+    setTypingPulse(true)
+    const timeout = window.setTimeout(() => setTypingPulse(false), 1800)
+    return () => window.clearTimeout(timeout)
+  }, [draft])
+
+  async function enableBrowserNotifications() {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setError("This browser does not support desktop notifications.")
+      return
+    }
+    const permission = await Notification.requestPermission()
+    setBrowserNotificationsEnabled(permission === "granted")
+    if (permission !== "granted") {
+      setError("Browser notifications are blocked. Enable them from the browser site settings to receive Connect alerts.")
+    }
+  }
+
+  function pushBrowserNotification(key: string, title: string, body?: string) {
+    if (typeof window === "undefined" || !("Notification" in window)) return
+    if (Notification.permission !== "granted") return
+    if (notificationSeenRef.current.has(key)) return
+    notificationSeenRef.current.add(key)
+    if (!browserNotificationBootedRef.current) return
+    try {
+      const notice = new Notification(title, {
+        body: body || "AngelCare Connect update",
+        tag: key,
+        silent: false,
+      })
+      notice.onclick = () => {
+        window.focus()
+        setPanelOpen(true)
+      }
+    } catch {}
+  }
+
+  function showBrowserConnectNotifications(nextConversations: Conversation[], nextNotifications: Notice[], nextCalls: CallSession[], me: StaffUser | null) {
+    for (const conversation of nextConversations) {
+      if (!conversation.unread_count || conversation.unread_count <= 0) continue
+      const key = `connect-message-${conversation.id}-${conversation.last_message_at || conversation.unread_count}`
+      pushBrowserNotification(key, `New Connect message · ${conversation.title}`, conversation.last_message || "Open AngelCare Connect to read the latest update.")
+    }
+    for (const notice of nextNotifications) {
+      if (notice.read) continue
+      pushBrowserNotification(`connect-notice-${notice.id}`, notice.title, notice.body || "New AngelCare Connect notification")
+    }
+    for (const call of nextCalls) {
+      const incoming = String(call.started_by || "") !== String(me?.id || "")
+      const liveStatus = call.status === "ringing" || call.status === "created" || call.status === "active"
+      if (!incoming || !liveStatus) continue
+      const key = `connect-call-${call.id}-${call.status}`
+      pushBrowserNotification(key, `Incoming ${call.call_type} call`, "Open AngelCare Connect to join the conversation call.")
+    }
+    browserNotificationBootedRef.current = true
+  }
+
+  async function loadConnectShell(showLoading = true) {
+    if (showLoading) setLoading(true)
+    setError(null)
+    try {
+      const route = typeof window !== "undefined" ? window.location.pathname : ""
+      const [mePayload, conversationPayload, staffPayload, actionPayload, notificationPayload, callPayload] = await Promise.all([
+        readJson<{ user: StaffUser | null }>(`/api/connect/me?route=${encodeURIComponent(route)}`),
+        readJson<{ conversations: Conversation[] }>("/api/connect/conversations"),
+        readJson<{ staff: StaffUser[] }>("/api/connect/staff"),
+        readJson<{ actions: ConnectAction[] }>("/api/connect/actions"),
+        readJson<{ notifications: Notice[] }>("/api/connect/notifications"),
+        readJson<{ calls: CallSession[] }>("/api/connect/calls"),
+      ])
+      setCurrentUser(mePayload.user)
+      const nextConversations = conversationPayload.conversations || []
+      setConversations(nextConversations)
+      setStaff(staffPayload.staff || [])
+      setActions(actionPayload.actions || [])
+      const nextNotifications = notificationPayload.notifications || []
+      const nextCalls = callPayload.calls || []
+      setNotifications(nextNotifications)
+      setCalls(nextCalls)
+      showBrowserConnectNotifications(nextConversations, nextNotifications, nextCalls, mePayload.user)
+      setSelectedId((current) => current || nextConversations[0]?.id || "")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "AngelCare Connect failed to load")
+    } finally {
+      if (showLoading) setLoading(false)
+    }
+  }
+
+  async function loadMessages(conversationId: string) {
+    setThreadLoading(true)
+    setError(null)
+    try {
+      const payload = await readJson<{ messages: Message[] }>(`/api/connect/messages?conversationId=${encodeURIComponent(conversationId)}`)
+      setMessages(payload.messages || [])
+      setConversations((current) => current.map((conversation) => conversation.id === conversationId ? { ...conversation, unread_count: 0 } : conversation))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Connect messages failed to load")
+    } finally {
+      setThreadLoading(false)
+    }
+  }
 
   function setPanelOpen(next: boolean) {
     setOpen(next)
     try { window.localStorage.setItem(CONNECT_OPEN_KEY, String(next)) } catch {}
+  }
+
+  function changePanelSize(next: PanelSize) {
+    setPanelSize(next)
+    setRightPanelOpen(next === "expanded")
+    try { window.localStorage.setItem(CONNECT_SIZE_KEY, next) } catch {}
   }
 
   function changeMode(next: ConnectMode) {
@@ -231,272 +398,953 @@ export default function AngelCareConnect() {
     try { window.localStorage.setItem(CONNECT_MODE_KEY, next) } catch {}
   }
 
-  const filtered = useMemo(() => {
-    if (mode === "private") return conversations.filter((c) => c.kind === "private")
-    if (mode === "rooms") return conversations.filter((c) => c.kind !== "private")
-    if (mode === "broadcasts") return conversations.filter((c) => c.kind === "executive" || c.priority === "urgent")
-    return conversations
-  }, [mode])
+  const selected = conversations.find((conversation) => conversation.id === selectedId) || conversations[0] || null
+  const selectedMember = otherMember(selected, currentUser?.id)
+  const isDirect = selected?.type === "direct"
+  const headlineName = isDirect ? selectedMember?.name || selected?.title || "Direct message" : selected?.title || "AngelCare Connect"
+  const headlineRole = isDirect
+    ? selectedMember?.job_title || selectedMember?.role || selectedMember?.department || "AngelCare staff"
+    : selected?.department || selected?.module_key || selected?.privacy_level || "Internal communication room"
+  const activeFiles = fileMessages(messages)
+  const unreadTotal = conversations.reduce((sum, conversation) => sum + (conversation.unread_count || 0), 0) + notifications.filter((notice) => !notice.read).length
+  const normalizedCurrentRole = String(currentUser?.role || "").trim().toLowerCase()
+  const isCEO = ["ceo", "chief executive officer", "chief-executive-officer", "dg", "direction générale", "direction generale", "founder", "owner", "super_admin", "super admin"].includes(normalizedCurrentRole)
 
-  const selected = conversations.find((c) => c.id === selectedId) || conversations[0]
-  const thread = messages.filter((m) => m.conversationId === selected.id)
-  const unreadTotal = conversations.reduce((sum, c) => sum + c.unread, 0)
+  const filteredConversations = useMemo(() => {
+    const normalized = query.trim().toLowerCase()
+    return conversations.filter((conversation) => {
+      const targetMode = modeForConversation(conversation)
+      if (mode !== "actions" && targetMode !== mode) return false
+      if (!normalized) return true
+      const memberNames = conversation.members?.map((member) => `${member.name} ${member.department || ""} ${member.role || ""}`).join(" ") || ""
+      return [conversation.title, conversation.department, conversation.module_key, conversation.last_message, memberNames]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(normalized))
+    })
+  }, [conversations, mode, query])
 
-  function sendMessage() {
+  const staffResults = useMemo(() => {
+    const normalized = query.trim().toLowerCase()
+    const list = staff.filter((member) => member.id !== currentUser?.id)
+    if (!normalized) return list.slice(0, 10)
+    return list.filter((member) => [member.name, member.email, member.department, member.role, member.job_title]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalized))).slice(0, 12)
+  }, [staff, currentUser?.id, query])
+
+  const roomMemberResults = useMemo(() => {
+    const normalized = roomSearch.trim().toLowerCase()
+    const list = staff.filter((member) => member.id !== currentUser?.id)
+    if (!normalized) return list.slice(0, 80)
+    return list.filter((member) => [member.name, member.email, member.department, member.role, member.job_title]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalized))).slice(0, 80)
+  }, [staff, currentUser?.id, roomSearch])
+
+  const taskMemberResults = useMemo(() => {
+    const normalized = taskSearch.trim().toLowerCase()
+    const list = staff.filter((member) => member.id !== currentUser?.id)
+    if (!normalized) return list.slice(0, 120)
+    return list.filter((member) => [member.name, member.email, member.department, member.role, member.job_title]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalized))).slice(0, 120)
+  }, [staff, currentUser?.id, taskSearch])
+
+  const visibleTasks = useMemo(() => {
+    const normalized = query.trim().toLowerCase()
+    if (!normalized) return actions
+    return actions.filter((action) => [action.title, action.description, action.status, action.priority, ...(action.assignees || []).map((a) => a.user?.name || a.user_id)]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalized)))
+  }, [actions, query])
+
+  async function sendCurrentMessage() {
     const body = draft.trim()
-    if (!body) return
-    setMessages((current) => [
-      ...current,
-      {
-        id: `local-${Date.now()}`,
-        conversationId: selected.id,
-        author: "You",
-        body,
-        at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        mine: true,
-        confidential: selected.kind === "private" || selected.kind === "executive",
-      },
-    ])
-    setDraft("")
+    if (!body || !selected || sending) return
+    setSending(true)
+    setError(null)
+    try {
+      const payload = await readJson<{ message: Message }>("/api/connect/messages", {
+        method: "POST",
+        body: JSON.stringify({
+          conversationId: selected.id,
+          body,
+          priority: composerPriority,
+          confidential: confidential || selected.privacy_level === "private" || selected.privacy_level === "executive",
+        }),
+      })
+      setMessages((current) => [...current, payload.message])
+      setDraft("")
+      setComposerPriority("normal")
+      setConfidential(false)
+      setConversations((current) => current.map((conversation) => conversation.id === selected.id ? { ...conversation, last_message: body, last_message_at: new Date().toISOString() } : conversation))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Message could not be sent")
+    } finally {
+      setSending(false)
+    }
   }
 
-  if (!open) {
+  async function createDirectConversation(target: StaffUser) {
+    setError(null)
+    try {
+      const payload = await readJson<{ conversation: Conversation }>("/api/connect/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "direct",
+          privacy_level: "private",
+          directUserId: target.id,
+          memberIds: [target.id],
+          title: target.name,
+        }),
+      })
+      setConversations((current) => current.some((conversation) => conversation.id === payload.conversation.id) ? current : [payload.conversation, ...current])
+      setSelectedId(payload.conversation.id)
+      changeMode("direct")
+      if (panelSize === "narrow") setRightPanelOpen(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Direct conversation could not be created")
+    }
+  }
+
+  function openRoomBuilder() {
+    if (!isCEO) {
+      setError(`Only the CEO can create AngelCare Connect rooms and select room access. Your loaded Connect role is: ${currentUser?.role || "empty"}.`)
+      return
+    }
+    setSelectedRoomMembers([])
+    setRoomSearch("")
+    setRoomTitle("AngelCare private room")
+    setRoomModalOpen(true)
+  }
+
+  function toggleRoomMember(memberId: string) {
+    setSelectedRoomMembers((current) => current.includes(memberId) ? current.filter((id) => id !== memberId) : [...current, memberId])
+  }
+
+  async function createSelectedRoom() {
+    if (!isCEO) {
+      setError(`Only the CEO can create AngelCare Connect rooms. Your loaded Connect role is: ${currentUser?.role || "empty"}.`)
+      return
+    }
+    if (!roomTitle.trim()) {
+      setError("Room title is required.")
+      return
+    }
+    if (selectedRoomMembers.length === 0) {
+      setError("Select at least one staff member for room access.")
+      return
+    }
+    setError(null)
+    try {
+      const payload = await readJson<{ conversation: Conversation }>("/api/connect/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "room",
+          privacy_level: "private",
+          title: roomTitle.trim(),
+          memberIds: selectedRoomMembers,
+        }),
+      })
+      setConversations((current) => current.some((conversation) => conversation.id === payload.conversation.id) ? current : [payload.conversation, ...current])
+      setSelectedId(payload.conversation.id)
+      changeMode("rooms")
+      setRoomModalOpen(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Room could not be created")
+    }
+  }
+
+  function openTaskManager() {
+    setTaskManagerOpen(true)
+    changeMode("actions")
+  }
+
+  function openTaskEditor(task?: ConnectAction | null) {
+    const next = task || null
+    setEditingTask(next)
+    setTaskTitle(next?.title || (selected ? `Follow-up · ${selected.title}` : ""))
+    setTaskDescription(next?.description || "")
+    setTaskPriority((next?.priority as Priority) || "normal")
+    setTaskStatus(next?.status || "open")
+    setTaskDueAt(next?.due_at ? next.due_at.slice(0, 16) : "")
+    const ids = next?.assignee_ids?.length ? next.assignee_ids : (next?.assignees || []).map((item) => item.user_id)
+    setSelectedTaskAssignees(ids.length ? ids : [])
+    setTaskSearch("")
+    setTaskEditorOpen(true)
+  }
+
+  function toggleTaskAssignee(memberId: string) {
+    setSelectedTaskAssignees((current) => current.includes(memberId) ? current.filter((id) => id !== memberId) : [...current, memberId])
+  }
+
+  async function saveTask() {
+    if (!taskTitle.trim()) {
+      setError("Task title is required.")
+      return
+    }
+    if (selectedTaskAssignees.length === 0) {
+      setError("Select at least one staff member for this task.")
+      return
+    }
+    setError(null)
+    const body = {
+      actionId: editingTask?.id,
+      title: taskTitle.trim(),
+      description: taskDescription.trim(),
+      priority: taskPriority,
+      status: taskStatus,
+      due_at: taskDueAt ? new Date(taskDueAt).toISOString() : null,
+      conversation_id: selected?.id || editingTask?.conversation_id || null,
+      assigneeIds: selectedTaskAssignees,
+    }
+    try {
+      const payload = await readJson<{ action: ConnectAction }>("/api/connect/actions", {
+        method: editingTask ? "PATCH" : "POST",
+        body: JSON.stringify(body),
+      })
+      setActions((current) => editingTask
+        ? current.map((action) => action.id === payload.action.id ? payload.action : action)
+        : [payload.action, ...current])
+      setTaskEditorOpen(false)
+      setTaskManagerOpen(true)
+      changeMode("actions")
+      if (selected?.id) await loadMessages(selected.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Connect task could not be saved")
+    }
+  }
+
+  async function deleteTask(task: ConnectAction) {
+    const confirmed = window.confirm("Delete this Connect task? Assigned users will lose access to it.")
+    if (!confirmed) return
+    setError(null)
+    try {
+      await readJson<{ ok: boolean }>(`/api/connect/actions?actionId=${encodeURIComponent(task.id)}`, { method: "DELETE" })
+      setActions((current) => current.filter((action) => action.id !== task.id))
+      if (editingTask?.id === task.id) setTaskEditorOpen(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Connect task could not be deleted")
+    }
+  }
+
+  async function createActionFromThread() {
+    if (!selected) return
+    const defaultAssignees = selected.members?.filter((member) => member.id !== currentUser?.id).map((member) => member.id).slice(0, 6) || []
+    setEditingTask(null)
+    setTaskTitle(`Follow-up · ${selected.title}`)
+    setTaskDescription(messages.slice(-5).map((message) => `${message.sender_name || "User"}: ${message.body}`).join("\n"))
+    setTaskPriority(selected.unread_count && selected.unread_count > 2 ? "important" : "normal")
+    setTaskStatus("open")
+    setTaskDueAt("")
+    setSelectedTaskAssignees(defaultAssignees)
+    setTaskSearch("")
+    setTaskManagerOpen(true)
+    setTaskEditorOpen(true)
+  }
+
+  async function startCall(callType: "audio" | "video") {
+    if (!selected) return
+    try {
+      const callPayload = await readJson<{ call: { room_name?: string } }>("/api/connect/calls", {
+        method: "POST",
+        body: JSON.stringify({
+          conversation_id: selected.id,
+          call_type: callType,
+          status: "created",
+          receiver_id: selectedMember?.id,
+        }),
+      })
+      await readJson<{ message: Message }>("/api/connect/messages", {
+        method: "POST",
+        body: JSON.stringify({
+          conversationId: selected.id,
+          body: `${callType === "video" ? "Video" : "Audio"} call started from AngelCare Connect.`,
+          message_type: "call",
+          priority: "important",
+          confidential: selected.privacy_level === "private" || selected.privacy_level === "executive",
+        }),
+      })
+      await loadMessages(selected.id)
+      setActiveCall({ roomName: callPayload.call?.room_name || `connect-${selected.id}`, type: callType })
+      setCallView("inline")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Call could not be started")
+    }
+  }
+
+  async function pinCurrentConversation() {
+    if (!selected) return
+    const nextPinned = !selected.pinned
+    setError(null)
+    setMoreMenuOpen(false)
+    try {
+      await readJson<{ ok: boolean; pinned: boolean }>("/api/connect/conversations", {
+        method: "PATCH",
+        body: JSON.stringify({ conversationId: selected.id, action: "pin", pinned: nextPinned }),
+      })
+      setConversations((current) => current.map((conversation) => conversation.id === selected.id ? { ...conversation, pinned: nextPinned } : conversation))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Conversation pin could not be updated")
+    }
+  }
+
+  async function emptyCurrentConversation() {
+    if (!selected) return
+    const confirmed = window.confirm("Empty this chat for the room? This will remove visible messages from this Connect thread.")
+    if (!confirmed) return
+    setError(null)
+    setMoreMenuOpen(false)
+    try {
+      await readJson<{ ok: boolean }>("/api/connect/conversations", {
+        method: "PATCH",
+        body: JSON.stringify({ conversationId: selected.id, action: "empty" }),
+      })
+      setMessages([])
+      setConversations((current) => current.map((conversation) => conversation.id === selected.id ? { ...conversation, last_message: null, unread_count: 0 } : conversation))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Conversation could not be emptied")
+    }
+  }
+
+  async function deleteCurrentConversation() {
+    if (!selected) return
+    const confirmed = window.confirm("Delete this conversation from Connect? Rooms owned by CEO are archived for selected members.")
+    if (!confirmed) return
+    setError(null)
+    setMoreMenuOpen(false)
+    try {
+      await readJson<{ ok: boolean }>(`/api/connect/conversations?conversationId=${encodeURIComponent(selected.id)}`, { method: "DELETE" })
+      setConversations((current) => {
+        const remaining = current.filter((conversation) => conversation.id !== selected.id)
+        setSelectedId(remaining[0]?.id || "")
+        return remaining
+      })
+      setMessages([])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Conversation could not be deleted")
+    }
+  }
+
+  if (!open && floating) {
     return (
       <button
         type="button"
         onClick={() => setPanelOpen(true)}
-        className="fixed bottom-6 right-6 z-[70] flex items-center gap-3 rounded-[28px] border border-slate-200 bg-slate-950 px-5 py-4 text-white shadow-2xl shadow-slate-950/30 transition hover:-translate-y-1 hover:bg-slate-900"
+        className="fixed bottom-6 right-6 z-[70] flex items-center gap-3 rounded-[26px] border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-2xl shadow-slate-900/20 transition hover:-translate-y-1 hover:shadow-slate-900/30"
         aria-label="Open AngelCare Connect"
       >
-        <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-slate-950">
+        <span className="relative grid h-12 w-12 place-items-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-500/25">
           <MessageCircle className="h-5 w-5" />
-          {unreadTotal > 0 && (
-            <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-black text-white">{unreadTotal}</span>
-          )}
+          {unreadTotal > 0 && <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-black text-white">{unreadTotal}</span>}
         </span>
         <span className="hidden text-left sm:block">
-          <span className="block text-xs font-black uppercase tracking-[0.24em] text-cyan-200">Connect</span>
-          <span className="block text-sm font-black">Private communication</span>
+          <span className="block text-xs font-black uppercase tracking-[0.22em] text-violet-600">Connect</span>
+          <span className="block text-sm font-black">Open internal messenger</span>
         </span>
       </button>
     )
   }
 
-  return (
-    <section className="fixed bottom-5 right-5 z-[70] w-[min(1180px,calc(100vw-28px))] overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/30">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-slate-950 px-5 py-4 text-white">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/20">
-            <ShieldCheck className="h-6 w-6" />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-black uppercase tracking-[0.22em] text-cyan-200">AngelCare Connect</p>
-            <p className="truncate text-lg font-black">Private inbox · Corporate rooms · Secure actions</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setCompact(!compact)} className="rounded-2xl border border-white/10 p-3 text-white/80 hover:bg-white/10" aria-label="Toggle compact view">
-            <Maximize2 className="h-4 w-4" />
-          </button>
-          <button onClick={() => setPanelOpen(false)} className="rounded-2xl border border-white/10 p-3 text-white/80 hover:bg-white/10" aria-label="Close Connect">
-            <Minus className="h-4 w-4" />
-          </button>
-          <button onClick={() => setPanelOpen(false)} className="rounded-2xl bg-white p-3 text-slate-950 hover:bg-slate-100" aria-label="Close Connect">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
+  const shellClass = embedded && !forceFloating
+    ? "relative flex h-[calc(100vh-120px)] min-h-[720px] w-full overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl shadow-slate-200/70"
+    : panelSize === "narrow"
+      ? "fixed bottom-5 right-5 z-[70] flex h-[min(760px,calc(100vh-40px))] w-[min(860px,calc(100vw-40px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
+      : "fixed bottom-5 right-5 z-[70] flex h-[min(860px,calc(100vh-40px))] w-[min(1440px,calc(100vw-40px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
 
-      <div className={cx("grid bg-slate-50", compact ? "h-[560px] grid-cols-[300px_1fr]" : "h-[720px] grid-cols-[310px_1fr_310px]")}>
-        <aside className="border-r border-slate-200 bg-white p-4">
-          <div className="grid grid-cols-4 gap-2 rounded-3xl bg-slate-100 p-1">
+  const sidebarWidth = panelSize === "narrow" ? "w-[292px]" : "w-[310px]"
+  const showRightPanel = rightPanelOpen && panelSize === "expanded"
+
+  return (
+    <section className={shellClass} aria-label="AngelCare Connect messenger">
+      <aside className={cx("flex min-h-0 shrink-0 flex-col border-r border-slate-200 bg-white", sidebarWidth)}>
+        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
+          <button className="flex min-w-0 items-center gap-2 text-left">
+            <span className="truncate text-base font-black text-slate-950">
+              {mode === "direct" ? "Direct Messages" : mode === "rooms" ? "Team Rooms" : mode === "broadcasts" ? "Broadcasts" : "Actions"}
+            </span>
+            <ChevronDown className="h-4 w-4 text-slate-400" />
+          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={openTaskManager} className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-500/20" title="Open Connect task manager">
+              <ClipboardList className="h-5 w-5" />
+            </button>
+            <button onClick={openRoomBuilder} className={cx("grid h-10 w-10 place-items-center rounded-2xl text-white shadow-lg", isCEO ? "bg-violet-600 shadow-violet-500/25" : "bg-slate-300 shadow-slate-300/20")} title={isCEO ? "Create selected-access room" : "Only CEO can create rooms"}>
+              <Plus className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4 px-4 py-4">
+          <div className="flex items-center gap-2">
+            <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+              <Search className="h-4 w-4 text-slate-400" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search conversations..." />
+            </div>
+            <button className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200" title="Filters">
+              <Settings2 className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-4 gap-1 rounded-2xl bg-slate-50 p-1 text-xs font-black text-slate-500">
             {([
-              ["private", Inbox],
-              ["rooms", Users],
-              ["broadcasts", MegaphoneIcon],
-              ["actions", Zap],
-            ] as const).map(([key, Icon]) => (
-              <button
-                key={key}
-                onClick={() => changeMode(key)}
-                className={cx("grid h-11 place-items-center rounded-2xl transition", mode === key ? "bg-slate-950 text-white shadow" : "text-slate-500 hover:bg-white")}
-                title={key}
-              >
-                <Icon className="h-4 w-4" />
+              ["direct", "All", conversations.filter((conversation) => conversation.type === "direct").length],
+              ["rooms", "Rooms", conversations.filter((conversation) => conversation.type === "room" || conversation.type === "context").length],
+              ["broadcasts", "Alerts", conversations.filter((conversation) => conversation.type === "broadcast").length],
+              ["actions", "Tasks", actions.length],
+            ] as const).map(([key, label, count]) => (
+              <button key={key} onClick={() => changeMode(key)} className={cx("rounded-xl px-2 py-2 transition", mode === key ? "bg-white text-violet-700 shadow-sm" : "hover:bg-white")}> 
+                <span>{label}</span>
+                {count > 0 && <span className="ml-1 rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] text-violet-700">{count}</span>}
               </button>
             ))}
           </div>
+        </div>
 
-          <div className="mt-4 flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2">
-            <Search className="h-4 w-4 text-slate-400" />
-            <input className="w-full bg-transparent text-sm font-semibold outline-none placeholder:text-slate-400" placeholder="Search private chats, rooms…" />
-          </div>
+        {error && <div className="mx-4 mb-3 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-xs font-bold leading-5 text-rose-700">{error}</div>}
 
-          <div className="mt-4 space-y-2 overflow-y-auto pr-1">
-            {filtered.map((conversation) => {
-              const Icon = iconFor(conversation.kind)
-              const active = selected.id === conversation.id
-              return (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedId(conversation.id)}
-                  className={cx("w-full rounded-3xl border p-3 text-left transition", active ? "border-slate-900 bg-slate-950 text-white shadow-xl shadow-slate-950/15" : "border-slate-200 bg-white text-slate-900 hover:border-slate-300 hover:shadow")}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <span className={cx("mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl", active ? "bg-white text-slate-950" : "bg-slate-100 text-slate-700")}>
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="flex items-center gap-2 truncate text-sm font-black">
-                          {conversation.pinned && <Pin className="h-3 w-3 text-cyan-400" />}
-                          {conversation.title}
-                        </span>
-                        <span className={cx("mt-1 block truncate text-xs font-semibold", active ? "text-white/65" : "text-slate-500")}>{conversation.lastMessage}</span>
-                      </span>
-                    </div>
-                    {conversation.unread > 0 && <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-black text-white">{conversation.unread}</span>}
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
+          {loading && <div className="flex items-center gap-2 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading live chats…</div>}
+
+          {!loading && mode !== "actions" && filteredConversations.map((conversation) => {
+            const active = selected?.id === conversation.id
+            const member = otherMember(conversation, currentUser?.id)
+            const title = conversation.type === "direct" ? member?.name || conversation.title : conversation.title
+            const subtitle = conversation.last_message || (conversation.type === "direct" ? member?.job_title || member?.role || member?.department : conversation.department || conversation.privacy_level)
+            return (
+              <button key={conversation.id} onClick={() => setSelectedId(conversation.id)} className={cx("group mb-2 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition", active ? "bg-violet-50 shadow-sm ring-1 ring-violet-100" : "hover:bg-slate-50")}>
+                <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-black text-slate-700">
+                  {conversation.type === "direct" ? initials(title) : <Users className="h-5 w-5" />}
+                  <span className={cx("absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white", statusTone(member?.status || "offline"))} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="truncate text-sm font-black text-slate-900">{title}</span>
+                    <span className="shrink-0 text-[11px] font-bold text-slate-400">{formatTime(conversation.last_message_at)}</span>
+                  </span>
+                  <span className="mt-1 flex items-center justify-between gap-2">
+                    <span className="truncate text-xs font-semibold text-slate-500">{subtitle || "Live internal thread"}</span>
+                    {(conversation.unread_count || 0) > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-violet-600 px-1.5 text-[10px] font-black text-white">{conversation.unread_count}</span>}
+                  </span>
+                </span>
+              </button>
+            )
+          })}
+
+          {!loading && mode === "actions" && (
+            <div className="space-y-2">
+              <button onClick={() => openTaskEditor()} className="mb-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700">
+                <Plus className="h-4 w-4" /> New task
+              </button>
+              {visibleTasks.map((action) => (
+                <div key={action.id} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm font-black text-slate-950">{action.title}</p>
+                    <span className={cx("rounded-full px-2 py-1 text-[10px] font-black uppercase", priorityTone(action.priority))}>{action.priority}</span>
                   </div>
-                </button>
-              )
-            })}
-          </div>
-        </aside>
-
-        <main className="flex min-w-0 flex-col bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-5 py-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="truncate text-xl font-black text-slate-950">{selected.title}</h2>
-                  <span className={cx("rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-wide", badgeTone(selected.priority))}>{selected.priority}</span>
-                  <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-emerald-700">secured</span>
+                  <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{action.description || "No task description"}</p>
+                  <p className="mt-2 text-xs font-bold text-slate-500">{action.status} · {formatTime(action.due_at || action.created_at)} · {(action.assignees || []).length || (action.assignee_ids || []).length} assigned</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <button onClick={() => openTaskEditor(action)} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50"><Pencil className="mr-1 inline h-3 w-3" /> Edit</button>
+                    <button onClick={() => void deleteTask(action)} className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-black text-rose-600 hover:bg-rose-50"><Trash2 className="mr-1 inline h-3 w-3" /> Delete</button>
+                  </div>
                 </div>
-                <p className="mt-1 text-sm font-semibold text-slate-500">{selected.subtitle}</p>
-              </div>
+              ))}
+            </div>
+          )}
+
+          {!loading && mode !== "actions" && filteredConversations.length === 0 && (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center">
+              <UserRound className="mx-auto h-8 w-8 text-slate-400" />
+              <p className="mt-3 text-sm font-black text-slate-800">No conversations found</p>
+              <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">Search staff below or create a team room.</p>
+            </div>
+          )}
+
+          {mode === "direct" && staffResults.length > 0 && (
+            <div className="mt-5 border-t border-slate-100 pt-4">
+              <p className="mb-2 px-2 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Start private chat</p>
+              {staffResults.map((member) => (
+                <button key={member.id} onClick={() => void createDirectConversation(member)} className="mb-1 flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-slate-50">
+                  <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-600">
+                    {initials(member.name)}
+                    <span className={cx("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusTone(member.status))} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-bold text-slate-800">{member.name}</span>
+                    <span className="block truncate text-[11px] font-bold text-slate-400">{member.department || "AngelCare"} · {member.job_title || member.role || "staff"}</span>
+                  </span>
+                  <ChevronRight className="h-4 w-4 text-slate-300" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
+        <header className="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="relative grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-violet-100 to-slate-100 text-sm font-black text-violet-700">
+              {selected ? initials(headlineName) : <MessageCircle className="h-5 w-5" />}
+              {selected && <span className={cx("absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white", statusTone(selectedMember?.status || "online"))} />}
+            </span>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <button className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 hover:bg-slate-50" title="Start voice call"><Phone className="h-4 w-4" /></button>
-                <button className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 hover:bg-slate-50" title="Start video call"><Video className="h-4 w-4" /></button>
-                <button className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 hover:bg-slate-50" title="More"><MoreHorizontal className="h-4 w-4" /></button>
+                <h2 className="truncate text-base font-black text-slate-950">{headlineName}</h2>
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
               </div>
+              <p className="truncate text-xs font-semibold text-slate-500">{headlineRole}</p>
             </div>
           </div>
+          <div className="flex items-center gap-2 text-slate-500">
+            <button className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100" title="Search thread"><Search className="h-5 w-5" /></button>
+            <button onClick={() => void startCall("audio")} disabled={!selected} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40" title="Voice call"><Phone className="h-5 w-5" /></button>
+            <button onClick={() => void startCall("video")} disabled={!selected} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40" title="Video call"><Video className="h-5 w-5" /></button>
+            <div className="relative">
+              <button onClick={() => setMoreMenuOpen((current) => !current)} disabled={!selected} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40" title="Conversation options"><MoreHorizontal className="h-5 w-5" /></button>
+              {moreMenuOpen && selected && (
+                <div className="absolute right-0 top-12 z-[90] w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 text-sm font-bold text-slate-700 shadow-2xl shadow-slate-900/15">
+                  <button onClick={() => setRightPanelOpen((current) => !current)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50"><UserRound className="h-4 w-4 text-slate-400" /> Toggle profile details</button>
+                  <button onClick={() => void enableBrowserNotifications()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50"><Bell className="h-4 w-4 text-violet-500" /> {browserNotificationsEnabled ? "Browser notifications enabled" : "Enable browser notifications"}</button>
+                  <button onClick={() => void pinCurrentConversation()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50">{selected.pinned ? <PinOff className="h-4 w-4 text-violet-500" /> : <Pin className="h-4 w-4 text-violet-500" />} {selected.pinned ? "Unpin conversation" : "Pin conversation"}</button>
+                  <button onClick={() => void createActionFromThread()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50"><ClipboardCheck className="h-4 w-4 text-emerald-500" /> Create task from thread</button>
+                  <button onClick={() => void emptyCurrentConversation()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-amber-50 hover:text-amber-700"><Eraser className="h-4 w-4" /> Empty chat</button>
+                  <button onClick={() => void deleteCurrentConversation()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /> Delete conversation</button>
+                </div>
+              )}
+            </div>
+            {floating && <button onClick={() => changePanelSize(panelSize === "expanded" ? "narrow" : "expanded")} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100" title={panelSize === "expanded" ? "Narrow widget" : "Expand widget"}>{panelSize === "expanded" ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}</button>}
+            {floating && <button onClick={() => setPanelOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100" title="Minimize"><X className="h-5 w-5" /></button>}
+          </div>
+        </header>
 
-          <div className="flex-1 space-y-4 overflow-y-auto p-5">
-            {thread.length === 0 && (
-              <div className="grid h-full place-items-center text-center">
-                <div className="max-w-sm rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
-                  <LockKeyhole className="mx-auto h-10 w-10 text-slate-400" />
-                  <p className="mt-4 text-lg font-black text-slate-950">Private thread ready</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-500">No message yet. Start with a clear decision, escalation, or execution request.</p>
+        {activeCall && callView !== "fullscreen" && (
+          <div className={cx("border-b border-violet-100 bg-violet-50/70 px-5 py-3", callView === "mini" && "py-2")}>
+            {callView === "inline" ? (
+              <div className="overflow-hidden rounded-[24px] border border-violet-200 bg-white shadow-sm">
+                <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-black text-slate-950">{activeCall.type === "video" ? "Video call" : "Audio call"} · {headlineName}</p>
+                    <p className="text-xs font-bold text-slate-500">Happening inside this conversation</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setCallView("mini")} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Minimize to chat</button>
+                    <button onClick={() => setCallView("fullscreen")} className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-black text-white hover:bg-violet-700">Full screen</button>
+                  </div>
+                </div>
+                {currentUser && (
+                  <div className="h-[260px] bg-slate-950">
+                    <ConnectLiveRoom
+                      roomName={activeCall.roomName}
+                      participantName={currentUser.name || currentUser.email || "AngelCare User"}
+                      participantId={currentUser.id}
+                      type={activeCall.type}
+                      onLeave={() => setActiveCall(null)}
+                    />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between rounded-2xl border border-violet-200 bg-white px-4 py-3 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-600 text-white">{activeCall.type === "video" ? <Video className="h-4 w-4" /> : <Phone className="h-4 w-4" />}</span>
+                  <div>
+                    <p className="text-sm font-black text-slate-950">Live {activeCall.type} call in this conversation</p>
+                    <p className="text-xs font-bold text-slate-500">Minimized while you keep chatting</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setCallView("inline")} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Open call</button>
+                  <button onClick={() => setCallView("fullscreen")} className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-black text-white hover:bg-violet-700">Full screen</button>
                 </div>
               </div>
             )}
-            {thread.map((message) => (
-              <div key={message.id} className={cx("flex", message.mine ? "justify-end" : "justify-start")}>
-                <div className={cx("max-w-[78%] rounded-[26px] border px-4 py-3 shadow-sm", message.mine ? "border-slate-900 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-900")}>
-                  <div className="mb-1 flex items-center gap-2 text-[11px] font-black uppercase tracking-wide opacity-70">
-                    {message.confidential && <EyeOff className="h-3 w-3" />}
-                    <span>{message.author}</span>
-                    <span>·</span>
-                    <span>{message.at}</span>
-                  </div>
-                  <p className="text-sm font-semibold leading-6">{message.body}</p>
-                  {message.action && (
-                    <button className={cx("mt-3 flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-black", message.mine ? "bg-white/10 text-white" : "bg-cyan-50 text-cyan-800")}>
-                      <ClipboardCheck className="h-4 w-4" /> Convert to {message.action}
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
           </div>
+        )}
 
-          <div className="border-t border-slate-200 bg-white p-4">
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-              <button className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-50"><Paperclip className="mr-1 inline h-3 w-3" /> Attach</button>
-              <button className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-50"><Mic className="mr-1 inline h-3 w-3" /> Voice note</button>
-              <button className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-50"><CheckCircle2 className="mr-1 inline h-3 w-3" /> Request approval</button>
-              <button className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-50"><Star className="mr-1 inline h-3 w-3" /> Mark priority</button>
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto bg-gradient-to-b from-white to-slate-50 px-5 py-5">
+          {threadLoading && <div className="mb-4 flex items-center justify-center gap-2 text-sm font-bold text-slate-400"><Loader2 className="h-4 w-4 animate-spin" /> Loading thread…</div>}
+
+          {!selected && (
+            <div className="grid h-full place-items-center text-center">
+              <div className="max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
+                <MessageCircle className="mx-auto h-10 w-10 text-violet-500" />
+                <p className="mt-4 text-xl font-black text-slate-950">AngelCare Connect</p>
+                <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">Select a live conversation or start a private staff chat from the left panel.</p>
+              </div>
             </div>
-            <div className="flex items-end gap-3 rounded-[28px] border border-slate-200 bg-slate-50 p-2">
-              <textarea
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault()
-                    sendMessage()
-                  }
-                }}
-                className="min-h-[52px] flex-1 resize-none bg-transparent px-3 py-3 text-sm font-semibold outline-none placeholder:text-slate-400"
-                placeholder="Write private message, @mention, decision, escalation, approval request…"
-              />
-              <button onClick={sendMessage} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white hover:bg-slate-800" aria-label="Send message">
-                <Send className="h-4 w-4" />
+          )}
+
+          {selected && messages.length === 0 && !threadLoading && (
+            <div className="grid h-full place-items-center text-center">
+              <div className="max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
+                <Sparkles className="mx-auto h-10 w-10 text-violet-500" />
+                <p className="mt-4 text-xl font-black text-slate-950">Live thread ready</p>
+                <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">No messages yet. Start a clear internal update, decision, request, or escalation.</p>
+              </div>
+            </div>
+          )}
+
+          {selected && messages.length > 0 && (
+            <div className="mx-auto flex max-w-4xl flex-col gap-4">
+              <div className="mx-auto rounded-full bg-white px-4 py-1 text-xs font-black text-slate-400 shadow-sm ring-1 ring-slate-200">Today</div>
+              {messages.map((message) => {
+                const mine = currentUser?.id === message.sender_id || String(currentUser?.id) === String(message.sender_id)
+                const fileName = String(message.metadata?.filename || message.metadata?.fileName || "")
+                const systemMessage = message.message_type === "system"
+                if (systemMessage) {
+                  return (
+                    <div key={message.id} className="flex justify-center py-1">
+                      <div className="max-w-[76%] rounded-full border border-slate-200 bg-white px-4 py-2 text-center text-[13px] font-extrabold leading-5 text-slate-700 shadow-sm">
+                        {message.body}
+                      </div>
+                    </div>
+                  )
+                }
+                return (
+                  <div key={message.id} className={cx("flex items-end gap-2", mine ? "justify-end" : "justify-start")}> 
+                    {!mine && <span className="mb-1 grid h-9 w-9 place-items-center rounded-full bg-slate-100 text-[11px] font-black text-slate-600 ring-1 ring-slate-200">{initials(message.sender_name)}</span>}
+                    <div className={cx("max-w-[72%]", mine ? "text-right" : "text-left")}> 
+                      <div className={cx("mb-1 flex items-center gap-2 text-[12px] font-extrabold text-slate-500", mine ? "justify-end" : "justify-start")}> 
+                        {!mine && <span className="text-slate-700">{message.sender_name || "AngelCare User"}</span>}
+                        <span>{formatTime(message.created_at)}</span>
+                        {message.confidential && <EyeOff className="h-3 w-3 text-violet-500" />}
+                      </div>
+                      <div className={cx("rounded-[26px] px-5 py-4 text-[15px] leading-7 shadow-sm ring-1", mine ? "rounded-br-md bg-violet-700 text-white shadow-violet-500/25 ring-violet-700/20" : "rounded-bl-md border border-slate-200 bg-white text-slate-900 ring-slate-200/80")}> 
+                        {message.message_type === "file" || fileName ? (
+                          <div className="flex items-center gap-3">
+                            <span className={cx("grid h-10 w-10 place-items-center rounded-2xl", mine ? "bg-white/15 text-white" : "bg-rose-50 text-rose-600")}><FileText className="h-5 w-5" /></span>
+                            <span className="min-w-0 text-left">
+                              <span className={cx("block truncate text-sm font-black", mine ? "text-white" : "text-slate-950")}>{fileName || "Shared file"}</span>
+                              <span className={cx("block text-xs font-bold", mine ? "text-violet-100" : "text-slate-500")}>{message.body}</span>
+                            </span>
+                          </div>
+                        ) : (
+                          <p className={cx("whitespace-pre-wrap break-words font-semibold tracking-[-0.01em]", mine ? "text-white" : "text-slate-900")}>{message.body}</p>
+                        )}
+                      </div>
+                      {mine && <div className="mt-1 flex items-center justify-end gap-1 text-violet-600"><Check className="h-3 w-3" /><Check className="-ml-1 h-3 w-3" /></div>}
+                    </div>
+                  </div>
+                )
+              })}
+              {typingPulse && <div className="flex items-center gap-2 text-xs font-bold text-slate-400"><span className="rounded-full bg-white px-3 py-2 shadow-sm">You are typing…</span></div>}
+            </div>
+          )}
+        </div>
+
+        <footer className="border-t border-slate-200 bg-white px-5 py-4">
+          <div className="rounded-[24px] border border-slate-200 bg-white p-3 shadow-sm">
+            <textarea
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault()
+                  void sendCurrentMessage()
+                }
+              }}
+              disabled={!selected || sending}
+              className="min-h-[54px] w-full resize-none bg-transparent px-2 py-2 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed"
+              placeholder={selected ? "Type a message..." : "Select a conversation first..."}
+            />
+            <div className="flex items-center justify-between gap-3 pt-2">
+              <div className="flex items-center gap-1 text-slate-400">
+                <button type="button" onClick={() => setError("File upload requires the production storage bucket route before enabling attachments.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Attach file"><Paperclip className="h-4 w-4" /></button>
+                <button type="button" onClick={() => setError("Emoji picker package is not installed yet; message text is live.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Emoji"><Smile className="h-4 w-4" /></button>
+                <button type="button" onClick={() => setError("GIF/media picker requires approved media source before production enablement.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Media"><ImageIcon className="h-4 w-4" /></button>
+                <button type="button" onClick={() => setError("Voice notes require recorder + storage route before production enablement.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Voice note"><Mic className="h-4 w-4" /></button>
+                <button type="button" onClick={() => setConfidential((current) => !current)} className={cx("grid h-9 w-9 place-items-center rounded-xl", confidential ? "bg-violet-100 text-violet-700" : "hover:bg-slate-100")} title="Confidential"><EyeOff className="h-4 w-4" /></button>
+                <button type="button" onClick={() => setComposerPriority((current) => current === "urgent" ? "normal" : current === "important" ? "urgent" : "important")} className={cx("rounded-xl px-2.5 py-2 text-[11px] font-black uppercase", priorityTone(composerPriority))}>{composerPriority}</button>
+              </div>
+              <button onClick={() => void sendCurrentMessage()} disabled={!selected || sending || !draft.trim()} className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none" title="Send">
+                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </button>
             </div>
           </div>
-        </main>
+        </footer>
+      </main>
 
-        {!compact && (
-          <aside className="border-l border-slate-200 bg-white p-4">
-            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center gap-3">
-                <LockKeyhole className="h-5 w-5 text-slate-700" />
-                <div>
-                  <p className="text-sm font-black text-slate-950">Privacy rule</p>
-                  <p className="text-xs font-semibold text-slate-500">{selected.privacy}</p>
-                </div>
-              </div>
+      {showRightPanel && (
+        <aside className="flex min-h-0 w-[380px] shrink-0 flex-col border-l border-slate-200 bg-white">
+          <div className="relative h-36 bg-gradient-to-br from-violet-100 via-sky-100 to-emerald-100">
+            <button onClick={() => setRightPanelOpen(false)} className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/70 text-slate-500 backdrop-blur hover:bg-white"><X className="h-4 w-4" /></button>
+          </div>
+          <div className="-mt-14 flex flex-col items-center border-b border-slate-100 px-5 pb-5 text-center">
+            <span className="relative grid h-28 w-28 place-items-center rounded-full border-4 border-white bg-violet-100 text-3xl font-black text-violet-700 shadow-lg">
+              {initials(headlineName)}
+              <span className={cx("absolute bottom-4 right-3 h-4 w-4 rounded-full border-2 border-white", statusTone(selectedMember?.status || "online"))} />
+            </span>
+            <h3 className="mt-3 text-xl font-black text-slate-950">{headlineName}</h3>
+            <p className="mt-1 text-sm font-semibold text-slate-500">{headlineRole}</p>
+            <p className="text-xs font-semibold text-slate-400">{selected?.department || selectedMember?.department || "AngelCare"}</p>
+            <div className="mt-5 grid w-full grid-cols-4 gap-2">
+              {([
+                [MessageCircle, "Message", () => {}],
+                [Phone, "Call", () => void startCall("audio")],
+                [Video, "Video", () => void startCall("video")],
+                [MoreHorizontal, "More", () => void createActionFromThread()],
+              ] as Array<[React.ComponentType<{ className?: string }>, string, () => void]>).map(([Icon, label, action]) => (
+                <button key={label} onClick={action} disabled={!selected} className="rounded-2xl bg-slate-50 px-2 py-3 text-xs font-black text-slate-600 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-40">
+                  <Icon className="mx-auto mb-1 h-4 w-4" />{label}
+                </button>
+              ))}
             </div>
+          </div>
 
-            <div className="mt-4 rounded-[28px] border border-slate-200 bg-white p-4">
-              <p className="mb-3 text-sm font-black text-slate-950">Members</p>
-              <div className="space-y-2">
-                {selected.members.map((member) => (
-                  <div key={member} className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2">
-                    <span className="text-sm font-bold text-slate-700">{member}</span>
-                    <Circle className="h-2.5 w-2.5 fill-emerald-500 text-emerald-500" />
+          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5">
+            <section>
+              <h4 className="text-sm font-black text-slate-950">About</h4>
+              <dl className="mt-3 space-y-3 text-sm">
+                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Email</dt><dd className="truncate font-bold text-slate-700">{selectedMember?.email || currentUser?.email || "—"}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Phone</dt><dd className="font-bold text-slate-700">{selectedMember?.phone || "—"}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Department</dt><dd className="truncate font-bold text-slate-700">{selectedMember?.department || selected?.department || "—"}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Privacy</dt><dd className="truncate font-bold text-slate-700">{selected?.privacy_level || "—"}</dd></div>
+              </dl>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Shared Media</h4><button className="text-xs font-black text-violet-600">View all</button></div>
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {activeFiles.slice(0, 3).map((message) => (
+                  <div key={message.id} className="grid aspect-square place-items-center rounded-2xl bg-slate-100 text-slate-400"><FileText className="h-5 w-5" /></div>
+                ))}
+                {activeFiles.length === 0 && <div className="col-span-4 rounded-2xl border border-dashed border-slate-200 p-4 text-center text-xs font-bold text-slate-400">No shared media yet</div>}
+                {activeFiles.length > 3 && <div className="grid aspect-square place-items-center rounded-2xl bg-slate-100 text-sm font-black text-slate-600">+{activeFiles.length - 3}</div>}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Files</h4><button className="text-xs font-black text-violet-600">View all</button></div>
+              <div className="mt-3 space-y-2">
+                {activeFiles.slice(0, 5).map((message) => {
+                  const name = String(message.metadata?.filename || message.metadata?.fileName || message.body || "Shared file")
+                  return (
+                    <div key={message.id} className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
+                      <span className="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-rose-600"><FileText className="h-5 w-5" /></span>
+                      <span className="min-w-0 flex-1"><span className="block truncate text-sm font-black text-slate-800">{name}</span><span className="text-xs font-bold text-slate-400">Connect file</span></span>
+                      <Download className="h-4 w-4 text-slate-300" />
+                    </div>
+                  )
+                })}
+                {activeFiles.length === 0 && <p className="rounded-2xl bg-slate-50 p-4 text-xs font-bold text-slate-400">No files shared in this live thread yet.</p>}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Pinned Messages</h4><button onClick={createActionFromThread} className="text-xs font-black text-violet-600">Create task</button></div>
+              <div className="mt-3 space-y-2">
+                {messages.filter((message) => message.priority !== "normal" || message.confidential).slice(-3).reverse().map((message) => (
+                  <div key={message.id} className="rounded-2xl bg-slate-50 p-3">
+                    <p className="line-clamp-2 text-sm font-bold text-slate-700">{message.body}</p>
+                    <p className="mt-1 text-xs font-bold text-slate-400">{message.priority} · {formatTime(message.created_at)}</p>
                   </div>
                 ))}
+                {messages.filter((message) => message.priority !== "normal" || message.confidential).length === 0 && <p className="rounded-2xl bg-slate-50 p-4 text-xs font-bold text-slate-400">No pinned or priority messages yet.</p>}
+              </div>
+            </section>
+          </div>
+        </aside>
+      )}
+
+
+      {taskManagerOpen && (
+        <div className="fixed inset-0 z-[91] grid place-items-center bg-slate-950/35 p-6 backdrop-blur-sm">
+          <div className="flex max-h-[88vh] w-[min(980px,calc(100vw-48px))] flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white text-slate-950 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+              <div>
+                <p className="text-xl font-black text-slate-950">Connect task manager</p>
+                <p className="mt-1 text-sm font-bold text-slate-500">Create, preview, edit, delete, and assign live tasks to selected staff only.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => openTaskEditor()} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white hover:bg-emerald-700"><Plus className="mr-2 inline h-4 w-4" />New task</button>
+                <button onClick={() => setTaskManagerOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200"><X className="h-5 w-5" /></button>
               </div>
             </div>
-
-            <div className="mt-4 rounded-[28px] border border-slate-200 bg-slate-950 p-4 text-white">
-              <p className="text-sm font-black">Smart actions</p>
-              <div className="mt-3 space-y-2">
-                {[
-                  [ClipboardCheck, "Create task from thread"],
-                  [AlertTriangle, "Escalate to manager"],
-                  [Bell, "Send urgent alert"],
-                  [FileText, "Generate summary note"],
-                  [Archive, "Archive confidentially"],
-                ].map(([Icon, label]) => (
-                  <button key={label as string} className="flex w-full items-center justify-between rounded-2xl border border-white/10 px-3 py-2 text-left text-xs font-black text-white/85 hover:bg-white/10">
-                    <span className="flex items-center gap-2"><Icon className="h-4 w-4" /> {label as string}</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                ))}
-              </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-6">
+              {actions.length === 0 ? (
+                <div className="rounded-[28px] border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                  <ClipboardList className="mx-auto h-10 w-10 text-emerald-600" />
+                  <p className="mt-3 text-lg font-black text-slate-950">No Connect tasks yet</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">Tasks appear only for selected assignees and automatically notify them.</p>
+                </div>
+              ) : (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {visibleTasks.map((task) => (
+                    <article key={task.id} className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h4 className="truncate text-base font-black text-slate-950">{task.title}</h4>
+                          <p className="mt-1 line-clamp-3 text-sm font-semibold leading-6 text-slate-600">{task.description || "No description added."}</p>
+                        </div>
+                        <span className={cx("rounded-full px-2.5 py-1 text-[10px] font-black uppercase", priorityTone(task.priority))}>{task.priority}</span>
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {(task.assignees || []).slice(0, 5).map((item) => (
+                          <span key={item.user_id} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-700">{item.user?.name || item.user_id}</span>
+                        ))}
+                        {(task.assignees || []).length > 5 && <span className="rounded-full bg-violet-100 px-2.5 py-1 text-xs font-black text-violet-700">+{(task.assignees || []).length - 5}</span>}
+                      </div>
+                      <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                        <p className="text-xs font-bold text-slate-500">{task.status} · {formatTime(task.due_at || task.created_at)}</p>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => openTaskEditor(task)} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-700 hover:bg-slate-50"><Pencil className="mr-1 inline h-3.5 w-3.5" />Edit</button>
+                          <button onClick={() => void deleteTask(task)} className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-black text-rose-600 hover:bg-rose-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" />Delete</button>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="mt-4 rounded-[28px] border border-cyan-200 bg-cyan-50 p-4">
-              <div className="flex items-start gap-3">
-                <Sparkles className="mt-0.5 h-5 w-5 text-cyan-700" />
+      {taskEditorOpen && (
+        <div className="fixed inset-0 z-[93] grid place-items-center bg-slate-950/45 p-6 backdrop-blur-sm">
+          <div className="flex max-h-[90vh] w-[min(820px,calc(100vw-48px))] flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white text-slate-950 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+              <div>
+                <p className="text-xl font-black text-slate-950">{editingTask ? "Edit Connect task" : "Create Connect task"}</p>
+                <p className="mt-1 text-sm font-bold text-slate-500">Assigned users are notified and only selected assignees can access the task.</p>
+              </div>
+              <button onClick={() => setTaskEditorOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200"><X className="h-5 w-5" /></button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+              <label className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Task title</label>
+              <input value={taskTitle} onChange={(event) => setTaskTitle(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-950 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100" placeholder="Example: Confirm partnership proposal with Direction" />
+              <label className="mt-5 block text-xs font-black uppercase tracking-[0.18em] text-slate-500">Description / preview</label>
+              <textarea value={taskDescription} onChange={(event) => setTaskDescription(event.target.value)} className="mt-2 min-h-[110px] w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-800 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100" placeholder="Write the clear task context, expected output, deadline or decision needed..." />
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <p className="text-sm font-black text-cyan-950">AI-ready layer</p>
-                  <p className="mt-1 text-xs font-semibold leading-5 text-cyan-800">Later, this panel can summarize rooms, detect blockers, and convert decisions into tasks without changing the widget shell.</p>
+                  <label className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Priority</label>
+                  <select value={taskPriority} onChange={(event) => setTaskPriority(event.target.value as Priority)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-900 outline-none"><option value="normal">Normal</option><option value="important">Important</option><option value="urgent">Urgent</option></select>
+                </div>
+                <div>
+                  <label className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Status</label>
+                  <select value={taskStatus} onChange={(event) => setTaskStatus(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-900 outline-none"><option value="open">Open</option><option value="in_progress">In progress</option><option value="blocked">Blocked</option><option value="done">Done</option></select>
+                </div>
+                <div>
+                  <label className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Due date</label>
+                  <input type="datetime-local" value={taskDueAt} onChange={(event) => setTaskDueAt(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-900 outline-none" />
                 </div>
               </div>
+              <div className="mt-6 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-950">Assign to selected staff</p>
+                  <p className="text-xs font-bold text-slate-500">{selectedTaskAssignees.length} selected · task is visible only to these users and creator.</p>
+                </div>
+                <div className="flex w-72 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2">
+                  <Search className="h-4 w-4 text-slate-400" />
+                  <input value={taskSearch} onChange={(event) => setTaskSearch(event.target.value)} className="w-full bg-transparent text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400" placeholder="Search staff..." />
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {taskMemberResults.map((member) => {
+                  const checked = selectedTaskAssignees.includes(member.id)
+                  return (
+                    <button key={member.id} onClick={() => toggleTaskAssignee(member.id)} className={cx("flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition", checked ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50")}>
+                      <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-700">{initials(member.name)}<span className={cx("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusTone(member.status))} /></span>
+                      <span className="min-w-0 flex-1"><span className="block truncate text-sm font-black text-slate-950">{member.name}</span><span className="block truncate text-xs font-bold text-slate-500">{member.department || "AngelCare"} · {member.job_title || member.role || "staff"}</span></span>
+                      <span className={cx("grid h-6 w-6 place-items-center rounded-full border text-xs font-black", checked ? "border-emerald-600 bg-emerald-600 text-white" : "border-slate-300 text-slate-300")}>{checked ? <Check className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </aside>
-        )}
-      </div>
+            <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-6 py-5">
+              <p className="text-xs font-bold text-slate-500">Tasks are live, user-scoped, and notify every newly assigned staff member.</p>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setTaskEditorOpen(false)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button onClick={() => void saveTask()} disabled={!taskTitle.trim() || selectedTaskAssignees.length === 0} className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"><Save className="mr-2 inline h-4 w-4" />Save task</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {roomModalOpen && (
+        <div className="fixed inset-0 z-[92] grid place-items-center bg-slate-950/40 p-6 backdrop-blur-sm">
+          <div className="flex max-h-[86vh] w-[min(760px,calc(100vw-48px))] flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white text-slate-950 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+              <div>
+                <p className="text-xl font-black text-slate-950">Create selected-access room</p>
+                <p className="mt-1 text-sm font-bold text-slate-500">CEO only · the room appears only for selected staff members.</p>
+              </div>
+              <button onClick={() => setRoomModalOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200"><X className="h-5 w-5" /></button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+              <label className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Room name</label>
+              <input value={roomTitle} onChange={(event) => setRoomTitle(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-900 outline-none focus:border-violet-300 focus:bg-white" placeholder="Example: Direction x Operations private room" />
+
+              <div className="mt-5 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-950">Select staff access</p>
+                  <p className="text-xs font-bold text-slate-500">{selectedRoomMembers.length} selected · users not selected will not see this room.</p>
+                </div>
+                <div className="flex w-72 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                  <Search className="h-4 w-4 text-slate-400" />
+                  <input value={roomSearch} onChange={(event) => setRoomSearch(event.target.value)} className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400" placeholder="Search staff..." />
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {roomMemberResults.map((member) => {
+                  const checked = selectedRoomMembers.includes(member.id)
+                  return (
+                    <button key={member.id} onClick={() => toggleRoomMember(member.id)} className={cx("flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition", checked ? "border-violet-300 bg-violet-50" : "border-slate-200 bg-white hover:bg-slate-50")}>
+                      <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-700">
+                        {initials(member.name)}
+                        <span className={cx("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusTone(member.status))} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-black text-slate-900">{member.name}</span>
+                        <span className="block truncate text-xs font-bold text-slate-500">{member.department || "AngelCare"} · {member.job_title || member.role || "staff"}</span>
+                      </span>
+                      <span className={cx("grid h-6 w-6 place-items-center rounded-full border text-xs font-black", checked ? "border-violet-600 bg-violet-600 text-white" : "border-slate-300 text-slate-300")}>{checked ? <Check className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-6 py-5">
+              <p className="text-xs font-bold text-slate-500">CEO creates the room. Membership controls visibility in every user’s Connect widget.</p>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setRoomModalOpen(false)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-600 hover:bg-slate-50">Cancel</button>
+                <button onClick={() => void createSelectedRoom()} disabled={!roomTitle.trim() || selectedRoomMembers.length === 0} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-500/20 hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">Create room</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeCall && currentUser && callView === "fullscreen" && (
+        <div className="fixed inset-0 z-[95] bg-slate-950/85 p-6 backdrop-blur-sm">
+          <div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden rounded-[28px] border border-white/10 bg-slate-950 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white">
+              <div>
+                <p className="text-base font-black">{activeCall.type === "video" ? "Video call" : "Audio call"} · {headlineName}</p>
+                <p className="text-xs font-bold text-white/50">Full screen Connect call</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setCallView("inline")} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-black hover:bg-white/15">Back to conversation</button>
+                <button onClick={() => setCallView("mini")} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-black hover:bg-white/15">Minimize</button>
+              </div>
+            </div>
+            <div className="min-h-0 flex-1">
+              <ConnectLiveRoom
+                roomName={activeCall.roomName}
+                participantName={currentUser.name || currentUser.email || "AngelCare User"}
+                participantId={currentUser.id}
+                type={activeCall.type}
+                onLeave={() => setActiveCall(null)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
-}
-
-function MegaphoneIcon(props: React.ComponentProps<typeof Bell>) {
-  return <Bell {...props} />
 }

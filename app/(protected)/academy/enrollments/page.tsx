@@ -227,12 +227,12 @@ function initials(name: string) {
 function statusTone(status: unknown): Tone {
   const value = String(status || "").toLowerCase();
   if (
-    ["enrolled", "active", "completed", "approved", "paid"].some((x) =>
+    ["enrolled", "active", "completed", "approved", "paid"].some((x: any) =>
       value.includes(x),
     )
   )
     return "green";
-  if (["pending", "draft", "waiting", "review"].some((x) => value.includes(x)))
+  if (["pending", "draft", "waiting", "review"].some((x: any) => value.includes(x)))
     return "orange";
   if (
     ["cancel", "drop", "risk", "blocked", "rejected", "late", "unpaid"].some(
@@ -240,7 +240,7 @@ function statusTone(status: unknown): Tone {
     )
   )
     return "red";
-  if (["hold", "pause"].some((x) => value.includes(x))) return "violet";
+  if (["hold", "pause"].some((x: any) => value.includes(x))) return "violet";
   return "blue";
 }
 
@@ -684,7 +684,7 @@ export default async function AcademyEnrollmentsPage({
     ),
   );
   const riskyEnrollments = enrollments.filter((e: AnyRow) =>
-    ["blocked", "risk", "cancelled", "dropped", "on_hold"].some((x) =>
+    ["blocked", "risk", "cancelled", "dropped", "on_hold"].some((x: any) =>
       String(e.status || "")
         .toLowerCase()
         .includes(x),
@@ -701,14 +701,14 @@ export default async function AcademyEnrollmentsPage({
     0,
   );
   const attendanceCountByTrainee = new Map<string, number>();
-  attendance.forEach((row) =>
+  attendance.forEach((row: any) =>
     attendanceCountByTrainee.set(
       String(row.trainee_id),
       (attendanceCountByTrainee.get(String(row.trainee_id)) || 0) + 1,
     ),
   );
   const paymentByTrainee = new Map<string, number>();
-  payments.forEach((row) =>
+  payments.forEach((row: any) =>
     paymentByTrainee.set(
       String(row.trainee_id),
       (paymentByTrainee.get(String(row.trainee_id)) || 0) +

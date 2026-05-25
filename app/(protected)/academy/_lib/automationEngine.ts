@@ -24,9 +24,9 @@ export function buildAutomationSignals(input: {
   const signals: AutomationSignal[] = []
 
   trainees
-    .filter((t) => !t.eligibility_status || t.eligibility_status === 'pending')
+    .filter((t: any) => !t.eligibility_status || t.eligibility_status === 'pending')
     .slice(0, 8)
-    .forEach((t) => signals.push({
+    .forEach((t: any) => signals.push({
       id: `eligibility-${t.id}`,
       severity: 'high',
       category: 'eligibility',
@@ -37,9 +37,9 @@ export function buildAutomationSignals(input: {
     }))
 
   payments
-    .filter((p) => p.status !== 'paid')
+    .filter((p: any) => p.status !== 'paid')
     .slice(0, 10)
-    .forEach((p) => signals.push({
+    .forEach((p: any) => signals.push({
       id: `payment-${p.id}`,
       severity: p.due_at && new Date(p.due_at) < new Date() ? 'critical' : 'medium',
       category: 'payment',
@@ -57,8 +57,8 @@ export function buildAutomationSignals(input: {
   }, {})
 
   Object.entries(attendanceByTrainee).forEach(([traineeId, logs]) => {
-    const absent = logs.filter((l) => l.status === 'absent').length
-    const late = logs.filter((l) => l.status === 'late').length
+    const absent = logs.filter((l: any) => l.status === 'absent').length
+    const late = logs.filter((l: any) => l.status === 'late').length
     if (absent >= 2 || late >= 3) {
       signals.push({
         id: `attendance-${traineeId}`,
@@ -73,10 +73,10 @@ export function buildAutomationSignals(input: {
   })
 
   trainees
-    .filter((t) => t.status === 'active' || t.status === 'completed')
-    .filter((t) => !certificates.some((c) => c.trainee_id === t.id))
+    .filter((t: any) => t.status === 'active' || t.status === 'completed')
+    .filter((t: any) => !certificates.some((c: any) => c.trainee_id === t.id))
     .slice(0, 8)
-    .forEach((t) => signals.push({
+    .forEach((t: any) => signals.push({
       id: `certificate-${t.id}`,
       severity: 'medium',
       category: 'certificate',
@@ -87,9 +87,9 @@ export function buildAutomationSignals(input: {
     }))
 
   followups
-    .filter((f) => f.status !== 'closed')
+    .filter((f: any) => f.status !== 'closed')
     .slice(0, 8)
-    .forEach((f) => signals.push({
+    .forEach((f: any) => signals.push({
       id: `placement-${f.id}`,
       severity: 'medium',
       category: 'placement',
@@ -99,7 +99,7 @@ export function buildAutomationSignals(input: {
       href: '/academy/graduation',
     }))
 
-  return signals.sort((a, b) => severityRank(b.severity) - severityRank(a.severity))
+  return signals.sort((a: any, b: any) => severityRank(b.severity) - severityRank(a.severity))
 }
 
 function severityRank(severity: AutomationSignal['severity']) {

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { requireAccess } from '@/lib/auth/requireAccess'
+import ReceiptPrintButton from '../../_components/ReceiptPrintButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,13 +34,13 @@ export default async function PaymentReceiptPage({ params }: { params: Promise<{
   const amount = n(p?.amount ?? p?.amount_mad ?? p?.paid_amount)
   const paidAt = p?.paid_at ?? p?.created_at
   const receiptNo = s(p?.reference, `ACA-REC-${String(id).slice(0, 8).toUpperCase()}`)
-  return <main className="receiptPage"><div className="toolbar"><Link href="/academy/payments?view=payments">← Back to payments</Link><button onClick={undefined as any}>Use browser print / Save as PDF</button></div><section className="receipt">
+  return <main className="receiptPage"><div className="toolbar"><Link href="/academy/payments?view=payments">← Back to payments</Link><ReceiptPrintButton label="Imprimer / Enregistrer PDF" /></div><section className="receipt">
     <header className="receiptTop"><div className="logo"><strong>ANGEL CARE</strong><span>Preschool & Kindergarten</span></div><div className="title"><h1>REÇU D’INSCRIPTION & PAIEMENT</h1><p>Trainee Enrollment & Payment Receipt</p><div className="meta"><b>Reçu N°</b><span>{receiptNo}</span><b>Date d’émission</b><span>{d(paidAt)}</span><b>Mode de paiement</b><span>{s(p?.method ?? p?.payment_method, 'Cash')}</span></div></div></header>
     <div className="sectionGrid two"><section><h2>♡ INFORMATIONS TRAINEE</h2><p><b>Nom complet</b><span>{s(trainee?.full_name ?? p?.trainee_name)}</span></p><p><b>Date de naissance</b><span>{d(trainee?.birth_date ?? trainee?.date_of_birth)}</span></p><p><b>Téléphone</b><span>{s(trainee?.phone ?? trainee?.telephone)}</span></p><p><b>Email</b><span>{s(trainee?.email)}</span></p><p><b>CIN</b><span>{s(trainee?.cin ?? trainee?.national_id)}</span></p><p><b>Adresse</b><span>{s(trainee?.address ?? trainee?.city, 'Maroc')}</span></p></section><section><h2>♢ INFORMATIONS FORMATION</h2><p><b>Programme</b><span>{s(course?.title ?? course?.name, 'Course Enrollment')}</span></p><p><b>Session</b><span>{s(group?.name ?? group?.title, 'Session Academy')}</span></p><p><b>Durée</b><span>{s(course?.duration ?? course?.duration_days, 'Selon programme')}</span></p><p><b>Lieu de formation</b><span>{s(location?.name ?? location?.city, 'Angelcare Academy – Rabat')}</span></p><p><b>Date de début</b><span>{d(enrollment?.start_date ?? group?.start_date)}</span></p></section></div>
     <section className="paymentBlock"><h2>▤ DÉTAILS DU PAIEMENT</h2><table><thead><tr><th>DÉSIGNATION</th><th>MONTANT (MAD)</th></tr></thead><tbody><tr><td>Frais d'inscription</td><td>{mad(0)}</td></tr><tr><td>Frais de formation</td><td>{mad(amount)}</td></tr><tr><td>Supports & Matériel</td><td>{mad(0)}</td></tr><tr><td>Frais d'attestation</td><td>{mad(0)}</td></tr><tr className="total"><td>TOTAL</td><td>{mad(amount)}</td></tr><tr className="paid"><td>MONTANT PAYÉ</td><td>{mad(amount)}</td></tr><tr><td>STATUT</td><td className="green">{String(p?.status || '').toLowerCase().includes('pending') ? 'Paiement en attente' : 'Payé intégralement'}</td></tr></tbody></table></section>
     <div className="sectionGrid two cards"><section><h2>▧ DÉTAILS DE LA TRANSACTION</h2><p><b>Méthode de paiement</b><span>{s(p?.method ?? p?.payment_method, 'Cash')}</span></p><p><b>Référence de transaction</b><span>{receiptNo}</span></p><p><b>Banque</b><span>{s(p?.bank, '—')}</span></p><p><b>Date de paiement</b><span>{d(paidAt)} – {t(paidAt)}</span></p><p><b>Montant payé</b><span>{mad(amount)}</span></p></section><section><h2>ⓘ INCLUS DANS LA FORMATION</h2><ul><li>Attestation professionnelle reconnue</li><li>Supports pédagogiques & matériel</li><li>Accompagnement insertion emploi</li><li>Accès aux ateliers pratiques</li><li>Suivi post-formation</li></ul></section></div>
     <footer><div><h3>CONDITIONS</h3><p>Ce reçu confirme l'inscription et le paiement des frais de formation mentionnés ci-dessus. Aucun remboursement n’est possible sauf en cas d’annulation de la session par Angelcare Academy.</p></div><div><h3>SIGNATURE & CACHET</h3></div><div><h3>SCANNEZ POUR VÉRIFIER</h3><div className="qr">▦</div></div></footer><div className="contact"><span>📍 AV. HASSAN 2 RUE KUWAIT N13 PREMIER ÉTAGE ADMINISTRATION BUREAU N°3 12030, TÉMARA MAROC</span><span>☎ +212 5 37 58 14 62</span><span>✉ academy@angelcare.ma</span><span>@ angelcare.morocco</span></div>
-  </section><style>{css}</style><script dangerouslySetInnerHTML={{ __html: `window.addEventListener('load',()=>setTimeout(()=>window.print(),500))` }} /></main>
+  </section><style>{css}</style></main>
 }
 
 const css = `

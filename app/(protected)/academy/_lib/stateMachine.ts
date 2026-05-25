@@ -36,12 +36,12 @@ export const ACADEMY_TRANSITIONS: AcademyTransition[] = [
 
 export function canTransition(current: AcademyStage | string | null | undefined, target: AcademyStage) {
   const currentStage = (current || 'prospect') as AcademyStage;
-  return ACADEMY_TRANSITIONS.some((t) => (t.from === currentStage || t.from === '*') && t.to === target);
+  return ACADEMY_TRANSITIONS.some((t: any) => (t.from === currentStage || t.from === '*') && t.to === target);
 }
 
 export function getAvailableTransitions(current: AcademyStage | string | null | undefined) {
   const currentStage = (current || 'prospect') as AcademyStage;
-  return ACADEMY_TRANSITIONS.filter((t) => t.from === currentStage || t.from === '*');
+  return ACADEMY_TRANSITIONS.filter((t: any) => t.from === currentStage || t.from === '*');
 }
 
 export function stageLabel(stage?: string | null) {

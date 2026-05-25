@@ -45,7 +45,7 @@ export async function academyProductionSync(event: AcademySyncEvent) {
     status: 'queued',
     metadata: { event_key: event.event_key, target_modules: targetModules, payload: event.payload || {} },
   })
-  await supabase.from('academy_integration_events').insert(targetModules.map((target_module) => ({
+  await supabase.from('academy_integration_events').insert(targetModules.map((target_module: any) => ({
     target_module,
     event_key: event.event_key,
     entity: event.entity,

@@ -20,7 +20,7 @@ export function AutomationSignalPanel({ signals }: { signals: AutomationSignal[]
       </div>
 
       <div style={gridStyle}>
-        {signals.length ? signals.map((signal) => (
+        {signals.length ? signals.map((signal: any) => (
           <Link key={signal.id} href={signal.href} style={signalStyle(severityColors[signal.severity])}>
             <span style={badgeStyle(severityColors[signal.severity])}>{signal.severity.toUpperCase()}</span>
             <strong>{signal.title}</strong>

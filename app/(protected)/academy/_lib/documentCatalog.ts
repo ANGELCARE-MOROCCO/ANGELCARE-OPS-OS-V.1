@@ -90,7 +90,7 @@ export const DOCUMENT_CATALOG: AcademyDocumentTemplate[] = [
 ]
 
 export function getDocumentTemplate(type?: string | null) {
-  return DOCUMENT_CATALOG.find((doc) => doc.type === type) || null
+  return DOCUMENT_CATALOG.find((doc: any) => doc.type === type) || null
 }
 
 export function getCategoryLabel(category: DocumentCategory) {

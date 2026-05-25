@@ -63,23 +63,23 @@ export function AcademyExecutiveSuite({ data }: { data: AcademyData }) {
   const partners = data.partners || []
   const alerts = data.alerts || []
 
-  const paid = payments.filter((p) => p.status === 'paid').reduce((s, p) => s + Number(p.amount || 0), 0)
-  const openPayments = payments.filter((p) => p.status !== 'paid')
-  const unpaid = openPayments.reduce((s, p) => s + Number(p.amount || 0), 0)
-  const pendingEligibility = trainees.filter((t) => (t.eligibility_status || 'pending') === 'pending')
-  const approvedEligibility = trainees.filter((t) => t.eligibility_status === 'approved').length
-  const absentCount = attendance.filter((a) => a.status === 'absent').length
+  const paid = payments.filter((p: any) => p.status === 'paid').reduce((s: any, p: any) => s + Number(p.amount || 0), 0)
+  const openPayments = payments.filter((p: any) => p.status !== 'paid')
+  const unpaid = openPayments.reduce((s: any, p: any) => s + Number(p.amount || 0), 0)
+  const pendingEligibility = trainees.filter((t: any) => (t.eligibility_status || 'pending') === 'pending')
+  const approvedEligibility = trainees.filter((t: any) => t.eligibility_status === 'approved').length
+  const absentCount = attendance.filter((a: any) => a.status === 'absent').length
   const attendanceRisk = attendance.length ? (absentCount / attendance.length) * 100 : 0
-  const activeAlerts = alerts.filter((a) => a.status !== 'closed')
+  const activeAlerts = alerts.filter((a: any) => a.status !== 'closed')
   const certified = certificates.length
   const conversion = trainees.length ? (enrollments.length / trainees.length) * 100 : 0
   const certificationYield = enrollments.length ? (certified / enrollments.length) * 100 : 0
   const capacitySignal = groups.length ? Math.round((enrollments.length / Math.max(groups.length * 20, 1)) * 100) : 0
 
   const priorities = [
-    ...pendingEligibility.slice(0, 3).map((t) => ({ title: `Validate eligibility: ${t.full_name}`, href: '/academy/eligibility', tone: '#16a34a', meta: t.city || 'City missing' })),
-    ...openPayments.slice(0, 3).map((p) => ({ title: 'Payment follow-up required', href: '/academy/payments', tone: '#ea580c', meta: `${p.status || 'pending'} · ${money(Number(p.amount || 0))}` })),
-    ...activeAlerts.slice(0, 3).map((a) => ({ title: a.title || 'Open Academy alert', href: '/academy/alerts-sales', tone: '#dc2626', meta: a.severity || 'normal' })),
+    ...pendingEligibility.slice(0, 3).map((t: any) => ({ title: `Validate eligibility: ${t.full_name}`, href: '/academy/eligibility', tone: '#16a34a', meta: t.city || 'City missing' })),
+    ...openPayments.slice(0, 3).map((p: any) => ({ title: 'Payment follow-up required', href: '/academy/payments', tone: '#ea580c', meta: `${p.status || 'pending'} · ${money(Number(p.amount || 0))}` })),
+    ...activeAlerts.slice(0, 3).map((a: any) => ({ title: a.title || 'Open Academy alert', href: '/academy/alerts-sales', tone: '#dc2626', meta: a.severity || 'normal' })),
   ].slice(0, 7)
 
   return (
@@ -121,7 +121,7 @@ export function AcademyExecutiveSuite({ data }: { data: AcademyData }) {
         <div style={panel}>
           <PanelHeader title="Master Academy Navigation" subtitle="All Academy sections with their management purpose, action layer and control signal." />
           <div style={moduleGrid}>
-            {modules.map((m) => (
+            {modules.map((m: any) => (
               <Link key={m.href} href={m.href} style={moduleCard(m.tone)}>
                 <div style={moduleTop}>
                   <span style={moduleIcon(m.tone)}>{m.icon}</span>
@@ -183,7 +183,7 @@ export function AcademyExecutiveSuite({ data }: { data: AcademyData }) {
         <div style={panel}>
           <PanelHeader title="Enterprise Control Layer" subtitle="Advanced operating tools added through V5 phases." />
           <div style={commandGrid}>
-            {commandLinks.map((l) => (
+            {commandLinks.map((l: any) => (
               <Link key={l.href} href={l.href} style={commandCard}>
                 <span>{l.tag}</span>
                 <strong>{l.label}</strong>

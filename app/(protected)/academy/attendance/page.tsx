@@ -56,12 +56,12 @@ function statusTone(status: string) {
 
 function nameOf(list: AnyRow[], id?: string | null, fallback = '—') {
   if (!id) return fallback
-  const row = list.find((x) => x.id === id)
+  const row = list.find((x: any) => x.id === id)
   return row?.full_name || row?.name || row?.title || fallback
 }
 
 function initials(name: string) {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((x) => x[0]?.toUpperCase()).join('') || 'AC'
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((x: any) => x[0]?.toUpperCase()).join('') || 'AC'
 }
 
 async function safeTable(supabase: any, table: string) {

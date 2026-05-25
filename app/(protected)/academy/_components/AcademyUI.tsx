@@ -14,11 +14,11 @@ export function Kpi({ label, value, sub, tone = '#2563eb' }: { label: string; va
 }
 
 export function ModuleGrid({ modules }: { modules: ReadonlyArray<{ title: string; href: string; desc: string }> }) {
-  return <div style={grid3}>{modules.map((m) => <Link key={m.href} href={m.href} style={moduleCard}><strong>{m.title}</strong><span>{m.desc}</span><em>Open control panel →</em></Link>)}</div>
+  return <div style={grid3}>{modules.map((m: any) => <Link key={m.href} href={m.href} style={moduleCard}><strong>{m.title}</strong><span>{m.desc}</span><em>Open control panel →</em></Link>)}</div>
 }
 
 export function DataTable({ headers, rows }: { headers: string[]; rows: React.ReactNode[][] }) {
-  return <div style={tableWrap}><table style={table}><thead><tr>{headers.map((h) => <th key={h} style={th}>{h}</th>)}</tr></thead><tbody>{rows.length ? rows.map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} style={td}>{c}</td>)}</tr>) : <tr><td colSpan={headers.length} style={td}>No records yet.</td></tr>}</tbody></table></div>
+  return <div style={tableWrap}><table style={table}><thead><tr>{headers.map((h: any) => <th key={h} style={th}>{h}</th>)}</tr></thead><tbody>{rows.length ? rows.map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} style={td}>{c}</td>)}</tr>) : <tr><td colSpan={headers.length} style={td}>No records yet.</td></tr>}</tbody></table></div>
 }
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label style={field}><span>{label}</span>{children}</label> }

@@ -24,5 +24,5 @@ export async function getAcademyData() {
 }
 
 export function nameOf(list: any[], id?: string | null, fallback = '—') {
-  return list.find((x) => x.id === id)?.full_name || list.find((x) => x.id === id)?.title || list.find((x) => x.id === id)?.name || fallback
+  return list.find((x: any) => x.id === id)?.full_name || list.find((x: any) => x.id === id)?.title || list.find((x: any) => x.id === id)?.name || fallback
 }

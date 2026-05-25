@@ -14,7 +14,7 @@ export function ExceptionPanel({ exceptions }: { exceptions: AcademyException[] 
         <strong style={countStyle}>{exceptions.length}</strong>
       </div>
       <div style={{ display: 'grid', gap: 10 }}>
-        {exceptions.length ? exceptions.slice(0, 10).map((item) => (
+        {exceptions.length ? exceptions.slice(0, 10).map((item: any) => (
           <Link key={item.id} href={item.actionHref} style={exceptionStyle(item.severity)}>
             <div>
               <strong>{item.title}</strong>
@@ -39,7 +39,7 @@ export function CommandPanel({ commands }: { commands: AcademyCommand[] }) {
         </div>
       </div>
       <div style={{ display: 'grid', gap: 12 }}>
-        {commands.map((cmd) => (
+        {commands.map((cmd: any) => (
           <Link key={cmd.id} href={cmd.href} style={commandStyle(cmd.priority)}>
             <span style={priorityStyle(cmd.priority)}>{cmd.priority}</span>
             <div>
@@ -63,7 +63,7 @@ export function WorkflowTransitions({ entityId, currentStage }: { entityId: stri
         <span>{stageLabel(currentStage)}</span>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        {transitions.map((t) => (
+        {transitions.map((t: any) => (
           <Link key={`${entityId}-${t.action}-${t.to}`} href={`/academy/trainees?transition=${t.to}&trainee=${entityId}`} style={transitionStyle}>
             {t.label}
           </Link>

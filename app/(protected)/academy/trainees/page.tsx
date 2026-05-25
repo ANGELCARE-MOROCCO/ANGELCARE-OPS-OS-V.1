@@ -1190,7 +1190,7 @@ function NewTraineeDossierModal({
                   Course
                   <select name="course_id" defaultValue="" style={inputStyle()}>
                     <option value="">No course yet</option>
-                    {courses.map((c) => (
+                    {courses.map((c: any) => (
                       <option key={c.id} value={c.id}>
                         {c.title || c.id} {c.level ? `• ${c.level}` : ""}
                       </option>
@@ -1201,7 +1201,7 @@ function NewTraineeDossierModal({
                   Group
                   <select name="group_id" defaultValue="" style={inputStyle()}>
                     <option value="">No group yet</option>
-                    {groups.map((g) => (
+                    {groups.map((g: any) => (
                       <option key={g.id} value={g.id}>
                         {g.name || g.id} {g.status ? `• ${g.status}` : ""}
                       </option>
@@ -1252,7 +1252,7 @@ function NewTraineeDossierModal({
                     style={inputStyle()}
                   >
                     <option value="">No location yet</option>
-                    {locations.map((l) => (
+                    {locations.map((l: any) => (
                       <option key={l.id} value={l.id}>
                         {l.name || l.id} {l.city ? `• ${l.city}` : ""}
                       </option>
@@ -1267,7 +1267,7 @@ function NewTraineeDossierModal({
                     style={inputStyle()}
                   >
                     <option value="">No trainer yet</option>
-                    {trainers.map((t) => (
+                    {trainers.map((t: any) => (
                       <option key={t.id} value={t.id}>
                         {t.full_name || t.id}{" "}
                         {t.specialty ? `• ${t.specialty}` : ""}
@@ -1427,8 +1427,8 @@ function Sidebar() {
       </p>
       <nav style={{ display: "grid", gap: 6 }}>
         {sidebarItems
-          .filter((i) => i.group === "academy")
-          .map((item) => (
+          .filter((i: any) => i.group === "academy")
+          .map((item: any) => (
             <Link
               key={item.href}
               href={item.href}
@@ -1466,8 +1466,8 @@ function Sidebar() {
       </p>
       <nav style={{ display: "grid", gap: 6 }}>
         {sidebarItems
-          .filter((i) => i.group === "system")
-          .map((item) => (
+          .filter((i: any) => i.group === "system")
+          .map((item: any) => (
             <Link
               key={item.href}
               href={item.href}
@@ -1561,12 +1561,12 @@ function EditableTraineeDossierModal({
   const latestEnrollment = traineeEnrollments[0];
   const latestPayment = traineePayments[0];
   const paidTotal = traineePayments
-    .filter((p) =>
+    .filter((p: any) =>
       ["paid", "validated", "completed", "success"].includes(
         String(p.status || "").toLowerCase(),
       ),
     )
-    .reduce((sum, p) => sum + paymentAmount(p), 0);
+    .reduce((sum: any, p: any) => sum + paymentAmount(p), 0);
   const currentCourseId = String(
     latestEnrollment?.course_id || traineeMeta(trainee, "course_id") || "",
   );
@@ -2016,7 +2016,7 @@ function EditableTraineeDossierModal({
                     style={inputStyle()}
                   >
                     <option value="">No course yet</option>
-                    {courses.map((c) => (
+                    {courses.map((c: any) => (
                       <option key={c.id} value={c.id}>
                         {c.title || c.id} {c.level ? `• ${c.level}` : ""}
                       </option>
@@ -2031,7 +2031,7 @@ function EditableTraineeDossierModal({
                     style={inputStyle()}
                   >
                     <option value="">No group yet</option>
-                    {groups.map((g) => (
+                    {groups.map((g: any) => (
                       <option key={g.id} value={g.id}>
                         {g.name || g.id} {g.status ? `• ${g.status}` : ""}
                       </option>
@@ -2087,7 +2087,7 @@ function EditableTraineeDossierModal({
                     style={inputStyle()}
                   >
                     <option value="">No location yet</option>
-                    {locations.map((l) => (
+                    {locations.map((l: any) => (
                       <option key={l.id} value={l.id}>
                         {l.name || l.id} {l.city ? `• ${l.city}` : ""}
                       </option>
@@ -2102,7 +2102,7 @@ function EditableTraineeDossierModal({
                     style={inputStyle()}
                   >
                     <option value="">No trainer yet</option>
-                    {trainers.map((t) => (
+                    {trainers.map((t: any) => (
                       <option key={t.id} value={t.id}>
                         {t.full_name || t.id}{" "}
                         {t.specialty ? `• ${t.specialty}` : ""}
@@ -2319,24 +2319,24 @@ export default async function AcademyTraineesPage({
 
   const traineeIdsWithEnrollment = new Set(
     enrollments
-      .map((e) => e.trainee_id)
+      .map((e: any) => e.trainee_id)
       .filter(Boolean)
       .map(String),
   );
   const traineeIdsWithPayment = new Set(
     payments
-      .filter((p) =>
+      .filter((p: any) =>
         ["paid", "validated", "completed", "success"].includes(
           String(p.status || "").toLowerCase(),
         ),
       )
-      .map((p) => p.trainee_id)
+      .map((p: any) => p.trainee_id)
       .filter(Boolean)
       .map(String),
   );
   const traineeIdsWithCertificate = new Set(
     certificates
-      .map((c) => c.trainee_id)
+      .map((c: any) => c.trainee_id)
       .filter(Boolean)
       .map(String),
   );
@@ -2359,14 +2359,14 @@ export default async function AcademyTraineesPage({
     (t) => scoreOf(t) > 0 && scoreOf(t) < 55,
   ).length;
   const paidRevenue = payments
-    .filter((p) => traineeIdsWithPayment.has(String(p.trainee_id)))
-    .reduce((s, p) => s + paymentAmount(p), 0);
+    .filter((p: any) => traineeIdsWithPayment.has(String(p.trainee_id)))
+    .reduce((s: any, p: any) => s + paymentAmount(p), 0);
   const averageReadiness = trainees.length
-    ? Math.round(trainees.reduce((s, t) => s + scoreOf(t), 0) / trainees.length)
+    ? Math.round(trainees.reduce((s: any, t: any) => s + scoreOf(t), 0) / trainees.length)
     : 0;
   const recentTrainees = trainees.slice(0, 12);
   const selectedTrainee = openId
-    ? trainees.find((t) => String(t.id) === String(openId))
+    ? trainees.find((t: any) => String(t.id) === String(openId))
     : null;
 
   const lifecycle: [string, number, string, string][] = [
@@ -2486,7 +2486,7 @@ export default async function AcademyTraineesPage({
               }}
             >
               <h3 style={{ margin: 0, fontSize: 16 }}>Quick Actions ›</h3>
-              {quickActions.map((action) => (
+              {quickActions.map((action: any) => (
                 <Link
                   key={action.href}
                   href={action.href}
@@ -2598,7 +2598,7 @@ export default async function AcademyTraineesPage({
                 <Pill tone="blue">live</Pill>
               </div>
               <div style={{ marginTop: 22, display: "grid", gap: 15 }}>
-                {lifecycle.map((row) => (
+                {lifecycle.map((row: any) => (
                   <div
                     key={row[0]}
                     style={{
@@ -2719,7 +2719,7 @@ export default async function AcademyTraineesPage({
                   ],
                   [
                     "Attendance Sync",
-                    new Set(attendance.map((a) => a.trainee_id).filter(Boolean))
+                    new Set(attendance.map((a: any) => a.trainee_id).filter(Boolean))
                       .size,
                     "#355df6",
                     "academy_attendance",
@@ -2730,7 +2730,7 @@ export default async function AcademyTraineesPage({
                     "#f59e0b",
                     "academy_certificates",
                   ],
-                ].map((row) => (
+                ].map((row: any) => (
                   <div
                     key={row[0]}
                     style={{
@@ -2847,7 +2847,7 @@ export default async function AcademyTraineesPage({
                   <span style={{ padding: 14 }}>Action</span>
                 </div>
                 {recentTrainees.length ? (
-                  recentTrainees.map((t) => {
+                  recentTrainees.map((t: any) => {
                     const id = String(t.id);
                     const score = scoreOf(t);
                     const enrolled = traineeIdsWithEnrollment.has(id);
@@ -3062,7 +3062,7 @@ export default async function AcademyTraineesPage({
                     "#f59e0b",
                     "Validate completion evidence and certificate registry.",
                   ],
-                ].map((action) => (
+                ].map((action: any) => (
                   <Link
                     key={action[0]}
                     href={String(action[1])}
@@ -3206,7 +3206,7 @@ export default async function AcademyTraineesPage({
                   "📈",
                   "#64748b",
                 ],
-              ].map((layer) => (
+              ].map((layer: any) => (
                 <Link
                   key={String(layer[0])}
                   href={String(layer[2])}

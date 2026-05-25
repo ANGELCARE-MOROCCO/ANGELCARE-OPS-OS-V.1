@@ -1,0 +1,53 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getWorkSchedulesCommandData, getScheduleRange, dateKey } from '@/lib/hr-production/work-schedules-command'
+
+export const dynamic = 'force-dynamic'
+
+type Shift = Awaited<ReturnType<typeof getWorkSchedulesCommandData>>['shifts'][number]
+
+function val(form: FormData, key: string, fallback = '') {
+  const value = form.get(key)
+  return value == null ? fallback : String(value).trim()
+}
+function checked(form: FormData, key: string) { return form.get(key) === 'on' || form.get(key) === 'true' }
+function esc(value: any) { return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char)) }
+function nice(date: Date) { return date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) }
+function groupBy<T>(rows: T[], makeKey: (row: T) => string) { return rows.reduce<Record<string, T[]>>((acc, row) => { const key = makeKey(row) || 'Unassigned'; (acc[key] ||= []).push(row); return acc }, {}) }
+function duration(start: string, end: string) { const [sh, sm] = start.split(':').map(Number); const [eh, em] = end.split(':').map(Number); return Math.max(0, ((eh || 0) * 60 + (em || 0)) - ((sh || 0) * 60 + (sm || 0))) }
+function toneClass(status: string) { const s = String(status || '').toLowerCase(); if (s.includes('cover') || s.includes('pending')) return 'warn'; if (s.includes('cancel')) return 'danger'; if (s.includes('complete') || s.includes('confirm')) return 'ok'; return 'info' }
+function card(shift: Shift) { return `<div class="shift ${toneClass(shift.status)}"><b>${esc(shift.start)}–${esc(shift.end)}</b><span>${esc(shift.staffName || 'Unassigned')}</span><small>${esc(shift.shiftType)} · ${esc(shift.location || shift.department || 'Office')}</small></div>` }
+
+function dailyTemplate(days: Date[], shifts: Shift[], includeNotes: boolean) {
+  const day = days[0]
+  const rows = shifts.filter(s => s.date === dateKey(day)).sort((a,b)=>`${a.start}${a.staffName}`.localeCompare(`${b.start}${b.staffName}`))
+  return `<section class="board daily"><div class="section-title"><h2>Daily detailed roster</h2><p>${esc(nice(day))}</p></div><table><thead><tr><th>Time</th><th>Employee</th><th>Department</th><th>Location</th><th>Shift type</th><th>Status</th>${includeNotes ? '<th>Notes</th>' : ''}</tr></thead><tbody>${rows.map(s=>`<tr><td><b>${esc(s.start)}–${esc(s.end)}</b><br><small>${Math.round(duration(s.start,s.end)/60)}h</small></td><td>${esc(s.staffName || 'Unassigned')}</td><td>${esc(s.department)}</td><td>${esc(s.location)}</td><td>${esc(s.shiftType)}</td><td><span class="pill ${toneClass(s.status)}">${esc(s.status || 'planned')}</span></td>${includeNotes ? `<td>${esc(s.notes || '')}</td>` : ''}</tr>`).join('') || '<tr><td colspan="7">No shifts for this day.</td></tr>'}</tbody></table></section>`
+}
+function weeklyTemplate(days: Date[], shifts: Shift[]) {
+  const departments = groupBy(shifts, s => s.department || 'Operations')
+  return `<section class="board weekly"><div class="section-title"><h2>Weekly office board roster</h2><p>${esc(nice(days[0]))} → ${esc(nice(days[days.length - 1]))}</p></div>${Object.entries(departments).map(([dept, rows]) => `<div class="department-block"><h3>${esc(dept)}</h3><div class="week-grid"><div class="corner">Employee</div>${days.map(d=>`<div class="day-head">${esc(d.toLocaleDateString('en-GB',{weekday:'short'}))}<br><small>${esc(d.toLocaleDateString('en-GB',{day:'2-digit', month:'short'}))}</small></div>`).join('')}${Object.entries(groupBy(rows, s => s.staffName || 'Unassigned')).map(([name, staffRows]) => `<div class="staff-name">${esc(name)}</div>${days.map(d=>`<div class="cell">${staffRows.filter(s=>s.date===dateKey(d)).map(card).join('') || '<span class="empty">—</span>'}</div>`).join('')}`).join('')}</div></div>`).join('') || '<p>No shifts for this week.</p>'}</section>`
+}
+function monthlyTemplate(days: Date[], shifts: Shift[]) {
+  return `<section class="board monthly"><div class="section-title"><h2>Monthly roster calendar</h2><p>${esc(days[0].toLocaleDateString('en-GB',{month:'long', year:'numeric'}))}</p></div><div class="month-grid">${days.map(d=>{ const rows=shifts.filter(s=>s.date===dateKey(d)); return `<div class="month-cell"><div class="month-date">${esc(d.toLocaleDateString('en-GB',{day:'2-digit'}))}</div>${rows.slice(0,5).map(s=>`<div class="mini ${toneClass(s.status)}">${esc(s.start)} ${esc(s.staffName || 'Unassigned')}</div>`).join('')}${rows.length>5?`<small>+${rows.length-5} more</small>`:''}</div>` }).join('')}</div></section>`
+}
+
+export async function POST(request: NextRequest) {
+  const form = await request.formData()
+  const view = val(form, 'print_view', 'week')
+  const date = val(form, 'print_date', dateKey())
+  const includeEmployees = checked(form, 'include_employees')
+  const includeCoverage = checked(form, 'include_coverage')
+  const includeAlerts = checked(form, 'include_alerts')
+  const includeNotes = checked(form, 'include_notes') || true
+  const includeDaily = view === 'day' || checked(form, 'template_daily')
+  const includeWeekly = view === 'week' || checked(form, 'template_weekly')
+  const includeMonthly = view === 'month' || checked(form, 'template_monthly')
+  const data = await getWorkSchedulesCommandData({ date, view })
+  const range = getScheduleRange(date, view)
+  const shifts = data.shifts.filter((shift) => range.days.some((day) => shift.date === dateKey(day)))
+  const unassigned = shifts.filter(s => !s.staffName || String(s.staffName).toLowerCase().includes('unassigned')).length
+  const sections = [includeDaily ? dailyTemplate(range.days, shifts, includeNotes) : '', includeWeekly ? weeklyTemplate(range.days, shifts) : '', includeMonthly ? monthlyTemplate(range.days, shifts) : ''].join('')
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>AngelCare HR Roster Print</title><style>
+@page{size:A4 landscape;margin:9mm}*{box-sizing:border-box}body{font-family:Inter,Arial,sans-serif;color:#07111f;background:#fff;margin:0}.print-button{position:fixed;right:14px;top:14px;border:0;border-radius:999px;background:#7c3aed;color:#fff;padding:10px 16px;font-weight:900;z-index:20}.cover{border:2px solid #0f172a;border-radius:20px;padding:16px;margin-bottom:12px;background:linear-gradient(135deg,#f8fafc,#eef2ff)}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.brand{font-size:11px;font-weight:1000;letter-spacing:.22em;color:#6d28d9;text-transform:uppercase}.top h1{font-size:28px;line-height:1.1;margin:7px 0 4px}.top p{margin:0;color:#475569;font-size:12px;font-weight:700}.metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}.metric{border:1px solid #dbe4f0;border-radius:14px;background:white;padding:10px}.metric span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:#64748b;font-weight:900}.metric b{display:block;font-size:21px;margin-top:2px}.board{break-inside:avoid-page;margin-top:12px}.section-title{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0f172a;padding-bottom:8px;margin-bottom:8px}.section-title h2{font-size:18px;margin:0}.section-title p{margin:0;font-size:11px;font-weight:900;color:#475569}table{width:100%;border-collapse:collapse;font-size:10.5px}th{background:#0f172a;color:#fff;padding:7px;text-align:left;letter-spacing:.06em;text-transform:uppercase}td{border:1px solid #e2e8f0;padding:6px;vertical-align:top}.pill{display:inline-block;border-radius:999px;padding:4px 8px;font-weight:900;font-size:9px}.ok{background:#dcfce7!important;color:#166534!important;border-color:#86efac!important}.warn{background:#fef3c7!important;color:#92400e!important;border-color:#fcd34d!important}.danger{background:#ffe4e6!important;color:#9f1239!important;border-color:#fda4af!important}.info{background:#dbeafe!important;color:#1d4ed8!important;border-color:#93c5fd!important}.department-block{margin-bottom:12px}.department-block h3{font-size:13px;margin:0 0 6px;background:#f1f5f9;border-radius:12px;padding:7px}.week-grid{display:grid;grid-template-columns:150px repeat(7,1fr);border:1px solid #dbe4f0;border-radius:14px;overflow:hidden;font-size:9px}.corner,.day-head,.staff-name,.cell{border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;padding:6px}.corner,.day-head{background:#0f172a;color:white;font-weight:900;text-align:center}.staff-name{font-weight:900;background:#f8fafc}.cell{min-height:58px;background:white}.shift{border-left:4px solid currentColor;border-radius:8px;padding:5px;margin-bottom:4px}.shift b,.shift span,.shift small{display:block}.shift span{font-weight:900}.shift small{opacity:.72}.empty{color:#cbd5e1}.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.month-cell{border:1px solid #dbe4f0;border-radius:12px;min-height:92px;padding:7px;background:#fff}.month-date{font-weight:1000;color:#0f172a;margin-bottom:5px}.mini{border-radius:8px;padding:3px 5px;margin:3px 0;font-size:8.5px;font-weight:900}@media print{.print-button{display:none}.board{page-break-inside:avoid}}
+</style></head><body><button class="print-button" onclick="window.print()">Print / Save PDF</button><section class="cover"><div class="top"><div><div class="brand">AngelCare HR · Work Schedule Command</div><h1>${esc(view.toUpperCase())} roster board</h1><p>${esc(nice(range.days[0]))} → ${esc(nice(range.days[range.days.length - 1]))} · Africa/Casablanca · generated ${esc(new Date().toLocaleString())}</p></div><div><p><b>Office use:</b> A4 landscape board-ready roster</p><p><b>Source:</b> live HR roster assignments</p></div></div>${includeCoverage ? `<div class="metrics"><div class="metric"><span>Shifts</span><b>${data.metrics.totalShifts}</b></div><div class="metric"><span>Hours</span><b>${data.metrics.totalHours}h</b></div><div class="metric"><span>Coverage</span><b>${data.metrics.averageCoverage}%</b></div><div class="metric"><span>Health</span><b>${data.metrics.scheduleHealth}/100</b></div><div class="metric"><span>Unassigned</span><b>${unassigned}</b></div><div class="metric"><span>Employees</span><b>${includeEmployees ? data.employees.length : '—'}</b></div></div>` : ''}${includeAlerts ? `<p style="margin-top:10px;font-weight:900;color:#9f1239">Alerts: ${unassigned} unassigned shift(s), conflicts should be reviewed before posting.</p>` : ''}</section>${sections || '<p>No print template selected.</p>'}<script>setTimeout(()=>window.print(),300)</script></body></html>`
+  return new NextResponse(html, { headers: { 'content-type': 'text/html; charset=utf-8' } })
+}

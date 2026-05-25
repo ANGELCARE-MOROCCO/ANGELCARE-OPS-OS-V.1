@@ -14,7 +14,7 @@ export default async function AcademyIntegrationsPage() {
           <EnterpriseCard title="Ready" value={String(items.filter(i=>i.status==='ready').length)} subtitle="Can be activated with credentials/config only." />
           <EnterpriseCard title="Partial" value={String(items.filter(i=>i.status==='partial').length)} subtitle="Requires provider/config mapping." />
           <EnterpriseCard title="Blocked" value={String(items.filter(i=>i.status==='blocked').length)} subtitle="Requires missing design/data dependency." />
-          <EnterpriseCard title="Avg readiness" value={`${Math.round(items.reduce((s,i)=>s+i.readiness,0)/items.length)}%`} subtitle="Integration maturity score." />
+          <EnterpriseCard title="Avg readiness" value={`${Math.round(items.reduce((s: any,i: any)=>s+i.readiness,0)/items.length)}%`} subtitle="Integration maturity score." />
         </EnterpriseGrid>
         <EnterpriseTable rows={items.map(i => ({ Integration: i.label, Status: i.status, Readiness: `${i.readiness}%`, 'Next step': i.nextStep }))} />
       </div>

@@ -31,7 +31,7 @@ export default async function AcademyQualityPage() {
         <section style={panel}>
           <h2 style={h2}>Trainer Load Signals</h2>
           <div style={{ display: 'grid', gap: 10 }}>
-            {loads.length ? loads.map((load) => (
+            {loads.length ? loads.map((load: any) => (
               <div key={load.trainerId} style={row}>
                 <b>{load.trainerId === 'unassigned' ? 'Unassigned groups' : `Trainer ${load.trainerId}`}</b>
                 <span>{load.groupCount} group(s) · {load.risk}</span>

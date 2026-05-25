@@ -12,31 +12,8 @@ function getSupabase() {
 
 export async function GET() {
   const supabase = getSupabase()
-  if (!supabase) return NextResponse.json({ ok: true, live: false, partners: [], programs: [] })
-
-  const [partners, programs] = await Promise.all([
-    supabase.from("revenue_partners").select("*").order("updated_at", { ascending: false }).limit(500),
-    supabase.from("revenue_partnership_programs").select("*").order("updated_at", { ascending: false }).limit(500),
-  ])
-
-  return NextResponse.json({
-    ok: true,
-    live: true,
-    partners: partners.data || [],
-    programs: programs.data || [],
-    errors: [partners.error?.message, programs.error?.message].filter(Boolean),
-  })
-}
-
-export async function POST(req: Request) {
-  const supabase = getSupabase()
-  if (!supabase) return NextResponse.json({ ok: false, error: "Supabase env missing" }, { status: 500 })
-
-  const body = await req.json()
-  const table = body.table === "programs" ? "revenue_partnership_programs" : "revenue_partners"
-  const payload = { ...(body.record || {}), updated_at: new Date().toISOString() }
-
-  const { data, error } = await supabase.from(table).upsert(payload).select("*").single()
-  if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true, record: data })
+  if (!supabase) return NextResponse.json({ ok: false, live: false, records: [], error: "Supabase env missing" })
+  const { data, error } = await supabase.from("revenue_partnerships").select("*").limit(500)
+  if (error) return NextResponse.json({ ok: false, live: true, records: [], error: error.message })
+  return NextResponse.json({ ok: true, live: true, records: data || [] })
 }

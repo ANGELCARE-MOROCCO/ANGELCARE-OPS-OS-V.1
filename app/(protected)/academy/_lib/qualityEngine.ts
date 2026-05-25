@@ -9,9 +9,9 @@ export function calculateAttendanceQuality(logs: any[] = []): QualityScore {
   if (!logs.length) {
     return { label: 'No data', score: 0, risk: 'high', recommendation: 'Start attendance tracking immediately.' }
   }
-  const present = logs.filter((l) => l.status === 'present').length
-  const late = logs.filter((l) => l.status === 'late').length
-  const absent = logs.filter((l) => l.status === 'absent').length
+  const present = logs.filter((l: any) => l.status === 'present').length
+  const late = logs.filter((l: any) => l.status === 'late').length
+  const absent = logs.filter((l: any) => l.status === 'absent').length
   const score = Math.max(0, Math.round((present / logs.length) * 100 - late * 4 - absent * 12))
   return {
     label: score >= 85 ? 'Strong delivery discipline' : score >= 65 ? 'Monitor closely' : 'Critical retention risk',

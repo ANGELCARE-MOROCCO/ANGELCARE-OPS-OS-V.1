@@ -792,10 +792,10 @@ export default function CentralRevenueCoreDashboard() {
             href="/revenue-command-center/executive-briefing"
           >
             <div className="space-y-3">
-              {alerts.map((a) => (
+              {alerts.map((a, index) => (
                 <Link
                   href={a.href}
-                  key={`${a.href}-${a.title}`}
+                  key={`${a.href}-${a.title}-${index}`}
                   className="block rounded-2xl border border-red-400/20 bg-red-500/15 p-4 hover:bg-red-500/20"
                 >
                   <div className="flex gap-2 text-sm font-black text-red-100">

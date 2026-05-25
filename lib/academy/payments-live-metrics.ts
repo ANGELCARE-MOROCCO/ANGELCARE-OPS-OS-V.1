@@ -94,7 +94,7 @@ function dayLabel(key: string): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 function byId(rows: AnyRow[], rowId: unknown): AnyRow | undefined {
-  return rows.find((r) => id(r.id) === id(rowId))
+  return rows.find((r: any) => id(r.id) === id(rowId))
 }
 function pct(part: number, total: number): number {
   return total > 0 ? Math.round((part / total) * 1000) / 10 : 0
@@ -140,19 +140,19 @@ function emailOf(row: AnyRow | undefined): string {
 }
 function groupTotals<T extends PaymentMetricRow>(rows: T[], getLabel: (row: T) => string): MetricSlice[] {
   const map = new Map<string, { value: number; amount: number }>()
-  rows.forEach((row) => {
+  rows.forEach((row: any) => {
     const label = getLabel(row) || 'Unassigned'
     const current = map.get(label) || { value: 0, amount: 0 }
     current.value += 1
     current.amount += row.amount
     map.set(label, current)
   })
-  const total = Array.from(map.values()).reduce((sum, item) => sum + item.amount, 0)
-  return Array.from(map.entries()).map(([label, item]) => ({ label, value: item.value, amount: item.amount, percent: pct(item.amount, total) })).sort((a, b) => b.amount - a.amount)
+  const total = Array.from(map.values()).reduce((sum: any, item: any) => sum + item.amount, 0)
+  return Array.from(map.entries()).map(([label, item]) => ({ label, value: item.value, amount: item.amount, percent: pct(item.amount, total) })).sort((a: any, b: any) => b.amount - a.amount)
 }
 function statusTotals(rows: PaymentMetricRow[]): MetricSlice[] {
   const map = new Map<string, { value: number; amount: number }>()
-  rows.forEach((row) => {
+  rows.forEach((row: any) => {
     const label = row.status
     const current = map.get(label) || { value: 0, amount: 0 }
     current.value += 1
@@ -160,7 +160,7 @@ function statusTotals(rows: PaymentMetricRow[]): MetricSlice[] {
     map.set(label, current)
   })
   const total = rows.length
-  return Array.from(map.entries()).map(([label, item]) => ({ label, value: item.value, amount: item.amount, percent: pct(item.value, total) })).sort((a, b) => b.value - a.value)
+  return Array.from(map.entries()).map(([label, item]) => ({ label, value: item.value, amount: item.amount, percent: pct(item.value, total) })).sort((a: any, b: any) => b.value - a.value)
 }
 function timeSeries(rows: { date: string; amount: number }[], days = 14): MetricPoint[] {
   const today = new Date()
@@ -170,16 +170,16 @@ function timeSeries(rows: { date: string; amount: number }[], days = 14): Metric
     d.setDate(today.getDate() - i)
     keys.push(d.toISOString().slice(0, 10))
   }
-  const map = new Map(keys.map((key) => [key, 0]))
-  rows.forEach((row) => {
+  const map = new Map(keys.map((key: any) => [key, 0]))
+  rows.forEach((row: any) => {
     const key = dateKey(row.date)
     if (map.has(key)) map.set(key, (map.get(key) || 0) + row.amount)
   })
-  return keys.map((key) => ({ label: dayLabel(key), value: Math.round((map.get(key) || 0) * 100) / 100 }))
+  return keys.map((key: any) => ({ label: dayLabel(key), value: Math.round((map.get(key) || 0) * 100) / 100 }))
 }
 function refundRowsFromPayments(payments: PaymentMetricRow[], refunds: AnyRow[], trainees: AnyRow[], enrollments: AnyRow[], courses: AnyRow[], groups: AnyRow[], locations: AnyRow[]): RefundMetricRow[] {
-  const explicit = refunds.map((r) => {
-    const payment = payments.find((p) => id(p.raw.id) === id(r.payment_id))
+  const explicit = refunds.map((r: any) => {
+    const payment = payments.find((p: any) => id(p.raw.id) === id(r.payment_id))
     const fake: AnyRow = payment?.raw || r
     const trainee = traineeFor(fake, trainees)
     const course = courseFor(fake, enrollments, courses)
@@ -209,12 +209,12 @@ function refundRowsFromPayments(payments: PaymentMetricRow[], refunds: AnyRow[],
       processingDays: days,
     }
   })
-  const paymentRefunds = payments.filter((p) => p.status === 'refunded' && !explicit.some((r) => id(r.id) === id(p.id))).map((p) => ({ ...p, refundId: p.id, refundReason: s(p.raw.refund_reason, 'Payment refunded'), requestedAt: p.date, processedAt: s(p.raw.updated_at ?? p.raw.paid_at ?? p.date), processingDays: 0 }))
-  return [...explicit, ...paymentRefunds].sort((a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime())
+  const paymentRefunds = payments.filter((p: any) => p.status === 'refunded' && !explicit.some((r: any) => id(r.id) === id(p.id))).map((p: any) => ({ ...p, refundId: p.id, refundReason: s(p.raw.refund_reason, 'Payment refunded'), requestedAt: p.date, processedAt: s(p.raw.updated_at ?? p.raw.paid_at ?? p.date), processingDays: 0 }))
+  return [...explicit, ...paymentRefunds].sort((a: any, b: any) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime())
 }
 function invoiceRows(invoices: AnyRow[], payments: PaymentMetricRow[], trainees: AnyRow[], enrollments: AnyRow[], courses: AnyRow[]): InvoiceMetricRow[] {
   if (invoices.length) {
-    return invoices.map((inv) => {
+    return invoices.map((inv: any) => {
       const t = byId(trainees, inv.trainee_id)
       const e = byId(enrollments, inv.enrollment_id)
       const c = byId(courses, inv.course_id ?? e?.course_id)
@@ -229,9 +229,9 @@ function invoiceRows(invoices: AnyRow[], payments: PaymentMetricRow[], trainees:
         issuedAt: s(inv.issued_at ?? inv.created_at, ''),
         raw: inv,
       }
-    }).sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
+    }).sort((a: any, b: any) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
   }
-  return payments.map((p) => ({ id: p.id, invoiceNumber: `INV-${p.reference.replace(/[^0-9A-Za-z]/g, '').slice(-8) || p.id.slice(0, 8)}`, traineeName: p.traineeName, courseName: p.courseName, amount: p.amount, status: p.status === 'completed' ? 'paid' : p.status, dueDate: p.date, issuedAt: p.date, raw: p.raw }))
+  return payments.map((p: any) => ({ id: p.id, invoiceNumber: `INV-${p.reference.replace(/[^0-9A-Za-z]/g, '').slice(-8) || p.id.slice(0, 8)}`, traineeName: p.traineeName, courseName: p.courseName, amount: p.amount, status: p.status === 'completed' ? 'paid' : p.status, dueDate: p.date, issuedAt: p.date, raw: p.raw }))
 }
 
 export function buildAcademyPaymentsMetrics(input: {
@@ -251,7 +251,7 @@ export function buildAcademyPaymentsMetrics(input: {
   const groups = input.groups || []
   const locations = input.locations || []
 
-  const paymentRows: PaymentMetricRow[] = paymentsRaw.map((p) => {
+  const paymentRows: PaymentMetricRow[] = paymentsRaw.map((p: any) => {
     const trainee = traineeFor(p, trainees)
     const course = courseFor(p, enrollments, courses)
     const group = groupFor(p, enrollments, groups)
@@ -271,19 +271,19 @@ export function buildAcademyPaymentsMetrics(input: {
       date: firstDate(p),
       raw: p,
     }
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }).sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-  const completed = paymentRows.filter((p) => p.status === 'completed')
-  const pending = paymentRows.filter((p) => p.status === 'pending')
-  const refunded = paymentRows.filter((p) => p.status === 'refunded')
-  const failed = paymentRows.filter((p) => p.status === 'failed')
-  const totalRevenue = completed.reduce((sum, p) => sum + p.amount, 0)
-  const pendingAmount = pending.reduce((sum, p) => sum + p.amount, 0)
+  const completed = paymentRows.filter((p: any) => p.status === 'completed')
+  const pending = paymentRows.filter((p: any) => p.status === 'pending')
+  const refunded = paymentRows.filter((p: any) => p.status === 'refunded')
+  const failed = paymentRows.filter((p: any) => p.status === 'failed')
+  const totalRevenue = completed.reduce((sum: any, p: any) => sum + p.amount, 0)
+  const pendingAmount = pending.reduce((sum: any, p: any) => sum + p.amount, 0)
 
   const refunds = refundRowsFromPayments(paymentRows, input.refunds || [], trainees, enrollments, courses, groups, locations)
   const invoices = invoiceRows(input.invoices || [], paymentRows, trainees, enrollments, courses)
-  const invoiceTotal = invoices.reduce((sum, inv) => sum + inv.amount, 0)
-  const invoicePaid = invoices.filter((inv) => ['paid', 'completed', 'validated'].includes(inv.status)).reduce((sum, inv) => sum + inv.amount, 0)
+  const invoiceTotal = invoices.reduce((sum: any, inv: any) => sum + inv.amount, 0)
+  const invoicePaid = invoices.filter((inv: any) => ['paid', 'completed', 'validated'].includes(inv.status)).reduce((sum: any, inv: any) => sum + inv.amount, 0)
 
   return {
     kpis: {
@@ -292,20 +292,20 @@ export function buildAcademyPaymentsMetrics(input: {
       successfulPayments: completed.length,
       pendingPayments: pending.length,
       refundedPayments: refunds.length || refunded.length,
-      refundedAmount: refunds.reduce((sum, r) => sum + r.amount, 0) || refunded.reduce((sum, p) => sum + p.amount, 0),
+      refundedAmount: refunds.reduce((sum: any, r: any) => sum + r.amount, 0) || refunded.reduce((sum: any, p: any) => sum + p.amount, 0),
       failedPayments: failed.length,
       successRate: pct(completed.length, paymentRows.length),
       averageOrderValue: completed.length ? totalRevenue / completed.length : 0,
       pendingAmount,
       invoiceTotal,
       invoicePaid,
-      invoicePending: invoices.filter((inv) => !['paid', 'completed', 'validated'].includes(inv.status)).length,
+      invoicePending: invoices.filter((inv: any) => !['paid', 'completed', 'validated'].includes(inv.status)).length,
     },
     paymentRows,
     refundRows: refunds,
     invoiceRows: invoices,
-    paymentTrend: timeSeries(completed.map((p) => ({ date: p.date, amount: p.amount })), 14),
-    refundTrend: timeSeries(refunds.map((r) => ({ date: r.requestedAt, amount: r.amount })), 14),
+    paymentTrend: timeSeries(completed.map((p: any) => ({ date: p.date, amount: p.amount })), 14),
+    refundTrend: timeSeries(refunds.map((r: any) => ({ date: r.requestedAt, amount: r.amount })), 14),
     statusDistribution: statusTotals(paymentRows),
     methodDistribution: groupTotals(paymentRows, (row) => row.method),
     courseRevenue: groupTotals(paymentRows, (row) => row.courseName),
@@ -317,7 +317,7 @@ export function buildAcademyPaymentsMetrics(input: {
     invoiceStatus: (() => {
       const total = invoices.length
       const map = new Map<string, { value: number; amount: number }>()
-      invoices.forEach((inv) => {
+      invoices.forEach((inv: any) => {
         const cur = map.get(inv.status) || { value: 0, amount: 0 }
         cur.value += 1
         cur.amount += inv.amount

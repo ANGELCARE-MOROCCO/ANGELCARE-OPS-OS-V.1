@@ -257,21 +257,21 @@ export function AcademyAgentSuite({ moduleKey, data }: { moduleKey: string; data
       </div>
 
       <div style={kpiGrid}>
-        {cfg.indicators.map((x) => <div key={x.label} style={{ ...metric, borderLeftColor: x.tone }}><span>{x.label}</span><strong>{x.value(data)}</strong><small>{x.sub}</small></div>)}
+        {cfg.indicators.map((x: any) => <div key={x.label} style={{ ...metric, borderLeftColor: x.tone }}><span>{x.label}</span><strong>{x.value(data)}</strong><small>{x.sub}</small></div>)}
       </div>
 
       <div style={grid}>
         <div style={panel}>
           <h3 style={h3}>Agent tools</h3>
-          <div style={toolGrid}>{cfg.tools.map((t) => <Link key={`${t.href}-${t.label}`} href={t.href} style={{ ...tool, background: t.tone }}>{t.label} →</Link>)}</div>
+          <div style={toolGrid}>{cfg.tools.map((t: any) => <Link key={`${t.href}-${t.label}`} href={t.href} style={{ ...tool, background: t.tone }}>{t.label} →</Link>)}</div>
         </div>
         <div style={panel}>
           <h3 style={h3}>Control points</h3>
-          <div style={chips}>{cfg.controls.map((c) => <span key={c} style={chip}>{c}</span>)}</div>
+          <div style={chips}>{cfg.controls.map((c: any) => <span key={c} style={chip}>{c}</span>)}</div>
         </div>
         <div style={panel}>
           <h3 style={h3}>Exception radar</h3>
-          <ul style={list}>{cfg.risks.map((r) => <li key={r}>{r}</li>)}</ul>
+          <ul style={list}>{cfg.risks.map((r: any) => <li key={r}>{r}</li>)}</ul>
         </div>
       </div>
 

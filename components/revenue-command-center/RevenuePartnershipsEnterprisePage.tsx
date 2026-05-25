@@ -4,16 +4,15 @@ import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { Activity, ArrowRight, BarChart3, Bot, BriefcaseBusiness, Building2, CalendarDays, CircleDot, FileSignature, Handshake, HeartHandshake, MapPin, Megaphone, Network, Plus, RefreshCcw, Search, ShieldCheck, Sparkles, Stethoscope, Target, UsersRound, X } from "lucide-react"
 import { RevenueCommandCenterSidebar } from "./RevenueCommandCenterSidebar"
 import PartnershipProgramsWorkspace from "./PartnershipProgramsWorkspace"
+import PartnersDirectoryWorkspace from "./PartnersDirectoryWorkspace"
 
 type Partner = Record<string, any>
-type WorkspaceKey = "overview" | "partners" | "pipeline" | "deals" | "programs" | "contracts" | "performance" | "coMarketing" | "territories" | "academy" | "corporate" | "referrals" | "events" | "compliance" | "activities"
+type WorkspaceKey = "overview" | "partners" | "programs"
 
 const tabs: { key: WorkspaceKey; label: string; icon: any }[] = [
-  { key: "overview", label: "Overview", icon: Sparkles }, { key: "partners", label: "Partners", icon: Handshake }, { key: "pipeline", label: "Pipeline", icon: Target },
-  { key: "deals", label: "Deal Rooms", icon: BriefcaseBusiness }, { key: "programs", label: "Programs", icon: UsersRound }, { key: "contracts", label: "Contracts", icon: FileSignature },
-  { key: "performance", label: "Performance", icon: BarChart3 }, { key: "coMarketing", label: "Co-Marketing", icon: Megaphone }, { key: "territories", label: "Territories", icon: MapPin },
-  { key: "academy", label: "Academy Alliances", icon: ShieldCheck }, { key: "corporate", label: "Corporate Benefits", icon: Building2 }, { key: "referrals", label: "Referral Networks", icon: Network },
-  { key: "events", label: "Events & Excursions", icon: CalendarDays }, { key: "compliance", label: "Compliance", icon: ShieldCheck }, { key: "activities", label: "Activities", icon: Activity },
+  { key: "overview", label: "Overview", icon: Sparkles },
+  { key: "partners", label: "Partners", icon: Handshake },
+  { key: "programs", label: "Programs", icon: UsersRound },
 ]
 
 const categories = [
@@ -48,12 +47,12 @@ export default function RevenuePartnershipsEnterprisePage() {
   async function load() {
     try {
       const [partnershipsRes, programsRes] = await Promise.all([
-        fetch("/api/revenue-command-center/partnerships", { cache: "no-store" }),
+        fetch("/api/revenue-command-center/partnerships/enterprise", { cache: "no-store" }),
         fetch("/api/revenue-command-center/partnership-programs", { cache: "no-store" }),
       ])
       const partnershipsJson = await partnershipsRes.json()
       const programsJson = await programsRes.json()
-      setPartners(Array.isArray(partnershipsJson.records) ? partnershipsJson.records : [])
+      setPartners(Array.isArray(partnershipsJson.partners) ? partnershipsJson.partners : Array.isArray(partnershipsJson.records) ? partnershipsJson.records : [])
       setPrograms(Array.isArray(programsJson.records) ? programsJson.records : [])
     } catch {
       setPartners([])
@@ -77,7 +76,7 @@ export default function RevenuePartnershipsEnterprisePage() {
       </header>
 
       <section className="w-full space-y-8 px-8 py-8 text-white">
-        {active === "programs" ? <PartnershipProgramsWorkspace livePrograms={programs} /> : <>
+        {active === "partners" ? <PartnersDirectoryWorkspace partners={partners} programs={programs} onClose={() => setActive("overview")} onRefresh={load} /> : active === "programs" ? <PartnershipProgramsWorkspace livePrograms={programs} /> : <>
           <section className="relative w-full overflow-hidden rounded-[42px] border border-white/15 bg-[radial-gradient(circle_at_15%_10%,rgba(124,58,237,.30),transparent_32%),linear-gradient(135deg,rgba(16,27,49,.98),rgba(20,12,54,.96))] p-9 text-white shadow-[0_30px_110px_rgba(0,0,0,.38)]"><div className="grid gap-8 2xl:grid-cols-[1fr_420px]"><div><div className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-500/15 px-5 py-2 text-xs font-black uppercase tracking-[.22em] text-white">Live Supabase • No demo rows • B2B domination layer</div><h2 className="mt-6 max-w-5xl text-[56px] font-black leading-[0.95] tracking-[-.06em] text-white">AngelCare Partnerships Executive Workspace</h2><p className="mt-6 max-w-5xl text-lg font-bold leading-9 text-white">Control preschools, kindergartens, maternity clinics, orthophonistes, hotels, corporates, associations, academy alliances, referrals and territorial expansion from one structured command layer.</p><div className="mt-8 flex flex-wrap gap-3"><Button active onClick={() => setModal("Create strategic partner")}>Create strategic partner</Button><Button onClick={() => setModal("Launch territory sprint")}>Launch territory sprint</Button><Button onClick={() => setActive("programs")}>Open Programs Workspace <ArrowRight className="h-4 w-4 text-white" /></Button></div></div><div className="grid gap-4">{[["Live network", stats.total, "partners connected"],["Action fabric", stats.progress, "open movements"],["Priority target", "Rabat–Temara", "Preschools & Kindergartens"]].map(([a,b,c])=><div key={String(a)} className="rounded-[28px] border border-white/15 bg-[#071122]/75 p-6 text-white"><p className="text-xs font-black uppercase tracking-[.22em] text-white">{a}</p><p className="mt-3 text-4xl font-black tracking-[-.05em] text-white">{b}</p><p className="mt-1 text-sm font-bold text-white">{c}</p></div>)}</div></div></section>
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-6"><Kpi icon={UsersRound} title="Total Partnerships" value={stats.total} note="live network" /><Kpi icon={Handshake} title="Active Partnerships" value={stats.active} note="activation ready" /><Kpi icon={BriefcaseBusiness} title="Pipeline Value" value={money(stats.pipeline)} note="weighted value" /><Kpi icon={Target} title="In Progress" value={stats.progress} note="open movement" /><Kpi icon={CalendarDays} title="Programs" value={programs.length || 24} note="open workspace" /><Kpi icon={ShieldCheck} title="Impact Score" value="0/10" note="partner health" /></div>
           <div className="grid gap-8 xl:grid-cols-[1fr_1.1fr_1.3fr]">

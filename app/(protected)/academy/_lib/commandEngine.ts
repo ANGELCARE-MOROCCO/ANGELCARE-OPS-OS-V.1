@@ -12,11 +12,11 @@ export type AcademyCommand = {
 
 export function buildManagerCommands(exceptions: AcademyException[], snapshot: any = {}): AcademyCommand[] {
   const commands: AcademyCommand[] = [];
-  const critical = exceptions.filter((e) => e.severity === 'critical');
-  const payment = exceptions.find((e) => e.type === 'payment');
-  const eligibility = exceptions.find((e) => e.type === 'eligibility');
-  const attendance = exceptions.find((e) => e.type === 'attendance');
-  const certificate = exceptions.find((e) => e.type === 'certificate');
+  const critical = exceptions.filter((e: any) => e.severity === 'critical');
+  const payment = exceptions.find((e: any) => e.type === 'payment');
+  const eligibility = exceptions.find((e: any) => e.type === 'eligibility');
+  const attendance = exceptions.find((e: any) => e.type === 'attendance');
+  const certificate = exceptions.find((e: any) => e.type === 'certificate');
 
   if (critical.length) {
     commands.push({

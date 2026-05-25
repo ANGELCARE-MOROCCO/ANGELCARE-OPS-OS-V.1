@@ -1,30 +1,26 @@
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
-
-const memoryNotifications: any[] = []
+import { createNotification, getNotifications } from '@/lib/connect/connect-repository'
 
 export async function GET() {
-  const user = await getCurrentAppUser()
-  if (!user?.id) return NextResponse.json({ notifications: [] }, { status: 401 })
-  const userId = String((user as any).id)
-  return NextResponse.json({ notifications: memoryNotifications.filter((n) => n.user_id === userId || n.audience === 'all') })
+  try {
+    const user = await getCurrentAppUser()
+    if (!user?.id) return NextResponse.json({ notifications: [], error: 'Unauthorized' }, { status: 401 })
+    const notifications = await getNotifications(user as any)
+    return NextResponse.json({ notifications })
+  } catch (error) {
+    return NextResponse.json({ notifications: [], error: error instanceof Error ? error.message : 'Load Connect notifications failed' }, { status: 500 })
+  }
 }
 
 export async function POST(req: Request) {
-  const user = await getCurrentAppUser()
-  if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const body = await req.json()
-  const notification = {
-    id: crypto.randomUUID(),
-    user_id: body.user_id || null,
-    audience: body.audience || 'selected',
-    title: String(body.title || 'Connect notification'),
-    body: String(body.body || ''),
-    priority: body.priority || 'normal',
-    read: false,
-    created_by: String((user as any).id),
-    created_at: new Date().toISOString(),
+  try {
+    const user = await getCurrentAppUser()
+    if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const notification = await createNotification(user as any, await req.json())
+    return NextResponse.json({ notification })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Create Connect notification failed'
+    return NextResponse.json({ error: message }, { status: message.toLowerCase().includes('restricted') ? 403 : 500 })
   }
-  memoryNotifications.push(notification)
-  return NextResponse.json({ notification })
 }
