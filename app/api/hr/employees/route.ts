@@ -265,15 +265,26 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const url = new URL(request.url)
-    const id = clean(url.searchParams.get('id')) as string | null
-    const email = clean(url.searchParams.get('email')) as string | null
+    const body = await request.json().catch(() => ({}))
+    const id = clean(body.id) || clean(url.searchParams.get('id')) as string | null
+    const email = clean(body.email) || clean(url.searchParams.get('email')) as string | null
+    const hardDelete = body.confirm_hard_delete === true
     if (!id && !email) return NextResponse.json({ ok: false, error: 'Missing employee id or email.' }, { status: 400 })
     const supabase = await createClient()
     const before = id || email ? { id, email } : null
+
+    if (!hardDelete) {
+      const archiveRow = { employment_status: 'Archived', status: 'archived', archived_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+      const result = await updateWithFallback(supabase, id, email, archiveRow)
+      if (!result.data) return NextResponse.json({ ok: false, error: 'Could not safely archive employee in known staff tables.', details: result.errors }, { status: 500 })
+      await logActivity(supabase, result.data, 'employee_archived', `Employee ${email || id} was safely archived from the Employees Command Center.`)
+      return NextResponse.json({ ok: true, mode: 'safe_archive', employee: result.data, table: result.table, warnings: result.errors })
+    }
+
     const result = await deleteFromKnownTables(supabase, id, email)
-    await logActivity(supabase, before, 'employee_deleted', `Employee ${email || id} was deleted from the Employees Command Center.`)
-    return NextResponse.json({ ok: true, deleted: result.deleted, warnings: result.errors })
+    await logActivity(supabase, before, 'employee_hard_deleted', `Employee ${email || id} was hard-deleted after explicit confirmation.`)
+    return NextResponse.json({ ok: true, mode: 'hard_delete', deleted: result.deleted, warnings: result.errors })
   } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err?.message || 'Employee delete failed' }, { status: 500 })
+    return NextResponse.json({ ok: false, error: err?.message || 'Employee archive/delete failed' }, { status: 500 })
   }
 }

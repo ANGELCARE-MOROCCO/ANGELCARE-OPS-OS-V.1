@@ -23,6 +23,7 @@ import {
   UserCheck,
   Workflow,
 } from 'lucide-react'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 import {
   approveAttendanceAction,
   createAttendanceAction,
@@ -39,18 +40,13 @@ const navGroups = [
     label: 'OVERVIEW',
     items: [
       { label: 'Dashboard', href: '/hr', icon: Home },
-      { label: 'Analytics', href: '/hr/analytics', icon: BarChart3 },
-      { label: 'Reports', href: '/hr/reports', icon: FileText },
-      { label: 'Alerts', href: '/hr/alerts', icon: Bell },
     ],
   },
   {
     label: 'PEOPLE',
     items: [
       { label: 'Employees', href: '/hr/employees', icon: Users },
-      { label: 'Organization', href: '/hr/organization', icon: Network },
       { label: 'Teams & Departments', href: '/hr/departments', icon: Building2 },
-      { label: 'Positions & Roles', href: '/hr/positions', icon: BriefcaseBusiness },
       { label: 'Recruitment', href: '/hr/recruitment', icon: UserCheck },
       { label: 'Onboarding', href: '/hr/onboarding', icon: CalendarCheck },
       { label: 'Performance', href: '/hr/performance-matrix', icon: Gauge },
@@ -61,16 +57,14 @@ const navGroups = [
     label: 'OPERATIONS',
     items: [
       { label: 'Attendance', href: '/hr/attendance', icon: CalendarCheck },
-      { label: 'Leave Management', href: '/hr/leave', icon: Clock3 },
+      { label: 'Leave Management', href: '/hr/approvals', icon: Clock3 },
       { label: 'Work Schedules', href: '/hr/work-schedules', icon: Workflow },
-      { label: 'Time Tracking', href: '/hr/time-tracking', icon: ActivityIcon },
-      { label: 'Overtime & Approvals', href: '/hr/overtime-approvals', icon: CheckCircle2 },
+      { label: 'Time Tracking', href: '/hr/workforce-ops', icon: ActivityIcon },
     ],
   },
   {
     label: 'COMPLIANCE & DOCUMENTS',
     items: [
-      { label: 'Policies & Procedures', href: '/hr/policies', icon: ShieldCheck },
       { label: 'Documents', href: '/hr/documents', icon: FolderKanban },
       { label: 'Compliance Dashboard', href: '/hr/compliance', icon: AlertTriangle },
     ],
@@ -78,9 +72,8 @@ const navGroups = [
   {
     label: 'SYSTEM',
     items: [
-      { label: 'Integrations', href: '/hr/integrations', icon: Sparkles },
+      { label: 'Integrations', href: '/hr/sync-center', icon: Sparkles },
       { label: 'Settings', href: '/hr/settings', icon: Settings },
-      { label: 'Access & Permissions', href: '/hr/access', icon: ShieldAlert },
     ],
   },
 ]
@@ -339,6 +332,8 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
               </div>
               <div className="mt-4 flex flex-wrap gap-2">{['command','live','exceptions','payroll','sites','quality'].map(v => <Link key={v} href={`/hr/attendance?date=${selectedDate}&view=${v}`} className={`rounded-2xl px-4 py-2 text-sm font-black capitalize ${view === v ? 'bg-violet-600 text-white shadow-lg shadow-violet-200' : 'bg-slate-100 text-slate-600 hover:bg-white'}`}>{v}</Link>)}</div>
             </div>
+
+            <HRRealtimeSyncPanel domain="attendance" title="Attendance realtime sync" compact />
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
               <Metric label="Records" value={records.length} sub="Synced attendance rows" icon="▤" />

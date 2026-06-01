@@ -1,115 +1,177 @@
 import { NextResponse } from "next/server"
+import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
+import { sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 
-type WorkerResult = {
-  id?: string
-  outboxId?: string
-  ok?: boolean
-  messageId?: string
-  error?: string
+function clean(value: any) {
+  return typeof value === "string" ? value.trim() : ""
+}
+
+async function resolveMailboxEmailFromDb(db: any, mailboxId: string) {
+  if (!mailboxId) return ""
+
+  try {
+    const { data } = await db
+      .from("email_os_core_mailboxes")
+      .select("*")
+      .eq("id", mailboxId)
+      .maybeSingle()
+
+    return (
+      data?.email_address ||
+      data?.address ||
+      data?.email ||
+      data?.from_email ||
+      data?.username ||
+      ""
+    )
+  } catch {
+    return ""
+  }
 }
 
 export async function POST(request: Request) {
+  let outboxId = ""
+  let db: any = null
+
   try {
-    const payload = await request.json().catch(() => ({}))
-    const url = new URL(request.url)
-    const origin = `${url.protocol}//${url.host}`
+    const body = await request.json().catch(() => ({}))
 
-    const sendResponse = await fetch(`${origin}/api/email-os/send`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    const mailboxId = clean(body.mailboxId || body.mailbox_id)
+    const toEmail = clean(body.toEmail || body.to_email)
+    const ccEmail = clean(body.ccEmail || body.cc_email)
+    const bccEmail = clean(body.bccEmail || body.bcc_email)
+    const subject = clean(body.subject) || "(Sans objet)"
+    const messageBody = clean(body.body || body.message)
+    const priority = clean(body.priority) || "normal"
+
+    if (!toEmail) {
+      return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
+    }
+
+    db = createEmailOSCoreDb()
+
+    const dbMailboxEmail = await resolveMailboxEmailFromDb(db, mailboxId)
+    const requestedFrom = clean(body.fromEmail || body.from_email) || dbMailboxEmail
+    const now = nowIso()
+    outboxId = makeEmailOSId()
+
+    await db.from("email_os_core_outbox").insert({
+      id: outboxId,
+      mailbox_id: mailboxId || null,
+      to_email: toEmail,
+      cc_email: ccEmail || null,
+      bcc_email: bccEmail || null,
+      subject,
+      body: messageBody,
+      status: "sending",
+      provider_message_id: null,
+      created_at: now,
+      updated_at: now,
+      sent_at: null,
+      priority,
+      template_key: body.templateKey || body.template_key || null,
+      diagnostics: {
+        ...(body.diagnostics || {}),
+        requestedMailboxId: mailboxId,
+        requestedFrom,
+        route: "send-direct",
+        transport: "central-send-mail"
+      },
+      queue_id: null,
+      from_email: requestedFrom || null,
+      last_error: null
+    }).then(() => null, () => null)
+
+    const { identity, info } = await sendEmailOSDirect({
+      mailboxId,
+      fromEmail: requestedFrom,
+      toEmail,
+      ccEmail,
+      bccEmail,
+      subject,
+      body: messageBody
     })
 
-    const sendJson = await sendResponse.json().catch(() => null)
+    const sentAt = nowIso()
 
-    if (!sendResponse.ok || sendJson?.ok === false) {
-      return NextResponse.json(
-        {
-          ok: false,
-          stage: "queue",
-          status: "failed",
-          error: sendJson?.error || `Send API failed with HTTP ${sendResponse.status}`,
-          send: sendJson
+    await db
+      .from("email_os_core_outbox")
+      .update({
+        mailbox_id: identity.mailboxId,
+        status: "sent",
+        provider_message_id: info.messageId || null,
+        updated_at: sentAt,
+        sent_at: sentAt,
+        from_email: identity.smtp.from,
+        diagnostics: {
+          ...(body.diagnostics || {}),
+          resolvedMailboxKey: identity.key,
+          resolvedMailboxLabel: identity.label,
+          resolvedMailboxId: identity.mailboxId,
+          actualFrom: identity.smtp.from,
+          smtpUser: identity.smtp.user,
+          transport: "central-send-mail",
+          accepted: info.accepted || [],
+          rejected: info.rejected || []
         },
-        { status: 500 }
-      )
-    }
+        last_error: null
+      })
+      .eq("id", outboxId)
+      .then(() => null, () => null)
 
-    const queueId = sendJson?.data?.queueId
-    const outboxId = sendJson?.data?.outboxId
-
-    const dispatchResponse = await fetch(`${origin}/api/email-os/cron/queue-worker`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }
-    })
-
-    const dispatchJson = await dispatchResponse.json().catch(() => null)
-    const processed: WorkerResult[] = Array.isArray(dispatchJson?.data) ? dispatchJson.data : []
-
-    const current =
-      processed.find((item) => item.id === queueId) ||
-      processed.find((item) => item.outboxId === outboxId) ||
-      null
-
-    if (!dispatchResponse.ok || dispatchJson?.ok === false) {
-      return NextResponse.json(
-        {
-          ok: false,
-          stage: "dispatch",
-          status: "failed",
-          error: dispatchJson?.error || `Dispatch failed with HTTP ${dispatchResponse.status}`,
-          send: sendJson?.data,
-          dispatch: dispatchJson
-        },
-        { status: 500 }
-      )
-    }
-
-    if (!current) {
-      return NextResponse.json(
-        {
-          ok: false,
-          stage: "dispatch",
-          status: "queued",
-          error: "Email was queued but the worker did not process this queue item immediately.",
-          send: sendJson?.data,
-          dispatch: dispatchJson
-        },
-        { status: 500 }
-      )
-    }
-
-    if (!current.ok) {
-      return NextResponse.json(
-        {
-          ok: false,
-          stage: "smtp",
-          status: "failed",
-          error: current.error || "SMTP dispatch failed",
-          send: sendJson?.data,
-          dispatch: current
-        },
-        { status: 500 }
-      )
-    }
+    await db.from("email_os_core_audit").insert({
+      id: makeEmailOSId(),
+      action: "send_direct_central_resolver",
+      target_type: "email_outbox",
+      target_id: outboxId,
+      severity: "info",
+      details: {
+        mailboxId,
+        resolvedMailboxKey: identity.key,
+        resolvedMailboxId: identity.mailboxId,
+        from: identity.smtp.from,
+        smtpUser: identity.smtp.user,
+        messageId: info.messageId || null
+      },
+      created_at: sentAt
+    }).then(() => null, () => null)
 
     return NextResponse.json({
       ok: true,
-      stage: "sent",
-      status: "sent",
       data: {
-        ...sendJson?.data,
-        messageId: current.messageId,
-        worker: current
+        sent: true,
+        outboxId,
+        messageId: info.messageId || null,
+        mailboxId: identity.mailboxId,
+        mailboxKey: identity.key,
+        from: identity.smtp.from
       }
     })
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Direct send failed"
+
+    if (db && outboxId) {
+      await db
+        .from("email_os_core_outbox")
+        .update({
+          status: "failed",
+          updated_at: nowIso(),
+          last_error: message
+        })
+        .eq("id", outboxId)
+        .then(() => null, () => null)
+    }
+
     return NextResponse.json(
       {
         ok: false,
-        stage: "exception",
-        status: "failed",
-        error: error instanceof Error ? error.message : "Direct send failed"
+        error: message,
+        hint: message.includes("535")
+          ? "Selected mailbox credentials were rejected. Confirm the selected compose mailbox matches the configured mailbox email/password."
+          : message.includes("421")
+            ? "Menara throttled SMTP. Wait 60 seconds and retry without liveness/diagnostics refreshing."
+            : null
       },
       { status: 500 }
     )

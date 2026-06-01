@@ -41,6 +41,8 @@ import {
   scheduleRecruitmentInterview,
 } from "./_actions";
 import { HR_TABLES, getHRDashboardData } from "@/lib/hr-production/repository";
+import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 export const dynamic = "force-dynamic";
 
@@ -94,20 +96,14 @@ const sidebarGroups = [
     label: "Overview",
     items: [
       ["Dashboard", "/hr", LayoutDashboard],
-      ["Analytics", "/hr/analytics", BarChart3],
-      ["Reports", "/hr/reports", FileText],
-      ["Alerts", "/hr/notifications", Bell],
     ],
   },
   {
     label: "People",
     items: [
       ["Employees", "/hr/employees", Users],
-      ["Organization", "/hr/departments", Network],
       ["Teams & Departments", "/hr/departments", Building2],
-      ["Positions & Roles", "/hr/positions", BriefcaseBusiness],
       ["Recruitment", "/hr/recruitment", UserCheck],
-      ["Interviews", "/hr/recruitment/interviews", CalendarCheck],
       ["Onboarding", "/hr/onboarding", ClipboardCheck],
       ["Performance", "/hr/performance-matrix", Gauge],
       ["Learning & Development", "/hr/training", GraduationCap],
@@ -117,34 +113,25 @@ const sidebarGroups = [
     label: "Operations",
     items: [
       ["Attendance", "/hr/attendance", CalendarCheck],
-      ["Leave Management", "/hr/approvals", Clock3],
-      ["Work Schedules", "/hr/rosters", Workflow],
-      ["Time Tracking", "/hr/workforce-ops", Activity],
-      ["Overtime & Approvals", "/hr/approvals", CheckCircle2],
-    ],
-  },
-  {
-    label: "Compensation & Benefits",
-    items: [
-      ["Payroll", "/hr/payroll", WalletCards],
-      ["Compensation", "/hr/compensation", BadgeCheck],
-      ["Benefits & Insurance", "/hr/benefits", ShieldCheck],
+      ["Leave Management", "/hr/leave", Clock3],
+      ["Work Schedules", "/hr/work-schedules", Workflow],
+      ["Time Tracking", "/hr/time-tracking", Activity],
     ],
   },
   {
     label: "Compliance & Documents",
     items: [
-      ["Policies & Procedures", "/hr/templates", ShieldCheck],
       ["Documents", "/hr/documents", FileBadge2],
+      ["Templates", "/hr/templates", FileText],
+      ["Policies", "/hr/policies", ShieldCheck],
       ["Compliance Dashboard", "/hr/compliance", AlertTriangle],
     ],
   },
   {
     label: "System",
     items: [
-      ["Integrations", "/hr/sync-center", Sparkles],
+      ["Integrations", "/hr/integrations", Sparkles],
       ["Settings", "/hr/settings", Settings],
-      ["Access & Permissions", "/hr/permissions", ShieldCheck],
     ],
   },
 ] as const;
@@ -1562,7 +1549,8 @@ export default async function Page({
                   </table>
                 </div>
               </Card>
-              <div className="space-y-6">
+              <div className="space-y-6"><HRModuleCommandBridge context="Recruitment Management" compact />
+      <HRRealtimeSyncPanel domain="recruitment" title="Recruitment realtime sync" compact />
                 <Card
                   title="Tasks & Reminders"
                   subtitle="Live tasks and instant task creation."
@@ -1704,7 +1692,7 @@ export default async function Page({
                   Source analytics
                 </Link>
                 <Link
-                  href="/hr/sync-center"
+                  href="/hr/integrations"
                   className="rounded-[24px] border border-slate-200 bg-white p-5 text-sm font-black shadow-sm hover:shadow-xl"
                 >
                   <Filter className="mb-3 h-6 w-6 text-violet-600" />

@@ -1,6 +1,7 @@
 import AppShell from '@/app/components/erp/AppShell'
 import { getHRDashboardData } from '@/lib/hr-production/repository'
 import { HRAction, HRCard, HRSection, HRTable } from '../_components/HRProductionUI'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 export default async function Page() {
   const data = await getHRDashboardData()
@@ -13,7 +14,9 @@ export default async function Page() {
     ['Task execution', data.tasks.length, '/api/hr/export?type=tasks'],
     ['Approval requests', data.approvals.length, '/api/hr/export?type=approvals'],
   ]
-  return <AppShell title="HR Reports" subtitle="Export-ready operational HR reporting." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Reports'}]}>
+  return <>
+    <HRRealtimeSyncPanel domain="reports" title="Reports realtime sync" compact />
+    <AppShell title="HR Reports" subtitle="Export-ready operational HR reporting." breadcrumbs={[{label:'HR',href:'/hr'},{label:'Reports'}]}>
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-4"><HRCard title="Reports" value={reports.length} /><HRCard title="Staff" value={data.staff.length} /><HRCard title="Attendance" value={data.attendance.length} /><HRCard title="Documents" value={data.docs.length} /></div>
       <HRSection title="Export center" subtitle="Download CSV reports directly from the HR production repository." action={<HRAction href="/hr/reports/export">Report hub</HRAction>}>
@@ -21,4 +24,5 @@ export default async function Page() {
       </HRSection>
     </div>
   </AppShell>
+  </>
 }

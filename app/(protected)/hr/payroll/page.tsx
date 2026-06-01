@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { getHREmployeesCommandData } from '@/lib/hr-production/employees-command'
+import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +14,8 @@ export default async function Page() {
   const command = await getHREmployeesCommandData()
   const rows = command.employees.filter((x: any) => Number(x.__sync?.payroll || 0) > 0 || Number(x.__sync?.attendance || 0) > 0)
   return <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <HRModuleCommandBridge context="Payroll Control" compact />
+      <HRRealtimeSyncPanel domain="payroll" title="Payroll realtime sync" compact />
     <section className="mx-auto max-w-7xl space-y-6">
       <div className="rounded-[32px] border border-white bg-white p-6 shadow-xl shadow-slate-200">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

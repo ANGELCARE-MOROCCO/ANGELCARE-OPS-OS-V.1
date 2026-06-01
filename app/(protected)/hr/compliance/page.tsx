@@ -1,11 +1,13 @@
-import Link from 'next/link'
-export default function Page(){
-  return <main className="p-6 space-y-6">
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <p className="text-sm font-semibold text-slate-500">HR ENTERPRISE ROUTE</p>
-      <h1 className="text-3xl font-bold text-slate-950">HR Compliance</h1>
-      <p className="mt-2 text-slate-600">This page is wired as a production-safe route. Connect detailed CRUD widgets progressively through the HR repository layer.</p>
-      <Link href="/hr" className="mt-4 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white">Back to HR</Link>
-    </div>
-  </main>
+import HRCommandScreens from '../_components/HRCommandScreens'
+import { getHRDashboardData } from '@/lib/hr-production/repository'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
+
+export const dynamic = 'force-dynamic'
+
+export default async function Page() {
+  const data = await getHRDashboardData()
+  return <>
+    <HRRealtimeSyncPanel domain="compliance" title="Compliance realtime sync" compact />
+    <HRCommandScreens variant="compliance" data={data as any} />
+  </>
 }

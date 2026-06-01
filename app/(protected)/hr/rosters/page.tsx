@@ -2,6 +2,7 @@ import AppShell from '@/app/components/erp/AppShell'
 import Link from 'next/link'
 import { getRosterCommandData } from '@/lib/hr-production/roster-enterprise'
 import { RosterButton, RosterHero, RosterMetric, RosterPanel, RosterShell, RosterStatus, RosterTable } from '../_components/RosterEnterpriseUI'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 function fmt(x: any) { return x ? String(x) : '—' }
 function dateOf(x: any) { return fmt(x.work_date || x.date || x.shift_date) }
@@ -25,6 +26,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
 
   return <AppShell><RosterShell>
     <RosterHero title="Roster Command Center" subtitle="Premium scheduling layer with monthly, weekly, daily, agenda, people and conflict views; configurable shifts; repetition; full create/edit/delete control." score={coverageScore} actions={<><RosterButton href="/hr/rosters/new">+ Create shift</RosterButton><RosterButton href="/hr/rosters/repeat" variant="light">Repeat scheduler</RosterButton><RosterButton href="/hr/rosters/templates" variant="light">Templates</RosterButton><RosterButton href="/hr/rosters/conflicts" variant="light">Conflicts</RosterButton></>} />
+    <HRRealtimeSyncPanel domain="rosters" title="Roster realtime sync" compact />
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
       <RosterMetric title="Total shifts" value={active.length} detail="Active roster records" />
       <RosterMetric title="Covered" value={covered.length} detail="Confirmed / approved" />

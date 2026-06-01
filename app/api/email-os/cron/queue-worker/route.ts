@@ -1,180 +1,144 @@
 import { NextResponse } from "next/server"
-import nodemailer from "nodemailer"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { nowIso } from "@/lib/email-os-core/schema"
-import { writeProviderLog } from "@/lib/email-os-core/provider-log"
+import { sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 
-function smtpReady() {
-  return Boolean(
-    process.env.EMAIL_OS_SMTP_HOST &&
-    process.env.EMAIL_OS_SMTP_USER &&
-    process.env.EMAIL_OS_SMTP_PASSWORD
-  )
-}
-
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_OS_SMTP_HOST,
-    port: Number(process.env.EMAIL_OS_SMTP_PORT || 587),
-    secure: Number(process.env.EMAIL_OS_SMTP_PORT || 587) === 465,
-    auth: {
-      user: process.env.EMAIL_OS_SMTP_USER,
-      pass: process.env.EMAIL_OS_SMTP_PASSWORD
-    }
-  })
+function clean(value: any) {
+  return typeof value === "string" ? value.trim() : ""
 }
 
 export async function POST() {
+  const db = createEmailOSCoreDb()
+
   try {
-    if (!smtpReady()) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "SMTP is not configured"
-        },
-        { status: 500 }
-      )
-    }
-
-    const db = createEmailOSCoreDb()
-
-    const { data: jobs, error } = await db
+    const { data: queueRows, error } = await db
       .from("email_os_core_queue")
       .select("*")
-      .eq("type", "send")
-      .eq("status", "queued")
-      .order("scheduled_at", { ascending: true })
-      .limit(25)
+      .in("status", ["queued", "pending", "retry"])
+      .order("created_at", { ascending: true })
+      .limit(3)
 
-    if (error) throw error
+    if (error) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
+    }
 
-    const transporter = createTransporter()
-    const results: Array<Record<string, unknown>> = []
+    const rows = queueRows || []
+    const results: any[] = []
 
-    for (const job of jobs || []) {
-      const outboxId = job.outbox_id || job.payload?.outboxId || null
-
+    for (const row of rows) {
       try {
-        await db
-          .from("email_os_core_queue")
-          .update({
-            status: "sending",
-            updated_at: nowIso()
-          })
-          .eq("id", job.id)
+        const outboxId = row.outbox_id || row.outboxId || row.payload?.outboxId
+        let outbox: any = null
 
         if (outboxId) {
-          await db
+          const { data } = await db
             .from("email_os_core_outbox")
-            .update({
-              status: "sending",
-              updated_at: nowIso()
-            })
+            .select("*")
             .eq("id", outboxId)
+            .maybeSingle()
+
+          outbox = data
         }
 
-        const payload = job.payload || {}
+        const payload = {
+          ...(row.payload || {}),
+          ...(outbox || {})
+        }
 
-        const sent = await transporter.sendMail({
-          from: payload.fromEmail || process.env.EMAIL_OS_SMTP_FROM || process.env.EMAIL_OS_SMTP_USER,
-          to: payload.toEmail,
-          cc: payload.ccEmail || undefined,
-          bcc: payload.bccEmail || undefined,
-          subject: payload.subject || "Untitled",
-          text: payload.body || ""
+        const mailboxId = clean(payload.mailbox_id || payload.mailboxId)
+        const fromEmail = clean(payload.from_email || payload.fromEmail)
+        const toEmail = clean(payload.to_email || payload.toEmail)
+        const ccEmail = clean(payload.cc_email || payload.ccEmail)
+        const bccEmail = clean(payload.bcc_email || payload.bccEmail)
+        const subject = clean(payload.subject) || "(Sans objet)"
+        const body = clean(payload.body || payload.message)
+
+        const { identity, info } = await sendEmailOSDirect({
+          mailboxId,
+          fromEmail,
+          toEmail,
+          ccEmail,
+          bccEmail,
+          subject,
+          body
         })
+
+        const sentAt = nowIso()
 
         await db
           .from("email_os_core_queue")
           .update({
-            status: "completed",
-            attempts: Number(job.attempts || 0) + 1,
+            status: "sent",
+            updated_at: sentAt,
             last_error: null,
-            result: {
-              messageId: sent.messageId
-            },
-            updated_at: nowIso()
+            diagnostics: {
+              ...(row.diagnostics || {}),
+              transport: "central-send-mail",
+              resolvedMailboxKey: identity.key,
+              resolvedMailboxId: identity.mailboxId,
+              messageId: info.messageId || null
+            }
           })
-          .eq("id", job.id)
+          .eq("id", row.id)
+          .then(() => null, () => null)
 
         if (outboxId) {
           await db
             .from("email_os_core_outbox")
             .update({
               status: "sent",
-              provider_message_id: sent.messageId,
+              provider_message_id: info.messageId || null,
+              sent_at: sentAt,
+              updated_at: sentAt,
+              mailbox_id: identity.mailboxId,
+              from_email: identity.smtp.from,
               last_error: null,
-              sent_at: nowIso(),
-              updated_at: nowIso()
+              diagnostics: {
+                ...(outbox?.diagnostics || {}),
+                transport: "central-send-mail",
+                resolvedMailboxKey: identity.key,
+                resolvedMailboxId: identity.mailboxId,
+                smtpUser: identity.smtp.user
+              }
             })
             .eq("id", outboxId)
+            .then(() => null, () => null)
         }
 
         results.push({
-          id: job.id,
+          id: row.id,
           outboxId,
           ok: true,
-          messageId: sent.messageId
+          messageId: info.messageId || null,
+          mailboxKey: identity.key,
+          from: identity.smtp.from
         })
-      } catch (jobError) {
-        const message = jobError instanceof Error ? jobError.message : "SMTP dispatch failed"
-        const attempts = Number(job.attempts || 0) + 1
-        const finalStatus = attempts >= 3 ? "failed" : "queued"
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Queue send failed"
 
         await db
           .from("email_os_core_queue")
           .update({
-            status: finalStatus,
-            attempts,
-            last_error: message,
-            updated_at: nowIso()
+            status: "failed",
+            updated_at: nowIso(),
+            last_error: message
           })
-          .eq("id", job.id)
-
-        if (outboxId) {
-          await db
-            .from("email_os_core_outbox")
-            .update({
-              status: finalStatus === "failed" ? "failed" : "queued",
-              last_error: message,
-              updated_at: nowIso()
-            })
-            .eq("id", outboxId)
-        }
+          .eq("id", row.id)
+          .then(() => null, () => null)
 
         results.push({
-          id: job.id,
-          outboxId,
+          id: row.id,
+          outboxId: row.outbox_id || row.outboxId || row.payload?.outboxId || null,
           ok: false,
           error: message
         })
       }
     }
 
-    await writeProviderLog({
-      provider: "smtp",
-      status: "queue-worker.completed",
-      metadata: {
-        processed: results.length
-      }
-    })
-
-    return NextResponse.json({
-      ok: true,
-      data: results
-    })
+    return NextResponse.json({ ok: true, data: results })
   } catch (error) {
-    await writeProviderLog({
-      provider: "smtp",
-      status: "queue-worker.failed",
-      message: error instanceof Error ? error.message : "Queue worker failed"
-    })
-
     return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : "Queue worker failed"
-      },
+      { ok: false, error: error instanceof Error ? error.message : "Queue worker failed" },
       { status: 500 }
     )
   }

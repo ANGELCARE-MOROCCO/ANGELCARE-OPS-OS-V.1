@@ -90,20 +90,14 @@ const sidebarGroups = [
     label: "Overview",
     items: [
       ["Dashboard", "/hr", LayoutDashboard],
-      ["Analytics", "/hr/analytics", BarChart3],
-      ["Reports", "/hr/reports", FileText],
-      ["Alerts", "/hr/notifications", Bell],
     ],
   },
   {
     label: "People",
     items: [
       ["Employees", "/hr/employees", Users],
-      ["Organization", "/hr/departments", Network],
       ["Teams & Departments", "/hr/departments", Building2],
-      ["Positions & Roles", "/hr/positions", BriefcaseBusiness],
       ["Recruitment", "/hr/recruitment", UserCheck],
-      ["Interviews", "/hr/recruitment/interviews", CalendarCheck],
       ["Onboarding", "/hr/onboarding", ClipboardCheck],
       ["Performance", "/hr/performance-matrix", Gauge],
       ["Learning & Development", "/hr/training", GraduationCap],
@@ -113,34 +107,25 @@ const sidebarGroups = [
     label: "Operations",
     items: [
       ["Attendance", "/hr/attendance", CalendarCheck],
-      ["Leave Management", "/hr/approvals", Clock3],
-      ["Work Schedules", "/hr/rosters", Workflow],
-      ["Time Tracking", "/hr/workforce-ops", Activity],
-      ["Overtime & Approvals", "/hr/approvals", CheckCircle2],
-    ],
-  },
-  {
-    label: "Compensation & Benefits",
-    items: [
-      ["Payroll", "/hr/payroll", WalletCards],
-      ["Compensation", "/hr/compensation", BadgeCheck],
-      ["Benefits & Insurance", "/hr/benefits", ShieldCheck],
+      ["Leave Management", "/hr/leave", Clock3],
+      ["Work Schedules", "/hr/work-schedules", Workflow],
+      ["Time Tracking", "/hr/time-tracking", Activity],
     ],
   },
   {
     label: "Compliance & Documents",
     items: [
-      ["Policies & Procedures", "/hr/templates", ShieldCheck],
       ["Documents", "/hr/documents", FileBadge2],
+      ["Templates", "/hr/templates", FileText],
+      ["Policies", "/hr/policies", ShieldCheck],
       ["Compliance Dashboard", "/hr/compliance", AlertTriangle],
     ],
   },
   {
     label: "System",
     items: [
-      ["Integrations", "/hr/sync-center", Sparkles],
+      ["Integrations", "/hr/integrations", Sparkles],
       ["Settings", "/hr/settings", Settings],
-      ["Access & Permissions", "/hr/permissions", ShieldCheck],
     ],
   },
 ] as const;

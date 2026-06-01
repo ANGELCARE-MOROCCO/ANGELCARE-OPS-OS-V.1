@@ -1,33 +1,34 @@
 import { NextResponse } from "next/server"
-import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { listEmailOSMultiMailboxes } from "@/lib/email-os-core/multi-mailbox-resolver"
 
 export async function GET() {
-  try {
-    const db = createEmailOSCoreDb()
+  const mailboxes = listEmailOSMultiMailboxes()
 
-    const { data: mailboxes } = await db
-      .from("email_os_core_mailboxes")
-      .select("*")
-      .limit(50)
-
-    const diagnostics = {
-      mailboxCount: mailboxes?.length || 0,
-      smtpConfigured: Boolean(process.env.EMAIL_OS_SMTP_HOST && process.env.EMAIL_OS_SMTP_USER && process.env.EMAIL_OS_SMTP_PASSWORD),
-      imapConfigured: Boolean(process.env.EMAIL_OS_IMAP_HOST),
-      defaultFrom: process.env.EMAIL_OS_SMTP_FROM || process.env.EMAIL_OS_SMTP_USER || null
+  return NextResponse.json({
+    ok: true,
+    data: {
+      mailboxCount: mailboxes.length,
+      mailboxes: mailboxes.map((mailbox) => ({
+        key: mailbox.key,
+        label: mailbox.label,
+        email: mailbox.email,
+        mailboxId: mailbox.mailboxId,
+        smtp: {
+          host: mailbox.smtp.host,
+          port: mailbox.smtp.port,
+          secure: mailbox.smtp.secure,
+          user: mailbox.smtp.user,
+          configured: Boolean(mailbox.smtp.pass)
+        },
+        incoming: {
+          protocol: mailbox.incoming.protocol,
+          host: mailbox.incoming.host,
+          port: mailbox.incoming.port,
+          secure: mailbox.incoming.secure,
+          user: mailbox.incoming.user,
+          configured: Boolean(mailbox.incoming.pass)
+        }
+      }))
     }
-
-    return NextResponse.json({
-      ok: true,
-      data: diagnostics
-    })
-  } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : "Diagnostics failed"
-      },
-      { status: 500 }
-    )
-  }
+  })
 }

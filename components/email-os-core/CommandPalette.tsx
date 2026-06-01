@@ -71,9 +71,9 @@ export default function CommandPalette({ onNavigate }: { onNavigate?: (target: s
         </div>
 
         <div className="max-h-96 overflow-y-auto p-2">
-          {filtered.map((item) => (
+          {filtered.map((item, index) => (
             <button
-              key={item.label}
+              key={`${item.label}-${index}`}
               onClick={() => {
                 item.action()
                 setOpen(false)

@@ -2,6 +2,7 @@ import AppShell from '@/app/components/erp/AppShell'
 import Link from 'next/link'
 import { getStaffCommandData } from '@/lib/hr-production/staff-enterprise'
 import { StaffButton, StaffHero, StaffMetric, StaffPanel, StaffShell, StaffStatus, StaffTable } from '../_components/StaffEnterpriseUI'
+import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
 
 function t(v: any) { return String(v || '').toLowerCase() }
 function readiness(row: any) {
@@ -28,13 +29,14 @@ export default async function Page() {
     `${readiness(x)}%`,
     <div key="actions" className="flex flex-wrap gap-2">
       <Link className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white" href={`/hr/staff/${x.id}`}>Open</Link>
-      <Link className="rounded-full border border-slate-200 px-3 py-1 text-xs font-black text-slate-700" href={`/hr/staff/${x.id}/edit`}>Edit</Link>
+      <Link className="rounded-full border border-slate-200 px-3 py-1 text-xs font-black text-slate-700" href={`/hr/employees/${x.id}`}>Edit</Link>
     </div>
   ])
 
   return (
     <AppShell>
       <StaffShell>
+        <HRModuleCommandBridge context="Staff Command Center" compact />
         <StaffHero
           eyebrow="AngelCare HR Staff OS"
           title="Staff Command Center"
@@ -72,10 +74,10 @@ export default async function Page() {
               ['/hr/contracts','Contracts','Employment agreements'],
               ['/hr/rosters','Rosters','Schedules and mission coverage'],
               ['/hr/training','Training','Academy and skill progression'],
-              ['/hr/performance','Performance','Reviews and quality'],
+              ['/hr/performance-matrix','Performance','Reviews and quality'],
               ['/hr/payroll','Payroll Inputs','Hours, bonuses and deductions'],
               ['/hr/onboarding','Onboarding','Checklists and readiness'],
-              ['/hr/activity','Activity Timeline','Audit and actions'],
+              ['/hr/activity-timeline','Activity Timeline','Audit and actions'],
             ].map(([href,title,sub]) => (
               <Link key={href} href={href} className="rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="font-black text-slate-950">{title}</div>

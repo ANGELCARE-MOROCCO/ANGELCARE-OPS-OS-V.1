@@ -345,7 +345,7 @@ export default function ContentCommandCenter() {
               const active = index === 0
               return (
                 <Link
-                  key={item.label}
+                  key={`${item.label}-${item.href}`}
                   href={item.href}
                   className={cn(
                     "group flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-black transition",
@@ -557,7 +557,7 @@ export default function ContentCommandCenter() {
                 tone: "emerald" as Tone,
                 icon: Radio,
               },
-            ].map((item) => <div key={item.label}><MetricCard {...item} /></div>)}
+            ].map((item) => <div key={`workspace-${item.label}`}><MetricCard {...item} /></div>)}
           </section>
 
           {activeTab === "Digital" && (

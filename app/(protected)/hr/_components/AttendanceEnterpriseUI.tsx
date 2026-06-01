@@ -20,7 +20,7 @@ export function AttendanceTopbar() {
         </form>
         <div className="flex items-center gap-3 text-sm font-black">
           <span className="rounded-full bg-emerald-500 px-3 py-1 text-xs text-slate-950">LIVE</span>
-          <Link href="/hr/reports" className="rounded-xl bg-violet-600 px-4 py-2 text-xs text-white">Export Report</Link>
+          <Link href="/hr/documents" className="rounded-xl bg-violet-600 px-4 py-2 text-xs text-white">Export Report</Link>
         </div>
       </div>
     </div>
@@ -30,16 +30,16 @@ export function AttendanceTopbar() {
 export function AttendanceSidebar() {
   const items = [
     ['Dashboard','/hr'],
-    ['Staff Management','/hr/staff'],
+    ['Employees','/hr/employees'],
     ['Attendance Live','/hr/attendance'],
     ['Attendance Actions','/hr/attendance/actions'],
     ['Corrections','/hr/attendance/corrections'],
-    ['Roster & Shifts','/hr/rosters'],
+    ['Work Schedules','/hr/work-schedules'],
     ['Leave','/hr/leave'],
     ['Payroll','/hr/payroll'],
     ['Documents','/hr/documents'],
-    ['Reports','/hr/reports'],
-    ['Sync Center','/hr/sync-center'],
+    ['Documents','/hr/documents'],
+    ['Integrations','/hr/integrations'],
   ]
   return (
     <aside className="hidden w-[260px] shrink-0 border-r border-slate-800 bg-[#091524] p-4 xl:block">

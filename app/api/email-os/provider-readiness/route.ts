@@ -1,37 +1,32 @@
 import { NextResponse } from "next/server"
+import { listEmailOSMultiMailboxes } from "@/lib/email-os-core/multi-mailbox-resolver"
 
 export async function GET() {
-  const env = {
-    supabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-    supabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-    supabaseServiceRole: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    smtpHost: Boolean(process.env.EMAIL_OS_SMTP_HOST),
-    smtpPort: Boolean(process.env.EMAIL_OS_SMTP_PORT),
-    smtpUser: Boolean(process.env.EMAIL_OS_SMTP_USER),
-    smtpPassword: Boolean(process.env.EMAIL_OS_SMTP_PASSWORD),
-    smtpFrom: Boolean(process.env.EMAIL_OS_SMTP_FROM),
-    imapHost: Boolean(process.env.EMAIL_OS_IMAP_HOST),
-    imapPort: Boolean(process.env.EMAIL_OS_IMAP_PORT),
-    imapUser: Boolean(process.env.EMAIL_OS_IMAP_USER),
-    imapPassword: Boolean(process.env.EMAIL_OS_IMAP_PASSWORD),
-    internalToken: Boolean(process.env.EMAIL_OS_INTERNAL_TOKEN)
-  }
-
-  const blockers = Object.entries(env)
-    .filter(([key, value]) => !value && ["supabaseUrl", "supabaseServiceRole"].includes(key))
-    .map(([key]) => key)
-
-  const warnings = Object.entries(env)
-    .filter(([key, value]) => !value && !blockers.includes(key))
-    .map(([key]) => key)
+  const mailboxes = listEmailOSMultiMailboxes()
+  const configured = mailboxes.filter((mailbox) =>
+    mailbox.email &&
+    mailbox.smtp.host &&
+    mailbox.smtp.port &&
+    mailbox.smtp.user &&
+    mailbox.smtp.pass &&
+    mailbox.incoming.host &&
+    mailbox.incoming.port &&
+    mailbox.incoming.user &&
+    mailbox.incoming.pass
+  )
 
   return NextResponse.json({
-    ok: blockers.length === 0,
+    ok: true,
     data: {
-      env,
-      blockers,
-      warnings,
-      status: blockers.length === 0 ? "deployable" : "blocked"
+      providerMode: process.env.EMAIL_PROVIDER_MODE || "multi_mailbox_enterprise",
+      totalMailboxes: mailboxes.length,
+      configuredMailboxes: configured.length,
+      ready: mailboxes.length > 0 && configured.length === mailboxes.length,
+      smtpHost: mailboxes[0]?.smtp?.host || null,
+      smtpPort: mailboxes[0]?.smtp?.port || null,
+      incomingProtocol: mailboxes[0]?.incoming?.protocol || null,
+      incomingHost: mailboxes[0]?.incoming?.host || null,
+      incomingPort: mailboxes[0]?.incoming?.port || null
     }
   })
 }

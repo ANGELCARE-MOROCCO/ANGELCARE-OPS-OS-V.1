@@ -84,7 +84,7 @@ export default async function HROperationsConsolePremiumPage() {
           <PremiumPanel title="SLA Control" subtitle="Daily watchlist." accent="purple">
             <WorkQueueRow title="Approvals SLA" meta={`${data.pendingApprovals.length} decisions waiting`} status={data.pendingApprovals.length ? 'pending' : 'clear'} tone={data.pendingApprovals.length ? 'purple' : 'green'} href="/hr/approvals" />
             <WorkQueueRow title="Document SLA" meta={`${data.pendingDocs.length} records to verify`} status={data.pendingDocs.length ? 'review' : 'clear'} tone={data.pendingDocs.length ? 'red' : 'green'} href="/hr/documents" />
-            <WorkQueueRow title="Onboarding SLA" meta={`${data.onboardingBacklog.length} integration items`} status={data.onboardingBacklog.length ? 'active' : 'clear'} tone={data.onboardingBacklog.length ? 'amber' : 'green'} href="/hr/onboarding/board" />
+            <WorkQueueRow title="Onboarding SLA" meta={`${data.onboardingBacklog.length} integration items`} status={data.onboardingBacklog.length ? 'active' : 'clear'} tone={data.onboardingBacklog.length ? 'amber' : 'green'} href="/hr/onboarding" />
             <WorkQueueRow title="Quality SLA" meta={`${data.qualityRisks.length} quality checks open`} status={data.qualityRisks.length ? 'review' : 'ok'} tone={data.qualityRisks.length ? 'amber' : 'green'} href="/hr/data-quality" />
           </PremiumPanel>
         </div>

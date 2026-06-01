@@ -1,6 +1,9 @@
 import Link from 'next/link'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 export default function Page(){
-  return <main className="p-6 space-y-6">
+  return <>
+    <HRRealtimeSyncPanel domain="reports" title="Export realtime sync" compact />
+    <main className="p-6 space-y-6">
     <div className="rounded-3xl border bg-white p-6 shadow-sm">
       <p className="text-sm font-semibold text-slate-500">HR ENTERPRISE ROUTE</p>
       <h1 className="text-3xl font-bold text-slate-950">HR Export Center</h1>
@@ -8,4 +11,5 @@ export default function Page(){
       <Link href="/hr" className="mt-4 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white">Back to HR</Link>
     </div>
   </main>
+  </>
 }

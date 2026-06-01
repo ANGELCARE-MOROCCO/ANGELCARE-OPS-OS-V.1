@@ -1,5 +1,7 @@
 import OnboardingCommandCenter, { type OnboardingSeedData } from './_components/OnboardingCommandCenter'
 import { createClient } from '@/lib/supabase/server'
+import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,5 +59,9 @@ export default async function Page() {
     activity: activityRows,
   }
 
-  return <OnboardingCommandCenter initialData={seed} />
+  return <>
+    <div className="fixed inset-x-5 top-[124px] z-[80]"><HRModuleCommandBridge context="Onboarding Management" compact />
+      <HRRealtimeSyncPanel domain="onboarding" title="Onboarding realtime sync" compact /></div>
+    <OnboardingCommandCenter initialData={seed} />
+  </>
 }

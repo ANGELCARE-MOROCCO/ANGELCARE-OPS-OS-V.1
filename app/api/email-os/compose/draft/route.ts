@@ -2,35 +2,50 @@ import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
+function clean(value: any) {
+  return typeof value === "string" ? value.trim() : ""
+}
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json().catch(() => ({}))
     const db = createEmailOSCoreDb()
+    const body = await request.json().catch(() => ({}))
+    const now = nowIso()
+    const id = makeEmailOSId()
 
     const row = {
-      id: body.id || makeEmailOSId(),
-      mailbox_id: body.mailboxId || null,
-      from_email: body.fromEmail || process.env.EMAIL_OS_SMTP_FROM || process.env.EMAIL_OS_SMTP_USER || null,
-      to_email: body.toEmail || null,
-      cc_email: body.ccEmail || null,
-      bcc_email: body.bccEmail || null,
-      subject: body.subject || "Untitled draft",
-      body: body.body || "",
+      id,
+      mailbox_id: clean(body.mailboxId || body.mailbox_id) || null,
+      from_email: clean(body.fromEmail || body.from_email) || null,
+      to_email: clean(body.toEmail || body.to_email || body.to) || null,
+      cc_email: clean(body.ccEmail || body.cc_email || body.cc) || null,
+      bcc_email: clean(body.bccEmail || body.bcc_email || body.bcc) || null,
+      subject: clean(body.subject) || "(Sans objet)",
+      body: clean(body.body || body.message || body.text || body.html),
       status: "draft",
-      metadata: body.metadata || {},
-      created_at: body.id ? undefined : nowIso(),
-      updated_at: nowIso()
+      priority: clean(body.priority) || "normal",
+      diagnostics: { route: "compose/draft", transport: "draft-only" },
+      created_at: now,
+      updated_at: now
     }
 
-    const cleanRow = Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined))
+    const { data, error } = await db.from("email_os_core_drafts").insert(row).select("*").single()
 
-    const { data, error } = await db
-      .from("email_os_core_saved_drafts")
-      .upsert(cleanRow)
-      .select("*")
-      .single()
+    if (error) {
+      const fallback = await db.from("email_os_core_outbox").insert({
+        ...row,
+        provider_message_id: null,
+        queue_id: null,
+        sent_at: null,
+        last_error: null
+      }).select("*").single()
 
-    if (error) throw error
+      if (fallback.error) {
+        return NextResponse.json({ ok: false, error: fallback.error.message }, { status: 500 })
+      }
+
+      return NextResponse.json({ ok: true, data: fallback.data })
+    }
 
     return NextResponse.json({ ok: true, data })
   } catch (error) {

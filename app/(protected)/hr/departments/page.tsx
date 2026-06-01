@@ -44,15 +44,10 @@ type IconType = React.ComponentType<{ className?: string }>
 const sidebarGroups: { label: string; items: { label: string; href: string; icon: IconType }[] }[] = [
   { label: 'Overview', items: [
     { label: 'Dashboard', href: '/hr', icon: LayoutDashboard },
-    { label: 'Analytics', href: '/hr/analytics', icon: BarChart3 },
-    { label: 'Reports', href: '/hr/reports', icon: FileText },
-    { label: 'Alerts', href: '/hr/notifications', icon: Bell },
   ]},
   { label: 'People', items: [
     { label: 'Employees', href: '/hr/employees', icon: Users },
-    { label: 'Organization', href: '/hr/departments', icon: Network },
     { label: 'Teams & Departments', href: '/hr/departments', icon: Building2 },
-    { label: 'Positions & Roles', href: '/hr/positions', icon: BriefcaseBusiness },
     { label: 'Recruitment', href: '/hr/recruitment', icon: UserCheck },
     { label: 'Onboarding', href: '/hr/onboarding', icon: ClipboardCheck },
     { label: 'Performance', href: '/hr/performance-matrix', icon: Gauge },
@@ -60,25 +55,19 @@ const sidebarGroups: { label: string; items: { label: string; href: string; icon
   ]},
   { label: 'Operations', items: [
     { label: 'Attendance', href: '/hr/attendance', icon: CalendarCheck },
-    { label: 'Leave Management', href: '/hr/approvals', icon: Clock3 },
-    { label: 'Work Schedules', href: '/hr/rosters', icon: Workflow },
-    { label: 'Time Tracking', href: '/hr/workforce-ops', icon: Activity },
-    { label: 'Overtime & Approvals', href: '/hr/approvals', icon: CheckCircle2 },
-  ]},
-  { label: 'Compensation & Benefits', items: [
-    { label: 'Payroll', href: '/hr/payroll', icon: WalletCards },
-    { label: 'Compensation', href: '/hr/compensation', icon: BadgeCheck },
-    { label: 'Benefits & Insurance', href: '/hr/benefits', icon: ShieldCheck },
+    { label: 'Leave Management', href: '/hr/leave', icon: Clock3 },
+    { label: 'Work Schedules', href: '/hr/work-schedules', icon: Workflow },
+    { label: 'Time Tracking', href: '/hr/time-tracking', icon: Activity },
   ]},
   { label: 'Compliance & Documents', items: [
-    { label: 'Policies & Procedures', href: '/hr/templates', icon: ShieldCheck },
     { label: 'Documents', href: '/hr/documents', icon: FileBadge2 },
+    { label: 'Templates', href: '/hr/templates', icon: FileText },
+    { label: 'Policies', href: '/hr/policies', icon: ShieldCheck },
     { label: 'Compliance Dashboard', href: '/hr/compliance', icon: AlertTriangle },
   ]},
   { label: 'System', items: [
-    { label: 'Integrations', href: '/hr/sync-center', icon: Sparkles },
+    { label: 'Integrations', href: '/hr/integrations', icon: Sparkles },
     { label: 'Settings', href: '/hr/settings', icon: Settings },
-    { label: 'Access & Permissions', href: '/hr/permissions', icon: ShieldCheck },
   ]},
 ]
 
@@ -186,7 +175,7 @@ function Donut({ items }: { items: { label: string; count: number; color: string
     <div className="relative mx-auto h-44 w-44 rounded-full" style={{ background: `conic-gradient(${gradient})` }}>
       <div className="absolute inset-9 grid place-items-center rounded-full bg-white text-center shadow-inner"><span className="text-3xl font-black text-slate-950">{total}</span><span className="-mt-8 text-xs font-bold text-slate-400">Total</span></div>
     </div>
-    <div className="space-y-3">{items.map((item) => <div key={item.label} className="grid grid-cols-[12px_1fr_auto] items-center gap-3 text-xs font-bold"><span className="h-3 w-3 rounded-full" style={{ background: item.color }} /><span className="text-slate-600">{item.label}</span><span className="font-black text-slate-900">{item.count} <span className="text-slate-400">({pct(item.count, total)}%)</span></span></div>)}</div>
+    <div className="space-y-3">{items.map((item) => <div key={`${item.label}-${item.count}-${item.color}`} className="grid grid-cols-[12px_1fr_auto] items-center gap-3 text-xs font-bold"><span className="h-3 w-3 rounded-full" style={{ background: item.color }} /><span className="text-slate-600">{item.label}</span><span className="font-black text-slate-900">{item.count} <span className="text-slate-400">({pct(item.count, total)}%)</span></span></div>)}</div>
   </div>
 }
 

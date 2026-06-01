@@ -39,19 +39,15 @@ import {
 import { getHRDashboardData } from '@/lib/hr-production/repository'
 import { getHRProductionMetrics, getHRProductionScore } from '@/lib/hr-production/metrics'
 import { HR_PRODUCTION_NAV } from '@/lib/hr-production/navigation'
+import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
 
 const sidebarGroups = [
   { label: 'Overview', items: [
-    { label: 'Dashboard', href: '#dashboard', icon: Home, active: true },
-    { label: 'Analytics', href: '#analytics', icon: BarChart3 },
-    { label: 'Reports', href: '/hr/reports', icon: FileText },
-    { label: 'Alerts', href: '/hr/notifications', icon: Bell },
+    { label: 'Dashboard', href: '/hr', icon: Home, active: true },
   ]},
   { label: 'People', items: [
-    { label: 'Employees', href: '/hr/staff', icon: Users },
-    { label: 'Organization', href: '/hr/departments', icon: Network },
+    { label: 'Employees', href: '/hr/employees', icon: Users },
     { label: 'Teams & Departments', href: '/hr/departments', icon: Building2 },
-    { label: 'Positions & Roles', href: '/hr/positions', icon: BriefcaseBusiness },
     { label: 'Recruitment', href: '/hr/recruitment', icon: UserCheck },
     { label: 'Onboarding', href: '/hr/onboarding', icon: ClipboardCheck },
     { label: 'Performance', href: '/hr/performance-matrix', icon: Gauge },
@@ -59,32 +55,31 @@ const sidebarGroups = [
   ]},
   { label: 'Operations', items: [
     { label: 'Attendance', href: '/hr/attendance', icon: CalendarCheck },
-    { label: 'Leave Management', href: '/hr/approvals', icon: Clock3 },
-    { label: 'Work Schedules', href: '/hr/rosters', icon: Workflow },
-    { label: 'Time Tracking', href: '/hr/workforce-ops', icon: Activity },
-    { label: 'Overtime & Approvals', href: '/hr/approvals', icon: CheckCircle2 },
+    { label: 'Leave Management', href: '/hr/leave', icon: Clock3 },
+    { label: 'Work Schedules', href: '/hr/work-schedules', icon: Workflow },
+    { label: 'Time Tracking', href: '/hr/time-tracking', icon: Activity },
   ]},
   { label: 'Compliance & Documents', items: [
-    { label: 'Policies & Procedures', href: '/hr/templates', icon: ShieldCheck },
     { label: 'Documents', href: '/hr/documents', icon: FileBadge2 },
+    { label: 'Templates', href: '/hr/templates', icon: FileText },
+    { label: 'Policies', href: '/hr/policies', icon: ShieldCheck },
     { label: 'Compliance Dashboard', href: '/hr/compliance', icon: AlertTriangle },
   ]},
   { label: 'System', items: [
-    { label: 'Integrations', href: '/hr/sync-center', icon: Sparkles },
+    { label: 'Integrations', href: '/hr/integrations', icon: Sparkles },
     { label: 'Settings', href: '/hr/settings', icon: Settings },
-    { label: 'Access & Permissions', href: '/hr/permissions', icon: ShieldCheck },
   ]},
 ]
 
 const quickActions = [
-  { label: 'Add Employee', href: '/hr/staff/new', icon: UserCog },
+  { label: 'Add Employee', href: '/hr/employees', icon: UserCog },
   { label: 'Create Job', href: '/hr/openings/new', icon: BriefcaseBusiness },
-  { label: 'Request Time Off', href: '/hr/approvals', icon: CalendarCheck },
+  { label: 'Request Time Off', href: '/hr/leave', icon: CalendarCheck },
   { label: 'Add Document', href: '/hr/documents', icon: FileText },
   { label: 'Schedule Meeting', href: '/hr/calendar', icon: Clock3 },
   { label: 'Create Policy', href: '/hr/templates', icon: ShieldCheck },
   { label: 'Performance Review', href: '/hr/performance-matrix', icon: Gauge },
-  { label: 'Generate Report', href: '/hr/reports/export', icon: BarChart3 },
+  { label: 'Generate Report', href: '/hr/documents', icon: BarChart3 },
 ]
 
 function formatNumber(value: number) {
@@ -120,7 +115,7 @@ function Panel({ title, subtitle, children, className = '' }: { title: string; s
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300 to-transparent" />
       <div className="mb-4 flex items-start justify-between gap-4">
         <div><h2 className="text-sm font-black text-slate-950">{title}</h2>{subtitle ? <p className="mt-1 text-xs font-bold text-slate-400">{subtitle}</p> : null}</div>
-        <Link href="/hr/reports" className="rounded-full bg-violet-50 px-3 py-1 text-[11px] font-black text-violet-700 hover:bg-violet-100">View →</Link>
+        <Link href="/hr/documents" className="rounded-full bg-violet-50 px-3 py-1 text-[11px] font-black text-violet-700 hover:bg-violet-100">View →</Link>
       </div>
       {children}
     </section>
@@ -222,7 +217,7 @@ export default async function Page() {
             <div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div>
           </div>
           <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-            {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item) => <Link key={item.label} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.active ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><item.icon className="h-4 w-4" />{item.label}</Link>)}</div></div>)}
+            {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item) => <Link key={`${item.label}-${item.href}`} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.href === '/hr' ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><item.icon className="h-4 w-4" />{item.label}</Link>)}</div></div>)}
           </nav>
           <Link href="/ai-command-center/hr-copilot" className="mt-4 flex items-center justify-between rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-black text-violet-700 shadow-sm"><span>Ask Angel AI</span><Sparkles className="h-4 w-4" /></Link>
         </aside>
@@ -251,6 +246,8 @@ export default async function Page() {
               <MetricCard title="Labor Control" value={`${score}%`} delta="7.1%" icon={CircleDollarSign} tone="blue" />
             </div>
           </div>
+
+          <div className="mb-5"><HRModuleCommandBridge context="HR dashboard" /></div>
 
           <div id="dashboard" className="grid grid-cols-12 gap-4">
             <Panel title="Workforce Overview" subtitle="Headcount by department" className="col-span-12 xl:col-span-4"><div className="flex items-center justify-around gap-4"><Donut value={formatNumber(totalStaff)} label="Total" /><div className="flex-1 space-y-3 text-xs font-bold">{['Operations 28%', 'Sales & Marketing 20%', 'Customer Care 16%', 'Product & Tech 15%', 'Finance 8%', 'HR 6%', 'Other 7%'].map((x, i) => <div key={x} className="flex items-center justify-between"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ background: ['#8b5cf6','#ef4444','#3b82f6','#06b6d4','#14b8a6','#64748b','#a855f7'][i] }} />{x.split(' ').slice(0,-1).join(' ')}</span><span className="text-slate-400">{x.split(' ').at(-1)}</span></div>)}</div></div></Panel>

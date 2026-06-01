@@ -182,15 +182,10 @@ const groups = [
 const navGroups = [
   { label: "Overview", items: [
     { label: "Dashboard", href: "/hr", icon: LayoutDashboard },
-    { label: "Analytics", href: "/hr/analytics", icon: BarChart3 },
-    { label: "Reports", href: "/hr/reports", icon: FileText },
-    { label: "Alerts", href: "/hr/notifications", icon: Bell },
   ]},
   { label: "People", items: [
     { label: "Employees", href: "/hr/employees", icon: Users },
-    { label: "Organization", href: "/hr/departments", icon: Network },
     { label: "Teams & Departments", href: "/hr/departments", icon: Building2 },
-    { label: "Positions & Roles", href: "/hr/positions", icon: Briefcase },
     { label: "Recruitment", href: "/hr/recruitment", icon: UserCheck },
     { label: "Onboarding", href: "/hr/onboarding", icon: ClipboardCheck },
     { label: "Performance", href: "/hr/performance-matrix", icon: Gauge },
@@ -199,19 +194,16 @@ const navGroups = [
   { label: "Operations", items: [
     { label: "Attendance", href: "/hr/attendance", icon: CalendarDays },
     { label: "Leave Management", href: "/hr/approvals", icon: Clock },
-    { label: "Work Schedules", href: "/hr/rosters", icon: Workflow },
+    { label: "Work Schedules", href: "/hr/work-schedules", icon: Workflow },
     { label: "Time Tracking", href: "/hr/workforce-ops", icon: Activity },
-    { label: "Overtime & Approvals", href: "/hr/approvals", icon: CheckCircle2 },
   ]},
   { label: "Compliance & Documents", items: [
-    { label: "Policies & Procedures", href: "/hr/templates", icon: ShieldCheck },
     { label: "Documents", href: "/hr/documents", icon: FileBadge2 },
     { label: "Compliance Dashboard", href: "/hr/compliance", icon: AlertTriangle },
   ]},
   { label: "System", items: [
     { label: "Integrations", href: "/hr/sync-center", icon: Sparkles },
     { label: "Settings", href: "/hr/settings", icon: Settings },
-    { label: "Access & Permissions", href: "/hr/permissions", icon: ShieldCheck },
   ]},
 ] as const;
 function cn(...c: Array<string | false | undefined | null>) {

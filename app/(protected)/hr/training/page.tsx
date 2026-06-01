@@ -45,6 +45,8 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { getHRDashboardData } from '@/lib/hr-production/repository'
 import AssignTrainingEnterpriseModal from '@/components/hr-training/AssignTrainingEnterpriseModal'
+import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
+import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,37 +71,30 @@ const fallbackPositionSeed = [
 const sidebarGroups = [
   { label: 'Overview', items: [
     { label: 'Dashboard', href: '/hr', icon: Home },
-    { label: 'Analytics', href: '/hr/analytics', icon: BarChart3 },
-    { label: 'Reports', href: '/hr/reports', icon: FileText },
-    { label: 'Alerts', href: '/hr/notifications', icon: Bell },
   ]},
   { label: 'People', items: [
     { label: 'Employees', href: '/hr/employees', icon: Users },
-    { label: 'Organization', href: '/hr/departments', icon: Network },
     { label: 'Teams & Departments', href: '/hr/departments', icon: Building2 },
-    { label: 'Positions & Roles', href: '/hr/positions', icon: BriefcaseBusiness },
     { label: 'Recruitment', href: '/hr/recruitment', icon: UserCheck },
-    { label: 'Interviews', href: '/hr/recruitment/interviews', icon: CalendarCheck },
     { label: 'Onboarding', href: '/hr/onboarding', icon: ClipboardCheck },
     { label: 'Performance', href: '/hr/performance-matrix', icon: Gauge },
     { label: 'Learning & Development', href: '/hr/training', icon: GraduationCap, active: true },
   ]},
   { label: 'Operations', items: [
     { label: 'Attendance', href: '/hr/attendance', icon: CalendarCheck },
-    { label: 'Leave Management', href: '/hr/approvals', icon: Clock3 },
-    { label: 'Work Schedules', href: '/hr/rosters', icon: Workflow },
-    { label: 'Time Tracking', href: '/hr/workforce-ops', icon: LineChart },
-    { label: 'Overtime & Approvals', href: '/hr/approvals', icon: CheckCircle2 },
+    { label: 'Leave Management', href: '/hr/leave', icon: Clock3 },
+    { label: 'Work Schedules', href: '/hr/work-schedules', icon: Workflow },
+    { label: 'Time Tracking', href: '/hr/time-tracking', icon: LineChart },
   ]},
   { label: 'Compliance & Documents', items: [
-    { label: 'Policies & Procedures', href: '/hr/templates', icon: ShieldCheck },
     { label: 'Documents', href: '/hr/documents', icon: FileBadge2 },
+    { label: 'Templates', href: '/hr/templates', icon: FileText },
+    { label: 'Policies', href: '/hr/policies', icon: ShieldCheck },
     { label: 'Compliance Dashboard', href: '/hr/compliance', icon: AlertTriangle },
   ]},
   { label: 'System', items: [
-    { label: 'Integrations', href: '/hr/sync-center', icon: Sparkles },
+    { label: 'Integrations', href: '/hr/integrations', icon: Sparkles },
     { label: 'Settings', href: '/hr/settings', icon: Settings },
-    { label: 'Access & Permissions', href: '/users', icon: ShieldCheck },
   ]},
 ]
 
@@ -337,6 +332,8 @@ function positionRecommendations(position: string) {
 
 function SideBar() {
   return <aside className="sticky top-0 flex h-screen min-h-0 w-[290px] shrink-0 flex-col border-r border-slate-200/80 bg-white/95 px-3 py-4 shadow-[24px_0_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
+    <HRModuleCommandBridge context="Training Management" compact />
+      <HRRealtimeSyncPanel domain="training" title="Training realtime sync" compact />
     <div className="mb-5 flex items-center gap-3 px-2"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-500 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div><div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div></div>
     <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
       {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item, index) => { const Icon = item.icon; return <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.active ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><Icon className="h-4 w-4" />{item.label}</Link> })}</div></div>)}
@@ -477,7 +474,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
         <header className="mb-6 rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_18px_80px_rgba(15,23,42,0.06)]">
           <div className="flex flex-wrap items-start justify-between gap-5">
             <div><p className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-600">Live synced training data</p><h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950">HR Training & Resource Command Center</h1><p className="mt-2 max-w-4xl text-sm font-bold leading-6 text-slate-600">Position-based training bank synced with Users management, HR employees, departments, roles, resources and compliance readiness. Click any position to open its full training resource workspace.</p></div>
-            <div className="flex flex-wrap gap-3"><a href="#modal-live-control" className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-200"><Gauge className="h-4 w-4" />Live Control</a><a href="#modal-assign-training" className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-200"><Plus className="h-4 w-4" />Assign Training</a><Link href="/hr/learning" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"><BookOpen className="h-4 w-4" />Learning Hub</Link></div>
+            <div className="flex flex-wrap gap-3"><a href="#modal-live-control" className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-200"><Gauge className="h-4 w-4" />Live Control</a><a href="#modal-assign-training" className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-200"><Plus className="h-4 w-4" />Assign Training</a><Link href="/hr/training#modal-position-library" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"><BookOpen className="h-4 w-4" />Learning Hub</Link></div>
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-4">
             {[['Synced staff', money(totalStaff), 'Users + HR employees', Users, 'blue'], ['Positions', money(positions.length), 'From users management', BriefcaseBusiness, 'violet'], ['Training records', money(totalPrograms), 'Live programs', GraduationCap, 'emerald'], ['Resource bank', money(totalResources), 'PDF/video/link records', Library, 'amber']].map(([label, val, sub, Icon, tone]) => { const I = Icon as any; return <a key={String(label)} href="#modal-position-library" className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><div className="flex items-center justify-between"><div><p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">{String(label)}</p><p className="mt-2 text-3xl font-black text-slate-950">{String(val)}</p><p className="mt-1 text-xs font-bold text-slate-500">{String(sub)}</p></div><div className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br ${toneClasses(tone as Tone)} text-white`}><I className="h-5 w-5" /></div></div></a> })}
@@ -489,9 +486,9 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
             <form className="mb-5 rounded-[26px] border border-slate-200 bg-gradient-to-br from-white via-violet-50/60 to-blue-50/60 p-4 shadow-sm" action="/hr/training" method="get">
               <div className="grid gap-3 lg:grid-cols-[1.2fr_0.9fr_0.8fr_0.8fr_auto]">
                 <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Search positions / trainings</span><div className="mt-2 flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4"><Search className="h-4 w-4 text-slate-400" /><input name="q" defaultValue={sp('q')} placeholder="Caregiver, field staff, PDF, compliance..." className="w-full bg-transparent text-sm font-bold text-slate-800 outline-none" /></div></label>
-                <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Department</span><select name="department" defaultValue={filterDepartment} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800"><option value="all">All departments</option>{departments.map((department, index) => <option key={`filter-dept-${department}`} value={department}>{department}</option>)}</select></label>
+                <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Department</span><select name="department" defaultValue={filterDepartment} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800"><option value="all">All departments</option>{departments.map((department, index) => <option key={`filter-dept-${index}-${department}`} value={department}>{department}</option>)}</select></label>
                 <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Coverage</span><select name="coverage" defaultValue={filterCoverage} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800"><option value="all">All coverage</option><option value="ready">Ready 75%+</option><option value="risk">Needs work</option><option value="empty">No users mapped</option></select></label>
-                <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Resource type</span><select name="resource_type" defaultValue={filterResourceType} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800">{resourceTypeOptions.map((type, index) => <option key={`filter-type-${type}`} value={type}>{type === 'all' ? 'All types' : type}</option>)}</select></label>
+                <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Resource type</span><select name="resource_type" defaultValue={filterResourceType} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800">{resourceTypeOptions.map((type, index) => <option key={`filter-type-${index}-${type}`} value={type}>{type === 'all' ? 'All types' : type}</option>)}</select></label>
                 <div className="flex items-end gap-2"><button className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-sm font-black text-white"><Filter className="h-4 w-4" />Apply</button><Link href="/hr/training" className="inline-flex h-12 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-600">Reset</Link></div>
               </div>
               <label className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-slate-600 shadow-sm"><input type="checkbox" name="mapped" value="yes" defaultChecked={filterOnlyMapped} className="h-4 w-4 rounded border-slate-300" />Show only positions with mapped users</label>
@@ -500,7 +497,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-950 px-4 py-3 text-white"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-white/45">Filtered position bank</p><p className="text-sm font-black">Showing {filteredPositions.length} of {positions.length} synced positions</p></div><div className="flex gap-2 text-xs font-black"><span className="rounded-full bg-white/10 px-3 py-1">{money(filteredPositions.reduce((a, p) => a + p.users.length, 0))} users</span><span className="rounded-full bg-white/10 px-3 py-1">{money(filteredPositions.reduce((a, p) => a + p.items.length, 0))} resources</span></div></div>
 
             <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-              {filteredPositions.map((position, positionIndex) => <a key={`position-card-${position.id || position.name}`} href={`#modal-position-bank-${position.id}`} className="group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-2xl">
+              {filteredPositions.map((position, positionIndex) => <a key={`position-card-${positionIndex}-${position.id || position.name}`} href={`#modal-position-bank-${position.id}`} className="group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-2xl">
                 <div className={`h-2 bg-gradient-to-r ${toneClasses(resourceTone(position.items[0]?.priority || 'normal'))}`} />
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Position file</p><h3 className="mt-2 text-xl font-black text-slate-950">{position.name}</h3><p className="mt-1 text-xs font-bold text-slate-500">{position.department}</p></div><div className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-950 text-white"><BriefcaseBusiness className="h-5 w-5" /></div></div>
@@ -515,7 +512,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
 
           <aside className="space-y-6">
             <Panel title="Training bank radar" subtitle="Coverage by live position sync.">
-              <div className="space-y-4">{filteredPositions.slice(0, 8).map((p, pIndex) => <a key={`radar-${p.id}`} href={`#modal-position-bank-${p.id}`} className="block rounded-2xl border border-slate-100 p-3 hover:bg-violet-50/40"><div className="flex items-center justify-between text-xs font-black"><span>{p.name}</span><span>{pct(p.completion)}</span></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-400" style={{ width: pct(p.completion) }} /></div></a>)}</div>
+              <div className="space-y-4">{filteredPositions.slice(0, 8).map((p, pIndex) => <a key={`radar-${pIndex}-${p.id}`} href={`#modal-position-bank-${p.id}`} className="block rounded-2xl border border-slate-100 p-3 hover:bg-violet-50/40"><div className="flex items-center justify-between text-xs font-black"><span>{p.name}</span><span>{pct(p.completion)}</span></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-400" style={{ width: pct(p.completion) }} /></div></a>)}</div>
             </Panel>
             <Panel title="Quick actions" subtitle="Large in-page workspaces.">
               <div className="grid gap-3"><a href="#modal-add-global-training" className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white"><Plus className="h-4 w-4" />Add global training</a><a href="#modal-upload-resource" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700"><Upload className="h-4 w-4" />Upload resource link</a><a href="#modal-compliance-overview" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700"><ShieldCheck className="h-4 w-4" />Compliance overview</a></div>
@@ -525,15 +522,15 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
       </main>
     </div>
 
-    {positions.map((position, positionIndex) => <Modal key={`modal-position-${position.id}`} id={`modal-position-bank-${position.id}`} title={`${position.name} — Training Resource Bank`} subtitle="Browse, preview, add, edit, remove and sync every training resource attached to this position. This workspace is connected to Users management positions, HR staff, training programs, requirements and resource links." ultra>
+    {positions.map((position, positionIndex) => <Modal key={`modal-position-${positionIndex}-${position.id}`} id={`modal-position-bank-${position.id}`} title={`${position.name} — Training Resource Bank`} subtitle="Browse, preview, add, edit, remove and sync every training resource attached to this position. This workspace is connected to Users management positions, HR staff, training programs, requirements and resource links." ultra>
       <div className="grid gap-7 xl:grid-cols-[1.5fr_0.75fr]">
         <section className="space-y-6">
-          <div className="rounded-[30px] bg-slate-950 p-6 text-white shadow-2xl"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Synced position file</p><h4 className="mt-2 text-3xl font-black">{position.name}</h4><p className="mt-2 text-sm font-bold text-white/60">{position.department} • {position.users.length} mapped user(s) • {position.items.length} training resource(s)</p></div><div className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10"><Library className="h-7 w-7" /></div></div><div className="mt-6 grid gap-3 md:grid-cols-4">{[['Users', position.users.length], ['Live programs', position.programs.length], ['Requirements', position.requirements.length], ['Resources', position.resources.length]].map(([label, val]) => <div key={`position-stat-${position.id}-${label}`} className="rounded-2xl bg-white/10 p-4"><p className="text-2xl font-black">{val}</p><p className="text-[10px] font-black uppercase text-white/50">{label}</p></div>)}</div></div>
+          <div className="rounded-[30px] bg-slate-950 p-6 text-white shadow-2xl"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Synced position file</p><h4 className="mt-2 text-3xl font-black">{position.name}</h4><p className="mt-2 text-sm font-bold text-white/60">{position.department} • {position.users.length} mapped user(s) • {position.items.length} training resource(s)</p></div><div className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10"><Library className="h-7 w-7" /></div></div><div className="mt-6 grid gap-3 md:grid-cols-4">{[['Users', position.users.length], ['Live programs', position.programs.length], ['Requirements', position.requirements.length], ['Resources', position.resources.length]].map(([label, val]) => <div key={`position-stat-${positionIndex}-${position.id}-${label}`} className="rounded-2xl bg-white/10 p-4"><p className="text-2xl font-black">{val}</p><p className="text-[10px] font-black uppercase text-white/50">{label}</p></div>)}</div></div>
 
           <Panel title="Modern training resource cards" subtitle="Click any resource to open technical details, preview links, edit metadata or remove it from this position.">
             <div className="grid gap-4 lg:grid-cols-2">
               {position.items.map((item, index) => {
-                const id = `${position.id}-${slug(item.title)}`
+                const id = `${position.id}-${positionIndex}-${index}-${slug(item.title)}`
                 const tone = resourceTone(item.priority)
                 return <a key={`resource-card-${id}`} href={`#modal-training-resource-${id}`} className="group overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                   <div className={`h-1.5 bg-gradient-to-r ${toneClasses(tone)}`} />
@@ -544,7 +541,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
           </Panel>
 
           <Panel title="Users mapped to this position" subtitle="Pulled directly from app users and HR employee records.">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{position.users.length ? position.users.slice(0, 12).map((user, index) => <div key={`position-user-${position.id}-${first(user, ['id','email','full_name','name'], String(index))}`} className="flex items-center gap-3 rounded-2xl border border-slate-100 p-3"><div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 text-xs font-black text-white">{initials(first(user, ['full_name','name','email'], 'U'))}</div><div className="min-w-0"><p className="truncate text-sm font-black text-slate-900">{first(user, ['full_name','name','email'], 'Staff')}</p><p className="truncate text-xs font-bold text-slate-500">{first(user, ['email','department'], 'Synced user')}</p></div></div>) : <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No user currently mapped to this position yet. Add/update positions in Users management to sync coverage.</p>}</div>
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{position.users.length ? position.users.slice(0, 12).map((user, index) => <div key={`position-user-${positionIndex}-${index}-${position.id}-${first(user, ['id','email','full_name','name'], String(index))}`} className="flex items-center gap-3 rounded-2xl border border-slate-100 p-3"><div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 text-xs font-black text-white">{initials(first(user, ['full_name','name','email'], 'U'))}</div><div className="min-w-0"><p className="truncate text-sm font-black text-slate-900">{first(user, ['full_name','name','email'], 'Staff')}</p><p className="truncate text-xs font-bold text-slate-500">{first(user, ['email','department'], 'Synced user')}</p></div></div>) : <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No user currently mapped to this position yet. Add/update positions in Users management to sync coverage.</p>}</div>
           </Panel>
         </section>
 
@@ -557,8 +554,8 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
       </div>
     </Modal>)}
 
-    {positions.flatMap((position) => position.items.map((item, index) => {
-      const id = `${position.id}-${slug(item.title)}`
+    {positions.flatMap((position, positionIndex) => position.items.map((item, index) => {
+      const id = `${position.id}-${positionIndex}-${index}-${slug(item.title)}`
       return <Modal key={`modal-resource-${id}`} id={`modal-training-resource-${id}`} title={item.title} subtitle={`Technical training resource details for ${position.name}. Preview, edit, save or remove the live resource.`}>
         <div className="grid gap-7 lg:grid-cols-[0.9fr_1.1fr]">
           <section className="space-y-5"><div className="rounded-[30px] bg-slate-950 p-6 text-white"><p className="text-xs font-black uppercase tracking-[0.18em] text-white/40">Resource technical preview</p><h4 className="mt-2 text-2xl font-black">{item.title}</h4><p className="mt-3 text-sm font-semibold leading-6 text-white/65">{item.description}</p><div className="mt-5 grid grid-cols-2 gap-3">{[['Type', item.type], ['Priority', item.priority], ['Duration', `${item.duration} min`], ['Status', item.live ? 'Live synced' : 'Suggested']].map(([label, val]) => <div key={`detail-stat-${id}-${label}`} className="rounded-2xl bg-white/10 p-3"><p className="text-[10px] font-black uppercase text-white/40">{label}</p><p className="mt-1 text-sm font-black">{val}</p></div>)}</div></div><div className="rounded-[24px] border border-slate-200 bg-white p-5"><h5 className="font-black text-slate-950">Resource links</h5><div className="mt-4 grid gap-3"><a href={item.pdf || '#'} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-700"><FileText className="h-4 w-4" />Open PDF / resource link</a><a href={item.video || item.pdf || '#'} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-700"><PlayCircle className="h-4 w-4" />Open training video link</a></div></div></section>
@@ -576,7 +573,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
           </div>
           <Panel title="Ongoing assigned training monitor" subtitle="Approve passing, update progress and track HR staff training state from live assignment records.">
             <div className="space-y-3">
-              {liveAssignments.length ? liveAssignments.slice(0, 40).map((assignment, index) => <div key={`assignment-row-${assignment.id}`} className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+              {liveAssignments.length ? liveAssignments.slice(0, 40).map((assignment, index) => <div key={`assignment-row-${index}-${assignment.id}`} className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="min-w-0"><p className="text-sm font-black text-slate-950">{assignment.training}</p><p className="mt-1 text-xs font-bold text-slate-500">{assignment.staff} • {assignment.position} • {assignment.status}</p></div>
                   <div className="flex min-w-[220px] items-center gap-3"><div className="h-2 flex-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-400" style={{ width: pct(assignment.progress) }} /></div><span className="w-10 text-right text-xs font-black text-slate-700">{pct(assignment.progress)}</span></div>
@@ -588,7 +585,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
         </section>
         <aside className="space-y-6">
           <Panel title="Control navigation" subtitle="Operational shortcuts."><div className="grid gap-3"><a href="#modal-assign-training" className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Assign new training</a><a href="#modal-compliance-overview" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Compliance overview</a><Link href="/hr/training" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Back to training bank</Link></div></Panel>
-          <Panel title="Department pulse" subtitle="Coverage by filtered positions."><div className="space-y-3">{departments.slice(0, 8).map((department, index) => { const related = positions.filter((p) => n(p.department) === n(department)); const val = related.length ? Math.round(related.reduce((a,p)=>a+p.completion,0)/related.length) : positionCoverage; return <div key={`department-pulse-${department}`} className="rounded-2xl border border-slate-100 p-3"><div className="flex items-center justify-between text-xs font-black"><span>{department}</span><span>{pct(val)}</span></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-400" style={{ width: pct(val) }} /></div></div>})}</div></Panel>
+          <Panel title="Department pulse" subtitle="Coverage by filtered positions."><div className="space-y-3">{departments.slice(0, 8).map((department, index) => { const related = positions.filter((p) => n(p.department) === n(department)); const val = related.length ? Math.round(related.reduce((a,p)=>a+p.completion,0)/related.length) : positionCoverage; return <div key={`department-pulse-${index}-${department}`} className="rounded-2xl border border-slate-100 p-3"><div className="flex items-center justify-between text-xs font-black"><span>{department}</span><span>{pct(val)}</span></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-400" style={{ width: pct(val) }} /></div></div>})}</div></Panel>
         </aside>
       </div>
     </Modal>
@@ -597,7 +594,10 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
       staff={staff}
       departments={departments}
       positions={positions.map((p, pIndex) => ({ id: p.id, name: p.name, department: p.department, completion: p.completion, usersCount: p.users.length, items: p.items }))}
-      trainings={Array.from(new Map(positions.flatMap((p) => p.items.map((item, index) => [`${n(item.title)}-${n(item.source)}-${item.id || ''}`, { ...item, position: p.name, positionId: p.id, department: p.department }]))).values())}
+      trainings={Array.from(new Map(positions.flatMap((p, positionIndex) => p.items.map((item, index) => {
+        const uiTrainingId = `${p.id}-${positionIndex}-${index}-${item.id || slug(item.title)}`
+        return [`${uiTrainingId}-${n(item.title)}-${n(item.source)}`, { ...item, id: uiTrainingId, sourceTrainingId: item.id, position: p.name, positionId: p.id, department: p.department }]
+      }))).values())}
     />
 
     {['training-search','position-library','add-global-training','upload-resource','compliance-overview'].map((id) => <Modal key={`generic-modal-${id}`} id={`modal-${id}`} title={id.split('-').map((p, pIndex) => p[0].toUpperCase() + p.slice(1)).join(' ')} subtitle="Large in-page management workspace connected to HR training context, positions, users and resources.">

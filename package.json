@@ -71,7 +71,8 @@
     "email-os:template-compose-sync": "node scripts/verify-email-os-template-compose-sync.mjs",
     "email-os:real-inbox-sync": "node scripts/verify-email-os-real-inbox-sync.mjs",
     "email-os:corporate-compose-ux": "node scripts/verify-email-os-corporate-compose-ux.mjs",
-    "email-os:corporate-outbox": "node scripts/verify-email-os-corporate-outbox.mjs"
+    "email-os:corporate-outbox": "node scripts/verify-email-os-corporate-outbox.mjs",
+    "email-os:enterprise-workspace-final": "node scripts/verify-email-os-enterprise-workspace-final.mjs"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",
