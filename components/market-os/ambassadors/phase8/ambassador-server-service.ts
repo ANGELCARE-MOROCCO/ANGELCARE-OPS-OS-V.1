@@ -31,7 +31,7 @@ export async function createAmbassadorProfile(
     const now = new Date().toISOString();
     const record: AmbassadorProfileRecord = {
       ...input.payload,
-      id: `amb-${Date.now()}`,
+      id: `amb-${crypto.randomUUID()}`,
       createdAt: now,
       updatedAt: now,
       createdBy: input.actorId,

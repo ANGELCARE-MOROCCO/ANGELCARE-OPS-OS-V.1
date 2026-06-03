@@ -1,5 +1,7 @@
-import AmbassadorProgramRulesEngineWorkspace from "@/components/market-os/ambassadors/phase12/AmbassadorProgramRulesEngineWorkspace";
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorTierRulesPage() {
-  return <AmbassadorProgramRulesEngineWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="goals" />
 }

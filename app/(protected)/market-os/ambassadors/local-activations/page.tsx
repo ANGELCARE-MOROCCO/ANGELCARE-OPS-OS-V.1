@@ -1,5 +1,7 @@
-import AmbassadorFieldTerritoryExecutionWorkspace from "@/components/market-os/ambassadors/phase13/AmbassadorFieldTerritoryExecutionWorkspace";
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorLocalActivationsPage() {
-  return <AmbassadorFieldTerritoryExecutionWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="territories" />
 }

@@ -1,5 +1,7 @@
-import AmbassadorEnterpriseDashboard from '@/components/market-os/ambassadors/enterprise/AmbassadorEnterpriseDashboard';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorEnterpriseDashboardPage() {
-  return <AmbassadorEnterpriseDashboard />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="overview" />
 }

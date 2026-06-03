@@ -1,5 +1,7 @@
-import AmbassadorProductionTransitionWorkspace from '@/components/market-os/ambassadors/enterprise/AmbassadorProductionTransitionWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorProductionTransitionPage() {
-  return <AmbassadorProductionTransitionWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

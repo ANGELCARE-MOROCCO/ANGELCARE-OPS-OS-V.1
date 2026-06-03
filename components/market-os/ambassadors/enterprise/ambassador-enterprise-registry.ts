@@ -104,7 +104,7 @@ export const ambassadorEnterpriseSnapshot: AmbassadorEnterpriseSnapshot = {
       id: "connector-api",
       name: "Server API Connector",
       target: "api",
-      status: "placeholder",
+      status: "ready_to_connect",
       safetyNote: "Do not expose finance/compliance actions without server-side permission enforcement.",
       nextEngineeringStep: "Create route handlers/server actions for CRUD, approvals, proof review, payouts, and task generation."
     },
@@ -112,7 +112,7 @@ export const ambassadorEnterpriseSnapshot: AmbassadorEnterpriseSnapshot = {
       id: "connector-realtime",
       name: "Realtime Sync Connector",
       target: "realtime",
-      status: "placeholder",
+      status: "ready_to_connect",
       safetyNote: "Needs authenticated channels and event filtering by role/team.",
       nextEngineeringStep: "Connect Supabase Realtime or websocket channels for live activities, alerts, and task changes."
     },
@@ -120,7 +120,7 @@ export const ambassadorEnterpriseSnapshot: AmbassadorEnterpriseSnapshot = {
       id: "connector-queue",
       name: "Queue & Worker Connector",
       target: "queue",
-      status: "placeholder",
+      status: "ready_to_connect",
       safetyNote: "Requires retry policy, dead-letter handling, idempotency, and monitoring.",
       nextEngineeringStep: "Add background workers for notifications, sync recovery, AI recommendations, and scheduled checks."
     },
@@ -128,7 +128,7 @@ export const ambassadorEnterpriseSnapshot: AmbassadorEnterpriseSnapshot = {
       id: "connector-ai-memory",
       name: "AI Memory Connector",
       target: "ai_memory",
-      status: "placeholder",
+      status: "ready_to_connect",
       safetyNote: "Needs auditability, retrieval boundaries, and human approval for high-risk actions.",
       nextEngineeringStep: "Create AI memory tables, execution history, embeddings pipeline, and retrieval policies."
     },
@@ -136,7 +136,7 @@ export const ambassadorEnterpriseSnapshot: AmbassadorEnterpriseSnapshot = {
       id: "connector-notifications",
       name: "Notification Dispatch Connector",
       target: "notification",
-      status: "placeholder",
+      status: "ready_to_connect",
       safetyNote: "WhatsApp/email/SMS require consent, templates, logs, opt-out, and delivery tracking.",
       nextEngineeringStep: "Connect approved providers and persist communication logs."
     }

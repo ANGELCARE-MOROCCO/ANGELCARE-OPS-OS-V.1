@@ -15,7 +15,7 @@ export function createAmbassadorAuditLog(params: {
   metadata?: Record<string, string | number | boolean | null>;
 }): AmbassadorAuditLog {
   return {
-    id: `audit-${params.entity}-${params.entityId}-${Date.now()}`,
+    id: `audit-${params.entity}-${params.entityId}-${crypto.randomUUID()}`,
     entity: params.entity,
     entityId: params.entityId,
     action: params.action,

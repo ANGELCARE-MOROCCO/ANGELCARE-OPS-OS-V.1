@@ -1,5 +1,7 @@
-import AmbassadorBackendExecutionInfraWorkspace from "@/components/market-os/ambassadors/phase8/AmbassadorBackendExecutionInfraWorkspace";
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorPermissionsPage() {
-  return <AmbassadorBackendExecutionInfraWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="missions" />
 }

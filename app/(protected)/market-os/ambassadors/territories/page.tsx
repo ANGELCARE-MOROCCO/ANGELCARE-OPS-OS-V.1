@@ -1,6 +1,7 @@
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-import AmbassadorTerritoriesUltraPage from "@/components/market-os/ambassadors/ambassador-territories-ultra-page"
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorTerritoriesUltraPage />
+  return <AmbassadorProductionWorkspace mode="territories" />
 }

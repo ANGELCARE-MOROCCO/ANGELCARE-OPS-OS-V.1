@@ -1,5 +1,7 @@
-import AmbassadorGoalsKpisWorkspace from "@/components/market-os/ambassadors/goals-kpis-workspace"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorGoalsKpisWorkspace />
+  return <AmbassadorProductionWorkspace mode="goals" />
 }

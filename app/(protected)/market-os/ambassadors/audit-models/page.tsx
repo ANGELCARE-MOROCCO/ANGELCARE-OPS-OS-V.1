@@ -1,5 +1,7 @@
-import AmbassadorAuditModelsWorkspace from '@/components/market-os/ambassadors/enterprise/AmbassadorAuditModelsWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorAuditModelsPage() {
-  return <AmbassadorAuditModelsWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

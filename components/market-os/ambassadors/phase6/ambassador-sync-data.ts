@@ -12,7 +12,7 @@ export const ambassadorSyncRecords: AmbassadorSyncRecord[] = [
     updatedAt: "2026-05-09T10:20:00.000Z",
     source: "supabase_ready",
     riskLevel: "medium",
-    notes: "Ready to replace localStorage profile state with server persistence.",
+    notes: "Ready to replace browser profile state with server persistence.",
   },
   {
     id: "sync-missions-001",

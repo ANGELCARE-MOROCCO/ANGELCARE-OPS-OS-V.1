@@ -1,5 +1,7 @@
-import AmbassadorTrainingCertificationWorkspace from "@/components/market-os/ambassadors/training-certification-workspace"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorTrainingCertificationWorkspace />
+  return <AmbassadorProductionWorkspace mode="training" />
 }

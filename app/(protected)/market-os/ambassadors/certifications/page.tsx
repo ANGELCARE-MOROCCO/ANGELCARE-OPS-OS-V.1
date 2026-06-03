@@ -1,5 +1,7 @@
-import AmbassadorTrainingCertificationWorkspace from "@/components/market-os/ambassadors/phase11/AmbassadorTrainingCertificationWorkspace";
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorCertificationsPage() {
-  return <AmbassadorTrainingCertificationWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="training" />
 }

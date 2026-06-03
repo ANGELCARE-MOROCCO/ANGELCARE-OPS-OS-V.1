@@ -1,5 +1,7 @@
-import AmbassadorMissionsCommandCenter from "@/components/market-os/ambassadors/missions-command-center"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorMissionsCommandCenter />
+  return <AmbassadorProductionWorkspace mode="missions" />
 }

@@ -1,5 +1,7 @@
-import AmbassadorMarketDominanceWorkspace from '@/components/market-os/ambassadors/phase24/AmbassadorMarketDominanceWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorMarketDominancePage() {
-  return <AmbassadorMarketDominanceWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

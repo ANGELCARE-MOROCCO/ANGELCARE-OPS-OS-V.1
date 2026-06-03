@@ -1,4 +1,4 @@
-import AmbassadorSubpage from "@/components/market-os/ambassadors/ambassador-subpage"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
 export const dynamic = "force-dynamic"
 
@@ -6,5 +6,5 @@ type PageProps = { params: Promise<{ id: string }> }
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params
-  return <AmbassadorSubpage mode="delete" id={id} />
+  return <AmbassadorProductionWorkspace mode="delete" id={id} />
 }

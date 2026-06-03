@@ -1,5 +1,7 @@
-import AmbassadorCommunicationsExecutionWorkspace from "@/components/market-os/ambassadors/phase10/AmbassadorCommunicationsExecutionWorkspace";
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorBroadcastsPage() {
-  return <AmbassadorCommunicationsExecutionWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

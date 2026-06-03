@@ -4,7 +4,7 @@ import * as React from 'react';
 
 const layers = [
   { title: 'Supabase Core', status: 'blueprint', detail: 'Tables, RLS, audit logs, AI memory, jobs, notifications.' },
-  { title: 'API Layer', status: 'placeholder', detail: 'Profiles, missions, proofs, payouts, AI actions, events.' },
+  { title: 'API Layer', status: 'ready_to_connect', detail: 'Profiles, missions, proofs, payouts, AI actions, events.' },
   { title: 'Realtime Layer', status: 'registry', detail: 'Channels prepared for alerts, missions, proofs, revenue, AI actions.' },
   { title: 'Queue Layer', status: 'foundation', detail: 'Job structure, retry rules, worker readiness.' },
   { title: 'AI Runtime', status: 'governed', detail: 'Human approval rules for high-risk AI actions.' },

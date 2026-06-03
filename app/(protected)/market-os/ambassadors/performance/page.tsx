@@ -1,5 +1,7 @@
-import AmbassadorPerformanceCommandCenter from "@/components/market-os/ambassadors/ambassador-performance-command-center"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorPerformanceCommandCenter />
+  return <AmbassadorProductionWorkspace mode="performance" />
 }

@@ -1,5 +1,7 @@
-import AmbassadorRevenuePerformanceWorkspace from '@/components/market-os/ambassadors/phase15/AmbassadorRevenuePerformanceWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorPerformanceLeaderboardPage() {
-  return <AmbassadorRevenuePerformanceWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="recruitment" />
 }

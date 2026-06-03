@@ -1,5 +1,7 @@
-import AmbassadorMultiAgentWorkspace from '@/components/market-os/ambassadors/phase21/AmbassadorMultiAgentWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorAgentGovernancePage() {
-  return <AmbassadorMultiAgentWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

@@ -8,23 +8,14 @@ import {
   Users,
   Map,
   TrendingUp,
-  Activity,
   FileText,
   UserPlus,
   GraduationCap,
   Target,
   Gift,
   MapPinned,
-  CalendarCheck,
   ClipboardList,
-  Ticket,
-  MessageSquare,
-  Radar,
-  Lightbulb,
-  Folder,
   Settings,
-  Plug,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react"
 
@@ -36,7 +27,6 @@ const groups = [
       { label: "Ambassadors Directory", href: "/market-os/ambassadors/directory", icon: Users },
       { label: "Territories", href: "/market-os/ambassadors/territories", icon: Map },
       { label: "Performance", href: "/market-os/ambassadors/performance", icon: TrendingUp },
-      { label: "Activities", href: "/market-os/ambassadors/activities", icon: Activity },
       { label: "Reports", href: "/market-os/ambassadors/reports", icon: FileText },
     ],
   },
@@ -54,33 +44,12 @@ const groups = [
     label: "FIELD OPERATIONS",
     items: [
       { label: "Missions", href: "/market-os/ambassadors/missions", icon: MapPinned },
-      { label: "Visits & Check-ins", href: "/market-os/ambassadors/visits-check-ins", icon: CalendarCheck },
-      { label: "Task Management", href: "/market-os/ambassadors/tasks", icon: ClipboardList },
-      { label: "Tickets & Requests", href: "/market-os/ambassadors/tickets", icon: Ticket },
-    ],
-  },
-  {
-    label: "MARKET INTELLIGENCE",
-    items: [
-      { label: "Surveys & Feedback", href: "/market-os/ambassadors/surveys-feedback", icon: MessageSquare },
-      { label: "Competitor Tracking", href: "/market-os/ambassadors/competitor-tracking", icon: Radar },
-      { label: "Market Insights", href: "/market-os/ambassadors/market-insights", icon: Lightbulb },
-    ],
-  },
-  {
-    label: "RESOURCES",
-    items: [
-      { label: "Documents", href: "/market-os/ambassadors/documents", icon: Folder },
-      { label: "Communication Hub", href: "/market-os/ambassadors/communication-hub", icon: MessageSquare },
-      { label: "Knowledge Base", href: "/market-os/ambassadors/knowledge-base", icon: Lightbulb },
     ],
   },
   {
     label: "SYSTEM",
     items: [
       { label: "Settings", href: "/market-os/ambassadors/settings", icon: Settings },
-      { label: "Integrations", href: "/market-os/ambassadors/integrations", icon: Plug },
-      { label: "Access & Permissions", href: "/market-os/ambassadors/access-permissions", icon: ShieldCheck },
     ],
   },
 ]

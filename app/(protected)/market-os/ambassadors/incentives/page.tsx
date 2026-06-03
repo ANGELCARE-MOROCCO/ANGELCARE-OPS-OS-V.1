@@ -1,5 +1,7 @@
-import AmbassadorIncentivesWorkspace from "@/components/market-os/ambassadors/incentives-workspace"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorIncentivesWorkspace />
+  return <AmbassadorProductionWorkspace mode="incentives" />
 }

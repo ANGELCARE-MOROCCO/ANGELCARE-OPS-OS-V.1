@@ -1,5 +1,7 @@
-import AmbassadorFinalStabilizationWorkspace from '@/components/market-os/ambassadors/final-stabilization/AmbassadorFinalStabilizationWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorFinalStabilizationPage() {
-  return <AmbassadorFinalStabilizationWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

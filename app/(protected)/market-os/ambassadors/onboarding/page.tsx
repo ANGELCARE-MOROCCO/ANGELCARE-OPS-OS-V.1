@@ -1,5 +1,7 @@
-import AmbassadorOnboardingWorkspace from "@/components/market-os/ambassadors/onboarding-workspace"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorOnboardingWorkspace />
+  return <AmbassadorProductionWorkspace mode="onboarding" />
 }

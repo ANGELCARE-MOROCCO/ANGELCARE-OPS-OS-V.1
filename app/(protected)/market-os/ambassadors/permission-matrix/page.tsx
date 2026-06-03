@@ -1,5 +1,7 @@
-import AmbassadorPermissionMatrixWorkspace from '@/components/market-os/ambassadors/enterprise/AmbassadorPermissionMatrixWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorPermissionMatrixPage() {
-  return <AmbassadorPermissionMatrixWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="missions" />
 }

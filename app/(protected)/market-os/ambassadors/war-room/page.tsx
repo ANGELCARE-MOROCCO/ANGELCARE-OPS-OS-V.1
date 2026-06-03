@@ -1,5 +1,7 @@
-import AmbassadorWarRoomWorkspace from '@/components/market-os/ambassadors/phase18/AmbassadorWarRoomWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorWarRoomPage() {
-  return <AmbassadorWarRoomWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="missions" />
 }

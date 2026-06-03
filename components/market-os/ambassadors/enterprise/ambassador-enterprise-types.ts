@@ -20,7 +20,7 @@ export type AmbassadorEnterpriseModule = {
   productionStatus: "ready_ui" | "backend_ready" | "needs_backend" | "needs_governance";
 };
 
-export type AmbassadorConnectorStatus = "placeholder" | "ready_to_connect" | "connected" | "blocked";
+export type AmbassadorConnectorStatus = "ready_to_connect" | "connected" | "blocked";
 
 export type AmbassadorBackendConnector = {
   id: string;

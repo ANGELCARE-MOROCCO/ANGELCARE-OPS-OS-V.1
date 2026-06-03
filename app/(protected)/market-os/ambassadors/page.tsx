@@ -1,5 +1,7 @@
-import AmbassadorMainOverviewPage from "@/components/market-os/ambassadors/ambassador-main-overview-page"
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorMainOverviewPage />
+  return <AmbassadorProductionWorkspace mode="overview" />
 }

@@ -44,7 +44,7 @@ export default function AmbassadorEnterpriseDashboard() {
         </h1>
         <p className='mt-3 max-w-4xl text-sm leading-6 text-slate-600'>
           Safe consolidated enterprise layer for Ambassador OS: module registry,
-          backend connector placeholders, permission matrix, audit models,
+          backend connector readiness, permission matrix, audit models,
           production transition checklist, and route-ready command pages.
         </p>
       </div>

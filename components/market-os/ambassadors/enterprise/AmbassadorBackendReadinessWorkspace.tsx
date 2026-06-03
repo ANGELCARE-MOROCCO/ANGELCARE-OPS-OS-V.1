@@ -21,7 +21,7 @@ export default function AmbassadorBackendReadinessWorkspace() {
         <Badge tone='info'>Backend Readiness</Badge>
         <h1 className='mt-4 text-3xl font-bold text-slate-950'>Ambassador Backend Connector Readiness</h1>
         <p className='mt-3 max-w-4xl text-sm leading-6 text-slate-600'>
-          Safe placeholders and engineering transition map for Supabase, APIs, realtime,
+          Safe connector readiness notes and engineering transition map for Supabase, APIs, realtime,
           queues, AI memory, webhooks, and notification infrastructure.
         </p>
       </div>

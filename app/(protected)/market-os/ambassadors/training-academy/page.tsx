@@ -1,9 +1,7 @@
-export default function AmbassadorTrainingAcademyPage() {
-  return (
-    <iframe
-      src="/ambassador-training/angelcare_ambassador_os_ultimate_training_x5_expanded.html"
-      className="h-screen w-full border-0"
-      title="AngelCare Ambassador OS Training Academy"
-    />
-  )
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="training" />
 }

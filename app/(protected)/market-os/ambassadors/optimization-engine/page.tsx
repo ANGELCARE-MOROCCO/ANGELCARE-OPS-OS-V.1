@@ -1,5 +1,7 @@
-import AmbassadorAutonomousGrowthWorkspace from '@/components/market-os/ambassadors/phase19/AmbassadorAutonomousGrowthWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorOptimizationEnginePage() {
-  return <AmbassadorAutonomousGrowthWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

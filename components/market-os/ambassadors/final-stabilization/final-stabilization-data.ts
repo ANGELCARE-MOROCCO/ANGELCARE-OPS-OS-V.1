@@ -48,7 +48,7 @@ export const finalStabilizationSnapshot: FinalStabilizationSnapshot = {
       area: 'backend',
       status: 'warning',
       priority: 'high',
-      instruction: 'Replace 501 placeholders one subsystem at a time after auth/RBAC is ready.'
+      instruction: 'Replace 501 readiness entries one subsystem at a time after auth/RBAC is ready.'
     },
     {
       id: 'check-ui',

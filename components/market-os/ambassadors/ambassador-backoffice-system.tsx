@@ -178,7 +178,8 @@ export type AmbassadorStore = {
 export const todayISO = (offset = 0) => {
   const d = new Date(); d.setDate(d.getDate()+offset); return d.toISOString().slice(0,10)
 }
-export const uid = (prefix="id") => `${prefix}-${Math.random().toString(36).slice(2,8)}-${Date.now().toString(36)}`
+let uidCounter = 0
+export const uid = (prefix="id") => `${prefix}-${typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `sequence-${++uidCounter}`}`
 export const mad = (n:number) => new Intl.NumberFormat("fr-MA",{style:"currency",currency:"MAD",maximumFractionDigits:0}).format(Number.isFinite(n)?n:0)
 export const pct = (n:number) => `${Math.max(0, Math.min(100, Math.round(n||0)))}%`
 
@@ -228,10 +229,9 @@ export const seedStore: AmbassadorStore = {
 }
 
 function safeRead(): AmbassadorStore {
-  if (typeof window === "undefined") return seedStore
-  try { const raw = localStorage.getItem(AMBASSADOR_OS_KEY); return raw ? { ...seedStore, ...JSON.parse(raw) } : seedStore } catch { return seedStore }
+  return seedStore
 }
-function safeWrite(store: AmbassadorStore) { if (typeof window !== "undefined") localStorage.setItem(AMBASSADOR_OS_KEY, JSON.stringify(store)) }
+function safeWrite(store: AmbassadorStore) { void store }
 
 export function useAmbassadorStore() {
   const [store, setStore] = React.useState<AmbassadorStore>(seedStore)

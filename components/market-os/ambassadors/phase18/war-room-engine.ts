@@ -3,7 +3,7 @@ import type { WarRoomSnapshot, LiveOperationalAlert } from "./war-room-types";
 export type WarRoomMetrics = {
   activeAlerts: number;
   criticalAlerts: number;
-  liveActivities: number;
+  liveSignals: number;
   healthyOperations: number;
   warningOperations: number;
   criticalOperations: number;
@@ -17,7 +17,7 @@ export function getCriticalAlerts(alerts: LiveOperationalAlert[]) {
 export function getWarRoomMetrics(snapshot: WarRoomSnapshot): WarRoomMetrics {
   const activeAlerts = snapshot.alerts.length;
   const criticalAlerts = snapshot.alerts.filter((item) => item.severity === "critical").length;
-  const liveActivities = snapshot.activity.length;
+  const liveSignals = snapshot.activity.length;
   const healthyOperations = snapshot.heartbeat.filter((item) => item.status === "healthy").length;
   const warningOperations = snapshot.heartbeat.filter((item) => item.status === "warning").length;
   const criticalOperations = snapshot.heartbeat.filter((item) => item.status === "critical").length;
@@ -39,7 +39,7 @@ export function getWarRoomMetrics(snapshot: WarRoomSnapshot): WarRoomMetrics {
   return {
     activeAlerts,
     criticalAlerts,
-    liveActivities,
+    liveSignals,
     healthyOperations,
     warningOperations,
     criticalOperations,

@@ -74,32 +74,25 @@ export const programOptions = ["default", "Mothers Circle", "Community Mothers P
 export const territoryOptions = ["Rabat", "Temara", "Sale", "Casablanca", "Marrakech", "Rabat-Sale-Kenitra", "Grand Casablanca"]
 
 // UTILITIES
+let uidCounter = 0
+
 export function uid(prefix = "id") {
-  const random =
+  const identifier =
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()
-      : Math.random().toString(36).substring(2, 10)
+      : `sequence-${++uidCounter}`
 
-  return `${prefix}-${random}`
+  return `${prefix}-${identifier}`
 }
 
 export function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback
-  try {
-    const data = localStorage.getItem(key)
-    return data ? (JSON.parse(data) as T) : fallback
-  } catch {
-    return fallback
-  }
+  void key
+  return fallback
 }
 
 export function writeJson<T>(key: string, value: T) {
-  if (typeof window === "undefined") return
-  try {
-    localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    // Ignore storage write failures so UI does not crash.
-  }
+  void key
+  void value
 }
 
 // BASIC UI COMPONENTS

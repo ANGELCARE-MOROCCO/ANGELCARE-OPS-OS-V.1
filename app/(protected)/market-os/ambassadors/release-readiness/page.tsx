@@ -1,5 +1,7 @@
-import AmbassadorProductionHardeningWorkspace from '@/components/market-os/ambassadors/phase22/AmbassadorProductionHardeningWorkspace';
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
 
-export default function AmbassadorReleaseReadinessPage() {
-  return <AmbassadorProductionHardeningWorkspace />;
+export const dynamic = "force-dynamic"
+
+export default function Page() {
+  return <AmbassadorProductionWorkspace mode="settings" />
 }

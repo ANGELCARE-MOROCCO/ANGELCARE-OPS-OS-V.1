@@ -49,8 +49,8 @@ export default function AmbassadorWarRoomWorkspace() {
 
       <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-4'>
         <MetricCard label='War room health' value={`${metrics.warRoomHealthScore}%`} helper='Enterprise operational health score.' />
-        <MetricCard label='Active alerts' value={metrics.activeAlerts} helper={`${metrics.criticalAlerts} critical alert(s).`} />
-        <MetricCard label='Live activities' value={metrics.liveActivities} helper='Real-time ambassador execution stream.' />
+        <MetricCard label='Active signals' value={metrics.activeAlerts} helper={`${metrics.criticalAlerts} critical notifications.`} />
+        <MetricCard label='Live signals' value={metrics.liveSignals} helper='Real-time ambassador execution stream.' />
         <MetricCard label='Critical operations' value={metrics.criticalOperations} helper='Operations requiring immediate escalation.' />
       </div>
 

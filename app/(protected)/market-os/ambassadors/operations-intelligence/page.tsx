@@ -1,5 +1,7 @@
-import AmbassadorOperationsIntelligenceWorkspace from "@/components/market-os/ambassadors/phase4/operations-intelligence-workspace";
+import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorOperationsIntelligenceWorkspace />;
+  return <AmbassadorProductionWorkspace mode="performance" />
 }
