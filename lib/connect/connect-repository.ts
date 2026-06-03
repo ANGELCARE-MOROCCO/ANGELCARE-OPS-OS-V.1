@@ -11,6 +11,7 @@ import {
 import type {
   ConnectAction,
   ConnectAppUser,
+  ConnectAttachment,
   ConnectCallSession,
   ConnectConversation,
   ConnectConversationType,
@@ -40,6 +41,18 @@ type MessagePayload = {
   priority?: ConnectPriority
   confidential?: boolean
   metadata?: Record<string, unknown>
+}
+
+const CONNECT_ATTACHMENTS_BUCKET = 'connect-attachments'
+const CONNECT_MISSED_CALL_MS = 60_000
+
+type AttachmentPayload = {
+  conversationId: string
+  messageId?: string | null
+  storagePath: string
+  filename: string
+  contentType?: string | null
+  sizeBytes?: number | null
 }
 
 function userId(user: MinimalAppUser) {
@@ -101,6 +114,35 @@ async function isConversationMember(supabase: SupabaseClient, conversationId: st
     .maybeSingle()
   assertSupabaseOk(error, 'Check Connect membership')
   return data as { id: string; role: string } | null
+}
+
+async function getConversationMemberRows(supabase: SupabaseClient, conversationId: string) {
+  const { data, error } = await supabase
+    .from('connect_conversation_members')
+    .select('*')
+    .eq('conversation_id', conversationId)
+  assertSupabaseOk(error, 'Load Connect conversation recipients')
+  return (data || []) as any[]
+}
+
+async function getConversationTitle(supabase: SupabaseClient, conversationId: string) {
+  const { data, error } = await supabase
+    .from('connect_conversations')
+    .select('title, type')
+    .eq('id', conversationId)
+    .maybeSingle()
+  assertSupabaseOk(error, 'Load Connect conversation title')
+  return cleanText((data as any)?.title, 'AngelCare Connect')
+}
+
+async function createRecipientNotifications(
+  supabase: SupabaseClient,
+  rows: Array<Record<string, unknown>>,
+  label: string,
+) {
+  if (!rows.length) return
+  const { error } = await supabase.from('connect_notifications').insert(rows)
+  assertSupabaseOk(error, label)
 }
 
 export function toConnectUser(user: Record<string, unknown>): ConnectAppUser {
@@ -386,11 +428,52 @@ export async function getConversationMessages(currentUser: MinimalAppUser, conve
     .limit(600)
   assertSupabaseOk(error, 'Load Connect messages')
 
-  const senders = await getUsersByIds(supabase, normalizeIds(((messages || []) as any[]).map((message) => message.sender_id)))
-  return ((messages || []) as any[]).map((message) => ({
-    ...(message as ConnectMessage),
-    sender_name: message.sender_name && message.sender_name !== 'Unknown' ? message.sender_name : senders.get(String(message.sender_id))?.name || 'AngelCare User',
-    sender_role: senders.get(String(message.sender_id))?.role || null,
+  const messageRows = (messages || []) as any[]
+  const senders = await getUsersByIds(supabase, normalizeIds(messageRows.map((message) => message.sender_id)))
+  const memberRows = await getConversationMemberRows(supabase, conversationId)
+  const memberCount = memberRows.length
+  const { data: readRows, error: readError } = messageRows.length
+    ? await supabase
+      .from('connect_message_reads')
+      .select('*')
+      .in('message_id', messageRows.map((message) => String(message.id)))
+    : { data: [], error: null }
+  assertSupabaseOk(readError, 'Load Connect read receipts')
+
+  const readUsers = await getUsersByIds(supabase, normalizeIds(((readRows || []) as any[]).map((row) => row.user_id)))
+  const readsByMessage = new Map<string, any[]>()
+  for (const row of (readRows || []) as any[]) {
+    const key = String(row.message_id)
+    readsByMessage.set(key, [...(readsByMessage.get(key) || []), row])
+  }
+
+  return await Promise.all(messageRows.map(async (message) => {
+    const sender = senders.get(String(message.sender_id))
+    const reads = (readsByMessage.get(String(message.id)) || [])
+      .filter((row) => String(row.user_id) !== String(message.sender_id))
+      .map((row) => ({
+        user_id: String(row.user_id),
+        name: readUsers.get(String(row.user_id))?.name || null,
+        read_at: String(row.read_at),
+      }))
+    const myRead = (readsByMessage.get(String(message.id)) || []).find((row) => String(row.user_id) === currentUserId)
+    const metadata = { ...((message.metadata || {}) as Record<string, unknown>) }
+    const storagePath = cleanText(metadata.storage_path)
+    if ((message.message_type === 'file' || storagePath) && storagePath) {
+      const signed = await supabase.storage.from(CONNECT_ATTACHMENTS_BUCKET).createSignedUrl(storagePath, 60 * 60)
+      if (signed.data?.signedUrl) metadata.signed_url = signed.data.signedUrl
+    }
+    return {
+      ...(message as ConnectMessage),
+      metadata,
+      sender_name: message.sender_name && message.sender_name !== 'Unknown' ? message.sender_name : sender?.name || 'AngelCare User',
+      sender_role: sender?.role || null,
+      read_count: reads.length,
+      read_by: reads,
+      my_read_at: myRead?.read_at || null,
+      delivered_count: Math.max(0, memberCount - 1),
+      delivery_state: reads.length > 0 ? 'read' : memberCount > 1 ? 'delivered' : 'sent',
+    } satisfies ConnectMessage
   }))
 }
 
@@ -405,6 +488,27 @@ export async function markConversationRead(currentUser: MinimalAppUser, conversa
     .eq('conversation_id', conversationId)
     .eq('user_id', currentUserId)
   assertSupabaseOk(error, 'Mark Connect conversation read')
+  const { data: unreadMessages, error: unreadError } = await supabase
+    .from('connect_messages')
+    .select('id')
+    .eq('conversation_id', conversationId)
+    .neq('sender_id', currentUserId)
+    .is('deleted_at', null)
+    .limit(1000)
+  assertSupabaseOk(unreadError, 'Load Connect messages for read receipts')
+  const now = new Date().toISOString()
+  const receiptRows = ((unreadMessages || []) as any[]).map((message) => ({
+    message_id: String(message.id),
+    conversation_id: conversationId,
+    user_id: currentUserId,
+    read_at: now,
+  }))
+  if (receiptRows.length) {
+    const { error: receiptError } = await supabase
+      .from('connect_message_reads')
+      .upsert(receiptRows, { onConflict: 'message_id,user_id' })
+    assertSupabaseOk(receiptError, 'Save Connect read receipts')
+  }
   return { ok: true }
 }
 
@@ -437,7 +541,35 @@ export async function sendMessage(currentUser: MinimalAppUser, payload: MessageP
 
   await supabase.from('connect_conversations').update({ updated_at: new Date().toISOString() }).eq('id', conversationId)
   await markConversationRead(currentUser, conversationId)
-  return { ...(message as ConnectMessage), sender_name: sender }
+  if ((payload.message_type || 'text') !== 'system') {
+    const [conversationTitle, members] = await Promise.all([
+      getConversationTitle(supabase, conversationId),
+      getConversationMemberRows(supabase, conversationId),
+    ])
+    const notificationRows = members
+      .filter((member) => String(member.user_id) !== currentUserId && !member.muted)
+      .map((member) => ({
+        user_id: String(member.user_id),
+        audience: 'selected',
+        title: payload.message_type === 'task' ? `Connect task update · ${conversationTitle}` : `New Connect message · ${conversationTitle}`,
+        body: body.slice(0, 240),
+        priority: payload.priority || 'normal',
+        read: false,
+        created_by: currentUserId,
+        source_type: 'message',
+        source_id: String((message as any).id),
+        metadata: { conversation_id: conversationId, message_type: payload.message_type || 'text' },
+      }))
+    await createRecipientNotifications(supabase, notificationRows, 'Create Connect message notifications')
+  }
+  return {
+    ...(message as ConnectMessage),
+    sender_name: sender,
+    delivered_count: 0,
+    read_count: 0,
+    read_by: [],
+    delivery_state: 'sent',
+  }
 }
 
 
@@ -525,6 +657,9 @@ export async function createNotification(currentUser: MinimalAppUser, payload: P
     priority: payload.priority || 'normal',
     read: false,
     created_by: userId(currentUser),
+    source_type: payload.source_type || null,
+    source_id: payload.source_id || null,
+    metadata: payload.metadata || {},
   }).select('*').single()
   assertSupabaseOk(error, 'Create Connect notification')
   return data as ConnectNotification
@@ -648,6 +783,9 @@ export async function createAction(currentUser: MinimalAppUser, payload: Partial
       priority: payload.priority || 'normal',
       read: false,
       created_by: currentUserId,
+      source_type: 'action',
+      source_id: String(action.id),
+      metadata: { action_id: String(action.id), conversation_id: conversationId || null },
     })
   }
 
@@ -659,7 +797,7 @@ export async function createAction(currentUser: MinimalAppUser, payload: Partial
       priority: payload.priority || 'normal',
       confidential: true,
       metadata: { action_id: action.id, assignee_ids: finalAssigneeIds },
-    }).catch(() => null)
+    })
   }
 
   const [withAssignees] = await attachActionAssignees(supabase, [action])
@@ -706,6 +844,9 @@ export async function updateAction(currentUser: MinimalAppUser, actionId: string
         priority: payload.priority || 'normal',
         read: false,
         created_by: currentUserId,
+        source_type: 'action',
+        source_id: actionId,
+        metadata: { action_id: actionId },
       })
     }
   }
@@ -807,10 +948,158 @@ export async function deleteMessage(currentUser: MinimalAppUser, messageId: stri
   return { ok: true, deleted: true }
 }
 
+export async function createAttachmentRecord(currentUser: MinimalAppUser, payload: AttachmentPayload): Promise<ConnectAttachment> {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const conversationId = cleanText(payload.conversationId)
+  if (!conversationId) throw new Error('conversationId required')
+  const membership = await isConversationMember(supabase, conversationId, currentUserId)
+  if (!membership) throw new Error('Private conversation: current user is not a member')
+  const { data, error } = await supabase
+    .from('connect_attachments')
+    .insert({
+      conversation_id: conversationId,
+      message_id: payload.messageId || null,
+      storage_bucket: CONNECT_ATTACHMENTS_BUCKET,
+      storage_path: payload.storagePath,
+      filename: payload.filename,
+      content_type: payload.contentType || 'application/octet-stream',
+      size_bytes: payload.sizeBytes || 0,
+      uploaded_by: currentUserId,
+    })
+    .select('*')
+    .single()
+  assertSupabaseOk(error, 'Create Connect attachment metadata')
+  return data as ConnectAttachment
+}
+
+export async function attachMessageToAttachment(currentUser: MinimalAppUser, attachmentId: string, messageId: string) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const { data: attachment, error: loadError } = await supabase
+    .from('connect_attachments')
+    .select('id, conversation_id, uploaded_by')
+    .eq('id', attachmentId)
+    .maybeSingle()
+  assertSupabaseOk(loadError, 'Load Connect attachment')
+  if (!attachment) throw new Error('Connect attachment not found')
+  const membership = await isConversationMember(supabase, String((attachment as any).conversation_id), currentUserId)
+  if (!membership || String((attachment as any).uploaded_by || '') !== currentUserId) throw new Error('Cannot update this Connect attachment')
+  const { error } = await supabase
+    .from('connect_attachments')
+    .update({ message_id: messageId })
+    .eq('id', attachmentId)
+  assertSupabaseOk(error, 'Link Connect attachment message')
+  return { ok: true }
+}
+
+export async function getAttachments(currentUser: MinimalAppUser, conversationId: string): Promise<ConnectAttachment[]> {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const membership = await isConversationMember(supabase, conversationId, currentUserId)
+  if (!membership) throw new Error('Private conversation: current user is not a member')
+  const { data, error } = await supabase
+    .from('connect_attachments')
+    .select('*')
+    .eq('conversation_id', conversationId)
+    .is('deleted_at', null)
+    .order('uploaded_at', { ascending: false })
+    .limit(250)
+  assertSupabaseOk(error, 'Load Connect attachments')
+  const rows = (data || []) as any[]
+  const users = await getUsersByIds(supabase, normalizeIds(rows.map((row) => row.uploaded_by)))
+  return await Promise.all(rows.map(async (row) => {
+    const signed = await supabase.storage.from(CONNECT_ATTACHMENTS_BUCKET).createSignedUrl(String(row.storage_path), 60 * 60)
+    return {
+      ...(row as ConnectAttachment),
+      signed_url: signed.data?.signedUrl || null,
+      uploader_name: users.get(String(row.uploaded_by))?.name || null,
+    }
+  }))
+}
+
+export async function deleteAttachment(currentUser: MinimalAppUser, params: { attachmentId?: string | null; messageId?: string | null }) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const attachmentId = cleanText(params.attachmentId)
+  const messageId = cleanText(params.messageId)
+  if (!attachmentId && !messageId) throw new Error('attachmentId or messageId required')
+
+  let attachment: any | null = null
+  if (attachmentId) {
+    const { data, error } = await supabase
+      .from('connect_attachments')
+      .select('*')
+      .eq('id', attachmentId)
+      .is('deleted_at', null)
+      .maybeSingle()
+    assertSupabaseOk(error, 'Load Connect attachment')
+    attachment = data
+  } else if (messageId) {
+    const { data, error } = await supabase
+      .from('connect_attachments')
+      .select('*')
+      .eq('message_id', messageId)
+      .is('deleted_at', null)
+      .maybeSingle()
+    assertSupabaseOk(error, 'Load Connect attachment from message')
+    attachment = data
+  }
+
+  if (!attachment && messageId) {
+    const { data: message, error } = await supabase
+      .from('connect_messages')
+      .select('id, conversation_id, sender_id, metadata')
+      .eq('id', messageId)
+      .is('deleted_at', null)
+      .maybeSingle()
+    assertSupabaseOk(error, 'Load Connect file message')
+    if (!message) throw new Error('Connect attachment not found')
+    const metadata = ((message as any).metadata || {}) as Record<string, unknown>
+    attachment = {
+      id: null,
+      message_id: String((message as any).id),
+      conversation_id: String((message as any).conversation_id),
+      uploaded_by: String((message as any).sender_id),
+      storage_path: cleanText(metadata.storage_path),
+    }
+  }
+
+  if (!attachment) throw new Error('Connect attachment not found')
+  const membership = await isConversationMember(supabase, String(attachment.conversation_id), currentUserId)
+  if (!membership) throw new Error('Private conversation: current user is not a member')
+  const ownsAttachment = String(attachment.uploaded_by || '') === currentUserId
+  const canAdminDelete = ['owner', 'admin'].includes(String(membership.role || '')) || canUseConnectAdminActions(currentUser)
+  if (!ownsAttachment && !canAdminDelete) throw new Error('Cannot delete this Connect attachment')
+
+  if (attachment.storage_path) {
+    const removed = await supabase.storage.from(CONNECT_ATTACHMENTS_BUCKET).remove([String(attachment.storage_path)])
+    if (removed.error) throw new Error(`Delete Connect storage object: ${removed.error.message}`)
+  }
+
+  const now = new Date().toISOString()
+  if (attachment.id) {
+    const { error } = await supabase
+      .from('connect_attachments')
+      .update({ deleted_at: now })
+      .eq('id', String(attachment.id))
+    assertSupabaseOk(error, 'Soft-delete Connect attachment metadata')
+  }
+  if (attachment.message_id) {
+    const { error } = await supabase
+      .from('connect_messages')
+      .update({ deleted_at: now })
+      .eq('id', String(attachment.message_id))
+    assertSupabaseOk(error, 'Soft-delete Connect attachment message')
+  }
+  await supabase.from('connect_conversations').update({ updated_at: now }).eq('id', String(attachment.conversation_id))
+  return { ok: true, deleted: true }
+}
+
 export async function markNotificationsRead(currentUser: MinimalAppUser, notificationIds?: string[]) {
   const supabase = await createClient()
   const currentUserId = userId(currentUser)
-  let query = supabase.from('connect_notifications').update({ read: true }).eq('user_id', currentUserId)
+  let query = supabase.from('connect_notifications').update({ read: true, read_at: new Date().toISOString() }).eq('user_id', currentUserId)
   if (notificationIds?.length) query = query.in('id', normalizeIds(notificationIds))
   const { error } = await query
   assertSupabaseOk(error, 'Mark Connect notifications read')
@@ -831,6 +1120,112 @@ export async function muteConversation(currentUser: MinimalAppUser, conversation
   return { ok: true, muted }
 }
 
+function normalizeCallStatus(status: unknown): ConnectCallSession['status'] {
+  const value = String(status || '').trim().toLowerCase()
+  if (value === 'active') return 'connected'
+  if (value === 'created') return 'ringing'
+  if (['ringing', 'answered', 'connected', 'rejected', 'ended', 'missed'].includes(value)) return value as ConnectCallSession['status']
+  return 'ringing'
+}
+
+function terminalCallStatus(status: unknown) {
+  return ['rejected', 'ended', 'missed'].includes(String(status || '').trim().toLowerCase())
+}
+
+async function getCallParticipantRows(supabase: SupabaseClient, callIds: string[]) {
+  if (!callIds.length) return [] as any[]
+  const { data, error } = await supabase
+    .from('connect_call_participants')
+    .select('*')
+    .in('call_id', callIds)
+  assertSupabaseOk(error, 'Load Connect call participants')
+  return (data || []) as any[]
+}
+
+async function canAccessCall(supabase: SupabaseClient, call: any, currentUserId: string) {
+  if (String(call.started_by || '') === currentUserId || String(call.receiver_id || '') === currentUserId) return true
+  const { data, error } = await supabase
+    .from('connect_call_participants')
+    .select('id')
+    .eq('call_id', String(call.id))
+    .eq('user_id', currentUserId)
+    .maybeSingle()
+  assertSupabaseOk(error, 'Check Connect call participant')
+  return Boolean(data)
+}
+
+async function sendCallEventMessage(supabase: SupabaseClient, call: any, actorId: string, body: string) {
+  if (!call.conversation_id) return
+  const { error } = await supabase.from('connect_messages').insert({
+    conversation_id: String(call.conversation_id),
+    sender_id: actorId,
+    sender_name: 'AngelCare Connect',
+    body,
+    message_type: 'call',
+    priority: 'important',
+    confidential: false,
+    metadata: {
+      call_id: String(call.id),
+      room_name: call.room_name,
+      call_type: call.call_type,
+      status: call.status,
+    },
+  })
+  assertSupabaseOk(error, 'Create Connect call history message')
+  await supabase.from('connect_conversations').update({ updated_at: new Date().toISOString() }).eq('id', String(call.conversation_id))
+}
+
+async function hydrateCalls(supabase: SupabaseClient, calls: any[]): Promise<ConnectCallSession[]> {
+  const participantRows = await getCallParticipantRows(supabase, calls.map((call) => String(call.id)))
+  const participantIdsByCall = new Map<string, string[]>()
+  for (const row of participantRows) {
+    const key = String(row.call_id)
+    participantIdsByCall.set(key, [...(participantIdsByCall.get(key) || []), String(row.user_id)])
+  }
+  const users = await getUsersByIds(supabase, normalizeIds(calls.map((call) => call.started_by)))
+  return calls.map((call) => ({
+    ...(call as ConnectCallSession),
+    status: normalizeCallStatus(call.status),
+    started_by_name: users.get(String(call.started_by))?.name || null,
+    participant_ids: participantIdsByCall.get(String(call.id)) || [],
+  }))
+}
+
+async function markStaleRingingCallsMissed(supabase: SupabaseClient, calls: any[], currentUserId: string) {
+  const cutoff = Date.now() - CONNECT_MISSED_CALL_MS
+  const stale = calls.filter((call) => normalizeCallStatus(call.status) === 'ringing' && new Date(call.started_at || 0).getTime() < cutoff)
+  if (!stale.length) return
+  const now = new Date().toISOString()
+  for (const call of stale) {
+    const { data: updated, error } = await supabase
+      .from('connect_call_sessions')
+      .update({ status: 'missed', ended_at: now, updated_at: now })
+      .eq('id', String(call.id))
+      .eq('status', 'ringing')
+      .select('*')
+      .maybeSingle()
+    assertSupabaseOk(error, 'Mark stale Connect call missed')
+    if (!updated) continue
+    const participantRows = await getCallParticipantRows(supabase, [String(call.id)])
+    const targetIds = normalizeIds(participantRows
+      .map((row) => row.user_id)
+      .filter((id) => String(id) !== String(call.started_by)))
+    await createRecipientNotifications(supabase, targetIds.map((targetId) => ({
+      user_id: targetId,
+      audience: 'selected',
+      title: 'Missed Connect call',
+      body: `Missed ${call.call_type || 'audio'} call from ${cleanText(call.started_by_name, 'AngelCare Connect')}.`,
+      priority: 'important',
+      read: false,
+      created_by: currentUserId,
+      source_type: 'call',
+      source_id: String(call.id),
+      metadata: { call_id: String(call.id), conversation_id: call.conversation_id || null, status: 'missed' },
+    })), 'Create Connect missed call notifications')
+    await sendCallEventMessage(supabase, { ...call, status: 'missed' }, currentUserId, `${call.call_type === 'video' ? 'Video' : 'Audio'} call missed.`)
+  }
+}
+
 export async function updateCall(currentUser: MinimalAppUser, callId: string, payload: Partial<ConnectCallSession>) {
   const supabase = await createClient()
   const currentUserId = userId(currentUser)
@@ -841,41 +1236,154 @@ export async function updateCall(currentUser: MinimalAppUser, callId: string, pa
     .maybeSingle()
   assertSupabaseOk(existingError, 'Load Connect call')
   if (!existing) throw new Error('Connect call not found')
-  const ownsCall = String((existing as any).started_by || '') === currentUserId || String((existing as any).receiver_id || '') === currentUserId
-  if (!ownsCall) throw new Error('Cannot update this Connect call')
+  const canUpdate = await canAccessCall(supabase, existing, currentUserId)
+  if (!canUpdate) throw new Error('Cannot update this Connect call')
+  if (terminalCallStatus((existing as any).status)) throw new Error('Connect call is already closed')
+  const nextStatus = payload.status ? normalizeCallStatus(payload.status) : normalizeCallStatus((existing as any).status)
+  if (nextStatus === 'ringing') throw new Error('Use call create to start a ringing Connect call')
   const updates: Record<string, unknown> = {}
-  if (payload.status) updates.status = payload.status
-  if (payload.status === 'ended' || payload.status === 'rejected' || payload.status === 'missed') updates.ended_at = new Date().toISOString()
+  const now = new Date().toISOString()
+  updates.status = nextStatus
+  updates.updated_at = now
+  if (nextStatus === 'answered') updates.answered_at = now
+  if (nextStatus === 'connected') {
+    updates.answered_at = (existing as any).answered_at || now
+    updates.connected_at = (existing as any).connected_at || now
+  }
+  if (terminalCallStatus(nextStatus)) updates.ended_at = now
   if (payload.metadata) updates.metadata = payload.metadata
   const { data, error } = await supabase.from('connect_call_sessions').update(updates).eq('id', callId).select('*').single()
   assertSupabaseOk(error, 'Update Connect call')
-  return data as ConnectCallSession
+
+  await supabase
+    .from('connect_call_participants')
+    .upsert({
+      call_id: callId,
+      user_id: currentUserId,
+      status: nextStatus,
+      joined_at: nextStatus === 'answered' || nextStatus === 'connected' ? now : null,
+      left_at: terminalCallStatus(nextStatus) ? now : null,
+    }, { onConflict: 'call_id,user_id' })
+
+  const call = data as any
+  if (nextStatus === 'connected' || nextStatus === 'answered') {
+    await createRecipientNotifications(supabase, [{
+      user_id: String(call.started_by),
+      audience: 'selected',
+      title: 'Connect call answered',
+      body: `${userName(currentUser as any)} answered the ${call.call_type || 'audio'} call.`,
+      priority: 'important',
+      read: false,
+      created_by: currentUserId,
+      source_type: 'call',
+      source_id: callId,
+      metadata: { call_id: callId, conversation_id: call.conversation_id || null, status: nextStatus },
+    }].filter((row) => String(row.user_id) !== currentUserId), 'Create Connect answered call notification')
+    await sendCallEventMessage(supabase, call, currentUserId, `${call.call_type === 'video' ? 'Video' : 'Audio'} call connected.`)
+  }
+  if (nextStatus === 'rejected') {
+    await createRecipientNotifications(supabase, [{
+      user_id: String(call.started_by),
+      audience: 'selected',
+      title: 'Connect call rejected',
+      body: `${userName(currentUser as any)} rejected the ${call.call_type || 'audio'} call.`,
+      priority: 'important',
+      read: false,
+      created_by: currentUserId,
+      source_type: 'call',
+      source_id: callId,
+      metadata: { call_id: callId, conversation_id: call.conversation_id || null, status: 'rejected' },
+    }].filter((row) => String(row.user_id) !== currentUserId), 'Create Connect rejected call notification')
+    await sendCallEventMessage(supabase, call, currentUserId, `${call.call_type === 'video' ? 'Video' : 'Audio'} call rejected.`)
+  }
+  if (nextStatus === 'ended') {
+    await sendCallEventMessage(supabase, call, currentUserId, `${call.call_type === 'video' ? 'Video' : 'Audio'} call ended.`)
+  }
+  const [hydrated] = await hydrateCalls(supabase, [call])
+  return hydrated
 }
 
 export async function getCalls(currentUser: MinimalAppUser): Promise<ConnectCallSession[]> {
   const supabase = await createClient()
   const currentUserId = userId(currentUser)
-  const { data, error } = await supabase.from('connect_call_sessions').select('*').or(`started_by.eq.${currentUserId},receiver_id.eq.${currentUserId}`).order('started_at', { ascending: false }).limit(100)
+  const { data: participantRows, error: participantError } = await supabase
+    .from('connect_call_participants')
+    .select('call_id')
+    .eq('user_id', currentUserId)
+  assertSupabaseOk(participantError, 'Load my Connect call participants')
+  const participantCallIds = normalizeIds(((participantRows || []) as any[]).map((row) => row.call_id))
+  const orTerms = [`started_by.eq.${currentUserId}`, `receiver_id.eq.${currentUserId}`]
+  if (participantCallIds.length) orTerms.push(`id.in.(${participantCallIds.join(',')})`)
+  const { data, error } = await supabase
+    .from('connect_call_sessions')
+    .select('*')
+    .or(orTerms.join(','))
+    .order('started_at', { ascending: false })
+    .limit(100)
   assertSupabaseOk(error, 'Load Connect calls')
-  return (data || []) as ConnectCallSession[]
+  await markStaleRingingCallsMissed(supabase, (data || []) as any[], currentUserId)
+  const { data: refreshed, error: refreshError } = await supabase
+    .from('connect_call_sessions')
+    .select('*')
+    .or(orTerms.join(','))
+    .order('started_at', { ascending: false })
+    .limit(100)
+  assertSupabaseOk(refreshError, 'Reload Connect calls')
+  return hydrateCalls(supabase, (refreshed || []) as any[])
 }
 
 export async function createCall(currentUser: MinimalAppUser, payload: Partial<ConnectCallSession>) {
   const supabase = await createClient()
+  const currentUserId = userId(currentUser)
   const conversationId = payload.conversation_id || null
+  let memberRows: any[] = []
   if (conversationId) {
-    const membership = await isConversationMember(supabase, conversationId, userId(currentUser))
+    const membership = await isConversationMember(supabase, conversationId, currentUserId)
     if (!membership) throw new Error('Cannot start call in a private conversation')
+    memberRows = await getConversationMemberRows(supabase, conversationId)
   }
+  const targetIds = normalizeIds([
+    payload.receiver_id || null,
+    ...memberRows.map((member) => member.user_id).filter((id) => String(id) !== currentUserId),
+  ])
+  if (!targetIds.length) throw new Error('Select at least one Connect call recipient')
+  const roomName = payload.room_name || `angelcare-connect-${randomUUID()}`
+  const status = normalizeCallStatus(payload.status || 'ringing')
   const { data, error } = await supabase.from('connect_call_sessions').insert({
     conversation_id: conversationId,
-    room_name: payload.room_name || `angelcare-connect-${randomUUID()}`,
+    room_name: roomName,
     call_type: payload.call_type || 'audio',
-    status: payload.status || 'created',
-    started_by: userId(currentUser),
-    receiver_id: payload.receiver_id || null,
-    metadata: payload.metadata || {},
+    status,
+    started_by: currentUserId,
+    receiver_id: payload.receiver_id || targetIds[0] || null,
+    metadata: { ...(payload.metadata || {}), participant_ids: targetIds },
   }).select('*').single()
   assertSupabaseOk(error, 'Create Connect call')
-  return data as ConnectCallSession
+  const call = data as any
+  const participantRows = normalizeIds([currentUserId, ...targetIds]).map((participantId) => ({
+    call_id: String(call.id),
+    user_id: participantId,
+    role: participantId === currentUserId ? 'caller' : 'receiver',
+    status: participantId === currentUserId ? 'ringing' : 'ringing',
+  }))
+  const { error: participantError } = await supabase
+    .from('connect_call_participants')
+    .upsert(participantRows, { onConflict: 'call_id,user_id' })
+  assertSupabaseOk(participantError, 'Create Connect call participants')
+  const title = conversationId ? await getConversationTitle(supabase, String(conversationId)) : 'AngelCare Connect'
+  await createRecipientNotifications(supabase, targetIds.map((targetId) => ({
+    user_id: targetId,
+    audience: 'selected',
+    title: `Incoming Connect ${call.call_type} call`,
+    body: `${userName(currentUser as any)} is calling in ${title}.`,
+    priority: 'urgent',
+    read: false,
+    created_by: currentUserId,
+    source_type: 'call',
+    source_id: String(call.id),
+    metadata: { call_id: String(call.id), conversation_id: conversationId, status: 'ringing', room_name: roomName },
+  })), 'Create Connect incoming call notifications')
+  await sendCallEventMessage(supabase, call, currentUserId, `${call.call_type === 'video' ? 'Video' : 'Audio'} call ringing.`)
+  const [hydrated] = await hydrateCalls(supabase, [call])
+  return hydrated
 }

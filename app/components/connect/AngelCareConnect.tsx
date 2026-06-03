@@ -87,6 +87,11 @@ type Message = {
   confidential: boolean
   created_at: string
   metadata?: Record<string, unknown> | null
+  read_count?: number
+  read_by?: Array<{ user_id: string; name?: string | null; read_at: string }>
+  my_read_at?: string | null
+  delivered_count?: number
+  delivery_state?: "sent" | "delivered" | "read"
 }
 
 type ConnectAction = {
@@ -110,6 +115,9 @@ type Notice = {
   body?: string | null
   priority: Priority
   read: boolean
+  source_type?: string | null
+  source_id?: string | null
+  metadata?: Record<string, unknown> | null
   created_at: string
 }
 
@@ -118,16 +126,51 @@ type CallSession = {
   conversation_id?: string | null
   room_name: string
   call_type: "audio" | "video"
-  status: "ringing" | "active" | "missed" | "ended" | "rejected" | "created"
+  status: "ringing" | "answered" | "connected" | "active" | "missed" | "ended" | "rejected" | "created"
   started_by?: string | null
+  started_by_name?: string | null
   receiver_id?: string | null
   started_at?: string
+  answered_at?: string | null
+  connected_at?: string | null
+  ended_at?: string | null
+  participant_ids?: string[]
+  metadata?: Record<string, unknown> | null
+}
+
+type AttachmentPreview = {
+  id?: string | null
+  messageId: string
+  filename: string
+  contentType: string
+  size: number
+  url?: string | null
+  storagePath?: string | null
+  uploadedBy?: string | null
+  uploadedAt?: string | null
+  mine: boolean
+}
+
+type WidgetPosition = {
+  x: number
+  y: number
+}
+
+type ToastAlert = {
+  id: string
+  title: string
+  body?: string | null
+  conversationId?: string | null
+  callId?: string | null
+  actionId?: string | null
+  tone: "message" | "call" | "task" | "missed"
 }
 
 const CONNECT_OPEN_KEY = "angelcare.connect.open"
 const CONNECT_SIZE_KEY = "angelcare.connect.panelSize"
 const CONNECT_MODE_KEY = "angelcare.connect.mode"
 const CONNECT_SELECTED_KEY = "angelcare.connect.selected"
+const CONNECT_POSITION_KEY = "angelcare.connect.position"
 
 function cx(...items: Array<string | false | null | undefined>) {
   return items.filter(Boolean).join(" ")
@@ -165,6 +208,24 @@ function formatTime(value?: string | null) {
   return date.toLocaleDateString([], { month: "short", day: "numeric" })
 }
 
+function formatDuration(start?: string | null, now = Date.now()) {
+  if (!start) return "00:00"
+  const started = new Date(start).getTime()
+  if (Number.isNaN(started)) return "00:00"
+  const totalSeconds = Math.max(0, Math.floor((now - started) / 1000))
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+}
+
+function formatBytes(value?: number | null) {
+  const bytes = Number(value || 0)
+  if (!Number.isFinite(bytes) || bytes <= 0) return "Unknown size"
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
 function statusTone(status?: StaffUser["status"]) {
   if (status === "online") return "bg-emerald-500"
   if (status === "busy") return "bg-amber-500"
@@ -191,6 +252,48 @@ function otherMember(conversation: Conversation | null, currentUserId?: string) 
 
 function fileMessages(messages: Message[]) {
   return messages.filter((message) => message.message_type === "file" || Boolean(message.metadata && (message.metadata.filename || message.metadata.fileName || message.metadata.url)))
+}
+
+function terminalCall(status?: CallSession["status"]) {
+  return status === "ended" || status === "rejected" || status === "missed"
+}
+
+function liveCall(status?: CallSession["status"]) {
+  return status === "answered" || status === "connected" || status === "active"
+}
+
+function attachmentFromMessage(message: Message, currentUserId?: string | null): AttachmentPreview {
+  const metadata = message.metadata || {}
+  return {
+    id: String(metadata.attachment_id || "") || null,
+    messageId: message.id,
+    filename: String(metadata.filename || metadata.fileName || message.body || "Shared file"),
+    contentType: String(metadata.content_type || metadata.contentType || "application/octet-stream"),
+    size: Number(metadata.size || metadata.size_bytes || 0),
+    url: String(metadata.signed_url || metadata.url || "") || null,
+    storagePath: String(metadata.storage_path || "") || null,
+    uploadedBy: String(metadata.uploaded_by || message.sender_id || "") || null,
+    uploadedAt: String(metadata.uploaded_at || message.created_at || "") || null,
+    mine: String(message.sender_id) === String(currentUserId || ""),
+  }
+}
+
+function attachmentIsImage(attachment: AttachmentPreview) {
+  return attachment.contentType.startsWith("image/")
+}
+
+function attachmentIsPdf(attachment: AttachmentPreview) {
+  return attachment.contentType === "application/pdf" || attachment.filename.toLowerCase().endsWith(".pdf")
+}
+
+function readLabel(message: Message, selected?: Conversation | null) {
+  const readers = (message.read_by || []).filter((reader) => reader.name || reader.user_id)
+  if (readers.length > 0) {
+    const names = readers.slice(0, 2).map((reader) => reader.name || "User").join(", ")
+    return readers.length > 2 ? `Read by ${names} +${readers.length - 2}` : `Read by ${names}`
+  }
+  if ((message.delivered_count || 0) > 0 || (selected?.member_count || 0) > 1) return "Delivered"
+  return "Sent"
 }
 
 export default function AngelCareConnect({
@@ -224,7 +327,7 @@ export default function AngelCareConnect({
   const [confidential, setConfidential] = useState(false)
   const [typingPulse, setTypingPulse] = useState(false)
   const [rightPanelOpen, setRightPanelOpen] = useState(true)
-  const [activeCall, setActiveCall] = useState<{ roomName: string; type: "audio" | "video" } | null>(null)
+  const [activeCall, setActiveCall] = useState<{ callId: string; roomName: string; type: "audio" | "video"; startedAt?: string | null } | null>(null)
   const [callView, setCallView] = useState<"inline" | "fullscreen" | "mini">("inline")
   const [moreMenuOpen, setMoreMenuOpen] = useState(false)
   const [roomModalOpen, setRoomModalOpen] = useState(false)
@@ -254,6 +357,16 @@ export default function AngelCareConnect({
   const [threadSearchOpen, setThreadSearchOpen] = useState(false)
   const [threadQuery, setThreadQuery] = useState("")
   const [recordingVoice, setRecordingVoice] = useState(false)
+  const [attachmentPreview, setAttachmentPreview] = useState<AttachmentPreview | null>(null)
+  const [widgetPosition, setWidgetPosition] = useState<WidgetPosition | null>(null)
+  const [toastAlerts, setToastAlerts] = useState<ToastAlert[]>([])
+  const [nowMs, setNowMs] = useState(Date.now())
+  const [audioUnlocked, setAudioUnlocked] = useState(false)
+  const selectedIdRef = useRef("")
+  const audioUnlockedRef = useRef(false)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const dragRef = useRef<{ startX: number; startY: number; originX: number; originY: number; width: number; height: number; moved: boolean; next?: WidgetPosition } | null>(null)
+  const suppressMinimizedClickRef = useRef(false)
 
   useEffect(() => {
     try {
@@ -264,15 +377,73 @@ export default function AngelCareConnect({
       if (storedMode) setMode(storedMode)
       const storedSelected = window.localStorage.getItem(CONNECT_SELECTED_KEY)
       if (storedSelected) setSelectedId(storedSelected)
+      const storedPosition = window.localStorage.getItem(CONNECT_POSITION_KEY)
+      if (storedPosition) {
+        const parsed = JSON.parse(storedPosition) as WidgetPosition
+        if (Number.isFinite(parsed.x) && Number.isFinite(parsed.y)) setWidgetPosition(parsed)
+      }
       setBrowserNotificationsEnabled(typeof Notification !== "undefined" && Notification.permission === "granted")
     } catch {}
   }, [floating, defaultOpen])
 
   useEffect(() => {
     void loadConnectShell()
-    const interval = window.setInterval(() => void loadConnectShell(false), 25000)
+    const interval = window.setInterval(() => {
+      void loadConnectShell(false)
+      const activeSelectedId = selectedIdRef.current
+      if (activeSelectedId) void loadMessages(activeSelectedId, false)
+    }, 6000)
     return () => window.clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    selectedIdRef.current = selectedId
+  }, [selectedId])
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNowMs(Date.now()), 1000)
+    return () => window.clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    function unlockAudio() {
+      audioUnlockedRef.current = true
+      setAudioUnlocked(true)
+    }
+    window.addEventListener("pointerdown", unlockAudio, { once: true })
+    window.addEventListener("keydown", unlockAudio, { once: true })
+    return () => {
+      window.removeEventListener("pointerdown", unlockAudio)
+      window.removeEventListener("keydown", unlockAudio)
+    }
+  }, [])
+
+  useEffect(() => {
+    function refreshOnFocus() {
+      void loadConnectShell(false)
+      const activeSelectedId = selectedIdRef.current
+      if (activeSelectedId) void loadMessages(activeSelectedId, false)
+    }
+    window.addEventListener("focus", refreshOnFocus)
+    document.addEventListener("visibilitychange", refreshOnFocus)
+    return () => {
+      window.removeEventListener("focus", refreshOnFocus)
+      document.removeEventListener("visibilitychange", refreshOnFocus)
+    }
+  }, [])
+
+  useEffect(() => {
+    function clampOnResize() {
+      setWidgetPosition((current) => {
+        if (!current) return current
+        const next = clampWidgetPosition(current, panelSize === "expanded" ? 1440 : 860, open ? 860 : 88)
+        try { window.localStorage.setItem(CONNECT_POSITION_KEY, JSON.stringify(next)) } catch {}
+        return next
+      })
+    }
+    window.addEventListener("resize", clampOnResize)
+    return () => window.removeEventListener("resize", clampOnResize)
+  }, [panelSize, open])
 
   useEffect(() => {
     if (!selectedId) return
@@ -307,12 +478,33 @@ export default function AngelCareConnect({
     }
   }
 
-  function pushBrowserNotification(key: string, title: string, body?: string) {
-    if (typeof window === "undefined" || !("Notification" in window)) return
-    if (Notification.permission !== "granted") return
-    if (notificationSeenRef.current.has(key)) return
-    notificationSeenRef.current.add(key)
-    if (!browserNotificationBootedRef.current) return
+  function playCue(kind: "message" | "call" | "task" | "missed") {
+    if (!audioUnlockedRef.current || typeof window === "undefined" || !("AudioContext" in window)) return
+    try {
+      const context = audioContextRef.current || new AudioContext()
+      audioContextRef.current = context
+      const oscillator = context.createOscillator()
+      const gain = context.createGain()
+      oscillator.type = kind === "call" ? "sine" : "triangle"
+      oscillator.frequency.value = kind === "call" ? 720 : kind === "task" ? 520 : kind === "missed" ? 360 : 620
+      gain.gain.value = kind === "call" ? 0.08 : 0.045
+      oscillator.connect(gain)
+      gain.connect(context.destination)
+      oscillator.start()
+      oscillator.stop(context.currentTime + (kind === "call" ? 0.34 : 0.16))
+    } catch {}
+  }
+
+  function showInAppAlert(alert: ToastAlert) {
+    setToastAlerts((current) => [alert, ...current.filter((item) => item.id !== alert.id)].slice(0, 4))
+    window.setTimeout(() => {
+      setToastAlerts((current) => current.filter((item) => item.id !== alert.id))
+    }, 8500)
+  }
+
+  function pushBrowserNotification(key: string, title: string, body?: string): boolean {
+    if (typeof window === "undefined" || !("Notification" in window)) return false
+    if (Notification.permission !== "granted") return false
     try {
       const notice = new Notification(title, {
         body: body || "AngelCare Connect update",
@@ -323,25 +515,56 @@ export default function AngelCareConnect({
         window.focus()
         setPanelOpen(true)
       }
-    } catch {}
+      return true
+    } catch {
+      return false
+    }
   }
 
   function showBrowserConnectNotifications(nextConversations: Conversation[], nextNotifications: Notice[], nextCalls: CallSession[], me: StaffUser | null) {
     for (const conversation of nextConversations) {
       if (!conversation.unread_count || conversation.unread_count <= 0) continue
       const key = `connect-message-${conversation.id}-${conversation.last_message_at || conversation.unread_count}`
-      pushBrowserNotification(key, `New Connect message · ${conversation.title}`, conversation.last_message || "Open AngelCare Connect to read the latest update.")
+      const fresh = !notificationSeenRef.current.has(key)
+      if (fresh) notificationSeenRef.current.add(key)
+      if (fresh && browserNotificationBootedRef.current) {
+        pushBrowserNotification(key, `New Connect message · ${conversation.title}`, conversation.last_message || "Open AngelCare Connect to read the latest update.")
+        playCue("message")
+        showInAppAlert({ id: key, tone: "message", title: `New message · ${conversation.title}`, body: conversation.last_message, conversationId: conversation.id })
+      }
     }
     for (const notice of nextNotifications) {
       if (notice.read) continue
-      pushBrowserNotification(`connect-notice-${notice.id}`, notice.title, notice.body || "New AngelCare Connect notification")
+      const tone = notice.source_type === "action" ? "task" : notice.source_type === "call" && String(notice.metadata?.status || "").includes("missed") ? "missed" : notice.source_type === "call" ? "call" : "message"
+      const key = `connect-notice-${notice.id}`
+      const fresh = !notificationSeenRef.current.has(key)
+      if (fresh) notificationSeenRef.current.add(key)
+      if (fresh && browserNotificationBootedRef.current) {
+        pushBrowserNotification(key, notice.title, notice.body || "New AngelCare Connect notification")
+        playCue(tone)
+        showInAppAlert({
+          id: key,
+          tone,
+          title: notice.title,
+          body: notice.body,
+          conversationId: String(notice.metadata?.conversation_id || "") || null,
+          callId: notice.source_type === "call" ? notice.source_id || null : null,
+          actionId: notice.source_type === "action" ? notice.source_id || null : null,
+        })
+      }
     }
     for (const call of nextCalls) {
       const incoming = String(call.started_by || "") !== String(me?.id || "")
-      const liveStatus = call.status === "ringing" || call.status === "created" || call.status === "active"
+      const liveStatus = call.status === "ringing" || call.status === "created" || call.status === "active" || call.status === "connected"
       if (!incoming || !liveStatus) continue
       const key = `connect-call-${call.id}-${call.status}`
-      pushBrowserNotification(key, `Incoming ${call.call_type} call`, "Open AngelCare Connect to join the conversation call.")
+      const fresh = !notificationSeenRef.current.has(key)
+      if (fresh) notificationSeenRef.current.add(key)
+      if (fresh && browserNotificationBootedRef.current) {
+        pushBrowserNotification(key, `Incoming ${call.call_type} call`, "Open AngelCare Connect to join the conversation call.")
+        playCue("call")
+        showInAppAlert({ id: key, tone: "call", title: `Incoming ${call.call_type} call`, body: call.started_by_name ? `${call.started_by_name} is calling.` : "Open AngelCare Connect to answer.", conversationId: call.conversation_id, callId: call.id })
+      }
     }
     browserNotificationBootedRef.current = true
   }
@@ -377,8 +600,8 @@ export default function AngelCareConnect({
     }
   }
 
-  async function loadMessages(conversationId: string) {
-    setThreadLoading(true)
+  async function loadMessages(conversationId: string, showThreadLoading = true) {
+    if (showThreadLoading) setThreadLoading(true)
     setError(null)
     try {
       const payload = await readJson<{ messages: Message[] }>(`/api/connect/messages?conversationId=${encodeURIComponent(conversationId)}`)
@@ -387,7 +610,7 @@ export default function AngelCareConnect({
     } catch (err) {
       setError(err instanceof Error ? err.message : "Connect messages failed to load")
     } finally {
-      setThreadLoading(false)
+      if (showThreadLoading) setThreadLoading(false)
     }
   }
 
@@ -407,6 +630,75 @@ export default function AngelCareConnect({
     try { window.localStorage.setItem(CONNECT_MODE_KEY, next) } catch {}
   }
 
+  function clampWidgetPosition(position: WidgetPosition, width: number, height: number): WidgetPosition {
+    const margin = 12
+    const maxX = Math.max(margin, window.innerWidth - Math.min(width, window.innerWidth - margin * 2) - margin)
+    const maxY = Math.max(margin, window.innerHeight - Math.min(height, window.innerHeight - margin * 2) - margin)
+    return {
+      x: Math.min(Math.max(margin, position.x), maxX),
+      y: Math.min(Math.max(margin, position.y), maxY),
+    }
+  }
+
+  function saveWidgetPosition(position: WidgetPosition) {
+    setWidgetPosition(position)
+    try { window.localStorage.setItem(CONNECT_POSITION_KEY, JSON.stringify(position)) } catch {}
+  }
+
+  function handleWidgetPointerMove(event: PointerEvent) {
+    const drag = dragRef.current
+    if (!drag) return
+    const dx = event.clientX - drag.startX
+    const dy = event.clientY - drag.startY
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) drag.moved = true
+    const next = clampWidgetPosition({ x: drag.originX + dx, y: drag.originY + dy }, drag.width, drag.height)
+    drag.next = next
+    setWidgetPosition(next)
+  }
+
+  function handleWidgetPointerUp() {
+    const drag = dragRef.current
+    if (!drag) return
+    window.removeEventListener("pointermove", handleWidgetPointerMove)
+    window.removeEventListener("pointerup", handleWidgetPointerUp)
+    const next = drag.next || clampWidgetPosition({ x: drag.originX, y: drag.originY }, drag.width, drag.height)
+    saveWidgetPosition(next)
+    if (drag.moved) {
+      suppressMinimizedClickRef.current = true
+      window.setTimeout(() => { suppressMinimizedClickRef.current = false }, 120)
+    }
+    dragRef.current = null
+  }
+
+  function beginWidgetDrag(event: React.PointerEvent<HTMLElement>, source: "panel" | "button") {
+    if (!floating) return
+    const target = event.target as HTMLElement
+    if (source === "panel" && target.closest("button,a,input,textarea,select")) return
+    const element = source === "button"
+      ? event.currentTarget
+      : event.currentTarget.closest("[data-connect-shell]") as HTMLElement | null
+    if (!element) return
+    const rect = element.getBoundingClientRect()
+    dragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: rect.left,
+      originY: rect.top,
+      width: rect.width,
+      height: rect.height,
+      moved: false,
+    }
+    setWidgetPosition({ x: rect.left, y: rect.top })
+    window.addEventListener("pointermove", handleWidgetPointerMove)
+    window.addEventListener("pointerup", handleWidgetPointerUp)
+  }
+
+  function openConnectContext(conversationId?: string | null, nextMode?: ConnectMode) {
+    if (conversationId) setSelectedId(conversationId)
+    if (nextMode) changeMode(nextMode)
+    setPanelOpen(true)
+  }
+
   const selected = conversations.find((conversation) => conversation.id === selectedId) || conversations[0] || null
   const selectedMember = otherMember(selected, currentUser?.id)
   const isDirect = selected?.type === "direct"
@@ -418,6 +710,35 @@ export default function AngelCareConnect({
   const unreadTotal = conversations.reduce((sum, conversation) => sum + (conversation.unread_count || 0), 0) + notifications.filter((notice) => !notice.read).length
   const normalizedCurrentRole = String(currentUser?.role || "").trim().toLowerCase()
   const isCEO = ["ceo", "chief executive officer", "chief-executive-officer", "dg", "direction générale", "direction generale", "founder", "owner", "super_admin", "super admin"].includes(normalizedCurrentRole)
+  const visibleCall = calls.find((call) => activeCall?.callId === call.id) || null
+  const incomingCall = calls.find((call) => !terminalCall(call.status) && (call.status === "ringing" || call.status === "created") && String(call.started_by || "") !== String(currentUser?.id || "")) || null
+  const outgoingRingingCall = calls.find((call) => !terminalCall(call.status) && (call.status === "ringing" || call.status === "created") && String(call.started_by || "") === String(currentUser?.id || "")) || null
+  const connectedCall = calls.find((call) => liveCall(call.status) && !terminalCall(call.status)) || null
+  const missedCallCount = calls.filter((call) => call.status === "missed" && String(call.started_by || "") !== String(currentUser?.id || "")).length
+  const assignedTaskCount = actions.filter((action) => action.status !== "done" && (action.assignee_ids || action.assignees?.map((item) => item.user_id) || []).some((id) => String(id) === String(currentUser?.id || ""))).length
+  const taskNotificationCount = notifications.filter((notice) => !notice.read && notice.source_type === "action").length
+  const callSignal = Boolean(incomingCall || outgoingRingingCall || connectedCall)
+  const minimizedSignalCount = unreadTotal + missedCallCount + assignedTaskCount
+  const activeCallStartedAt = visibleCall?.connected_at || visibleCall?.answered_at || activeCall?.startedAt || visibleCall?.started_at
+
+  useEffect(() => {
+    if (!currentUser?.id) return
+    if (activeCall) {
+      const current = calls.find((call) => call.id === activeCall.callId)
+      if (current && terminalCall(current.status)) setActiveCall(null)
+      return
+    }
+    const live = calls.find((call) => liveCall(call.status) && !terminalCall(call.status) && (
+      String(call.started_by || "") === String(currentUser.id)
+      || String(call.receiver_id || "") === String(currentUser.id)
+      || (call.participant_ids || []).some((id) => String(id) === String(currentUser.id))
+    ))
+    if (live) {
+      setActiveCall({ callId: live.id, roomName: live.room_name, type: live.call_type, startedAt: live.connected_at || live.answered_at || live.started_at || null })
+      setCallView("inline")
+      if (live.conversation_id) setSelectedId(live.conversation_id)
+    }
+  }, [activeCall, calls, currentUser?.id])
 
   const filteredConversations = useMemo(() => {
     const normalized = query.trim().toLowerCase()
@@ -552,6 +873,27 @@ export default function AngelCareConnect({
     } catch (err) {
       setError(err instanceof Error ? err.message : "Message could not be deleted")
     }
+  }
+
+  async function deleteConnectAttachment(attachment: AttachmentPreview) {
+    const confirmed = window.confirm(`Delete "${attachment.filename}" from this Connect conversation?`)
+    if (!confirmed) return
+    setError(null)
+    try {
+      const params = attachment.id
+        ? `attachmentId=${encodeURIComponent(attachment.id)}`
+        : `messageId=${encodeURIComponent(attachment.messageId)}`
+      await readJson<{ ok: boolean }>(`/api/connect/attachments?${params}`, { method: "DELETE" })
+      setMessages((current) => current.filter((item) => item.id !== attachment.messageId))
+      setAttachmentPreview(null)
+      if (selected?.id) void loadMessages(selected.id, false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Attachment could not be deleted")
+    }
+  }
+
+  function openAttachmentFromMessage(message: Message) {
+    setAttachmentPreview(attachmentFromMessage(message, currentUser?.id))
   }
 
   async function markAllNotificationsRead() {
@@ -751,31 +1093,78 @@ export default function AngelCareConnect({
 
   async function startCall(callType: "audio" | "video") {
     if (!selected) return
+    setError(null)
     try {
-      const callPayload = await readJson<{ call: { room_name?: string } }>("/api/connect/calls", {
+      const callPayload = await readJson<{ call: CallSession }>("/api/connect/calls", {
         method: "POST",
         body: JSON.stringify({
           conversation_id: selected.id,
           call_type: callType,
-          status: "created",
+          status: "ringing",
           receiver_id: selectedMember?.id,
         }),
       })
-      await readJson<{ message: Message }>("/api/connect/messages", {
-        method: "POST",
-        body: JSON.stringify({
-          conversationId: selected.id,
-          body: `${callType === "video" ? "Video" : "Audio"} call started from AngelCare Connect.`,
-          message_type: "call",
-          priority: "important",
-          confidential: selected.privacy_level === "private" || selected.privacy_level === "executive",
-        }),
-      })
+      setCalls((current) => [callPayload.call, ...current.filter((call) => call.id !== callPayload.call.id)])
       await loadMessages(selected.id)
-      setActiveCall({ roomName: callPayload.call?.room_name || `connect-${selected.id}`, type: callType })
-      setCallView("inline")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Call could not be started")
+    }
+  }
+
+  async function answerCall(call: CallSession) {
+    setError(null)
+    try {
+      const payload = await readJson<{ call: CallSession }>("/api/connect/calls", {
+        method: "PATCH",
+        body: JSON.stringify({ callId: call.id, status: "connected" }),
+      })
+      const next = payload.call
+      setCalls((current) => current.map((item) => item.id === next.id ? next : item))
+      if (next.conversation_id) {
+        setSelectedId(next.conversation_id)
+        await loadMessages(next.conversation_id, false)
+      }
+      setActiveCall({ callId: next.id, roomName: next.room_name, type: next.call_type, startedAt: next.connected_at || next.answered_at || next.started_at || null })
+      setCallView("inline")
+      setPanelOpen(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Call could not be answered")
+    }
+  }
+
+  async function rejectCall(call: CallSession) {
+    setError(null)
+    try {
+      const payload = await readJson<{ call: CallSession }>("/api/connect/calls", {
+        method: "PATCH",
+        body: JSON.stringify({ callId: call.id, status: "rejected" }),
+      })
+      setCalls((current) => current.map((item) => item.id === payload.call.id ? payload.call : item))
+      if (payload.call.conversation_id) await loadMessages(payload.call.conversation_id, false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Call could not be rejected")
+    }
+  }
+
+  async function endCall(callId?: string | null) {
+    const id = callId || activeCall?.callId
+    if (!id) return
+    const call = calls.find((item) => item.id === id)
+    if (call && terminalCall(call.status)) {
+      setActiveCall(null)
+      return
+    }
+    setError(null)
+    try {
+      const payload = await readJson<{ call: CallSession }>("/api/connect/calls", {
+        method: "PATCH",
+        body: JSON.stringify({ callId: id, status: "ended" }),
+      })
+      setCalls((current) => current.map((item) => item.id === payload.call.id ? payload.call : item))
+      setActiveCall(null)
+      if (payload.call.conversation_id) await loadMessages(payload.call.conversation_id, false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Call could not be ended")
     }
   }
 
@@ -833,20 +1222,42 @@ export default function AngelCareConnect({
   }
 
   if (!open && floating) {
+    const unreadConversation = conversations.find((conversation) => (conversation.unread_count || 0) > 0)
+    const minimizedStyle = widgetPosition ? { left: widgetPosition.x, top: widgetPosition.y, right: "auto", bottom: "auto" } : undefined
     return (
       <button
         type="button"
-        onClick={() => setPanelOpen(true)}
-        className="fixed bottom-6 right-6 z-[70] flex items-center gap-3 rounded-[26px] border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-2xl shadow-slate-900/20 transition hover:-translate-y-1 hover:shadow-slate-900/30"
+        onPointerDown={(event) => beginWidgetDrag(event, "button")}
+        onClick={() => {
+          if (suppressMinimizedClickRef.current) return
+          if (incomingCall?.conversation_id) openConnectContext(incomingCall.conversation_id)
+          else if (taskNotificationCount || assignedTaskCount) openConnectContext(null, "actions")
+          else openConnectContext(unreadConversation?.id || selectedId)
+        }}
+        style={minimizedStyle}
+        className={cx(
+          "fixed bottom-6 right-6 z-[70] flex touch-none items-center gap-3 rounded-[26px] border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-2xl shadow-slate-900/20 transition hover:-translate-y-1 hover:shadow-slate-900/30",
+          (incomingCall || callSignal) && "animate-pulse border-violet-300 ring-4 ring-violet-500/15",
+          missedCallCount > 0 && "ring-4 ring-rose-500/15"
+        )}
         aria-label="Open AngelCare Connect"
+        title="Drag to move. Click to open AngelCare Connect."
       >
         <span className="relative grid h-12 w-12 place-items-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-500/25">
-          <MessageCircle className="h-5 w-5" />
-          {unreadTotal > 0 && <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-black text-white">{unreadTotal}</span>}
+          {incomingCall || connectedCall || outgoingRingingCall ? <Phone className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}
+          {minimizedSignalCount > 0 && <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-black text-white">{minimizedSignalCount}</span>}
         </span>
         <span className="hidden text-left sm:block">
           <span className="block text-xs font-black uppercase tracking-[0.22em] text-violet-600">Connect</span>
-          <span className="block text-sm font-black">Open internal messenger</span>
+          <span className="block text-sm font-black">
+            {incomingCall ? "Incoming call" : connectedCall ? "Live call active" : outgoingRingingCall ? "Calling..." : missedCallCount > 0 ? "Missed call" : taskNotificationCount || assignedTaskCount ? "Task assigned" : unreadTotal > 0 ? "Unread updates" : "Open internal messenger"}
+          </span>
+          <span className="mt-1 flex items-center gap-1 text-[10px] font-black text-slate-400">
+            {unreadTotal > 0 && <span className="rounded-full bg-violet-50 px-1.5 py-0.5 text-violet-700">{unreadTotal} unread</span>}
+            {incomingCall && <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-emerald-700">ringing</span>}
+            {missedCallCount > 0 && <span className="rounded-full bg-rose-50 px-1.5 py-0.5 text-rose-700">{missedCallCount} missed</span>}
+            {(taskNotificationCount > 0 || assignedTaskCount > 0) && <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-emerald-700">tasks</span>}
+          </span>
         </span>
       </button>
     )
@@ -857,12 +1268,38 @@ export default function AngelCareConnect({
     : panelSize === "narrow"
       ? "fixed bottom-5 right-5 z-[70] flex h-[min(760px,calc(100vh-40px))] w-[min(860px,calc(100vw-40px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
       : "fixed bottom-5 right-5 z-[70] flex h-[min(860px,calc(100vh-40px))] w-[min(1440px,calc(100vw-40px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
+  const shellStyle = floating && widgetPosition ? { left: widgetPosition.x, top: widgetPosition.y, right: "auto", bottom: "auto" } : undefined
 
   const sidebarWidth = panelSize === "narrow" ? "w-[292px]" : "w-[310px]"
   const showRightPanel = rightPanelOpen && panelSize === "expanded"
 
   return (
-    <section className={shellClass} aria-label="AngelCare Connect messenger">
+    <section data-connect-shell className={shellClass} style={shellStyle} aria-label="AngelCare Connect messenger">
+      {toastAlerts.length > 0 && (
+        <div className="pointer-events-none fixed right-5 top-5 z-[98] flex w-[min(380px,calc(100vw-32px))] flex-col gap-2">
+          {toastAlerts.map((alert) => (
+            <button
+              key={alert.id}
+              type="button"
+              onClick={() => {
+                setToastAlerts((current) => current.filter((item) => item.id !== alert.id))
+                if (alert.tone === "task") openConnectContext(null, "actions")
+                else openConnectContext(alert.conversationId || selectedId)
+              }}
+              className={cx(
+                "pointer-events-auto rounded-[22px] border bg-white p-4 text-left shadow-2xl shadow-slate-900/15",
+                alert.tone === "call" && "border-emerald-200",
+                alert.tone === "missed" && "border-rose-200",
+                alert.tone === "task" && "border-emerald-200",
+                alert.tone === "message" && "border-violet-200"
+              )}
+            >
+              <p className="truncate text-sm font-black text-slate-950">{alert.title}</p>
+              {alert.body && <p className="mt-1 line-clamp-2 text-xs font-bold leading-5 text-slate-500">{alert.body}</p>}
+            </button>
+          ))}
+        </div>
+      )}
       <aside className={cx("flex min-h-0 shrink-0 flex-col border-r border-slate-200 bg-white", sidebarWidth)}>
         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
           <button className="flex min-w-0 items-center gap-2 text-left">
@@ -989,7 +1426,7 @@ export default function AngelCareConnect({
       </aside>
 
       <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
-        <header className="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
+        <header onPointerDown={(event) => beginWidgetDrag(event, "panel")} className={cx("flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4", floating && "cursor-move")}>
           <div className="flex min-w-0 items-center gap-3">
             <span className="relative grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-violet-100 to-slate-100 text-sm font-black text-violet-700">
               {selected ? initials(headlineName) : <MessageCircle className="h-5 w-5" />}
@@ -1035,6 +1472,59 @@ export default function AngelCareConnect({
           </div>
         )}
 
+        {(incomingCall || outgoingRingingCall || connectedCall || missedCallCount > 0) && (
+          <div className="border-b border-violet-100 bg-white px-5 py-3">
+            {incomingCall ? (
+              <div className="flex items-center justify-between gap-4 rounded-[24px] border border-emerald-200 bg-emerald-50 px-4 py-3 shadow-sm">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"><Phone className="h-5 w-5" /></span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-950">Incoming {incomingCall.call_type} call</p>
+                    <p className="truncate text-xs font-bold text-slate-600">{incomingCall.started_by_name || "AngelCare teammate"} · Ringing for {formatDuration(incomingCall.started_at, nowMs)}</p>
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button onClick={() => void rejectCall(incomingCall)} className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-xs font-black text-rose-600 hover:bg-rose-50">Reject</button>
+                  <button onClick={() => void answerCall(incomingCall)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-xs font-black text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700">Answer</button>
+                </div>
+              </div>
+            ) : outgoingRingingCall ? (
+              <div className="flex items-center justify-between gap-4 rounded-[24px] border border-violet-200 bg-violet-50 px-4 py-3 shadow-sm">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-500/20"><Phone className="h-5 w-5" /></span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-950">Calling in Connect</p>
+                    <p className="truncate text-xs font-bold text-slate-600">Ringing · {formatDuration(outgoingRingingCall.started_at, nowMs)}</p>
+                  </div>
+                </div>
+                <button onClick={() => void endCall(outgoingRingingCall.id)} className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-xs font-black text-rose-600 hover:bg-rose-50">Cancel call</button>
+              </div>
+            ) : connectedCall ? (
+              <div className="flex items-center justify-between gap-4 rounded-[24px] border border-violet-200 bg-violet-50 px-4 py-3 shadow-sm">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-500/20">{connectedCall.call_type === "video" ? <Video className="h-5 w-5" /> : <Phone className="h-5 w-5" />}</span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-950">Connected {connectedCall.call_type} call</p>
+                    <p className="truncate text-xs font-bold text-slate-600">Live duration · {formatDuration(connectedCall.connected_at || connectedCall.answered_at || connectedCall.started_at, nowMs)}</p>
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button onClick={() => { setActiveCall({ callId: connectedCall.id, roomName: connectedCall.room_name, type: connectedCall.call_type, startedAt: connectedCall.connected_at || connectedCall.answered_at || connectedCall.started_at || null }); setCallView("inline") }} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 hover:bg-slate-50">Open call</button>
+                  <button onClick={() => void endCall(connectedCall.id)} className="rounded-2xl bg-rose-600 px-4 py-3 text-xs font-black text-white hover:bg-rose-700">End</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-4 rounded-[24px] border border-rose-200 bg-rose-50 px-4 py-3 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-2xl bg-rose-600 text-white"><Phone className="h-4 w-4" /></span>
+                  <p className="text-sm font-black text-rose-700">{missedCallCount} missed Connect call{missedCallCount === 1 ? "" : "s"}</p>
+                </div>
+                <button onClick={() => void markAllNotificationsRead()} className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-xs font-black text-rose-600 hover:bg-rose-50">Mark seen</button>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeCall && callView !== "fullscreen" && (
           <div className={cx("border-b border-violet-100 bg-violet-50/70 px-5 py-3", callView === "mini" && "py-2")}>
             {callView === "inline" ? (
@@ -1042,7 +1532,7 @@ export default function AngelCareConnect({
                 <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
                   <div>
                     <p className="text-sm font-black text-slate-950">{activeCall.type === "video" ? "Video call" : "Audio call"} · {headlineName}</p>
-                    <p className="text-xs font-bold text-slate-500">Happening inside this conversation</p>
+                    <p className="text-xs font-bold text-slate-500">Connected · {formatDuration(activeCallStartedAt, nowMs)}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button onClick={() => setCallView("mini")} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Minimize to chat</button>
@@ -1056,7 +1546,7 @@ export default function AngelCareConnect({
                       participantName={currentUser.name || currentUser.email || "AngelCare User"}
                       participantId={currentUser.id}
                       type={activeCall.type}
-                      onLeave={() => setActiveCall(null)}
+                      onLeave={() => void endCall(activeCall.callId)}
                     />
                   </div>
                 )}
@@ -1067,7 +1557,7 @@ export default function AngelCareConnect({
                   <span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-600 text-white">{activeCall.type === "video" ? <Video className="h-4 w-4" /> : <Phone className="h-4 w-4" />}</span>
                   <div>
                     <p className="text-sm font-black text-slate-950">Live {activeCall.type} call in this conversation</p>
-                    <p className="text-xs font-bold text-slate-500">Minimized while you keep chatting</p>
+                    <p className="text-xs font-bold text-slate-500">{formatDuration(activeCallStartedAt, nowMs)} · Minimized while you keep chatting</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1108,6 +1598,8 @@ export default function AngelCareConnect({
               {filteredMessages.map((message) => {
                 const mine = currentUser?.id === message.sender_id || String(currentUser?.id) === String(message.sender_id)
                 const fileName = String(message.metadata?.filename || message.metadata?.fileName || "")
+                const fileAttachment = message.message_type === "file" || fileName ? attachmentFromMessage(message, currentUser?.id) : null
+                const unreadForMe = !mine && !message.my_read_at && message.message_type !== "system"
                 const systemMessage = message.message_type === "system"
                 if (systemMessage) {
                   return (
@@ -1126,21 +1618,27 @@ export default function AngelCareConnect({
                         {!mine && <span className="text-slate-700">{message.sender_name || "AngelCare User"}</span>}
                         <span>{formatTime(message.created_at)}</span>
                         {message.confidential && <EyeOff className="h-3 w-3 text-violet-500" />}
+                        {unreadForMe && <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-black uppercase text-violet-700">New</span>}
                       </div>
-                      <div className={cx("rounded-[26px] px-5 py-4 text-[15px] leading-7 shadow-sm ring-1", mine ? "rounded-br-md bg-violet-700 text-white shadow-violet-500/25 ring-violet-700/20" : "rounded-bl-md border border-slate-200 bg-white text-slate-900 ring-slate-200/80")}> 
-                        {message.message_type === "file" || fileName ? (
-                          <div className="flex items-center gap-3">
+                      <div className={cx("rounded-[26px] px-5 py-4 text-[15px] leading-7 shadow-sm ring-1", mine ? "rounded-br-md bg-violet-700 text-white shadow-violet-500/25 ring-violet-700/20" : unreadForMe ? "rounded-bl-md border border-violet-200 bg-violet-50 text-slate-900 ring-violet-200" : "rounded-bl-md border border-slate-200 bg-white text-slate-900 ring-slate-200/80")}> 
+                        {fileAttachment ? (
+                          <button type="button" onClick={() => openAttachmentFromMessage(message)} className="flex w-full items-center gap-3 text-left">
                             <span className={cx("grid h-10 w-10 place-items-center rounded-2xl", mine ? "bg-white/15 text-white" : "bg-rose-50 text-rose-600")}><FileText className="h-5 w-5" /></span>
                             <span className="min-w-0 text-left">
-                              <span className={cx("block truncate text-sm font-black", mine ? "text-white" : "text-slate-950")}>{fileName || "Shared file"}</span>
-                              <span className={cx("block text-xs font-bold", mine ? "text-violet-100" : "text-slate-500")}>{message.body}</span>
+                              <span className={cx("block truncate text-sm font-black", mine ? "text-white" : "text-slate-950")}>{fileAttachment.filename}</span>
+                              <span className={cx("block text-xs font-bold", mine ? "text-violet-100" : "text-slate-500")}>{formatBytes(fileAttachment.size)} · {fileAttachment.contentType}</span>
                             </span>
-                          </div>
+                          </button>
                         ) : (
                           <p className={cx("whitespace-pre-wrap break-words font-semibold tracking-[-0.01em]", mine ? "text-white" : "text-slate-900")}>{message.body}</p>
                         )}
                       </div>
-                      {mine && <div className="mt-1 flex items-center justify-end gap-2 text-violet-600"><span className="flex items-center gap-1"><Check className="h-3 w-3" /><Check className="-ml-1 h-3 w-3" /></span><button onClick={() => void deleteConnectMessage(message)} className="rounded-full px-2 py-0.5 text-[10px] font-black text-rose-500 hover:bg-rose-50">Delete</button></div>}
+                      <div className={cx("mt-1 flex items-center gap-2 text-[10px] font-black", mine ? "justify-end text-violet-600" : "justify-start text-slate-400")}>
+                        {mine && <span className="flex items-center gap-1"><Check className="h-3 w-3" />{readLabel(message, selected)}</span>}
+                        {fileAttachment?.url && <a href={fileAttachment.url} target="_blank" rel="noreferrer" className="rounded-full px-2 py-0.5 hover:bg-slate-100" title="Download attachment">Download</a>}
+                        {fileAttachment && <button onClick={() => openAttachmentFromMessage(message)} className="rounded-full px-2 py-0.5 hover:bg-slate-100">Preview</button>}
+                        {(mine || fileAttachment?.mine) && <button onClick={() => fileAttachment ? void deleteConnectAttachment(fileAttachment) : void deleteConnectMessage(message)} className="rounded-full px-2 py-0.5 text-rose-500 hover:bg-rose-50">Delete</button>}
+                      </div>
                     </div>
                   </div>
                 )
@@ -1207,7 +1705,7 @@ export default function AngelCareConnect({
             <p className="text-xs font-semibold text-slate-400">{selected?.department || selectedMember?.department || "AngelCare"}</p>
             <div className="mt-5 grid w-full grid-cols-4 gap-2">
               {([
-                [MessageCircle, "Message", () => {}],
+                [MessageCircle, "Message", () => { setThreadSearchOpen(false); setRightPanelOpen(false) }],
                 [Phone, "Call", () => void startCall("audio")],
                 [Video, "Video", () => void startCall("video")],
                 [MoreHorizontal, "More", () => void createActionFromThread()],
@@ -1231,10 +1729,29 @@ export default function AngelCareConnect({
             </section>
 
             <section>
+              <h4 className="text-sm font-black text-slate-950">Recent Calls</h4>
+              <div className="mt-3 space-y-2">
+                {calls.filter((call) => !selected?.id || call.conversation_id === selected.id).slice(0, 4).map((call) => (
+                  <div key={call.id} className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 p-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className={cx("grid h-9 w-9 place-items-center rounded-xl text-white", call.status === "missed" || call.status === "rejected" ? "bg-rose-500" : liveCall(call.status) ? "bg-emerald-600" : "bg-violet-600")}>{call.call_type === "video" ? <Video className="h-4 w-4" /> : <Phone className="h-4 w-4" />}</span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-black text-slate-800">{call.call_type} · {call.status}</span>
+                        <span className="text-xs font-bold text-slate-400">{formatTime(call.started_at)}{liveCall(call.status) ? ` · ${formatDuration(call.connected_at || call.answered_at || call.started_at, nowMs)}` : ""}</span>
+                      </span>
+                    </div>
+                    {call.status === "ringing" && String(call.started_by || "") !== String(currentUser?.id || "") && <button onClick={() => void answerCall(call)} className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white">Answer</button>}
+                  </div>
+                ))}
+                {calls.filter((call) => !selected?.id || call.conversation_id === selected.id).length === 0 && <p className="rounded-2xl bg-slate-50 p-4 text-xs font-bold text-slate-400">No call history for this thread yet.</p>}
+              </div>
+            </section>
+
+            <section>
               <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Shared Media</h4><button onClick={() => { setThreadSearchOpen(true); setThreadQuery("file") }} className="text-xs font-black text-violet-600">View all</button></div>
               <div className="mt-3 grid grid-cols-4 gap-2">
                 {activeFiles.slice(0, 3).map((message) => (
-                  <div key={message.id} className="grid aspect-square place-items-center rounded-2xl bg-slate-100 text-slate-400"><FileText className="h-5 w-5" /></div>
+                  <button key={message.id} onClick={() => openAttachmentFromMessage(message)} className="grid aspect-square place-items-center rounded-2xl bg-slate-100 text-slate-400 hover:bg-violet-50 hover:text-violet-600" title="Preview attachment"><FileText className="h-5 w-5" /></button>
                 ))}
                 {activeFiles.length === 0 && <div className="col-span-4 rounded-2xl border border-dashed border-slate-200 p-4 text-center text-xs font-bold text-slate-400">No shared media yet</div>}
                 {activeFiles.length > 3 && <div className="grid aspect-square place-items-center rounded-2xl bg-slate-100 text-sm font-black text-slate-600">+{activeFiles.length - 3}</div>}
@@ -1245,12 +1762,13 @@ export default function AngelCareConnect({
               <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Files</h4><button onClick={() => { setThreadSearchOpen(true); setThreadQuery("file") }} className="text-xs font-black text-violet-600">View all</button></div>
               <div className="mt-3 space-y-2">
                 {activeFiles.slice(0, 5).map((message) => {
-                  const name = String(message.metadata?.filename || message.metadata?.fileName || message.body || "Shared file")
+                  const attachment = attachmentFromMessage(message, currentUser?.id)
                   return (
                     <div key={message.id} className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
                       <span className="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-rose-600"><FileText className="h-5 w-5" /></span>
-                      <span className="min-w-0 flex-1"><span className="block truncate text-sm font-black text-slate-800">{name}</span><span className="text-xs font-bold text-slate-400">Connect file</span></span>
-                      <Download className="h-4 w-4 text-slate-300" />
+                      <button onClick={() => setAttachmentPreview(attachment)} className="min-w-0 flex-1 text-left"><span className="block truncate text-sm font-black text-slate-800">{attachment.filename}</span><span className="text-xs font-bold text-slate-400">{formatBytes(attachment.size)} · {formatTime(attachment.uploadedAt)}</span></button>
+                      {attachment.url && <a href={attachment.url} target="_blank" rel="noreferrer" className="grid h-8 w-8 place-items-center rounded-xl text-slate-400 hover:bg-white hover:text-violet-600" title="Download attachment"><Download className="h-4 w-4" /></a>}
+                      {attachment.mine && <button onClick={() => void deleteConnectAttachment(attachment)} className="grid h-8 w-8 place-items-center rounded-xl text-rose-400 hover:bg-white hover:text-rose-600" title="Delete attachment"><Trash2 className="h-4 w-4" /></button>}
                     </div>
                   )
                 })}
@@ -1446,13 +1964,56 @@ export default function AngelCareConnect({
         </div>
       )}
 
+      {attachmentPreview && (
+        <div className="fixed inset-0 z-[94] grid place-items-center bg-slate-950/45 p-6 backdrop-blur-sm">
+          <div className="flex max-h-[90vh] w-[min(920px,calc(100vw-48px))] flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white text-slate-950 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+              <div className="min-w-0">
+                <p className="truncate text-lg font-black text-slate-950">{attachmentPreview.filename}</p>
+                <p className="mt-1 text-xs font-bold text-slate-500">{formatBytes(attachmentPreview.size)} · {attachmentPreview.contentType} · Uploaded {formatTime(attachmentPreview.uploadedAt)}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                {attachmentPreview.url && <a href={attachmentPreview.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-slate-200 px-4 py-3 text-xs font-black text-slate-700 hover:bg-slate-50"><Download className="mr-2 inline h-4 w-4" />Download</a>}
+                {attachmentPreview.mine && <button onClick={() => void deleteConnectAttachment(attachmentPreview)} className="rounded-2xl border border-rose-200 px-4 py-3 text-xs font-black text-rose-600 hover:bg-rose-50"><Trash2 className="mr-2 inline h-4 w-4" />Delete</button>}
+                <button onClick={() => setAttachmentPreview(null)} className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200"><X className="h-5 w-5" /></button>
+              </div>
+            </div>
+            <div className="min-h-0 flex-1 overflow-auto bg-slate-50 p-6">
+              {!attachmentPreview.url ? (
+                <div className="grid min-h-[360px] place-items-center rounded-[24px] border border-dashed border-slate-300 bg-white p-8 text-center">
+                  <div>
+                    <FileText className="mx-auto h-10 w-10 text-slate-400" />
+                    <p className="mt-3 text-sm font-black text-slate-800">Preview link expired</p>
+                    <p className="mt-1 text-xs font-semibold text-slate-500">Refresh the conversation and try again. The file metadata is still safely stored.</p>
+                  </div>
+                </div>
+              ) : attachmentIsImage(attachmentPreview) ? (
+                <div className="grid place-items-center rounded-[24px] bg-white p-4 shadow-sm">
+                  <img src={attachmentPreview.url} alt={attachmentPreview.filename} className="max-h-[62vh] max-w-full rounded-2xl object-contain" />
+                </div>
+              ) : attachmentIsPdf(attachmentPreview) ? (
+                <iframe src={attachmentPreview.url} title={attachmentPreview.filename} className="h-[62vh] w-full rounded-[24px] border border-slate-200 bg-white" />
+              ) : (
+                <div className="grid min-h-[360px] place-items-center rounded-[24px] border border-slate-200 bg-white p-8 text-center shadow-sm">
+                  <div>
+                    <FileText className="mx-auto h-12 w-12 text-violet-500" />
+                    <p className="mt-3 text-base font-black text-slate-950">Preview unavailable for this file type</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-500">Use Download to open it in the appropriate desktop or browser application.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {activeCall && currentUser && callView === "fullscreen" && (
         <div className="fixed inset-0 z-[95] bg-slate-950/85 p-6 backdrop-blur-sm">
           <div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden rounded-[28px] border border-white/10 bg-slate-950 shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white">
               <div>
                 <p className="text-base font-black">{activeCall.type === "video" ? "Video call" : "Audio call"} · {headlineName}</p>
-                <p className="text-xs font-bold text-white/50">Full screen Connect call</p>
+                <p className="text-xs font-bold text-white/50">Full screen Connect call · {formatDuration(activeCallStartedAt, nowMs)}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={() => setCallView("inline")} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-black hover:bg-white/15">Back to conversation</button>
@@ -1465,7 +2026,7 @@ export default function AngelCareConnect({
                 participantName={currentUser.name || currentUser.email || "AngelCare User"}
                 participantId={currentUser.id}
                 type={activeCall.type}
-                onLeave={() => setActiveCall(null)}
+                onLeave={() => void endCall(activeCall.callId)}
               />
             </div>
           </div>

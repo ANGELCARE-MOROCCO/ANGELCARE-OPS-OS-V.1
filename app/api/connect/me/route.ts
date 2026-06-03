@@ -5,11 +5,12 @@ import { toConnectUser, touchConnectPresence } from '@/lib/connect/connect-repos
 export async function GET(req: Request) {
   try {
     const user = await getCurrentAppUser()
-    if (!user?.id) return NextResponse.json({ user: null, error: 'Unauthorized' }, { status: 401 })
+    if (!user?.id) return NextResponse.json({ ok: false, data: { user: null }, user: null, error: 'Unauthorized' }, { status: 401 })
     const route = new URL(req.url).searchParams.get('route')
     await touchConnectPresence(user as any, route)
-    return NextResponse.json({ user: toConnectUser(user as any) })
+    const connectUser = toConnectUser(user as any)
+    return NextResponse.json({ ok: true, data: { user: connectUser }, user: connectUser, error: null })
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Connect me failed' }, { status: 500 })
+    return NextResponse.json({ ok: false, data: { user: null }, user: null, error: error instanceof Error ? error.message : 'Connect me failed' }, { status: 500 })
   }
 }

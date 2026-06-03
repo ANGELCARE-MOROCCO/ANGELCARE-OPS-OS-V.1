@@ -5,7 +5,7 @@ import { createCall } from '@/lib/connect/connect-repository'
 export async function POST(req: Request) {
   try {
     const user = await getCurrentAppUser()
-    if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!user?.id) return NextResponse.json({ ok: false, data: null, error: 'Unauthorized' }, { status: 401 })
     const body = await req.json()
     const callLog = await createCall(user as any, {
       conversation_id: body.conversation_id || body.conversationId || null,
@@ -15,9 +15,9 @@ export async function POST(req: Request) {
       status: body.status || 'created',
       metadata: body.metadata || {},
     })
-    return NextResponse.json({ callLog })
+    return NextResponse.json({ ok: true, data: { callLog }, callLog, error: null })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Create Connect call log failed'
-    return NextResponse.json({ error: message }, { status: message.toLowerCase().includes('private') ? 403 : 500 })
+    return NextResponse.json({ ok: false, data: null, error: message }, { status: message.toLowerCase().includes('private') || message.toLowerCase().includes('recipient') ? 403 : 500 })
   }
 }

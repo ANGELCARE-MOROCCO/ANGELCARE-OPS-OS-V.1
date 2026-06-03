@@ -62,6 +62,10 @@ export type ConnectMessage = {
   edited_at?: string | null
   deleted_at?: string | null
   read_count?: number
+  read_by?: Array<{ user_id: string; name?: string | null; read_at: string }>
+  my_read_at?: string | null
+  delivered_count?: number
+  delivery_state?: 'sent' | 'delivered' | 'read'
 }
 
 export type ConnectNotification = {
@@ -73,7 +77,26 @@ export type ConnectNotification = {
   priority: ConnectPriority
   read: boolean
   created_by?: string | null
+  source_type?: string | null
+  source_id?: string | null
+  metadata?: Record<string, unknown> | null
   created_at: string
+}
+
+export type ConnectAttachment = {
+  id: string
+  conversation_id: string
+  message_id?: string | null
+  storage_bucket: string
+  storage_path: string
+  filename: string
+  content_type: string
+  size_bytes: number
+  uploaded_by?: string | null
+  uploaded_at: string
+  deleted_at?: string | null
+  signed_url?: string | null
+  uploader_name?: string | null
 }
 
 export type ConnectActionAssignee = {
@@ -109,10 +132,14 @@ export type ConnectCallSession = {
   conversation_id?: string | null
   room_name: string
   call_type: 'audio' | 'video'
-  status: 'ringing' | 'active' | 'missed' | 'ended' | 'rejected' | 'created'
+  status: 'ringing' | 'answered' | 'connected' | 'missed' | 'ended' | 'rejected' | 'created' | 'active'
   started_by?: string | null
+  started_by_name?: string | null
   receiver_id?: string | null
   started_at?: string
+  answered_at?: string | null
+  connected_at?: string | null
   ended_at?: string | null
   metadata?: Record<string, unknown>
+  participant_ids?: string[]
 }
