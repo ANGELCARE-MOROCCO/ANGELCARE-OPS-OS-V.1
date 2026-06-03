@@ -759,6 +759,99 @@ export async function createBroadcast(currentUser: MinimalAppUser, payload: { ti
   return { conversation, message, notification }
 }
 
+
+
+export async function updateMessage(currentUser: MinimalAppUser, messageId: string, payload: Partial<ConnectMessage>) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const { data: existing, error: existingError } = await supabase
+    .from('connect_messages')
+    .select('id, conversation_id, sender_id, message_type')
+    .eq('id', messageId)
+    .is('deleted_at', null)
+    .maybeSingle()
+  assertSupabaseOk(existingError, 'Load Connect message')
+  if (!existing) throw new Error('Connect message not found')
+  if (String((existing as any).sender_id) !== currentUserId) throw new Error('Cannot edit another user message')
+  const membership = await isConversationMember(supabase, String((existing as any).conversation_id), currentUserId)
+  if (!membership) throw new Error('Private conversation: current user is not a member')
+  const updates: Record<string, unknown> = { edited_at: new Date().toISOString() }
+  if (payload.body !== undefined) updates.body = cleanText(payload.body, 'Updated Connect message')
+  if (payload.priority !== undefined) updates.priority = payload.priority
+  if (payload.confidential !== undefined) updates.confidential = Boolean(payload.confidential)
+  if (payload.metadata !== undefined) updates.metadata = payload.metadata || {}
+  const { data, error } = await supabase.from('connect_messages').update(updates).eq('id', messageId).select('*').single()
+  assertSupabaseOk(error, 'Update Connect message')
+  await supabase.from('connect_conversations').update({ updated_at: new Date().toISOString() }).eq('id', String((existing as any).conversation_id))
+  return data as ConnectMessage
+}
+
+export async function deleteMessage(currentUser: MinimalAppUser, messageId: string) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const { data: existing, error: existingError } = await supabase
+    .from('connect_messages')
+    .select('id, conversation_id, sender_id, message_type')
+    .eq('id', messageId)
+    .is('deleted_at', null)
+    .maybeSingle()
+  assertSupabaseOk(existingError, 'Load Connect message')
+  if (!existing) throw new Error('Connect message not found')
+  const membership = await isConversationMember(supabase, String((existing as any).conversation_id), currentUserId)
+  if (!membership) throw new Error('Private conversation: current user is not a member')
+  const ownsMessage = String((existing as any).sender_id) === currentUserId
+  const canAdminDelete = ['owner', 'admin'].includes(String(membership.role || '')) || canUseConnectAdminActions(currentUser)
+  if (!ownsMessage && !canAdminDelete) throw new Error('Cannot delete this Connect message')
+  const { error } = await supabase.from('connect_messages').update({ deleted_at: new Date().toISOString() }).eq('id', messageId)
+  assertSupabaseOk(error, 'Delete Connect message')
+  return { ok: true, deleted: true }
+}
+
+export async function markNotificationsRead(currentUser: MinimalAppUser, notificationIds?: string[]) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  let query = supabase.from('connect_notifications').update({ read: true }).eq('user_id', currentUserId)
+  if (notificationIds?.length) query = query.in('id', normalizeIds(notificationIds))
+  const { error } = await query
+  assertSupabaseOk(error, 'Mark Connect notifications read')
+  return { ok: true }
+}
+
+export async function muteConversation(currentUser: MinimalAppUser, conversationId: string, muted: boolean) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const membership = await isConversationMember(supabase, conversationId, currentUserId)
+  if (!membership) throw new Error('Cannot update this private conversation')
+  const { error } = await supabase
+    .from('connect_conversation_members')
+    .update({ muted })
+    .eq('conversation_id', conversationId)
+    .eq('user_id', currentUserId)
+  assertSupabaseOk(error, 'Update Connect conversation mute')
+  return { ok: true, muted }
+}
+
+export async function updateCall(currentUser: MinimalAppUser, callId: string, payload: Partial<ConnectCallSession>) {
+  const supabase = await createClient()
+  const currentUserId = userId(currentUser)
+  const { data: existing, error: existingError } = await supabase
+    .from('connect_call_sessions')
+    .select('*')
+    .eq('id', callId)
+    .maybeSingle()
+  assertSupabaseOk(existingError, 'Load Connect call')
+  if (!existing) throw new Error('Connect call not found')
+  const ownsCall = String((existing as any).started_by || '') === currentUserId || String((existing as any).receiver_id || '') === currentUserId
+  if (!ownsCall) throw new Error('Cannot update this Connect call')
+  const updates: Record<string, unknown> = {}
+  if (payload.status) updates.status = payload.status
+  if (payload.status === 'ended' || payload.status === 'rejected' || payload.status === 'missed') updates.ended_at = new Date().toISOString()
+  if (payload.metadata) updates.metadata = payload.metadata
+  const { data, error } = await supabase.from('connect_call_sessions').update(updates).eq('id', callId).select('*').single()
+  assertSupabaseOk(error, 'Update Connect call')
+  return data as ConnectCallSession
+}
+
 export async function getCalls(currentUser: MinimalAppUser): Promise<ConnectCallSession[]> {
   const supabase = await createClient()
   const currentUserId = userId(currentUser)

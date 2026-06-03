@@ -245,6 +245,15 @@ export default function AngelCareConnect({
   const notificationSeenRef = useRef<Set<string>>(new Set())
   const browserNotificationBootedRef = useRef(false)
   const [browserNotificationsEnabled, setBrowserNotificationsEnabled] = useState(false)
+  const attachmentInputRef = useRef<HTMLInputElement | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const voiceChunksRef = useRef<Blob[]>([])
+  const [attachmentAccept, setAttachmentAccept] = useState("")
+  const [uploadingAttachment, setUploadingAttachment] = useState(false)
+  const [emojiMenuOpen, setEmojiMenuOpen] = useState(false)
+  const [threadSearchOpen, setThreadSearchOpen] = useState(false)
+  const [threadQuery, setThreadQuery] = useState("")
+  const [recordingVoice, setRecordingVoice] = useState(false)
 
   useEffect(() => {
     try {
@@ -457,6 +466,103 @@ export default function AngelCareConnect({
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalized)))
   }, [actions, query])
+
+  const filteredMessages = useMemo(() => {
+    const normalized = threadQuery.trim().toLowerCase()
+    if (!normalized) return messages
+    return messages.filter((message) => [message.body, message.sender_name, message.sender_role, message.priority, String(message.metadata?.filename || message.metadata?.fileName || "")]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalized)))
+  }, [messages, threadQuery])
+
+  async function uploadConnectFile(file: File) {
+    if (!selected) {
+      setError("Select a Connect conversation before uploading a file.")
+      return
+    }
+    setUploadingAttachment(true)
+    setError(null)
+    try {
+      const form = new FormData()
+      form.append("conversationId", selected.id)
+      form.append("priority", composerPriority)
+      form.append("confidential", String(confidential || selected.privacy_level === "private" || selected.privacy_level === "executive"))
+      form.append("file", file)
+      const response = await fetch("/api/connect/attachments", { method: "POST", body: form })
+      const payload = (await response.json().catch(() => ({}))) as { message?: Message; error?: string }
+      if (!response.ok || !payload.message) throw new Error(payload.error || "Connect attachment upload failed")
+      setMessages((current) => [...current, payload.message as Message])
+      setConversations((current) => current.map((conversation) => conversation.id === selected.id ? { ...conversation, last_message: payload.message?.body || "File shared", last_message_at: new Date().toISOString() } : conversation))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Attachment could not be uploaded")
+    } finally {
+      setUploadingAttachment(false)
+      if (attachmentInputRef.current) attachmentInputRef.current.value = ""
+    }
+  }
+
+  function openAttachmentPicker(accept = "") {
+    if (!selected) {
+      setError("Select a conversation before adding media.")
+      return
+    }
+    setAttachmentAccept(accept)
+    window.setTimeout(() => attachmentInputRef.current?.click(), 0)
+  }
+
+  async function toggleVoiceRecording() {
+    if (!selected) {
+      setError("Select a conversation before recording a voice note.")
+      return
+    }
+    if (recordingVoice) {
+      mediaRecorderRef.current?.stop()
+      return
+    }
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      setError("Voice recording is not available in this browser.")
+      return
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      voiceChunksRef.current = []
+      const recorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = recorder
+      recorder.ondataavailable = (event) => { if (event.data.size > 0) voiceChunksRef.current.push(event.data) }
+      recorder.onstop = () => {
+        setRecordingVoice(false)
+        stream.getTracks().forEach((track) => track.stop())
+        const blob = new Blob(voiceChunksRef.current, { type: "audio/webm" })
+        if (blob.size > 0) void uploadConnectFile(new File([blob], `voice-note-${Date.now()}.webm`, { type: "audio/webm" }))
+      }
+      recorder.start()
+      setRecordingVoice(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Microphone permission is required to record voice notes.")
+    }
+  }
+
+  async function deleteConnectMessage(message: Message) {
+    const confirmed = window.confirm("Delete this Connect message from the live thread?")
+    if (!confirmed) return
+    setError(null)
+    try {
+      await readJson<{ ok: boolean }>(`/api/connect/messages?messageId=${encodeURIComponent(message.id)}`, { method: "DELETE" })
+      setMessages((current) => current.filter((item) => item.id !== message.id))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Message could not be deleted")
+    }
+  }
+
+  async function markAllNotificationsRead() {
+    setError(null)
+    try {
+      await readJson<{ ok: boolean }>("/api/connect/notifications", { method: "PATCH", body: JSON.stringify({}) })
+      setNotifications((current) => current.map((notice) => ({ ...notice, read: true })))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Notifications could not be marked as read")
+    }
+  }
 
   async function sendCurrentMessage() {
     const body = draft.trim()
@@ -781,7 +887,7 @@ export default function AngelCareConnect({
               <Search className="h-4 w-4 text-slate-400" />
               <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search conversations..." />
             </div>
-            <button className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200" title="Filters">
+            <button onClick={() => void markAllNotificationsRead()} className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200" title="Mark Connect notifications read">
               <Settings2 className="h-4 w-4" />
             </button>
           </div>
@@ -898,7 +1004,7 @@ export default function AngelCareConnect({
             </div>
           </div>
           <div className="flex items-center gap-2 text-slate-500">
-            <button className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100" title="Search thread"><Search className="h-5 w-5" /></button>
+            <button onClick={() => setThreadSearchOpen((current) => !current)} className={cx("grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100", threadSearchOpen && "bg-violet-50 text-violet-700")} title="Search thread"><Search className="h-5 w-5" /></button>
             <button onClick={() => void startCall("audio")} disabled={!selected} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40" title="Voice call"><Phone className="h-5 w-5" /></button>
             <button onClick={() => void startCall("video")} disabled={!selected} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40" title="Video call"><Video className="h-5 w-5" /></button>
             <div className="relative">
@@ -918,6 +1024,16 @@ export default function AngelCareConnect({
             {floating && <button onClick={() => setPanelOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl hover:bg-slate-100" title="Minimize"><X className="h-5 w-5" /></button>}
           </div>
         </header>
+
+        {threadSearchOpen && (
+          <div className="border-b border-slate-100 bg-slate-50 px-5 py-3">
+            <div className="mx-auto flex max-w-4xl items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
+              <Search className="h-4 w-4 text-slate-400" />
+              <input value={threadQuery} onChange={(event) => setThreadQuery(event.target.value)} className="w-full bg-transparent text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400" placeholder="Search inside this thread, files, priorities, senders..." />
+              {threadQuery && <button onClick={() => setThreadQuery("")} className="rounded-xl bg-slate-100 px-2 py-1 text-xs font-black text-slate-500">Clear</button>}
+            </div>
+          </div>
+        )}
 
         {activeCall && callView !== "fullscreen" && (
           <div className={cx("border-b border-violet-100 bg-violet-50/70 px-5 py-3", callView === "mini" && "py-2")}>
@@ -976,7 +1092,7 @@ export default function AngelCareConnect({
             </div>
           )}
 
-          {selected && messages.length === 0 && !threadLoading && (
+          {selected && filteredMessages.length === 0 && !threadLoading && (
             <div className="grid h-full place-items-center text-center">
               <div className="max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
                 <Sparkles className="mx-auto h-10 w-10 text-violet-500" />
@@ -986,10 +1102,10 @@ export default function AngelCareConnect({
             </div>
           )}
 
-          {selected && messages.length > 0 && (
+          {selected && filteredMessages.length > 0 && (
             <div className="mx-auto flex max-w-4xl flex-col gap-4">
               <div className="mx-auto rounded-full bg-white px-4 py-1 text-xs font-black text-slate-400 shadow-sm ring-1 ring-slate-200">Today</div>
-              {messages.map((message) => {
+              {filteredMessages.map((message) => {
                 const mine = currentUser?.id === message.sender_id || String(currentUser?.id) === String(message.sender_id)
                 const fileName = String(message.metadata?.filename || message.metadata?.fileName || "")
                 const systemMessage = message.message_type === "system"
@@ -1024,7 +1140,7 @@ export default function AngelCareConnect({
                           <p className={cx("whitespace-pre-wrap break-words font-semibold tracking-[-0.01em]", mine ? "text-white" : "text-slate-900")}>{message.body}</p>
                         )}
                       </div>
-                      {mine && <div className="mt-1 flex items-center justify-end gap-1 text-violet-600"><Check className="h-3 w-3" /><Check className="-ml-1 h-3 w-3" /></div>}
+                      {mine && <div className="mt-1 flex items-center justify-end gap-2 text-violet-600"><span className="flex items-center gap-1"><Check className="h-3 w-3" /><Check className="-ml-1 h-3 w-3" /></span><button onClick={() => void deleteConnectMessage(message)} className="rounded-full px-2 py-0.5 text-[10px] font-black text-rose-500 hover:bg-rose-50">Delete</button></div>}
                     </div>
                   </div>
                 )
@@ -1035,6 +1151,7 @@ export default function AngelCareConnect({
         </div>
 
         <footer className="border-t border-slate-200 bg-white px-5 py-4">
+          <input ref={attachmentInputRef} type="file" accept={attachmentAccept} className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadConnectFile(file) }} />
           <div className="rounded-[24px] border border-slate-200 bg-white p-3 shadow-sm">
             <textarea
               value={draft}
@@ -1051,10 +1168,19 @@ export default function AngelCareConnect({
             />
             <div className="flex items-center justify-between gap-3 pt-2">
               <div className="flex items-center gap-1 text-slate-400">
-                <button type="button" onClick={() => setError("File upload requires the production storage bucket route before enabling attachments.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Attach file"><Paperclip className="h-4 w-4" /></button>
-                <button type="button" onClick={() => setError("Emoji picker package is not installed yet; message text is live.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Emoji"><Smile className="h-4 w-4" /></button>
-                <button type="button" onClick={() => setError("GIF/media picker requires approved media source before production enablement.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Media"><ImageIcon className="h-4 w-4" /></button>
-                <button type="button" onClick={() => setError("Voice notes require recorder + storage route before production enablement.")} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Voice note"><Mic className="h-4 w-4" /></button>
+                <button type="button" onClick={() => openAttachmentPicker()} disabled={uploadingAttachment} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100 disabled:opacity-40" title="Attach file">{uploadingAttachment ? <Loader2 className="h-4 w-4 animate-spin" /> : <Paperclip className="h-4 w-4" />}</button>
+                <div className="relative">
+                  <button type="button" onClick={() => setEmojiMenuOpen((current) => !current)} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100" title="Emoji"><Smile className="h-4 w-4" /></button>
+                  {emojiMenuOpen && (
+                    <div className="absolute bottom-11 left-0 z-[94] grid grid-cols-6 gap-1 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl">
+                      {["✅", "🙏", "🚨", "📌", "📎", "👏", "💬", "📞", "🟢", "⏳", "⭐", "🔥"].map((emoji) => (
+                        <button key={emoji} type="button" onClick={() => { setDraft((current) => `${current}${emoji}`); setEmojiMenuOpen(false) }} className="grid h-8 w-8 place-items-center rounded-xl text-lg hover:bg-slate-100">{emoji}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button type="button" onClick={() => openAttachmentPicker("image/*,video/*")} disabled={uploadingAttachment} className="grid h-9 w-9 place-items-center rounded-xl hover:bg-slate-100 disabled:opacity-40" title="Media"><ImageIcon className="h-4 w-4" /></button>
+                <button type="button" onClick={() => void toggleVoiceRecording()} className={cx("grid h-9 w-9 place-items-center rounded-xl", recordingVoice ? "bg-rose-100 text-rose-700" : "hover:bg-slate-100")} title={recordingVoice ? "Stop voice note" : "Voice note"}><Mic className="h-4 w-4" /></button>
                 <button type="button" onClick={() => setConfidential((current) => !current)} className={cx("grid h-9 w-9 place-items-center rounded-xl", confidential ? "bg-violet-100 text-violet-700" : "hover:bg-slate-100")} title="Confidential"><EyeOff className="h-4 w-4" /></button>
                 <button type="button" onClick={() => setComposerPriority((current) => current === "urgent" ? "normal" : current === "important" ? "urgent" : "important")} className={cx("rounded-xl px-2.5 py-2 text-[11px] font-black uppercase", priorityTone(composerPriority))}>{composerPriority}</button>
               </div>
@@ -1105,7 +1231,7 @@ export default function AngelCareConnect({
             </section>
 
             <section>
-              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Shared Media</h4><button className="text-xs font-black text-violet-600">View all</button></div>
+              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Shared Media</h4><button onClick={() => { setThreadSearchOpen(true); setThreadQuery("file") }} className="text-xs font-black text-violet-600">View all</button></div>
               <div className="mt-3 grid grid-cols-4 gap-2">
                 {activeFiles.slice(0, 3).map((message) => (
                   <div key={message.id} className="grid aspect-square place-items-center rounded-2xl bg-slate-100 text-slate-400"><FileText className="h-5 w-5" /></div>
@@ -1116,7 +1242,7 @@ export default function AngelCareConnect({
             </section>
 
             <section>
-              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Files</h4><button className="text-xs font-black text-violet-600">View all</button></div>
+              <div className="flex items-center justify-between"><h4 className="text-sm font-black text-slate-950">Files</h4><button onClick={() => { setThreadSearchOpen(true); setThreadQuery("file") }} className="text-xs font-black text-violet-600">View all</button></div>
               <div className="mt-3 space-y-2">
                 {activeFiles.slice(0, 5).map((message) => {
                   const name = String(message.metadata?.filename || message.metadata?.fileName || message.body || "Shared file")

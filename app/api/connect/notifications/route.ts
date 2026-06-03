@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
-import { createNotification, getNotifications } from '@/lib/connect/connect-repository'
+import { createNotification, getNotifications, markNotificationsRead } from '@/lib/connect/connect-repository'
 
 export async function GET() {
   try {
@@ -22,5 +22,17 @@ export async function POST(req: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Create Connect notification failed'
     return NextResponse.json({ error: message }, { status: message.toLowerCase().includes('restricted') ? 403 : 500 })
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const user = await getCurrentAppUser()
+    if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const body = await req.json().catch(() => ({}))
+    const result = await markNotificationsRead(user as any, body.notificationIds || body.ids)
+    return NextResponse.json(result)
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Update Connect notifications failed' }, { status: 500 })
   }
 }

@@ -1,6 +1,7 @@
 import { requireAccess } from '@/lib/auth/requireAccess'
 import RevenueCommandUnifiedLayout from './_shared/RevenueCommandUnifiedLayout'
 import RevenueLocalStorageRecoveryBridge from './_recovery/RevenueLocalStorageRecoveryBridge'
+import RevenueEnterpriseOperationsBridge from '@/components/revenue-command-center/RevenueEnterpriseOperationsBridge'
 
 export default async function RevenueLayout({
   children,
@@ -12,6 +13,7 @@ export default async function RevenueLayout({
   return (
     <RevenueCommandUnifiedLayout>
       <RevenueLocalStorageRecoveryBridge />
+      <RevenueEnterpriseOperationsBridge />
       {children}
     </RevenueCommandUnifiedLayout>
   )

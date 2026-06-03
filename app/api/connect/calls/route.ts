@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
-import { createCall, getCalls } from '@/lib/connect/connect-repository'
+import { createCall, getCalls, updateCall } from '@/lib/connect/connect-repository'
 
 export async function GET() {
   try {
@@ -22,5 +22,20 @@ export async function POST(req: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Create Connect call failed'
     return NextResponse.json({ error: message }, { status: message.toLowerCase().includes('private') ? 403 : 500 })
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const user = await getCurrentAppUser()
+    if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const body = await req.json()
+    const callId = String(body.callId || body.id || '').trim()
+    if (!callId) return NextResponse.json({ error: 'callId required' }, { status: 400 })
+    const call = await updateCall(user as any, callId, body)
+    return NextResponse.json({ call })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Update Connect call failed'
+    return NextResponse.json({ error: message }, { status: message.toLowerCase().includes('cannot') ? 403 : 500 })
   }
 }

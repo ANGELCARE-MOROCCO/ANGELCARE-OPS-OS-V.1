@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
-import { getConversationMessages, markConversationRead, sendMessage } from '@/lib/connect/connect-repository'
+import { deleteMessage, getConversationMessages, markConversationRead, sendMessage, updateMessage } from '@/lib/connect/connect-repository'
 
 export async function GET(req: Request) {
   try {
@@ -28,6 +28,38 @@ export async function POST(req: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Send Connect message failed'
     const status = message.toLowerCase().includes('required') ? 400 : message.toLowerCase().includes('private') ? 403 : 500
+    return NextResponse.json({ error: message }, { status })
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const user = await getCurrentAppUser()
+    if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const body = await req.json()
+    const messageId = String(body.messageId || body.id || '').trim()
+    if (!messageId) return NextResponse.json({ error: 'messageId required' }, { status: 400 })
+    const message = await updateMessage(user as any, messageId, body)
+    return NextResponse.json({ message })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Update Connect message failed'
+    const status = message.toLowerCase().includes('cannot') ? 403 : message.toLowerCase().includes('required') ? 400 : 500
+    return NextResponse.json({ error: message }, { status })
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const user = await getCurrentAppUser()
+    if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const url = new URL(req.url)
+    const messageId = String(url.searchParams.get('messageId') || '').trim()
+    if (!messageId) return NextResponse.json({ error: 'messageId required' }, { status: 400 })
+    const result = await deleteMessage(user as any, messageId)
+    return NextResponse.json(result)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Delete Connect message failed'
+    const status = message.toLowerCase().includes('cannot') ? 403 : 500
     return NextResponse.json({ error: message }, { status })
   }
 }

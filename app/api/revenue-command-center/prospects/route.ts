@@ -53,6 +53,20 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json()
     if (!body.id) return fail("Missing prospect id", 400)
+    if (body.mode === "archive" || body.action === "archive") {
+      const { data, error } = await supabase.from("revenue_prospects").update({ status: "archived", archived_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", body.id).select("*").single()
+      if (error) return fail(error)
+      await logRevenueActivity(supabase, { entityType: "prospect", entityId: data.id, prospectId: data.prospect_id || null, eventType: "prospect_archived", title: `prospect archived: ${data.name || data.id}`, severity: "warning", metadata: { table: "revenue_prospects" } })
+      await logRevenueAction(supabase, { actionType: "archive_prospect", entityType: "prospect", entityId: data.id, payload: body, result: { id: data.id } })
+      return ok({ prospect: data })
+    }
+    if (body.mode === "restore" || body.action === "restore") {
+      const { data, error } = await supabase.from("revenue_prospects").update({ status: "active", archived_at: null, updated_at: new Date().toISOString() }).eq("id", body.id).select("*").single()
+      if (error) return fail(error)
+      await logRevenueActivity(supabase, { entityType: "prospect", entityId: data.id, prospectId: data.prospect_id || null, eventType: "prospect_restored", title: `prospect restored: ${data.name || data.id}`, metadata: { table: "revenue_prospects" } })
+      await logRevenueAction(supabase, { actionType: "restore_prospect", entityType: "prospect", entityId: data.id, payload: body, result: { id: data.id } })
+      return ok({ prospect: data })
+    }
     const patch: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
       updated_by: null,
@@ -66,6 +80,23 @@ export async function PATCH(request: Request) {
     if (error) return fail(error)
     await logRevenueActivity(supabase, { entityType: "prospect", entityId: data.id, prospectId: data.id, eventType: "prospect_updated", title: `Prospect updated: ${data.name}`, metadata: { patch } })
     await logRevenueAction(supabase, { actionType: "update_prospect", entityType: "prospect", entityId: data.id, payload: body, result: { id: data.id } })
+    return ok({ prospect: data })
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+
+export async function DELETE(request: Request) {
+  const supabase = await revenueClient()
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get("id")
+    if (!id) return fail("Missing prospect id", 400)
+    const { data, error } = await supabase.from("revenue_prospects").update({ status: "archived", archived_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", id).select("*").single()
+    if (error) return fail(error)
+    await logRevenueActivity(supabase, { entityType: "prospect", entityId: data.id, prospectId: data.prospect_id || null, eventType: "prospect_archived", title: `prospect archived: ${data.name || data.id}`, severity: "warning", metadata: { table: "revenue_prospects" } })
+    await logRevenueAction(supabase, { actionType: "archive_prospect", entityType: "prospect", entityId: data.id, payload: { id }, result: { id: data.id } })
     return ok({ prospect: data })
   } catch (error) {
     return fail(error)

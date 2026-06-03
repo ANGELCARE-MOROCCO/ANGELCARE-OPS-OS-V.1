@@ -5,6 +5,7 @@ import {
   deleteConversationForCurrentUser,
   emptyConversation,
   getMyConversations,
+  muteConversation,
   pinConversation,
 } from '@/lib/connect/connect-repository'
 
@@ -48,6 +49,10 @@ export async function PATCH(req: Request) {
     }
     if (action === 'empty') {
       const result = await emptyConversation(user as any, conversationId)
+      return NextResponse.json(result)
+    }
+    if (action === 'mute') {
+      const result = await muteConversation(user as any, conversationId, Boolean(body.muted))
       return NextResponse.json(result)
     }
     return NextResponse.json({ error: 'Unsupported Connect conversation action' }, { status: 400 })
