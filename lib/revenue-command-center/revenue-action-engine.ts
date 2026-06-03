@@ -13,12 +13,39 @@ async function safeInsert(table: string, row: Json) {
   return data
 }
 
+function linkedPayload(entityType: RevenueEntityType, entityId: string) {
+  return {
+    entityType,
+    entityId,
+    prospectId: entityType === "prospect" ? entityId : undefined,
+    partnershipId: entityType === "partnership" ? entityId : undefined,
+  }
+}
+
+async function apiJson(url: string, init: RequestInit) {
+  const response = await fetch(url, {
+    ...init,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload?.ok === false) throw new Error(String(payload?.error || `Revenue API request failed: ${response.status}`))
+  return payload
+}
+
 async function safeLogEvent(entityType: RevenueEntityType, entityId: string, eventType: string, title: string, body?: string, metadata: Json = {}) {
   const activityRow = {
     entity_type: entityType,
     entity_id: entityId,
+    prospect_id: entityType === "prospect" ? entityId : null,
+    partnership_id: entityType === "partnership" ? entityId : null,
     event_type: eventType,
+    title,
     event_title: title,
+    body: body || null,
     event_body: body || null,
     actor: "AngelCare",
     severity: "info",
@@ -66,9 +93,10 @@ export async function revenueCreateTask(input: {
   expectedOutcome?: string
 }) {
   const entityType = input.entityType || "prospect"
-  const data = await safeInsert("revenue_tasks", {
-    entity_type: entityType,
-    entity_id: input.entityId,
+  const payload = await apiJson("/api/revenue-command-center/tasks", {
+    method: "POST",
+    body: JSON.stringify({
+    ...linkedPayload(entityType, input.entityId),
     title: input.title,
     description: input.description || null,
     owner: input.owner || "BD Officer",
@@ -82,27 +110,28 @@ export async function revenueCreateTask(input: {
     location: input.location || null,
     outcome_expected: input.expectedOutcome || null,
     status: "open",
+    }),
   })
-  await safeLogEvent(entityType, input.entityId, "task.created", "Task created", input.title, { taskId: data.id })
-  return data
+  return payload.task || payload.data || payload.item
 }
 
 export async function revenueCompleteTask(taskId: string, entityType: RevenueEntityType, entityId: string, done: boolean) {
-  const { data, error } = await supabase.from("revenue_tasks").update({
-    status: done ? "done" : "open",
-    completed_at: done ? new Date().toISOString() : null,
-    updated_at: new Date().toISOString(),
-  }).eq("id", taskId).select().single()
-  if (error) throw error
-  await safeLogEvent(entityType, entityId, done ? "task.completed" : "task.reopened", data.title, undefined, { taskId })
-  return data
+  const payload = await apiJson("/api/revenue-command-center/tasks", {
+    method: "PATCH",
+    body: JSON.stringify({ id: taskId, action: done ? "complete" : "reopen", ...linkedPayload(entityType, entityId) }),
+  })
+  return payload.task || payload.data || payload.item
 }
 
 export async function revenueDeleteTask(taskId: string, entityType: RevenueEntityType, entityId: string) {
-  const { data, error } = await supabase.from("revenue_tasks").delete().eq("id", taskId).select().single()
-  if (error) throw error
-  await safeLogEvent(entityType, entityId, "task.deleted", "Task deleted", data?.title || taskId, { taskId })
-  return data
+  const response = await fetch(`/api/revenue-command-center/tasks?id=${encodeURIComponent(taskId)}`, {
+    method: "DELETE",
+    cache: "no-store",
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload?.ok === false) throw new Error(String(payload?.error || "Unable to archive task"))
+  await safeLogEvent(entityType, entityId, "task.archived", "Task archived", taskId, { taskId })
+  return payload.task || payload.data || payload.item
 }
 
 export async function revenueScheduleAppointment(input: {
@@ -117,40 +146,45 @@ export async function revenueScheduleAppointment(input: {
   priority?: string
 }) {
   const entityType = input.entityType || "prospect"
-  const data = await safeInsert("revenue_appointments", {
-    entity_type: entityType,
-    entity_id: input.entityId,
+  const payload = await apiJson("/api/revenue-command-center/appointments", {
+    method: "POST",
+    body: JSON.stringify({
+    ...linkedPayload(entityType, input.entityId),
     title: input.title,
-    appointment_at: input.appointmentAt,
+    appointmentAt: input.appointmentAt,
     owner: input.owner || "BD Officer",
     location: input.location || null,
     notes: input.notes || null,
     appointment_type: input.appointmentType || "meeting",
     priority: input.priority || "medium",
     status: "scheduled",
+    }),
   })
-  await safeLogEvent(entityType, input.entityId, "appointment.scheduled", "Appointment scheduled", input.title, { appointmentId: data.id })
-  return data
+  return payload.appointment || payload.data || payload.item
 }
 
 export async function revenueUpdateAppointmentStatus(appointmentId: string, entityType: RevenueEntityType, entityId: string, status: "scheduled" | "completed" | "cancelled" | "no_show") {
-  const { data, error } = await supabase.from("revenue_appointments").update({ status, updated_at: new Date().toISOString() }).eq("id", appointmentId).select().single()
-  if (error) throw error
-  await safeLogEvent(entityType, entityId, `appointment.${status}`, "Appointment updated", data.title, { appointmentId, status })
-  return data
+  const action = status === "completed" ? "record_outcome" : status === "cancelled" ? "cancel" : status === "no_show" ? "mark_no_show" : "update"
+  const payload = await apiJson("/api/revenue-command-center/appointments", {
+    method: "PATCH",
+    body: JSON.stringify({ id: appointmentId, action, status, ...linkedPayload(entityType, entityId) }),
+  })
+  return payload.appointment || payload.data || payload.item
 }
 
 export async function revenueAddComment(input: { entityType?: RevenueEntityType; entityId: string; author?: string; channel?: string; note: string }) {
   const entityType = input.entityType || "prospect"
-  const data = await safeInsert("revenue_comments", {
-    entity_type: entityType,
-    entity_id: input.entityId,
+  const payload = await apiJson("/api/revenue-command-center/notes", {
+    method: "POST",
+    body: JSON.stringify({
+    ...linkedPayload(entityType, input.entityId),
     author: input.author || "AngelCare",
-    channel: input.channel || "internal",
-    note: input.note,
+    noteType: "comment",
+    visibility: input.channel || "internal",
+    body: input.note,
+    }),
   })
-  await safeLogEvent(entityType, input.entityId, "comment.added", "Comment added", input.note, { commentId: data.id, channel: input.channel || "internal" })
-  return data
+  return payload.note || payload.comment || payload.data || payload.item
 }
 
 export async function revenueAddDocument(input: { entityType?: RevenueEntityType; entityId: string; title: string; fileUrl?: string; documentType?: string }) {
@@ -185,14 +219,22 @@ export async function revenueAddContact(input: { entityType?: RevenueEntityType;
 }
 
 export async function revenueMovePipeline(entityId: string, fromStage: string | null, toStage: string) {
-  const { data, error } = await supabase.from("revenue_prospects").update({ stage: toStage, updated_at: new Date().toISOString() }).eq("id", entityId).select().single()
-  if (error) throw error
-  await safeLogEvent("prospect", entityId, "pipeline.updated", "Pipeline updated", `${fromStage || "start"} → ${toStage}`, { fromStage, toStage })
-  return data
+  const payload = await apiJson("/api/revenue-command-center/prospects", {
+    method: "PATCH",
+    body: JSON.stringify({ id: entityId, action: "stage_change", stage: toStage, fromStage }),
+  })
+  return payload.prospect || payload.data || payload.item
 }
 
 async function selectOptional(table: string, entityType: RevenueEntityType, entityId: string, orderColumn = "created_at", ascending = false, limit?: number) {
-  let query = supabase.from(table).select("*").eq("entity_type", entityType).eq("entity_id", entityId).order(orderColumn, { ascending })
+  let query = supabase.from(table).select("*").order(orderColumn, { ascending })
+  if (entityType === "prospect") {
+    query = query.or(`entity_id.eq.${entityId},prospect_id.eq.${entityId}`)
+  } else if (entityType === "partnership") {
+    query = query.or(`entity_id.eq.${entityId},partnership_id.eq.${entityId}`)
+  } else {
+    query = query.eq("entity_type", entityType).eq("entity_id", entityId)
+  }
   if (limit) query = query.limit(limit)
   const { data, error } = await query
   if (error) return []
@@ -200,14 +242,16 @@ async function selectOptional(table: string, entityType: RevenueEntityType, enti
 }
 
 export async function revenueLoadEntityControls(entityType: RevenueEntityType, entityId: string) {
-  const [tasks, appointments, comments, documents, contacts, activities] = await Promise.all([
+  const [tasks, appointments, comments, notes, documents, contacts, activities, events] = await Promise.all([
     selectOptional("revenue_tasks", entityType, entityId, "created_at"),
     selectOptional("revenue_appointments", entityType, entityId, "appointment_at", true),
     selectOptional("revenue_comments", entityType, entityId, "created_at"),
+    selectOptional("revenue_notes", entityType, entityId, "created_at"),
     selectOptional("revenue_documents", entityType, entityId, "created_at"),
     selectOptional("revenue_contacts", entityType, entityId, "created_at"),
     selectOptional("revenue_activities", entityType, entityId, "created_at", false, 50),
+    selectOptional("revenue_events", entityType, entityId, "created_at", false, 50),
   ])
 
-  return { tasks, appointments, comments, documents, contacts, events: activities, activities }
+  return { tasks, appointments, comments: [...notes, ...comments], notes, documents, contacts, events: [...activities, ...events], activities: [...activities, ...events] }
 }

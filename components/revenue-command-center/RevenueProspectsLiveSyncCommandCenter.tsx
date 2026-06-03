@@ -62,6 +62,9 @@ export default function RevenueProspectsLiveSyncCommandCenter() {
   const [stageFilter, setStageFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
   const [viewMode, setViewMode] = useState<ViewMode>("grid")
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editingProspect, setEditingProspect] = useState<RCCProspect | null>(null)
+  const [actionError, setActionError] = useState("")
 
   const cities = useMemo(() => Array.from(new Set(prospects.map((p) => p.city).filter(Boolean))).sort(), [prospects])
   const stages = useMemo(() => Array.from(new Set(prospects.map((p) => p.stage).filter(Boolean))).sort(), [prospects])
@@ -93,6 +96,38 @@ export default function RevenueProspectsLiveSyncCommandCenter() {
     await Promise.all([refreshProspects(), refreshTasks(), refreshAppointments()])
   }
 
+  async function saveProspect(input: Record<string, any>) {
+    setActionError("")
+    const response = await fetch("/api/revenue-command-center/prospects", {
+      method: input.id ? "PATCH" : "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+      body: JSON.stringify(input.id ? { ...input, action: "update" } : input),
+    })
+    const payload = await response.json().catch(() => ({}))
+    if (!response.ok || payload.ok === false) throw new Error(payload.error || "Unable to save prospect")
+    await refreshAll()
+    setModalOpen(false)
+    setEditingProspect(null)
+  }
+
+  async function archiveProspect(prospect: RCCProspect) {
+    if (!window.confirm(`Archive ${prospect.name}?`)) return
+    setActionError("")
+    const response = await fetch("/api/revenue-command-center/prospects", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+      body: JSON.stringify({ id: prospect.id, action: "archive" }),
+    })
+    const payload = await response.json().catch(() => ({}))
+    if (!response.ok || payload.ok === false) {
+      setActionError(payload.error || "Unable to archive prospect")
+      return
+    }
+    await refreshAll()
+  }
+
   return (
     <main data-rcc-prospects-live="true" className="min-h-screen bg-[#050b16] text-white">
       <style dangerouslySetInnerHTML={{ __html: `
@@ -113,6 +148,13 @@ export default function RevenueProspectsLiveSyncCommandCenter() {
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(124,58,237,.24),transparent_27%),radial-gradient(circle_at_85%_8%,rgba(14,165,233,.16),transparent_28%),linear-gradient(180deg,#081120_0%,#030814_74%,#01040b_100%)]" />
 
       <div className="relative w-full max-w-none min-w-0 p-6 xl:p-8">
+        {modalOpen ? (
+          <ProspectEditModal
+            prospect={editingProspect}
+            onClose={() => { setModalOpen(false); setEditingProspect(null) }}
+            onSave={saveProspect}
+          />
+        ) : null}
         <header className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-500/10 px-4 py-2 text-xs font-black uppercase tracking-[.16em] text-cyan-100">
@@ -125,6 +167,9 @@ export default function RevenueProspectsLiveSyncCommandCenter() {
           </div>
 
           <div className="flex flex-wrap gap-3">
+            <button onClick={() => { setEditingProspect(null); setModalOpen(true) }} className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-black text-white hover:bg-violet-500">
+              <Plus className="h-4 w-4" /> Create Prospect
+            </button>
             <Link href="/revenue-command-center/prospects/directory" className="inline-flex items-center gap-2 rounded-xl border border-[#315474] bg-[#10223a] px-5 py-3 text-sm font-black text-white hover:bg-white/5">
               <Users className="h-4 w-4" /> Directory
             </Link>
@@ -143,6 +188,11 @@ export default function RevenueProspectsLiveSyncCommandCenter() {
         {prospectsError && (
           <div className="mb-5 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm font-black text-red-100">
             {prospectsError}
+          </div>
+        )}
+        {actionError && (
+          <div className="mb-5 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm font-black text-red-100">
+            {actionError}
           </div>
         )}
 
@@ -189,11 +239,19 @@ export default function RevenueProspectsLiveSyncCommandCenter() {
                 taskCount={(tasksByProspect.get(prospect.id) || []).length}
                 appointmentCount={(appointmentsByProspect.get(prospect.id) || []).length}
                 nextAppointment={(appointmentsByProspect.get(prospect.id) || [])[0]?.appointmentAt}
+                onEdit={() => { setEditingProspect(prospect); setModalOpen(true) }}
+                onArchive={() => void archiveProspect(prospect)}
               />
             ))}
           </section>
         ) : (
-          <ProspectTable prospects={filtered} tasksByProspect={tasksByProspect} appointmentsByProspect={appointmentsByProspect} />
+          <ProspectTable
+            prospects={filtered}
+            tasksByProspect={tasksByProspect}
+            appointmentsByProspect={appointmentsByProspect}
+            onEdit={(prospect) => { setEditingProspect(prospect); setModalOpen(true) }}
+            onArchive={(prospect) => void archiveProspect(prospect)}
+          />
         )}
 
         {!loading && filtered.length === 0 && (
@@ -231,7 +289,7 @@ function Select({ value, onChange, options, label }: { value: string; onChange: 
   )
 }
 
-function ProspectCard({ prospect, taskCount, appointmentCount, nextAppointment }: { prospect: RCCProspect; taskCount: number; appointmentCount: number; nextAppointment?: string }) {
+function ProspectCard({ prospect, taskCount, appointmentCount, nextAppointment, onEdit, onArchive }: { prospect: RCCProspect; taskCount: number; appointmentCount: number; nextAppointment?: string; onEdit: () => void; onArchive: () => void }) {
   return (
     <article className="group rounded-3xl border border-[#315474] bg-gradient-to-br from-[#10223a] to-[#07111f] p-5 shadow-[0_18px_60px_rgba(0,0,0,.30)] transition hover:-translate-y-0.5 hover:border-cyan-300/60">
       <div className="flex items-start justify-between gap-4">
@@ -270,16 +328,22 @@ function ProspectCard({ prospect, taskCount, appointmentCount, nextAppointment }
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
+      <div className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-5">
         <Link href={`/revenue-command-center/prospects/${prospect.id}`} className="inline-flex items-center justify-center gap-1 rounded-xl bg-violet-600 px-3 py-3 text-xs font-black text-white">
           Profile <ChevronRight className="h-4 w-4" />
         </Link>
+        <button onClick={onEdit} className="inline-flex items-center justify-center rounded-xl border border-[#315474] bg-[#10223a] px-3 py-3 text-xs font-black text-white">
+          Edit
+        </button>
         <Link href={`/revenue-command-center/daily-tasks?prospect=${prospect.id}`} className="inline-flex items-center justify-center rounded-xl border border-[#315474] bg-[#10223a] px-3 py-3 text-xs font-black text-white">
           Tasks
         </Link>
         <Link href={`/revenue-command-center/appointments?prospect=${prospect.id}`} className="inline-flex items-center justify-center rounded-xl border border-[#315474] bg-[#10223a] px-3 py-3 text-xs font-black text-white">
           Appointments
         </Link>
+        <button onClick={onArchive} className="inline-flex items-center justify-center rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-3 text-xs font-black text-red-100">
+          Archive
+        </button>
       </div>
     </article>
   )
@@ -294,7 +358,7 @@ function Mini({ label, value }: { label: string; value: string }) {
   )
 }
 
-function ProspectTable({ prospects, tasksByProspect, appointmentsByProspect }: { prospects: RCCProspect[]; tasksByProspect: Map<string, any[]>; appointmentsByProspect: Map<string, any[]> }) {
+function ProspectTable({ prospects, tasksByProspect, appointmentsByProspect, onEdit, onArchive }: { prospects: RCCProspect[]; tasksByProspect: Map<string, any[]>; appointmentsByProspect: Map<string, any[]>; onEdit: (prospect: RCCProspect) => void; onArchive: (prospect: RCCProspect) => void }) {
   return (
     <section className="overflow-hidden rounded-3xl border border-[#315474] bg-[#07111f] shadow-[0_18px_60px_rgba(0,0,0,.30)]">
       <table className="w-full min-w-[1100px] text-left">
@@ -308,7 +372,7 @@ function ProspectTable({ prospects, tasksByProspect, appointmentsByProspect }: {
             <th className="p-4">Value</th>
             <th className="p-4">Tasks</th>
             <th className="p-4">Appointments</th>
-            <th className="p-4">Open</th>
+            <th className="p-4">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -322,11 +386,127 @@ function ProspectTable({ prospects, tasksByProspect, appointmentsByProspect }: {
               <td className="p-4">{money(p.valueMad)}</td>
               <td className="p-4">{(tasksByProspect.get(p.id) || []).length}</td>
               <td className="p-4">{(appointmentsByProspect.get(p.id) || []).length}</td>
-              <td className="p-4"><Link href={`/revenue-command-center/prospects/${p.id}`} className="text-cyan-200">Profile</Link></td>
+              <td className="p-4">
+                <div className="flex flex-wrap gap-2">
+                  <Link href={`/revenue-command-center/prospects/${p.id}`} className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-black text-white">Profile</Link>
+                  <button onClick={() => onEdit(p)} className="rounded-xl border border-[#315474] bg-[#10223a] px-3 py-2 text-xs font-black text-white">Edit</button>
+                  <button onClick={() => onArchive(p)} className="rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-xs font-black text-red-100">Archive</button>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
     </section>
+  )
+}
+
+function ProspectEditModal({ prospect, onClose, onSave }: { prospect: RCCProspect | null; onClose: () => void; onSave: (input: Record<string, any>) => Promise<void> }) {
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+  const [form, setForm] = useState({
+    id: prospect?.id || "",
+    name: prospect?.name || "",
+    company: String(prospect?.raw?.company || prospect?.raw?.organization || ""),
+    contactName: prospect?.contactName === "N/A" ? "" : prospect?.contactName || "",
+    email: prospect?.email || "",
+    phone: prospect?.phone || "",
+    city: prospect?.city || "",
+    source: String(prospect?.raw?.source || "manual"),
+    segment: String(prospect?.raw?.segment || "b2b"),
+    status: String(prospect?.raw?.status || "active"),
+    stage: prospect?.stage || "new_lead",
+    probability: String(prospect?.raw?.probability || ""),
+    score: String(prospect?.score || ""),
+    valueMad: String(prospect?.valueMad || ""),
+    priority: prospect?.priority || "medium",
+    owner: prospect?.owner || "BD Officer",
+    nextAction: String(prospect?.raw?.next_action || prospect?.raw?.nextAction || ""),
+    notes: String(prospect?.raw?.notes || ""),
+  })
+
+  function update(key: keyof typeof form, value: string) {
+    setForm((current) => ({ ...current, [key]: value }))
+  }
+
+  async function submit() {
+    if (!form.name.trim() || saving) return
+    setSaving(true)
+    setError("")
+    try {
+      await onSave({
+        ...form,
+        valueMad: form.valueMad ? Number(form.valueMad) : undefined,
+        score: form.score ? Number(form.score) : undefined,
+        probability: form.probability ? Number(form.probability) : undefined,
+      })
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to save prospect")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[99999] overflow-y-auto bg-black/75 p-4 backdrop-blur-md">
+      <div className="mx-auto w-full max-w-5xl rounded-[28px] border border-[#315474] bg-[#071426] p-6 shadow-[0_30px_90px_rgba(0,0,0,.70)]">
+        <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Live prospect record</div>
+            <h2 className="mt-1 text-3xl font-black text-white">{prospect ? "Edit Prospect" : "Create Prospect"}</h2>
+          </div>
+          <div className="flex gap-2">
+            <button disabled={saving} onClick={onClose} className="rounded-xl border border-[#315474] bg-[#10223a] px-5 py-3 text-sm font-black text-white disabled:opacity-60">Cancel</button>
+            <button disabled={saving || !form.name.trim()} onClick={() => void submit()} className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-black text-white disabled:opacity-50">{saving ? "Saving..." : "Save Prospect"}</button>
+          </div>
+        </div>
+        {error ? <div className="mb-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-black text-red-100">{error}</div> : null}
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <ModalInput label="Name" value={form.name} onChange={(value) => update("name", value)} required />
+          <ModalInput label="Company" value={form.company} onChange={(value) => update("company", value)} />
+          <ModalInput label="Contact" value={form.contactName} onChange={(value) => update("contactName", value)} />
+          <ModalInput label="Email" value={form.email} onChange={(value) => update("email", value)} />
+          <ModalInput label="Phone" value={form.phone} onChange={(value) => update("phone", value)} />
+          <ModalInput label="City" value={form.city} onChange={(value) => update("city", value)} />
+          <ModalInput label="Source" value={form.source} onChange={(value) => update("source", value)} />
+          <ModalInput label="Segment" value={form.segment} onChange={(value) => update("segment", value)} />
+          <ModalSelect label="Status" value={form.status} onChange={(value) => update("status", value)} options={["active", "pending", "won", "lost", "archived"]} />
+          <ModalSelect label="Stage" value={form.stage} onChange={(value) => update("stage", value)} options={["new_lead", "discovery", "qualification", "proposal", "negotiation", "contracting", "closed_won", "closed_lost", "recovery"]} />
+          <ModalSelect label="Priority" value={form.priority} onChange={(value) => update("priority", value)} options={["low", "medium", "high", "critical"]} />
+          <ModalInput label="Owner" value={form.owner} onChange={(value) => update("owner", value)} />
+          <ModalInput label="Value MAD" value={form.valueMad} onChange={(value) => update("valueMad", value)} type="number" />
+          <ModalInput label="Score" value={form.score} onChange={(value) => update("score", value)} type="number" />
+          <ModalInput label="Probability" value={form.probability} onChange={(value) => update("probability", value)} type="number" />
+          <label className="grid gap-2 md:col-span-2 xl:col-span-3">
+            <span className="text-xs font-black uppercase tracking-[.14em] text-cyan-100">Next Action</span>
+            <input value={form.nextAction} onChange={(event) => update("nextAction", event.target.value)} className="h-12 rounded-xl border border-[#315474] bg-[#10223a] px-4 text-sm font-bold text-white outline-none" />
+          </label>
+          <label className="grid gap-2 md:col-span-2 xl:col-span-3">
+            <span className="text-xs font-black uppercase tracking-[.14em] text-cyan-100">Notes</span>
+            <textarea value={form.notes} onChange={(event) => update("notes", event.target.value)} className="min-h-[120px] rounded-xl border border-[#315474] bg-[#10223a] p-4 text-sm font-bold text-white outline-none" />
+          </label>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ModalInput({ label, value, onChange, type = "text", required }: { label: string; value: string; onChange: (value: string) => void; type?: string; required?: boolean }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-xs font-black uppercase tracking-[.14em] text-cyan-100">{label}{required ? " *" : ""}</span>
+      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} className="h-12 rounded-xl border border-[#315474] bg-[#10223a] px-4 text-sm font-bold text-white outline-none" />
+    </label>
+  )
+}
+
+function ModalSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-xs font-black uppercase tracking-[.14em] text-cyan-100">{label}</span>
+      <select value={value} onChange={(event) => onChange(event.target.value)} className="h-12 rounded-xl border border-[#315474] bg-[#10223a] px-4 text-sm font-bold text-white outline-none">
+        {options.map((option) => <option key={option} value={option}>{stageLabel(option)}</option>)}
+      </select>
+    </label>
   )
 }

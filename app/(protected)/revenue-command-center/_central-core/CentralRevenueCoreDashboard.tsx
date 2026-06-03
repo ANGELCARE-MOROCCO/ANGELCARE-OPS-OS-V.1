@@ -35,6 +35,8 @@ import {
 import {
   useLiveActivities,
   useLiveAppointments,
+  useLiveFollowUps,
+  useLivePartnerships,
   useLiveProspects,
   useLiveTasks,
   type RCCAppointment,
@@ -175,9 +177,13 @@ const moduleCards = [
 
 function RevenueDashboardSidebar({
   prospectCount,
+  partnerCount,
   taskCount,
+  appointmentCount,
+  alertCount,
 }: {
   prospectCount: number;
+  partnerCount: number;
   taskCount: number;
   appointmentCount: number;
   alertCount: number;
@@ -221,9 +227,9 @@ function RevenueDashboardSidebar({
       <div className="space-y-1">
         {item("/revenue-command-center", <BarChart3 />, "Command Center", true)}
         {item("/revenue-command-center/prospects/directory", <MapPinned />, "Prospects Directory", false, prospectCount)}
-        {item("/revenue-command-center/partnerships", <Handshake />, "Partner Program")}
+        {item("/revenue-command-center/partnerships", <Handshake />, "Partner Program", false, partnerCount)}
         {item("/revenue-command-center/daily-tasks", <CheckCircle2 />, "Tasks & Actions", false, taskCount)}
-        {item("/revenue-command-center/appointments", <CalendarDays />, "Calendar")}
+        {item("/revenue-command-center/appointments", <CalendarDays />, "Calendar", false, appointmentCount)}
         {item("/revenue-command-center/campaigns", <Megaphone />, "Email Campaigns")}
         {item("/revenue-command-center/follow-ups", <MessageCircle />, "WhatsApp Center")}
         {item("/revenue-command-center/market-mapping", <Globe2 />, "Market Map")}
@@ -243,6 +249,12 @@ export default function CentralRevenueCoreDashboard() {
     lastSync: prospectLastSync,
   } = useLiveProspects();
   const {
+    partnerships,
+    loading: partnershipsLoading,
+    error: partnershipsError,
+    refresh: refreshPartnerships,
+  } = useLivePartnerships();
+  const {
     tasks,
     loading: tasksLoading,
     error: tasksError,
@@ -257,6 +269,12 @@ export default function CentralRevenueCoreDashboard() {
     byEntityId: appointmentsByProspect,
   } = useLiveAppointments();
   const {
+    followUps,
+    loading: followUpsLoading,
+    error: followUpsError,
+    refresh: refreshFollowUps,
+  } = useLiveFollowUps();
+  const {
     activities,
     loading: activitiesLoading,
     error: activitiesError,
@@ -265,11 +283,13 @@ export default function CentralRevenueCoreDashboard() {
 
   const loading =
     prospectsLoading ||
+    partnershipsLoading ||
     tasksLoading ||
     appointmentsLoading ||
+    followUpsLoading ||
     activitiesLoading;
   const error =
-    prospectsError || tasksError || appointmentsError || activitiesError;
+    prospectsError || partnershipsError || tasksError || appointmentsError || followUpsError || activitiesError;
 
   const metrics = useMemo(() => {
     const totalPipeline = prospects.reduce(
@@ -289,6 +309,12 @@ export default function CentralRevenueCoreDashboard() {
       isToday(a.appointmentAt),
     ).length;
     const openTasks = tasks.filter(isOpenTask).length;
+    const activePartners = partnerships.filter(
+      (p) => !["archived", "lost", "inactive"].includes(String(p.status || "").toLowerCase()),
+    ).length;
+    const pendingFollowUps = followUps.filter((followUp) =>
+      ["open", "pending", "scheduled"].includes(String(followUp.status || "").toLowerCase()),
+    ).length;
     const highPriority = prospects.filter((p) =>
       ["critical", "high"].includes(String(p.priority)),
     ).length;
@@ -298,9 +324,11 @@ export default function CentralRevenueCoreDashboard() {
       forecast,
       meetingsToday,
       openTasks,
+      activePartners,
+      pendingFollowUps,
       highPriority,
     };
-  }, [prospects, tasks, appointments]);
+  }, [prospects, tasks, appointments, partnerships, followUps]);
 
   const stageBars = useMemo(() => {
     const wanted = [
@@ -387,19 +415,13 @@ export default function CentralRevenueCoreDashboard() {
       if (id === "prospects") return prospects.length;
       if (id === "appointments") return appointments.length;
       if (id === "daily-tasks") return tasks.length;
-      if (id === "follow-ups")
-        return tasks.filter(
-          (t) => isOpenTask(t) && String(t.taskType).includes("follow"),
-        ).length;
+      if (id === "follow-ups") return metrics.pendingFollowUps;
       if (id === "executive-briefing") return alerts.length;
       if (id === "decision-maps")
         return prospects.filter(
           (p) => String(p.contactName || "").trim() && p.contactName !== "N/A",
         ).length;
-      if (id === "partnerships")
-        return prospects.filter((p) =>
-          String(p.raw?.type || p.raw?.data?.type || "").includes("partner"),
-        ).length;
+      if (id === "partnerships") return partnerships.length;
       if (id === "campaigns")
         return prospects.filter((p) =>
           String(p.raw?.source || p.raw?.data?.source || "")
@@ -429,7 +451,9 @@ export default function CentralRevenueCoreDashboard() {
           "executive-briefing",
         ].includes(id)
       )
-        return metrics.totalPipeline;
+        return id === "partnerships"
+          ? partnerships.reduce((sum, partnership) => sum + Number(partnership.valueMad || 0), 0)
+          : metrics.totalPipeline;
       if (id === "appointments")
         return appointments.reduce(
           (sum, a) => sum + Number(a.raw?.entity_value_mad || 0),
@@ -443,13 +467,15 @@ export default function CentralRevenueCoreDashboard() {
       return 0;
     };
     return { synced, value };
-  }, [prospects, appointments, tasks, alerts.length, metrics.totalPipeline]);
+  }, [prospects, partnerships, appointments, tasks, alerts.length, metrics.totalPipeline, metrics.pendingFollowUps]);
 
   async function refreshAll() {
     await Promise.all([
       refreshProspects(),
+      refreshPartnerships(),
       refreshTasks(),
       refreshAppointments(),
+      refreshFollowUps(),
       refreshActivities(),
     ]);
   }
@@ -490,6 +516,7 @@ export default function CentralRevenueCoreDashboard() {
       <div className="relative flex min-h-screen w-full min-w-0">
         <RevenueDashboardSidebar
           prospectCount={prospects.length}
+          partnerCount={partnerships.length}
           taskCount={tasks.length}
           appointmentCount={appointments.length}
           alertCount={alerts.length}
@@ -544,21 +571,21 @@ export default function CentralRevenueCoreDashboard() {
             />
             <Kpi
               icon={<BriefcaseBusiness />}
-              label="Open Records"
+              label="Total Prospects"
               value={String(prospects.length)}
               detail={`${prospects.length} visible records`}
             />
             <Kpi
-              icon={<Megaphone />}
-              label="Won This Month"
-              value={money(metrics.won)}
-              detail="synced from closed-won"
+              icon={<Handshake />}
+              label="Active Partners"
+              value={String(metrics.activePartners)}
+              detail={`${partnerships.length} live partner records`}
             />
             <Kpi
-              icon={<LineChart />}
-              label="Forecast"
-              value={money(metrics.forecast)}
-              detail="weighted MAD forecast"
+              icon={<CheckCircle2 />}
+              label="Open Tasks"
+              value={String(metrics.openTasks)}
+              detail="live execution queue"
             />
             <Kpi
               icon={<CalendarDays />}
@@ -570,8 +597,8 @@ export default function CentralRevenueCoreDashboard() {
 
           <section className="mb-5 grid grid-cols-1 gap-4 xl:grid-cols-4">
             <CommandSignal icon={<ShieldCheck />} label="Execution Integrity" value={loading ? "Syncing" : "Live"} detail="canonical revenue tables" tone="emerald" />
-            <CommandSignal icon={<DatabaseZap />} label="Data Source" value="Supabase" detail="zero demo counters" tone="cyan" />
-            <CommandSignal icon={<Zap />} label="Action Engine" value="Active" detail="tasks + appointments + activities" tone="violet" />
+            <CommandSignal icon={<DatabaseZap />} label="Data Source" value="Supabase" detail="live operational counters" tone="cyan" />
+            <CommandSignal icon={<Zap />} label="Action Engine" value="Active" detail={`${metrics.pendingFollowUps} pending follow-ups`} tone="violet" />
             <CommandSignal icon={<Bell />} label="Critical Watch" value={String(alerts.length)} detail="live risk radar" tone="amber" />
           </section>
 

@@ -6,6 +6,7 @@ const supabase = createClient()
 
 export type ProductionProspectOption = {
   id: string
+  entityType: "prospect" | "partnership"
   name: string
   company?: string
   city: string
@@ -75,6 +76,7 @@ function normalizeProspectOption(row: any): ProductionProspectOption {
   const data = row?.data || {}
   return {
     id: String(row.id),
+    entityType: "prospect",
     name: String(row.name || data.name || data.company || "Unnamed prospect"),
     company: data.company || row.company,
     city: String(row.city || data.city || "Unassigned"),
@@ -90,32 +92,133 @@ function normalizeProspectOption(row: any): ProductionProspectOption {
   }
 }
 
-async function logActivity(row: Record<string, unknown>) {
-  try {
-    await supabase.from("revenue_activities").insert(row)
-  } catch {
-    return undefined
+function normalizePartnershipOption(row: any): ProductionProspectOption {
+  const metadata = row?.metadata || {}
+  const value = Number(row.value_mad || row.potential_value_mad || row.pipeline_value_mad || row.valueMad || row.potentialValueMad || 0)
+  return {
+    id: String(row.id),
+    entityType: "partnership",
+    name: String(row.name || row.organization || row.company || "Unnamed partner"),
+    company: row.organization || row.company || row.name,
+    city: String(row.city || row.location || metadata.city || "Unassigned"),
+    stage: String(row.stage || row.status || "prospecting"),
+    priority: String(row.priority || (value >= 100000 ? "high" : "medium")),
+    value_mad: value,
+    score: Number(row.score || row.probability || row.health_score || 0),
+    contactName: row.contactName || row.contact_name,
+    owner: row.owner || row.assignedOwner,
+    phone: row.phone,
+    email: row.email,
+    updated_at: row.updated_at || null,
   }
 }
 
-export async function listProductionProspectOptions(query = "") {
-  let dbQuery = supabase.from("revenue_prospects").select("*").order("updated_at", { ascending: false }).limit(2000)
-  if (query.trim()) {
-    const q = query.trim().replaceAll("%", "")
-    dbQuery = dbQuery.or(`name.ilike.%${q}%,city.ilike.%${q}%,stage.ilike.%${q}%`)
+function normalizeProductionTask(row: any): ProductionTask {
+  return {
+    id: String(row.id),
+    entity_type: String(row.entity_type || row.entityType || "prospect"),
+    entity_id: String(row.entity_id || row.entityId || row.prospect_id || row.prospectId || row.partnership_id || row.partnershipId || ""),
+    title: String(row.title || "Untitled task"),
+    description: row.description || null,
+    owner: String(row.owner || row.assignedOwner || "BD Officer"),
+    priority: (row.priority || "medium") as ProductionTask["priority"],
+    status: (row.status || "open") as ProductionTask["status"],
+    due_date: row.due_date || row.dueDate || null,
+    start_at: row.start_at || row.startAt || null,
+    end_at: row.end_at || row.endAt || null,
+    task_type: String(row.task_type || row.taskType || "follow_up"),
+    department: String(row.department || "Revenue Command"),
+    assigned_role: row.assigned_role || row.assignedRole || null,
+    location: row.location || null,
+    outcome_expected: row.outcome_expected || row.outcomeExpected || row.expected_outcome || row.expectedOutcome || null,
+    escalation_rule: row.escalation_rule || row.escalationRule || null,
+    dependencies: row.dependencies || null,
+    tags: Array.isArray(row.tags) ? row.tags : null,
+    visibility: row.visibility || null,
+    reminder_minutes: row.reminder_minutes || row.reminderMinutes || null,
+    add_to_calendar: row.add_to_calendar ?? row.addToCalendar ?? null,
+    send_notifications: row.send_notifications ?? row.sendNotifications ?? null,
+    completed_at: row.completed_at || row.completedAt || null,
+    created_at: row.created_at || new Date().toISOString(),
+    updated_at: row.updated_at || new Date().toISOString(),
+    entity_name: row.entity_name || row.entityName || row.prospect_name || row.partnership_name,
+    entity_city: row.entity_city || row.entityCity,
+    entity_stage: row.entity_stage || row.entityStage,
+    entity_priority: row.entity_priority || row.entityPriority,
   }
-  const { data, error, count } = await dbQuery
-  if (error) throw error
+}
+
+function normalizeProductionAppointment(row: any): ProductionAppointment {
+  return {
+    id: String(row.id),
+    entity_type: String(row.entity_type || row.entityType || "prospect"),
+    entity_id: String(row.entity_id || row.entityId || row.prospect_id || row.prospectId || row.partnership_id || row.partnershipId || ""),
+    title: String(row.title || "Untitled appointment"),
+    appointment_at: String(row.appointment_at || row.appointmentAt || row.scheduled_at || row.scheduledAt || ""),
+    owner: String(row.owner || "BD Officer"),
+    status: (row.status || "scheduled") as ProductionAppointment["status"],
+    location: row.location || null,
+    notes: row.notes || null,
+    created_at: row.created_at || new Date().toISOString(),
+    updated_at: row.updated_at || new Date().toISOString(),
+    entity_name: row.entity_name || row.entityName || row.prospect_name || row.partnership_name,
+    entity_city: row.entity_city || row.entityCity,
+    entity_stage: row.entity_stage || row.entityStage,
+    entity_priority: row.entity_priority || row.entityPriority,
+  }
+}
+
+async function fetchOperational(url: string, init: RequestInit = {}) {
+  const res = await fetch(url, {
+    ...init,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
+  })
+  const payload = await res.json().catch(() => ({}))
+  if (!res.ok || payload?.ok === false) {
+    throw new Error(String(payload?.error || `Revenue API request failed: ${res.status}`))
+  }
+  return payload
+}
+
+export async function listProductionProspectOptions(query = "") {
+  const [prospectResult, partnershipResult] = await Promise.allSettled([
+    fetchOperational("/api/revenue-command-center/prospects?limit=2000"),
+    fetchOperational("/api/revenue-command-center/partnerships?limit=2000"),
+  ])
+
+  if (prospectResult.status === "rejected" && partnershipResult.status === "rejected") {
+    throw new Error(`${prospectResult.reason?.message || prospectResult.reason}; ${partnershipResult.reason?.message || partnershipResult.reason}`)
+  }
+
+  const prospects = prospectResult.status === "fulfilled"
+    ? (prospectResult.value.prospects || prospectResult.value.data || []).map(normalizeProspectOption)
+    : []
+  const partnerships = partnershipResult.status === "fulfilled"
+    ? (partnershipResult.value.partnerships || partnershipResult.value.data || []).map(normalizePartnershipOption)
+    : []
+  const q = query.trim().toLowerCase()
+  const rows = [...prospects, ...partnerships].filter((item) => {
+    if (!q) return true
+    return `${item.name} ${item.company || ""} ${item.city} ${item.stage} ${item.priority} ${item.contactName || ""} ${item.phone || ""} ${item.email || ""} ${item.entityType}`.toLowerCase().includes(q)
+  })
 
   return {
-    prospects: (data || []).map(normalizeProspectOption),
-    count: count ?? (data || []).length,
-    source: "revenue_prospects",
+    prospects: rows,
+    count: rows.length,
+    source: "revenue_prospects + revenue_partnerships",
     syncedAt: new Date().toISOString(),
   }
 }
 
 export async function listProductionTasks() {
+  const payload = await fetchOperational("/api/revenue-command-center/tasks?limit=5000")
+  const rows = payload.tasks || payload.data || payload.items || []
+  if (Array.isArray(rows)) return rows.map(normalizeProductionTask)
+
   const view = await supabase
     .from("revenue_task_command_view")
     .select("*")
@@ -123,11 +226,11 @@ export async function listProductionTasks() {
     .order("due_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false })
 
-  if (!view.error) return (view.data || []) as ProductionTask[]
+  if (!view.error) return (view.data || []).map(normalizeProductionTask)
 
   const table = await supabase.from("revenue_tasks").select("*").order("updated_at", { ascending: false })
   if (table.error) throw table.error
-  return (table.data || []) as ProductionTask[]
+  return (table.data || []).map(normalizeProductionTask)
 }
 
 export async function createProductionTask(input: {
@@ -153,9 +256,14 @@ export async function createProductionTask(input: {
   addToCalendar?: boolean
   sendNotifications?: boolean
 }) {
-  const { data, error } = await supabase.from("revenue_tasks").insert({
-    entity_type: input.entityType || "prospect",
-    entity_id: input.entityId,
+  const entityType = input.entityType || "prospect"
+  const payload = await fetchOperational("/api/revenue-command-center/tasks", {
+    method: "POST",
+    body: JSON.stringify({
+      entityType,
+      entityId: input.entityId,
+      prospectId: entityType === "prospect" ? input.entityId : undefined,
+      partnershipId: entityType === "partnership" ? input.entityId : undefined,
     title: input.title,
     description: input.description || null,
     owner: input.owner || "BD Officer",
@@ -175,52 +283,64 @@ export async function createProductionTask(input: {
     reminder_minutes: input.reminderMinutes || null,
     add_to_calendar: Boolean(input.addToCalendar),
     send_notifications: Boolean(input.sendNotifications),
+      reminderMinutes: input.reminderMinutes || null,
+      addToCalendar: Boolean(input.addToCalendar),
+      sendNotifications: Boolean(input.sendNotifications),
     status: "open",
-  }).select().single()
-
-  if (error) throw error
-  await logActivity({ entity_type: input.entityType || "prospect", entity_id: input.entityId, event_type: "task.created", event_title: "Task created", event_body: input.title, actor: "AngelCare", severity: "info", metadata: { taskId: data.id } })
-  return data as ProductionTask
+    }),
+  })
+  return normalizeProductionTask(payload.task || payload.data || payload.item)
 }
 
 export async function updateProductionTaskStatus(taskId: string, status: "open" | "done" | "cancelled") {
-  const { data, error } = await supabase.from("revenue_tasks").update({ status, completed_at: status === "done" ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).eq("id", taskId).select().single()
-  if (error) throw error
-  await logActivity({ entity_type: data.entity_type || "prospect", entity_id: data.entity_id, event_type: `task.${status}`, event_title: "Task status updated", event_body: data.title, actor: "AngelCare", severity: "info", metadata: { taskId, status } })
-  return data as ProductionTask
+  const action = status === "done" ? "complete" : status === "open" ? "reopen" : "update"
+  const payload = await fetchOperational("/api/revenue-command-center/tasks", {
+    method: "PATCH",
+    body: JSON.stringify({ id: taskId, action, status }),
+  })
+  return normalizeProductionTask(payload.task || payload.data || payload.item)
 }
 
 export async function listProductionAppointments() {
+  const payload = await fetchOperational("/api/revenue-command-center/appointments?limit=5000")
+  const rows = payload.appointments || payload.data || payload.items || []
+  if (Array.isArray(rows)) return rows.map(normalizeProductionAppointment)
+
   const view = await supabase.from("revenue_appointment_command_view").select("*").order("appointment_at", { ascending: true })
-  if (!view.error) return (view.data || []) as ProductionAppointment[]
+  if (!view.error) return (view.data || []).map(normalizeProductionAppointment)
 
   const table = await supabase.from("revenue_appointments").select("*").order("appointment_at", { ascending: true })
   if (table.error) throw table.error
-  return (table.data || []) as ProductionAppointment[]
+  return (table.data || []).map(normalizeProductionAppointment)
 }
 
 export async function createProductionAppointment(input: { entityType?: string; entityId: string; title: string; appointmentAt: string; owner?: string; location?: string; notes?: string }) {
-  const { data, error } = await supabase.from("revenue_appointments").insert({
-    entity_type: input.entityType || "prospect",
-    entity_id: input.entityId,
+  const entityType = input.entityType || "prospect"
+  const payload = await fetchOperational("/api/revenue-command-center/appointments", {
+    method: "POST",
+    body: JSON.stringify({
+      entityType,
+      entityId: input.entityId,
+      prospectId: entityType === "prospect" ? input.entityId : undefined,
+      partnershipId: entityType === "partnership" ? input.entityId : undefined,
     title: input.title,
-    appointment_at: input.appointmentAt,
+      appointmentAt: input.appointmentAt,
     owner: input.owner || "BD Officer",
     location: input.location || null,
     notes: input.notes || null,
     status: "scheduled",
-  }).select().single()
-
-  if (error) throw error
-  await logActivity({ entity_type: input.entityType || "prospect", entity_id: input.entityId, event_type: "appointment.scheduled", event_title: "Appointment scheduled", event_body: input.title, actor: "AngelCare", severity: "info", metadata: { appointmentId: data.id } })
-  return data as ProductionAppointment
+    }),
+  })
+  return normalizeProductionAppointment(payload.appointment || payload.data || payload.item)
 }
 
 export async function updateProductionAppointmentStatus(appointmentId: string, status: "scheduled" | "completed" | "cancelled" | "no_show") {
-  const { data, error } = await supabase.from("revenue_appointments").update({ status, updated_at: new Date().toISOString() }).eq("id", appointmentId).select().single()
-  if (error) throw error
-  await logActivity({ entity_type: data.entity_type || "prospect", entity_id: data.entity_id, event_type: `appointment.${status}`, event_title: "Appointment status updated", event_body: data.title, actor: "AngelCare", severity: "info", metadata: { appointmentId, status } })
-  return data as ProductionAppointment
+  const action = status === "completed" ? "record_outcome" : status === "cancelled" ? "cancel" : status === "no_show" ? "mark_no_show" : "update"
+  const payload = await fetchOperational("/api/revenue-command-center/appointments", {
+    method: "PATCH",
+    body: JSON.stringify({ id: appointmentId, action, status }),
+  })
+  return normalizeProductionAppointment(payload.appointment || payload.data || payload.item)
 }
 
 export function subscribeProductionExecution(onChange: () => void) {
@@ -229,7 +349,11 @@ export function subscribeProductionExecution(onChange: () => void) {
     .on("postgres_changes", { event: "*", schema: "public", table: "revenue_tasks" }, onChange)
     .on("postgres_changes", { event: "*", schema: "public", table: "revenue_appointments" }, onChange)
     .on("postgres_changes", { event: "*", schema: "public", table: "revenue_prospects" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_partnerships" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_follow_ups" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_notes" }, onChange)
     .on("postgres_changes", { event: "*", schema: "public", table: "revenue_activities" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_events" }, onChange)
     .subscribe()
 
   return () => {

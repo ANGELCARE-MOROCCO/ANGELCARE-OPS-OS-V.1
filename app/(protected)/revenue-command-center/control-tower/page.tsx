@@ -1,7 +1,8 @@
-import RevenueExecutiveBriefingV11Workspace from "@/components/revenue-command-center/RevenueExecutiveBriefingV11Workspace"
+import CentralRevenueCoreDashboard from "../_central-core/CentralRevenueCoreDashboard"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default function Page() {
-  return <RevenueExecutiveBriefingV11Workspace mode="control" />
+  return <CentralRevenueCoreDashboard />
 }

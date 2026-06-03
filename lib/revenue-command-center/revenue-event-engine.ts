@@ -17,6 +17,21 @@ export type RevenueEvent = {
   created_at: string
 }
 
+function normalizeEvent(row: Record<string, any>): RevenueEvent {
+  return {
+    id: String(row.id || ""),
+    entity_type: String(row.entity_type || "general"),
+    entity_id: String(row.entity_id || row.prospect_id || row.partnership_id || ""),
+    event_type: String(row.event_type || row.action_type || row.action || "activity"),
+    event_title: String(row.event_title || row.title || row.action || "Activity logged"),
+    event_body: row.event_body || row.body || row.note || null,
+    actor: String(row.actor || "AngelCare"),
+    severity: String(row.severity || "info"),
+    metadata: (row.metadata && typeof row.metadata === "object") ? row.metadata : {},
+    created_at: String(row.created_at || new Date().toISOString()),
+  }
+}
+
 export type RevenueNotification = {
   id: string
   entity_type: string | null
@@ -55,26 +70,44 @@ export async function logRevenueEvent(input: {
 }
 
 export async function listRevenueEvents(limit = 100) {
-  const { data, error } = await supabase
+  const events = await supabase
     .from("revenue_events")
     .select("*")
     .order("created_at", { ascending: false })
     .limit(limit)
 
-  if (error) throw error
-  return (data || []) as RevenueEvent[]
+  const activities = await supabase
+    .from("revenue_activities")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit)
+
+  if (events.error && activities.error) throw events.error
+  return [...(events.data || []), ...(activities.data || [])]
+    .map(normalizeEvent)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, limit)
 }
 
 export async function listEntityEvents(entityType: string, entityId: string) {
-  const { data, error } = await supabase
+  const events = await supabase
     .from("revenue_events")
     .select("*")
     .eq("entity_type", entityType)
     .eq("entity_id", entityId)
     .order("created_at", { ascending: false })
 
-  if (error) throw error
-  return (data || []) as RevenueEvent[]
+  const activities = await supabase
+    .from("revenue_activities")
+    .select("*")
+    .eq("entity_type", entityType)
+    .eq("entity_id", entityId)
+    .order("created_at", { ascending: false })
+
+  if (events.error && activities.error) throw events.error
+  return [...(events.data || []), ...(activities.data || [])]
+    .map(normalizeEvent)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 }
 
 export async function listRevenueNotifications() {
@@ -108,6 +141,9 @@ export function subscribeRevenueEvents(onChange: () => void) {
   const channel = supabase
     .channel("revenue-events-notifications")
     .on("postgres_changes", { event: "*", schema: "public", table: "revenue_events" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_activities" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_notes" }, onChange)
+    .on("postgres_changes", { event: "*", schema: "public", table: "revenue_comments" }, onChange)
     .on("postgres_changes", { event: "*", schema: "public", table: "revenue_notifications" }, onChange)
     .subscribe()
 

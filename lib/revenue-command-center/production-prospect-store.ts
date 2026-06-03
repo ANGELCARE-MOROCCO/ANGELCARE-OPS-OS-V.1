@@ -1,9 +1,5 @@
 "use client"
 
-import { createClient } from "@/lib/supabase/client"
-
-const supabase = createClient()
-
 type ProspectLike = {
   id: string
   name?: string
@@ -17,63 +13,47 @@ type ProspectLike = {
   createdAt?: string
 }
 
-function normalizeForRow(prospect: ProspectLike) {
-  const now = new Date().toISOString()
-  return {
-    id: String(prospect.id),
-    name: String(prospect.name || prospect.company || "Unnamed prospect"),
-    city: String(prospect.city || "Unassigned"),
-    stage: String(prospect.stage || "new_lead"),
-    priority: String(prospect.priority || "medium"),
-    value_mad: Number(prospect.valueMad || 0),
-    score: Number(prospect.score || 0),
-    data: {
-      ...prospect,
-      id: String(prospect.id),
-      updatedAt: prospect.updatedAt || now,
-      createdAt: prospect.createdAt || now,
+async function revenueProspectsApi<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers || {}),
     },
-    updated_at: now,
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload?.ok === false) {
+    throw new Error(String(payload?.error || `Revenue prospects request failed: ${response.status}`))
   }
+  return payload as T
 }
 
 export async function loadProductionProspects<T = ProspectLike>(): Promise<T[]> {
-  const { data, error } = await supabase
-    .from("revenue_prospects")
-    .select("data")
-    .order("updated_at", { ascending: false })
-
-  if (error) throw error
-  return (data || []).map((row: { data: T }) => row.data).filter(Boolean)
+  const payload = await revenueProspectsApi<{ prospects?: T[]; data?: T[]; items?: T[] }>(
+    "/api/revenue-command-center/prospects?includeArchived=false&limit=5000",
+  )
+  return payload.prospects || payload.data || payload.items || []
 }
 
 export async function saveProductionProspect<T extends ProspectLike>(prospect: T) {
-  const row = normalizeForRow(prospect)
-  const { data, error } = await supabase
-    .from("revenue_prospects")
-    .upsert(row, { onConflict: "id" })
-    .select()
-    .single()
-
-  if (error) throw error
-  return data
+  const payload = await revenueProspectsApi<{ prospect?: T; data?: T; item?: T }>("/api/revenue-command-center/prospects", {
+    method: prospect.id ? "PATCH" : "POST",
+    body: JSON.stringify(prospect),
+  })
+  return payload.prospect || payload.data || payload.item
 }
 
 export async function saveProductionProspectsBulk<T extends ProspectLike>(prospects: T[]) {
   if (!prospects.length) return []
-  const rows = prospects.map(normalizeForRow)
-  const { data, error } = await supabase
-    .from("revenue_prospects")
-    .upsert(rows, { onConflict: "id" })
-    .select("id")
-
-  if (error) throw error
-  return data || []
+  const saved = await Promise.all(prospects.map((prospect) => saveProductionProspect(prospect)))
+  return saved.filter(Boolean)
 }
 
 export async function deleteProductionProspect(id: string) {
-  const { error } = await supabase.from("revenue_prospects").delete().eq("id", id)
-  if (error) throw error
+  await revenueProspectsApi(`/api/revenue-command-center/prospects?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  })
 }
 
 export async function migrateBrowserProspectsToProduction<T extends ProspectLike>(prospects: T[]) {

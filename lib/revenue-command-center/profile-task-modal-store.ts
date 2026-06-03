@@ -53,14 +53,12 @@ export async function createProfileLinkedTask(input: ProfileTaskPayload) {
 }
 
 export async function loadProspectProfileTasks(prospectId: string) {
-  const { data, error } = await supabase
-    .from("revenue_task_command_view")
-    .select("*")
-    .eq("entity_id", prospectId)
-    .order("created_at", { ascending: false })
-
-  if (error) throw error
-  return data || []
+  const response = await fetch(`/api/revenue-command-center/tasks?prospectId=${encodeURIComponent(prospectId)}&includeArchived=false&limit=1000`, {
+    cache: "no-store",
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || "Unable to load prospect tasks")
+  return payload.tasks || payload.data || payload.items || []
 }
 
 export function subscribeProspectProfileTasks(prospectId: string, onChange: () => void) {
@@ -68,7 +66,7 @@ export function subscribeProspectProfileTasks(prospectId: string, onChange: () =
     .channel(`profile-tasks-${prospectId}`)
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "revenue_tasks", filter: `entity_id=eq.${prospectId}` },
+      { event: "*", schema: "public", table: "revenue_tasks" },
       onChange,
     )
     .subscribe()

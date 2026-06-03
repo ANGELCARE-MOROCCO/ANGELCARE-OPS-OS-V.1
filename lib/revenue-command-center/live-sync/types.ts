@@ -16,6 +16,23 @@ export type RCCProspect = {
   updatedAt?: string
 }
 
+export type RCCPartnership = {
+  id: string
+  name: string
+  organization: string
+  city: string
+  stage: string
+  status: string
+  priority: string
+  valueMad: number
+  owner: string
+  contactName: string
+  email: string
+  phone: string
+  raw: any
+  updatedAt?: string
+}
+
 export type RCCTask = {
   id: string
   entityType: string
@@ -33,6 +50,23 @@ export type RCCTask = {
   dueDate?: string | null
   location?: string
   expectedOutcome?: string
+  raw: any
+  updatedAt?: string
+}
+
+export type RCCFollowUp = {
+  id: string
+  entityType: string
+  entityId: string
+  prospectId?: string
+  partnershipId?: string
+  title: string
+  status: string
+  channel: string
+  priority: string
+  owner: string
+  scheduledAt?: string | null
+  notes?: string
   raw: any
   updatedAt?: string
 }
@@ -114,6 +148,27 @@ export function normalizeProspect(row: any): RCCProspect {
   }
 }
 
+export function normalizePartnership(row: any): RCCPartnership {
+  const metadata = row?.metadata || {}
+  const name = firstString(row?.name, row?.organization, row?.company, "Unnamed partner")
+  return {
+    id: String(row?.id || ""),
+    name,
+    organization: firstString(row?.organization, row?.company, row?.name, name),
+    city: firstString(row?.city, row?.location, metadata.city, "Unassigned"),
+    stage: firstString(row?.stage, row?.status, "prospecting"),
+    status: firstString(row?.status, row?.stage, "active"),
+    priority: firstString(row?.priority, metadata.priority, "medium"),
+    valueMad: firstNumber(row?.value_mad, row?.valueMad, row?.potential_value_mad, row?.potentialValueMad, row?.pipeline_value_mad, metadata.valueMad),
+    owner: firstString(row?.owner, row?.assignedOwner, "Partnership Lead"),
+    contactName: firstString(row?.contact_name, row?.contactName, row?.decision_maker, "N/A"),
+    email: firstString(row?.email),
+    phone: firstString(row?.phone),
+    raw: row,
+    updatedAt: row?.updated_at,
+  }
+}
+
 export function normalizeTask(row: any): RCCTask {
   return {
     id: String(row?.id || ""),
@@ -132,6 +187,25 @@ export function normalizeTask(row: any): RCCTask {
     dueDate: row?.due_date || row?.due_at || null,
     location: firstString(row?.location),
     expectedOutcome: firstString(row?.expected_outcome, row?.outcome_expected),
+    raw: row,
+    updatedAt: row?.updated_at,
+  }
+}
+
+export function normalizeFollowUp(row: any): RCCFollowUp {
+  return {
+    id: String(row?.id || ""),
+    entityType: firstString(row?.entity_type, row?.entityType, "general"),
+    entityId: firstString(row?.entity_id, row?.entityId, row?.prospect_id, row?.prospectId, row?.partnership_id, row?.partnershipId),
+    prospectId: firstString(row?.prospect_id, row?.prospectId) || undefined,
+    partnershipId: firstString(row?.partnership_id, row?.partnershipId) || undefined,
+    title: firstString(row?.title, row?.next_step, row?.nextStep, "Revenue follow-up"),
+    status: normalizeStatus(row?.status, "pending"),
+    channel: firstString(row?.channel, "whatsapp"),
+    priority: firstString(row?.priority, "medium"),
+    owner: firstString(row?.owner, "BD Officer"),
+    scheduledAt: row?.scheduled_at || row?.scheduledAt || null,
+    notes: firstString(row?.notes),
     raw: row,
     updatedAt: row?.updated_at,
   }

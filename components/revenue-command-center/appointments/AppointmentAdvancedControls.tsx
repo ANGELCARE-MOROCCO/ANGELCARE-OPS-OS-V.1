@@ -285,7 +285,7 @@ export function AppointmentModal({
   prospects: AppointmentProspect[]
   appointment: AppointmentRecord | null
   onClose: () => void
-  onSave: (input: Record<string, any>) => void
+  onSave: (input: Record<string, any>) => Promise<void> | void
 }) {
   const initialProspect = appointment ? prospects.find((p) => p.id === appointment.entity_id) || prospects[0] || null : prospects[0] || null
   const [selectedProspect, setSelectedProspect] = useState<AppointmentProspect | null>(initialProspect)
@@ -301,6 +301,8 @@ export function AppointmentModal({
   const [sendEmailInvitation, setSendEmailInvitation] = useState(true)
   const [sendWhatsAppReminder, setSendWhatsAppReminder] = useState(false)
   const [requireConfirmation, setRequireConfirmation] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [submitError, setSubmitError] = useState("")
 
   const initialDate = toDateInput(appointment?.appointment_at)
   const initialStart = toTimeInput(appointment?.appointment_at)
@@ -361,15 +363,21 @@ export function AppointmentModal({
     setForm((f) => ({ ...f, [key]: value }))
   }
 
-  function submit(draft = false) {
-    if (!selectedProspect || !form.title.trim()) return
+  async function submit(draft = false) {
+    if (!selectedProspect || !form.title.trim() || saving) return
 
     const appointmentAt = combineDateTime(form.appointmentDate, form.startTime)
     const endAt = combineDateTime(form.appointmentDate, form.endTime)
 
-    onSave({
+    setSaving(true)
+    setSubmitError("")
+    try {
+      await onSave({
       id: form.id || undefined,
+      entityType: selectedProspect.entityType,
       entityId: selectedProspect.id,
+      prospectId: selectedProspect.entityType === "prospect" ? selectedProspect.id : undefined,
+      partnershipId: selectedProspect.entityType === "partnership" ? selectedProspect.id : undefined,
       title: form.title,
       appointmentAt,
       endAt,
@@ -394,6 +402,11 @@ export function AppointmentModal({
         ...(followUpTask ? [{ title: `Follow up after ${form.title}`, dueDate: form.followUpDate, owner: form.followUpOwner }] : []),
       ],
     })
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to save appointment")
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -423,17 +436,23 @@ export function AppointmentModal({
         <header className="flex items-start justify-between border-b border-white/10 px-8 py-7">
           <div>
             <h2 className="text-3xl font-black tracking-tight text-white">{appointment?.id ? "Edit Appointment" : "Schedule New Appointment"}</h2>
-            <p className="mt-1 text-base font-bold text-white/80">Create and schedule a new meeting, call or engagement</p>
+            <p className="mt-1 text-base font-bold text-white/80">Create and schedule a new meeting, call or engagement linked to a live prospect or partner</p>
           </div>
-          <button onClick={onClose} className="grid h-11 w-11 place-items-center rounded-xl text-white hover:bg-white/10">
+          <button disabled={saving} onClick={onClose} className="grid h-11 w-11 place-items-center rounded-xl text-white hover:bg-white/10 disabled:opacity-60">
             <X className="h-6 w-6" />
           </button>
         </header>
 
+        {submitError ? (
+          <div className="mx-7 mt-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-black text-red-100">
+            {submitError}
+          </div>
+        ) : null}
+
         <section className="grid grid-cols-1 gap-3 border-b border-white/10 px-7 py-4 md:grid-cols-4">
           <IntelligenceCard icon={<WandSparkles />} label="AI Scheduling Fit" value="High Match" detail="Prospect, owner and timing aligned" tone="violet" />
           <IntelligenceCard icon={<Flame />} label="Commercial Priority" value={form.priority.toUpperCase()} detail="Driven by selected prospect score" tone="rose" />
-          <IntelligenceCard icon={<Star />} label="Live Prospect Sync" value={selectedProspect ? "Connected" : "Select Prospect"} detail={`${prospects.length} saved prospects available`} tone="cyan" />
+          <IntelligenceCard icon={<Star />} label="Live Entity Sync" value={selectedProspect ? "Connected" : "Select Entity"} detail={`${prospects.length} saved prospects/partners available`} tone="cyan" />
           <IntelligenceCard icon={<Target />} label="Next Action" value={followUpTask ? "Follow-up Task" : "No Follow-up"} detail="Saved into appointment tasks JSON" tone="emerald" />
         </section>
 
@@ -461,15 +480,15 @@ export function AppointmentModal({
             </div>
           </ModalSection>
 
-          <ModalSection title="2. Smart Live Prospect Selector">
+          <ModalSection title="2. Smart Live Entity Selector">
             <div className="rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500/12 via-blue-500/10 to-violet-500/12 p-4">
               <div className="flex items-center gap-3">
                 <div className={`grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br ${priorityColor(selectedProspect?.priority || "medium")} text-lg font-black text-white shadow-lg`}>
                   {selectedProspect ? initials(selectedProspect.name) : <Building2 className="h-6 w-6" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-black uppercase tracking-[.15em] text-cyan-100">Live selected prospect</div>
-                  <div className="truncate text-xl font-black text-white">{selectedProspect?.name || "Select a saved prospect"}</div>
+                  <div className="text-xs font-black uppercase tracking-[.15em] text-cyan-100">Live selected entity</div>
+                  <div className="truncate text-xl font-black text-white">{selectedProspect?.name || "Select a saved prospect or partner"}</div>
                   <div className="mt-1 flex flex-wrap gap-2">
                     <span className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-black text-white">{selectedProspect?.city || "No city"}</span>
                     <span className={`rounded-full border px-2.5 py-1 text-[11px] font-black ${stageColor(selectedProspect?.stage || "")}`}>{selectedProspect?.stage || "stage"}</span>
@@ -487,14 +506,14 @@ export function AppointmentModal({
             <Field label="Search Saved Prospects" required>
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-cyan-200" />
-                <input value={prospectQuery} onChange={(e) => setProspectQuery(e.target.value)} placeholder="Search by company, city, stage, score, contact, owner..." className="pl-11" />
+                <input value={prospectQuery} onChange={(e) => setProspectQuery(e.target.value)} placeholder="Search by company, partner, city, stage, score, contact, owner..." className="pl-11" />
               </div>
             </Field>
 
             <div className="grid gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-500/8 p-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-[.14em] text-white/80">Live synced filters</span>
-                <span className="rounded-full bg-cyan-500/15 px-3 py-1 text-[11px] font-black text-cyan-100">{filteredProspects.length} shown / {prospects.length} live prospects</span>
+                <span className="rounded-full bg-cyan-500/15 px-3 py-1 text-[11px] font-black text-cyan-100">{filteredProspects.length} shown / {prospects.length} live entities</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <label className="grid gap-2">
@@ -525,7 +544,7 @@ export function AppointmentModal({
                   <span className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br ${priorityColor(p.priority)} text-base font-black text-white shadow-lg`}>{initials(p.name)}</span>
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-black text-white">{p.name}</span>
-                    <span className="block truncate text-xs font-bold text-white/75">{p.city} · {p.contactName} · {p.owner}</span>
+                    <span className="block truncate text-xs font-bold text-white/75">{p.entityType} · {p.city} · {p.contactName} · {p.owner}</span>
                     <span className="mt-1 flex gap-1">
                       <span className={`rounded-full border px-2 py-0.5 text-[10px] font-black ${stageColor(p.stage)}`}>{p.stage}</span>
                       <span className="rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-black text-white">{p.priority}</span>
@@ -535,7 +554,7 @@ export function AppointmentModal({
                 </button>
               ))}
               {!filteredProspects.length && (
-                <div className="rounded-xl border border-dashed border-white/15 p-4 text-center text-sm font-bold text-white/65">No saved prospects match this search or selected city/type filters.</div>
+                <div className="rounded-xl border border-dashed border-white/15 p-4 text-center text-sm font-bold text-white/65">No saved prospects or partners match this search or selected city/type filters.</div>
               )}
             </div>
 
@@ -546,7 +565,7 @@ export function AppointmentModal({
               <InfoChip icon={<Gauge />} label="Owner" value={selectedProspect?.owner || "BD Officer"} />
             </div>
 
-            <button type="button" onClick={() => update("attendeesText", JSON.stringify([...cleanJson(form.attendeesText), { name: selectedProspect?.contactName || "Prospect Contact", role: "External Guest", email: selectedProspect?.email || "" }], null, 2))} className="rounded-xl border border-dashed border-violet-400/40 bg-violet-500/10 py-3 text-sm font-black text-violet-100 hover:bg-violet-500/15">
+            <button type="button" onClick={() => update("attendeesText", JSON.stringify([...cleanJson(form.attendeesText), { name: selectedProspect?.contactName || "External Contact", role: "External Guest", email: selectedProspect?.email || "" }], null, 2))} className="rounded-xl border border-dashed border-violet-400/40 bg-violet-500/10 py-3 text-sm font-black text-violet-100 hover:bg-violet-500/15">
               + Add selected contact to attendees
             </button>
           </ModalSection>
@@ -622,11 +641,11 @@ export function AppointmentModal({
         </section>
 
         <footer className="flex items-center justify-between border-t border-white/10 px-8 py-5">
-          <button onClick={onClose} className="rounded-xl border border-white/10 bg-[#07111f] px-10 py-4 text-sm font-black text-white">Cancel</button>
+          <button disabled={saving} onClick={onClose} className="rounded-xl border border-white/10 bg-[#07111f] px-10 py-4 text-sm font-black text-white disabled:opacity-60">Cancel</button>
           <div className="flex gap-4">
-            <button onClick={() => submit(true)} className="rounded-xl border border-violet-400/35 bg-[#07111f] px-10 py-4 text-sm font-black text-violet-200">Save as Draft</button>
-            <button disabled={!selectedProspect || !form.title.trim()} onClick={() => submit(false)} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-700 to-purple-700 px-10 py-4 text-sm font-black text-white shadow-[0_12px_40px_rgba(124,58,237,.35)] disabled:opacity-40">
-              <CalendarDays className="h-5 w-5" /> {appointment?.id ? "Save Appointment" : "Schedule Appointment"}
+            <button disabled={saving} onClick={() => void submit(true)} className="rounded-xl border border-violet-400/35 bg-[#07111f] px-10 py-4 text-sm font-black text-violet-200 disabled:opacity-60">Save as Draft</button>
+            <button disabled={!selectedProspect || !form.title.trim() || saving} onClick={() => void submit(false)} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-700 to-purple-700 px-10 py-4 text-sm font-black text-white shadow-[0_12px_40px_rgba(124,58,237,.35)] disabled:opacity-40">
+              <CalendarDays className="h-5 w-5" /> {saving ? "Saving..." : appointment?.id ? "Save Appointment" : "Schedule Appointment"}
             </button>
           </div>
         </footer>

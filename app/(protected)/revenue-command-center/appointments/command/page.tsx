@@ -1,7 +1,8 @@
-import RevenueAppointmentsV12MegaWorkspace from "@/components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace"
+import RevenueAppointmentsProductionCommandCenter from "@/components/revenue-command-center/RevenueAppointmentsProductionCommandCenter"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default function Page() {
-  return <RevenueAppointmentsV12MegaWorkspace mode="control-tower" />
+  return <RevenueAppointmentsProductionCommandCenter />
 }

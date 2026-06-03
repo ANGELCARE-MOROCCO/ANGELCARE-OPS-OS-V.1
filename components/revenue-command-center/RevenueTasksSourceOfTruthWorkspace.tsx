@@ -170,16 +170,20 @@ export default function RevenueTasksSourceOfTruthWorkspace() {
   const [tasks, setTasks] = useState<ProductionTask[]>([])
   const [prospects, setProspects] = useState<ProductionProspectOption[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const [modalOpen, setModalOpen] = useState(false)
   const [lastSync, setLastSync] = useState<Date | null>(null)
 
   async function refresh() {
     setLoading(true)
+    setError("")
     try {
       const [taskData, prospectData] = await Promise.all([listProductionTasks(), listProductionProspectOptions()])
       setTasks(taskData)
       setProspects(prospectData.prospects)
       setLastSync(new Date())
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to sync production tasks")
     } finally {
       setLoading(false)
     }
@@ -203,6 +207,7 @@ export default function RevenueTasksSourceOfTruthWorkspace() {
 
   async function createTask(payload: EnterpriseTaskPayload) {
     await createProductionTask({
+      entityType: payload.entityType,
       entityId: payload.entityId,
       title: payload.title,
       description: payload.description,
@@ -228,8 +233,13 @@ export default function RevenueTasksSourceOfTruthWorkspace() {
   }
 
   async function toggleTask(task: ProductionTask) {
-    await updateProductionTaskStatus(task.id, task.status === "done" ? "open" : "done")
-    await refresh()
+    try {
+      setError("")
+      await updateProductionTaskStatus(task.id, task.status === "done" ? "open" : "done")
+      await refresh()
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to update task")
+    }
   }
 
   return (
@@ -261,7 +271,16 @@ export default function RevenueTasksSourceOfTruthWorkspace() {
         }
       ` }} />
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_30%_0%,rgba(16,185,129,.15),transparent_30%),radial-gradient(circle_at_84%_0%,rgba(59,130,246,.15),transparent_28%),linear-gradient(180deg,#07111f_0%,#030814_70%,#020611_100%)]" />
-      {modalOpen && <EnterpriseTaskModal prospects={prospects} onClose={() => setModalOpen(false)} onSubmit={(payload) => { void createTask(payload); setModalOpen(false) }} />}
+      {modalOpen && (
+        <EnterpriseTaskModal
+          prospects={prospects}
+          onClose={() => setModalOpen(false)}
+          onSubmit={async (payload) => {
+            await createTask(payload)
+            setModalOpen(false)
+          }}
+        />
+      )}
       <section className="relative w-full max-w-none min-w-0 ">
         <header className="mb-4 flex flex-col gap-4 rounded-[32px] border border-[#244365] bg-[#07111f]/90 p-6 shadow-[0_24px_70px_rgba(0,0,0,.32)] xl:flex-row xl:items-center xl:justify-between">
           <div>
@@ -286,6 +305,11 @@ export default function RevenueTasksSourceOfTruthWorkspace() {
         </section>
 
         <section className="rounded-[32px] border border-[#244365] bg-[#0e1e34] p-5 shadow-[0_24px_70px_rgba(0,0,0,.28)]">
+          {error ? (
+            <div className="mb-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-black text-red-100">
+              Live task sync failed: {error}
+            </div>
+          ) : null}
           {loading ? (
             <div className="p-12 text-center text-sm font-bold text-[#cbd5e1]">Loading production tasks...</div>
           ) : tasks.length ? (
@@ -331,6 +355,7 @@ export default function RevenueTasksSourceOfTruthWorkspace() {
 }
 
 type EnterpriseTaskPayload = {
+  entityType: "prospect" | "partnership"
   entityId: string
   title: string
   description: string
@@ -353,7 +378,7 @@ type EnterpriseTaskPayload = {
   sendNotifications: boolean
 }
 
-function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: ProductionProspectOption[]; onClose: () => void; onSubmit: (payload: EnterpriseTaskPayload) => void }) {
+function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: ProductionProspectOption[]; onClose: () => void; onSubmit: (payload: EnterpriseTaskPayload) => Promise<void> | void }) {
   const first = prospects[0]
   const [search, setSearch] = useState("")
   const [pickerOpen, setPickerOpen] = useState(true)
@@ -361,6 +386,8 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
   const [prospectSyncStatus, setProspectSyncStatus] = useState<"loading" | "live" | "empty" | "error">(prospects.length ? "live" : "loading")
   const [prospectSyncError, setProspectSyncError] = useState("")
   const [selectedProspect, setSelectedProspect] = useState<ProductionProspectOption | null>(first || null)
+  const [saving, setSaving] = useState(false)
+  const [submitError, setSubmitError] = useState("")
   const [tagInput, setTagInput] = useState("")
   const [form, setForm] = useState({
     title: "",
@@ -431,9 +458,13 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
     setTagInput("")
   }
 
-  function submit() {
-    if (!selectedProspect || !form.title.trim()) return
-    onSubmit({
+  async function submit() {
+    if (!selectedProspect || !form.title.trim() || saving) return
+    setSaving(true)
+    setSubmitError("")
+    try {
+      await onSubmit({
+      entityType: selectedProspect.entityType,
       entityId: selectedProspect.id,
       title: form.title.trim(),
       description: form.description,
@@ -455,6 +486,11 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
       addToCalendar: form.addToCalendar,
       sendNotifications: form.sendNotifications,
     })
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to create task")
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -466,35 +502,40 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
             <div>
               <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Enterprise execution task</div>
               <h2 className="mt-1 text-3xl font-black text-white">Create New Task</h2>
-              <p className="mt-1 text-sm font-bold text-[#cbd5e1]">Create a comprehensive execution task and link it to a prospect. All tasks are automatically synced and tracked.</p>
+              <p className="mt-1 text-sm font-bold text-[#cbd5e1]">Create a comprehensive execution task and link it to a live prospect or partner. All tasks are automatically synced and tracked.</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={onClose} className="rounded-xl border border-[#315474] bg-[#10223a] px-5 py-3 text-sm font-black text-white">Cancel</button>
-            <button disabled={!selectedProspect || !form.title.trim()} onClick={submit} className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-50">Create Task</button>
-            <button onClick={onClose} className="grid h-11 w-11 place-items-center rounded-xl text-white hover:bg-white/10"><X className="h-5 w-5" /></button>
+            <button disabled={saving} onClick={onClose} className="rounded-xl border border-[#315474] bg-[#10223a] px-5 py-3 text-sm font-black text-white disabled:opacity-60">Cancel</button>
+            <button disabled={!selectedProspect || !form.title.trim() || saving} onClick={() => void submit()} className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-50">{saving ? "Saving..." : "Create Task"}</button>
+            <button disabled={saving} onClick={onClose} className="grid h-11 w-11 place-items-center rounded-xl text-white hover:bg-white/10 disabled:opacity-60"><X className="h-5 w-5" /></button>
           </div>
         </div>
+        {submitError ? (
+          <div className="mb-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-black text-red-100">
+            {submitError}
+          </div>
+        ) : null}
 
         <section className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-[#244365] bg-[#10223a] p-4 md:grid-cols-4">
-          <Feature icon={<Link2 />} title="Linked to Prospect" detail="Task will be linked to selected prospect" />
+          <Feature icon={<Link2 />} title="Linked Entity" detail="Task will be linked to the selected prospect or partner" />
           <Feature icon={<RefreshCcw />} title="Real-time Sync" detail="Appears in tasks, timeline & analytics" />
           <Feature icon={<Bell />} title="Smart Escalation" detail="Automatic alerts & escalation rules" />
           <Feature icon={<Eye />} title="Full Visibility" detail="Track progress and outcomes" />
         </section>
 
         <div className="grid gap-5 xl:grid-cols-2">
-          <Panel icon={<Users />} title="1. Link to Prospect">
+          <Panel icon={<Users />} title="1. Link to Prospect or Partner">
             <div className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
               <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4">
                 <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">Live source</div>
-                <div className="mt-1 text-lg font-black text-white">{filteredProspects.length} saved prospects</div>
-                <div className="mt-1 text-xs font-bold text-[#cbd5e1]">Synced from Revenue prospects database</div>
+                <div className="mt-1 text-lg font-black text-white">{filteredProspects.length} saved entities</div>
+                <div className="mt-1 text-xs font-bold text-[#cbd5e1]">Synced from prospects and partnerships</div>
               </div>
               <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4">
                 <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-200">Selected</div>
                 <div className="mt-1 max-w-[240px] truncate text-lg font-black text-white">{selectedProspect?.name || "None"}</div>
-                <div className="mt-1 text-xs font-bold text-[#cbd5e1]">{selectedProspect ? `${selectedProspect.city} · ${selectedProspect.stage}` : "Choose one prospect below"}</div>
+                <div className="mt-1 text-xs font-bold text-[#cbd5e1]">{selectedProspect ? `${selectedProspect.entityType} · ${selectedProspect.city} · ${selectedProspect.stage}` : "Choose one entity below"}</div>
               </div>
               <button
                 type="button"
@@ -517,7 +558,7 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
             </div>
 
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-cyan-100">Find prospect</span>
+              <span className="text-xs font-black uppercase tracking-[.14em] text-cyan-100">Find prospect or partner</span>
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-200" />
                 <input
@@ -527,7 +568,7 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
                     setSearch(e.target.value)
                     setPickerOpen(true)
                   }}
-                  placeholder="Search by prospect, city, stage, priority, contact, phone, email..."
+                  placeholder="Search by prospect, partner, city, stage, priority, contact, phone, email..."
                   className="h-12 w-full rounded-xl border border-[#315474] bg-[#070b19] pl-11 pr-4 text-sm font-bold text-white outline-none placeholder:text-slate-400"
                 />
               </div>
@@ -535,7 +576,7 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
 
             {prospectSyncStatus === "error" && (
               <div className="rounded-xl border border-red-400/20 bg-red-500/10 p-3 text-xs font-bold text-red-100">
-                Could not load saved prospects. Please check Supabase connection and revenue_prospects table.
+                Could not load saved prospects or partners. Please check Supabase connection and revenue operational tables.
               </div>
             )}
 
@@ -563,7 +604,7 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
                       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-emerald-300 to-cyan-500 text-sm font-black text-slate-950">{prospect.name.slice(0, 2).toUpperCase()}</span>
                       <span className="min-w-0">
                         <span className="block truncate text-base font-black !text-white">{prospect.name}</span>
-                        <span className="prospect-muted block truncate text-sm font-semibold !text-white/90">{prospect.company || "AngelCare prospect"}</span>
+                        <span className="prospect-muted block truncate text-sm font-semibold !text-white/90">{prospect.company || `AngelCare ${prospect.entityType}`}</span>
                       </span>
                     </span>
                     <span className="text-sm font-bold !text-white">
@@ -581,8 +622,8 @@ function EnterpriseTaskModal({ prospects, onClose, onSubmit }: { prospects: Prod
                 ))}
                 {!pagedProspects.length && (
                   <div className="space-y-2 p-8 text-center text-sm font-bold text-[#cbd5e1]">
-                    <div>No saved prospects found.</div>
-                    <div className="prospect-muted text-xs !text-white/80">Create prospects in Prospects Directory, then return here and refresh.</div>
+                    <div>No saved prospects or partners found.</div>
+                    <div className="prospect-muted text-xs !text-white/80">Create records in Prospects Directory or Partner Program, then return here and refresh.</div>
                   </div>
                 )}
               </div>

@@ -67,6 +67,10 @@ const menu = [
 
 function money(value: number) { return `${new Intl.NumberFormat("fr-MA", { maximumFractionDigits: 0 }).format(Number(value || 0))} MAD` }
 function title(v: string) { return v.replaceAll("_", " ").replace(/\b\w/g, m => m.toUpperCase()) }
+function n(value: unknown, fallback = 0) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
 function tone(status: PartnershipStatus) {
   if (["active", "growth"].includes(status)) return "bg-emerald-500/15 text-emerald-200 border-emerald-400/30"
   if (["proposal", "agreement", "meeting"].includes(status)) return "bg-blue-500/15 text-blue-200 border-blue-400/30"
@@ -86,7 +90,77 @@ function defaultPayload(): ApiPayload {
   return { ok: true, partners: [], activities: [], metrics: { total: 0, active: 0, pipeline_mad: 0, forecast_mad: 0, high_value: 0, risk: 0, referral_potential: 0, synced_prospects: 0 }, sync: { live: false, source: "loading" } }
 }
 
-export default function RevenuePartnershipsEnterpriseWorkspace({ initialTab = "overview" as EnterpriseTab }: { initialTab?: EnterpriseTab }) {
+function normalizeKind(value: unknown): PartnershipKind {
+  const key = String(value || "preschool").toLowerCase()
+  const allowed: PartnershipKind[] = ["preschool", "kindergarten", "corporate", "clinic", "academy", "event_venue", "agency", "institution", "supplier", "referral_partner"]
+  return allowed.includes(key as PartnershipKind) ? key as PartnershipKind : "institution"
+}
+
+function normalizeStatus(value: unknown): PartnershipStatus {
+  const key = String(value || "target").toLowerCase()
+  if (statusFlow.includes(key as PartnershipStatus)) return key as PartnershipStatus
+  if (["prospecting", "new", "active"].includes(key)) return key === "active" ? "active" : "target"
+  return "target"
+}
+
+function partnerFromOperational(row: Record<string, any>): Partner {
+  const value = n(row.value_mad ?? row.valueMad ?? row.potential_value_mad ?? row.potentialValueMad)
+  const probability = n(row.probability ?? row.score, 45)
+  return {
+    id: String(row.id),
+    name: String(row.name || row.organization || "Unnamed partner"),
+    organization: String(row.organization || row.name || "B2B partner"),
+    city: String(row.city || row.location || "Unassigned"),
+    kind: normalizeKind(row.kind || row.partnership_type || row.partnershipType),
+    status: normalizeStatus(row.status || row.stage),
+    owner: String(row.owner || "Partnership Lead"),
+    contact_name: String(row.contact_name || row.contactName || ""),
+    phone: String(row.phone || ""),
+    email: String(row.email || ""),
+    value_mad: value,
+    probability,
+    health_score: n(row.health_score ?? row.score, probability),
+    referral_potential: n(row.referral_potential, Math.round(probability / 2)),
+    next_action: String(row.next_action || row.nextAction || "Define partnership next step."),
+    context: String(row.notes || row.relationship_notes || row.relationshipNotes || ""),
+    source_prospect_id: row.source_prospect_id || null,
+    created_at: row.created_at || null,
+    updated_at: row.updated_at || null,
+  }
+}
+
+function activityFromOperational(row: Record<string, any>): Activity {
+  return {
+    id: String(row.id || `${row.entity_id || "activity"}-${row.created_at || Date.now()}`),
+    partner_id: row.partnership_id || row.partnershipId || (row.entity_type === "partnership" ? row.entity_id : null),
+    title: String(row.title || row.event_title || row.action || "Partnership activity"),
+    note: String(row.body || row.event_body || row.note || ""),
+    action: String(row.event_type || row.action_type || row.action || "activity"),
+    created_at: String(row.created_at || new Date().toISOString()),
+  }
+}
+
+function computeMetrics(partners: Partner[]): Metrics {
+  const pipeline = partners.reduce((sum, p) => sum + n(p.value_mad), 0)
+  return {
+    total: partners.length,
+    active: partners.filter((p) => ["active", "growth"].includes(p.status)).length,
+    pipeline_mad: pipeline,
+    forecast_mad: Math.round(partners.reduce((sum, p) => sum + n(p.value_mad) * (n(p.probability) / 100), 0)),
+    high_value: partners.filter((p) => n(p.value_mad) >= 100000 || n(p.referral_potential) >= 75).length,
+    risk: partners.filter((p) => ["risk", "recovery", "lost"].includes(p.status) || n(p.health_score, 100) < 45).length,
+    referral_potential: partners.length ? Math.round(partners.reduce((sum, p) => sum + n(p.referral_potential), 0) / partners.length) : 0,
+    synced_prospects: 0,
+  }
+}
+
+export default function RevenuePartnershipsEnterpriseWorkspace({
+  initialTab = "overview" as EnterpriseTab,
+  focusPartnerId,
+}: {
+  initialTab?: EnterpriseTab
+  focusPartnerId?: string
+}) {
   const [payload, setPayload] = useState<ApiPayload>(() => defaultPayload())
   const [tab, setTab] = useState<EnterpriseTab>(initialTab)
   const [query, setQuery] = useState("")
@@ -94,16 +168,39 @@ export default function RevenuePartnershipsEnterpriseWorkspace({ initialTab = "o
   const [selected, setSelected] = useState<Partner | null>(null)
   const [modal, setModal] = useState<ModalKind>(null)
   const [busy, setBusy] = useState(false)
+  const [error, setError] = useState("")
   const [form, setForm] = useState<Record<string, string>>({})
 
   async function load() {
-    const res = await fetch("/api/revenue-command-center/partnerships/enterprise", { cache: "no-store" })
-    const data = await res.json() as ApiPayload
+    setError("")
+    const [partnerRes, activityRes] = await Promise.all([
+      fetch("/api/revenue-command-center/partnerships?limit=1000", { cache: "no-store" }),
+      fetch("/api/revenue-command-center/activity?entityType=partnership&limit=80", { cache: "no-store" }),
+    ])
+    const partnerPayload = await partnerRes.json()
+    const activityPayload = await activityRes.json().catch(() => ({ activities: [] }))
+    if (!partnerRes.ok || partnerPayload.ok === false) throw new Error(partnerPayload.error || "Unable to load partnerships")
+    const partners = (partnerPayload.partnerships || partnerPayload.data || []).map(partnerFromOperational)
+    const data: ApiPayload = {
+      ok: true,
+      partners,
+      activities: (activityPayload.activities || activityPayload.events || activityPayload.data || []).map(activityFromOperational),
+      metrics: computeMetrics(partners),
+      sync: { live: true, source: "revenue_partnerships" },
+    }
     setPayload(data)
-    setSelected(current => current ? (data.partners.find(p => p.id === current.id) || data.partners[0] || null) : data.partners[0] || null)
+    setSelected(current => {
+      const focused = focusPartnerId ? data.partners.find(p => p.id === focusPartnerId) : null
+      if (focused) return focused
+      return current ? (data.partners.find(p => p.id === current.id) || data.partners[0] || null) : data.partners[0] || null
+    })
   }
 
-  useEffect(() => { void load(); const timer = window.setInterval(() => { void load() }, 15000); return () => window.clearInterval(timer) }, [])
+  useEffect(() => {
+    void load().catch((error) => setError(error instanceof Error ? error.message : "Unable to load partnerships"))
+    const timer = window.setInterval(() => { void load().catch((error) => setError(error instanceof Error ? error.message : "Unable to load partnerships")) }, 15000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   const filtered = useMemo(() => payload.partners.filter(p => {
     const hay = `${p.name} ${p.organization} ${p.city} ${p.owner} ${p.contact_name} ${p.context} ${p.next_action}`.toLowerCase()
@@ -128,10 +225,52 @@ export default function RevenuePartnershipsEnterpriseWorkspace({ initialTab = "o
 
   async function submit(action: string) {
     setBusy(true)
+    setError("")
     try {
-      await fetch("/api/revenue-command-center/partnerships/enterprise", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, partnerId: selected?.id, payload: form }) })
+      let res: Response
+      if (action === "create") {
+        if (!String(form.name || form.organization || "").trim()) throw new Error("Partner name is required")
+        res = await fetch("/api/revenue-command-center/partnerships", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          body: JSON.stringify({
+            ...form,
+            organization: form.organization || form.name,
+            partnershipType: form.kind,
+            valueMad: form.value_mad,
+            potentialValueMad: form.value_mad,
+            notes: form.context,
+          }),
+        })
+      } else {
+        if (!selected?.id) throw new Error("Select a partner before saving this action")
+        const actionMap: Record<string, Record<string, unknown>> = {
+          qualify: { action: "stage_change", stage: "qualified", status: "qualified" },
+          proposal: { action: "stage_change", stage: "proposal", status: "proposal" },
+          agreement: { action: "stage_change", stage: "agreement", status: "agreement" },
+          activate: { action: "stage_change", stage: "active", status: "active" },
+          referral: { action: "add_note", noteType: "comment", body: form.note || form.title || "Referral action logged" },
+          risk: { action: "stage_change", stage: "risk", status: "risk" },
+          note: { action: "add_note", noteType: "note", body: form.note || form.title || "Partnership note" },
+        }
+        const meetingAt = form.due_date ? `${form.due_date}T10:00:00` : new Date(Date.now() + 86400000).toISOString()
+        const body = action === "meeting"
+          ? { id: selected.id, action: "schedule_appointment", title: form.title || `Meeting with ${selected.name}`, appointmentAt: meetingAt, owner: form.owner || selected.owner, notes: form.note }
+          : { id: selected.id, ...(actionMap[action] || { action: "update" }), ...form }
+        res = await fetch("/api/revenue-command-center/partnerships", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          body: JSON.stringify(body),
+        })
+      }
+      const result = await res.json().catch(() => ({}))
+      if (!res.ok || result.ok === false) throw new Error(result.error || "Unable to save partnership action")
       setModal(null)
       await load()
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to save partnership action")
     } finally { setBusy(false) }
   }
 
@@ -150,6 +289,7 @@ export default function RevenuePartnershipsEnterpriseWorkspace({ initialTab = "o
           <div><p className="text-xs font-black uppercase tracking-[0.3em] text-violet-300">Revenue Command Center / Partnerships</p><h1 className="mt-2 text-3xl font-black lg:text-5xl">Partnerships Command</h1><p className="mt-2 max-w-3xl text-sm font-semibold text-slate-300">Live B2B partnership execution for kindergartens, preschools, clinics, corporates, referral partners, institutions, venues, and strategic accounts.</p></div>
           <div className="flex flex-wrap gap-3"><Button variant="soft" onClick={() => void load()}>Refresh live</Button><Button onClick={() => open("create")}>+ New Partnership</Button></div>
         </header>
+        {error ? <div className="mb-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-black text-red-100">{error}</div> : null}
 
         <div className="mb-5 overflow-x-auto rounded-[24px] border border-white/10 bg-[#081a30] p-2"><div className="flex min-w-max gap-2">{tabs.map(item => <button key={item.id} onClick={() => setTab(item.id)} className={`rounded-2xl px-4 py-3 text-left transition ${tab === item.id ? "bg-violet-600 text-white" : "text-slate-300 hover:bg-white/5"}`}><p className="text-sm font-black">{item.label}</p><p className="text-[11px] font-bold opacity-70">{item.subtitle}</p></button>)}</div></div>
 
@@ -162,7 +302,7 @@ export default function RevenuePartnershipsEnterpriseWorkspace({ initialTab = "o
         {tab === "pipeline" ? <section className="mb-5 grid gap-4 xl:grid-cols-5">{stageCards.map(group => <Card key={group.status} className="min-h-[240px]"><div className="mb-3 flex items-center justify-between"><p className="font-black">{title(group.status)}</p><span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">{group.items.length}</span></div><div className="space-y-3">{group.items.map(p => <button key={p.id} onClick={() => setSelected(p)} className="block w-full rounded-2xl border border-white/10 bg-white/5 p-3 text-left hover:bg-white/10"><p className="font-black">{p.name}</p><p className="mt-1 text-xs font-bold text-slate-400">{p.city} • {money(p.value_mad)}</p></button>)}</div></Card>)}</section> : null}
 
         <div className="grid gap-5 2xl:grid-cols-[1fr_420px]">
-          <section className="space-y-4">{filtered.length ? filtered.map(p => <Card key={p.id} className={selected?.id === p.id ? "ring-2 ring-violet-400" : ""}><div className="grid gap-5 xl:grid-cols-[1fr_220px_290px]"><div><div className="flex flex-wrap gap-2"><span className={`rounded-full border px-3 py-1 text-xs font-black ${tone(p.status)}`}>{title(p.status)}</span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black text-slate-200">{title(p.kind)}</span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black text-slate-200">{p.city}</span></div><h2 className="mt-3 text-2xl font-black">{p.name}</h2><p className="mt-1 text-sm font-bold text-slate-300">{p.organization} • {p.contact_name || "Decision maker pending"}</p><p className="mt-3 text-sm font-semibold leading-6 text-slate-400">{p.context || p.next_action || "No context recorded yet."}</p></div><div className="rounded-2xl bg-white/5 p-4"><p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Commercial impact</p><p className="mt-2 text-xl font-black">{money(p.value_mad)}</p><p className="mt-2 text-sm font-bold text-slate-300">Probability {p.probability}%</p><p className="text-sm font-bold text-slate-300">Health {p.health_score}%</p><p className="text-sm font-bold text-slate-300">Referral {p.referral_potential}%</p></div><div className="grid grid-cols-2 gap-2"><Button variant="soft" onClick={() => setSelected(p)}>Open Room</Button><Button variant="soft" onClick={() => open("qualify", p)}>Qualify</Button><Button variant="soft" onClick={() => open("meeting", p)}>Meeting</Button><Button variant="soft" onClick={() => open("proposal", p)}>Proposal</Button><Button variant="soft" onClick={() => open("agreement", p)}>Agreement</Button><Button variant="soft" onClick={() => open("activate", p)}>Activate</Button><Button variant="soft" onClick={() => open("referral", p)}>Referral</Button><Button variant="danger" onClick={() => open("risk", p)}>Risk</Button></div></div></Card>) : <Card><p className="text-lg font-black">No live partnerships found for this view.</p><p className="mt-2 text-sm font-bold text-slate-400">Create a partnership or sync prospects with partnership potential. No fake fallback records are shown.</p></Card>}</section>
+          <section className="space-y-4">{filtered.length ? filtered.map(p => <Card key={p.id} className={selected?.id === p.id ? "ring-2 ring-violet-400" : ""}><div className="grid gap-5 xl:grid-cols-[1fr_220px_290px]"><div><div className="flex flex-wrap gap-2"><span className={`rounded-full border px-3 py-1 text-xs font-black ${tone(p.status)}`}>{title(p.status)}</span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black text-slate-200">{title(p.kind)}</span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black text-slate-200">{p.city}</span></div><Link href={`/revenue-command-center/partnerships/${p.id}`} className="mt-3 block text-2xl font-black text-white hover:text-violet-200">{p.name}</Link><p className="mt-1 text-sm font-bold text-slate-300">{p.organization} • {p.contact_name || "Decision maker pending"}</p><p className="mt-3 text-sm font-semibold leading-6 text-slate-400">{p.context || p.next_action || "No context recorded yet."}</p></div><div className="rounded-2xl bg-white/5 p-4"><p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Commercial impact</p><p className="mt-2 text-xl font-black">{money(p.value_mad)}</p><p className="mt-2 text-sm font-bold text-slate-300">Probability {p.probability}%</p><p className="text-sm font-bold text-slate-300">Health {p.health_score}%</p><p className="text-sm font-bold text-slate-300">Referral {p.referral_potential}%</p></div><div className="grid grid-cols-2 gap-2"><Button variant="soft" onClick={() => setSelected(p)}>Open Room</Button><Button variant="soft" onClick={() => open("qualify", p)}>Qualify</Button><Button variant="soft" onClick={() => open("meeting", p)}>Meeting</Button><Button variant="soft" onClick={() => open("proposal", p)}>Proposal</Button><Button variant="soft" onClick={() => open("agreement", p)}>Agreement</Button><Button variant="soft" onClick={() => open("activate", p)}>Activate</Button><Button variant="soft" onClick={() => open("referral", p)}>Referral</Button><Button variant="danger" onClick={() => open("risk", p)}>Risk</Button></div></div></Card>) : <Card><p className="text-lg font-black">No live partnerships found for this view.</p><p className="mt-2 text-sm font-bold text-slate-400">Create a partnership or verify the revenue_partnerships table connection.</p></Card>}</section>
 
           <aside className="space-y-5"><Card className="bg-[#0b1530]"><p className="text-xs font-black uppercase tracking-[0.25em] text-violet-300">Selected command room</p><h2 className="mt-2 text-2xl font-black">{selected?.name || "No partner selected"}</h2>{selected ? <div className="mt-4 space-y-3"><p className="text-sm font-bold text-slate-300">{selected.next_action}</p><div className="grid grid-cols-2 gap-3"><Button variant="soft" onClick={() => open("meeting")}>Schedule</Button><Button variant="soft" onClick={() => open("proposal")}>Proposal</Button><Button variant="soft" onClick={() => open("agreement")}>Contract</Button><Button onClick={() => open("activate")}>Activate</Button></div></div> : null}</Card><Card><p className="text-xs font-black uppercase tracking-[0.25em] text-violet-300">Recent live activity</p><div className="mt-4 space-y-3">{payload.activities.slice(0, 12).map(a => <div key={a.id} className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="text-sm font-black">{a.title}</p><p className="mt-1 text-xs font-bold text-slate-400">{a.note}</p><p className="mt-1 text-[11px] font-bold text-slate-500">{new Date(a.created_at).toLocaleString()}</p></div>)}</div></Card></aside>
         </div>

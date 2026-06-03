@@ -41,7 +41,6 @@ import {
   deleteProductionProspect,
   loadProductionProspects,
   saveProductionProspect,
-  saveProductionProspectsBulk,
 } from "@/lib/revenue-command-center/production-prospect-store"
 
 import { useRevenueEntityControls } from "@/lib/revenue-command-center/use-revenue-entity-controls"
@@ -245,21 +244,6 @@ type ProfileAppointment = {
 }
 type ProfileComment = { id: string; remoteId?: string; author: string; at: string; note: string; channel: string }
 
-const STORE_KEY = "revenue_prospects_v12_mega_store"
-const PROFILE_CONTROLS_KEY = "revenue_prospect_profile_controls_v1"
-const SNAPSHOT_KEYS = [STORE_KEY, "revenue_command_browser_snapshots", "angelcare_global_persistence_snapshots"]
-
-type ProfileControlsStore = Record<
-  string,
-  {
-    tasks: ProfileTask[]
-    appointments: ProfileAppointment[]
-    comments: ProfileComment[]
-    documents: string[]
-    updatedAt: string
-  }
->
-
 
 const stageLabels: Record<ProspectStage, string> = {
   new_lead: "New Lead",
@@ -281,11 +265,6 @@ function cn(...items: Array<string | false | null | undefined>) {
   return items.filter(Boolean).join(" ")
 }
 
-function safeParse<T>(value: string | null): T | null {
-  if (!value) return null
-  try { return JSON.parse(value) as T } catch { return null }
-}
-
 function mad(value: number) {
   if (Math.abs(value) >= 1_000_000) return `${(value / 1_000_000).toFixed(value >= 10_000_000 ? 1 : 2)}M MAD`
   if (Math.abs(value) >= 1_000) return `${Math.round(value / 1000)}K MAD`
@@ -300,7 +279,8 @@ function initials(name: string) {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join("") || "AC"
 }
 
-function normalizeProspect(raw: Partial<ProspectRecord> & { value?: number; valueMad?: number }): ProspectRecord {
+function normalizeProspect(input: Partial<ProspectRecord> & { value?: number; valueMad?: number; raw?: any; data?: any }): ProspectRecord {
+  const raw = { ...(input.raw?.data || input.data || {}), ...input }
   const now = new Date().toISOString()
   return {
     id: String(raw.id || `${Date.now()}-${Math.random().toString(36).slice(2)}`),
@@ -350,62 +330,6 @@ function normalizeProspect(raw: Partial<ProspectRecord> & { value?: number; valu
   }
 }
 
-function loadStore(): ProspectStore {
-  if (typeof window === "undefined") return { prospects: [] }
-
-  const direct = safeParse<ProspectStore>(localStorage.getItem(STORE_KEY))
-  if (direct?.prospects?.length) return { ...direct, prospects: direct.prospects.map(normalizeProspect) }
-
-  for (const key of SNAPSHOT_KEYS) {
-    const payload = safeParse<Record<string, unknown>>(localStorage.getItem(key))
-    const candidate = payload?.[STORE_KEY]
-    if (typeof candidate === "string") {
-      const recovered = safeParse<ProspectStore>(candidate)
-      if (recovered?.prospects?.length) {
-        localStorage.setItem(STORE_KEY, JSON.stringify(recovered))
-        return { ...recovered, prospects: recovered.prospects.map(normalizeProspect) }
-      }
-    }
-    if (candidate && typeof candidate === "object") {
-      const recovered = candidate as ProspectStore
-      if (recovered.prospects?.length) {
-        localStorage.setItem(STORE_KEY, JSON.stringify(recovered))
-        return { ...recovered, prospects: recovered.prospects.map(normalizeProspect) }
-      }
-    }
-  }
-
-  return { prospects: [] }
-}
-
-function saveStore(store: ProspectStore) {
-  if (typeof window === "undefined") return
-  localStorage.setItem(STORE_KEY, JSON.stringify({ ...store, updatedAt: new Date().toISOString() }))
-}
-
-function loadProfileControls(prospectId: string) {
-  if (typeof window === "undefined") return null
-  const all = safeParse<ProfileControlsStore>(localStorage.getItem(PROFILE_CONTROLS_KEY)) || {}
-  return all[prospectId] || null
-}
-
-function saveProfileControls(
-  prospectId: string,
-  controls: { tasks: ProfileTask[]; appointments: ProfileAppointment[]; comments: ProfileComment[]; documents: string[] },
-) {
-  if (typeof window === "undefined") return
-  const all = safeParse<ProfileControlsStore>(localStorage.getItem(PROFILE_CONTROLS_KEY)) || {}
-  all[prospectId] = { ...controls, updatedAt: new Date().toISOString() }
-  localStorage.setItem(PROFILE_CONTROLS_KEY, JSON.stringify(all))
-}
-
-function deleteProfileControls(prospectId: string) {
-  if (typeof window === "undefined") return
-  const all = safeParse<ProfileControlsStore>(localStorage.getItem(PROFILE_CONTROLS_KEY)) || {}
-  delete all[prospectId]
-  localStorage.setItem(PROFILE_CONTROLS_KEY, JSON.stringify(all))
-}
-
 function downloadTextFile(filename: string, content: string) {
   const blob = new Blob([content], { type: "text/plain;charset=utf-8" })
   const url = URL.createObjectURL(blob)
@@ -429,13 +353,17 @@ function mapDbPriority(priority: string | null | undefined): "High" | "Medium" |
 }
 
 function mapTaskFromDb(row: any): ProfileTask {
+  const status = String(row.status || "").toLowerCase()
+  const startAt = row.start_at || row.startAt || null
+  const endAt = row.end_at || row.endAt || null
+  const dueDate = row.due_date || row.dueDate || null
   const label =
     row.status_label ||
-    (row.status === "done"
+    (status === "done" || status === "completed"
       ? "Completed"
-      : row.status === "cancelled"
+      : status === "cancelled" || status === "canceled"
         ? "Cancelled"
-        : row.start_at
+        : startAt
           ? "Scheduled"
           : "Open")
 
@@ -444,23 +372,23 @@ function mapTaskFromDb(row: any): ProfileTask {
     remoteId: String(row.id),
     title: String(row.title || "Untitled task"),
     priority: mapDbPriority(row.priority),
-    due: row.start_at
-      ? `${new Date(row.start_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · ${(row.due_date || "").toString().slice(0, 10) || "No due date"}`
-      : row.due_date
-        ? String(row.due_date)
+    due: startAt
+      ? `${new Date(startAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · ${(dueDate || "").toString().slice(0, 10) || "No due date"}`
+      : dueDate
+        ? String(dueDate)
         : "No due date",
-    done: row.status === "done",
+    done: status === "done" || status === "completed",
     statusLabel: label,
     owner: String(row.owner || "BD Officer"),
-    type: String(row.task_type || "task"),
+    type: String(row.task_type || row.taskType || row.type || "task"),
     description: String(row.description || ""),
-    startAt: row.start_at || null,
-    endAt: row.end_at || null,
-    dueDate: row.due_date || null,
-    role: String(row.assigned_role || ""),
+    startAt,
+    endAt,
+    dueDate,
+    role: String(row.assigned_role || row.assignedRole || ""),
     location: String(row.location || ""),
-    outcome: String(row.outcome_expected || ""),
-    escalation: String(row.escalation_rule || ""),
+    outcome: String(row.outcome_expected || row.outcomeExpected || row.expected_outcome || row.expectedOutcome || ""),
+    escalation: String(row.escalation_rule || row.escalationRule || ""),
     dependencies: String(row.dependencies || ""),
     tags: Array.isArray(row.tags) ? row.tags.map(String) : [],
   }
@@ -468,6 +396,7 @@ function mapTaskFromDb(row: any): ProfileTask {
 
 function mapAppointmentFromDb(row: any): ProfileAppointment {
   const rawStatus = String(row.status || row.status_label || "scheduled").toLowerCase()
+  const appointmentAt = row.appointment_at || row.appointmentAt || row.scheduled_at || row.scheduledAt || row.at
   const status =
     rawStatus === "completed" || rawStatus === "done"
       ? "Completed"
@@ -483,17 +412,18 @@ function mapAppointmentFromDb(row: any): ProfileAppointment {
     id: String(row.id),
     remoteId: String(row.id),
     title: String(row.title || "Appointment"),
-    at: String(row.appointment_at || row.at || "Scheduled"),
+    at: String(appointmentAt || "Scheduled"),
     status,
-    type: String(row.appointment_type || row.type || "meeting"),
+    type: String(row.appointment_type || row.appointmentType || row.type || "meeting"),
     owner: String(row.owner || "BD Officer"),
     location: String(row.location || row.entity_city || ""),
-    meetingLink: String(row.meeting_link || ""),
+    meetingLink: String(row.meeting_link || row.meetingLink || ""),
     notes: String(row.notes || row.agenda || ""),
   }
 }
 
 function mapAppointmentFromLive(row: any): ProfileAppointment {
+  const appointmentAt = row.appointment_at || row.appointmentAt
   const status =
     row.status === "completed"
       ? "Completed"
@@ -505,7 +435,7 @@ function mapAppointmentFromLive(row: any): ProfileAppointment {
             ? "Pending"
             : "Scheduled"
 
-  const start = row.appointment_at ? new Date(row.appointment_at) : null
+  const start = appointmentAt ? new Date(appointmentAt) : null
   const dateText = start
     ? `${start.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })} · ${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
     : "No date"
@@ -516,10 +446,10 @@ function mapAppointmentFromLive(row: any): ProfileAppointment {
     title: String(row.title || "Untitled appointment"),
     at: dateText,
     status,
-    type: String(row.appointment_type || "meeting"),
+    type: String(row.appointment_type || row.appointmentType || "meeting"),
     owner: String(row.owner || "BD Officer"),
     location: String(row.location || row.entity_city || ""),
-    meetingLink: String(row.meeting_link || ""),
+    meetingLink: String(row.meeting_link || row.meetingLink || ""),
     notes: String(row.notes || row.agenda || ""),
   }
 }
@@ -531,8 +461,8 @@ function mapCommentFromDb(row: any): ProfileComment {
     remoteId: String(row.id),
     author: String(row.author || "AngelCare"),
     at: row.created_at ? new Date(row.created_at).toLocaleString() : "Now",
-    channel: String(row.channel || "internal"),
-    note: String(row.note || ""),
+    channel: String(row.channel || row.visibility || row.note_type || row.noteType || "internal"),
+    note: String(row.body || row.note || row.comment || row.event_body || ""),
   }
 }
 
@@ -546,7 +476,11 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   const [comments, setComments] = useState<ProfileComment[]>([])
   const [lastSync, setLastSync] = useState<Date | null>(null)
   const [activeTab, setActiveTab] = useState("Overview")
-  const [engineStatus, setEngineStatus] = useState<"connecting" | "live" | "fallback">("connecting")
+  const [engineStatus, setEngineStatus] = useState<"connecting" | "live">("connecting")
+  const [profileError, setProfileError] = useState("")
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [savingComment, setSavingComment] = useState(false)
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null)
   const [taskModalOpen, setTaskModalOpen] = useState(false)
   const [viewTaskModal, setViewTaskModal] = useState<ProfileTask | null>(null)
   const [appointmentModalOpen, setAppointmentModalOpen] = useState(false)
@@ -562,21 +496,15 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   async function refresh() {
     try {
       const productionProspects = await loadProductionProspects<ProspectRecord>()
-      if (productionProspects.length) {
-        setStore({ prospects: productionProspects.map(normalizeProspect) })
-        setLastSync(new Date())
-        return
-      }
+      setStore({ prospects: productionProspects.map(normalizeProspect) })
+      setProfileError("")
+      setLastSync(new Date())
     } catch (error) {
-      console.warn("Production prospect store unavailable, using browser recovery fallback", error)
+      setProfileError(error instanceof Error ? error.message : "Unable to load live prospect profile")
     }
-
-    const next = loadStore()
-    setStore(next)
-    setLastSync(new Date())
   }
 
-  async function refreshRealControls(id: string, fallbackProspect?: ProspectRecord) {
+  async function refreshRealControls(id: string, currentProspect?: ProspectRecord) {
     try {
       const [data, liveTaskRows, liveAppointmentRows] = await Promise.all([
         loadProspectControlData(id).catch(() => ({ tasks: [], appointments: [], comments: [], documents: [] })),
@@ -594,24 +522,18 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
       setComments((data.comments || []).map(mapCommentFromDb))
 
       const liveDocuments = (data.documents || []).map((doc: any) => String(doc.title || "Document"))
-      if (fallbackProspect && liveDocuments.length) {
-        const nextProspect = { ...fallbackProspect, documents: liveDocuments }
+      if (currentProspect && liveDocuments.length) {
+        const nextProspect = { ...currentProspect, documents: liveDocuments }
         setDraft(nextProspect)
       }
 
-      saveProfileControls(id, {
-        tasks: syncedTasks,
-        appointments: syncedAppointments,
-        comments: (data.comments || []).map(mapCommentFromDb),
-        documents: fallbackProspect?.documents || [],
-      })
-
       refreshRevenueControls()
       setEngineStatus("live")
+      setProfileError("")
       setLastSync(new Date())
     } catch (error) {
-      console.warn("Prospect live controls sync unavailable, using browser fallback", error)
-      setEngineStatus("fallback")
+      setProfileError(error instanceof Error ? error.message : "Unable to sync live profile controls")
+      setEngineStatus("connecting")
     }
   }
 
@@ -627,22 +549,9 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   useEffect(() => {
     if (!prospect) return
     setDraft(prospect)
-
-    const persisted = loadProfileControls(prospect.id)
-    if (persisted) {
-      setTasks(persisted.tasks || [])
-      setAppointments(persisted.appointments || [])
-      setComments(persisted.comments || [])
-    } else {
-      const baseTasks: ProfileTask[] = []
-      const baseAppointments: ProfileAppointment[] = []
-      const baseComments: ProfileComment[] = []
-
-      setTasks(baseTasks)
-      setAppointments(baseAppointments)
-      setComments(baseComments)
-      saveProfileControls(prospect.id, { tasks: baseTasks, appointments: baseAppointments, comments: baseComments, documents: prospect.documents })
-    }
+    setTasks([])
+    setAppointments([])
+    setComments([])
 
     refreshRealControls(prospect.id, prospect)
 
@@ -684,77 +593,103 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
     contactName: activeProspect.contactName || activeProspect.decisionMaker,
   }
 
-  function commit(nextProspect: ProspectRecord, action: string, note: string) {
+  async function commit(nextProspect: ProspectRecord, action: string, note: string) {
     const updated = { ...nextProspect, updatedAt: new Date().toISOString() }
-    const nextStore: ProspectStore = {
-      ...store,
-      prospects: store.prospects.map((p) => (p.id === nextProspect.id ? updated : p)),
-      logs: [{ id: `${Date.now()}`, prospectId: nextProspect.id, at: new Date().toISOString(), action, note }, ...(store.logs || [])],
+    setSavingProfile(true)
+    setProfileError("")
+    try {
+      const saved = await saveProductionProspect(updated)
+      const normalized = normalizeProspect(saved || updated)
+      const nextStore: ProspectStore = {
+        ...store,
+        prospects: store.prospects.map((p) => (p.id === nextProspect.id ? normalized : p)),
+        logs: [{ id: `${Date.now()}`, prospectId: nextProspect.id, at: new Date().toISOString(), action, note }, ...(store.logs || [])],
+      }
+      setStore(nextStore)
+      setDraft(normalized)
+      setEngineStatus("live")
+      setLastSync(new Date())
+      await refreshRevenueControls()
+      return normalized
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : "Unable to save live prospect change")
+      setEngineStatus("connecting")
+      return null
+    } finally {
+      setSavingProfile(false)
     }
-    saveStore(nextStore)
-    void saveProductionProspect(updated)
-    setStore(nextStore)
-    setLastSync(new Date())
   }
 
-  function persistControls(next: Partial<{ tasks: ProfileTask[]; appointments: ProfileAppointment[]; comments: ProfileComment[]; documents: string[] }>) {
-    const nextTasks = next.tasks || tasks
-    const nextAppointments = next.appointments || appointments
-    const nextComments = next.comments || comments
-    const nextDocuments = next.documents || activeProspect.documents
-    saveProfileControls(activeProspect.id, { tasks: nextTasks, appointments: nextAppointments, comments: nextComments, documents: nextDocuments })
-    setLastSync(new Date())
-  }
-
-  function saveDraft() {
+  async function saveDraft() {
     if (!draft) return
-    commit(draft, "Profile edited", `${draft.name} profile updated`)
-    setEditing(false)
+    const saved = await commit(draft, "Profile edited", `${draft.name} profile updated`)
+    if (saved) setEditing(false)
   }
 
-  function deleteProspect() {
-    const ok = window.confirm(`Delete ${activeProspect.name}? This removes it from the live activeProspect store.`)
+  async function deleteProspect() {
+    const ok = window.confirm(`Archive ${activeProspect.name}? This removes it from active revenue workflows without deleting history.`)
     if (!ok) return
-    const nextStore: ProspectStore = {
-      ...store,
-      prospects: store.prospects.filter((p) => p.id !== activeProspect.id),
-      logs: [{ id: `${Date.now()}`, prospectId: activeProspect.id, at: new Date().toISOString(), action: "Prospect deleted", note: activeProspect.name }, ...(store.logs || [])],
+    setSavingProfile(true)
+    setProfileError("")
+    try {
+      await deleteProductionProspect(activeProspect.id)
+      setStore((current) => ({ ...current, prospects: current.prospects.filter((p) => p.id !== activeProspect.id) }))
+      window.location.href = "/revenue-command-center/prospects/directory"
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : "Unable to archive prospect")
+      setSavingProfile(false)
     }
-    saveStore(nextStore)
-    void deleteProductionProspect(activeProspect.id)
-    deleteProfileControls(activeProspect.id)
-    window.location.href = "/revenue-command-center/prospects/directory"
   }
 
   async function updateStage(stage: ProspectStage) {
     const previousStage = activeProspect.stage
     const next = { ...activeProspect, stage, updatedAt: new Date().toISOString() }
-    commit(next, "Pipeline stage updated", stageLabels[stage])
+    setSavingProfile(true)
+    setProfileError("")
     try {
-      await addPipelineHistory(activeProspect.id, previousStage, stage)
-      await refreshRealControls(activeProspect.id, next)
+      const saved = await addPipelineHistory(activeProspect.id, previousStage, stage)
+      const normalized = normalizeProspect(saved || next)
+      setStore((current) => ({
+        ...current,
+        prospects: current.prospects.map((p) => (p.id === activeProspect.id ? normalized : p)),
+        logs: [{ id: `${Date.now()}`, prospectId: activeProspect.id, at: new Date().toISOString(), action: "Pipeline stage updated", note: stageLabels[stage] }, ...(current.logs || [])],
+      }))
+      setDraft(normalized)
+      await refreshRealControls(activeProspect.id, normalized)
+      setEngineStatus("live")
     } catch (error) {
-      console.warn("Pipeline history saved locally only", error)
-      setEngineStatus("fallback")
+      setProfileError(error instanceof Error ? error.message : "Unable to update prospect stage")
+      setEngineStatus("connecting")
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  async function saveProfileComment(note: string, channel: string) {
+    if (!note.trim()) return false
+    setSavingComment(true)
+    setProfileError("")
+    try {
+      const saved = await addProspectComment({ prospectId: activeProspect.id, author: activeProspect.owner || "BD Officer", channel, note: note.trim() })
+      const nextComment = mapCommentFromDb(saved)
+      setComments((current) => [nextComment, ...current.filter((item) => item.id !== nextComment.id)])
+      await refreshRealControls(activeProspect.id, activeProspect)
+      setEngineStatus("live")
+      return true
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : "Unable to save comment")
+      setEngineStatus("connecting")
+      return false
+    } finally {
+      setSavingComment(false)
     }
   }
 
   async function postComment() {
-    if (!comment.trim()) return
     const note = comment.trim()
-    const item = { id: `${Date.now()}`, author: activeProspect.owner || "BD Officer", at: new Date().toLocaleString(), channel: "Internal", note }
-    const nextComments = [item, ...comments]
-    setComments(nextComments)
-    persistControls({ comments: nextComments })
-    commit(activeProspect, "Comment posted", note)
-    setComment("")
-    try {
-      await addProspectComment({ prospectId: activeProspect.id, author: activeProspect.owner || "BD Officer", channel: "internal", note })
-      await refreshRealControls(activeProspect.id, activeProspect)
-    } catch (error) {
-      console.warn("Comment saved locally only", error)
-      setEngineStatus("fallback")
-    }
+    if (!note) return
+    const saved = await saveProfileComment(note, "internal")
+    if (saved) setComment("")
   }
 
   function addTask() {
@@ -766,18 +701,8 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   }
 
   async function submitTask(payload: { title: string; description: string; priority: "low" | "medium" | "high" | "critical"; owner: string; dueDate: string }) {
-    const item = {
-      id: `${Date.now()}`,
-      title: payload.title,
-      priority: payload.priority === "high" || payload.priority === "critical" ? "High" as const : payload.priority === "low" ? "Low" as const : "Medium" as const,
-      due: payload.dueDate || "No due date",
-      done: false,
-    }
-    const nextTasks = [item, ...tasks]
-    setTasks(nextTasks)
-    persistControls({ tasks: nextTasks })
-    commit(activeProspect, "Task created", item.title)
-
+    setSavingProfile(true)
+    setProfileError("")
     try {
       await createProspectTask({
         prospectId: activeProspect.id,
@@ -789,9 +714,31 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
       })
       await refreshRealControls(activeProspect.id, activeProspect)
       setEngineStatus("live")
+      return true
     } catch (error) {
-      console.warn("Task saved locally only", error)
-      setEngineStatus("fallback")
+      setProfileError(error instanceof Error ? error.message : "Unable to create linked task")
+      setEngineStatus("connecting")
+      return false
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  async function toggleProfileTask(task: ProfileTask) {
+    const taskId = task.remoteId || task.id
+    if (!taskId) return
+    const nextDone = !task.done
+    setUpdatingTaskId(taskId)
+    setProfileError("")
+    try {
+      await completeProspectTask(taskId, activeProspect.id, nextDone)
+      await refreshRealControls(activeProspect.id, activeProspect)
+      setEngineStatus("live")
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : "Unable to update task status")
+      setEngineStatus("connecting")
+    } finally {
+      setUpdatingTaskId(null)
     }
   }
 
@@ -801,18 +748,8 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   }
 
   async function submitAppointment(payload: { title: string; appointmentAt: string; owner: string; location: string; notes: string }) {
-    const displayAt = payload.appointmentAt ? new Date(payload.appointmentAt).toLocaleString() : `${todayPlus(2)} 11:00`
-    const item = {
-      id: `${Date.now()}`,
-      title: payload.title,
-      at: displayAt,
-      owner: payload.owner || activeProspect.owner || "BD Officer",
-    }
-    const nextAppointments: ProfileAppointment[] = [item as ProfileAppointment, ...appointments]
-    setAppointments(nextAppointments)
-    persistControls({ appointments: nextAppointments })
-    commit({ ...activeProspect, nextContactDate: (payload.appointmentAt || todayPlus(2)).slice(0, 10), nextAction: item.title }, "Appointment scheduled", item.title)
-
+    setSavingProfile(true)
+    setProfileError("")
     try {
       await scheduleProspectAppointment({
         prospectId: activeProspect.id,
@@ -824,9 +761,13 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
       })
       await refreshRealControls(activeProspect.id, activeProspect)
       setEngineStatus("live")
+      return true
     } catch (error) {
-      console.warn("Appointment saved locally only", error)
-      setEngineStatus("fallback")
+      setProfileError(error instanceof Error ? error.message : "Unable to schedule linked appointment")
+      setEngineStatus("connecting")
+      return false
+    } finally {
+      setSavingProfile(false)
     }
   }
 
@@ -837,11 +778,8 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
 
   async function submitDocument(payload: { title: string; documentType: string; fileUrl: string }) {
     const title = payload.title
-    const nextDocuments = [...activeProspect.documents, title]
-    persistControls({ documents: nextDocuments })
-    const nextProspect = { ...activeProspect, documents: nextDocuments }
-    commit(nextProspect, "Document added", title)
-
+    setSavingProfile(true)
+    setProfileError("")
     try {
       await addProspectDocument({
         prospectId: activeProspect.id,
@@ -850,11 +788,20 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
         documentType: payload.documentType || "profile",
         createdBy: activeProspect.owner || "AngelCare",
       })
+      const nextProspect = { ...activeProspect, documents: [...activeProspect.documents, title] }
+      setStore((current) => ({
+        ...current,
+        prospects: current.prospects.map((p) => (p.id === activeProspect.id ? nextProspect : p)),
+      }))
       await refreshRealControls(activeProspect.id, nextProspect)
       setEngineStatus("live")
+      return true
     } catch (error) {
-      console.warn("Document saved locally only", error)
-      setEngineStatus("fallback")
+      setProfileError(error instanceof Error ? error.message : "Unable to save document metadata")
+      setEngineStatus("connecting")
+      return false
+    } finally {
+      setSavingProfile(false)
     }
   }
 
@@ -870,6 +817,15 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
 
   const healthScore = Math.round((activeProspect.score + activeProspect.fitScore + activeProspect.probability) / 3)
   const highPotential = activeProspect.score >= 78 || activeProspect.priority === "high" || activeProspect.priority === "critical"
+  const activityItems = ((revenueControls.activities || revenueControls.events || []) as any[])
+    .map((event) => ({
+      id: String(event.id || `${event.event_type || event.eventType || "activity"}-${event.created_at || event.createdAt || ""}`),
+      at: String(event.created_at || event.createdAt || ""),
+      action: String(event.title || event.event_title || event.eventTitle || event.event_type || event.eventType || "Revenue activity"),
+      note: String(event.body || event.event_body || event.eventBody || event.description || ""),
+    }))
+    .filter((event) => event.action || event.note)
+    .slice(0, 6)
 
   const profileStageOptions = [
     { label: "New Lead", value: "new_lead" },
@@ -990,9 +946,10 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
         <AppointmentCreateModal
           prospect={activeProspect}
           onClose={() => setAppointmentModalOpen(false)}
-          onSubmit={(payload) => {
-            submitAppointment(payload)
-            setAppointmentModalOpen(false)
+          onSubmit={async (payload) => {
+            const saved = await submitAppointment(payload)
+            if (saved) setAppointmentModalOpen(false)
+            return saved
           }}
         />
       )}
@@ -1000,9 +957,10 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
         <DocumentCreateModal
           prospect={activeProspect}
           onClose={() => setDocumentModalOpen(false)}
-          onSubmit={(payload) => {
-            submitDocument(payload)
-            setDocumentModalOpen(false)
+          onSubmit={async (payload) => {
+            const saved = await submitDocument(payload)
+            if (saved) setDocumentModalOpen(false)
+            return saved
           }}
         />
       )}
@@ -1048,8 +1006,8 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
             <ActionButton onClick={() => activeProspect.phone && (window.location.href = `tel:${activeProspect.phone}`)} icon={<Phone />} label="Call" tone="emerald" />
             <ActionButton onClick={() => activeProspect.phone && window.open(`https://wa.me/${activeProspect.phone.replace(/\D/g, "")}`, "_blank")} icon={<MessageCircle />} label="WhatsApp" tone="green" />
             <ActionButton onClick={() => activeProspect.email && (window.location.href = `mailto:${activeProspect.email}`)} icon={<Mail />} label="Email" tone="blue" />
-            {editing ? <ActionButton onClick={saveDraft} icon={<Save />} label="Save" tone="violet" /> : <ActionButton onClick={() => setEditing(true)} icon={<Edit3 />} label="Edit" tone="violet" />}
-            <ActionButton onClick={deleteProspect} icon={<Trash2 />} label="Delete" tone="rose" />
+            {editing ? <ActionButton onClick={() => void saveDraft()} icon={<Save />} label={savingProfile ? "Saving" : "Save"} tone="violet" /> : <ActionButton onClick={() => setEditing(true)} icon={<Edit3 />} label="Edit" tone="violet" />}
+            <ActionButton onClick={() => void deleteProspect()} icon={<Trash2 />} label="Archive" tone="rose" />
             <ActionButton onClick={downloadProfileReport} icon={<MoreHorizontal />} label="Report" tone="slate" />
           </div>
         </header>
@@ -1068,10 +1026,16 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
 
         <section className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-4">
           <LiveTile label="Active Zone" value={activeTab} detail="clickable control layer" />
-          <LiveTile label="Action Engine" value={revenueStatus === "live" ? "Supabase Live" : engineStatus === "fallback" ? "Browser Fallback" : "Connecting"} detail={revenueStatus === "live" ? "DB-backed controls" : "local-safe mode"} />
+          <LiveTile label="Action Engine" value={revenueStatus === "live" || engineStatus === "live" ? "Supabase Live" : "Connecting"} detail={revenueStatus === "live" || engineStatus === "live" ? "DB-backed controls" : "Waiting for live sync"} />
           <LiveTile label="Last Sync" value={lastSync ? lastSync.toLocaleTimeString() : "Syncing"} detail="profile + controls" />
           <LiveTile label="Profile Controls" value={`${tasks.length + appointments.length + comments.length}`} detail="tasks, appointments, comments" />
         </section>
+
+        {profileError && (
+          <div className="mb-4 rounded-2xl border border-red-400/25 bg-red-500/10 p-4 text-sm font-black text-red-100">
+            {profileError}
+          </div>
+        )}
 
         <div className="mb-4">
           <RevenueEntityControlPanel controls={revenueControls} status={revenueStatus} lastSyncAt={revenueLastSyncAt} />
@@ -1089,19 +1053,7 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
               onSave={(nextProspect, action, note) => commit(nextProspect, action, note)}
               onAddTask={addTask}
               onSchedule={scheduleAppointment}
-              onPostComment={(note) => {
-                const item = { id: `${Date.now()}`, author: activeProspect.owner || "BD Officer", at: new Date().toLocaleString(), channel: activeTab, note }
-                const nextComments = [item, ...comments]
-                setComments(nextComments)
-                persistControls({ comments: nextComments })
-                commit(activeProspect, `${activeTab} note posted`, note)
-                addProspectComment({ prospectId: activeProspect.id, author: activeProspect.owner || "BD Officer", channel: activeTab, note })
-                  .then(() => refreshRealControls(activeProspect.id, activeProspect))
-                  .catch((error) => {
-                    console.warn("Tab note saved locally only", error)
-                    setEngineStatus("fallback")
-                  })
-              }}
+              onPostComment={(note) => saveProfileComment(note, activeTab)}
               onUploadDocument={openDocumentModal}
               onDownloadReport={downloadProfileReport}
             />
@@ -1181,7 +1133,7 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
               <Panel title="#1 Comments Track">
                 <div className="mb-3 flex gap-2">
                   <input value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment..." className="h-11 flex-1 rounded-xl border border-[#244365] bg-[#081525] px-3 text-sm font-bold text-white outline-none" />
-                  <button onClick={postComment} className="rounded-xl bg-violet-700 px-4 text-sm font-black text-white">Post</button>
+                  <button disabled={savingComment || !comment.trim()} onClick={() => void postComment()} className="rounded-xl bg-violet-700 px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50">{savingComment ? "Saving" : "Post"}</button>
                 </div>
                 <div className="mb-3 flex gap-4 text-xs font-black text-[#cbd5e1]"><span>All</span><span>Internal</span><span>Calls</span><span>Meetings</span><span>Emails</span></div>
                 <div className="space-y-3">
@@ -1224,21 +1176,8 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
                           <input
                             type="checkbox"
                             checked={t.done}
-                            onChange={() => {
-                              const nextDone = !t.done
-                              const nextTasks = tasks.map((x) => (x.id === t.id ? { ...x, done: nextDone, statusLabel: nextDone ? "Completed" : "Open" } : x))
-                              setTasks(nextTasks)
-                              persistControls({ tasks: nextTasks })
-                              commit(activeProspect, "Task status updated", t.title)
-                              if (t.remoteId) {
-                                completeProspectTask(t.remoteId, activeProspect.id, nextDone)
-                                  .then(() => refreshRealControls(activeProspect.id, activeProspect))
-                                  .catch((error) => {
-                                    console.warn("Task status saved locally only", error)
-                                    setEngineStatus("fallback")
-                                  })
-                              }
-                            }}
+                            disabled={updatingTaskId === (t.remoteId || t.id)}
+                            onChange={() => void toggleProfileTask(t)}
                           />
                         </label>
 
@@ -1346,10 +1285,20 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
 
             <Panel title="Activity Timeline" action={<Link href="/revenue-command-center/prospects/directory" className="text-violet-300">View All</Link>}>
               <div className="space-y-3">
-                {(store.logs || []).filter((l) => l.prospectId === activeProspect.id).slice(0, 5).concat([
-                  { id: "email", prospectId: activeProspect.id, at: new Date().toISOString(), action: "Email opened", note: "Proposal document" },
-                  { id: "wa", prospectId: activeProspect.id, at: new Date().toISOString(), action: "WhatsApp message sent", note: "Product demo video" },
-                ]).slice(0, 6).map((l) => <div key={l.id} className="flex gap-3 rounded-xl bg-[#10223a] p-3"><ActivityDot /><div><div className="font-bold text-white">{l.action}</div><div className="text-xs text-[#cbd5e1]">{l.note}</div></div></div>)}
+                {activityItems.length === 0 && (
+                  <div className="rounded-xl border border-[#244365] bg-[#10223a] p-4 text-sm font-bold text-[#cbd5e1]">
+                    No live activity has been recorded for this prospect yet.
+                  </div>
+                )}
+                {activityItems.map((event) => (
+                  <div key={event.id} className="flex gap-3 rounded-xl bg-[#10223a] p-3">
+                    <ActivityDot />
+                    <div>
+                      <div className="font-bold text-white">{event.action}</div>
+                      <div className="text-xs text-[#cbd5e1]">{event.note || event.at}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </Panel>
 
@@ -1380,15 +1329,17 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
               <div className="flex gap-2">
                 <button
                   onClick={() => { setDraft(activeProspect); setEditing(false) }}
+                  disabled={savingProfile}
                   className="rounded-xl border border-[#315474] bg-[#07111f] px-4 py-3 text-sm font-black text-white"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={saveDraft}
-                  className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_12px_30px_rgba(16,185,129,.25)]"
+                  disabled={savingProfile}
+                  onClick={() => void saveDraft()}
+                  className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_12px_30px_rgba(16,185,129,.25)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Save Live Changes
+                  {savingProfile ? "Saving..." : "Save Live Changes"}
                 </button>
               </div>
             </div>
@@ -1727,16 +1678,26 @@ function ProfileTabWorkspace({
   onSave: (prospect: ProspectRecord, action: string, note: string) => void
   onAddTask: () => void
   onSchedule: () => void
-  onPostComment: (note: string) => void
+  onPostComment: (note: string) => Promise<boolean>
   onUploadDocument: () => void
   onDownloadReport: () => void
 }) {
   const [note, setNote] = useState("")
+  const [savingNote, setSavingNote] = useState(false)
+  const [noteError, setNoteError] = useState("")
 
-  function submitNote() {
+  async function submitNote() {
     if (!note.trim()) return
-    onPostComment(note.trim())
-    setNote("")
+    setSavingNote(true)
+    setNoteError("")
+    try {
+      const saved = await onPostComment(note.trim())
+      if (saved) setNote("")
+    } catch (error) {
+      setNoteError(error instanceof Error ? error.message : "Unable to save note")
+    } finally {
+      setSavingNote(false)
+    }
   }
 
   if (activeTab === "Company Details") {
@@ -1787,10 +1748,15 @@ function ProfileTabWorkspace({
               <Person key={s} name={s} role={i === 0 ? "High Influence" : "Medium Influence"} />
             ))}
             <button
-              onClick={() => {
+              onClick={async () => {
                 const fullName = `Stakeholder ${prospect.stakeholders.length + 1}`
-                onSave({ ...prospect, stakeholders: [...prospect.stakeholders, fullName] }, "Stakeholder added", "Contact map expanded")
-                addProspectContact({ prospectId: prospect.id, fullName, role: "Influencer", influenceLevel: "medium" }).catch((error) => console.warn("Contact saved locally only", error))
+                setNoteError("")
+                try {
+                  await addProspectContact({ prospectId: prospect.id, fullName, role: "Influencer", influenceLevel: "medium" })
+                  await onSave({ ...prospect, stakeholders: [...prospect.stakeholders, fullName] }, "Stakeholder added", "Contact map expanded")
+                } catch (error) {
+                  setNoteError(error instanceof Error ? error.message : "Unable to add stakeholder")
+                }
               }}
               className="mt-3 w-full rounded-xl bg-violet-700 px-4 py-3 font-black text-white"
             >
@@ -1799,7 +1765,8 @@ function ProfileTabWorkspace({
           </DetailCard>
           <DetailCard title="Contact Notes">
             <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add contact note..." className="min-h-[130px] w-full rounded-xl border border-[#244365] bg-[#081525] p-3 text-sm font-bold text-white outline-none" />
-            <button onClick={submitNote} className="mt-3 w-full rounded-xl bg-emerald-500 px-4 py-3 font-black text-slate-950">Save Contact Note</button>
+            {noteError && <div className="mt-3 rounded-xl border border-red-400/20 bg-red-500/10 p-3 text-sm font-black text-red-100">{noteError}</div>}
+            <button disabled={savingNote || !note.trim()} onClick={() => void submitNote()} className="mt-3 w-full rounded-xl bg-emerald-500 px-4 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-50">{savingNote ? "Saving..." : "Save Contact Note"}</button>
           </DetailCard>
         </div>
       </section>
@@ -1879,7 +1846,8 @@ function ProfileTabWorkspace({
           </div>
           <DetailCard title="New Communication">
             <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Log call, WhatsApp, meeting or email..." className="min-h-[160px] w-full rounded-xl border border-[#244365] bg-[#081525] p-3 text-sm font-bold text-white outline-none" />
-            <button onClick={submitNote} className="mt-3 w-full rounded-xl bg-emerald-500 px-4 py-3 font-black text-slate-950">Log Communication</button>
+            {noteError && <div className="mt-3 rounded-xl border border-red-400/20 bg-red-500/10 p-3 text-sm font-black text-red-100">{noteError}</div>}
+            <button disabled={savingNote || !note.trim()} onClick={() => void submitNote()} className="mt-3 w-full rounded-xl bg-emerald-500 px-4 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-50">{savingNote ? "Saving..." : "Log Communication"}</button>
           </DetailCard>
         </div>
       </section>
@@ -2017,7 +1985,7 @@ function AppointmentCreateModal({
 }: {
   prospect: ProspectRecord
   onClose: () => void
-  onSubmit: (payload: { title: string; appointmentAt: string; owner: string; location: string; notes: string }) => void
+  onSubmit: (payload: { title: string; appointmentAt: string; owner: string; location: string; notes: string }) => Promise<boolean>
 }) {
   const [form, setForm] = useState({
     title: "",
@@ -2026,6 +1994,22 @@ function AppointmentCreateModal({
     location: "AngelCare / Client meeting",
     notes: "",
   })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+
+  async function submit() {
+    if (!form.title.trim()) return
+    setSaving(true)
+    setError("")
+    try {
+      const saved = await onSubmit({ ...form, title: form.title.trim() })
+      if (!saved) setError("Unable to schedule appointment")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to schedule appointment")
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <CommandModal title="Schedule Real Appointment" subtitle={`Linked to ${prospect.name}`} onClose={onClose}>
@@ -2036,12 +2020,14 @@ function AppointmentCreateModal({
         <CommandInput label="Location" value={form.location} onChange={(value) => setForm({ ...form, location: value })} />
       </div>
       <CommandTextarea label="Meeting notes" value={form.notes} onChange={(value) => setForm({ ...form, notes: value })} placeholder="Agenda, objectives, stakeholders, next expected decision..." />
+      {error && <div className="rounded-xl border border-red-400/20 bg-red-500/10 p-3 text-sm font-black text-red-100">{error}</div>}
       <button
         type="button"
-        onClick={() => form.title.trim() && onSubmit({ ...form, title: form.title.trim() })}
-        className="mt-5 w-full rounded-2xl bg-blue-500 px-5 py-4 text-base font-black text-white"
+        disabled={saving || !form.title.trim()}
+        onClick={() => void submit()}
+        className="mt-5 w-full rounded-2xl bg-blue-500 px-5 py-4 text-base font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Schedule Appointment
+        {saving ? "Scheduling..." : "Schedule Appointment"}
       </button>
     </CommandModal>
   )
@@ -2054,13 +2040,29 @@ function DocumentCreateModal({
 }: {
   prospect: ProspectRecord
   onClose: () => void
-  onSubmit: (payload: { title: string; documentType: string; fileUrl: string }) => void
+  onSubmit: (payload: { title: string; documentType: string; fileUrl: string }) => Promise<boolean>
 }) {
   const [form, setForm] = useState({
     title: "",
     documentType: "profile",
     fileUrl: "",
   })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+
+  async function submit() {
+    if (!form.title.trim()) return
+    setSaving(true)
+    setError("")
+    try {
+      const saved = await onSubmit({ ...form, title: form.title.trim() })
+      if (!saved) setError("Unable to save document metadata")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save document metadata")
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <CommandModal title="Add Real Document Metadata" subtitle={`Linked to ${prospect.name}`} onClose={onClose}>
@@ -2079,12 +2081,14 @@ function DocumentCreateModal({
         </label>
         <CommandInput label="File URL optional" value={form.fileUrl} onChange={(value) => setForm({ ...form, fileUrl: value })} placeholder="Paste storage URL when available" />
       </div>
+      {error && <div className="rounded-xl border border-red-400/20 bg-red-500/10 p-3 text-sm font-black text-red-100">{error}</div>}
       <button
         type="button"
-        onClick={() => form.title.trim() && onSubmit({ ...form, title: form.title.trim() })}
-        className="mt-5 w-full rounded-2xl bg-violet-600 px-5 py-4 text-base font-black text-white"
+        disabled={saving || !form.title.trim()}
+        onClick={() => void submit()}
+        className="mt-5 w-full rounded-2xl bg-violet-600 px-5 py-4 text-base font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Add Document
+        {saving ? "Saving..." : "Add Document"}
       </button>
     </CommandModal>
   )
