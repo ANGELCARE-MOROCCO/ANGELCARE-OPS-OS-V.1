@@ -1,16 +1,5 @@
 
-export type RevenueEntityType =
-  | "prospect"
-  | "partnership"
-  | "appointment"
-  | "task"
-  | "follow_up"
-  | "note"
-  | "comment"
-  | "document"
-  | "campaign"
-  | "general"
-  | "team";
+export type RevenueEntityType = "prospect" | "appointment" | "campaign" | "task" | "document" | "team";
 
 export type RevenueTask = {
   id: string;

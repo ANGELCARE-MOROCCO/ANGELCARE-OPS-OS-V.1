@@ -1,7 +1,5 @@
 export * from "./types"
 export * from "./useLiveProspects"
-export * from "./useLivePartnerships"
 export * from "./useLiveTasks"
 export * from "./useLiveAppointments"
-export * from "./useLiveFollowUps"
 export * from "./useLiveActivities"

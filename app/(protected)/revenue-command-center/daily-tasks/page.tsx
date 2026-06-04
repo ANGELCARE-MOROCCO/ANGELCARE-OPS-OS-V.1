@@ -1,8 +1,7 @@
-import RevenueTasksSourceOfTruthWorkspace from "@/components/revenue-command-center/RevenueTasksSourceOfTruthWorkspace"
+import RevenueDailyTasksProductionCommandCenter from "@/components/revenue-command-center/RevenueDailyTasksProductionCommandCenter"
 
 export const dynamic = "force-dynamic"
-export const revalidate = 0
 
 export default function Page() {
-  return <RevenueTasksSourceOfTruthWorkspace />
+  return <RevenueDailyTasksProductionCommandCenter />
 }

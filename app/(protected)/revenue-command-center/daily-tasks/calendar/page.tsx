@@ -1,8 +1,7 @@
-import RevenueTasksSourceOfTruthWorkspace from "@/components/revenue-command-center/RevenueTasksSourceOfTruthWorkspace"
+import RevenueDailyTasksV13McKinseyWorkspace from "@/components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace"
 
 export const dynamic = "force-dynamic"
-export const revalidate = 0
 
 export default function Page() {
-  return <RevenueTasksSourceOfTruthWorkspace />
+  return <RevenueDailyTasksV13McKinseyWorkspace mode="calendar" />
 }

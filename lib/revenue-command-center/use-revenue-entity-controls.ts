@@ -42,10 +42,8 @@ export function useRevenueEntityControls(entityType: RevenueEntityType, entityId
       .on("postgres_changes", { event: "*", schema: "public", table: "revenue_tasks", filter: `entity_id=eq.${entityId}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "revenue_appointments", filter: `entity_id=eq.${entityId}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "revenue_comments", filter: `entity_id=eq.${entityId}` }, refresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "revenue_notes", filter: `entity_id=eq.${entityId}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "revenue_documents", filter: `entity_id=eq.${entityId}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "revenue_contacts", filter: `entity_id=eq.${entityId}` }, refresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "revenue_activities", filter: `entity_id=eq.${entityId}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "revenue_events", filter: `entity_id=eq.${entityId}` }, refresh)
       .subscribe((state) => {
         if (state === "SUBSCRIBED") setStatus("live")

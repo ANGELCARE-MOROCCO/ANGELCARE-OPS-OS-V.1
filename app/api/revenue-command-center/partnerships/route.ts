@@ -1,118 +1,26 @@
-import { fail, ok, revenueClient, tolerantInsert } from "@/lib/revenue-command-center/canonical-server"
-import {
-  createRevenueId,
-  normalizePartnershipFromDb,
-  normalizePartnershipPayload,
-} from "@/lib/revenue-command-center/operational-normalizers"
-import {
-  createLinkedAppointment,
-  createLinkedFollowUp,
-  createLinkedTask,
-  saveRevenueNote,
-  updateRevenueRowWithActivity,
-} from "@/lib/revenue-command-center/operational-server"
+import { NextResponse } from "next/server"
+import { revenueClient } from "@/lib/revenue-command-center/canonical-server"
+import { archiveRevenueRow, createRevenueRow, listRevenueRows, restoreRevenueRow, revenueTableConfigs, updateRevenueRow } from "@/lib/revenue-command-center/enterprise-api"
+
+const config = revenueTableConfigs.partnerships
 
 export const dynamic = "force-dynamic"
-export const revalidate = 0
-
-function actionOf(body: Record<string, any>) {
-  return String(body.action || body.mode || "update").toLowerCase()
-}
-
-function hasAny(body: Record<string, any>, keys: string[]) {
-  return keys.some((key) => body[key] !== undefined)
-}
-
-function partnershipUpdatePatch(body: Record<string, any>) {
-  const normalized = normalizePartnershipPayload(body)
-  const patch: Record<string, unknown> = {}
-  const aliases: Array<[string, string[]]> = [
-    ["organization", ["organization", "company"]],
-    ["name", ["name", "organization", "company"]],
-    ["company", ["company", "organization", "name"]],
-    ["contact_name", ["contactName", "contact_name", "contact", "decisionMaker"]],
-    ["email", ["email"]],
-    ["phone", ["phone", "whatsapp"]],
-    ["city", ["city", "location"]],
-    ["location", ["location", "city"]],
-    ["partnership_type", ["partnershipType", "partnership_type", "partner_type", "kind", "type"]],
-    ["partner_type", ["partner_type", "partnershipType", "partnership_type", "kind", "type"]],
-    ["kind", ["kind", "partner_type", "partnershipType", "partnership_type", "type"]],
-    ["stage", ["stage"]],
-    ["status", ["status"]],
-    ["potential_value_mad", ["potentialValueMad", "potential_value_mad", "valueMad", "value_mad", "value", "pipeline_value_mad"]],
-    ["value_mad", ["valueMad", "value_mad", "value", "pipeline_value_mad"]],
-    ["pipeline_value_mad", ["pipelineValueMad", "pipeline_value_mad", "valueMad", "value_mad"]],
-    ["contract_status", ["contractStatus", "contract_status"]],
-    ["next_action", ["nextAction", "next_action"]],
-    ["next_action_at", ["nextActionAt", "next_action_at"]],
-    ["owner", ["owner", "assignedOwner", "owner_name"]],
-    ["notes", ["notes", "relationshipNotes", "relationship_notes", "context"]],
-    ["relationship_notes", ["relationshipNotes", "relationship_notes", "notes", "context"]],
-    ["metadata", ["metadata"]],
-  ]
-  for (const [field, keys] of aliases) {
-    if (hasAny(body, keys)) patch[field] = (normalized as any)[field]
-  }
-  return patch
-}
-
-async function getPartnership(supabase: Awaited<ReturnType<typeof revenueClient>>, id: string) {
-  const { data, error } = await supabase.from("revenue_partnerships").select("*").eq("id", id).maybeSingle()
-  if (error) throw new Error(error.message)
-  return data
-}
 
 export async function GET(request: Request) {
   const supabase = await revenueClient()
-  const { searchParams } = new URL(request.url)
-  const stage = searchParams.get("stage")
-  const status = searchParams.get("status")
-  const owner = searchParams.get("owner")
-  const includeArchived = searchParams.get("includeArchived") === "true"
-  const limit = Math.min(Number(searchParams.get("limit") || 500), 5000)
-
-  let query = supabase.from("revenue_partnerships").select("*").order("updated_at", { ascending: false }).limit(limit)
-  if (!includeArchived) query = query.neq("status", "archived")
-  if (stage && stage !== "all") query = query.eq("stage", stage)
-  if (status && status !== "all") query = query.eq("status", status)
-  if (owner && owner !== "all") query = query.eq("owner", owner)
-
-  const { data, error, count } = await query
-  if (error) return fail(error)
-  const partnerships = (data || []).map(normalizePartnershipFromDb)
-  return ok({ data: partnerships, items: partnerships, records: partnerships, partnerships, count: count ?? partnerships.length, source: "revenue_partnerships" })
+  const { data, error } = await listRevenueRows(supabase, config, request.url)
+  if (error) return NextResponse.json({ ok: false, live: true, records: [], error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true, live: true, source: config.table, records: data || [], partnerships: data || [] })
 }
 
 export async function POST(request: Request) {
   const supabase = await revenueClient()
   try {
     const body = await request.json()
-    const action = actionOf(body)
-
-    if (body.id && ["add_note", "note", "add_comment", "comment", "create_task", "schedule_appointment", "create_follow_up"].includes(action)) {
-      return PATCH(new Request(request.url, { method: "PATCH", body: JSON.stringify(body), headers: request.headers }))
-    }
-
-    const payload = { ...normalizePartnershipPayload(body), id: createRevenueId(body) }
-    if (!String(payload.organization || payload.name || "").trim()) return fail("Partnership organization is required", 400)
-
-    const data = await tolerantInsert(supabase as any, "revenue_partnerships", payload)
-    const partnership = normalizePartnershipFromDb(data)
-
-    await updateRevenueRowWithActivity(supabase as any, {
-      table: "revenue_partnerships",
-      id: partnership.id,
-      patch: {},
-      entityType: "partnership",
-      actionType: "partnership_created",
-      title: `Partner created: ${partnership.organization || partnership.name}`,
-      partnershipId: partnership.id,
-    })
-
-    return ok({ data: partnership, item: partnership, partnership, partnerships: [partnership], records: [partnership], count: 1, source: "revenue_partnerships" })
+    const data = await createRevenueRow(supabase, config, body)
+    return NextResponse.json({ ok: true, live: true, source: config.table, partnership: data })
   } catch (error) {
-    return fail(error)
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Partnership create failed" }, { status: 500 })
   }
 }
 
@@ -120,93 +28,10 @@ export async function PATCH(request: Request) {
   const supabase = await revenueClient()
   try {
     const body = await request.json()
-    const id = String(body.id || body.partnershipId || body.partnership_id || "")
-    if (!id) return fail("Missing partnership id", 400)
-    const action = actionOf(body)
-    const before = await getPartnership(supabase, id)
-    if (!before && !["create_task", "schedule_appointment", "create_follow_up", "add_note", "note", "add_comment", "comment"].includes(action)) {
-      return fail("Partnership not found", 404)
-    }
-
-    if (["add_note", "note", "add_comment", "comment"].includes(action)) {
-      const note = await saveRevenueNote(supabase as any, { ...body, entityType: "partnership", entityId: id, partnershipId: id }, { actionType: action.includes("comment") ? "comment" : "note", parentLabel: before?.organization || before?.name })
-      return ok({ data: note, item: note, note, comment: note.comment || note, source: "revenue_notes" })
-    }
-
-    if (action === "create_task") {
-      const task = await createLinkedTask(supabase as any, { ...body, entityType: "partnership", entityId: id, partnershipId: id })
-      return ok({ data: task, item: task, task, source: "revenue_tasks" })
-    }
-
-    if (action === "schedule_appointment") {
-      const appointment = await createLinkedAppointment(supabase as any, { ...body, entityType: "partnership", entityId: id, partnershipId: id })
-      return ok({ data: appointment, item: appointment, appointment, source: "revenue_appointments" })
-    }
-
-    if (action === "create_follow_up") {
-      const followUp = await createLinkedFollowUp(supabase as any, { ...body, entityType: "partnership", entityId: id, partnershipId: id })
-      return ok({ data: followUp, item: followUp, followUp, followUps: [followUp], source: "revenue_follow_ups" })
-    }
-
-    const now = new Date().toISOString()
-    let patch: Record<string, unknown> = {}
-    let eventType = "partnership_updated"
-
-    if (action === "archive") {
-      patch = { status: "archived", archived_at: now }
-      eventType = "partnership_archived"
-    } else if (action === "restore") {
-      patch = { status: "active", archived_at: null }
-      eventType = "partnership_restored"
-    } else if (action === "stage_change") {
-      patch = { stage: body.stage || body.toStage || body.to_stage }
-      eventType = "partnership_stage_changed"
-    } else if (action === "assign") {
-      patch = { owner: body.owner || body.assignedOwner || body.assigned_owner }
-      eventType = "partnership_owner_changed"
-    } else {
-      patch = partnershipUpdatePatch(body)
-      if (body.stage !== undefined && before?.stage && before.stage !== body.stage) eventType = "partnership_stage_changed"
-      if ((body.owner !== undefined || body.assignedOwner !== undefined) && before?.owner !== (body.owner || body.assignedOwner)) eventType = "partnership_owner_changed"
-    }
-
-    const row = await updateRevenueRowWithActivity(supabase as any, {
-      table: "revenue_partnerships",
-      id,
-      patch,
-      entityType: "partnership",
-      actionType: eventType,
-      title: `Partner ${eventType.replace("partnership_", "").replaceAll("_", " ")}: ${before?.organization || before?.name || id}`,
-      before,
-      partnershipId: id,
-    })
-    const partnership = normalizePartnershipFromDb(row)
-    return ok({ data: partnership, item: partnership, partnership, partnerships: [partnership], records: [partnership], count: 1, source: "revenue_partnerships" })
+    const mode = String(body.mode || body.action || "update")
+    const data = mode === "archive" ? await archiveRevenueRow(supabase, config, body) : mode === "restore" ? await restoreRevenueRow(supabase, config, body) : await updateRevenueRow(supabase, config, body)
+    return NextResponse.json({ ok: true, live: true, source: config.table, partnership: data })
   } catch (error) {
-    return fail(error)
-  }
-}
-
-export async function DELETE(request: Request) {
-  const supabase = await revenueClient()
-  try {
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get("id")
-    if (!id) return fail("Missing partnership id", 400)
-    const before = await getPartnership(supabase, id)
-    const row = await updateRevenueRowWithActivity(supabase as any, {
-      table: "revenue_partnerships",
-      id,
-      patch: { status: "archived", archived_at: new Date().toISOString() },
-      entityType: "partnership",
-      actionType: "partnership_archived",
-      title: `Partner archived: ${before?.organization || before?.name || id}`,
-      before,
-      partnershipId: id,
-    })
-    const partnership = normalizePartnershipFromDb(row)
-    return ok({ data: partnership, item: partnership, partnership, source: "revenue_partnerships" })
-  } catch (error) {
-    return fail(error)
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Partnership update failed" }, { status: 500 })
   }
 }

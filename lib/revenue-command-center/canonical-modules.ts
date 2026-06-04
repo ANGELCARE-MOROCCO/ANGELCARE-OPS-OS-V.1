@@ -13,7 +13,7 @@ export const REVENUE_COMMAND_CANONICAL_MODULES = {
   },
   prospectsDirectory: {
     route: "/revenue-command-center/prospects/directory",
-    canonicalComponent: "RevenueProspectsLiveSyncCommandCenter",
+    canonicalComponent: "ProspectsDirectoryCommandCenter",
     status: "canonical",
     sourceOfTruth: "revenue_prospects",
   },
@@ -25,21 +25,21 @@ export const REVENUE_COMMAND_CANONICAL_MODULES = {
   },
   tasks: {
     route: "/revenue-command-center/daily-tasks",
-    canonicalComponent: "RevenueTasksSourceOfTruthWorkspace",
-    status: "canonical",
+    canonicalComponent: "RevenueDailyTasksV13McKinseyWorkspace",
+    status: "next-consolidation-target",
     sourceOfTruth: "revenue_tasks",
   },
   appointments: {
     route: "/revenue-command-center/appointments",
-    canonicalComponent: "RevenueAppointmentsProductionCommandCenter",
-    status: "canonical",
+    canonicalComponent: "RevenueAppointmentsV12MegaWorkspace",
+    status: "next-consolidation-target",
     sourceOfTruth: "revenue_appointments",
   },
   partnerships: {
     route: "/revenue-command-center/partnerships",
-    canonicalComponent: "RevenuePartnershipsEnterpriseWorkspace",
-    status: "canonical",
-    sourceOfTruth: "revenue_partnerships + revenue_activities",
+    canonicalComponent: "RevenuePartnershipsV13ActionsWorkspace",
+    status: "next-consolidation-target",
+    sourceOfTruth: "revenue_contacts + revenue_events",
   },
   analytics: {
     route: "/revenue-command-center/revenue-analytics",

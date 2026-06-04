@@ -3,14 +3,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { BarChart3, CalendarDays, CheckCircle2, Handshake, Mail, Map, MessageCircle, ShieldCheck, Target, UsersRound } from "lucide-react"
-import { useLiveAppointments, useLivePartnerships, useLiveProspects, useLiveTasks } from "@/lib/revenue-command-center/live-sync"
 
 const navItems = [
   { label: "Command Center", href: "/revenue-command-center", icon: Target },
-  { label: "Prospects Directory", href: "/revenue-command-center/prospects/directory", icon: UsersRound, badge: "prospects" },
-  { label: "Partner Program", href: "/revenue-command-center/partnerships", icon: Handshake, badge: "partnerships" },
-  { label: "Tasks & Actions", href: "/revenue-command-center/daily-tasks", icon: CheckCircle2, badge: "tasks" },
-  { label: "Calendar", href: "/revenue-command-center/appointments", icon: CalendarDays, badge: "appointments" },
+  { label: "Prospects Directory", href: "/revenue-command-center/prospects/directory", icon: UsersRound },
+  { label: "Partner Program", href: "/revenue-command-center/partnerships", icon: Handshake },
+  { label: "Tasks & Actions", href: "/revenue-command-center/daily-tasks", icon: CheckCircle2 },
+  { label: "Calendar", href: "/revenue-command-center/appointments", icon: CalendarDays },
   { label: "Email Campaigns", href: "/revenue-command-center/email-campaigns", icon: Mail },
   { label: "WhatsApp Center", href: "/revenue-command-center/whatsapp-center", icon: MessageCircle },
   { label: "Market Map", href: "/revenue-command-center/market-map", icon: Map },
@@ -20,16 +19,6 @@ const navItems = [
 
 export function RevenueCommandCenterSidebar() {
   const pathname = usePathname()
-  const { prospects } = useLiveProspects()
-  const { partnerships } = useLivePartnerships()
-  const { tasks } = useLiveTasks()
-  const { appointments } = useLiveAppointments()
-  const counts: Record<string, number> = {
-    prospects: prospects.length,
-    partnerships: partnerships.length,
-    tasks: tasks.filter((task) => !["done", "completed", "cancelled", "canceled", "archived"].includes(String(task.status).toLowerCase())).length,
-    appointments: appointments.filter((appointment) => appointment.appointmentAt?.slice(0, 10) === new Date().toISOString().slice(0, 10)).length,
-  }
   return (
     <aside className="fixed left-0 top-0 z-[999] flex h-screen w-[260px] flex-col border-r border-white/10 bg-[#050b18] text-white shadow-2xl">
       <div className="flex h-28 items-center gap-3 border-b border-white/10 px-6">
@@ -42,8 +31,7 @@ export function RevenueCommandCenterSidebar() {
           const Icon = item.icon
           return (
             <Link key={item.href} href={item.href} className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-white ${active ? "bg-gradient-to-r from-violet-600 to-blue-600" : "bg-white/[0.07] hover:bg-white/[0.12]"}`}>
-              <Icon className="h-5 w-5 text-white" /><span className="min-w-0 flex-1 truncate text-white">{item.label}</span>
-              {item.badge ? <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-black text-white">{counts[item.badge] ?? 0}</span> : null}
+              <Icon className="h-5 w-5 text-white" /><span className="text-white">{item.label}</span>
             </Link>
           )
         })}

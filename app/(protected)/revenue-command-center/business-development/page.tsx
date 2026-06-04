@@ -1,8 +1,5 @@
-import RevenuePartnershipsEnterpriseWorkspace from "@/components/revenue-command-center/RevenuePartnershipsEnterpriseWorkspace"
-
-export const dynamic = "force-dynamic"
-export const revalidate = 0
+import RevenueCommandFinalWorkspace from '../_final/RevenueCommandFinalWorkspace'
 
 export default function Page() {
-  return <RevenuePartnershipsEnterpriseWorkspace initialTab="outreach" />
+  return <RevenueCommandFinalWorkspace workspace="businessDevelopment" />
 }
