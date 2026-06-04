@@ -4,13 +4,16 @@ import UsersEmployeeCommandClient, { type UserStaffRecord } from './_components/
 
 export const dynamic = 'force-dynamic'
 
-type Row = Record<string, any>
+type Row = Record<string, unknown>
+
+const DELETE_PERMISSION_KEYS = new Set(['*', 'users.delete', 'admin.manage'])
+const ADMIN_DELETE_ROLES = new Set(['ceo', 'direction', 'admin', 'super_admin', 'owner', 'root', 'root_admin'])
 
 async function readTable(table: string, columns = '*', limit = 500) {
   try {
     const supabase = await createClient()
     const { data } = await supabase.from(table).select(columns).limit(limit)
-    return (data || []) as Row[]
+    return (data || []) as unknown as Row[]
   } catch {
     return [] as Row[]
   }
@@ -20,7 +23,21 @@ function key(value: unknown) {
   return String(value || '').trim().toLowerCase()
 }
 
-function pick(row: Row | undefined, keys: string[], fallback: any = null) {
+function normalizeRole(value: unknown) {
+  return key(value).replace(/[\s-]+/g, '_')
+}
+
+function permissionsFor(row: Row) {
+  return Array.isArray(row.permissions) ? row.permissions.map(String) : []
+}
+
+function canPermanentlyDeleteUsers(row: Row) {
+  const role = normalizeRole(row.role)
+  const permissions = permissionsFor(row)
+  return ADMIN_DELETE_ROLES.has(role) || permissions.some((permission) => DELETE_PERMISSION_KEYS.has(permission))
+}
+
+function pick(row: Row | undefined, keys: string[], fallback: unknown = null) {
   if (!row) return fallback
   for (const name of keys) {
     if (row[name] !== undefined && row[name] !== null && row[name] !== '') return row[name]
@@ -77,7 +94,7 @@ function readiness(record: UserStaffRecord) {
 }
 
 export default async function UsersPage() {
-  await requireRole(['ceo', 'manager', 'hr_admin', 'hr_manager', 'operations_manager'])
+  const actor = await requireRole(['ceo', 'manager', 'hr_admin', 'hr_manager', 'operations_manager'])
 
   const [usersRaw, staffRaw, attendance, documents, contracts, training, rosters, payroll, leave] = await Promise.all([
     readTable('app_users'),
@@ -149,5 +166,5 @@ export default async function UsersPage() {
     return record
   })
 
-  return <UsersEmployeeCommandClient initialUsers={users} loadedAt={new Date().toISOString()} />
+  return <UsersEmployeeCommandClient initialUsers={users} loadedAt={new Date().toISOString()} currentUserId={String(actor.id)} canPermanentlyDeleteUsers={canPermanentlyDeleteUsers(actor as Row)} />
 }
