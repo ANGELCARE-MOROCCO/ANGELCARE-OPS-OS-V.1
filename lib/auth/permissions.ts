@@ -73,42 +73,42 @@ export const MODULE_PERMISSIONS = {
 } as const
 
 export const USER_ROLE_OPTIONS = [
-  { label: 'CEO', value: 'ceo', department: 'Direction', defaultHome: '/command-center' },
-  { label: 'Direction', value: 'direction', department: 'Direction', defaultHome: '/command-center' },
-  { label: 'Admin', value: 'admin', department: 'Administration', defaultHome: '/command-center' },
+  { label: 'CEO', value: 'ceo', department: 'Direction', defaultHome: '/workspace' },
+  { label: 'Direction', value: 'direction', department: 'Direction', defaultHome: '/workspace' },
+  { label: 'Admin', value: 'admin', department: 'Administration', defaultHome: '/workspace' },
 
-  { label: 'Marketing', value: 'marketing', department: 'Marketing', defaultHome: '/market-os/marketing-home' },
-  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/csa-home' },
-  { label: 'Operations', value: 'operations', department: 'Operations', defaultHome: '/operations' },
-  { label: 'HR', value: 'hr', department: 'Human Resources', defaultHome: '/hr' },
-  { label: 'Session Leader', value: 'session_leader', department: 'Operations', defaultHome: '/team-command' },
-  { label: 'Finance', value: 'finance', department: 'Finance', defaultHome: '/billing' },
-  { label: 'Academy Admin', value: 'academy_admin', department: 'Academy', defaultHome: '/academy' },
-  { label: 'Academy Trainer', value: 'academy_trainer', department: 'Academy', defaultHome: '/academy' },
+  { label: 'Marketing', value: 'marketing', department: 'Marketing', defaultHome: '/workspace' },
+  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/workspace' },
+  { label: 'Operations', value: 'operations', department: 'Operations', defaultHome: '/workspace' },
+  { label: 'HR', value: 'hr', department: 'Human Resources', defaultHome: '/workspace' },
+  { label: 'Session Leader', value: 'session_leader', department: 'Operations', defaultHome: '/workspace' },
+  { label: 'Finance', value: 'finance', department: 'Finance', defaultHome: '/workspace' },
+  { label: 'Academy Admin', value: 'academy_admin', department: 'Academy', defaultHome: '/workspace' },
+  { label: 'Academy Trainer', value: 'academy_trainer', department: 'Academy', defaultHome: '/workspace' },
 
-  { label: 'Staff', value: 'staff', department: 'Staff Portal', defaultHome: '/staff-home' },
-  { label: 'Caregiver', value: 'caregiver', department: 'Field Staff', defaultHome: '/staff-home' },
+  { label: 'Staff', value: 'staff', department: 'Staff Portal', defaultHome: '/workspace' },
+  { label: 'Caregiver', value: 'caregiver', department: 'Field Staff', defaultHome: '/workspace' },
 ] as const
 
 export type UserRoleKey = typeof USER_ROLE_OPTIONS[number]['value']
 
 export const ROLE_HOME_ROUTES: Record<string, string> = {
-  ceo: '/command-center',
-  direction: '/command-center',
-  admin: '/command-center',
+  ceo: '/workspace',
+  direction: '/workspace',
+  admin: '/workspace',
 
-  marketing: '/market-os/marketing-home',
-  csa: '/csa-home',
-  operations: '/operations',
-  hr: '/hr',
-  session_leader: '/team-command',
-  finance: '/billing',
-  academy_admin: '/academy',
-  academy_trainer: '/academy',
+  marketing: '/workspace',
+  csa: '/workspace',
+  operations: '/workspace',
+  hr: '/workspace',
+  session_leader: '/workspace',
+  finance: '/workspace',
+  academy_admin: '/workspace',
+  academy_trainer: '/workspace',
 
-  staff: '/staff-home',
-  caregiver: '/staff-home',
-  employee: '/staff-home',
+  staff: '/workspace',
+  caregiver: '/workspace',
+  employee: '/workspace',
 }
 
 export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
@@ -427,32 +427,5 @@ export function getDefaultHomeForRole(user: any) {
 
 export function getFirstAllowedRoute(user: any) {
   if (!user) return '/login'
-
-  const role = normalizeRole(user)
-  const permissions = Array.isArray(user.permissions) ? user.permissions : []
-
-  // Department homes must win before generic staff portal permissions.
-  if (role === 'csa' || permissions.includes('csa.home')) return '/csa-home'
-  if (role === 'marketing' || permissions.includes('marketing.home')) return '/market-os/marketing-home'
-
-  if (role === 'ceo' || role === 'admin' || role === 'direction' || permissions.includes('*')) {
-    return '/command-center'
-  }
-
-  const roleDefault = getDefaultHomeForRole(user)
-  const allowedLinks = getAllowedModuleLinks(user)
-
-  if (roleDefault) {
-    const canOpenDefault =
-      roleDefault === '/command-center' ||
-      allowedLinks.some((link) => link.href === roleDefault || roleDefault.startsWith(`${link.href}/`))
-
-    if (canOpenDefault) return roleDefault
-  }
-
-  if (role === 'staff' || role === 'caregiver' || role === 'employee') return '/staff-home'
-  if (permissions.includes('staff_portal.view')) return '/staff-home'
-
-  const first = allowedLinks[0]
-  return first?.href || '/staff-home'
+  return '/workspace'
 }

@@ -1,4 +1,4 @@
-import { revenueClient, ok, fail, cleanString, cleanArray, requireProspect, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
+import { revenueClient, ok, fail, cleanString, cleanArray, ensureRevenueProspect, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
 
 export async function GET(request: Request) {
   const supabase = await revenueClient()
@@ -20,7 +20,8 @@ export async function POST(request: Request) {
     const body = await request.json()
     const entityId = cleanString(body.entityId || body.prospectId)
     if (!body.title) return fail("Missing task title", 400)
-    if (entityId) await requireProspect(supabase, entityId)
+    const prospectSnapshot = body.prospectSnapshot || body.prospect || body.entity || body.metadata?.prospect || null
+    if (entityId) await ensureRevenueProspect(supabase, entityId, prospectSnapshot)
     const row = {
       entity_type: cleanString(body.entityType, "prospect"),
       entity_id: entityId || null,
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
       end_at: body.endAt || body.end_at || null,
       expected_outcome: cleanString(body.expectedOutcome || body.expected_outcome, ""),
       location: cleanString(body.location, ""),
-      metadata: { ...(body.metadata || {}), checklist: cleanArray(body.checklist) },
+      metadata: { ...(body.metadata || {}), checklist: cleanArray(body.checklist), prospectSnapshot: prospectSnapshot || undefined },
     }
     const { data, error } = await supabase.from("revenue_tasks").insert(row).select("*").single()
     if (error) return fail(error)

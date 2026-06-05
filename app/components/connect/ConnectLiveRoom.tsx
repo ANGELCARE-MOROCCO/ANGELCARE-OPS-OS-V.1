@@ -148,13 +148,15 @@ export default function ConnectLiveRoom({
         connect
         video={isVideo}
         audio
-        onDisconnected={onLeave}
         className="min-h-[520px] bg-slate-950"
       >
+        <style>{`.angelcare-connect-livekit .lk-disconnect-button{display:none!important}`}</style>
         <RoomAudioRenderer />
 
         {isVideo ? (
-          <VideoConference />
+          <div className="angelcare-connect-livekit h-full">
+            <VideoConference />
+          </div>
         ) : (
           <div className="grid min-h-[420px] place-items-center bg-slate-950 p-6 text-center text-white">
             <div>
@@ -166,7 +168,7 @@ export default function ConnectLiveRoom({
                 Keep this room open while speaking.
               </p>
               <div className="mt-6">
-                <ControlBar variation="minimal" />
+                <ControlBar variation="minimal" controls={{ leave: false }} />
               </div>
             </div>
           </div>

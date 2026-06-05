@@ -1,4 +1,4 @@
-import { revenueClient, ok, fail, cleanString, cleanArray, requireProspect, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
+import { revenueClient, ok, fail, cleanString, cleanArray, ensureRevenueProspect, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
 
 export async function GET(request: Request) {
   const supabase = await revenueClient()
@@ -20,7 +20,8 @@ export async function POST(request: Request) {
     const body = await request.json()
     const entityId = cleanString(body.entityId || body.prospectId)
     if (!body.title || !body.appointmentAt) return fail("Missing appointment title or appointment time", 400)
-    if (entityId) await requireProspect(supabase, entityId)
+    const prospectSnapshot = body.prospectSnapshot || body.prospect || body.entity || body.metadata?.prospect || null
+    if (entityId) await ensureRevenueProspect(supabase, entityId, prospectSnapshot)
     const row = {
       entity_type: cleanString(body.entityType, "prospect"),
       entity_id: entityId || null,
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
       reminders: cleanArray(body.reminders),
       documents: cleanArray(body.documents),
       tasks: cleanArray(body.tasks),
-      metadata: body.metadata || {},
+      metadata: { ...(body.metadata || {}), prospectSnapshot: prospectSnapshot || undefined },
     }
     const { data, error } = await supabase.from("revenue_appointments").insert(row).select("*").single()
     if (error) return fail(error)

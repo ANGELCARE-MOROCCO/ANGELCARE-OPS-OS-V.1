@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
-export default function ProtectedHomePage() {
+export default function CommandCenterRedirectPage() {
   redirect('/workspace')
 }

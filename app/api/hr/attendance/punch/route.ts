@@ -251,6 +251,7 @@ async function safeLog(
       action: input.action,
       source: input.source,
       validation_status: "compatibility_accepted",
+      event_at: input.now,
       created_at: input.now,
     })
     .then(() => null, () => null)

@@ -224,6 +224,31 @@ export default function OverheadPanel() {
   }
 
   useEffect(() => {
+    let alive = true
+
+    const refreshIfAlive = (silent = true) => {
+      if (!alive) return
+      void refreshAttendanceStatus(silent)
+    }
+
+    refreshIfAlive(false)
+
+    const onFocus = () => refreshIfAlive(true)
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") refreshIfAlive(true)
+    }
+
+    window.addEventListener("focus", onFocus)
+    document.addEventListener("visibilitychange", onVisibilityChange)
+
+    return () => {
+      alive = false
+      window.removeEventListener("focus", onFocus)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
+  }, [])
+
+  useEffect(() => {
     setNow(new Date())
     setOnline(typeof navigator === "undefined" ? true : navigator.onLine)
 
@@ -425,7 +450,7 @@ export default function OverheadPanel() {
       const res = await fetch("/api/attendance/punch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, source: "overhead_panel", force: true }),
+        body: JSON.stringify({ action, source: "overhead_panel" }),
       })
 
       const payload = (await res.json().catch(() => ({}))) as AttendanceLivePayload & { error?: string }
@@ -509,9 +534,9 @@ export default function OverheadPanel() {
             <button
               key={item.action}
               type="button"
-              disabled={busy !== null}
+              disabled={busy !== null || !canPunch[item.action]}
               onClick={() => punch(item.action, item.nextStatus)}
-              title={canPunch[item.action] ? attendanceHint : `State repair mode: click to resync ${item.label}`}
+              title={canPunch[item.action] ? attendanceHint : `${item.label} is not available for the current attendance state`}
               style={punchButtonStyle(item.nextStatus, busy === item.action, !canPunch[item.action])}
             >
               <span>{item.icon}</span>

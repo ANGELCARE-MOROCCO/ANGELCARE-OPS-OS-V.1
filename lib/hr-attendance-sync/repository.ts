@@ -194,6 +194,7 @@ export async function syncPunchToHrAttendance(input: {
     source: input.source || 'overhead_panel',
     device_context: input.deviceContext || {},
     validation_status: input.force ? 'forced' : 'auto_accepted',
+    event_at: now,
     created_at: now,
   })
   if (logError) throw new Error(logError.message)

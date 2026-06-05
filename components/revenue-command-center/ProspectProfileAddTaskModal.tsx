@@ -127,6 +127,7 @@ export function ProspectProfileAddTaskModal({
         reminderMinutes: form.reminderMinutes,
         addToCalendar: form.addToCalendar,
         sendNotifications: form.sendNotifications,
+        prospectSnapshot: prospect,
       })
       onCreated?.(task)
       onClose()

@@ -39,6 +39,8 @@ import {
 
 import {
   deleteProductionProspect,
+  ensureProductionProspect,
+  loadProductionProspect,
   loadProductionProspects,
   saveProductionProspect,
   saveProductionProspectsBulk,
@@ -77,6 +79,7 @@ async function createProspectTask(input: {
   priority?: "low" | "medium" | "high" | "critical" | string
   owner?: string
   dueDate?: string
+  prospectSnapshot?: Record<string, unknown>
 }) {
   return revenueCreateTask({
     entityId: input.prospectId,
@@ -85,6 +88,7 @@ async function createProspectTask(input: {
     priority: (input.priority || "medium") as "low" | "medium" | "high" | "critical",
     owner: input.owner,
     dueDate: input.dueDate,
+    prospectSnapshot: input.prospectSnapshot,
   })
 }
 
@@ -99,6 +103,7 @@ async function scheduleProspectAppointment(input: {
   owner?: string
   location?: string
   notes?: string
+  prospectSnapshot?: Record<string, unknown>
 }) {
   return revenueScheduleAppointment({
     entityId: input.prospectId,
@@ -107,6 +112,7 @@ async function scheduleProspectAppointment(input: {
     owner: input.owner,
     location: input.location,
     notes: input.notes,
+    prospectSnapshot: input.prospectSnapshot,
   })
 }
 
@@ -561,9 +567,31 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
 
   async function refresh() {
     try {
-      const productionProspects = await loadProductionProspects<ProspectRecord>()
-      if (productionProspects.length) {
-        setStore({ prospects: productionProspects.map(normalizeProspect) })
+      const [currentProductionProspect, productionProspects] = await Promise.all([
+        loadProductionProspect<ProspectRecord>(prospectId).catch(() => null),
+        loadProductionProspects<ProspectRecord>().catch(() => []),
+      ])
+
+      const normalizedProduction = productionProspects.map(normalizeProspect)
+      if (currentProductionProspect) {
+        const current = normalizeProspect(currentProductionProspect)
+        setStore({ prospects: [current, ...normalizedProduction.filter((p) => p.id !== current.id)] })
+        setLastSync(new Date())
+        return
+      }
+
+      const browserStore = loadStore()
+      const browserProspect = browserStore.prospects.find((p) => p.id === prospectId)
+      if (browserProspect) {
+        const ensured = await ensureProductionProspect(browserProspect)
+        const ensuredProspect = normalizeProspect({ ...browserProspect, ...(ensured?.data || {}), ...(ensured || {}) })
+        setStore({ prospects: [ensuredProspect, ...normalizedProduction.filter((p) => p.id !== ensuredProspect.id)] })
+        setLastSync(new Date())
+        return
+      }
+
+      if (normalizedProduction.length) {
+        setStore({ prospects: normalizedProduction })
         setLastSync(new Date())
         return
       }
@@ -766,32 +794,25 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   }
 
   async function submitTask(payload: { title: string; description: string; priority: "low" | "medium" | "high" | "critical"; owner: string; dueDate: string }) {
-    const item = {
-      id: `${Date.now()}`,
-      title: payload.title,
-      priority: payload.priority === "high" || payload.priority === "critical" ? "High" as const : payload.priority === "low" ? "Low" as const : "Medium" as const,
-      due: payload.dueDate || "No due date",
-      done: false,
-    }
-    const nextTasks = [item, ...tasks]
-    setTasks(nextTasks)
-    persistControls({ tasks: nextTasks })
-    commit(activeProspect, "Task created", item.title)
-
     try {
-      await createProspectTask({
+      await ensureProductionProspect(activeProspect)
+      const created = await createProspectTask({
         prospectId: activeProspect.id,
         title: payload.title,
         description: payload.description,
         priority: payload.priority,
         owner: payload.owner || activeProspect.owner || "BD Officer",
         dueDate: payload.dueDate || undefined,
+        prospectSnapshot: activeProspect as unknown as Record<string, unknown>,
       })
+      commit(activeProspect, "Task created", payload.title)
       await refreshRealControls(activeProspect.id, activeProspect)
       setEngineStatus("live")
+      return created
     } catch (error) {
-      console.warn("Task saved locally only", error)
+      console.error("Task creation failed against production source of truth", error)
       setEngineStatus("fallback")
+      window.alert(error instanceof Error ? error.message : "Unable to create task in production source of truth.")
     }
   }
 
@@ -801,32 +822,25 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
   }
 
   async function submitAppointment(payload: { title: string; appointmentAt: string; owner: string; location: string; notes: string }) {
-    const displayAt = payload.appointmentAt ? new Date(payload.appointmentAt).toLocaleString() : `${todayPlus(2)} 11:00`
-    const item = {
-      id: `${Date.now()}`,
-      title: payload.title,
-      at: displayAt,
-      owner: payload.owner || activeProspect.owner || "BD Officer",
-    }
-    const nextAppointments: ProfileAppointment[] = [item as ProfileAppointment, ...appointments]
-    setAppointments(nextAppointments)
-    persistControls({ appointments: nextAppointments })
-    commit({ ...activeProspect, nextContactDate: (payload.appointmentAt || todayPlus(2)).slice(0, 10), nextAction: item.title }, "Appointment scheduled", item.title)
-
     try {
-      await scheduleProspectAppointment({
+      await ensureProductionProspect(activeProspect)
+      const appointment = await scheduleProspectAppointment({
         prospectId: activeProspect.id,
         title: payload.title,
         appointmentAt: payload.appointmentAt || `${todayPlus(2)}T11:00:00`,
         owner: payload.owner || activeProspect.owner || "BD Officer",
         location: payload.location,
         notes: payload.notes,
+        prospectSnapshot: activeProspect as unknown as Record<string, unknown>,
       })
+      commit({ ...activeProspect, nextContactDate: (payload.appointmentAt || todayPlus(2)).slice(0, 10), nextAction: payload.title }, "Appointment scheduled", payload.title)
       await refreshRealControls(activeProspect.id, activeProspect)
       setEngineStatus("live")
+      return appointment
     } catch (error) {
-      console.warn("Appointment saved locally only", error)
+      console.error("Appointment creation failed against production source of truth", error)
       setEngineStatus("fallback")
+      window.alert(error instanceof Error ? error.message : "Unable to schedule appointment in production source of truth.")
     }
   }
 

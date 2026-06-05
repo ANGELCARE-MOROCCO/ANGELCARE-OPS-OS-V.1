@@ -37,6 +37,7 @@ export type ProfileTaskPayload = {
   reminderMinutes?: number
   addToCalendar?: boolean
   sendNotifications?: boolean
+  prospectSnapshot?: ProfileTaskProspect | Record<string, unknown>
 }
 
 export async function createProfileLinkedTask(input: ProfileTaskPayload) {
@@ -44,7 +45,7 @@ export async function createProfileLinkedTask(input: ProfileTaskPayload) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     cache: "no-store",
-    body: JSON.stringify(input),
+    body: JSON.stringify({ ...input, prospectSnapshot: input.prospectSnapshot }),
   })
 
   const payload = await response.json()

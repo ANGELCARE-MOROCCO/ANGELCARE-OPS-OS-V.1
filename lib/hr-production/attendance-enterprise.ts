@@ -43,6 +43,28 @@ async function safeSelect(table: string, orderColumn?: string, limit = 800) {
   }
 }
 
+async function getAuthenticatedUser() {
+  const supabase = await createClient()
+  try {
+    const { data } = await supabase.auth.getUser()
+    return data?.user || null
+  } catch {
+    return null
+  }
+}
+
+function uniqueRowsById(rows: AnyRow[]) {
+  const seen = new Set<string>()
+  const out: AnyRow[] = []
+  for (const row of rows || []) {
+    const key = String(row?.id || `${row?.user_id || row?.staff_profile_id || row?.staff_id || 'row'}-${row?.attendance_date || row?.work_date || row?.created_at || Math.random()}`)
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(row)
+  }
+  return out
+}
+
 function ids(row: AnyRow) {
   const meta = row.metadata || row.payload || row.raw || {}
   return [
@@ -51,6 +73,7 @@ function ids(row: AnyRow) {
     row.employee_id,
     row.user_id,
     row.profile_id,
+    row.staff_profile_id,
     row.auth_user_id,
     row.created_by,
     row.owner_id,
@@ -59,6 +82,7 @@ function ids(row: AnyRow) {
     meta.employee_id,
     meta.user_id,
     meta.profile_id,
+    meta.staff_profile_id,
     meta.auth_user_id,
     meta.person_id,
   ].filter(Boolean).map(String)
@@ -126,12 +150,12 @@ function normalizeAttendanceRow(row: AnyRow, staff: AnyRow[], links: AnyRow[], s
   const identity = resolveIdentity(row, staff, links)
 
   const punchIn =
-    first(row, ['punch_in_at','check_in_at','clock_in_at','started_at','start_at','start_time'], null) ||
-    (low(row.event_type).includes('in') ? row.event_at : null)
+    first(row, ['punch_in_at','check_in','check_in_at','clock_in_at','started_at','start_at','start_time'], null) ||
+    (low(row.event_type).includes('in') || low(row.action).includes('shift_in') || low(row.action).includes('clock_in') ? (row.event_at || row.created_at) : null)
 
   const punchOut =
-    first(row, ['punch_out_at','check_out_at','clock_out_at','ended_at','end_at','end_time'], null) ||
-    (low(row.event_type).includes('out') ? row.event_at : null)
+    first(row, ['punch_out_at','check_out','check_out_at','clock_out_at','ended_at','end_at','end_time'], null) ||
+    (low(row.event_type).includes('out') || low(row.action).includes('shift_out') || low(row.action).includes('clock_out') ? (row.event_at || row.created_at) : null)
 
   const workDate =
     clean(first(row, ['work_date','attendance_date','date','day'], '')) ||
@@ -146,8 +170,10 @@ function normalizeAttendanceRow(row: AnyRow, staff: AnyRow[], links: AnyRow[], s
     work_date: workDate,
     punch_in_at: punchIn,
     punch_out_at: punchOut,
-    break_start_at: first(row, ['break_start_at','pause_start_at'], null),
-    break_end_at: first(row, ['break_end_at','pause_end_at'], null),
+    break_start_at: first(row, ['break_start_at','lunch_start','pause_start_at','break_in_at'], null) ||
+      (low(row.event_type).includes('break') || low(row.action).includes('lunch_start') || low(row.action).includes('break_start') ? (row.event_at || row.created_at) : null),
+    break_end_at: first(row, ['break_end_at','lunch_end','pause_end_at','break_out_at'], null) ||
+      (low(row.action).includes('lunch_end') || low(row.action).includes('break_end') || low(row.action).includes('resume') ? (row.event_at || row.created_at) : null),
     status: normalizeStatus(row),
     validation_status: clean(first(row, ['validation_status','attendance_status','status'], ''), normalizeStatus(row)),
     source: clean(row.source, sourceTable),
@@ -180,10 +206,14 @@ export async function getAttendanceEnterpriseData() {
   const staff = Array.isArray(dashboard.staff) ? dashboard.staff : []
 
   const links = await safeSelect('hr_identity_links', 'created_at', 700)
+  const authenticatedUser = await getAuthenticatedUser()
+  const directAttendanceRows = await safeSelect('hr_attendance_records', 'updated_at', 1200)
+  const dashboardAttendanceRows = Array.isArray(dashboard.attendance) ? dashboard.attendance : []
+  const combinedAttendanceRows = uniqueRowsById([...directAttendanceRows, ...dashboardAttendanceRows])
 
   const sources: { table: string; order?: string; rows: AnyRow[] }[] = [
     { table: 'v_hr_attendance_resolved_live', rows: await safeSelect('v_hr_attendance_resolved_live', 'created_at', 900) },
-    { table: 'hr_attendance_records', rows: Array.isArray(dashboard.attendance) ? dashboard.attendance : [] },
+    { table: 'hr_attendance_records', rows: combinedAttendanceRows },
     { table: 'app_attendance_logs', order: 'event_at', rows: await safeSelect('app_attendance_logs', 'event_at', 900) },
 
     // User profile / app profile likely attendance sources.
@@ -198,6 +228,16 @@ export async function getAttendanceEnterpriseData() {
   ]
 
   const normalized = sources.flatMap(src => (src.rows || []).map(row => normalizeAttendanceRow(row, staff, links, src.table)))
+
+  // Critical live-board guarantee:
+  // the OverheadPanel reads the authenticated user's live session from hr_attendance_records.
+  // The shift board must include the same user's row even when the user is CEO/admin and not linked
+  // to an HR staff profile, or when dashboard.attendance was capped before the newest row.
+  if (authenticatedUser?.id) {
+    const currentUserRows = combinedAttendanceRows.filter((row) => String(row?.user_id || row?.auth_user_id || '') === String(authenticatedUser.id))
+    for (const row of currentUserRows) normalized.push(normalizeAttendanceRow(row, staff, links, 'hr_attendance_records'))
+  }
+
   const records = dedupe(normalized)
 
   const logs = sources.find(s => s.table === 'app_attendance_logs')?.rows || []

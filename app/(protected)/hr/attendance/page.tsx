@@ -230,8 +230,145 @@ function Metric({ label, value, sub, icon, tone='violet' }: { label: string; val
   return <Card className="p-5"><div className="flex items-center gap-4"><div className={`grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br ${bg} text-2xl`}>{icon}</div><div><p className="text-xs font-black text-slate-500">{label}</p><div className="mt-1 text-3xl font-black text-slate-950">{value}</div><p className="text-xs font-bold text-slate-500">{sub}</p></div></div></Card>
 }
 
+const SHIFT_BOARD_START_MINUTE = 7 * 60
+const SHIFT_BOARD_END_MINUTE = 19 * 60
+const SHIFT_BOARD_MINUTES = SHIFT_BOARD_END_MINUTE - SHIFT_BOARD_START_MINUTE
+const SHIFT_BOARD_WIDTH = 12 * 90
+
+type ShiftSegment = {
+  key: string
+  start: number
+  end: number
+  tone: 'work' | 'break' | 'closed' | 'review'
+  label: string
+  live?: boolean
+}
+
+function firstValue(row: Row, keys: string[]) {
+  for (const key of keys) {
+    const direct = row?.[key]
+    if (direct !== undefined && direct !== null && String(direct).trim() !== '') return direct
+    const raw = row?.raw?.[key]
+    if (raw !== undefined && raw !== null && String(raw).trim() !== '') return raw
+  }
+  return null
+}
+
+function currentCasablancaMinutes() {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Africa/Casablanca',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date())
+  const hh = Number(parts.find((part) => part.type === 'hour')?.value || 0)
+  const mm = Number(parts.find((part) => part.type === 'minute')?.value || 0)
+  return (Number.isFinite(hh) ? hh : 0) * 60 + (Number.isFinite(mm) ? mm : 0)
+}
+
+function isSelectedToday(selectedDate: string) {
+  return selectedDate === isoToday()
+}
+
+function clampBoardMinute(value: number) {
+  return Math.max(SHIFT_BOARD_START_MINUTE, Math.min(SHIFT_BOARD_END_MINUTE, value))
+}
+
+function segmentStyle(segment: ShiftSegment): React.CSSProperties {
+  const start = clampBoardMinute(segment.start)
+  const end = clampBoardMinute(Math.max(segment.end, segment.start + 5))
+  const left = ((start - SHIFT_BOARD_START_MINUTE) / SHIFT_BOARD_MINUTES) * SHIFT_BOARD_WIDTH
+  const width = Math.max(18, ((end - start) / SHIFT_BOARD_MINUTES) * SHIFT_BOARD_WIDTH)
+  return { left: `${left}px`, width: `${width}px` }
+}
+
+function segmentClass(segment: ShiftSegment) {
+  if (segment.tone === 'break') return 'border-orange-300 bg-orange-100 text-orange-800 shadow-orange-100'
+  if (segment.tone === 'review') return 'border-amber-300 bg-amber-100 text-amber-800 shadow-amber-100'
+  if (segment.tone === 'closed') return 'border-emerald-300 bg-emerald-100 text-emerald-800 shadow-emerald-100'
+  return 'border-emerald-300 bg-emerald-100 text-emerald-800 shadow-emerald-100'
+}
+
+function buildShiftSegments(rows: Row[], selectedDate: string): ShiftSegment[] {
+  const segments: ShiftSegment[] = []
+  const sorted = [...rows].sort((a, b) => String(firstValue(a, ['punch_in_at','check_in','created_at']) || '').localeCompare(String(firstValue(b, ['punch_in_at','check_in','created_at']) || '')))
+  const nowMinute = isSelectedToday(selectedDate) ? currentCasablancaMinutes() : SHIFT_BOARD_END_MINUTE
+
+  sorted.forEach((row, rowIndex) => {
+    const status = String(row.status || row.validation_status || row.raw?.status || row.raw?.validation_status || '').toLowerCase()
+    const inAt = firstValue(row, ['punch_in_at','check_in','check_in_at','clock_in_at','started_at','start_time'])
+    const outAt = firstValue(row, ['punch_out_at','check_out','check_out_at','clock_out_at','ended_at','end_time'])
+    const breakStartAt = firstValue(row, ['break_start_at','lunch_start','pause_start_at','break_in_at'])
+    const breakEndAt = firstValue(row, ['break_end_at','lunch_end','pause_end_at','break_out_at'])
+
+    let start = minutesFromAnyTime(inAt)
+    if (!start) {
+      const eventAction = String(row.raw?.action || row.raw?.event_type || row.action || row.event_type || '').toLowerCase()
+      if (/shift_in|clock_in|check_in|in/.test(eventAction)) start = minutesFromAnyTime(firstValue(row, ['event_at','created_at']))
+    }
+    if (!start) return
+
+    const explicitEnd = minutesFromAnyTime(outAt)
+    const breakStart = minutesFromAnyTime(breakStartAt)
+    const breakEnd = minutesFromAnyTime(breakEndAt)
+    const activeEnd = explicitEnd || Math.max(nowMinute, start + 5)
+    const isClosed = Boolean(explicitEnd) || /completed|validated|approved|out/.test(status)
+    const isReview = /late|review|pending|exception|missing|absent/.test(status)
+
+    if (breakStart && breakStart > start) {
+      segments.push({
+        key: `${row.id || rowIndex}-work-before-break`,
+        start,
+        end: breakStart,
+        tone: isReview ? 'review' : isClosed ? 'closed' : 'work',
+        label: `${t(inAt)} → ${t(breakStartAt)} · in`,
+        live: !isClosed,
+      })
+
+      const breakStop = breakEnd && breakEnd > breakStart ? breakEnd : activeEnd
+      segments.push({
+        key: `${row.id || rowIndex}-break`,
+        start: breakStart,
+        end: breakStop,
+        tone: 'break',
+        label: `${t(breakStartAt)} → ${breakEnd ? t(breakEndAt) : 'now'} · break`,
+        live: !breakEnd && !explicitEnd,
+      })
+
+      if (breakEnd && activeEnd > breakEnd) {
+        segments.push({
+          key: `${row.id || rowIndex}-work-after-break`,
+          start: breakEnd,
+          end: activeEnd,
+          tone: isReview ? 'review' : isClosed ? 'closed' : 'work',
+          label: `${t(breakEndAt)} → ${explicitEnd ? t(outAt) : 'now'} · back`,
+          live: !explicitEnd,
+        })
+      }
+      return
+    }
+
+    segments.push({
+      key: `${row.id || rowIndex}-work`,
+      start,
+      end: activeEnd,
+      tone: isReview ? 'review' : isClosed ? 'closed' : 'work',
+      label: `${t(inAt)} → ${explicitEnd ? t(outAt) : 'now'} · ${String(row.status || 'live synced').replaceAll('_',' ')}`,
+      live: !explicitEnd,
+    })
+  })
+
+  return segments
+}
+
 function ShiftGrid({ records, selectedDate }: { records: Row[]; selectedDate: string }) {
-  const lanes = Array.from(new Map(records.slice(0, 80).map((r) => [r.identity?.name || r.id, r])).values()).slice(0, 12)
+  const grouped = new Map<string, Row[]>()
+  for (const row of records.slice(0, 160)) {
+    const key = staffKeyOf(row)
+    if (!grouped.has(key)) grouped.set(key, [])
+    grouped.get(key)!.push(row)
+  }
+  const lanes = Array.from(grouped.entries()).slice(0, 12).map(([key, rows]) => ({ key, rows, primary: rows[0] }))
   const hours = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00']
   const prev = shiftDate(selectedDate, -1)
   const next = shiftDate(selectedDate, 1)
@@ -240,7 +377,7 @@ function ShiftGrid({ records, selectedDate }: { records: Row[]; selectedDate: st
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
         <div>
           <h3 className="text-xl font-black text-slate-950">Live Shift Board</h3>
-          <p className="text-sm font-semibold text-slate-500">Monitor active staff lanes, schedule coverage, late arrivals and exceptions for the selected day.</p>
+          <p className="text-sm font-semibold text-slate-500">Green bars show active/recorded work time. Orange attached bars show breaks. Green resumes automatically after Retour until OUT.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link href={`/hr/attendance?date=${prev}`} className="grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 bg-white text-xl font-black shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">‹</Link>
@@ -258,25 +395,38 @@ function ShiftGrid({ records, selectedDate }: { records: Row[]; selectedDate: st
         <div className="flex flex-wrap items-center gap-3 text-sm font-black text-slate-700">
           <span className="rounded-2xl bg-white px-4 py-2 shadow-sm">{niceDate(selectedDate)}</span>
           <span className="rounded-2xl bg-emerald-50 px-4 py-2 text-emerald-700">{records.length} records loaded</span>
+          <span className="rounded-2xl bg-emerald-50 px-4 py-2 text-emerald-700">● Working / live</span>
+          <span className="rounded-2xl bg-orange-50 px-4 py-2 text-orange-700">● Break / pause</span>
           <span className="rounded-2xl bg-violet-50 px-4 py-2 text-violet-700">Click any staff name or bar to open full attendance control</span>
         </div>
       </div>
       <div className="overflow-x-auto">
-        <div className="min-w-[1180px]">
-          <div className="grid grid-cols-[230px_repeat(12,90px)] bg-slate-50 text-[11px] font-black uppercase tracking-[.1em] text-slate-500">
-            <div className="border-r border-slate-200 p-3">Staff / site</div>{hours.map(h => <div key={h} className="border-r border-slate-200 p-3 text-center">{h}</div>)}
+        <div className="min-w-[1310px]">
+          <div className="grid grid-cols-[230px_1080px] bg-slate-50 text-[11px] font-black uppercase tracking-[.1em] text-slate-500">
+            <div className="border-r border-slate-200 p-3">Staff / site</div>
+            <div className="grid grid-cols-12">{hours.map(h => <div key={h} className="border-r border-slate-200 p-3 text-center last:border-r-0">{h}</div>)}</div>
           </div>
-          {lanes.map((r, index) => {
-            const start = Math.max(0, Math.min(10, Number(t(r.punch_in_at).slice(0,2)) - 7 || index % 6))
-            const span = r.punch_out_at ? Math.max(2, Math.min(9, (Number(t(r.punch_out_at).slice(0,2)) || 17) - (Number(t(r.punch_in_at).slice(0,2)) || 8))) : 5
-            const tone = /late|review|pending/i.test(r.status) ? 'border-amber-200 bg-amber-50 text-amber-700 shadow-amber-100' : /absent|missing/i.test(r.status) ? 'border-rose-200 bg-rose-50 text-rose-700 shadow-rose-100' : 'border-emerald-200 bg-emerald-50 text-emerald-700 shadow-emerald-100'
-            return <div key={`${staffKeyOf(r)}-${index}`} className="grid grid-cols-[230px_repeat(12,90px)] border-t border-slate-100 hover:bg-violet-50/30">
-              <a href={`#${staffModalId(r)}`} className="group border-r border-slate-100 p-3 transition hover:bg-white">
-                <div className="font-black text-violet-700 group-hover:text-violet-900">{r.identity?.name || 'Staff member'}</div>
-                <div className="text-xs font-semibold text-slate-500">{r.identity?.department || 'Unmapped department'} · {r.identity?.location || 'No site'}</div>
+          {lanes.map(({ key, rows, primary }, index) => {
+            const segments = buildShiftSegments(rows, selectedDate)
+            return <div key={`${key}-${index}`} className="grid grid-cols-[230px_1080px] border-t border-slate-100 hover:bg-violet-50/30">
+              <a href={`#${staffModalId(primary)}`} className="group border-r border-slate-100 p-3 transition hover:bg-white">
+                <div className="font-black text-violet-700 group-hover:text-violet-900">{primary.identity?.name || 'Staff member'}</div>
+                <div className="text-xs font-semibold text-slate-500">{primary.identity?.department || 'Unmapped department'} · {primary.identity?.location || 'No site'}</div>
                 <div className="mt-2 inline-flex rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-500">open control room →</div>
               </a>
-              {hours.map((h, i) => <div key={`${rid(r)}-${h}`} className="relative h-20 border-r border-slate-100 p-1 hover:bg-cyan-50/40">{i === start ? <a href={`#${staffModalId(r)}`} className={`absolute left-1 top-3 z-10 h-12 rounded-2xl border px-3 py-2 text-xs font-black shadow-md transition hover:-translate-y-1 hover:shadow-xl ${tone}`} style={{ width: `${span * 88}px` }}><span className="mr-1">●</span>{t(r.punch_in_at)} - {t(r.punch_out_at)} · {String(r.status || 'synced').replaceAll('_',' ')}</a> : null}</div>)}
+              <div className="relative h-20 overflow-hidden" style={{ backgroundImage: 'linear-gradient(to right, rgba(226,232,240,.85) 1px, transparent 1px)', backgroundSize: '90px 100%' }}>
+                {segments.length ? segments.map((segment, segmentIndex) => (
+                  <a
+                    key={`${staffKeyOf(primary)}-${segment.key}-${segmentIndex}-${segment.start}-${segment.end}`}
+                    href={`#${staffModalId(primary)}`}
+                    className={`absolute top-4 z-10 h-11 rounded-2xl border px-3 py-2 text-xs font-black shadow-md transition hover:-translate-y-1 hover:shadow-xl ${segmentClass(segment)} ${segment.live ? 'animate-pulse' : ''}`}
+                    style={segmentStyle(segment)}
+                    title={segment.label}
+                  >
+                    <span className="mr-1">●</span>{segment.label}
+                  </a>
+                )) : <div className="absolute left-3 top-6 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-400">No timed punch segment</div>}
+              </div>
             </div>
           })}
           {!lanes.length ? <div className="p-12 text-center"><div className="text-2xl font-black text-slate-900">No attendance rows for {niceDate(selectedDate)}</div><p className="mt-2 font-bold text-slate-500">Use the date selector or create a manual punch/control action.</p><div className="mt-5"><ModalButton href="#manual-punch" tone="purple">Create manual punch</ModalButton></div></div> : null}

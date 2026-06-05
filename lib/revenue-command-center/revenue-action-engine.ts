@@ -7,6 +7,19 @@ const supabase = createClient()
 
 type Json = Record<string, unknown>
 
+
+async function postRevenueApi<T = any>(url: string, body: Json): Promise<T> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store",
+    body: JSON.stringify(body),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload.ok === false) throw new Error(payload.error || `Revenue API failed: ${response.status}`)
+  return payload as T
+}
+
 async function safeInsert(table: string, row: Json) {
   const { data, error } = await supabase.from(table).insert(row).select().single()
   if (error) throw error
@@ -64,27 +77,27 @@ export async function revenueCreateTask(input: {
   assignedRole?: string
   location?: string
   expectedOutcome?: string
+  prospectSnapshot?: Json
 }) {
-  const entityType = input.entityType || "prospect"
-  const data = await safeInsert("revenue_tasks", {
-    entity_type: entityType,
-    entity_id: input.entityId,
+  const payload = await postRevenueApi<{ task: any }>("/api/revenue-command-center/tasks", {
+    entityType: input.entityType || "prospect",
+    entityId: input.entityId,
+    prospectId: input.entityId,
     title: input.title,
-    description: input.description || null,
+    description: input.description || "",
     owner: input.owner || "BD Officer",
     priority: input.priority || "medium",
-    due_date: input.dueDate || null,
-    start_at: input.startAt || null,
-    end_at: input.endAt || null,
-    task_type: input.taskType || "follow_up",
+    dueDate: input.dueDate || null,
+    startAt: input.startAt || null,
+    endAt: input.endAt || null,
+    taskType: input.taskType || "follow_up",
     department: input.department || "business_development",
-    assigned_role: input.assignedRole || null,
+    assignedRole: input.assignedRole || null,
     location: input.location || null,
-    outcome_expected: input.expectedOutcome || null,
-    status: "open",
+    expectedOutcome: input.expectedOutcome || null,
+    prospectSnapshot: input.prospectSnapshot || null,
   })
-  await safeLogEvent(entityType, input.entityId, "task.created", "Task created", input.title, { taskId: data.id })
-  return data
+  return payload.task
 }
 
 export async function revenueCompleteTask(taskId: string, entityType: RevenueEntityType, entityId: string, done: boolean) {
@@ -115,22 +128,22 @@ export async function revenueScheduleAppointment(input: {
   notes?: string
   appointmentType?: string
   priority?: string
+  prospectSnapshot?: Json
 }) {
-  const entityType = input.entityType || "prospect"
-  const data = await safeInsert("revenue_appointments", {
-    entity_type: entityType,
-    entity_id: input.entityId,
+  const payload = await postRevenueApi<{ appointment: any }>("/api/revenue-command-center/appointments", {
+    entityType: input.entityType || "prospect",
+    entityId: input.entityId,
+    prospectId: input.entityId,
     title: input.title,
-    appointment_at: input.appointmentAt,
+    appointmentAt: input.appointmentAt,
     owner: input.owner || "BD Officer",
-    location: input.location || null,
-    notes: input.notes || null,
-    appointment_type: input.appointmentType || "meeting",
+    location: input.location || "",
+    notes: input.notes || "",
+    appointmentType: input.appointmentType || "meeting",
     priority: input.priority || "medium",
-    status: "scheduled",
+    prospectSnapshot: input.prospectSnapshot || null,
   })
-  await safeLogEvent(entityType, input.entityId, "appointment.scheduled", "Appointment scheduled", input.title, { appointmentId: data.id })
-  return data
+  return payload.appointment
 }
 
 export async function revenueUpdateAppointmentStatus(appointmentId: string, entityType: RevenueEntityType, entityId: string, status: "scheduled" | "completed" | "cancelled" | "no_show") {

@@ -171,9 +171,24 @@ const CONNECT_SIZE_KEY = "angelcare.connect.panelSize"
 const CONNECT_MODE_KEY = "angelcare.connect.mode"
 const CONNECT_SELECTED_KEY = "angelcare.connect.selected"
 const CONNECT_POSITION_KEY = "angelcare.connect.position"
+const CONNECT_WIDGET_TOP_GUARD = 88
+const CONNECT_WIDGET_MARGIN = 16
+const CONNECT_WIDGET_Z_INDEX = 80
+const CONNECT_WIDGET_MINIMIZED_WIDTH = 320
+const CONNECT_WIDGET_MINIMIZED_HEIGHT = 88
+const CONNECT_WIDGET_NARROW_WIDTH = 860
+const CONNECT_WIDGET_NARROW_HEIGHT = 760
+const CONNECT_WIDGET_EXPANDED_WIDTH = 1440
+const CONNECT_WIDGET_EXPANDED_HEIGHT = 860
 
 function cx(...items: Array<string | false | null | undefined>) {
   return items.filter(Boolean).join(" ")
+}
+
+function widgetDimensions(panelSize: PanelSize, isOpen: boolean) {
+  if (!isOpen) return { width: CONNECT_WIDGET_MINIMIZED_WIDTH, height: CONNECT_WIDGET_MINIMIZED_HEIGHT }
+  if (panelSize === "narrow") return { width: CONNECT_WIDGET_NARROW_WIDTH, height: CONNECT_WIDGET_NARROW_HEIGHT }
+  return { width: CONNECT_WIDGET_EXPANDED_WIDTH, height: CONNECT_WIDGET_EXPANDED_HEIGHT }
 }
 
 async function readJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
@@ -370,8 +385,10 @@ export default function AngelCareConnect({
 
   useEffect(() => {
     try {
-      if (floating) setOpen(defaultOpen || window.localStorage.getItem(CONNECT_OPEN_KEY) === "true")
+      const storedOpen = defaultOpen || window.localStorage.getItem(CONNECT_OPEN_KEY) === "true"
+      if (floating) setOpen(storedOpen)
       const storedSize = window.localStorage.getItem(CONNECT_SIZE_KEY) as PanelSize | null
+      const nextPanelSize = storedSize === "narrow" || storedSize === "expanded" ? storedSize : "expanded"
       if (storedSize === "narrow" || storedSize === "expanded") setPanelSize(storedSize)
       const storedMode = window.localStorage.getItem(CONNECT_MODE_KEY) as ConnectMode | null
       if (storedMode) setMode(storedMode)
@@ -380,7 +397,14 @@ export default function AngelCareConnect({
       const storedPosition = window.localStorage.getItem(CONNECT_POSITION_KEY)
       if (storedPosition) {
         const parsed = JSON.parse(storedPosition) as WidgetPosition
-        if (Number.isFinite(parsed.x) && Number.isFinite(parsed.y)) setWidgetPosition(parsed)
+        if (Number.isFinite(parsed.x) && Number.isFinite(parsed.y)) {
+          const dimensions = widgetDimensions(nextPanelSize, storedOpen)
+          const next = clampWidgetPosition(parsed, dimensions.width, dimensions.height)
+          setWidgetPosition(next)
+          if (next.x !== parsed.x || next.y !== parsed.y) {
+            try { window.localStorage.setItem(CONNECT_POSITION_KEY, JSON.stringify(next)) } catch {}
+          }
+        }
       }
       setBrowserNotificationsEnabled(typeof Notification !== "undefined" && Notification.permission === "granted")
     } catch {}
@@ -433,16 +457,18 @@ export default function AngelCareConnect({
   }, [])
 
   useEffect(() => {
-    function clampOnResize() {
+    function clampCurrentPosition() {
       setWidgetPosition((current) => {
         if (!current) return current
-        const next = clampWidgetPosition(current, panelSize === "expanded" ? 1440 : 860, open ? 860 : 88)
+        const dimensions = widgetDimensions(panelSize, open)
+        const next = clampWidgetPosition(current, dimensions.width, dimensions.height)
         try { window.localStorage.setItem(CONNECT_POSITION_KEY, JSON.stringify(next)) } catch {}
         return next
       })
     }
-    window.addEventListener("resize", clampOnResize)
-    return () => window.removeEventListener("resize", clampOnResize)
+    clampCurrentPosition()
+    window.addEventListener("resize", clampCurrentPosition)
+    return () => window.removeEventListener("resize", clampCurrentPosition)
   }, [panelSize, open])
 
   useEffect(() => {
@@ -631,12 +657,15 @@ export default function AngelCareConnect({
   }
 
   function clampWidgetPosition(position: WidgetPosition, width: number, height: number): WidgetPosition {
-    const margin = 12
-    const maxX = Math.max(margin, window.innerWidth - Math.min(width, window.innerWidth - margin * 2) - margin)
-    const maxY = Math.max(margin, window.innerHeight - Math.min(height, window.innerHeight - margin * 2) - margin)
+    const margin = CONNECT_WIDGET_MARGIN
+    const topGuard = CONNECT_WIDGET_TOP_GUARD
+    const availableWidth = Math.max(0, window.innerWidth - margin * 2)
+    const availableHeight = Math.max(0, window.innerHeight - topGuard - margin)
+    const maxX = Math.max(margin, window.innerWidth - Math.min(width, availableWidth) - margin)
+    const maxY = Math.max(topGuard, window.innerHeight - Math.min(height, availableHeight) - margin)
     return {
       x: Math.min(Math.max(margin, position.x), maxX),
-      y: Math.min(Math.max(margin, position.y), maxY),
+      y: Math.min(Math.max(topGuard, position.y), maxY),
     }
   }
 
@@ -679,16 +708,17 @@ export default function AngelCareConnect({
       : event.currentTarget.closest("[data-connect-shell]") as HTMLElement | null
     if (!element) return
     const rect = element.getBoundingClientRect()
+    const next = clampWidgetPosition({ x: rect.left, y: rect.top }, rect.width, rect.height)
     dragRef.current = {
       startX: event.clientX,
       startY: event.clientY,
-      originX: rect.left,
-      originY: rect.top,
+      originX: next.x,
+      originY: next.y,
       width: rect.width,
       height: rect.height,
       moved: false,
     }
-    setWidgetPosition({ x: rect.left, y: rect.top })
+    setWidgetPosition(next)
     window.addEventListener("pointermove", handleWidgetPointerMove)
     window.addEventListener("pointerup", handleWidgetPointerUp)
   }
@@ -1223,7 +1253,10 @@ export default function AngelCareConnect({
 
   if (!open && floating) {
     const unreadConversation = conversations.find((conversation) => (conversation.unread_count || 0) > 0)
-    const minimizedStyle = widgetPosition ? { left: widgetPosition.x, top: widgetPosition.y, right: "auto", bottom: "auto" } : undefined
+    const minimizedTop = widgetPosition ? Math.max(widgetPosition.y, CONNECT_WIDGET_TOP_GUARD) : undefined
+    const minimizedStyle = widgetPosition
+      ? { left: widgetPosition.x, top: minimizedTop, right: "auto", bottom: "auto", zIndex: CONNECT_WIDGET_Z_INDEX }
+      : { zIndex: CONNECT_WIDGET_Z_INDEX }
     return (
       <button
         type="button"
@@ -1236,7 +1269,7 @@ export default function AngelCareConnect({
         }}
         style={minimizedStyle}
         className={cx(
-          "fixed bottom-6 right-6 z-[70] flex touch-none items-center gap-3 rounded-[26px] border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-2xl shadow-slate-900/20 transition hover:-translate-y-1 hover:shadow-slate-900/30",
+          "fixed bottom-6 right-6 z-[80] flex touch-none items-center gap-3 rounded-[26px] border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-2xl shadow-slate-900/20 transition hover:-translate-y-1 hover:shadow-slate-900/30",
           (incomingCall || callSignal) && "animate-pulse border-violet-300 ring-4 ring-violet-500/15",
           missedCallCount > 0 && "ring-4 ring-rose-500/15"
         )}
@@ -1266,9 +1299,27 @@ export default function AngelCareConnect({
   const shellClass = embedded && !forceFloating
     ? "relative flex h-[calc(100vh-120px)] min-h-[720px] w-full overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl shadow-slate-200/70"
     : panelSize === "narrow"
-      ? "fixed bottom-5 right-5 z-[70] flex h-[min(760px,calc(100vh-40px))] w-[min(860px,calc(100vw-40px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
-      : "fixed bottom-5 right-5 z-[70] flex h-[min(860px,calc(100vh-40px))] w-[min(1440px,calc(100vw-40px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
-  const shellStyle = floating && widgetPosition ? { left: widgetPosition.x, top: widgetPosition.y, right: "auto", bottom: "auto" } : undefined
+      ? "fixed bottom-4 right-4 z-[80] flex h-[min(760px,calc(100vh-40px))] w-[min(860px,calc(100vw-32px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
+      : "fixed bottom-4 right-4 z-[80] flex h-[min(860px,calc(100vh-40px))] w-[min(1440px,calc(100vw-32px))] overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/25"
+  const shellTop = widgetPosition ? Math.max(widgetPosition.y, CONNECT_WIDGET_TOP_GUARD) : undefined
+  const shellMaxHeightTop = shellTop ?? CONNECT_WIDGET_TOP_GUARD
+  const shellStyle = floating
+    ? widgetPosition
+      ? {
+          left: widgetPosition.x,
+          top: shellTop,
+          right: "auto",
+          bottom: "auto",
+          maxHeight: `calc(100vh - ${shellMaxHeightTop}px - ${CONNECT_WIDGET_MARGIN}px)`,
+          zIndex: CONNECT_WIDGET_Z_INDEX,
+        }
+      : {
+          right: CONNECT_WIDGET_MARGIN,
+          bottom: CONNECT_WIDGET_MARGIN,
+          maxHeight: `calc(100vh - ${CONNECT_WIDGET_TOP_GUARD}px - ${CONNECT_WIDGET_MARGIN}px)`,
+          zIndex: CONNECT_WIDGET_Z_INDEX,
+        }
+    : undefined
 
   const sidebarWidth = panelSize === "narrow" ? "w-[292px]" : "w-[310px]"
   const showRightPanel = rightPanelOpen && panelSize === "expanded"

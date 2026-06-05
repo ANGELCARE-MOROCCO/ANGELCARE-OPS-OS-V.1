@@ -1,4 +1,4 @@
-import { revenueClient, ok, fail, cleanString, cleanNumber, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
+import { revenueClient, ok, fail, cleanString, cleanNumber, normalizeRevenueProspectPayload, ensureRevenueProspect, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
 
 export async function GET(request: Request) {
   const supabase = await revenueClient()
@@ -20,25 +20,33 @@ export async function POST(request: Request) {
   const supabase = await revenueClient()
   try {
     const body = await request.json()
-    const row = {
-      name: cleanString(body.name || body.company, "Unnamed prospect"),
-      company: cleanString(body.company || body.name, ""),
-      city: cleanString(body.city, "Unassigned"),
-      source: cleanString(body.source, "manual"),
-      segment: cleanString(body.segment, "b2b"),
-      stage: cleanString(body.stage, "new_lead"),
-      priority: cleanString(body.priority, "medium"),
-      score: cleanNumber(body.score, 0),
-      value_mad: cleanNumber(body.valueMad ?? body.value_mad ?? body.value, 0),
-      probability: cleanNumber(body.probability, 0),
-      owner: cleanString(body.owner, "BD Officer"),
-      contact_name: cleanString(body.contactName || body.contact_name, ""),
-      email: cleanString(body.email, ""),
-      phone: cleanString(body.phone, ""),
-      data: body,
-      metadata: body.metadata || {},
+    const explicitId = cleanString(body.id || body.prospectId || body.entityId, "")
+    let data: any = null
+    let error: any = null
+    if (explicitId) {
+      data = await ensureRevenueProspect(supabase, explicitId, body)
+    } else {
+      const row = normalizeRevenueProspectPayload(body)
+      const insertPayload: Record<string, unknown> = { ...row }
+      delete insertPayload.id
+      const inserted = await supabase.from("revenue_prospects").insert(insertPayload).select("*").single()
+      data = inserted.data
+      error = inserted.error
+      if (error && /column .* does not exist/i.test(error.message || "")) {
+        const minimalPayload: Record<string, unknown> = {
+          name: row.name,
+          city: row.city,
+          stage: row.stage,
+          priority: row.priority,
+          value_mad: row.value_mad,
+          score: row.score,
+          data: row.data,
+        }
+        const fallback = await supabase.from("revenue_prospects").insert(minimalPayload).select("*").single()
+        data = fallback.data
+        error = fallback.error
+      }
     }
-    const { data, error } = await supabase.from("revenue_prospects").insert(row).select("*").single()
     if (error) return fail(error)
     await logRevenueActivity(supabase, { entityType: "prospect", entityId: data.id, prospectId: data.id, eventType: "prospect_created", title: `Prospect created: ${data.name}`, metadata: { source: "canonical_api" } })
     await logRevenueAction(supabase, { actionType: "create_prospect", entityType: "prospect", entityId: data.id, payload: body, result: { id: data.id } })
