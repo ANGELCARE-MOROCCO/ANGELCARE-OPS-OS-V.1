@@ -182,6 +182,18 @@ function Shell({ children }: { children: React.ReactNode }) {
   )
 }
 
+
+function downloadPdf(url: string, filename: string) {
+  if (typeof document === 'undefined') return
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.rel = 'noopener noreferrer'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
+
 export default function AcademyProgramsClient({ initialDashboard }: Props) {
   const [dashboard, setDashboard] = useState(initialDashboard)
   const [query, setQuery] = useState('')
@@ -360,7 +372,7 @@ function ProgramModal({ modal, setModal, trainers, saving, saveProgram }: any) {
   }
 
   function printProgram() {
-    if (modal.id) window.open(`/api/academy/programs/${modal.id}/pdf`, '_blank', 'noopener,noreferrer')
+    if (modal.id) downloadPdf(`/api/academy/programs/${modal.id}/pdf`, `program-${modal.id}-technical-sheet.pdf`)
   }
 
   return (
