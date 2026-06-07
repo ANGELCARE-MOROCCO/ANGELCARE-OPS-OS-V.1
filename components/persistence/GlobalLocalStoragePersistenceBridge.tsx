@@ -45,13 +45,23 @@ function collectManagedLocalStorage() {
 }
 
 async function syncSnapshots(snapshots: { key: string; value: string; source: string; origin: string }[]) {
-  const response = await fetch("/api/persistence/local-storage", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ snapshots }),
-  })
-  if (!response.ok) throw new Error(`Persistence sync failed: ${response.status}`)
-  return response.json() as Promise<{ ok: boolean; snapshots?: { key: string; value: string; updatedAt?: string }[] }>
+  try {
+    const response = await fetch("/api/persistence/local-storage", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ snapshots }),
+    })
+
+    if (!response.ok) {
+      console.warn(`Persistence sync skipped: ${response.status}`)
+      return { ok: false, snapshots: [] } as { ok: boolean; snapshots?: { key: string; value: string; updatedAt?: string }[] }
+    }
+
+    return response.json() as Promise<{ ok: boolean; snapshots?: { key: string; value: string; updatedAt?: string }[] }>
+  } catch (error) {
+    console.warn("Persistence sync unavailable", error)
+    return { ok: false, snapshots: [] } as { ok: boolean; snapshots?: { key: string; value: string; updatedAt?: string }[] }
+  }
 }
 
 export default function GlobalLocalStoragePersistenceBridge() {

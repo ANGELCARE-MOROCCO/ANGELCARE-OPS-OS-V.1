@@ -1,0 +1,652 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+
+type Dict = Record<string, any>
+type Trainer = {
+  id: string | number
+  reference_number?: string
+  trainer_code?: string
+  full_name?: string
+  name?: string
+  email?: string
+  mobile?: string
+  professional_title?: string
+  gender?: string
+  city?: string
+  base_location?: string
+  languages?: string[] | string
+  bio?: string
+  employment_type?: string
+  status?: string
+  seniority_level?: string
+  main_specialty?: string
+  specialty?: string
+  secondary_specialties?: string[] | string
+  readiness_score?: number
+  dispatch_score?: number
+  utilization_percent?: number
+  weekly_capacity?: number
+  current_load?: number
+  session_rating?: number
+  completion_rate?: number
+  punctuality_score?: number
+  incident_count?: number
+  docs_verified?: number
+  docs_required?: number
+  certifications?: Dict[]
+  documents?: Dict[]
+  assignments?: Assignment[]
+  availability?: Dict
+  compensation?: Dict
+  created_at?: string
+  updated_at?: string
+}
+
+type Assignment = {
+  id?: string | number
+  title?: string
+  program_title?: string
+  cohort_title?: string
+  cohort_reference?: string
+  trainer_id?: string | number
+  trainer_name?: string
+  start_time?: string
+  end_time?: string
+  start_at?: string
+  end_at?: string
+  start_date?: string
+  end_date?: string
+  date?: string
+  location?: string
+  delivery_format?: string
+  status?: string
+  priority?: string
+  type?: string
+}
+
+type ViewMode = 'day' | 'week' | 'month'
+type ModalMode = 'create' | 'view' | 'edit'
+
+const API_TRAINERS = '/api/academy/trainers'
+const API_ASSIGNMENTS = '/api/academy/trainer-assignments'
+
+const sidebar = [
+  ['⌂', 'Command Center', '/academy'],
+  ['👥', 'Trainees', '/academy/trainees'],
+  ['▣', 'Enrollments', '/academy/enrollments'],
+  ['◴', 'Attendance', '/academy/attendance'],
+  ['▰', 'Payments', '/academy/payments'],
+  ['♢', 'Certificates', '/academy/certificates'],
+  ['♟', 'Trainers', '/academy/trainers'],
+  ['▤', 'Programs', '/academy/programs'],
+  ['✦', 'Job Placement', '/academy/job-placement'],
+  ['♡', 'Partners & Employers', '/academy/partners-employers'],
+  ['◂', 'Announcements', '/academy/announcements'],
+  ['▥', 'Reports & Analytics', '/academy/reports'],
+  ['◇', 'Integrations', '/academy/integrations'],
+  ['⚙', 'Automation', '/academy/automation'],
+  ['⚙', 'Settings', '/academy/settings'],
+]
+
+const palette = ['#6d5dfc', '#2f80ed', '#16a34a', '#f59e0b', '#ef4444', '#14b8a6', '#8b5cf6']
+
+function textOf(value: any, fallback = '—') {
+  if (value === null || value === undefined || String(value).trim() === '') return fallback
+  return String(value)
+}
+
+function nameOf(trainer: Trainer) {
+  return textOf(trainer.full_name || trainer.name, 'Unnamed Trainer')
+}
+
+function initials(value: string) {
+  return value.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'TR'
+}
+
+function asArray<T = any>(value: any): T[] {
+  if (!value) return []
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string') return value.split(',').map((item) => item.trim()).filter(Boolean) as T[]
+  return []
+}
+
+function toNumber(value: any, fallback = 0) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
+function pct(value: any) {
+  return Math.max(0, Math.min(100, Math.round(toNumber(value, 0))))
+}
+
+function dateKey(date: Date) {
+  return date.toISOString().slice(0, 10)
+}
+
+function parseDate(value?: string) {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function startOfWeek(date: Date) {
+  const copy = new Date(date)
+  const day = copy.getDay() || 7
+  copy.setDate(copy.getDate() - day + 1)
+  copy.setHours(0, 0, 0, 0)
+  return copy
+}
+
+function addDays(date: Date, days: number) {
+  const copy = new Date(date)
+  copy.setDate(copy.getDate() + days)
+  return copy
+}
+
+function formatTime(value?: string) {
+  const date = parseDate(value)
+  if (!date) return '—'
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+function formatDay(value?: string) {
+  const date = parseDate(value)
+  if (!date) return '—'
+  return date.toLocaleDateString([], { month: 'short', day: '2-digit' })
+}
+
+function normalizePayload(raw: any): { trainers: Trainer[]; assignments: Assignment[] } {
+  const trainers = raw?.trainers || raw?.data || raw?.items || raw?.records || []
+  const assignments = raw?.assignments || raw?.sessions || raw?.dispatches || []
+  return { trainers: Array.isArray(trainers) ? trainers : [], assignments: Array.isArray(assignments) ? assignments : [] }
+}
+
+function assignmentStart(item: Assignment) {
+  return item.start_time || item.start_at || item.start_date || item.date
+}
+
+function assignmentEnd(item: Assignment) {
+  return item.end_time || item.end_at || item.end_date || item.start_time || item.date
+}
+
+function assignmentTitle(item: Assignment) {
+  return textOf(item.title || item.program_title || item.cohort_title, 'Training Session')
+}
+
+function belongsToTrainer(item: Assignment, trainer: Trainer) {
+  return String(item.trainer_id || '') === String(trainer.id) || textOf(item.trainer_name, '') === nameOf(trainer)
+}
+
+function calcLoad(trainer: Trainer) {
+  const explicit = trainer.utilization_percent ?? trainer.current_load
+  return pct(explicit)
+}
+
+function isAvailable(trainer: Trainer) {
+  const status = textOf(trainer.status, '').toLowerCase()
+  return status.includes('available') || status.includes('active') || status.includes('ready')
+}
+
+function statusTone(trainer: Trainer) {
+  const load = calcLoad(trainer)
+  const status = textOf(trainer.status, '').toLowerCase()
+  if (status.includes('leave') || status.includes('unavailable') || status.includes('inactive')) return 'danger'
+  if (load >= 90) return 'danger'
+  if (load >= 75) return 'warn'
+  if (isAvailable(trainer)) return 'success'
+  return 'neutral'
+}
+
+function buildExportRows(trainers: Trainer[]) {
+  const header = ['Name', 'Email', 'Mobile', 'Status', 'Specialty', 'Readiness', 'Utilization', 'Dispatch Score']
+  const rows = trainers.map((t) => [
+    nameOf(t), textOf(t.email, ''), textOf(t.mobile, ''), textOf(t.status, ''), textOf(t.main_specialty || t.specialty, ''),
+    String(pct(t.readiness_score)), String(calcLoad(t)), String(toNumber(t.dispatch_score, 0)),
+  ])
+  return [header, ...rows].map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\n')
+}
+
+const emptyTrainer: Partial<Trainer> = {
+  full_name: '',
+  email: '',
+  mobile: '',
+  professional_title: 'Registered Trainer',
+  gender: '',
+  city: '',
+  languages: [],
+  bio: '',
+  employment_type: 'internal',
+  status: 'available',
+  seniority_level: 'senior',
+  main_specialty: 'General Training',
+  secondary_specialties: ['Soft Skills', 'Leadership', 'Communication'],
+  readiness_score: 0,
+  dispatch_score: 0,
+  utilization_percent: 0,
+  weekly_capacity: 40,
+  docs_verified: 0,
+  docs_required: 5,
+}
+
+export default function AcademyTrainersClient() {
+  const [trainers, setTrainers] = useState<Trainer[]>([])
+  const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [query, setQuery] = useState('')
+  const [availabilityFilter, setAvailabilityFilter] = useState('all')
+  const [specialtyFilter, setSpecialtyFilter] = useState('all')
+  const [loadFilter, setLoadFilter] = useState('all')
+  const [viewMode, setViewMode] = useState<ViewMode>('day')
+  const [focusDate, setFocusDate] = useState(() => new Date())
+  const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null)
+  const [modalMode, setModalMode] = useState<ModalMode | null>(null)
+  const [draft, setDraft] = useState<Partial<Trainer>>(emptyTrainer)
+  const [activeStep, setActiveStep] = useState(1)
+  const [selectedWorkload, setSelectedWorkload] = useState<Trainer | null>(null)
+
+  async function load() {
+    setLoading(true)
+    try {
+      const [trainerRes, assignmentRes] = await Promise.all([
+        fetch(API_TRAINERS, { cache: 'no-store' }),
+        fetch(API_ASSIGNMENTS, { cache: 'no-store' }).catch(() => null),
+      ])
+      const trainerJson = await trainerRes.json().catch(() => ({}))
+      const assignmentJson = assignmentRes ? await assignmentRes.json().catch(() => ({})) : {}
+      const normalized = normalizePayload(trainerJson)
+      setTrainers(normalized.trainers)
+      setAssignments([...(normalized.assignments || []), ...asArray<Assignment>(assignmentJson.assignments || assignmentJson.data || assignmentJson.items)])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { load() }, [])
+
+  const todayKey = dateKey(focusDate)
+  const weekStart = useMemo(() => startOfWeek(focusDate), [focusDate])
+  const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart])
+  const monthDays = useMemo(() => {
+    const first = new Date(focusDate.getFullYear(), focusDate.getMonth(), 1)
+    const total = new Date(focusDate.getFullYear(), focusDate.getMonth() + 1, 0).getDate()
+    return Array.from({ length: total }, (_, index) => new Date(focusDate.getFullYear(), focusDate.getMonth(), index + 1))
+  }, [focusDate])
+
+  const filteredTrainers = useMemo(() => {
+    const search = query.toLowerCase().trim()
+    return trainers.filter((trainer) => {
+      const haystack = [nameOf(trainer), trainer.email, trainer.mobile, trainer.city, trainer.main_specialty, trainer.specialty, asArray(trainer.languages).join(' '), asArray(trainer.secondary_specialties).join(' ')].join(' ').toLowerCase()
+      if (search && !haystack.includes(search)) return false
+      if (availabilityFilter !== 'all') {
+        const available = isAvailable(trainer)
+        if (availabilityFilter === 'available' && !available) return false
+        if (availabilityFilter === 'busy' && available) return false
+      }
+      if (specialtyFilter !== 'all' && textOf(trainer.main_specialty || trainer.specialty, '').toLowerCase() !== specialtyFilter) return false
+      if (loadFilter !== 'all') {
+        const load = calcLoad(trainer)
+        if (loadFilter === 'high' && load < 75) return false
+        if (loadFilter === 'normal' && (load < 35 || load >= 75)) return false
+        if (loadFilter === 'low' && load >= 35) return false
+      }
+      return true
+    })
+  }, [trainers, query, availabilityFilter, specialtyFilter, loadFilter])
+
+  const specialties = useMemo(() => Array.from(new Set(trainers.map((t) => textOf(t.main_specialty || t.specialty, 'General Training')).filter(Boolean))), [trainers])
+
+  const todayAssignments = useMemo(() => assignments.filter((assignment) => {
+    const start = parseDate(assignmentStart(assignment))
+    return start && dateKey(start) === todayKey
+  }), [assignments, todayKey])
+
+  const upcomingAssignments = useMemo(() => assignments
+    .filter((assignment) => {
+      const start = parseDate(assignmentStart(assignment))
+      return start && start >= new Date(new Date().setHours(0, 0, 0, 0))
+    })
+    .sort((a, b) => Number(parseDate(assignmentStart(a))) - Number(parseDate(assignmentStart(b))))
+    .slice(0, 8), [assignments])
+
+  const stats = useMemo(() => {
+    const active = trainers.filter((t) => !textOf(t.status, '').toLowerCase().includes('inactive')).length
+    const available = trainers.filter(isAvailable).length
+    const assignedToday = new Set(todayAssignments.map((a) => String(a.trainer_id || a.trainer_name || ''))).size
+    const upcoming = upcomingAssignments.length
+    const coverageRate = upcoming ? Math.round((upcoming / Math.max(1, upcoming + Math.max(0, available - assignedToday))) * 100) : 0
+    const avgLoad = trainers.length ? Math.round(trainers.reduce((sum, t) => sum + calcLoad(t), 0) / trainers.length) : 0
+    const gaps = Math.max(0, upcomingAssignments.filter((a) => !a.trainer_id && !a.trainer_name).length + trainers.filter((t) => calcLoad(t) >= 90).length)
+    return { active, available, assignedToday, upcoming, coverageRate, avgLoad, gaps }
+  }, [trainers, todayAssignments, upcomingAssignments])
+
+  const alerts = useMemo(() => {
+    const list: { title: string; detail: string; severity: 'high' | 'medium' | 'low' }[] = []
+    trainers.filter((t) => calcLoad(t) >= 90).slice(0, 3).forEach((t) => list.push({ title: `${nameOf(t)} workload above 90%`, detail: 'Review assignments and rebalance load.', severity: 'high' }))
+    upcomingAssignments.filter((a) => !a.trainer_id && !a.trainer_name).slice(0, 3).forEach((a) => list.push({ title: `${assignmentTitle(a)} needs trainer coverage`, detail: `${formatDay(assignmentStart(a))} · ${formatTime(assignmentStart(a))}`, severity: 'high' }))
+    trainers.filter((t) => pct(t.readiness_score) < 40).slice(0, 3).forEach((t) => list.push({ title: `${nameOf(t)} readiness incomplete`, detail: 'Profile, documents or compliance need review.', severity: 'medium' }))
+    return list.slice(0, 6)
+  }, [trainers, upcomingAssignments])
+
+  function openCreate() {
+    setDraft({ ...emptyTrainer, reference_number: `TRN-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 89999)}` })
+    setSelectedTrainer(null)
+    setModalMode('create')
+    setActiveStep(1)
+  }
+
+  function openTrainer(trainer: Trainer, mode: ModalMode = 'view') {
+    setSelectedTrainer(trainer)
+    setDraft({ ...trainer })
+    setModalMode(mode)
+    setActiveStep(1)
+  }
+
+  function closeModal() {
+    setModalMode(null)
+    setSelectedTrainer(null)
+    setDraft(emptyTrainer)
+  }
+
+  function changeDraft(key: string, value: any) {
+    setDraft((current) => ({ ...current, [key]: value }))
+  }
+
+  async function saveTrainer(asDraft = false) {
+    setSaving(true)
+    try {
+      const payload = { ...draft, save_as_draft: asDraft, status: asDraft ? 'draft' : draft.status || 'available' }
+      const isEdit = modalMode === 'edit' && selectedTrainer?.id
+      const url = isEdit ? `${API_TRAINERS}/${selectedTrainer.id}` : API_TRAINERS
+      const res = await fetch(url, {
+        method: isEdit ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok || json.ok === false) throw new Error(json.error || 'Unable to save trainer')
+      await load()
+      const record = json.data || json.trainer || json.record
+      if (record) openTrainer(record, 'view')
+      else closeModal()
+    } catch (error: any) {
+      alert(error?.message || 'Unable to save trainer')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function assignTrainer(trainer: Trainer) {
+    const title = prompt(`Assignment title for ${nameOf(trainer)}`)
+    if (!title) return
+    const start = prompt('Start date/time ISO or YYYY-MM-DD HH:mm', `${dateKey(new Date())} 09:00`)
+    if (!start) return
+    const end = prompt('End date/time ISO or YYYY-MM-DD HH:mm', `${dateKey(new Date())} 12:00`)
+    try {
+      const res = await fetch(API_ASSIGNMENTS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ trainer_id: trainer.id, trainer_name: nameOf(trainer), title, start_time: start, end_time: end, status: 'assigned' }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok || json.ok === false) throw new Error(json.error || 'Assignment failed')
+      await load()
+    } catch (error: any) {
+      alert(error?.message || 'Assignment failed')
+    }
+  }
+
+  function exportCsv() {
+    const blob = new Blob([buildExportRows(filteredTrainers)], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `academy-trainers-${dateKey(new Date())}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  return (
+    <div className="trainerShell">
+      <AcademySidebar />
+      <main className="trainerMain">
+        <section className="trainerHeader">
+          <div>
+            <div className="breadcrumbs">Home › Trainers › Dispatch</div>
+            <h1>Trainers Dispatch & Management</h1>
+            <p>Real-time command center for trainer operations, availability, load balancing and live assignments.</p>
+          </div>
+          <div className="headerActions">
+            <div className="searchBox">⌕<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search trainers, skills, programs..." /></div>
+            <button className="ghost" onClick={() => setViewMode('day')}>Dispatch Board</button>
+            <button className="primary" onClick={openCreate}>＋ Add Trainer</button>
+            <button className="ghost" onClick={exportCsv}>Export</button>
+          </div>
+        </section>
+
+        <section className="kpiGrid">
+          <Kpi icon="♙" title="Active Trainers" value={stats.active} hint={`${trainers.length} live registry`} tone="blue" />
+          <Kpi icon="⊙" title="Assigned Today" value={stats.assignedToday} hint="sessions planned" tone="purple" />
+          <Kpi icon="♧" title="Upcoming Sessions" value={stats.upcoming} hint="next 7 days" tone="teal" />
+          <Kpi icon="◎" title="Coverage Rate" value={`${stats.coverageRate}%`} hint="covered assignments" tone="orange" />
+          <Kpi icon="▣" title="Average Load" value={`${stats.avgLoad}%`} hint="capacity used" tone="green" />
+        </section>
+
+        <section className="filtersBar">
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search trainers by name, skill, city, email..." />
+          <select value={availabilityFilter} onChange={(event) => setAvailabilityFilter(event.target.value)}><option value="all">Availability · All</option><option value="available">Available</option><option value="busy">Busy / Not Available</option></select>
+          <select value={specialtyFilter} onChange={(event) => setSpecialtyFilter(event.target.value)}><option value="all">Specialty · All</option>{specialties.map((specialty) => <option key={specialty} value={specialty.toLowerCase()}>{specialty}</option>)}</select>
+          <select value={loadFilter} onChange={(event) => setLoadFilter(event.target.value)}><option value="all">Load · All</option><option value="high">High Load</option><option value="normal">Normal Load</option><option value="low">Low Load</option></select>
+          <button onClick={load}>Refresh</button>
+        </section>
+
+        <section className="dispatchLayout">
+          <aside className="leftRail">
+            <StatusOverview trainers={trainers} />
+            <WorkloadPanel trainers={filteredTrainers} onOpen={(trainer) => { setSelectedWorkload(trainer); openTrainer(trainer, 'view') }} />
+          </aside>
+
+          <section className="centerBoard">
+            <div className="boardTop">
+              <div><h2>Live Training Schedule</h2><p>{viewMode === 'day' ? 'Training-based daily dispatch · 08:00 → 21:00' : viewMode === 'week' ? 'Weekly training coverage cards by date' : 'Monthly training coverage map'}</p></div>
+              <div className="viewControls">
+                <button className={viewMode === 'day' ? 'active' : ''} onClick={() => setViewMode('day')}>Day</button>
+                <button className={viewMode === 'week' ? 'active' : ''} onClick={() => setViewMode('week')}>Week</button>
+                <button className={viewMode === 'month' ? 'active' : ''} onClick={() => setViewMode('month')}>Month</button>
+                <button onClick={() => setFocusDate(new Date())}>Today</button>
+                <button onClick={() => setFocusDate(addDays(focusDate, viewMode === 'month' ? -30 : viewMode === 'week' ? -7 : -1))}>‹</button>
+                <button onClick={() => setFocusDate(addDays(focusDate, viewMode === 'month' ? 30 : viewMode === 'week' ? 7 : 1))}>›</button>
+              </div>
+            </div>
+            {viewMode === 'day' && <DaySchedule trainers={filteredTrainers.slice(0, 6)} assignments={assignments} focusDate={focusDate} onAssign={assignTrainer} />}
+            {viewMode === 'week' && <WeekSchedule days={weekDays} assignments={assignments} trainers={filteredTrainers} />}
+            {viewMode === 'month' && <MonthSchedule days={monthDays} assignments={assignments} />}
+          </section>
+
+          <aside className="rightRail">
+            <UpcomingPanel assignments={upcomingAssignments} />
+            <AlertsPanel alerts={alerts} />
+            <AvailabilityPanel trainers={filteredTrainers} />
+          </aside>
+        </section>
+      </main>
+
+      {modalMode && (
+        <TrainerDossierModal
+          mode={modalMode}
+          draft={draft}
+          trainer={selectedTrainer}
+          activeStep={activeStep}
+          saving={saving}
+          onStep={setActiveStep}
+          onChange={changeDraft}
+          onClose={closeModal}
+          onEdit={() => setModalMode('edit')}
+          onSave={saveTrainer}
+        />
+      )}
+
+      <style jsx global>{css}</style>
+    </div>
+  )
+}
+
+function AcademySidebar() {
+  return (
+    <aside className="academySidebar">
+      <div className="academyBrand"><div className="brandLogo">A</div><div><strong>AngelCare</strong><span>ACADEMY OS</span></div></div>
+      <div className="sidebarSection">ACADEMY</div>
+      <nav>{sidebar.map(([icon, label, href]) => <a key={label} className={label === 'Trainers' ? 'active' : ''} href={href}><span>{icon}</span>{label}</a>)}</nav>
+      <div className="sidebarUser"><div className="userAvatar">SU</div><div><strong>System User</strong><span>Academy Admin</span></div></div>
+    </aside>
+  )
+}
+
+function Kpi({ icon, title, value, hint, tone }: { icon: string; title: string; value: any; hint: string; tone: string }) {
+  return <article className={`kpi ${tone}`}><div className="kpiIcon">{icon}</div><div><span>{title}</span><strong>{value}</strong><small>{hint}</small></div><Spark /></article>
+}
+function Spark() { return <svg className="spark" viewBox="0 0 100 30"><path d="M2 22 L12 20 L20 23 L30 13 L40 16 L52 7 L62 15 L73 10 L84 17 L98 8" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg> }
+function StatusOverview({ trainers }: { trainers: Trainer[] }) {
+  const total = trainers.length
+  const available = trainers.filter(isAvailable).length
+  const overloaded = trainers.filter((t) => calcLoad(t) >= 90).length
+  const highLoad = trainers.filter((t) => calcLoad(t) >= 70 && calcLoad(t) < 90).length
+  const unavailable = trainers.filter((t) => !isAvailable(t)).length
+  const avgLoad = total ? Math.round(trainers.reduce((sum, t) => sum + calcLoad(t), 0) / total) : 0
+  const avgReadiness = total ? Math.round(trainers.reduce((sum, t) => sum + pct(t.readiness_score), 0) / total) : 0
+  const docsRisk = trainers.filter((t) => toNumber(t.docs_verified, 0) < toNumber(t.docs_required, 5)).length
+  const availableDeg = total ? Math.round((available / total) * 360) : 0
+  const highDeg = total ? availableDeg + Math.round((highLoad / total) * 360) : 0
+  const overloadDeg = total ? highDeg + Math.round((overloaded / total) * 360) : 0
+  return (
+    <section className="panel statusPanel upgradedStatus">
+      <div className="panelHead"><h3>Trainer Status Overview</h3><button>Live</button></div>
+      <div className="statusHero">
+        <div
+          className="donut premiumDonut"
+          style={{ background: `conic-gradient(#22c55e 0 ${availableDeg}deg, #f59e0b ${availableDeg}deg ${highDeg}deg, #ef4444 ${highDeg}deg ${overloadDeg}deg, #e5e7eb ${overloadDeg}deg 360deg)` }}
+        >
+          <strong>{total}</strong><span>trainers</span>
+        </div>
+        <div className="statusStack">
+          <StatusMini label="Available" value={available} tone="green" />
+          <StatusMini label="High Load" value={highLoad} tone="amber" />
+          <StatusMini label="Overloaded" value={overloaded} tone="red" />
+          <StatusMini label="Unavailable" value={unavailable} tone="gray" />
+        </div>
+      </div>
+      <div className="statusTiles">
+        <div><span>Average readiness</span><strong>{avgReadiness}%</strong><i style={{ width: `${avgReadiness}%` }} /></div>
+        <div><span>Average workload</span><strong>{avgLoad}%</strong><i style={{ width: `${avgLoad}%` }} /></div>
+        <div><span>Document risk</span><strong>{docsRisk}</strong><i style={{ width: `${Math.min(100, docsRisk * 18)}%` }} /></div>
+      </div>
+    </section>
+  )
+}
+function StatusMini({ label, value, tone }: { label: string; value: any; tone: string }) { return <div className={`statusMini ${tone}`}><b>{value}</b><span>{label}</span></div> }
+function Legend({ label, value, color }: { label: string; value: any; color: string }) { return <div className="legendRow"><span><i style={{ background: color }} />{label}</span><strong>{value}</strong></div> }
+function WorkloadPanel({ trainers, onOpen }: { trainers: Trainer[]; onOpen: (t: Trainer) => void }) {
+  return (
+    <section className="panel workloadPanel upgradedWorkload">
+      <div className="panelHead"><h3>Trainer Workload Overview</h3><button>Operational</button></div>
+      <div className="workloadCards">
+        {trainers.slice(0, 7).map((trainer) => {
+          const load = calcLoad(trainer)
+          const tone = load >= 90 ? 'danger' : load >= 70 ? 'warn' : load >= 35 ? 'normal' : 'light'
+          return (
+            <button key={trainer.id} className={`workloadCard ${tone}`} onClick={() => onOpen(trainer)}>
+              <span className="workloadAvatar">{initials(nameOf(trainer))}</span>
+              <main><strong>{nameOf(trainer)}</strong><small>{textOf(trainer.main_specialty || trainer.specialty, 'General Training')}</small><div className="bar"><i style={{ width: `${load}%` }} /></div></main>
+              <aside><b>{load}%</b><em>{load >= 90 ? 'Critical' : load >= 70 ? 'High' : load >= 35 ? 'Normal' : 'Low'}</em></aside>
+            </button>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+function DaySchedule({ trainers, assignments, focusDate, onAssign }: { trainers: Trainer[]; assignments: Assignment[]; focusDate: Date; onAssign: (trainer: Trainer) => void }) {
+  const hours = Array.from({ length: 14 }, (_, i) => 8 + i)
+  const dayAssignments = assignments
+    .filter((assignment) => {
+      const start = parseDate(assignmentStart(assignment))
+      return start && dateKey(start) === dateKey(focusDate)
+    })
+    .sort((a, b) => Number(parseDate(assignmentStart(a))) - Number(parseDate(assignmentStart(b))))
+  const availableTrainers = trainers.filter(isAvailable).sort((a, b) => calcLoad(a) - calcLoad(b))
+  function assignedTrainer(item: Assignment) {
+    return trainers.find((trainer) => belongsToTrainer(item, trainer)) || null
+  }
+  function itemsForHour(hour: number) {
+    return dayAssignments.filter((item) => parseDate(assignmentStart(item))?.getHours() === hour)
+  }
+  return (
+    <div className="scheduleTimeline">
+      <div className="scheduleDateBar">
+        <strong>{focusDate.toLocaleDateString([], { weekday: 'long', month: 'long', day: '2-digit', year: 'numeric' })}</strong>
+        <span>Operational hours 08:00 → 21:00 · training cards grouped by scheduled start time · trainers attached inside each training</span>
+      </div>
+      {hours.map((hour) => {
+        const items = itemsForHour(hour)
+        return (
+          <div className="scheduleHourRow" key={hour}>
+            <div className="hourRail"><strong>{String(hour).padStart(2, '0')}:00</strong><span>{hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : 'Evening'}</span></div>
+            <div className="scheduleSessionStack">
+              {items.length ? items.map((item, index) => {
+                const trainer = assignedTrainer(item)
+                const fallbackTrainer = availableTrainers[index % Math.max(1, availableTrainers.length)]
+                return (
+                  <article className="trainingSlotCard" key={item.id || `${hour}-${index}`}>
+                    <div className="trainingAccent" style={{ background: palette[index % palette.length] }} />
+                    <main>
+                      <div className="trainingMeta"><span>{formatTime(assignmentStart(item))} – {formatTime(assignmentEnd(item))}</span><em>{textOf(item.delivery_format || item.type, 'Training')}</em></div>
+                      <strong>{assignmentTitle(item)}</strong>
+                      <small>{textOf(item.cohort_reference || item.location, 'Academy schedule')}</small>
+                    </main>
+                    {trainer ? (
+                      <button className="trainerDispatchCard assigned" onClick={() => onAssign(trainer)}>
+                        <span>{initials(nameOf(trainer))}</span><div><b>{nameOf(trainer)}</b><small>{calcLoad(trainer)}% load · {textOf(trainer.status, 'available')}</small></div>
+                      </button>
+                    ) : fallbackTrainer ? (
+                      <button className="trainerDispatchCard open" onClick={() => onAssign(fallbackTrainer)}>
+                        <span>＋</span><div><b>Assign trainer</b><small>Suggested: {nameOf(fallbackTrainer)}</small></div>
+                      </button>
+                    ) : (
+                      <div className="trainerDispatchCard risk"><span>!</span><div><b>No trainer available</b><small>Coverage gap</small></div></div>
+                    )}
+                  </article>
+                )
+              }) : <div className="emptyScheduleSlot">No training scheduled in this hour</div>}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+function WeekSchedule({ days, assignments, trainers }: { days: Date[]; assignments: Assignment[]; trainers: Trainer[] }) {
+  return <div className="weekBoard upgradedWeekBoard">{days.map((day) => { const items = assignments.filter((a) => { const start = parseDate(assignmentStart(a)); return start && dateKey(start) === dateKey(day) }).sort((a,b)=>Number(parseDate(assignmentStart(a)))-Number(parseDate(assignmentStart(b)))); return <article key={dateKey(day)}><h4>{day.toLocaleDateString([], { weekday: 'short', month: 'short', day: '2-digit' })}</h4><span className="weekCount">{items.length} schedules</span>{items.length ? items.slice(0, 5).map((item, i) => { const trainer = trainers.find((t)=>belongsToTrainer(item,t)); return <div className="weekCard" key={item.id || i}><strong>{assignmentTitle(item)}</strong><span>{formatTime(assignmentStart(item))} · {trainer ? nameOf(trainer) : textOf(item.trainer_name, 'Unassigned')}</span></div> }) : <p>No training scheduled</p>}</article> })}</div>
+}
+function MonthSchedule({ days, assignments }: { days: Date[]; assignments: Assignment[] }) { return <div className="monthBoard upgradedMonthBoard">{days.map((day) => { const items = assignments.filter((a) => { const start = parseDate(assignmentStart(a)); return start && dateKey(start) === dateKey(day) }); return <div key={dateKey(day)} className={items.length ? 'has' : ''}><strong>{day.getDate()}</strong>{items.length ? <><span>{items.length} training</span><small>{assignmentTitle(items[0])}</small></> : null}</div> })}</div> }
+function UpcomingPanel({ assignments }: { assignments: Assignment[] }) { return <section className="panel upcoming"><h3>Upcoming Assignments</h3>{assignments.length ? assignments.slice(0, 4).map((a, i) => <article key={a.id || i}><div><strong>{formatDay(assignmentStart(a))}</strong><span>{formatTime(assignmentStart(a))}</span></div><main><b>{assignmentTitle(a)}</b><small>{textOf(a.trainer_name, 'Trainer needed')} · {textOf(a.cohort_reference || a.location, 'Academy')}</small></main><i /></article>) : <p className="empty">No upcoming assignments yet.</p>}</section> }
+function AlertsPanel({ alerts }: { alerts: { title: string; detail: string; severity: string }[] }) { return <section className="panel alerts"><h3>Alerts & Notifications</h3>{alerts.length ? alerts.map((alert, i) => <article key={i} className={alert.severity}><span>△</span><div><b>{alert.title}</b><small>{alert.detail}</small></div></article>) : <p className="empty">No live alerts.</p>}</section> }
+function AvailabilityPanel({ trainers }: { trainers: Trainer[] }) { return <section className="panel availability"><div className="panelHead"><h3>Trainer Availability</h3><button>View Calendar</button></div>{trainers.slice(0, 5).map((t) => <article key={t.id}><span>{initials(nameOf(t))}</span><strong>{nameOf(t)}</strong><em className={isAvailable(t) ? 'ok' : 'bad'}>{isAvailable(t) ? 'Available' : 'Unavailable'}</em><small>{calcLoad(t)}%</small></article>)}</section> }
+
+function TrainerDossierModal({ mode, draft, trainer, activeStep, saving, onStep, onChange, onClose, onEdit, onSave }: any) {
+  const readOnly = mode === 'view'
+  const name = textOf(draft.full_name || draft.name, mode === 'create' ? 'New Trainer' : 'Trainer')
+  const steps = ['Identity & Profile', 'Status & Classification', 'Certificates & Documents', 'Expertise & Delivery', 'Availability & Dispatch', 'Compensation & Terms', 'Performance & History', 'Admin & Controls']
+  return <div className="modalBackdrop"><section className="trainerModal"><header className="modalTop"><div className="modalTitle"><div className="modalIcon">♟</div><div><h2>{mode === 'create' ? 'Add New Trainer' : name}</h2><p>Create and configure a complete trainer dossier</p></div></div><div className="modalActions"><label>Reference #</label><input value={textOf(draft.reference_number || draft.trainer_code, `TRN-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 99999)).padStart(5, '0')}`)} onChange={(e) => onChange('reference_number', e.target.value)} disabled={readOnly} />{mode === 'view' ? <button className="primary" onClick={onEdit}>Edit</button> : <><button className="ghost" disabled={saving} onClick={() => onSave(true)}>Save Draft</button><button className="primary" disabled={saving} onClick={() => onSave(false)}>{mode === 'edit' ? 'Save Trainer' : 'Create Trainer'}</button></>}<button className="ghost" onClick={onClose}>Close</button></div></header><div className="modalBody"><aside className="modalSteps">{steps.map((step, index) => <button key={step} className={activeStep === index + 1 ? 'active' : ''} onClick={() => onStep(index + 1)}><span>{index + 1}</span><strong>{step}</strong><small>{index === 0 ? 'Personal information' : index === 1 ? 'Role and capabilities' : index === 2 ? 'Compliance uploads' : index === 3 ? 'Skills and programs' : index === 4 ? 'Schedule & assignment' : index === 5 ? 'Rates and commercial' : index === 6 ? 'Scores and activities' : 'Notes and approvals'}</small></button>)}</aside><main className="modalContent"><section className="modalCard identity"><h3>1 Identity & Profile</h3><div className="photoBox">Upload photo<small>JPG/PNG</small></div><Field label="Full Name" value={draft.full_name || draft.name} onChange={(v) => onChange('full_name', v)} disabled={readOnly} required /><Field label="Trainer Code" value={draft.trainer_code || draft.reference_number} onChange={(v) => onChange('trainer_code', v)} disabled={readOnly} required /><Field label="Professional Title" value={draft.professional_title} onChange={(v) => onChange('professional_title', v)} disabled={readOnly} /><Field label="Gender" value={draft.gender} onChange={(v) => onChange('gender', v)} disabled={readOnly} /><Field label="Mobile" value={draft.mobile} onChange={(v) => onChange('mobile', v)} disabled={readOnly} /><Field label="Email" value={draft.email} onChange={(v) => onChange('email', v)} disabled={readOnly} /><Field label="City / Base Location" value={draft.city || draft.base_location} onChange={(v) => onChange('city', v)} disabled={readOnly} /><Field label="Languages" value={asArray(draft.languages).join(', ')} onChange={(v) => onChange('languages', v.split(',').map((x) => x.trim()))} disabled={readOnly} /><label className="wide">Short Professional Bio<textarea value={textOf(draft.bio, '')} onChange={(e) => onChange('bio', e.target.value)} disabled={readOnly} /></label></section><section className="modalCard status"><h3>2 Professional Status & Classification</h3><Field label="Employment Type" value={draft.employment_type} onChange={(v) => onChange('employment_type', v)} disabled={readOnly} /><Field label="Status" value={draft.status} onChange={(v) => onChange('status', v)} disabled={readOnly} /><Field label="Seniority Level" value={draft.seniority_level} onChange={(v) => onChange('seniority_level', v)} disabled={readOnly} /><Field label="Main Specialty" value={draft.main_specialty || draft.specialty} onChange={(v) => onChange('main_specialty', v)} disabled={readOnly} /><Field label="Readiness %" value={draft.readiness_score} onChange={(v) => onChange('readiness_score', Number(v))} disabled={readOnly} /><Field label="Dispatch Score" value={draft.dispatch_score} onChange={(v) => onChange('dispatch_score', Number(v))} disabled={readOnly} /></section><section className="modalCard triple"><div><h3>3 Certifications</h3><p>No certifications yet</p></div><div><h3>Documents Uploads</h3><p>No documents yet</p></div><div><h3>Compliance Verification</h3>{['Medical Fitness', 'Background Check', 'ID Verification', 'Reference Check', 'Contract Signed'].map((item) => <p key={item}><span className="okDot" />{item}<b>Verified</b></p>)}</div></section><section className="modalCard expertise"><h3>4 Expertise & Delivery Capability</h3><div className="chips">{asArray(draft.secondary_specialties).concat(['Childcare', 'First Aid', 'Safety']).slice(0, 8).map((item: string) => <span key={item}>{item}</span>)}</div><Field label="Programs Qualified" value="12 Programs" disabled /><Field label="Max Hours / Day" value="6" disabled={readOnly} /><Field label="Regions Covered" value={draft.city || 'UAE, GCC'} disabled={readOnly} /><Field label="Delivery Formats" value="Onsite, Online, Hybrid" disabled={readOnly} /></section><section className="modalCard availabilityBlock"><h3>5 Availability & Dispatch Control</h3><div className="days">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => <button key={day}>✓<span>{day}</span></button>)}</div><Field label="Preferred Slots" value="09:00 - 17:00" disabled={readOnly} /><Field label="Current Load" value={`${calcLoad(draft as Trainer)}%`} disabled={readOnly} /><Field label="Weekly Capacity" value={draft.weekly_capacity || 40} onChange={(v) => onChange('weekly_capacity', Number(v))} disabled={readOnly} /></section><section className="modalCard compensation"><h3>6 Compensation & Commercial Terms</h3><Field label="Base Rate Type" value="Per Day" disabled={readOnly} /><Field label="Base Rate" value={(draft.compensation as any)?.base_rate || 0} disabled={readOnly} /><Field label="Hourly Rate" value={(draft.compensation as any)?.hourly_rate || 0} disabled={readOnly} /><Field label="Travel Fee" value={(draft.compensation as any)?.travel_fee || 0} disabled={readOnly} /><Field label="Accommodation" value="Provided" disabled={readOnly} /><Field label="Payment Method" value="Bank Transfer" disabled={readOnly} /></section><section className="modalCard performance"><h3>7 Performance, Quality History</h3>{[['Session Rating', toNumber(draft.session_rating, 0)], ['Completion Rate', `${pct(draft.completion_rate)}%`], ['Punctuality Score', `${pct(draft.punctuality_score)}%`], ['Incident Count', toNumber(draft.incident_count, 0)], ['Utilization', `${calcLoad(draft as Trainer)}%`]].map(([a, b]) => <div className="miniMetric" key={a}>{a}<strong>{b}</strong></div>)}</section><section className="modalCard admin"><h3>8 Administrative Notes & Internal Controls</h3><textarea value={textOf((draft as any).internal_notes, '')} onChange={(e) => onChange('internal_notes', e.target.value)} disabled={readOnly} placeholder="Internal remarks..." /><div className="finalChecks"><span>• Profile Complete</span><span>• Documents Verified</span><span>• Contract Signed</span><span>• Compliance Clear</span></div></section></main><aside className="summaryPreview"><h3>Trainer Summary Preview</h3><div className="bigAvatar">{initials(name)}</div><h2>{name}</h2><p>{textOf(draft.professional_title, 'Registered Trainer')}</p><span className="pill">{textOf(draft.status, 'available')}</span><div className="summaryStats"><div><b>{pct(draft.readiness_score)}%</b><span>Readiness</span></div><div><b>{toNumber(draft.dispatch_score, 0)}</b><span>Dispatch</span></div><div><b>{calcLoad(draft as Trainer)}%</b><span>Utilization</span></div><div><b>{toNumber(draft.docs_verified, 0)}/{toNumber(draft.docs_required, 5)}</b><span>Docs</span></div></div><h4>Assignments</h4><p className="empty">No assignments yet.</p></aside></div></section></div>
+}
+function Field({ label, value, onChange, disabled, required }: any) { return <label><span>{label}{required ? ' *' : ''}</span><input value={value ?? ''} onChange={(e) => onChange?.(e.target.value)} disabled={disabled} /></label> }
+
+const css = `
+.trainerShell{display:flex;min-height:calc(100vh - 84px);background:#f4f7fb;color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.academySidebar{width:248px;flex:0 0 248px;background:#fff;border-right:1px solid #e5e7eb;min-height:calc(100vh - 84px);padding:22px 18px;display:flex;flex-direction:column;gap:14px}.academyBrand{display:flex;align-items:center;gap:14px;margin-bottom:14px}.brandLogo{width:54px;height:54px;border-radius:18px;background:#2563eb;color:white;display:grid;place-items:center;font-size:28px;font-weight:900}.academyBrand strong{display:block;font-size:24px;letter-spacing:.02em}.academyBrand span{display:block;letter-spacing:.38em;font-weight:900;font-size:13px}.sidebarSection{font-size:12px;font-weight:900;letter-spacing:.22em;color:#94a3b8;margin:18px 0 6px}.academySidebar nav{display:grid;gap:3px}.academySidebar a{height:42px;display:flex;align-items:center;gap:13px;border-radius:12px;padding:0 13px;color:#111827;text-decoration:none;font-weight:760}.academySidebar a span{width:20px;text-align:center;color:#64748b}.academySidebar a.active{background:#eef4ff;color:#1d4ed8;border-right:3px solid #2563eb}.sidebarUser{margin-top:auto;display:flex;align-items:center;gap:10px;border:1px solid #e5e7eb;border-radius:16px;padding:12px;background:#fff}.userAvatar{width:38px;height:38px;border-radius:50%;background:#dbeafe;display:grid;place-items:center;font-weight:900}.sidebarUser strong{display:block}.sidebarUser span{font-size:12px;color:#64748b}.trainerMain{flex:1;min-width:0;padding:20px 22px 30px}.trainerHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}.breadcrumbs{font-size:12px;color:#64748b;font-weight:800;margin-bottom:6px}.trainerHeader h1{margin:0;font-size:28px;letter-spacing:-.04em}.trainerHeader p{margin:6px 0 0;color:#64748b;font-weight:650}.headerActions{display:flex;align-items:center;gap:10px}.searchBox{height:44px;width:360px;display:flex;align-items:center;gap:8px;border:1px solid #e5e7eb;background:#fff;border-radius:14px;padding:0 13px;box-shadow:0 10px 25px rgba(15,23,42,.05)}.searchBox input,.filtersBar input{border:0;outline:0;background:transparent;width:100%;font-size:14px}.primary,.ghost,.filtersBar button,.viewControls button{height:44px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;padding:0 16px;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(15,23,42,.04)}.primary{background:#2457e8;border-color:#2457e8;color:white;box-shadow:0 12px 28px rgba(37,99,235,.24)}.kpiGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:14px}.kpi{position:relative;min-height:116px;border:1px solid #e5e7eb;background:#fff;border-radius:18px;padding:20px 18px;display:flex;align-items:center;gap:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.06)}.kpiIcon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:21px}.kpi.blue .kpiIcon{background:#3b82f6}.kpi.purple .kpiIcon{background:#8b5cf6}.kpi.teal .kpiIcon{background:#14b8a6}.kpi.orange .kpiIcon{background:#f59e0b}.kpi.green .kpiIcon{background:#22c55e}.kpi span{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.kpi strong{display:block;font-size:28px;margin:5px 0}.kpi small{color:#64748b;font-weight:700}.spark{position:absolute;right:16px;bottom:18px;width:78px;height:26px;color:#22c55e}.filtersBar{display:grid;grid-template-columns:1fr 160px 160px 140px 110px;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:12px;margin-bottom:14px}.filtersBar input,.filtersBar select{height:42px;border:1px solid #e5e7eb;border-radius:12px;padding:0 12px;background:#fff}.dispatchLayout{display:grid;grid-template-columns:300px minmax(680px,1fr) 330px;gap:14px;align-items:start}.leftRail,.rightRail{display:grid;gap:14px}.panel{background:#fff;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 10px 30px rgba(15,23,42,.055);padding:18px}.panel h3{margin:0 0 14px;font-size:18px}.panelHead{display:flex;align-items:center;justify-content:space-between}.panelHead button{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:8px 12px;font-weight:800}.donutWrap{display:grid;place-items:center;margin:12px 0}.donut{width:140px;height:140px;border-radius:50%;display:grid;place-items:center;position:relative}.donut:after{content:"";position:absolute;inset:28px;background:#fff;border-radius:50%}.donut strong,.donut span{position:relative;z-index:1}.donut strong{font-size:32px}.donut span{font-size:11px;color:#94a3b8}.legendRow{display:flex;align-items:center;justify-content:space-between;margin:12px 0;font-weight:850}.legendRow span{display:flex;align-items:center;gap:8px}.legendRow i{width:8px;height:8px;border-radius:50%;display:inline-block}.workloadRow{width:100%;display:grid;grid-template-columns:1fr 92px 42px;gap:8px;align-items:center;border:0;background:#fff;border-bottom:1px solid #eef2f7;padding:11px 0;text-align:left;cursor:pointer}.workloadRow span{font-weight:850}.bar{height:6px;border-radius:999px;background:#eef2f7;overflow:hidden}.bar i{height:100%;display:block;border-radius:999px}.centerBoard{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(15,23,42,.055);min-width:0}.boardTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.boardTop h2{margin:0;font-size:20px}.boardTop p{margin:4px 0 0;color:#64748b}.viewControls{display:flex;gap:4px}.viewControls button{height:34px;padding:0 12px}.viewControls .active{background:#eaf1ff;color:#1d4ed8}.dayBoard{border:1px solid #eef2f7;border-radius:14px;overflow:hidden}.trainerHeaders{display:grid;grid-template-columns:repeat(6,1fr);margin-left:64px}.trainerHeaders button{height:50px;border:0;border-left:1px solid #eef2f7;background:#fff;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.trainerHeaders span{width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#2563eb;display:grid;place-items:center;font-size:10px;font-weight:900}.timeRow{display:grid;grid-template-columns:64px 1fr;border-top:1px solid #eef2f7}.hourLabel{padding:18px 8px;text-align:center;color:#64748b;font-weight:800}.lanes{display:grid;grid-template-columns:repeat(6,1fr)}.laneCell{min-height:58px;border-left:1px solid #eef2f7;padding:6px}.sessionCard{height:100%;min-height:42px;border:1px solid;border-radius:8px;padding:7px;display:grid;gap:2px}.sessionCard strong{font-size:11px}.sessionCard span,.sessionCard small{font-size:10px;color:#475569}.weekBoard{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}.weekBoard article,.monthBoard div{border:1px solid #e5e7eb;border-radius:14px;padding:12px;background:#f8fafc}.weekBoard h4{margin:0 0 10px}.weekCard{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-bottom:6px}.weekCard strong,.weekCard span{display:block}.weekCard span,.weekBoard p{font-size:11px;color:#64748b}.monthBoard{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.monthBoard div{min-height:74px}.monthBoard .has{border-color:#93c5fd;background:#eff6ff}.monthBoard strong{display:block}.monthBoard span{font-size:11px;color:#1d4ed8;font-weight:800}.upcoming article{display:grid;grid-template-columns:58px 1fr 8px;gap:12px;align-items:center;border:1px solid #e5e7eb;border-radius:14px;padding:12px;margin-bottom:10px}.upcoming article>div{border:1px solid #eef2f7;border-radius:12px;text-align:center;padding:8px}.upcoming strong,.upcoming b{display:block}.upcoming small,.upcoming span,.empty{color:#64748b}.upcoming i{width:8px;height:8px;border-radius:50%;background:#22c55e}.alerts article{display:flex;gap:10px;border-bottom:1px solid #eef2f7;padding:12px 0}.alerts span{color:#ef4444}.alerts b,.alerts small{display:block}.alerts small{color:#64748b}.availability article{display:grid;grid-template-columns:36px 1fr 80px 40px;align-items:center;gap:8px;border-bottom:1px solid #eef2f7;padding:10px 0}.availability article>span{width:32px;height:32px;border-radius:50%;background:#eaf1ff;display:grid;place-items:center;font-weight:900}.availability strong{font-size:13px}.availability em{font-style:normal;font-weight:900}.availability .ok{color:#16a34a}.availability .bad{color:#ef4444}.modalBackdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:92px 24px 24px}.trainerModal{width:min(1780px,98vw);max-height:calc(100vh - 120px);background:#fff;border-radius:26px;overflow:hidden;box-shadow:0 35px 90px rgba(15,23,42,.35);display:flex;flex-direction:column}.modalTop{height:76px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 24px}.modalTitle{display:flex;align-items:center;gap:14px}.modalIcon{width:42px;height:42px;border-radius:13px;background:#eef4ff;color:#2563eb;display:grid;place-items:center;font-size:21px}.modalTop h2{margin:0;font-size:20px}.modalTop p{margin:2px 0 0;color:#64748b}.modalActions{display:flex;align-items:center;gap:10px}.modalActions label{font-weight:900}.modalActions input{height:42px;border:1px solid #e5e7eb;border-radius:12px;padding:0 14px}.modalBody{display:grid;grid-template-columns:220px 1fr 310px;gap:16px;padding:18px;overflow:auto}.modalSteps{display:grid;align-content:start;gap:8px}.modalSteps button{border:0;background:#f8fafc;border-radius:14px;padding:13px;text-align:left;display:grid;grid-template-columns:26px 1fr;gap:8px;cursor:pointer}.modalSteps button span{width:24px;height:24px;border-radius:8px;background:#eef4ff;display:grid;place-items:center;font-weight:900}.modalSteps button strong{font-size:13px}.modalSteps small{grid-column:2;color:#64748b}.modalSteps .active{background:#eef4ff}.modalContent{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modalCard{border:1px solid #e5e7eb;border-radius:18px;padding:16px;background:#fff;box-shadow:0 8px 20px rgba(15,23,42,.035)}.modalCard h3{margin:0 0 14px;color:#1d4ed8}.identity{display:grid;grid-template-columns:150px repeat(4,1fr);gap:12px;grid-column:1/3}.photoBox{grid-row:span 3;border:1px dashed #bfdbfe;border-radius:18px;background:#eff6ff;display:grid;place-items:center;font-weight:900;color:#1d4ed8}.photoBox small{display:block;color:#475569}.modalCard label{display:grid;gap:6px;font-size:12px;font-weight:900}.modalCard input,.modalCard textarea{width:100%;min-height:38px;border:1px solid #e5e7eb;border-radius:10px;padding:9px;background:#fff}.modalCard textarea{min-height:82px}.wide{grid-column:2/6}.status{grid-column:1/3;display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.status h3{grid-column:1/7}.triple{grid-column:1/3;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.triple>div{background:#f8fafc;border-radius:16px;padding:14px}.triple p{display:flex;align-items:center;justify-content:space-between;color:#334155}.okDot{width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block}.expertise,.availabilityBlock,.compensation,.performance,.admin{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.expertise h3,.availabilityBlock h3,.compensation h3,.performance h3,.admin h3{grid-column:1/5}.chips{grid-column:1/5;display:flex;gap:8px;flex-wrap:wrap}.chips span{background:#f3e8ff;color:#6d28d9;border-radius:999px;padding:7px 10px;font-weight:900;font-size:12px}.days{grid-column:1/5;display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.days button{height:54px;border:0;border-radius:12px;background:#ecfdf5;color:#166534;font-weight:900}.days span{display:block}.miniMetric{border:1px solid #e5e7eb;border-radius:14px;padding:12px;font-weight:800}.miniMetric strong{display:block;font-size:18px;margin-top:6px}.admin textarea{grid-column:1/5}.finalChecks{grid-column:1/5;display:flex;gap:24px;font-weight:900}.summaryPreview{background:#f8fafc;border-radius:18px;padding:18px}.bigAvatar{width:72px;height:72px;border-radius:50%;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;font-size:24px;font-weight:900}.summaryPreview h2{margin-bottom:2px}.pill{display:inline-flex;background:#dcfce7;color:#166534;border-radius:999px;padding:4px 10px;font-weight:900}.summaryStats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.summaryStats div{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:12px}.summaryStats b{display:block;font-size:20px}.summaryStats span{color:#64748b;font-size:12px}@media(max-width:1500px){.dispatchLayout{grid-template-columns:280px minmax(620px,1fr) 300px}.kpiGrid{grid-template-columns:repeat(5,1fr)}.academySidebar{width:230px;flex-basis:230px}.modalBody{grid-template-columns:200px 1fr 280px}}
+.scheduleTimeline{border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#ffffff,#fbfdff)}
+.scheduleDateBar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e5e7eb;background:#f8fbff}.scheduleDateBar strong{font-size:15px}.scheduleDateBar span{color:#64748b;font-size:12px;font-weight:800}.scheduleHourRow{display:grid;grid-template-columns:92px 1fr;min-height:74px;border-bottom:1px solid #eef2f7}.hourRail{background:#fbfdff;border-right:1px solid #eef2f7;padding:14px 10px;text-align:center}.hourRail strong{display:block;color:#0f172a;font-size:14px}.hourRail span{display:block;color:#94a3b8;font-size:10px;font-weight:900;margin-top:4px;text-transform:uppercase;letter-spacing:.08em}.scheduleSessionStack{display:grid;gap:8px;padding:8px}.trainingSlotCard{position:relative;display:grid;grid-template-columns:1fr minmax(220px,280px);gap:12px;align-items:center;min-height:60px;border:1px solid #e5e7eb;border-radius:14px;background:#fff;box-shadow:0 8px 18px rgba(15,23,42,.045);padding:10px 12px 10px 18px;overflow:hidden}.trainingAccent{position:absolute;left:0;top:0;bottom:0;width:5px}.trainingMeta{display:flex;align-items:center;gap:8px;margin-bottom:4px}.trainingMeta span{font-size:11px;color:#2563eb;font-weight:950}.trainingMeta em{font-style:normal;background:#eef2ff;color:#3730a3;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:900}.trainingSlotCard main strong{display:block;font-size:13px}.trainingSlotCard main small{display:block;color:#64748b;font-size:11px;margin-top:3px}.trainerDispatchCard{border:1px solid #dbeafe;background:#eff6ff;border-radius:13px;min-height:48px;padding:8px;display:flex;align-items:center;gap:9px;text-align:left;cursor:pointer}.trainerDispatchCard span{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#2563eb;color:white;font-size:10px;font-weight:950}.trainerDispatchCard b{display:block;font-size:12px;color:#0f172a}.trainerDispatchCard small{display:block;font-size:10px;color:#64748b}.trainerDispatchCard.open{background:#f0fdf4;border-color:#bbf7d0}.trainerDispatchCard.open span{background:#16a34a}.trainerDispatchCard.risk{background:#fef2f2;border-color:#fecaca}.trainerDispatchCard.risk span{background:#ef4444}.emptyScheduleSlot{height:46px;border:1px dashed #dbe3ef;border-radius:13px;background:#fbfdff;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;font-weight:850}.upgradedStatus .panelHead button{background:#ecfdf5;color:#166534;border-color:#bbf7d0}.statusHero{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center}.premiumDonut{width:124px;height:124px}.statusStack{display:grid;grid-template-columns:1fr 1fr;gap:8px}.statusMini{border:1px solid #e5e7eb;border-radius:14px;padding:10px;background:#f8fafc}.statusMini b{display:block;font-size:20px}.statusMini span{font-size:10px;color:#64748b;font-weight:900}.statusMini.green{background:#ecfdf5;color:#166534;border-color:#bbf7d0}.statusMini.amber{background:#fffbeb;color:#92400e;border-color:#fde68a}.statusMini.red{background:#fef2f2;color:#991b1b;border-color:#fecaca}.statusMini.gray{background:#f8fafc;color:#475569}.statusTiles{display:grid;gap:9px;margin-top:14px}.statusTiles div{position:relative;border:1px solid #e5e7eb;border-radius:12px;padding:9px 10px;background:#fff;overflow:hidden}.statusTiles span{display:block;font-size:10px;color:#64748b;font-weight:900}.statusTiles strong{font-size:17px}.statusTiles i{position:absolute;left:0;bottom:0;height:3px;background:#2563eb;border-radius:999px}.workloadCards{display:grid;gap:8px}.workloadCard{border:1px solid #e5e7eb;border-radius:14px;background:#fff;padding:10px;display:grid;grid-template-columns:38px 1fr 56px;gap:10px;align-items:center;text-align:left;cursor:pointer}.workloadCard:hover{border-color:#93c5fd;box-shadow:0 10px 24px rgba(37,99,235,.10)}.workloadAvatar{width:36px;height:36px;border-radius:50%;background:#eaf1ff;color:#1d4ed8;display:grid;place-items:center;font-weight:950;font-size:11px}.workloadCard main strong{display:block;font-size:12px}.workloadCard main small{display:block;color:#64748b;font-size:10px;margin-bottom:6px}.workloadCard aside{text-align:right}.workloadCard aside b{display:block;font-size:15px}.workloadCard aside em{font-style:normal;font-size:9px;font-weight:900;color:#64748b}.workloadCard.danger{background:#fff7f7}.workloadCard.warn{background:#fffbeb}.workloadCard.light{background:#f8fafc}.upgradedWeekBoard article{min-height:230px;background:#fff}.weekCount{display:inline-flex;margin:-4px 0 8px;background:#eef2ff;color:#3730a3;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:900}.upgradedMonthBoard div{min-height:92px}.upgradedMonthBoard small{display:block;margin-top:5px;font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dayBoard,.trainerHeaders,.lanes,.laneCell{all:unset}
+@media(max-width:980px){.trainerShell{display:block}.academySidebar{display:none}.dispatchLayout{grid-template-columns:1fr}.leftRail,.rightRail{grid-template-columns:1fr}.kpiGrid{grid-template-columns:repeat(2,1fr)}.modalBody{grid-template-columns:1fr}.modalSteps,.summaryPreview{display:none}}
+
+/* V6 VISUAL COHERENCE OVERRIDES - dispatch cockpit correction */
+.trainerShell{display:grid!important;grid-template-columns:248px minmax(0,1fr)!important;align-items:start!important;min-height:calc(100vh - 84px)!important;background:#f4f7fb!important;overflow-x:hidden!important}.academySidebar{display:flex!important;position:sticky!important;top:84px!important;height:calc(100vh - 84px)!important;overflow:auto!important}.trainerMain{min-width:0!important;max-width:100%!important;padding:22px!important}.trainerHeader{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:20px!important;align-items:start!important}.headerActions{flex-wrap:nowrap!important}.searchBox{width:360px!important}.kpiGrid{grid-template-columns:repeat(5,minmax(180px,1fr))!important;gap:14px!important}.kpi{min-height:108px!important;border-radius:20px!important;background:linear-gradient(180deg,#fff,#fbfdff)!important}.filtersBar{grid-template-columns:minmax(280px,1fr) 160px 160px 140px 110px!important;border-radius:20px!important}.dispatchLayout{display:grid!important;grid-template-columns:320px minmax(720px,1fr) 330px!important;gap:16px!important;align-items:start!important}.leftRail,.rightRail{display:grid!important;gap:16px!important;min-width:0!important}.centerBoard{min-width:0!important;overflow:hidden!important;border-radius:22px!important}.boardTop{border-bottom:1px solid #eef2f7!important;padding-bottom:12px!important;margin-bottom:14px!important}.boardTop h2{font-size:21px!important;letter-spacing:-.02em!important}.boardTop p{font-weight:760!important;color:#64748b!important}.viewControls{background:#f8fafc!important;border:1px solid #e5e7eb!important;border-radius:14px!important;padding:3px!important;gap:3px!important}.viewControls button{height:34px!important;box-shadow:none!important;border:0!important;background:transparent!important;border-radius:10px!important}.viewControls .active{background:#eaf1ff!important;color:#1d4ed8!important;box-shadow:0 5px 14px rgba(37,99,235,.10)!important}.scheduleTimeline{display:block!important;border:1px solid #e5e7eb!important;border-radius:20px!important;overflow:hidden!important;background:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)!important}.scheduleDateBar{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;padding:16px 18px!important;border-bottom:1px solid #e5e7eb!important;background:linear-gradient(90deg,#f8fbff,#ffffff)!important}.scheduleDateBar strong{display:block!important;font-size:16px!important;font-weight:950!important;color:#0f172a!important}.scheduleDateBar span{display:block!important;color:#64748b!important;font-size:12px!important;font-weight:850!important;text-align:right!important}.scheduleHourRow{display:grid!important;grid-template-columns:96px minmax(0,1fr)!important;min-height:76px!important;border-bottom:1px solid #eef2f7!important}.hourRail{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;background:#fbfdff!important;border-right:1px solid #eef2f7!important;padding:10px!important;text-align:center!important}.hourRail strong{display:block!important;color:#0f172a!important;font-size:15px!important;font-weight:950!important;line-height:1!important}.hourRail span{display:block!important;color:#94a3b8!important;font-size:10px!important;font-weight:950!important;letter-spacing:.08em!important;text-transform:uppercase!important;margin-top:6px!important}.scheduleSessionStack{display:grid!important;gap:8px!important;padding:8px 10px!important;min-width:0!important}.trainingSlotCard{position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(220px,290px)!important;gap:12px!important;align-items:center!important;min-height:60px!important;border:1px solid #e5e7eb!important;border-radius:16px!important;background:linear-gradient(180deg,#fff,#fbfdff)!important;box-shadow:0 10px 24px rgba(15,23,42,.06)!important;padding:10px 12px 10px 18px!important;overflow:hidden!important}.trainingAccent{position:absolute!important;left:0!important;top:0!important;bottom:0!important;width:5px!important}.trainingMeta{display:flex!important;align-items:center!important;gap:8px!important;margin-bottom:4px!important}.trainingMeta span{font-size:11px!important;color:#2563eb!important;font-weight:950!important}.trainingMeta em{font-style:normal!important;background:#eef2ff!important;color:#3730a3!important;border-radius:999px!important;padding:3px 8px!important;font-size:10px!important;font-weight:950!important}.trainingSlotCard main strong{display:block!important;font-size:13px!important;color:#0f172a!important;font-weight:950!important}.trainingSlotCard main small{display:block!important;color:#64748b!important;font-size:11px!important;margin-top:3px!important}.trainerDispatchCard{border:1px solid #dbeafe!important;background:#eff6ff!important;border-radius:14px!important;min-height:50px!important;padding:8px!important;display:flex!important;align-items:center!important;gap:9px!important;text-align:left!important;cursor:pointer!important}.trainerDispatchCard span{width:32px!important;height:32px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:#2563eb!important;color:white!important;font-size:10px!important;font-weight:950!important}.trainerDispatchCard b{display:block!important;font-size:12px!important;color:#0f172a!important}.trainerDispatchCard small{display:block!important;font-size:10px!important;color:#64748b!important}.trainerDispatchCard.open{background:#f0fdf4!important;border-color:#bbf7d0!important}.trainerDispatchCard.open span{background:#16a34a!important}.trainerDispatchCard.risk{background:#fef2f2!important;border-color:#fecaca!important}.trainerDispatchCard.risk span{background:#ef4444!important}.emptyScheduleSlot{height:46px!important;border:1px dashed #dbe3ef!important;border-radius:14px!important;background:linear-gradient(90deg,#fbfdff,#fff)!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#94a3b8!important;font-size:12px!important;font-weight:850!important}.upgradedStatus{border-radius:22px!important}.statusHero{grid-template-columns:132px minmax(0,1fr)!important}.statusMini{border-radius:15px!important}.statusTiles div{border-radius:14px!important}.workloadCards{gap:9px!important}.workloadCard{border-radius:16px!important;grid-template-columns:38px minmax(0,1fr) 60px!important}.rightRail .panel{border-radius:20px!important}.upcoming article{border-radius:16px!important;background:#fff!important}.alerts article{border-bottom:1px solid #eef2f7!important;padding:13px 0!important}.availability article{grid-template-columns:36px minmax(0,1fr) 84px 42px!important}.weekBoard,.upgradedWeekBoard{display:grid!important;grid-template-columns:repeat(7,minmax(120px,1fr))!important;gap:10px!important;overflow:auto!important}.monthBoard,.upgradedMonthBoard{display:grid!important;grid-template-columns:repeat(7,1fr)!important;gap:8px!important}.dayBoard,.trainerHeaders,.lanes,.laneCell{all:revert!important}@media(max-width:1380px){.trainerShell{grid-template-columns:230px minmax(0,1fr)!important}.dispatchLayout{grid-template-columns:300px minmax(660px,1fr) 300px!important}.kpiGrid{grid-template-columns:repeat(5,minmax(150px,1fr))!important}.searchBox{width:300px!important}}@media(max-width:980px){.trainerShell{display:block!important}.academySidebar{display:none!important}.dispatchLayout{grid-template-columns:1fr!important}.leftRail,.rightRail{grid-template-columns:1fr!important}.kpiGrid{grid-template-columns:repeat(2,1fr)!important}.filtersBar{grid-template-columns:1fr!important}}
+`

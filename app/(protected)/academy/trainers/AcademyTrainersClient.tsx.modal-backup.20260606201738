@@ -1,0 +1,1286 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+
+type Trainer = {
+  id: string | number
+  full_name?: string
+  name?: string
+  email?: string
+  mobile?: string
+  phone?: string
+  trainer_code?: string
+  professional_title?: string
+  status?: string
+  availability_status?: string
+  main_specialty?: string
+  specialty?: string
+  seniority_level?: string
+  city?: string
+  base_location?: string
+  utilization_rate?: number
+  readiness_score?: number
+  dispatch_score?: number
+  weekly_capacity?: number
+  current_load?: number
+  documents_count?: number
+  required_documents?: number
+  certifications_count?: number
+  assignments?: Assignment[]
+}
+
+type Assignment = {
+  id?: string | number
+  trainer_id?: string | number | null
+  trainer_name?: string
+  title?: string
+  program_title?: string
+  cohort_title?: string
+  cohort_reference?: string
+  location?: string
+  delivery_format?: string
+  status?: string
+  start_time?: string
+  end_time?: string
+  start_at?: string
+  end_at?: string
+  starts_at?: string
+  ends_at?: string
+  scheduled_date?: string
+  date?: string
+}
+
+type ViewMode = 'day' | 'week' | 'month'
+
+const HOURS = Array.from({ length: 14 }, (_, index) => index + 8)
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function dateKey(date: Date) {
+  return date.toISOString().slice(0, 10)
+}
+
+function parseDate(value?: string | null) {
+  if (!value) return null
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+  return date
+}
+
+function startOfWeek(date: Date) {
+  const copy = new Date(date)
+  const day = copy.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  copy.setDate(copy.getDate() + diff)
+  copy.setHours(0, 0, 0, 0)
+  return copy
+}
+
+function monthDays(date: Date) {
+  const first = new Date(date.getFullYear(), date.getMonth(), 1)
+  const start = startOfWeek(first)
+  return Array.from({ length: 42 }, (_, index) => {
+    const d = new Date(start)
+    d.setDate(start.getDate() + index)
+    return d
+  })
+}
+
+function weekDays(date: Date) {
+  const start = startOfWeek(date)
+  return Array.from({ length: 7 }, (_, index) => {
+    const d = new Date(start)
+    d.setDate(start.getDate() + index)
+    return d
+  })
+}
+
+function niceDate(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString('en-GB', {
+    weekday: 'long',
+    month: 'long',
+    day: '2-digit',
+    year: 'numeric',
+  })
+}
+
+function trainerName(trainer: Trainer) {
+  return trainer.full_name || trainer.name || trainer.email || trainer.trainer_code || `Trainer ${trainer.id}`
+}
+
+function trainerInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'TR'
+}
+
+function trainerStatus(trainer: Trainer) {
+  return String(trainer.availability_status || trainer.status || 'available').toLowerCase()
+}
+
+function assignmentTitle(assignment: Assignment) {
+  return assignment.title || assignment.program_title || assignment.cohort_title || 'Scheduled training'
+}
+
+function assignmentStart(assignment: Assignment) {
+  return assignment.start_time || assignment.start_at || assignment.starts_at || assignment.scheduled_date || assignment.date || ''
+}
+
+function assignmentEnd(assignment: Assignment) {
+  return assignment.end_time || assignment.end_at || assignment.ends_at || ''
+}
+
+function assignmentDateKey(assignment: Assignment) {
+  const raw = assignmentStart(assignment)
+  if (!raw) return ''
+  const parsed = parseDate(raw)
+  if (parsed) return dateKey(parsed)
+  return String(raw).slice(0, 10)
+}
+
+function assignmentHour(assignment: Assignment) {
+  const raw = assignmentStart(assignment)
+  const parsed = parseDate(raw)
+  if (parsed) return parsed.getHours()
+  const match = String(raw).match(/(\d{1,2}):/)
+  return match ? Number(match[1]) : 9
+}
+
+function assignmentTime(assignment: Assignment) {
+  const start = parseDate(assignmentStart(assignment))
+  const end = parseDate(assignmentEnd(assignment))
+  if (!start) return 'Time not set'
+  const s = start.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  const e = end ? end.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : ''
+  return e ? `${s} – ${e}` : s
+}
+
+function toneFor(index: number) {
+  const tones = [
+    'border-blue-200 bg-blue-50 text-blue-950',
+    'border-emerald-200 bg-emerald-50 text-emerald-950',
+    'border-violet-200 bg-violet-50 text-violet-950',
+    'border-orange-200 bg-orange-50 text-orange-950',
+    'border-cyan-200 bg-cyan-50 text-cyan-950',
+  ]
+  return tones[index % tones.length]
+}
+
+function normalizeList(payload: any): Trainer[] {
+  const value = payload?.data || payload?.trainers || payload?.items || payload || []
+  return Array.isArray(value) ? value : []
+}
+
+function normalizeAssignments(payload: any): Assignment[] {
+  const value = payload?.data || payload?.assignments || payload?.items || payload || []
+  return Array.isArray(value) ? value : []
+}
+
+
+function AcademySidebar() {
+  const items = [
+    ['⌂', 'Command Center', '/academy'],
+    ['◎', 'Trainees', '/academy/trainees'],
+    ['▤', 'Enrollments', '/academy/enrollments'],
+    ['◷', 'Attendance', '/academy/attendance'],
+    ['▭', 'Payments', '/academy/payments'],
+    ['◈', 'Certificates', '/academy/certificates'],
+    ['♟', 'Trainers', '/academy/trainers'],
+    ['▣', 'Programs', '/academy/courses'],
+    ['◇', 'Job Placement', '/academy/job-placement'],
+    ['♡', 'Partners & Employers', '/academy/partners-employers'],
+    ['◂', 'Announcements', '/academy/announcements'],
+    ['▥', 'Reports & Analytics', '/academy/reports'],
+    ['◇', 'Integrations', '/academy/integrations'],
+    ['⚙', 'Automation', '/academy/automation'],
+    ['⚙', 'Settings', '/academy/settings'],
+  ]
+
+  return (
+    <aside className="sticky top-0 hidden h-screen overflow-y-auto border-r border-slate-200 bg-white px-5 py-6 shadow-sm lg:block">
+      <div className="mb-8 flex items-center gap-4">
+        <div className="grid h-14 w-14 place-items-center rounded-3xl bg-blue-600 text-3xl font-black text-white">A</div>
+        <div>
+          <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">AngelCare</h2>
+          <p className="text-xs font-black uppercase tracking-[0.42em] text-slate-500">Academy OS</p>
+        </div>
+      </div>
+
+      <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-slate-400">Academy</p>
+
+      <nav className="space-y-1.5">
+        {items.map(([icon, label, href]) => {
+          const active = href === '/academy/trainers'
+          return (
+            <a
+              key={href}
+              href={href}
+              className={
+                active
+                  ? 'flex items-center gap-3 rounded-2xl bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 shadow-sm ring-1 ring-blue-100'
+                  : 'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50 hover:text-blue-700'
+              }
+            >
+              <span className={active ? 'text-lg text-blue-600' : 'text-lg text-slate-500'}>{icon}</span>
+              <span>{label}</span>
+            </a>
+          )
+        })}
+      </nav>
+
+      <div className="mt-10 rounded-[2rem] border border-slate-200 bg-slate-50 p-5">
+        <p className="text-sm font-black text-slate-950">Academy OS</p>
+        <p className="mt-1 text-xs font-bold text-emerald-600">Online</p>
+        <p className="mt-1 text-xs font-bold text-slate-500">All systems operational</p>
+      </div>
+    </aside>
+  )
+}
+
+
+export default function AcademyTrainersClient() {
+  const [trainers, setTrainers] = useState<Trainer[]>([])
+  const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [query, setQuery] = useState('')
+  const [availability, setAvailability] = useState('all')
+  const [specialty, setSpecialty] = useState('all')
+  const [loadFilter, setLoadFilter] = useState('all')
+  const [selectedDate, setSelectedDate] = useState(todayKey())
+  const [viewMode, setViewMode] = useState<ViewMode>('day')
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit' | null>(null)
+  const [activeTrainer, setActiveTrainer] = useState<Trainer | null>(null)
+  const [form, setForm] = useState({
+    full_name: '',
+    email: '',
+    mobile: '',
+    professional_title: 'Registered Trainer',
+    status: 'available',
+    main_specialty: 'General Training',
+    seniority_level: 'senior',
+    city: '',
+    readiness_score: 0,
+    dispatch_score: 0,
+    weekly_capacity: 40,
+  })
+
+  async function loadData() {
+    setLoading(true)
+    try {
+      const [trainerResponse, assignmentResponse] = await Promise.all([
+        fetch('/api/academy/trainers', { cache: 'no-store' }),
+        fetch('/api/academy/trainer-assignments', { cache: 'no-store' }).catch(() => null),
+      ])
+
+      const trainerJson = await trainerResponse.json().catch(() => ({}))
+      const assignmentJson = assignmentResponse ? await assignmentResponse.json().catch(() => ({})) : {}
+
+      const loadedTrainers = normalizeList(trainerJson)
+      const loadedAssignments = normalizeAssignments(assignmentJson)
+
+      const embeddedAssignments = loadedTrainers.flatMap((trainer) =>
+        Array.isArray(trainer.assignments)
+          ? trainer.assignments.map((assignment) => ({
+              ...assignment,
+              trainer_id: assignment.trainer_id || trainer.id,
+              trainer_name: assignment.trainer_name || trainerName(trainer),
+            }))
+          : [],
+      )
+
+      setTrainers(loadedTrainers)
+      setAssignments([...loadedAssignments, ...embeddedAssignments])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const filteredTrainers = useMemo(() => {
+    const text = query.trim().toLowerCase()
+    return trainers.filter((trainer) => {
+      const name = trainerName(trainer).toLowerCase()
+      const email = String(trainer.email || '').toLowerCase()
+      const city = String(trainer.city || trainer.base_location || '').toLowerCase()
+      const spec = String(trainer.main_specialty || trainer.specialty || 'General Training').toLowerCase()
+      const status = trainerStatus(trainer)
+      const util = Number(trainer.utilization_rate || trainer.current_load || 0)
+
+      if (text && !`${name} ${email} ${city} ${spec}`.includes(text)) return false
+      if (availability !== 'all' && status !== availability) return false
+      if (specialty !== 'all' && spec !== specialty.toLowerCase()) return false
+      if (loadFilter === 'high' && util < 75) return false
+      if (loadFilter === 'normal' && util >= 75) return false
+
+      return true
+    })
+  }, [trainers, query, availability, specialty, loadFilter])
+
+  const selectedDateObject = useMemo(() => {
+    const parsed = new Date(`${selectedDate}T12:00:00`)
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed
+  }, [selectedDate])
+
+  const selectedAssignments = useMemo(() => {
+    if (viewMode === 'day') {
+      return assignments.filter((assignment) => assignmentDateKey(assignment) === selectedDate)
+    }
+
+    if (viewMode === 'week') {
+      const keys = new Set(weekDays(selectedDateObject).map(dateKey))
+      return assignments.filter((assignment) => keys.has(assignmentDateKey(assignment)))
+    }
+
+    const month = selectedDateObject.getMonth()
+    const year = selectedDateObject.getFullYear()
+    return assignments.filter((assignment) => {
+      const parsed = parseDate(assignmentStart(assignment))
+      return parsed && parsed.getMonth() === month && parsed.getFullYear() === year
+    })
+  }, [assignments, selectedDate, selectedDateObject, viewMode])
+
+  const total = trainers.length
+  const availableCount = trainers.filter((trainer) => ['available', 'active', 'ready'].includes(trainerStatus(trainer))).length
+  const assignedToday = assignments.filter((assignment) => assignmentDateKey(assignment) === todayKey()).length
+  const upcoming = assignments.filter((assignment) => {
+    const parsed = parseDate(assignmentStart(assignment))
+    return parsed ? parsed >= new Date() : false
+  }).length
+  const averageLoad = total
+    ? Math.round(trainers.reduce((sum, trainer) => sum + Number(trainer.utilization_rate || trainer.current_load || 0), 0) / total)
+    : 0
+  const highLoadCount = trainers.filter((trainer) => Number(trainer.utilization_rate || trainer.current_load || 0) >= 75).length
+  const overloadedCount = trainers.filter((trainer) => Number(trainer.utilization_rate || trainer.current_load || 0) >= 100).length
+  const unavailableCount = trainers.filter((trainer) => ['unavailable', 'leave', 'inactive', 'sick'].includes(trainerStatus(trainer))).length
+  const avgReadiness = total
+    ? Math.round(trainers.reduce((sum, trainer) => sum + Number(trainer.readiness_score || 0), 0) / total)
+    : 0
+  const documentRisk = trainers.filter((trainer) => {
+    const docs = Number(trainer.documents_count || 0)
+    const required = Number(trainer.required_documents || 5)
+    return docs < required
+  }).length
+  const coverageRate = upcoming ? Math.round((selectedAssignments.length / upcoming) * 100) : 0
+
+  const specialties = useMemo(() => {
+    return Array.from(new Set(trainers.map((trainer) => trainer.main_specialty || trainer.specialty || 'General Training'))).filter(Boolean)
+  }, [trainers])
+
+  const alerts = useMemo(() => {
+    const list: { title: string; message: string; tone: string }[] = []
+    trainers.forEach((trainer) => {
+      const name = trainerName(trainer)
+      const util = Number(trainer.utilization_rate || trainer.current_load || 0)
+      const docs = Number(trainer.documents_count || 0)
+      const required = Number(trainer.required_documents || 5)
+      const readiness = Number(trainer.readiness_score || 0)
+
+      if (util >= 100) list.push({ title: `${name} overloaded`, message: 'Trainer load is above safe capacity.', tone: 'red' })
+      if (util >= 75 && util < 100) list.push({ title: `${name} high load`, message: 'Review upcoming assignments and balance workload.', tone: 'amber' })
+      if (docs < required) list.push({ title: `${name} document risk`, message: 'Missing trainer documents or compliance files.', tone: 'red' })
+      if (readiness < 50) list.push({ title: `${name} readiness incomplete`, message: 'Profile, documents or compliance need review.', tone: 'amber' })
+    })
+    return list.slice(0, 6)
+  }, [trainers])
+
+  function openCreate() {
+    setActiveTrainer(null)
+    setForm({
+      full_name: '',
+      email: '',
+      mobile: '',
+      professional_title: 'Registered Trainer',
+      status: 'available',
+      main_specialty: 'General Training',
+      seniority_level: 'senior',
+      city: '',
+      readiness_score: 0,
+      dispatch_score: 0,
+      weekly_capacity: 40,
+    })
+    setModalMode('create')
+  }
+
+  function openTrainer(trainer: Trainer, mode: 'view' | 'edit') {
+    setActiveTrainer(trainer)
+    setForm({
+      full_name: trainerName(trainer),
+      email: trainer.email || '',
+      mobile: trainer.mobile || trainer.phone || '',
+      professional_title: trainer.professional_title || 'Registered Trainer',
+      status: trainer.status || trainer.availability_status || 'available',
+      main_specialty: trainer.main_specialty || trainer.specialty || 'General Training',
+      seniority_level: trainer.seniority_level || 'senior',
+      city: trainer.city || trainer.base_location || '',
+      readiness_score: Number(trainer.readiness_score || 0),
+      dispatch_score: Number(trainer.dispatch_score || 0),
+      weekly_capacity: Number(trainer.weekly_capacity || 40),
+    })
+    setModalMode(mode)
+  }
+
+  async function saveTrainer() {
+    setSaving(true)
+    try {
+      const isEdit = modalMode === 'edit' && activeTrainer
+      const url = isEdit ? `/api/academy/trainers/${activeTrainer.id}` : '/api/academy/trainers'
+      const response = await fetch(url, {
+        method: isEdit ? 'PATCH' : 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const json = await response.json().catch(() => ({}))
+      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to save trainer')
+      await loadData()
+      setModalMode(null)
+    } catch (error: any) {
+      alert(error?.message || 'Unable to save trainer')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function assignTrainer(trainer: Trainer) {
+    const title = window.prompt('Training / assignment title')
+    if (!title) return
+
+    const start = window.prompt('Start date/time', `${selectedDate}T09:00:00`)
+    if (!start) return
+
+    const end = window.prompt('End date/time', `${selectedDate}T11:00:00`)
+    if (!end) return
+
+    try {
+      const response = await fetch('/api/academy/trainer-assignments', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          trainer_id: trainer.id,
+          trainer_name: trainerName(trainer),
+          title,
+          start_time: start,
+          end_time: end,
+          status: 'planned',
+        }),
+      })
+      const json = await response.json().catch(() => ({}))
+      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to assign trainer')
+      await loadData()
+    } catch (error: any) {
+      alert(error?.message || 'Unable to assign trainer')
+    }
+  }
+
+  function exportCsv() {
+    const rows = [
+      ['Trainer', 'Email', 'Specialty', 'Status', 'Utilization', 'Readiness'],
+      ...filteredTrainers.map((trainer) => [
+        trainerName(trainer),
+        trainer.email || '',
+        trainer.main_specialty || trainer.specialty || 'General Training',
+        trainer.status || trainer.availability_status || 'available',
+        String(trainer.utilization_rate || trainer.current_load || 0),
+        String(trainer.readiness_score || 0),
+      ]),
+    ]
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'academy-trainers.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-100 text-slate-950 lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+      <AcademySidebar />
+      <main className="min-w-0 bg-slate-100 px-5 pb-10 pt-4">
+      <section className="w-full max-w-none space-y-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black text-slate-500">Home › Trainers › Dispatch</p>
+            <h1 className="mt-1 text-3xl font-black tracking-[-0.04em] text-slate-950">Trainers Dispatch & Management</h1>
+            <p className="mt-1 text-sm font-bold text-slate-500">
+              Real-time command center for trainer operations, availability, load balancing and live assignments.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search trainers, skills, programs..."
+              className="h-12 w-[360px] rounded-2xl border border-slate-200 bg-white px-5 text-sm font-bold text-slate-700 shadow-sm outline-none focus:border-blue-400"
+            />
+            <button className="h-12 rounded-2xl border border-blue-300 bg-white px-5 text-sm font-black text-slate-900 shadow-sm">
+              Dispatch Board
+            </button>
+            <button onClick={openCreate} className="h-12 rounded-2xl bg-blue-600 px-6 text-sm font-black text-white shadow-xl shadow-blue-200">
+              + Add Trainer
+            </button>
+            <button onClick={exportCsv} className="h-12 rounded-2xl bg-white px-5 text-sm font-black text-slate-900 shadow-sm">
+              Export
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+          <KpiCard icon="👥" label="Active Trainers" value={availableCount} caption={`${total} live registry`} tone="blue" />
+          <KpiCard icon="◎" label="Assigned Today" value={assignedToday} caption="sessions planned" tone="violet" />
+          <KpiCard icon="♧" label="Upcoming Sessions" value={upcoming} caption="next 7 days" tone="cyan" />
+          <KpiCard icon="◉" label="Coverage Rate" value={`${coverageRate}%`} caption="covered assignments" tone="orange" />
+          <KpiCard icon="▣" label="Average Load" value={`${averageLoad}%`} caption="capacity used" tone="green" />
+        </div>
+
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="grid gap-3 lg:grid-cols-[1fr_150px_150px_130px_110px]">
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search trainers by name, skill, city, email..."
+              className="h-12 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-bold outline-none focus:border-blue-400"
+            />
+            <select value={availability} onChange={(event) => setAvailability(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold">
+              <option value="all">Availability · All</option>
+              <option value="available">Available</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="unavailable">Unavailable</option>
+            </select>
+            <select value={specialty} onChange={(event) => setSpecialty(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold">
+              <option value="all">Specialty · All</option>
+              {specialties.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+            <select value={loadFilter} onChange={(event) => setLoadFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold">
+              <option value="all">Load · All</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+            </select>
+            <button onClick={loadData} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div className="grid gap-5 xl:grid-cols-[330px_minmax(760px,1fr)_330px]">
+          <aside className="space-y-5">
+            <TrainerStatusOverview
+              total={total}
+              available={availableCount}
+              highLoad={highLoadCount}
+              overloaded={overloadedCount}
+              unavailable={unavailableCount}
+              readiness={avgReadiness}
+              workload={averageLoad}
+              documentRisk={documentRisk}
+            />
+
+            <section className="min-w-0 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black">Trainer Workload</h3>
+                  <p className="text-xs font-bold text-slate-500">Clickable operational load cards</p>
+                </div>
+                <span className="rounded-2xl border border-slate-200 px-3 py-2 text-xs font-black">Live</span>
+              </div>
+              <div className="space-y-3">
+                {filteredTrainers.map((trainer) => {
+                  const util = Number(trainer.utilization_rate || trainer.current_load || 0)
+                  return (
+                    <button
+                      key={`workload-${trainer.id}`}
+                      onClick={() => openTrainer(trainer, 'view')}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-blue-300 hover:bg-blue-50"
+                    >
+                      <div className="flex items-center justify-between">
+                        <strong className="text-sm font-black">{trainerName(trainer)}</strong>
+                        <span className={util >= 75 ? 'text-xs font-black text-orange-600' : 'text-xs font-black text-emerald-600'}>
+                          {util >= 75 ? 'High Load' : 'Normal'}
+                        </span>
+                      </div>
+                      <div className="mt-3 h-2 rounded-full bg-slate-200">
+                        <div className="h-2 rounded-full bg-blue-600" style={{ width: `${Math.min(100, util)}%` }} />
+                      </div>
+                      <div className="mt-2 flex justify-between text-xs font-bold text-slate-500">
+                        <span>{trainer.main_specialty || trainer.specialty || 'General Training'}</span>
+                        <span>{util}%</span>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
+          </aside>
+
+          <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <ScheduleHeader
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+            />
+
+            {viewMode === 'day' && (
+              <DaySchedule
+                selectedDate={selectedDate}
+                assignments={selectedAssignments}
+                trainers={trainers}
+                onTrainerClick={(trainer) => openTrainer(trainer, 'view')}
+              />
+            )}
+
+            {viewMode === 'week' && (
+              <WeekSchedule
+                selectedDate={selectedDateObject}
+                assignments={selectedAssignments}
+                trainers={trainers}
+              />
+            )}
+
+            {viewMode === 'month' && (
+              <MonthSchedule
+                selectedDate={selectedDateObject}
+                assignments={selectedAssignments}
+              />
+            )}
+          </section>
+
+          <aside className="space-y-5">
+            <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-lg font-black">Upcoming Assignments</h3>
+              <p className="text-xs font-bold text-slate-500">Live scheduled trainings</p>
+              <div className="mt-4 space-y-3">
+                {assignments.slice(0, 5).map((assignment, index) => (
+                  <article key={`upcoming-${assignment.id || index}-${assignmentDateKey(assignment)}`} className="rounded-2xl border border-slate-200 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <strong className="text-sm font-black">{assignmentTitle(assignment)}</strong>
+                        <p className="mt-1 text-xs font-bold text-slate-500">{assignment.trainer_name || 'Trainer not assigned'}</p>
+                        <p className="mt-1 text-xs font-black text-blue-600">{assignmentTime(assignment)}</p>
+                      </div>
+                      <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
+                        {assignment.status || 'planned'}
+                      </span>
+                    </div>
+                  </article>
+                ))}
+                {!assignments.length && <EmptyBox text="No upcoming assignments yet." />}
+              </div>
+            </section>
+
+            <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-lg font-black">Alerts & Notifications</h3>
+              <p className="text-xs font-bold text-slate-500">Derived from live trainer data</p>
+              <div className="mt-4 space-y-3">
+                {alerts.map((alert, index) => (
+                  <article key={`alert-${index}-${alert.title}`} className="rounded-2xl border border-slate-200 p-4">
+                    <p className={alert.tone === 'red' ? 'text-sm font-black text-red-600' : 'text-sm font-black text-orange-600'}>
+                      △ {alert.title}
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-slate-500">{alert.message}</p>
+                  </article>
+                ))}
+                {!alerts.length && <EmptyBox text="No live alerts right now." />}
+              </div>
+            </section>
+
+            <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-black">Trainer Availability</h3>
+                <button className="rounded-2xl border border-slate-200 px-4 py-2 text-xs font-black">View Calendar</button>
+              </div>
+              <div className="space-y-3">
+                {filteredTrainers.slice(0, 6).map((trainer) => (
+                  <button
+                    key={`availability-${trainer.id}`}
+                    onClick={() => openTrainer(trainer, 'view')}
+                    className="flex w-full items-center justify-between rounded-2xl bg-slate-50 p-3 text-left hover:bg-blue-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="grid h-10 w-10 place-items-center rounded-full bg-blue-50 text-xs font-black text-blue-700">
+                        {trainerInitials(trainerName(trainer))}
+                      </span>
+                      <div>
+                        <strong className="block text-xs font-black">{trainerName(trainer)}</strong>
+                        <span className="text-xs font-bold text-slate-500">{trainer.main_specialty || trainer.specialty || 'Trainer'}</span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-black text-emerald-600">{trainer.status || trainer.availability_status || 'available'}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        {loading && (
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-500">
+            Loading live trainers workspace…
+          </div>
+        )}
+      </section>
+
+      {modalMode && (
+        <TrainerModal
+          mode={modalMode}
+          form={form}
+          setForm={setForm}
+          activeTrainer={activeTrainer}
+          saving={saving}
+          onClose={() => setModalMode(null)}
+          onEdit={() => setModalMode('edit')}
+          onSave={saveTrainer}
+        />
+      )}
+      </main>
+    </div>
+  )
+}
+
+function KpiCard({ icon, label, value, caption, tone }: { icon: string; label: string; value: string | number; caption: string; tone: string }) {
+  const bg: Record<string, string> = {
+    blue: 'bg-blue-500',
+    violet: 'bg-violet-500',
+    cyan: 'bg-teal-500',
+    orange: 'bg-orange-500',
+    green: 'bg-green-500',
+  }
+
+  return (
+    <article className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className={`grid h-12 w-12 place-items-center rounded-2xl ${bg[tone] || 'bg-blue-500'} text-white`}>
+          {icon}
+        </div>
+        <div className="h-8 w-20 rounded-full bg-gradient-to-r from-transparent via-emerald-100 to-emerald-200" />
+      </div>
+      <p className="mt-4 text-xs font-black uppercase tracking-[0.18em] text-slate-500">{label}</p>
+      <strong className="mt-1 block text-3xl font-black">{value}</strong>
+      <p className="mt-2 text-xs font-bold text-slate-500">{caption}</p>
+    </article>
+  )
+}
+
+function TrainerStatusOverview({
+  total,
+  available,
+  highLoad,
+  overloaded,
+  unavailable,
+  readiness,
+  workload,
+  documentRisk,
+}: {
+  total: number
+  available: number
+  highLoad: number
+  overloaded: number
+  unavailable: number
+  readiness: number
+  workload: number
+  documentRisk: number
+}) {
+  return (
+    <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h3 className="text-xl font-black tracking-[-0.03em]">Trainer Status Overview</h3>
+          <p className="text-xs font-bold text-slate-500">Live trainer readiness and dispatch health</p>
+        </div>
+        <span className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700">Live</span>
+      </div>
+
+      <div className="grid gap-5">
+        <div className="grid grid-cols-[132px_1fr] gap-4">
+          <div className="grid h-32 w-32 place-items-center rounded-full bg-emerald-500 text-center text-white shadow-lg shadow-emerald-100">
+            <div>
+              <strong className="block text-4xl font-black">{total}</strong>
+              <span className="text-xs font-black uppercase tracking-[0.16em]">Trainers</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <StatusMetric label="Available" value={available} tone="emerald" />
+            <StatusMetric label="High Load" value={highLoad} tone="amber" />
+            <StatusMetric label="Overloaded" value={overloaded} tone="red" />
+            <StatusMetric label="Unavailable" value={unavailable} tone="slate" />
+          </div>
+        </div>
+
+        <HealthBar label="Average readiness" value={readiness} />
+        <HealthBar label="Average workload" value={workload} />
+        <HealthBar label="Document risk" value={documentRisk} max={Math.max(1, total)} />
+      </div>
+    </section>
+  )
+}
+
+function StatusMetric({ label, value, tone }: { label: string; value: number; tone: 'emerald' | 'amber' | 'red' | 'slate' }) {
+  const cls = {
+    emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    amber: 'border-amber-200 bg-amber-50 text-amber-700',
+    red: 'border-red-200 bg-red-50 text-red-700',
+    slate: 'border-slate-200 bg-slate-50 text-slate-700',
+  }[tone]
+
+  return (
+    <div className={`rounded-2xl border p-4 ${cls}`}>
+      <strong className="block text-3xl font-black">{value}</strong>
+      <span className="text-xs font-black">{label}</span>
+    </div>
+  )
+}
+
+function HealthBar({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
+  const percent = Math.max(0, Math.min(100, Math.round((value / max) * 100)))
+  return (
+    <div className="rounded-2xl border border-slate-200 p-4">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-black text-slate-500">{label}</span>
+        <strong className="text-lg font-black">{value}{max === 100 ? '%' : ''}</strong>
+      </div>
+      <div className="mt-3 h-2 rounded-full bg-slate-100">
+        <div className="h-2 rounded-full bg-blue-600" style={{ width: `${percent}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function ScheduleHeader({
+  selectedDate,
+  setSelectedDate,
+  viewMode,
+  setViewMode,
+}: {
+  selectedDate: string
+  setSelectedDate: (value: string) => void
+  viewMode: ViewMode
+  setViewMode: (value: ViewMode) => void
+}) {
+  const date = new Date(`${selectedDate}T12:00:00`)
+
+  function move(delta: number) {
+    const copy = new Date(date)
+    if (viewMode === 'day') copy.setDate(copy.getDate() + delta)
+    if (viewMode === 'week') copy.setDate(copy.getDate() + delta * 7)
+    if (viewMode === 'month') copy.setMonth(copy.getMonth() + delta)
+    setSelectedDate(dateKey(copy))
+  }
+
+  return (
+    <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div>
+        <h2 className="text-xl font-black tracking-[-0.03em]">Live Training Schedule</h2>
+        <p className="text-xs font-bold text-slate-500">Training-based daily dispatch · operational hours 08:00 → 21:00</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(event) => setSelectedDate(event.target.value)}
+          className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 shadow-sm outline-none focus:border-blue-400"
+        />
+        {(['day', 'week', 'month'] as ViewMode[]).map((mode) => (
+          <button
+            key={mode}
+            onClick={() => setViewMode(mode)}
+            className={viewMode === mode ? 'h-11 rounded-2xl bg-blue-600 px-4 text-sm font-black capitalize text-white' : 'h-11 rounded-2xl bg-slate-50 px-4 text-sm font-black capitalize text-slate-700'}
+          >
+            {mode}
+          </button>
+        ))}
+        <button onClick={() => setSelectedDate(todayKey())} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">
+          Today
+        </button>
+        <button onClick={() => move(-1)} className="h-11 w-11 rounded-2xl border border-slate-200 bg-white text-sm font-black">‹</button>
+        <button onClick={() => move(1)} className="h-11 w-11 rounded-2xl border border-slate-200 bg-white text-sm font-black">›</button>
+      </div>
+    </div>
+  )
+}
+
+function DaySchedule({
+  selectedDate,
+  assignments,
+  trainers,
+  onTrainerClick,
+}: {
+  selectedDate: string
+  assignments: Assignment[]
+  trainers: Trainer[]
+  onTrainerClick: (trainer: Trainer) => void
+}) {
+  return (
+    <div>
+      <div className="mb-4 flex items-end justify-between">
+        <div>
+          <h3 className="text-lg font-black">{niceDate(selectedDate)}</h3>
+          <p className="text-xs font-bold text-slate-500">Cards are grouped by scheduled start time. Trainers are attached inside each training.</p>
+        </div>
+        <span className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-slate-500">
+          {assignments.length} trainings
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {HOURS.map((hour) => {
+          const hourAssignments = assignments.filter((assignment) => assignmentHour(assignment) === hour)
+          const label = `${String(hour).padStart(2, '0')}:00`
+          const period = hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : 'Evening'
+
+          return (
+            <section key={`hour-${selectedDate}-${hour}`} className="grid grid-cols-[78px_1fr] gap-3">
+              <div className="pt-3">
+                <strong className="block text-lg font-black">{label}</strong>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{period}</span>
+              </div>
+
+              <div className="min-h-[72px] rounded-3xl border border-slate-200 bg-slate-50/80 p-3">
+                {hourAssignments.length ? (
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {hourAssignments.map((assignment, index) => {
+                      const trainer = trainers.find((item) => String(item.id) === String(assignment.trainer_id))
+                      return (
+                        <article key={`training-${assignment.id || index}-${selectedDate}-${hour}`} className={`rounded-3xl border p-4 shadow-sm ${toneFor(index)}`}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <h4 className="text-sm font-black">{assignmentTitle(assignment)}</h4>
+                              <p className="mt-1 text-xs font-bold opacity-80">{assignmentTime(assignment)}</p>
+                              <p className="mt-1 text-xs font-bold opacity-70">{assignment.location || assignment.cohort_reference || assignment.delivery_format || 'Training slot'}</p>
+                            </div>
+                            <span className="rounded-full bg-white/70 px-3 py-1 text-[10px] font-black uppercase">{assignment.status || 'planned'}</span>
+                          </div>
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {trainer ? (
+                              <button
+                                onClick={() => onTrainerClick(trainer)}
+                                className="flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 text-xs font-black"
+                              >
+                                <span className="grid h-7 w-7 place-items-center rounded-full bg-blue-600 text-[10px] text-white">
+                                  {trainerInitials(trainerName(trainer))}
+                                </span>
+                                {trainerName(trainer)}
+                              </button>
+                            ) : (
+                              <span className="rounded-2xl bg-white/80 px-3 py-2 text-xs font-black text-orange-600">Trainer not assigned</span>
+                            )}
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex h-full min-h-[48px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white text-xs font-black text-slate-400">
+                    No training scheduled in this hour
+                  </div>
+                )}
+              </div>
+            </section>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function WeekSchedule({ selectedDate, assignments }: { selectedDate: Date; assignments: Assignment[]; trainers: Trainer[] }) {
+  return (
+    <div className="grid gap-3 md:grid-cols-7">
+      {weekDays(selectedDate).map((day, index) => {
+        const key = dateKey(day)
+        const dayAssignments = assignments.filter((assignment) => assignmentDateKey(assignment) === key)
+        return (
+          <article key={`week-${key}-${index}`} className="min-h-[320px] rounded-3xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-black uppercase text-slate-400">{day.toLocaleDateString('en-GB', { weekday: 'short' })}</p>
+            <h3 className="mt-1 text-xl font-black">{day.getDate()}</h3>
+            <div className="mt-4 space-y-2">
+              {dayAssignments.map((assignment, assignmentIndex) => (
+                <div key={`week-assignment-${key}-${assignment.id || assignmentIndex}`} className={`rounded-2xl border p-3 text-xs font-black ${toneFor(assignmentIndex)}`}>
+                  <p>{assignmentTitle(assignment)}</p>
+                  <span className="mt-1 block opacity-70">{assignmentTime(assignment)}</span>
+                </div>
+              ))}
+              {!dayAssignments.length && <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-4 text-center text-xs font-black text-slate-400">No trainings</p>}
+            </div>
+          </article>
+        )
+      })}
+    </div>
+  )
+}
+
+function MonthSchedule({ selectedDate, assignments }: { selectedDate: Date; assignments: Assignment[] }) {
+  return (
+    <div className="grid grid-cols-7 gap-2">
+      {monthDays(selectedDate).map((day, index) => {
+        const key = dateKey(day)
+        const dayAssignments = assignments.filter((assignment) => assignmentDateKey(assignment) === key)
+        const isCurrentMonth = day.getMonth() === selectedDate.getMonth()
+        return (
+          <article key={`month-${key}-${index}`} className={isCurrentMonth ? 'min-h-[120px] rounded-2xl border border-slate-200 bg-white p-3' : 'min-h-[120px] rounded-2xl border border-slate-100 bg-slate-50 p-3 opacity-50'}>
+            <div className="flex items-center justify-between">
+              <strong className="text-sm font-black">{day.getDate()}</strong>
+              {dayAssignments.length > 0 && <span className="rounded-full bg-blue-600 px-2 py-1 text-[10px] font-black text-white">{dayAssignments.length}</span>}
+            </div>
+            <div className="mt-2 space-y-1">
+              {dayAssignments.slice(0, 3).map((assignment, assignmentIndex) => (
+                <p key={`month-assignment-${key}-${assignment.id || assignmentIndex}`} className="truncate rounded-xl bg-blue-50 px-2 py-1 text-[10px] font-black text-blue-700">
+                  {assignmentTitle(assignment)}
+                </p>
+              ))}
+            </div>
+          </article>
+        )
+      })}
+    </div>
+  )
+}
+
+function EmptyBox({ text }: { text: string }) {
+  return <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-center text-sm font-black text-slate-400">{text}</div>
+}
+
+function TrainerModal({
+  mode,
+  form,
+  setForm,
+  activeTrainer,
+  saving,
+  onClose,
+  onEdit,
+  onSave,
+}: {
+  mode: 'create' | 'view' | 'edit'
+  form: any
+  setForm: (value: any) => void
+  activeTrainer: Trainer | null
+  saving: boolean
+  onClose: () => void
+  onEdit: () => void
+  onSave: () => void
+}) {
+  const locked = mode === 'view'
+
+  function update(key: string, value: any) {
+    setForm({ ...form, [key]: value })
+  }
+
+  return (
+    <div className="fixed inset-0 z-[10000] bg-slate-950/50 p-5 backdrop-blur-sm">
+      <div className="mx-auto flex max-h-[94vh] max-w-[1720px] flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl">
+        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-6">
+          <div>
+            <h2 className="text-2xl font-black">{mode === 'create' ? 'Add New Trainer' : mode === 'edit' ? 'Edit Trainer Dossier' : 'Trainer Dossier'}</h2>
+            <p className="text-sm font-bold text-slate-500">Create and configure a complete trainer dossier</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="rounded-2xl border border-slate-200 px-4 py-3 text-xs font-black">Reference # {activeTrainer?.trainer_code || 'TRN-New'}</span>
+            {mode === 'view' && <button onClick={onEdit} className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white">Edit</button>}
+            {mode !== 'view' && <button onClick={onSave} disabled={saving} className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white">{saving ? 'Saving...' : mode === 'create' ? 'Create Trainer' : 'Save Changes'}</button>}
+            <button onClick={onClose} className="rounded-2xl border border-slate-200 px-6 py-3 text-sm font-black">Close</button>
+          </div>
+        </header>
+
+        <div className="grid min-h-0 flex-1 grid-cols-[240px_1fr_310px] gap-5 overflow-auto p-6">
+          <aside className="space-y-3">
+            {['Identity & Profile', 'Status & Classification', 'Certificates & Documents', 'Expertise & Delivery', 'Availability & Dispatch', 'Compensation & Terms', 'Performance & History', 'Admin & Controls'].map((item, index) => (
+              <div key={item} className={index === 0 ? 'rounded-2xl bg-blue-50 p-4 text-sm font-black text-blue-700' : 'rounded-2xl bg-slate-50 p-4 text-sm font-black text-slate-700'}>
+                <span className="mr-2 rounded-full bg-white px-2 py-1 text-xs">{index + 1}</span>
+                {item}
+              </div>
+            ))}
+          </aside>
+
+          <section className="space-y-5">
+            <Panel title="1. Identity & Profile">
+              <div className="grid gap-4 md:grid-cols-[160px_1fr]">
+                <div className="grid h-36 place-items-center rounded-3xl border border-dashed border-blue-200 bg-blue-50 text-center text-sm font-black text-blue-700">
+                  Upload photo<br /><span className="text-xs text-slate-500">JPG/PNG</span>
+                </div>
+                <div className="grid gap-4 md:grid-cols-4">
+                  <Field label="Full Name" value={form.full_name} locked={locked} onChange={(v) => update('full_name', v)} />
+                  <Field label="Trainer Code" value={activeTrainer?.trainer_code || 'Auto generated'} locked />
+                  <Field label="Professional Title" value={form.professional_title} locked={locked} onChange={(v) => update('professional_title', v)} />
+                  <Field label="Gender" value="" locked={locked} />
+                  <Field label="Mobile" value={form.mobile} locked={locked} onChange={(v) => update('mobile', v)} />
+                  <Field label="Email" value={form.email} locked={locked} onChange={(v) => update('email', v)} />
+                  <Field label="City / Base Location" value={form.city} locked={locked} onChange={(v) => update('city', v)} />
+                  <Field label="Languages" value="" locked={locked} />
+                  <label className="md:col-span-4">
+                    <span className="text-xs font-black text-slate-500">Short Professional Bio</span>
+                    <textarea disabled={locked} className="mt-2 min-h-[84px] w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold outline-none" />
+                  </label>
+                </div>
+              </div>
+            </Panel>
+
+            <Panel title="2. Professional Status & Classification">
+              <div className="grid gap-4 md:grid-cols-6">
+                <Field label="Employment Type" value="internal" locked={locked} />
+                <Field label="Status" value={form.status} locked={locked} onChange={(v) => update('status', v)} />
+                <Field label="Seniority Level" value={form.seniority_level} locked={locked} onChange={(v) => update('seniority_level', v)} />
+                <Field label="Main Specialty" value={form.main_specialty} locked={locked} onChange={(v) => update('main_specialty', v)} />
+                <Field label="Readiness %" value={String(form.readiness_score)} locked={locked} onChange={(v) => update('readiness_score', Number(v || 0))} />
+                <Field label="Dispatch Score" value={String(form.dispatch_score)} locked={locked} onChange={(v) => update('dispatch_score', Number(v || 0))} />
+              </div>
+            </Panel>
+
+            <Panel title="3. Certifications, Compliance & Documents">
+              <div className="grid gap-4 md:grid-cols-3">
+                <MiniList title="Certifications" items={['Certified Soft Skills Trainer', 'First Aid & CPR', 'Data Protection Awareness']} />
+                <MiniList title="Document Uploads" items={['National ID / Passport', 'Academic Diploma', 'Employment Contract', 'Insurance Certificate']} />
+                <MiniList title="Compliance Verification" items={['Medical Fitness', 'Background Check', 'ID Verification', 'Reference Check', 'Contract Signed']} />
+              </div>
+            </Panel>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <Panel title="4. Training Expertise & Delivery Capability">
+                <div className="flex flex-wrap gap-2">
+                  {['Soft Skills', 'Leadership', 'Communication', 'Team Building', 'Childcare', 'First Aid', 'Safety'].map((tag) => (
+                    <span key={tag} className="rounded-full bg-violet-50 px-3 py-2 text-xs font-black text-violet-700">{tag}</span>
+                  ))}
+                </div>
+                <div className="mt-4 grid grid-cols-4 gap-3">
+                  <Field label="Programs Qualified" value="12" locked={locked} />
+                  <Field label="Max Hours / Day" value="6" locked={locked} />
+                  <Field label="Regions Covered" value="UAE, GCC" locked={locked} />
+                  <Field label="Delivery Formats" value="Onsite, Online" locked={locked} />
+                </div>
+              </Panel>
+
+              <Panel title="5. Availability & Dispatch Control">
+                <div className="grid grid-cols-7 gap-2">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                    <div key={day} className="rounded-2xl bg-emerald-50 p-3 text-center text-xs font-black text-emerald-700">{day}<br />✓</div>
+                  ))}
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  <Field label="Preferred Slots" value="09:00 - 17:00" locked={locked} />
+                  <Field label="Current Load" value="0%" locked />
+                  <Field label="Weekly Capacity" value={String(form.weekly_capacity)} locked={locked} onChange={(v) => update('weekly_capacity', Number(v || 0))} />
+                </div>
+              </Panel>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <Panel title="6. Compensation & Commercial Terms">
+                <div className="grid grid-cols-3 gap-3">
+                  <Field label="Base Rate Type" value="Per Day" locked={locked} />
+                  <Field label="Base Rate" value="0" locked={locked} />
+                  <Field label="Hourly Rate" value="0" locked={locked} />
+                  <Field label="Travel Fee" value="0" locked={locked} />
+                  <Field label="Accommodation" value="Provided" locked={locked} />
+                  <Field label="Payment Method" value="Bank Transfer" locked={locked} />
+                </div>
+              </Panel>
+
+              <Panel title="7. Performance, Quality & History">
+                <div className="grid grid-cols-5 gap-3">
+                  <MetricBox label="Rating" value="0" />
+                  <MetricBox label="Completion" value="0%" />
+                  <MetricBox label="Punctuality" value="0%" />
+                  <MetricBox label="Incidents" value="0" />
+                  <MetricBox label="Utilization" value="0%" />
+                </div>
+              </Panel>
+            </div>
+
+            <Panel title="8. Administrative Notes & Internal Controls">
+              <textarea disabled={locked} placeholder="Internal remarks..." className="min-h-[110px] w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold outline-none" />
+            </Panel>
+          </section>
+
+          <aside className="rounded-[2rem] bg-slate-50 p-5">
+            <h3 className="text-sm font-black text-slate-400">Trainer Summary Preview</h3>
+            <div className="mt-5 flex items-center gap-4">
+              <span className="grid h-16 w-16 place-items-center rounded-full bg-blue-100 text-xl font-black text-blue-700">
+                {trainerInitials(form.full_name || 'New Trainer')}
+              </span>
+              <div>
+                <h4 className="text-xl font-black">{form.full_name || 'New Trainer'}</h4>
+                <p className="text-sm font-bold text-slate-500">{form.professional_title}</p>
+                <span className="mt-1 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">{form.status}</span>
+              </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <MetricBox label="Readiness" value={`${form.readiness_score}%`} />
+              <MetricBox label="Dispatch" value={form.dispatch_score} />
+              <MetricBox label="Utilization" value="0%" />
+              <MetricBox label="Docs" value="0/5" />
+            </div>
+
+            <div className="mt-6 space-y-3">
+              <HealthBar label="Profile Completion" value={Number(form.readiness_score || 0)} />
+              <HealthBar label="Compliance" value={0} />
+              <HealthBar label="Availability" value={0} />
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <h3 className="mb-4 text-sm font-black text-blue-700">{title}</h3>
+      {children}
+    </section>
+  )
+}
+
+function Field({ label, value, locked, onChange }: { label: string; value: string; locked?: boolean; onChange?: (value: string) => void }) {
+  return (
+    <label>
+      <span className="text-xs font-black text-slate-500">{label}</span>
+      <input
+        disabled={locked}
+        value={value}
+        onChange={(event) => onChange?.(event.target.value)}
+        className="mt-2 h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-blue-400 disabled:bg-slate-50"
+      />
+    </label>
+  )
+}
+
+function MiniList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-3xl bg-slate-50 p-4">
+      <h4 className="mb-3 text-xs font-black text-slate-500">{title}</h4>
+      <div className="space-y-2">
+        {items.map((item) => (
+          <div key={item} className="flex items-center justify-between rounded-2xl bg-white px-3 py-2 text-xs font-black">
+            {item}
+            <span className="text-emerald-600">●</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MetricBox({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <span className="block text-xs font-black text-slate-500">{label}</span>
+      <strong className="mt-1 block text-xl font-black">{value}</strong>
+    </div>
+  )
+}
