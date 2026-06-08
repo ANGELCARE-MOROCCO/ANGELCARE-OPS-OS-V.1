@@ -183,15 +183,11 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 
-function downloadPdf(url: string, filename: string) {
-  if (typeof document === 'undefined') return
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.rel = 'noopener noreferrer'
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
+
+
+function previewPdf(url: string) {
+  if (typeof window === 'undefined') return
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 export default function AcademyProgramsClient({ initialDashboard }: Props) {
@@ -372,7 +368,7 @@ function ProgramModal({ modal, setModal, trainers, saving, saveProgram }: any) {
   }
 
   function printProgram() {
-    if (modal.id) downloadPdf(`/api/academy/programs/${modal.id}/pdf`, `program-${modal.id}-technical-sheet.pdf`)
+    if (modal.id) previewPdf(`/api/academy/programs/${modal.id}/pdf`)
   }
 
   return (

@@ -717,7 +717,7 @@ export async function GET(
       status: 200,
       headers: {
         'content-type': 'application/pdf',
-        'content-disposition': `attachment; filename="academy-cohort-${id}-manifest.pdf"`,
+        'content-disposition': `inline; filename="academy-cohort-${id}-manifest.pdf"`,
         'cache-control': 'no-store',
       },
     })

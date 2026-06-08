@@ -51,15 +51,11 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 
-function downloadPdf(url: string, filename: string) {
-  if (typeof document === 'undefined') return
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.rel = 'noopener noreferrer'
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
+
+
+function previewPdf(url: string) {
+  if (typeof window === 'undefined') return
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 export default function AcademyCohortsClient({ initialDashboard }: Props) {
@@ -163,7 +159,7 @@ function CohortModal({ modal, setModal, dashboard, saving, saveCohort }: any) {
     setValue('participants', [...(form.participants || []), { enrollment_id: enrollment.id, trainee_id: enrollment.trainee_id, trainee_name: enrollment.trainee_name, email: enrollment.email, phone: enrollment.phone, status: 'assigned', joined_at: new Date().toISOString() }])
   }
   function removeParticipant(index: number) { setValue('participants', (form.participants || []).filter((_, i) => i !== index)) }
-  function printCohort() { if (modal.id) downloadPdf(`/api/academy/cohorts/${modal.id}/pdf`, `cohort-${modal.id}-manifest.pdf`) }
+  function printCohort() { if (modal.id) previewPdf(`/api/academy/cohorts/${modal.id}/pdf`) }
 
   return <div className="modalBackdrop"><div className="megaModal cohortMega"><header className="modalHeader premiumHeader"><div className="modalTitleBlock"><span className="modalIcon">👥</span><div><h2>{modal.mode === 'create' ? 'Create Live Group / Cohort' : form.title || 'Cohort Manifest'}</h2><p>Wide enterprise manifest: program link, trainer assignment, capacity, approved enrollments, readiness controls and A4 print.</p></div></div><div className="refBox"><span>Reference Number</span><input disabled={locked} value={form.reference_number || ''} onChange={(e) => setValue('reference_number', e.target.value)} /></div><button className="iconBtn" onClick={() => setModal({ open: false, mode: 'create', form: emptyCohort() })}>×</button></header><div className="modalBody premiumCohortBody"><section className="modalContent"><Panel number="1" title="Cohort Core Control"><div className="formGrid five"><Field label="Cohort Title"><input disabled={locked} value={form.title || ''} onChange={(e) => setValue('title', e.target.value)} /></Field><Field label="Linked Program"><select disabled={locked} value={String(form.program_id || '')} onChange={(e) => { const selectedId = String(e.target.value); const program = dashboard.programs.find((x: any) => String(x.id) === selectedId); setModal((m: any) => ({ ...m, form: { ...m.form, program_id: selectedId, program_title: program?.title || program?.program_name || '' } })) }}><option value="">Select program</option>{dashboard.programs.map((p: any) => <option key={p.id} value={String(p.id)}>{p.title || p.program_name} · {p.reference_number || 'program'}</option>)}</select></Field><Field label="Assigned Trainer"><select disabled={locked} value={String(form.trainer_id || '')} onChange={(e) => { const trainer = dashboard.trainers.find((x: any) => String(x.id) === String(e.target.value)); setModal((m: any) => ({ ...m, form: { ...m.form, trainer_id: trainer?.id || '', trainer_name: trainer?.full_name || '' } })) }}><option value="">Assign trainer</option>{dashboard.trainers.map((t: any) => <option key={t.id} value={String(t.id)}>{t.full_name} · {t.specialty || 'Trainer'}</option>)}</select></Field><Field label="Start Date"><input disabled={locked} type="date" value={form.start_date || ''} onChange={(e) => setValue('start_date', e.target.value)} /></Field><Field label="End Date"><input disabled={locked} type="date" value={form.end_date || ''} onChange={(e) => setValue('end_date', e.target.value)} /></Field><Field label="Seat Capacity"><input disabled={locked} type="number" value={form.capacity || 0} onChange={(e) => setValue('capacity', Number(e.target.value))} /></Field><Field label="Status"><select disabled={locked} value={form.status || 'planned'} onChange={(e) => setValue('status', e.target.value)}><option value="planned">Planned</option><option value="open">Open</option><option value="active">Active</option><option value="completed">Completed</option><option value="paused">Paused</option><option value="cancelled">Cancelled</option></select></Field><Field label="Operational Notes"><textarea disabled={locked} value={form.notes || ''} onChange={(e) => setValue('notes', e.target.value)} /></Field></div>
 

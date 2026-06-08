@@ -255,15 +255,11 @@ function AcademySidebar() {
 
 
 
-function downloadPdf(url: string, filename: string) {
-  if (typeof document === 'undefined') return
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.rel = 'noopener noreferrer'
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
+
+
+function previewPdf(url: string) {
+  if (typeof window === 'undefined') return
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 export default function AcademyTrainersClient() {
@@ -1400,26 +1396,38 @@ function TrainerManagementModal({
   onClose: () => void
   onEditDossier: () => void
 }) {
+  const [tab, setTab] = useState<'overview' | 'cohorts' | 'payments' | 'notes' | 'receipt' | 'dossier'>('overview')
+  const [data, setData] = useState<any>({ trainer, cohorts: [], payments: [], notes: [], assignments: [], totals: {}, availableProgramCompensationModels: [] })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [tab, setTab] = useState<'overview' | 'cohorts' | 'payments' | 'operations'>('overview')
-  const [data, setData] = useState<any>({
-    cohorts: [],
-    payments: [],
-    notes: [],
-    assignments: [],
-    totals: {},
-  })
+  const [previewPayment, setPreviewPayment] = useState<any | null>(null)
+
+  const trainerId = String(trainer.id)
+  const liveTrainer = data.trainer || trainer
+  const cohorts = Array.isArray(data.cohorts) ? data.cohorts : []
+  const payments = Array.isArray(data.payments) ? data.payments : []
+  const notes = Array.isArray(data.notes) ? data.notes : []
+  const totals = data.totals || data.stats || {}
+  const compensationMap = Array.isArray(data.availableProgramCompensationModels) ? data.availableProgramCompensationModels : []
 
   async function loadManagement() {
     setLoading(true)
     try {
-      const response = await fetch(`/api/academy/trainers/${trainer.id}/management`, { cache: 'no-store' })
+      const response = await fetch(`/api/academy/trainers/${trainerId}/management`, { cache: 'no-store' })
       const json = await response.json().catch(() => ({}))
-      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to load trainer management data')
-      setData(json)
+      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to load trainer management')
+      const payload = json?.data || json
+      setData({
+        trainer: payload.trainer || json.trainer || trainer,
+        cohorts: payload.cohorts || json.cohorts || [],
+        payments: payload.payments || json.payments || [],
+        notes: payload.notes || json.notes || [],
+        assignments: payload.assignments || json.assignments || [],
+        availableProgramCompensationModels: payload.availableProgramCompensationModels || json.availableProgramCompensationModels || [],
+        totals: payload.totals || payload.stats || json.totals || json.stats || {},
+      })
     } catch (error: any) {
-      alert(error?.message || 'Unable to load trainer management data')
+      alert(error?.message || 'Unable to load trainer management')
     } finally {
       setLoading(false)
     }
@@ -1427,12 +1435,7 @@ function TrainerManagementModal({
 
   useEffect(() => {
     loadManagement()
-  }, [trainer.id])
-
-  const cohorts = Array.isArray(data.cohorts) ? data.cohorts : []
-  const payments = Array.isArray(data.payments) ? data.payments : []
-  const notes = Array.isArray(data.notes) ? data.notes : []
-  const totals = data.totals || {}
+  }, [trainerId])
 
   function setPayments(next: any[]) {
     setData((current: any) => ({ ...current, payments: next }))
@@ -1442,24 +1445,110 @@ function TrainerManagementModal({
     setData((current: any) => ({ ...current, notes: next }))
   }
 
+  function modelsForCohort(cohortId: any) {
+    const found = compensationMap.find((item: any) => String(item.cohort_id) === String(cohortId))
+    return Array.isArray(found?.models) ? found.models : []
+  }
+
+  function cohortById(cohortId: any) {
+    return cohorts.find((cohort: any) => String(cohort.id) === String(cohortId))
+  }
+
+  function amountForModel(cohortId: any, modelKey: any, tier: any) {
+    const models = modelsForCohort(cohortId)
+    const selected = models.find((model: any) => String(model.key) === String(modelKey))
+    if (!selected) return null
+    const tierNumber = Number(tier || selected.participant_tier || 0)
+    const exactTier = models.find((model: any) => String(model.key) === String(modelKey) && Number(model.participant_tier || 0) === tierNumber)
+    return Number((exactTier || selected).amount_dhs || 0)
+  }
+
+  function referenceSeed() {
+    return String(Date.now()).slice(-6)
+  }
+
   function addPayment() {
-    setPayments([
-      {
-        label: 'Trainer payment',
-        amount_dhs: 0,
-        status: 'pending',
-        payment_method: '',
-        payment_details: '',
-        due_date: '',
-        rejected_reason: '',
-      },
-      ...payments,
-    ])
+    const defaultCohort = cohorts[0]
+    const models = defaultCohort ? modelsForCohort(defaultCohort.id) : []
+    const model = models[0]
+    const amount = model ? Number(model.amount_dhs || 0) : 0
+    const newPayment = {
+      local_id: `local-${Date.now()}`,
+      reference_number: `TRP-${new Date().getFullYear()}-${referenceSeed()}`,
+      payment_reference: `TRP-${new Date().getFullYear()}-${referenceSeed()}`,
+      audit_code: `TRPAY-${String(trainerId).replace(/[^a-z0-9]/gi, '').slice(0, 8).toUpperCase()}-${String(defaultCohort?.id || 'NOCOHORT')}-${Date.now()}`,
+      label: model?.label || 'Trainer payment',
+      cohort_id: defaultCohort?.id || '',
+      cohort_reference: defaultCohort?.reference_number || '',
+      cohort_title: defaultCohort?.title || '',
+      program_id: defaultCohort?.program_id || '',
+      program_title: defaultCohort?.program_title || '',
+      compensation_model_key: model?.key || '',
+      compensation_model_label: model?.label || '',
+      participant_tier: model?.participant_tier || '',
+      amount_dhs: amount,
+      status: 'pending',
+      due_date: '',
+      paid_date: '',
+      payment_method: '',
+      payment_details: '',
+      finance_note: '',
+      manual_override: false,
+    }
+    setPayments([newPayment, ...payments])
+    setPreviewPayment(newPayment)
     setTab('payments')
   }
 
   function updatePayment(index: number, key: string, value: any) {
-    setPayments(payments.map((payment: any, i: number) => i === index ? { ...payment, [key]: value } : payment))
+    const next = payments.map((payment: any, i: number) => {
+      if (i !== index) return payment
+      const updated = { ...payment, [key]: value }
+
+      if (key === 'cohort_id') {
+        const cohort = cohortById(value)
+        const models = modelsForCohort(value)
+        const model = models[0]
+        updated.cohort_reference = cohort?.reference_number || ''
+        updated.cohort_title = cohort?.title || ''
+        updated.program_id = cohort?.program_id || ''
+        updated.program_title = cohort?.program_title || ''
+        updated.compensation_model_key = model?.key || ''
+        updated.compensation_model_label = model?.label || ''
+        updated.participant_tier = model?.participant_tier || ''
+        updated.amount_dhs = Number(model?.amount_dhs || 0)
+        updated.manual_override = false
+        updated.audit_code = updated.audit_code || `TRPAY-${String(trainerId).replace(/[^a-z0-9]/gi, '').slice(0, 8).toUpperCase()}-${String(value || 'NOCOHORT')}-${Date.now()}`
+      }
+
+      if (key === 'compensation_model_key') {
+        const model = modelsForCohort(updated.cohort_id).find((item: any) => String(item.key) === String(value))
+        updated.compensation_model_label = model?.label || ''
+        updated.participant_tier = model?.participant_tier || updated.participant_tier || ''
+        updated.amount_dhs = Number(model?.amount_dhs || 0)
+        updated.manual_override = false
+      }
+
+      if (key === 'participant_tier') {
+        const amount = amountForModel(updated.cohort_id, updated.compensation_model_key, value)
+        if (amount !== null) {
+          updated.amount_dhs = amount
+          updated.manual_override = false
+        }
+      }
+
+      if (key === 'amount_dhs') {
+        updated.amount_dhs = Number(value || 0)
+        updated.manual_override = true
+      }
+
+      if (key === 'status' && value === 'paid' && !updated.paid_date) {
+        updated.paid_date = new Date().toISOString().slice(0, 10)
+      }
+
+      return updated
+    })
+    setPayments(next)
   }
 
   function removePayment(index: number) {
@@ -1469,14 +1558,16 @@ function TrainerManagementModal({
   function addNote() {
     setNotes([
       {
+        local_id: `note-${Date.now()}`,
         category: 'admin',
-        note: '',
+        priority: 'normal',
         status: 'open',
-        created_at: new Date().toISOString(),
+        note: '',
+        cohort_id: '',
       },
       ...notes,
     ])
-    setTab('operations')
+    setTab('notes')
   }
 
   function updateNote(index: number, key: string, value: any) {
@@ -1490,108 +1581,100 @@ function TrainerManagementModal({
   async function saveManagement() {
     setSaving(true)
     try {
-      const response = await fetch(`/api/academy/trainers/${trainer.id}/management`, {
+      const response = await fetch(`/api/academy/trainers/${trainerId}/management`, {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ payments, notes }),
       })
       const json = await response.json().catch(() => ({}))
-      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to save trainer operations')
-      await loadManagement()
+      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to save trainer management')
+      const payload = json?.data || json
+      setData({
+        trainer: payload.trainer || trainer,
+        cohorts: payload.cohorts || [],
+        payments: payload.payments || [],
+        notes: payload.notes || [],
+        assignments: payload.assignments || [],
+        availableProgramCompensationModels: payload.availableProgramCompensationModels || [],
+        totals: payload.totals || payload.stats || {},
+      })
     } catch (error: any) {
-      alert(error?.message || 'Unable to save trainer operations')
+      alert(error?.message || 'Unable to save trainer management')
     } finally {
       setSaving(false)
     }
   }
 
+  function printReceipt(payment: any) {
+    if (!payment?.id) {
+      alert('Save this payment first before printing an A4 receipt.')
+      return
+    }
+    previewPdf(`/api/academy/trainers/${trainerId}/payments/${payment.id}/receipt/pdf`)
+  }
+
+  const trainerLabel = trainerName(liveTrainer)
+  const paidTotal = Number(totals.paid_total || payments.filter((p: any) => p.status === 'paid').reduce((sum: number, p: any) => sum + Number(p.amount_dhs || 0), 0))
+  const pendingTotal = Number(totals.pending_total || payments.filter((p: any) => p.status === 'pending').reduce((sum: number, p: any) => sum + Number(p.amount_dhs || 0), 0))
+  const rejectedTotal = Number(totals.rejected_total || payments.filter((p: any) => p.status === 'rejected').reduce((sum: number, p: any) => sum + Number(p.amount_dhs || 0), 0))
+
   return (
-    <div className="fixed inset-0 z-[10000] overflow-y-auto bg-slate-950/50 px-4 py-6 backdrop-blur-md">
-      <div className="mx-auto flex min-h-[92vh] w-full max-w-[1820px] flex-col overflow-hidden rounded-[2.4rem] border border-white/70 bg-white shadow-[0_45px_140px_rgba(15,23,42,0.38)]">
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 bg-white px-7 py-5">
+    <div className="fixed inset-0 z-[10000] overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-md">
+      <div className="mx-auto flex min-h-[92vh] w-full max-w-[1780px] flex-col overflow-hidden rounded-[2.4rem] border border-white/70 bg-white shadow-[0_45px_140px_rgba(15,23,42,0.38)]">
+        <header className="flex flex-wrap items-center justify-between gap-5 border-b border-slate-100 bg-white px-7 py-5">
           <div className="flex items-center gap-4">
-            <span className="grid h-16 w-16 place-items-center rounded-full bg-blue-100 text-xl font-black text-blue-700">
-              {trainerInitials(trainerName(trainer))}
-            </span>
+            <span className="grid h-16 w-16 place-items-center rounded-3xl bg-blue-50 text-xl font-black text-blue-700">{trainerInitials(trainerLabel)}</span>
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-600">Existing trainer management</p>
-              <h2 className="text-3xl font-black tracking-[-0.04em] text-slate-950">{trainerName(trainer)}</h2>
-              <p className="mt-1 text-sm font-bold text-slate-500">
-                Live cohorts, operations, payments, dispatch and trainer delivery control.
-              </p>
+              <p className="text-xs font-black uppercase tracking-[0.32em] text-slate-500">Existing Trainer Management</p>
+              <h2 className="text-3xl font-black tracking-[-0.04em] text-slate-950">{trainerLabel}</h2>
+              <p className="mt-1 text-sm font-bold text-slate-500">Live cohorts, operations, payments, receipts, audit and trainer delivery control.</p>
             </div>
           </div>
-
           <div className="flex flex-wrap items-center gap-3">
-            <button onClick={loadManagement} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm">
-              Refresh Live
-            </button>
-            <button onClick={addPayment} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700">
-              + Payment
-            </button>
-            <button onClick={addNote} className="rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-black text-violet-700">
-              + Ops Note
-            </button>
-            <button onClick={onEditDossier} className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-blue-200">
-              Edit Dossier
-            </button>
-            <button onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-black text-slate-700">
-              Close
-            </button>
+            <button onClick={loadManagement} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm">Refresh Live</button>
+            <button onClick={addPayment} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700 shadow-sm">+ Payment</button>
+            <button onClick={addNote} className="rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-black text-violet-700 shadow-sm">+ Ops Note</button>
+            <button onClick={onEditDossier} className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-blue-200">Edit Dossier</button>
+            <button onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-black text-slate-700">Close</button>
           </div>
         </header>
 
-        <section className="grid grid-cols-1 gap-4 border-b border-slate-100 bg-slate-50 px-7 py-5 md:grid-cols-6">
-          <OpsKpi label="Live Cohorts" value={totals.cohorts || cohorts.length || 0} tone="blue" />
+        <section className="grid gap-3 border-b border-slate-100 bg-slate-50 px-7 py-4 md:grid-cols-3 xl:grid-cols-7">
+          <OpsKpi label="Live Cohorts" value={totals.live_cohorts || cohorts.length} tone="blue" />
           <OpsKpi label="Ongoing" value={totals.ongoing || 0} tone="emerald" />
           <OpsKpi label="Upcoming" value={totals.upcoming || 0} tone="violet" />
           <OpsKpi label="Finished" value={totals.finished || 0} tone="slate" />
-          <OpsKpi label="Paid" value={`${Number(totals.paid_total || 0).toLocaleString('fr-MA')} Dhs`} tone="emerald" />
-          <OpsKpi label="Pending" value={`${Number(totals.pending_total || 0).toLocaleString('fr-MA')} Dhs`} tone="amber" />
+          <OpsKpi label="Paid" value={`${paidTotal.toLocaleString('fr-MA')} Dhs`} tone="emerald" />
+          <OpsKpi label="Pending" value={`${pendingTotal.toLocaleString('fr-MA')} Dhs`} tone="amber" />
+          <OpsKpi label="Next Due" value={totals.next_payment_due || '—'} tone="red" />
         </section>
 
-        <div className="grid min-h-0 flex-1 grid-cols-[250px_minmax(0,1fr)_360px] gap-5 overflow-auto bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6">
-          <aside className="space-y-3">
+        <div className="grid min-h-0 flex-1 grid-cols-[250px_minmax(0,1fr)_340px] gap-5 overflow-auto bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6">
+          <aside className="space-y-4">
             {[
               ['overview', 'Command Overview', 'Trainer control room'],
               ['cohorts', 'Cohorts & Delivery', 'Ongoing, upcoming, finished'],
-              ['payments', 'Payments Control', 'Paid, pending, rejected'],
-              ['operations', 'Operational Notes', 'Admin, absence, query, pay'],
+              ['payments', 'Payments Control', 'Cohorts, models, receipts'],
+              ['notes', 'Operational Notes', 'Admin, pay, absence, query'],
+              ['receipt', 'Receipt & Audit', 'Preview and financial tracking'],
+              ['dossier', 'Trainer Dossier', 'Profile snapshot'],
             ].map(([key, title, subtitle]) => (
-              <button
-                key={key}
-                onClick={() => setTab(key as any)}
-                className={
-                  tab === key
-                    ? 'flex w-full items-start gap-3 rounded-2xl bg-blue-50 p-4 text-left text-blue-800 ring-1 ring-blue-100'
-                    : 'flex w-full items-start gap-3 rounded-2xl bg-white p-4 text-left text-slate-700 ring-1 ring-slate-100 hover:bg-slate-50'
-                }
-              >
-                <span className="grid h-7 w-7 place-items-center rounded-xl bg-white text-xs font-black shadow-sm">●</span>
-                <span>
-                  <strong className="block text-sm font-black">{title}</strong>
-                  <small className="mt-1 block text-xs font-bold opacity-70">{subtitle}</small>
-                </span>
+              <button key={key} onClick={() => setTab(key as any)} className={`w-full rounded-2xl border px-4 py-4 text-left transition ${tab === key ? 'border-blue-200 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50'}`}>
+                <span className="block text-sm font-black text-slate-950">{title}</span>
+                <span className="text-xs font-bold text-slate-500">{subtitle}</span>
               </button>
             ))}
 
-            <div className="rounded-[1.7rem] border border-slate-200 bg-white p-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Trainer Snapshot</p>
-              <p className="mt-3 text-sm font-black">{trainer.professional_title || 'Registered Trainer'}</p>
-              <p className="mt-1 text-xs font-bold text-slate-500">{trainer.email || 'No email'}</p>
-              <p className="mt-1 text-xs font-bold text-slate-500">{trainer.mobile || trainer.phone || 'No phone'}</p>
-              <span className="mt-4 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
-                {trainer.status || trainer.availability_status || 'available'}
-              </span>
-            </div>
+            <ManagementPanel title="Trainer Snapshot">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{liveTrainer.seniority_level || 'Trainer'}</p>
+              <p className="mt-2 text-sm font-black text-slate-950">{liveTrainer.email || 'No email'}</p>
+              <p className="text-xs font-bold text-slate-500">{liveTrainer.mobile || liveTrainer.phone || 'No phone'}</p>
+              <span className="mt-3 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">{liveTrainer.status || liveTrainer.availability_status || 'available'}</span>
+            </ManagementPanel>
           </aside>
 
           <section className="min-w-0 space-y-5">
-            {loading && (
-              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-500">
-                Loading live trainer management data…
-              </div>
-            )}
+            {loading && <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-500">Loading live trainer management data…</div>}
 
             {!loading && tab === 'overview' && (
               <>
@@ -1600,15 +1683,11 @@ function TrainerManagementModal({
                     <div className="grid grid-cols-2 gap-3">
                       <MetricBox label="Assigned Cohorts" value={cohorts.length} />
                       <MetricBox label="Assignments" value={totals.assignments || 0} />
-                      <MetricBox label="Ops Notes" value={totals.notes || notes.length || 0} />
-                      <MetricBox label="Rejected Pay" value={`${Number(totals.rejected_total || 0).toLocaleString('fr-MA')} Dhs`} />
+                      <MetricBox label="Ops Notes" value={notes.length} />
+                      <MetricBox label="Rejected Pay" value={`${rejectedTotal.toLocaleString('fr-MA')} Dhs`} />
                     </div>
                   </ManagementPanel>
-
-                  <ManagementPanel title="Payment Intelligence">
-                    <PaymentBar paid={totals.paid_total || 0} pending={totals.pending_total || 0} rejected={totals.rejected_total || 0} />
-                  </ManagementPanel>
-
+                  <ManagementPanel title="Payment Intelligence"><PaymentBar paid={paidTotal} pending={pendingTotal} rejected={rejectedTotal} /></ManagementPanel>
                   <ManagementPanel title="Operational Risk">
                     <div className="space-y-3">
                       <RiskLine label="Pending payments" value={payments.filter((p: any) => p.status === 'pending').length} tone="amber" />
@@ -1617,76 +1696,93 @@ function TrainerManagementModal({
                     </div>
                   </ManagementPanel>
                 </div>
-
-                <ManagementPanel title="Latest Cohort Activity">
-                  <CohortTable cohorts={cohorts.slice(0, 6)} />
-                </ManagementPanel>
+                <ManagementPanel title="Latest Cohort Activity"><CohortTable cohorts={cohorts.slice(0, 6)} detailed /></ManagementPanel>
               </>
             )}
 
-            {!loading && tab === 'cohorts' && (
-              <ManagementPanel title="Live Cohorts & Training Delivery">
-                <CohortTable cohorts={cohorts} detailed />
-              </ManagementPanel>
-            )}
+            {!loading && tab === 'cohorts' && <ManagementPanel title="Live Cohorts & Training Delivery"><CohortTable cohorts={cohorts} detailed /></ManagementPanel>}
 
             {!loading && tab === 'payments' && (
-              <ManagementPanel title="Trainer Payment Control">
-                <div className="mb-4 flex justify-end">
+              <ManagementPanel title="Enterprise Trainer Payment Control">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-bold text-slate-500">Select cohort, linked program and saved compensation model. Amount auto-fills and can be manually overridden.</p>
                   <button onClick={addPayment} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">+ Add Payment Row</button>
                 </div>
-
-                <div className="space-y-3">
-                  {payments.map((payment: any, index: number) => (
-                    <div key={`payment-row-${payment.id || index}`} className="grid gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 xl:grid-cols-[1fr_130px_140px_160px_1fr_44px]">
-                      <SmallInput label="Label" value={payment.label || ''} onChange={(value) => updatePayment(index, 'label', value)} />
-                      <SmallInput label="Amount Dhs" value={String(payment.amount_dhs || '')} onChange={(value) => updatePayment(index, 'amount_dhs', value)} />
-                      <SmallSelect label="Status" value={payment.status || 'pending'} options={['pending', 'paid', 'rejected', 'cancelled']} onChange={(value) => updatePayment(index, 'status', value)} />
-                      <SmallInput label="Due Date" value={payment.due_date || ''} onChange={(value) => updatePayment(index, 'due_date', value)} />
-                      <SmallInput label="Method / Details" value={payment.payment_details || payment.payment_method || ''} onChange={(value) => updatePayment(index, 'payment_details', value)} />
-                      <button onClick={() => removePayment(index)} className="self-end rounded-2xl bg-red-50 px-3 py-3 text-sm font-black text-red-600">×</button>
-
-                      {payment.status === 'rejected' && (
-                        <div className="xl:col-span-6">
-                          <SmallInput label="Rejected Reason" value={payment.rejected_reason || ''} onChange={(value) => updatePayment(index, 'rejected_reason', value)} />
+                <div className="space-y-4">
+                  {payments.map((payment: any, index: number) => {
+                    const cohort = cohortById(payment.cohort_id)
+                    const models = modelsForCohort(payment.cohort_id)
+                    const tierOptions = Array.from(new Set([20, 30, 50, ...models.map((model: any) => Number(model.participant_tier || 0)).filter(Boolean)])).map(String)
+                    return (
+                      <article key={`payment-row-${payment.id || payment.local_id || index}`} className="rounded-[1.8rem] border border-slate-200 bg-slate-50 p-4 shadow-sm">
+                        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-500">{payment.reference_number || payment.payment_reference || 'Unsaved payment'}</p>
+                            <h4 className="mt-1 text-lg font-black text-slate-950">{payment.label || payment.compensation_model_label || 'Trainer payment'}</h4>
+                            <p className="text-xs font-bold text-slate-500">Audit: {payment.audit_code || 'Generated on save'} · {cohort?.reference_number || payment.cohort_reference || 'No cohort selected'}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={() => { setPreviewPayment(payment); setTab('receipt') }} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700">Preview</button>
+                            <button onClick={() => printReceipt(payment)} className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-black text-blue-700">Print A4</button>
+                            <button onClick={() => removePayment(index)} className="rounded-xl bg-red-50 px-3 py-2 text-xs font-black text-red-600">Remove</button>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {!payments.length && (
-                    <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-400">
-                      No payment records yet. Add payment rows for pending, paid or rejected trainer compensation.
-                    </div>
-                  )}
+                        <div className="grid gap-3 xl:grid-cols-4">
+                          <SmallSelect label="Linked Cohort" value={String(payment.cohort_id || '')} options={['', ...cohorts.map((c: any) => String(c.id))]} onChange={(value) => updatePayment(index, 'cohort_id', value)} />
+                          <ReadonlyMini label="Cohort / Program" value={`${payment.cohort_reference || cohort?.reference_number || '—'} · ${payment.program_title || cohort?.program_title || '—'}`} />
+                          <SmallSelect label="Compensation Model" value={payment.compensation_model_key || ''} options={['', ...models.map((model: any) => String(model.key))]} onChange={(value) => updatePayment(index, 'compensation_model_key', value)} />
+                          <SmallSelect label="Participant Tier" value={String(payment.participant_tier || '')} options={['', ...tierOptions]} onChange={(value) => updatePayment(index, 'participant_tier', value)} />
+                          <SmallInput label="Amount Dhs" value={String(payment.amount_dhs || '')} onChange={(value) => updatePayment(index, 'amount_dhs', value)} />
+                          <SmallSelect label="Status" value={payment.status || 'pending'} options={['pending', 'paid', 'rejected', 'cancelled']} onChange={(value) => updatePayment(index, 'status', value)} />
+                          <SmallInput label="Due Date" value={payment.due_date || ''} onChange={(value) => updatePayment(index, 'due_date', value)} />
+                          <SmallInput label="Paid Date" value={payment.paid_date || ''} onChange={(value) => updatePayment(index, 'paid_date', value)} />
+                          <SmallSelect label="Payment Method" value={payment.payment_method || ''} options={['', 'Cash', 'Bank Transfer', 'Cheque', 'Wallet', 'Other']} onChange={(value) => updatePayment(index, 'payment_method', value)} />
+                          <SmallInput label="Method Details" value={payment.payment_details || ''} onChange={(value) => updatePayment(index, 'payment_details', value)} />
+                          <SmallInput label="Finance Note" value={payment.finance_note || ''} onChange={(value) => updatePayment(index, 'finance_note', value)} />
+                          <ReadonlyMini label="Override" value={payment.manual_override ? 'Manual amount override' : 'Synced from program model'} />
+                        </div>
+                        {!models.length && payment.cohort_id && <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-black text-amber-700">No compensation model configured for this program. Manual amount is allowed and will be tracked as override.</p>}
+                      </article>
+                    )
+                  })}
+                  {!payments.length && <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-400">No payment records yet. Add one or more trainer compensation rows linked to live cohorts.</div>}
                 </div>
               </ManagementPanel>
             )}
 
-            {!loading && tab === 'operations' && (
+            {!loading && tab === 'notes' && (
               <ManagementPanel title="Operational Notes & Trainer Follow-up">
-                <div className="mb-4 flex justify-end">
-                  <button onClick={addNote} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">+ Add Operational Note</button>
-                </div>
-
+                <div className="mb-4 flex justify-end"><button onClick={addNote} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">+ Add Operational Note</button></div>
                 <div className="space-y-3">
                   {notes.map((note: any, index: number) => (
-                    <div key={`note-row-${note.id || index}`} className="grid gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 xl:grid-cols-[170px_150px_1fr_44px]">
-                      <SmallSelect label="Category" value={note.category || 'admin'} options={['admin', 'pay', 'query', 'absence', 'compliance', 'performance', 'dispatch', 'other']} onChange={(value) => updateNote(index, 'category', value)} />
-                      <SmallSelect label="Status" value={note.status || 'open'} options={['open', 'pending', 'resolved', 'closed']} onChange={(value) => updateNote(index, 'status', value)} />
-                      <label>
-                        <span className="text-xs font-black text-slate-500">Note</span>
-                        <textarea value={note.note || ''} onChange={(event) => updateNote(index, 'note', event.target.value)} className="mt-2 min-h-[72px] w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm font-bold outline-none" />
-                      </label>
+                    <div key={`note-row-${note.id || note.local_id || index}`} className="grid gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 xl:grid-cols-[160px_130px_160px_1fr_44px]">
+                      <SmallSelect label="Category" value={note.category || 'admin'} options={['admin', 'pay', 'query', 'absence', 'incident', 'performance', 'scheduling', 'compliance', 'other']} onChange={(value) => updateNote(index, 'category', value)} />
+                      <SmallSelect label="Priority" value={note.priority || 'normal'} options={['low', 'normal', 'high']} onChange={(value) => updateNote(index, 'priority', value)} />
+                      <SmallSelect label="Linked Cohort" value={String(note.cohort_id || '')} options={['', ...cohorts.map((c: any) => String(c.id))]} onChange={(value) => updateNote(index, 'cohort_id', value)} />
+                      <label><span className="text-xs font-black text-slate-500">Note</span><textarea value={note.note || ''} onChange={(event) => updateNote(index, 'note', event.target.value)} className="mt-2 min-h-[72px] w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm font-bold outline-none" /></label>
                       <button onClick={() => removeNote(index)} className="self-end rounded-2xl bg-red-50 px-3 py-3 text-sm font-black text-red-600">×</button>
                     </div>
                   ))}
+                  {!notes.length && <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-400">No operational notes yet. Add admin, pay, query, absence, incident or scheduling remarks.</div>}
+                </div>
+              </ManagementPanel>
+            )}
 
-                  {!notes.length && (
-                    <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm font-black text-slate-400">
-                      No operational notes yet. Add admin, pay, query, absence or dispatch remarks.
-                    </div>
-                  )}
+            {!loading && tab === 'receipt' && (
+              <ManagementPanel title="Receipt Preview & Audit Trail">
+                <ReceiptPreview payment={previewPayment || payments[0]} trainer={liveTrainer} cohort={cohortById((previewPayment || payments[0])?.cohort_id)} onPrint={() => printReceipt(previewPayment || payments[0])} />
+              </ManagementPanel>
+            )}
+
+            {!loading && tab === 'dossier' && (
+              <ManagementPanel title="Trainer Dossier Snapshot">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <ReadonlyMini label="Trainer Code" value={liveTrainer.trainer_code || liveTrainer.id} />
+                  <ReadonlyMini label="Professional Title" value={liveTrainer.professional_title || 'Registered Trainer'} />
+                  <ReadonlyMini label="Main Specialty" value={liveTrainer.main_specialty || liveTrainer.specialty || 'General Training'} />
+                  <ReadonlyMini label="Availability" value={liveTrainer.availability_status || liveTrainer.status || 'available'} />
+                  <ReadonlyMini label="Readiness" value={`${Number(liveTrainer.readiness_score || 0)}%`} />
+                  <ReadonlyMini label="Dispatch Score" value={liveTrainer.dispatch_score || 0} />
                 </div>
               </ManagementPanel>
             )}
@@ -1697,11 +1793,10 @@ function TrainerManagementModal({
               <div className="grid gap-3">
                 <button onClick={() => setTab('cohorts')} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black hover:bg-blue-50">Open Cohorts Control</button>
                 <button onClick={() => setTab('payments')} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black hover:bg-emerald-50">Manage Payments</button>
-                <button onClick={() => setTab('operations')} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black hover:bg-violet-50">Add Operational Note</button>
+                <button onClick={() => setTab('notes')} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black hover:bg-violet-50">Add Operational Note</button>
                 <button onClick={onEditDossier} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black hover:bg-slate-50">Edit Trainer Dossier</button>
               </div>
             </ManagementPanel>
-
             <ManagementPanel title="Payment Status">
               <div className="space-y-3">
                 <StatusCount label="Paid" value={payments.filter((p: any) => p.status === 'paid').length} tone="emerald" />
@@ -1709,18 +1804,40 @@ function TrainerManagementModal({
                 <StatusCount label="Rejected" value={payments.filter((p: any) => p.status === 'rejected').length} tone="red" />
               </div>
             </ManagementPanel>
-
             <ManagementPanel title="Save Operations">
-              <p className="text-xs font-bold text-slate-500">
-                Saves payment rows and operational notes to live database.
-              </p>
-              <button onClick={saveManagement} disabled={saving} className="mt-4 w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-200 disabled:opacity-50">
-                {saving ? 'Saving live updates…' : 'Save Live Updates'}
-              </button>
+              <p className="text-xs font-bold text-slate-500">Saves payment rows and operational notes to live database with payment references and audit codes.</p>
+              <button onClick={saveManagement} disabled={saving} className="mt-4 w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-200 disabled:opacity-50">{saving ? 'Saving live updates…' : 'Save Live Updates'}</button>
             </ManagementPanel>
           </aside>
         </div>
       </div>
+    </div>
+  )
+}
+
+function ReadonlyMini({ label, value }: { label: string; value: any }) {
+  return <div className="rounded-2xl border border-slate-200 bg-white p-3"><span className="block text-xs font-black text-slate-500">{label}</span><strong className="mt-1 block text-sm font-black text-slate-950">{value || '—'}</strong></div>
+}
+
+function ReceiptPreview({ payment, trainer, cohort, onPrint }: { payment: any; trainer: any; cohort: any; onPrint: () => void }) {
+  if (!payment) return <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm font-black text-slate-400">Select or create a payment row to preview the enterprise receipt.</div>
+  return (
+    <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5">
+        <div><p className="text-xs font-black uppercase tracking-[0.2em] text-blue-500">Trainer Payment Receipt</p><h3 className="mt-1 text-2xl font-black text-slate-950">{payment.reference_number || payment.payment_reference || 'Unsaved receipt'}</h3><p className="text-sm font-bold text-slate-500">Audit: {payment.audit_code || 'Generated after save'}</p></div>
+        <button onClick={onPrint} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">Print A4 Receipt</button>
+      </div>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <ReadonlyMini label="Trainer" value={trainer?.full_name || trainer?.name || trainer?.email} />
+        <ReadonlyMini label="Amount" value={`${Number(payment.amount_dhs || 0).toLocaleString('fr-MA')} Dhs`} />
+        <ReadonlyMini label="Cohort" value={`${payment.cohort_reference || cohort?.reference_number || '—'} · ${payment.cohort_title || cohort?.title || '—'}`} />
+        <ReadonlyMini label="Program" value={payment.program_title || cohort?.program_title || '—'} />
+        <ReadonlyMini label="Model" value={payment.compensation_model_label || payment.label || '—'} />
+        <ReadonlyMini label="Status" value={payment.status || 'pending'} />
+        <ReadonlyMini label="Due / Paid" value={`${payment.due_date || '—'} / ${payment.paid_date || payment.paid_at || '—'}`} />
+        <ReadonlyMini label="Method" value={`${payment.payment_method || '—'} · ${payment.payment_details || ''}`} />
+      </div>
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-600">{payment.finance_note || payment.rejected_reason || 'No finance note recorded.'}</div>
     </div>
   )
 }

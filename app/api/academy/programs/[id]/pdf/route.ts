@@ -645,7 +645,7 @@ function academyPdfResponse(pdf: Uint8Array | Buffer, filename: string) {
     status: 200,
     headers: {
       'content-type': 'application/pdf',
-      'content-disposition': `attachment; filename="${filename}"`,
+      'content-disposition': `inline; filename=\"${filename}}\"`,
       'cache-control': 'no-store',
     },
   })
