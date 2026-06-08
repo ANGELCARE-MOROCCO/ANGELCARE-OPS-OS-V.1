@@ -27,7 +27,22 @@ async function safeInsert(table: string, row: Json) {
 }
 
 async function safeLogEvent(entityType: RevenueEntityType, entityId: string, eventType: string, title: string, body?: string, metadata: Json = {}) {
-  const activityRow = {
+  const canonicalRow = {
+    entity_type: entityType,
+    entity_id: entityId,
+    prospect_id: entityType === "prospect" ? entityId : null,
+    event_type: eventType,
+    title,
+    body: body || null,
+    actor: "AngelCare",
+    severity: "info",
+    metadata,
+  }
+
+  const canonical = await supabase.from("revenue_activities").insert(canonicalRow).select().single()
+  if (!canonical.error) return canonical.data
+
+  const legacyRow = {
     entity_type: entityType,
     entity_id: entityId,
     event_type: eventType,
@@ -38,11 +53,11 @@ async function safeLogEvent(entityType: RevenueEntityType, entityId: string, eve
     metadata,
   }
 
-  const activity = await supabase.from("revenue_activities").insert(activityRow).select().single()
-  if (!activity.error) return activity.data
+  const legacy = await supabase.from("revenue_activities").insert(legacyRow).select().single()
+  if (!legacy.error) return legacy.data
 
   // Backward-compatible fallback for current installs that still have revenue_events first.
-  const event = await supabase.from("revenue_events").insert(activityRow).select().single()
+  const event = await supabase.from("revenue_events").insert(legacyRow).select().single()
   if (!event.error) return event.data
 
   // Last fallback for installs where only the RPC exists. Never block the business action if logging fails.

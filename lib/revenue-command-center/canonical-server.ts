@@ -40,14 +40,28 @@ export async function logRevenueActivity(
   },
 ) {
   const actor = await getActor(supabase)
-  await supabase.from("revenue_activities").insert({
-    entity_type: input.entityType || "prospect",
-    entity_id: input.entityId || input.prospectId || null,
-    prospect_id: input.prospectId || (input.entityType === "prospect" ? input.entityId : null) || null,
+  const entityType = input.entityType || "prospect"
+  const entityId = input.entityId || input.prospectId || null
+  const canonical = await supabase.from("revenue_activities").insert({
+    entity_type: entityType,
+    entity_id: entityId,
+    prospect_id: input.prospectId || (entityType === "prospect" ? entityId : null) || null,
     event_type: input.eventType,
     title: input.title,
     body: input.body || null,
     actor_id: actor.actorId,
+    actor: actor.actor,
+    severity: input.severity || "info",
+    metadata: input.metadata || {},
+  })
+  if (!canonical.error) return
+
+  await supabase.from("revenue_activities").insert({
+    entity_type: entityType,
+    entity_id: entityId,
+    event_type: input.eventType,
+    event_title: input.title,
+    event_body: input.body || null,
     actor: actor.actor,
     severity: input.severity || "info",
     metadata: input.metadata || {},
