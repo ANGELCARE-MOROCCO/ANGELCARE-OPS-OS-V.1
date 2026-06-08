@@ -40,6 +40,9 @@ function normalizePayload(input: AcademyCohortPayload) {
     progression_percent: Math.max(0, Math.min(100, toNumber(input.progression_percent, 0))),
     attendance_health: Math.max(0, Math.min(100, toNumber(input.attendance_health, 0))),
     notes: input.notes || null,
+    training_start_time: String(input.training_start_time || '09:00').slice(0, 5),
+    training_end_time: String(input.training_end_time || '17:00').slice(0, 5),
+    hours_per_day: Math.max(0, toNumber(input.hours_per_day, 8)),
   }
 }
 function normalizeCohort(row: any, related: { participants: any[]; checklist: any[] }): AcademyCohortRecord {
@@ -59,6 +62,9 @@ function normalizeCohort(row: any, related: { participants: any[]; checklist: an
     progression_percent: toNumber(row.progression_percent),
     attendance_health: toNumber(row.attendance_health),
     notes: row.notes,
+    training_start_time: String(row.training_start_time || '09:00').slice(0, 5),
+    training_end_time: String(row.training_end_time || '17:00').slice(0, 5),
+    hours_per_day: toNumber(row.hours_per_day, 8),
     created_at: row.created_at,
     updated_at: row.updated_at,
     participants: related.participants.filter((x) => String(x.cohort_id) === String(row.id)).map((x) => ({ id: x.id, trainee_id: x.trainee_id, enrollment_id: x.enrollment_id, trainee_name: x.trainee_name, email: x.email, phone: x.phone, status: x.status, joined_at: x.joined_at })),

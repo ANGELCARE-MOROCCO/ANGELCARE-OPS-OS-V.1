@@ -76,7 +76,7 @@ export default function AcademyCohortsClient({ initialDashboard }: Props) {
     if (json.ok) setDashboard(json.data)
   }
   function openCreate() { setModal({ open: true, mode: 'create', form: emptyCohort() }) }
-  function openView(cohort: AcademyCohortRecord) { setModal({ open: true, mode: 'view', id: cohort.id, form: { ...cohort, checklist: cohort.checklist?.length ? cohort.checklist : defaultChecklist } }) }
+  function openView(cohort: AcademyCohortRecord) { void openCohortModal(cohort, 'view') }
   
 
 function normalizeCohortTimePayload(payload: any) {
@@ -101,9 +101,13 @@ function normalizeCohortModalRow(row: any) {
   }
 }
 
-async function openCohortModal(row: any) {
-  const fallback = normalizeCohortModalRow(row)
-  setModal(fallback)
+async function openCohortModal(row: any, mode: Mode = 'view') {
+  const fallback = normalizeCohortModalRow({
+    ...row,
+    checklist: row?.checklist?.length ? row.checklist : defaultChecklist,
+    participants: Array.isArray(row?.participants) ? row.participants : [],
+  })
+  setModal({ open: true, mode, id: row?.id, form: fallback })
 
   if (!row?.id) return
 
@@ -114,15 +118,22 @@ async function openCohortModal(row: any) {
     if (!response.ok || json?.ok === false) return
 
     const live = json?.data || json?.cohort || row
-    setModal(normalizeCohortModalRow({
-      ...fallback,
-      ...live,
-      training_start_time: live.training_start_time || fallback.training_start_time,
-      training_end_time: live.training_end_time || fallback.training_end_time,
-      hours_per_day: live.hours_per_day || fallback.hours_per_day,
-    }))
+    setModal({
+      open: true,
+      mode,
+      id: live?.id || row.id,
+      form: normalizeCohortModalRow({
+        ...fallback,
+        ...live,
+        checklist: live?.checklist?.length ? live.checklist : fallback.checklist,
+        participants: Array.isArray(live?.participants) ? live.participants : fallback.participants,
+        training_start_time: live.training_start_time || fallback.training_start_time,
+        training_end_time: live.training_end_time || fallback.training_end_time,
+        hours_per_day: live.hours_per_day || fallback.hours_per_day,
+      }),
+    })
   } catch {
-    setModal(fallback)
+    setModal({ open: true, mode, id: row?.id, form: fallback })
   }
 }
 
@@ -130,12 +141,13 @@ async function saveCohort() {
     setSaving(true)
     const url = modal.id ? `/api/academy/cohorts/${modal.id}` : '/api/academy/cohorts'
     const method = modal.id ? 'PATCH' : 'POST'
-    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(normalizeCohortTimePayload(modal)) })
+    const payload = normalizeCohortTimePayload(modal.form)
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     const json = await safeJson(res)
     setSaving(false)
     if (!json.ok) { alert(json.error || 'Unable to save cohort'); return }
     await refresh()
-    setModal({ open: true, mode: 'view', id: json.data.id, form: { ...json.data, checklist: json.data.checklist?.length ? json.data.checklist : defaultChecklist } })
+    setModal({ open: true, mode: 'view', id: json.data.id, form: normalizeCohortModalRow({ ...json.data, checklist: json.data.checklist?.length ? json.data.checklist : defaultChecklist, participants: Array.isArray(json.data.participants) ? json.data.participants : payload.participants || [] }) })
   }
 
   const capacity = dashboard.cohorts.reduce((sum, cohort) => sum + Number(cohort.capacity || 0), 0)
@@ -170,7 +182,7 @@ function CohortModal({ modal, setModal, dashboard, saving, saveCohort }: any) {
                   <p className="text-xs font-bold text-blue-500">Used by live trainer agenda and A4 manifest.</p>
                 </div>
                 <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-blue-700">
-                  {(modal.training_start_time || '09:00')} → {(modal.training_end_time || '17:00')}
+                  {(form.training_start_time || '09:00')} → {(form.training_end_time || '17:00')}
                 </span>
               </div>
 
@@ -179,8 +191,9 @@ function CohortModal({ modal, setModal, dashboard, saving, saveCohort }: any) {
                   <span className="text-xs font-black text-slate-600">Training Start Time</span>
                   <input
                     type="time"
-                    value={modal.training_start_time || '09:00'}
-                    onChange={(event) => setModal({ ...modal, training_start_time: event.target.value })}
+                    value={form.training_start_time || '09:00'}
+                    disabled={locked}
+                    onChange={(event) => setValue('training_start_time', event.target.value)}
                     className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800 outline-none focus:border-blue-400"
                   />
                 </label>
@@ -189,8 +202,9 @@ function CohortModal({ modal, setModal, dashboard, saving, saveCohort }: any) {
                   <span className="text-xs font-black text-slate-600">Training End Time</span>
                   <input
                     type="time"
-                    value={modal.training_end_time || '17:00'}
-                    onChange={(event) => setModal({ ...modal, training_end_time: event.target.value })}
+                    value={form.training_end_time || '17:00'}
+                    disabled={locked}
+                    onChange={(event) => setValue('training_end_time', event.target.value)}
                     className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800 outline-none focus:border-blue-400"
                   />
                 </label>
@@ -202,8 +216,9 @@ function CohortModal({ modal, setModal, dashboard, saving, saveCohort }: any) {
                     min="1"
                     max="14"
                     step="0.5"
-                    value={modal.hours_per_day || 8}
-                    onChange={(event) => setModal({ ...modal, hours_per_day: Number(event.target.value || 8) })}
+                    value={form.hours_per_day || 8}
+                    disabled={locked}
+                    onChange={(event) => setValue('hours_per_day', Number(event.target.value || 8))}
                     className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800 outline-none focus:border-blue-400"
                   />
                 </label>

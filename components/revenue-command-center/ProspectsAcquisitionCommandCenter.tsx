@@ -458,6 +458,25 @@ function computeLiveProspectStats(liveProspects: any[], liveTasks: any[], liveAp
   }
 }
 
+
+async function saveCanonicalProspectFromAcquisition(input: Partial<ProspectRecord>): Promise<ProspectRecord | null> {
+  const response = await fetch("/api/revenue-command-center/prospects", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...input,
+      valueMad: Number(input.valueMad || 0),
+      metadata: {
+        ...(typeof (input as any).metadata === "object" ? (input as any).metadata : {}),
+        source_component: "ProspectsAcquisitionCommandCenter",
+      },
+    }),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || "Prospect save failed")
+  return normalizeProspect(payload?.prospect || payload?.data?.prospect || payload?.data || input)
+}
+
 function formatLiveMad(value: number) {
   if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M MAD`
   if (value >= 1000) return `${Math.round(value / 1000)}K MAD`
@@ -548,11 +567,40 @@ async function refreshAllLiveRevenueData() {
   }
 
 
-  function commitStore(nextStore: ProspectStore) {
+  async function commitStore(nextStore: ProspectStore) {
     saveProspectStore(nextStore)
     setStore(nextStore)
-    window.dispatchEvent(new CustomEvent("rcc-prospects-canonical-refresh"))
     setLastSync(new Date())
+
+    const previousIds = new Set((store.prospects || []).map((prospect) => prospect.id))
+    const createdProspects = (nextStore.prospects || []).filter((prospect) => !previousIds.has(prospect.id))
+    try {
+      if (createdProspects.length) {
+        const saved = (await Promise.all(createdProspects.map((prospect) => saveCanonicalProspectFromAcquisition(prospect).catch((error) => {
+          console.warn("Prospect canonical save failed", error)
+          return null
+        })))).filter(Boolean) as ProspectRecord[]
+        if (saved.length) {
+          const savedIds = new Set(saved.map((prospect) => prospect.id))
+          const clientIds = new Set(createdProspects.map((prospect) => prospect.id))
+          const mergedStore = {
+            ...nextStore,
+            prospects: [
+              ...saved,
+              ...nextStore.prospects.filter((prospect) => !clientIds.has(prospect.id) && !savedIds.has(prospect.id)),
+            ],
+            source: "supabase-live",
+            syncedAt: new Date().toISOString(),
+          }
+          saveProspectStore(mergedStore)
+          setStore(mergedStore)
+        }
+      }
+      window.dispatchEvent(new CustomEvent("rcc-prospects-canonical-refresh"))
+      await refreshAllLiveRevenueData()
+    } catch (error) {
+      console.warn("Prospects acquisition live sync refresh failed", error)
+    }
   }
 
   function refresh() {
@@ -1087,7 +1135,7 @@ function ProspectActionModal({
   prospects: ProspectRecord[]
   store: ProspectStore
   onClose: () => void
-  onCommit: (store: ProspectStore) => void
+  onCommit: (store: ProspectStore) => void | Promise<void>
 }) {
   const [form, setForm] = useState({
     name: "",
@@ -1148,7 +1196,7 @@ function ProspectActionModal({
     }
   }
 
-  function submit() {
+  async function submit() {
     if (action === "add_prospect") {
       const prospect = normalizeProspect({
         name: form.name || "New AngelCare prospect",
@@ -1164,7 +1212,7 @@ function ProspectActionModal({
         updatedAt: new Date().toISOString(),
       })
       const next = addLog({ ...store, prospects: [prospect, ...store.prospects] }, "Prospect created", prospect.id, `${prospect.name} · ${mad(prospect.valueMad)}`)
-      onCommit(next)
+      await onCommit(next)
       close()
       return
     }
@@ -1187,7 +1235,7 @@ function ProspectActionModal({
         })
       })
       const next = addLog({ ...store, prospects: [...imported, ...store.prospects] }, "Companies imported", imported[0]?.id || "workspace", `${imported.length} prospects`)
-      onCommit(next)
+      await onCommit(next)
       close()
       return
     }
@@ -1195,7 +1243,7 @@ function ProspectActionModal({
     if (action === "create_proposal" && selected) {
       const content = `ANGELCARE PROPOSAL\n\nProspect: ${selected.name}\nCity: ${selected.city}\nValue: ${mad(selected.valueMad)}\nStage: ${stageLabels[selected.stage]}\nNext action: ${selected.nextAction}\n\nOffer:\n${selected.proposedOffer || "Strategic AngelCare B2B collaboration offer."}\n`
       downloadTextFile(`angelcare-proposal-${selected.name.replace(/\W+/g, "-").toLowerCase()}.txt`, content)
-      onCommit(addLog(store, "Proposal generated", selected.id, selected.name))
+      await onCommit(addLog(store, "Proposal generated", selected.id, selected.name))
       close()
       return
     }
@@ -1203,7 +1251,7 @@ function ProspectActionModal({
     if (action === "generate_report") {
       const content = `ANGELCARE PROSPECT REPORT\n\nTotal prospects: ${prospects.length}\nPipeline: ${mad(prospects.reduce((sum, p) => sum + p.valueMad, 0))}\nHot prospects: ${prospects.filter((p) => p.priority === "critical" || p.priority === "high" || p.score >= 78).length}\nGenerated: ${new Date().toLocaleString()}\n`
       downloadTextFile("angelcare-prospect-report.txt", content)
-      onCommit(addLog(store, "Report generated", "workspace", `${prospects.length} prospects`))
+      await onCommit(addLog(store, "Report generated", "workspace", `${prospects.length} prospects`))
       close()
       return
     }
@@ -1214,21 +1262,21 @@ function ProspectActionModal({
           ? { ...prospect, nextContactDate: form.meetingDate, nextAction: form.message || prospect.nextAction, updatedAt: new Date().toISOString() }
           : prospect,
       )
-      onCommit(addLog({ ...store, prospects: nextProspects }, action === "schedule_meeting" ? "Meeting scheduled" : "Task created", selected.id, selected.name))
+      await onCommit(addLog({ ...store, prospects: nextProspects }, action === "schedule_meeting" ? "Meeting scheduled" : "Task created", selected.id, selected.name))
       close()
       return
     }
 
     if (action === "send_email" && selected?.email && typeof window !== "undefined") {
       window.location.href = `mailto:${selected.email}?subject=${encodeURIComponent("AngelCare partnership follow-up")}&body=${encodeURIComponent(form.message)}`
-      onCommit(addLog(store, "Email launched", selected.id, selected.name))
+      await onCommit(addLog(store, "Email launched", selected.id, selected.name))
       close()
       return
     }
 
     if (action === "whatsapp_blast" && selected?.phone && typeof window !== "undefined") {
       window.open(`https://wa.me/${selected.phone.replace(/\D/g, "")}?text=${encodeURIComponent(form.message)}`, "_blank")
-      onCommit(addLog(store, "WhatsApp launched", selected.id, selected.name))
+      await onCommit(addLog(store, "WhatsApp launched", selected.id, selected.name))
       close()
     }
   }

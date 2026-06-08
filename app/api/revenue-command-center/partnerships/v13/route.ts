@@ -209,6 +209,35 @@ function partnerToRow(partner: PartnerRecordV13): Row {
   }
 }
 
+
+function normalizePartnerInput(input: Row, fallbackId?: string): PartnerRecordV13 {
+  const id = s(input.id || input.partnerId || fallbackId, `partner-${Date.now()}-${Math.random().toString(36).slice(2)}`)
+  const now = nowIso()
+  return rowToPartner({
+    ...input,
+    id,
+    name: input.name || input.partnerName || input.organization || input.company || "Unnamed partnership",
+    organization: input.organization || input.company || input.name || input.partnerName || "Unnamed organization",
+    contact_name: input.contactName || input.contact_name || input.decisionMaker || input.decision_maker || "",
+    kind: input.kind || input.type || input.category || "institution",
+    status: input.status || input.stage || "target",
+    value_mad: input.valueMad ?? input.value_mad ?? input.value ?? input.contract_value_mad ?? 0,
+    health_score: input.activationScore ?? input.health_score ?? input.score ?? 70,
+    referral_potential: input.referralPotential ?? input.referral_potential ?? 50,
+    context: input.partnershipContext || input.context || input.notes || "",
+    next_action: input.nextAction || input.next_action || "Review next partnership action.",
+    raw: input,
+    created_at: input.createdAt || input.created_at || now,
+    updated_at: now,
+  })
+}
+
+function isDirectPartnerCreate(action: string, payload: Row, body: Row) {
+  const normalized = action.toLowerCase()
+  return ["create", "add", "add_partner", "create_partner", "upsert", "save", "update"].includes(normalized)
+    && Boolean(payload.name || payload.organization || payload.company || body.name || body.organization || body.company || body.partnerName)
+}
+
 async function tolerantUpsert(supabase: SupabaseClientLike, table: string, row: Row, conflict = "id") {
   let attempt = { ...row }
   for (let index = 0; index < 20; index += 1) {
@@ -300,6 +329,14 @@ export async function POST(req: NextRequest) {
     const action = s(body.action, "update") as PartnershipActionKey
     const partnerId = s(body.partnerId || body.id, "system")
     const payload = body.payload && typeof body.payload === "object" ? (body.payload as Row) : {}
+
+    if (isDirectPartnerCreate(action, payload, body)) {
+      const directPartner = normalizePartnerInput({ ...body, ...payload }, partnerId !== "system" ? partnerId : undefined)
+      await tolerantUpsert(supabase, "revenue_partnerships", partnerToRow(directPartner))
+      await logPartnershipActivity(supabase, action, directPartner.id, `Partner saved: ${directPartner.name}`, { partnerId: directPartner.id, payload })
+      const fresh = await readStore(supabase, false)
+      return json({ ok: true, action, partnerId: directPartner.id, partner: directPartner, data: fresh, source: "revenue_partnerships" })
+    }
 
     const current = await readStore(supabase)
     const next = applyPartnershipActionV13(current, action, partnerId, payload)

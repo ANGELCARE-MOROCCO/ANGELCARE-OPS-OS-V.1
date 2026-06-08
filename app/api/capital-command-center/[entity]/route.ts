@@ -144,7 +144,7 @@ function clean(entity: string, body: AnyRecord) {
     })
   }
 
-  if (entity === 'notes') {
+  if (entity === 'notes' || entity === 'trainings') {
     Object.assign(p, {
       investor_id: body.investor_id ? Number(body.investor_id) : null,
       opportunity_id: body.opportunity_id ? Number(body.opportunity_id) : null,

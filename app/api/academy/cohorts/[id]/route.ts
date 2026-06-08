@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/getUser'
+import { updateAcademyCohort } from '@/lib/academy-cohorts/repository'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -180,37 +182,38 @@ export async function PATCH(request: NextRequest, context: Context) {
   }
 
   const body = await request.json().catch(() => ({}))
-  const patch = cleanCohortPatch(body)
-
-  if (Object.keys(patch).length <= 1) {
-    return NextResponse.json({ ok: false, error: 'No valid cohort fields provided' }, { status: 400 })
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json({ ok: false, error: 'Invalid JSON payload' }, { status: 400 })
   }
 
-  const supabase = await createClient()
+  const user = await getCurrentUser()
+  if (!user) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
 
-  const { data, error } = await supabase
-    .from('academy_cohorts')
-    .update(patch)
-    .eq('id', id)
-    .select('*')
-    .maybeSingle()
+  try {
+    const data = await updateAcademyCohort(String(id), body, user.id)
+    if (!data) {
+      return NextResponse.json({ ok: false, error: 'Cohort not found or not updated' }, { status: 404 })
+    }
 
-  if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
-  if (!data) return NextResponse.json({ ok: false, error: 'Cohort not found' }, { status: 404 })
+    const updatedCohort = data as Record<string, any>
+    const supabase = await createClient()
+    await syncCohortToTrainerAssignments(supabase, updatedCohort)
 
-  await syncCohortToTrainerAssignments(supabase, data)
-
-  return NextResponse.json({
-    ok: true,
-    data: {
-      ...data,
-      training_start_time: cleanTime(data.training_start_time, '09:00'),
-      training_end_time: cleanTime(data.training_end_time, '17:00'),
-      hours_per_day: Number(data.hours_per_day || 8),
-    },
-    cohort: data,
-    synced: true,
-  })
+    return NextResponse.json({
+      ok: true,
+      data: {
+        ...updatedCohort,
+        training_start_time: cleanTime(updatedCohort.training_start_time, '09:00'),
+        training_end_time: cleanTime(updatedCohort.training_end_time, '17:00'),
+        hours_per_day: Number(updatedCohort.hours_per_day || 8),
+      },
+      cohort: updatedCohort,
+      synced: true,
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error || 'Unable to update cohort')
+    return NextResponse.json({ ok: false, error: message }, { status: 500 })
+  }
 }
 
 export async function PUT(request: NextRequest, context: Context) {

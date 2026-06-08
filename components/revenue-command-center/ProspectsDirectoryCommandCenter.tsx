@@ -161,29 +161,54 @@ function safeParse<T>(value: string | null): T | null {
   try { return JSON.parse(value) as T } catch { return null }
 }
 
-function normalizeProspect(raw: Partial<ProspectRecord> & { value?: number; valueMad?: number }): ProspectRecord {
+
+function firstValue<T = unknown>(...values: T[]): T | undefined {
+  return values.find((value) => value !== undefined && value !== null && String(value).trim?.() !== "")
+}
+
+async function saveCanonicalProspect(input: Partial<ProspectRecord>): Promise<ProspectRecord | null> {
+  const response = await fetch("/api/revenue-command-center/prospects", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...input,
+      valueMad: Number(input.valueMad || 0),
+      metadata: {
+        ...(typeof (input as any).metadata === "object" ? (input as any).metadata : {}),
+        source_component: "ProspectsDirectoryCommandCenter",
+      },
+    }),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || "Prospect save failed")
+  return normalizeProspect(payload?.prospect || payload?.data?.prospect || payload?.data || input)
+}
+
+function normalizeProspect(raw: Partial<ProspectRecord> & { value?: number; valueMad?: number; value_mad?: number; contact_name?: string; next_action?: string; next_contact_date?: string; decision_maker?: string; fit_score?: number; created_at?: string; updated_at?: string; metadata?: any; data?: any }): ProspectRecord {
+  const data = raw.data && typeof raw.data === "object" ? raw.data : {}
+  const meta = raw.metadata && typeof raw.metadata === "object" ? raw.metadata : {}
   const now = new Date().toISOString()
   return {
-    id: String(raw.id || `${Date.now()}-${Math.random().toString(36).slice(2)}`),
-    name: String(raw.name || raw.company || "Unnamed prospect"),
-    company: String(raw.company || raw.name || ""),
-    contactName: String(raw.contactName || raw.decisionMaker || "N/A"),
-    phone: String(raw.phone || ""),
-    email: String(raw.email || ""),
-    city: String(raw.city || "Unassigned"),
-    source: String(raw.source || "Manual"),
-    type: (raw.type || "institution") as ProspectType,
-    owner: String(raw.owner || "BD Officer"),
-    closer: String(raw.closer || "Revenue Manager"),
-    stage: (raw.stage || "new_lead") as ProspectStage,
-    priority: (raw.priority || "high") as ProspectPriority,
-    health: (raw.health || "on_track") as ProspectHealth,
-    valueMad: Number(raw.valueMad || raw.value || 0),
-    score: Number(raw.score || 65),
-    probability: Number(raw.probability || 55),
-    urgency: Number(raw.urgency || 50),
-    fitScore: Number(raw.fitScore || 60),
-    decisionMaker: String(raw.decisionMaker || ""),
+    id: String(firstValue(raw.id, data.id, meta.id) || `${Date.now()}-${Math.random().toString(36).slice(2)}`),
+    name: String(firstValue(raw.name, raw.company, data.name, data.company, meta.name, meta.company) || "Unnamed prospect"),
+    company: String(firstValue(raw.company, raw.name, data.company, data.name, meta.company, meta.name) || ""),
+    contactName: String(firstValue(raw.contactName, raw.contact_name, raw.decisionMaker, raw.decision_maker, data.contactName, data.contact_name, meta.contactName) || "N/A"),
+    phone: String(firstValue(raw.phone, data.phone, meta.phone) || ""),
+    email: String(firstValue(raw.email, data.email, meta.email) || ""),
+    city: String(firstValue(raw.city, data.city, meta.city) || "Unassigned"),
+    source: String(firstValue(raw.source, data.source, meta.source) || "Manual"),
+    type: (firstValue(raw.type, data.type, meta.type) || "institution") as ProspectType,
+    owner: String(firstValue(raw.owner, data.owner, meta.owner) || "BD Officer"),
+    closer: String(firstValue(raw.closer, data.closer, meta.closer) || "Revenue Manager"),
+    stage: (firstValue(raw.stage, data.stage, meta.stage) || "new_lead") as ProspectStage,
+    priority: (firstValue(raw.priority, data.priority, meta.priority) || "high") as ProspectPriority,
+    health: (firstValue(raw.health, data.health, meta.health) || "on_track") as ProspectHealth,
+    valueMad: Number(firstValue(raw.valueMad, raw.value_mad, raw.value, data.valueMad, data.value_mad, data.value, meta.valueMad) || 0),
+    score: Number(firstValue(raw.score, data.score, meta.score) || 65),
+    probability: Number(firstValue(raw.probability, data.probability, meta.probability) || 55),
+    urgency: Number(firstValue(raw.urgency, data.urgency, meta.urgency) || 50),
+    fitScore: Number(firstValue(raw.fitScore, raw.fit_score, data.fitScore, data.fit_score, meta.fitScore) || 60),
+    decisionMaker: String(firstValue(raw.decisionMaker, raw.decision_maker, data.decisionMaker, data.decision_maker, meta.decisionMaker) || ""),
     decisionMakerConfirmed: Boolean(raw.decisionMakerConfirmed),
     stakeholders: Array.isArray(raw.stakeholders) ? raw.stakeholders.map(String) : [],
     needSummary: String(raw.needSummary || ""),
@@ -191,15 +216,15 @@ function normalizeProspect(raw: Partial<ProspectRecord> & { value?: number; valu
     budgetContext: String(raw.budgetContext || ""),
     competitorRisk: String(raw.competitorRisk || ""),
     objection: String(raw.objection || ""),
-    nextAction: String(raw.nextAction || "Qualify prospect and define next commercial step."),
-    nextContactDate: String(raw.nextContactDate || now.slice(0, 10)),
+    nextAction: String(firstValue(raw.nextAction, raw.next_action, data.nextAction, data.next_action, meta.nextAction) || "Qualify prospect and define next commercial step."),
+    nextContactDate: String(firstValue(raw.nextContactDate, raw.next_contact_date, data.nextContactDate, data.next_contact_date, meta.nextContactDate) || now.slice(0, 10)),
     qualificationNotes: String(raw.qualificationNotes || ""),
     proposedOffer: String(raw.proposedOffer || ""),
     negotiationTerms: String(raw.negotiationTerms || ""),
     recoveryPlan: String(raw.recoveryPlan || ""),
     documents: Array.isArray(raw.documents) ? raw.documents.map(String) : [],
-    createdAt: String(raw.createdAt || now),
-    updatedAt: String(raw.updatedAt || now),
+    createdAt: String(firstValue(raw.createdAt, raw.created_at, data.createdAt, data.created_at, meta.createdAt) || now),
+    updatedAt: String(firstValue(raw.updatedAt, raw.updated_at, data.updatedAt, data.updated_at, meta.updatedAt) || now),
   }
 }
 
@@ -467,6 +492,16 @@ export default function ProspectsDirectoryCommandCenter() {
     })
 
     try {
+      const savedProspect = await saveCanonicalProspect(prospect)
+      if (savedProspect) {
+        const syncedStore = {
+          ...store,
+          prospects: [savedProspect, ...store.prospects.filter((item) => item.id !== prospect.id && item.id !== savedProspect.id)],
+          logs: [{ id: `${Date.now()}-saved`, prospectId: savedProspect.id, at: new Date().toISOString(), action: "Enterprise prospect saved to Supabase", note: `${savedProspect.name} · ${savedProspect.city}` }, ...(store.logs || [])],
+        }
+        saveProspectStore(syncedStore)
+        setStore(syncedStore)
+      }
       await revenueAddComment({
         entityId: prospect.id,
         author: prospect.owner || "AngelCare",
@@ -481,6 +516,8 @@ export default function ProspectsDirectoryCommandCenter() {
         owner: prospect.owner || "BD Officer",
         dueDate: prospect.nextContactDate,
       })
+      window.dispatchEvent(new CustomEvent("rcc-prospects-canonical-refresh"))
+      await refresh()
     } catch (error) {
       console.warn("Enterprise prospect saved locally only", error)
     }
