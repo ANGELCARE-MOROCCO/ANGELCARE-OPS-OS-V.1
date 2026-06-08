@@ -620,7 +620,15 @@ async function launchAcademyPdfBrowser() {
     return puppeteer.launch({
       args: chromiumServerless.args,
       defaultViewport: { width: 1440, height: 1100 },
-      executablePath: await chromiumServerless.executablePath(),
+      executablePath: await (async () => {
+        const fs = await import('node:fs')
+        const path = await import('node:path')
+        const binPath = path.join(process.cwd(), 'node_modules/@sparticuz/chromium/bin')
+        if (fs.existsSync(binPath)) {
+          return chromiumServerless.executablePath(binPath)
+        }
+        return chromiumServerless.executablePath()
+      })(),
       headless: true,
     })
   }
