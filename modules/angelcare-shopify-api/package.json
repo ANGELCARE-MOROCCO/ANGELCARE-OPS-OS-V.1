@@ -1,0 +1,42 @@
+{
+  "name": "angelcare-shopify-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Shopify OAuth callback server for the AngelCare dashboard integration.",
+  "main": "src/server.ts",
+  "scripts": {
+    "build:server": "esbuild src/server.ts --bundle --platform=node --format=esm --packages=external --outfile=.tmp/server.mjs",
+    "start": "npm run build:server --silent && node .tmp/server.mjs",
+    "dev": "npm run build:server --silent && node .tmp/server.mjs",
+    "dev:ui": "vite build --watch",
+    "build:ui": "vite build",
+    "build:script:embed": "esbuild scripts/embed-frontend.ts --bundle --platform=node --format=esm --packages=external --outfile=.tmp/embed-frontend.mjs",
+    "build:script:shopify-config": "esbuild scripts/shopify-config.ts --bundle --platform=node --format=esm --packages=external --outfile=.tmp/shopify-config.mjs",
+    "build:script:shopify-install-url": "esbuild scripts/shopify-install-url.ts --bundle --platform=node --format=esm --packages=external --outfile=.tmp/shopify-install-url.mjs",
+    "build:script:shopify-install-status": "esbuild scripts/shopify-install-status.ts --bundle --platform=node --format=esm --packages=external --outfile=.tmp/shopify-install-status.mjs",
+    "embed:frontend": "npm run build:script:embed --silent && node .tmp/embed-frontend.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && npm run build:ui",
+    "check": "npm run typecheck",
+    "shopify:config": "npm run build:script:shopify-config --silent && node .tmp/shopify-config.mjs",
+    "shopify:install-url": "npm run build:script:shopify-install-url --silent && node .tmp/shopify-install-url.mjs",
+    "shopify:status": "npm run build:script:shopify-install-status --silent && node .tmp/shopify-install-status.mjs",
+    "cloudflare:deploy": "npm run build && npx wrangler deploy",
+    "cloudflare:dev": "npx wrangler dev"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260608.1",
+    "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "esbuild": "^0.28.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
+  }
+}

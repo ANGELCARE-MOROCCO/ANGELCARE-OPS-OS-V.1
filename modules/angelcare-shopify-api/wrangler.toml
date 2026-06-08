@@ -1,0 +1,33 @@
+name = "angelcare-shopify-api"
+main = "src/cloudflare-worker.ts"
+compatibility_date = "2026-06-03"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+preview_urls = false
+
+[vars]
+NODE_ENV = "production"
+APP_URL = "https://angelcare-shopify-api.angelcaredashboard.workers.dev"
+SHOPIFY_API_VERSION = "2026-04"
+SHOPIFY_SCOPES = "read_orders,read_products,read_customers,read_inventory,write_inventory,read_locations,read_reports"
+SHOPIFY_TOKEN_GRANT = "authorization_code"
+SHOPIFY_OMIT_AUTH_SCOPES = "true"
+SHOPIFY_EMBEDDED = "false"
+SHOPIFY_APP_NAME = "AngelCare Dashboard"
+SHOPIFY_APP_HANDLE = "angelcare-dashboard"
+SHOPIFY_WEBHOOK_PATH = "/api/webhooks/shopify"
+SHOPIFY_WEBHOOK_TOPICS = "app/uninstalled"
+SHOPIFY_WEBHOOK_COMPLIANCE_TOPICS = "customers/redact,customers/data_request,shop/redact"
+CORS_ORIGIN = "*"
+DASHBOARD_USERNAME = "admin"
+
+[assets]
+directory = "./dist"
+
+# Create a KV namespace with:
+# npx wrangler kv namespace create ANGELCARE_KV
+#
+# Then uncomment this block and paste the returned id.
+[[kv_namespaces]]
+binding = "ANGELCARE_KV"
+id = "0780ddc872db41a18996ef93b357474b"
