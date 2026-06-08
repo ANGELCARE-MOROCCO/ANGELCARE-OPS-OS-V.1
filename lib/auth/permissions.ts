@@ -25,6 +25,7 @@ export const MODULE_PERMISSIONS = {
   profile: ['profile.view'],
   reports: ['reports.view', 'reports.export'],
   'revenue-command-center': ['revenue.view', 'revenue.manage'],
+  capital_command: ['capital.view', 'capital.manage'],
   sales: ['sales.view', 'sales.manage'],
   services: ['services.view', 'services.create', 'services.edit', 'services.delete'],
   users: ['users.view', 'users.create', 'users.edit', 'users.delete'],
@@ -226,6 +227,8 @@ export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
     'print.create',
     'families.view',
     'revenue.view',
+    'capital.view',
+    'capital.manage',
     'staff_portal.view',
   ],
 
@@ -287,6 +290,8 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Partnerships', href: '/revenue-command-center/partnerships', permission: 'revenue.view', group: 'Revenue Command', icon: '🏢', order: 30 },
   { label: 'B2C Workflow', href: '/revenue-command-center/b2c-workflow', permission: 'revenue.view', group: 'Revenue Command', icon: '🔁', order: 31 },
   { label: 'Leads Impact', href: '/revenue-command-center/leads-impact', permission: 'revenue.view', group: 'Revenue Command', icon: '⚡', order: 32 },
+
+  { label: 'Capital Command Center', href: '/capital-command-center', permission: 'capital.view', group: 'Strategic Finance', icon: '🏦', badge: 'CAP', order: 32.5 },
 
   { label: 'C.S.A Command Home', href: '/csa-home', permission: 'csa.home', group: 'C.S.A Command', icon: '🎧', badge: 'CSA', order: 33 },
   { label: 'Marketing Department Home', href: '/market-os/marketing-home', permission: 'marketing.home', group: 'Market OS', icon: '🏢', badge: 'HOME', order: 39 },

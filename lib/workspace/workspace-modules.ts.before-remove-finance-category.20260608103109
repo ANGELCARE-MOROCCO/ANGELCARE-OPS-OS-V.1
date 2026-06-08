@@ -204,7 +204,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
     href: '/capital-command-center',
     icon: 'barChart',
     accent: 'blue',
-    categories: ['admin', 'revenue'],
+    categories: ['admin', 'revenue', 'finance'],
     requiresElevated: false,
     modules: [
       {
@@ -212,7 +212,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         title: 'Capital Command Center',
         href: '/capital-command-center',
         icon: 'barChart',
-        categories: ['admin', 'revenue'],
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
       {
@@ -220,7 +220,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         title: 'Investor CRM',
         href: '/capital-command-center?workspace=investors',
         icon: 'users',
-        categories: ['admin', 'revenue'],
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
       {
@@ -228,7 +228,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         title: 'Fundraising Pipeline',
         href: '/capital-command-center?workspace=fundraising',
         icon: 'trendingUp',
-        categories: ['admin', 'revenue'],
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
       {
@@ -236,7 +236,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         title: 'Deal Room',
         href: '/capital-command-center?workspace=deals',
         icon: 'handshake',
-        categories: ['admin', 'revenue'],
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
       {
@@ -244,15 +244,15 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         title: 'Commitments',
         href: '/capital-command-center?workspace=commitments',
         icon: 'receipt',
-        categories: ['admin', 'revenue'],
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
       {
         id: 'capital-training',
         title: 'Training',
         href: '/capital-command-center?workspace=training',
-        icon: 'fileText',
-        categories: ['admin', 'revenue'],
+        icon: 'bookOpen',
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
       {
@@ -260,7 +260,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         title: 'Capital Payments',
         href: '/capital-command-center?workspace=payments',
         icon: 'fileText',
-        categories: ['admin', 'revenue'],
+        categories: ['admin', 'revenue', 'finance'],
         requiresElevated: false,
       },
     ],

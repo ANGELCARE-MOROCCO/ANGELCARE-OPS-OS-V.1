@@ -205,7 +205,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
     icon: 'barChart',
     accent: 'blue',
     categories: ['admin', 'revenue'],
-    requiresElevated: false,
+    requiresElevated: true,
     modules: [
       {
         id: 'capital-command-overview',
@@ -213,7 +213,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         href: '/capital-command-center',
         icon: 'barChart',
         categories: ['admin', 'revenue'],
-        requiresElevated: false,
+        requiresElevated: true,
       },
       {
         id: 'capital-investor-crm',
@@ -221,7 +221,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         href: '/capital-command-center?workspace=investors',
         icon: 'users',
         categories: ['admin', 'revenue'],
-        requiresElevated: false,
+        requiresElevated: true,
       },
       {
         id: 'capital-fundraising-pipeline',
@@ -229,7 +229,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         href: '/capital-command-center?workspace=fundraising',
         icon: 'trendingUp',
         categories: ['admin', 'revenue'],
-        requiresElevated: false,
+        requiresElevated: true,
       },
       {
         id: 'capital-deal-room',
@@ -237,7 +237,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         href: '/capital-command-center?workspace=deals',
         icon: 'handshake',
         categories: ['admin', 'revenue'],
-        requiresElevated: false,
+        requiresElevated: true,
       },
       {
         id: 'capital-commitments',
@@ -245,15 +245,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         href: '/capital-command-center?workspace=commitments',
         icon: 'receipt',
         categories: ['admin', 'revenue'],
-        requiresElevated: false,
-      },
-      {
-        id: 'capital-training',
-        title: 'Training',
-        href: '/capital-command-center?workspace=training',
-        icon: 'fileText',
-        categories: ['admin', 'revenue'],
-        requiresElevated: false,
+        requiresElevated: true,
       },
       {
         id: 'capital-payments',
@@ -261,7 +253,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         href: '/capital-command-center?workspace=payments',
         icon: 'fileText',
         categories: ['admin', 'revenue'],
-        requiresElevated: false,
+        requiresElevated: true,
       },
     ],
   },
