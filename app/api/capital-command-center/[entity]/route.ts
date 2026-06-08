@@ -15,6 +15,7 @@ const TABLES: Record<string, string> = {
   diligence: 'capital_diligence_tasks',
   documents: 'capital_documents',
   notes: 'capital_notes',
+  trainings: 'capital_training_pages',
 }
 
 function safeData(body: AnyRecord) {
@@ -128,6 +129,24 @@ function clean(entity: string, body: AnyRecord) {
     })
   }
 
+  if (entity === 'trainings') {
+    Object.assign(p, {
+      investor_id: body.investor_id ? Number(body.investor_id) : null,
+      opportunity_id: body.opportunity_id ? Number(body.opportunity_id) : null,
+      training_title: body.training_title || body.title || 'Fundraising staff training page',
+      training_source: body.training_source || 'AngelCare fundraising academy',
+      category: body.category || 'fundraising_staff',
+      status: body.status || body.publish_status || 'draft',
+      priority: body.priority || 'normal',
+      owner: body.owner || null,
+      audience: body.audience || 'Fundraising staff',
+      publish_status: body.publish_status || body.status || 'draft',
+      html_content: body.html_content || '',
+      summary: body.summary || null,
+      duration_minutes: Number(body.duration_minutes || 360),
+    })
+  }
+
   if (entity === 'documents') {
     Object.assign(p, {
       investor_id: body.investor_id ? Number(body.investor_id) : null,
@@ -144,7 +163,7 @@ function clean(entity: string, body: AnyRecord) {
     })
   }
 
-  if (entity === 'notes' || entity === 'trainings') {
+  if (entity === 'notes') {
     Object.assign(p, {
       investor_id: body.investor_id ? Number(body.investor_id) : null,
       opportunity_id: body.opportunity_id ? Number(body.opportunity_id) : null,

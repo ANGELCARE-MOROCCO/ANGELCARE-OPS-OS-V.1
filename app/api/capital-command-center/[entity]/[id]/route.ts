@@ -15,6 +15,7 @@ const TABLES: Record<string, string> = {
   diligence: 'capital_diligence_tasks',
   documents: 'capital_documents',
   notes: 'capital_notes',
+  trainings: 'capital_training_pages',
 }
 
 function safeData(body: AnyRecord) {

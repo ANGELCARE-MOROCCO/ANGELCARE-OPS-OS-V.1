@@ -14,6 +14,7 @@ const TABLES = {
   diligence: 'capital_diligence_tasks',
   documents: 'capital_documents',
   notes: 'capital_notes',
+  trainings: 'capital_training_pages',
 } as const
 
 function arr<T = AnyRecord>(value: any): T[] {
@@ -45,7 +46,7 @@ function daysUntil(value: any) {
 export async function GET() {
   try {
     const supabase = await createClient()
-    const [investors, opportunities, commitments, payments, diligence, documents, notes] = await Promise.all([
+    const [investors, opportunities, commitments, payments, diligence, documents, notes, trainings] = await Promise.all([
       safeRows(supabase, TABLES.investors),
       safeRows(supabase, TABLES.opportunities),
       safeRows(supabase, TABLES.commitments),
@@ -53,6 +54,7 @@ export async function GET() {
       safeRows(supabase, TABLES.diligence),
       safeRows(supabase, TABLES.documents),
       safeRows(supabase, TABLES.notes),
+      safeRows(supabase, TABLES.trainings),
     ])
 
     const stats = {
@@ -66,10 +68,11 @@ export async function GET() {
       overduePayments: payments.filter((x) => String(x.status) === 'pending' && daysUntil(x.due_date) !== null && Number(daysUntil(x.due_date)) < 0).length,
       diligenceOpen: diligence.filter((x) => !['completed', 'closed'].includes(String(x.status))).length,
       dataRoomDocs: documents.length,
+      trainingPages: trainings.length,
       nextCloseDays: opportunities.map((x) => daysUntil(x.closing_date)).filter((x) => x !== null).sort((a: any, b: any) => a - b)[0] ?? null,
     }
 
-    return NextResponse.json({ ok: true, data: { investors, opportunities, commitments, payments, diligence, documents, notes, stats } })
+    return NextResponse.json({ ok: true, data: { investors, opportunities, commitments, payments, diligence, trainings, documents, notes, stats } })
   } catch (error: any) {
     return NextResponse.json({ ok: false, error: error?.message || 'Unable to load Capital Command Center' }, { status: 500 })
   }

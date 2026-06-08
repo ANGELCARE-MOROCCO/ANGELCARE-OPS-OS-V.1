@@ -5,8 +5,8 @@ import { getInvestorCommunicationTemplate, INVESTOR_COMMUNICATION_TEMPLATE_COUNT
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-type EntityKey = 'investors' | 'opportunities' | 'commitments' | 'payments' | 'diligence' | 'documents' | 'notes' | 'trainings'
-type ViewKey = 'command' | 'investors' | 'fundraising' | 'deals' | 'diligence' | 'commitments' | 'payments' | 'dataroom' | 'reports' | 'training'
+type EntityKey = 'investors' | 'opportunities' | 'commitments' | 'payments' | 'diligence' | 'trainings' | 'documents' | 'notes'
+type ViewKey = 'command' | 'investors' | 'fundraising' | 'deals' | 'diligence' | 'trainings' | 'commitments' | 'payments' | 'dataroom' | 'reports'
 type ModalMode = 'create' | 'edit' | 'view'
 type AnyRecord = Record<string, any>
 
@@ -16,10 +16,10 @@ const NAV: { key: ViewKey; label: string; sub: string; icon: string; theme: stri
   { key: 'fundraising', label: 'Fundraising Pipeline', sub: 'Lead to close workflow', icon: '◇', theme: 'violet' },
   { key: 'deals', label: 'Deal Room', sub: 'Opportunities and theses', icon: '▣', theme: 'cyan' },
   { key: 'diligence', label: 'Due Diligence', sub: 'Legal, finance, risk', icon: '☑', theme: 'orange' },
+  { key: 'trainings', label: 'Fundraising Training', sub: 'Staff HTML courses', icon: '▧', theme: 'blue' },
   { key: 'commitments', label: 'Commitments', sub: 'Soft, signed, closed', icon: '▤', theme: 'emerald' },
   { key: 'payments', label: 'Capital Ledger', sub: 'Receipts and balances', icon: '◈', theme: 'green' },
   { key: 'dataroom', label: 'Data Room', sub: 'Documents and access', icon: '▱', theme: 'sky' },
-  { key: 'training', label: 'Training', sub: 'HTML playbooks and SOPs', icon: '▧', theme: 'amber' },
   { key: 'reports', label: 'Board Reporting', sub: 'Capital report center', icon: '◎', theme: 'slate' },
 ]
 
@@ -29,14 +29,14 @@ const ENTITY_META: Record<EntityKey, { title: string; short: string; endpoint: E
   commitments: { title: 'Capital Commitment', short: 'Commitment', endpoint: 'commitments', color: '#0f766e', icon: '▤' },
   payments: { title: 'Capital Payment / Receipt', short: 'Payment', endpoint: 'payments', color: '#16a34a', icon: '◈' },
   diligence: { title: 'Due Diligence Work Item', short: 'Diligence', endpoint: 'diligence', color: '#ea580c', icon: '☑' },
+  trainings: { title: 'Fundraising Staff Training HTML Page', short: 'Training page', endpoint: 'trainings', color: '#2563eb', icon: '▧' },
   documents: { title: 'Data Room Document', short: 'Document', endpoint: 'documents', color: '#0891b2', icon: '▱' },
-  trainings: { title: 'Training HTML Page', short: 'Training', endpoint: 'trainings', color: '#d97706', icon: '▧' },
   notes: { title: 'Investor / Deal Note', short: 'Note', endpoint: 'notes', color: '#475569', icon: '✎' },
 }
 
 const EMPTY_STATE: AnyRecord = {
-  investors: [], opportunities: [], commitments: [], payments: [], diligence: [], documents: [], notes: [], trainings: [],
-  stats: { investors: 0, opportunities: 0, activeOpportunities: 0, targetAmount: 0, committedAmount: 0, receivedAmount: 0, pendingAmount: 0, overduePayments: 0, diligenceOpen: 0, dataRoomDocs: 0, nextCloseDays: null },
+  investors: [], opportunities: [], commitments: [], payments: [], diligence: [], trainings: [], documents: [], notes: [],
+  stats: { investors: 0, opportunities: 0, activeOpportunities: 0, targetAmount: 0, committedAmount: 0, receivedAmount: 0, pendingAmount: 0, overduePayments: 0, diligenceOpen: 0, dataRoomDocs: 0, trainingPages: 0, nextCloseDays: null },
 }
 
 function money(value: any) {
@@ -236,27 +236,8 @@ function defaultRecord(entity: EntityKey, data: AnyRecord) {
   if (entity === 'opportunities') return { ...base, reference_number: refLabel('CAPD'), opportunity_title: '', opportunity_type: 'fundraise', stage: 'screening', status: 'active', target_amount: 0, committed_amount: 0, received_amount: 0, valuation: 0, sector: '', geography: '', owner: '', probability: 25, closing_date: today(), thesis: '', risk_summary: '', data: { terms: [], strategic_fit: '', committee_decision: 'not_submitted', underwriting_assumptions: [], milestones: [] } }
   if (entity === 'commitments') return { ...base, reference_number: refLabel('COM'), investor_id: investor?.id || '', opportunity_id: opportunity?.id || '', commitment_type: 'soft_commitment', status: 'soft_commit', committed_amount: 0, received_amount: 0, commitment_date: today(), expected_close_date: '', documents_status: 'pending', conditions: '', data: { capital_call_schedule: [], conditions_precedent: [], signing_package: [] } }
   if (entity === 'payments') return { ...base, reference_number: refLabel('CPP'), investor_id: investor?.id || '', opportunity_id: opportunity?.id || '', commitment_id: commitment?.id || '', payment_type: 'capital_receipt', status: 'pending', amount: 0, due_date: today(), paid_date: '', payment_method: 'bank_transfer', payment_details: '', proof_url: '', finance_note: '', data: { bank_reconciliation: 'pending', receipt_preview: {}, allocations: [], audit_events: [] } }
-  if (entity === 'trainings') return {
-    ...base,
-    reference_number: refLabel('TRHTML'),
-    training_title: '',
-    category: 'capital_operations',
-    status: 'draft',
-    audience: 'finance_team',
-    estimated_minutes: 15,
-    owner: '',
-    summary: '',
-    html_content: '<section style="font-family:Inter,Arial,sans-serif;padding:32px;line-height:1.6;color:#0f172a"><h1>Training title</h1><p>Write your internal training HTML here.</p></section>',
-    data: {
-      tags: [],
-      version: 'v1',
-      objectives: [],
-      checklist: [],
-      notes: '',
-    },
-  }
-
-  return { reference_number: refLabel('DD'), opportunity_id: opportunity?.id || '', investor_id: investor?.id || '', task_title: '', category: 'finance', status: 'open', priority: 'normal', owner: '', due_date: today(), evidence_url: '', notes: '', data: { checklist: [], blockers: [], signoffs: [] } }
+  if (entity === 'diligence') return { reference_number: refLabel('DD'), opportunity_id: opportunity?.id || '', investor_id: investor?.id || '', task_title: '', category: 'finance', status: 'open', priority: 'normal', owner: '', due_date: today(), evidence_url: '', notes: '', data: { checklist: [], blockers: [], signoffs: [] } }
+  if (entity === 'trainings') return { ...base, reference_number: refLabel('TRHTML'), investor_id: investor?.id || '', opportunity_id: opportunity?.id || '', training_title: '', training_source: 'AngelCare fundraising academy', category: 'fundraising_staff', status: 'draft', priority: 'normal', owner: '', audience: 'Fundraising staff', publish_status: 'draft', html_content: '', summary: '', duration_minutes: 360, data: { learning_objectives: [], modules: [], staff_roles: [], publishing_notes: '', version: 'v1', review_history: [], access_rules: [] } }
   if (entity === 'documents') return { reference_number: refLabel('CDR'), investor_id: investor?.id || '', opportunity_id: opportunity?.id || '', commitment_id: commitment?.id || '', document_title: '', category: 'data_room', status: 'draft', visibility: 'internal', file_url: '', version: 'v1', owner: '', expiry_date: '', data: { access_list: [], revision_notes: [], required_for: [] } }
   return { reference_number: refLabel('CN'), investor_id: investor?.id || '', opportunity_id: opportunity?.id || '', commitment_id: commitment?.id || '', category: 'general', priority: 'normal', note: '', owner: '', followup_at: '', data: { action_required: false, escalation: '', history: [] } }
 }
@@ -292,8 +273,8 @@ export default function CapitalCommandCenterClient() {
   const payments = data.payments || []
   const diligence = data.diligence || []
   const documents = data.documents || []
-  const notes = data.notes || []
   const trainings = data.trainings || []
+  const notes = data.notes || []
   const filteredInvestors = useMemo(() => filterRows(investors, query, stageFilter, ['investor_name', 'contact_name', 'email', 'country', 'stage']), [investors, query, stageFilter])
   const filteredOpps = useMemo(() => filterRows(opportunities, query, stageFilter, ['opportunity_title', 'sector', 'geography', 'stage']), [opportunities, query, stageFilter])
 
@@ -323,7 +304,7 @@ export default function CapitalCommandCenterClient() {
     else load()
   }
 
-  const globalContext = { investors, opportunities, commitments, payments, diligence, documents, notes, trainings, open, archive, setDetail }
+  const globalContext = { investors, opportunities, commitments, payments, diligence, trainings, documents, notes, open, archive, setDetail }
 
   return <main className="capital-shell">
     <CapitalSidebar view={view} setView={setView} />
@@ -334,7 +315,7 @@ export default function CapitalCommandCenterClient() {
           <h1>Capital Command Center</h1>
           <p className="sub">A production workspace for investor relations, fundraising execution, diligence, commitments, capital receipts, data-room governance and board reporting.</p>
         </div>
-        <div className="top-actions"><button onClick={load}>{loading ? 'Refreshing…' : 'Refresh Live'}</button><button className="primary" onClick={() => open('investors')}>+ Investor</button><button className="primary purple" onClick={() => open('opportunities')}>+ Opportunity</button></div>
+        <div className="top-actions"><button onClick={load}>{loading ? 'Refreshing…' : 'Refresh Live'}</button><button className="primary" onClick={() => open('investors')}>+ Investor</button><button className="primary purple" onClick={() => open('opportunities')}>+ Opportunity</button><button className="primary" onClick={() => open('trainings')}>+ Training HTML</button></div>
       </header>
 
       <section className="kpi-grid premium">
@@ -353,10 +334,10 @@ export default function CapitalCommandCenterClient() {
       {view === 'fundraising' && <FundraisingWorkspace rows={filteredOpps} ctx={globalContext} />}
       {view === 'deals' && <DealRoomWorkspace rows={filteredOpps} ctx={globalContext} />}
       {view === 'diligence' && <DiligenceWorkspace rows={diligence} ctx={globalContext} />}
+      {view === 'trainings' && <TrainingWorkspace rows={trainings} ctx={globalContext} />}
       {view === 'commitments' && <CommitmentsWorkspace rows={commitments} ctx={globalContext} />}
       {view === 'payments' && <PaymentsWorkspace rows={payments} ctx={globalContext} />}
       {view === 'dataroom' && <DataRoomWorkspace rows={documents} ctx={globalContext} />}
-      {view === 'training' && <TrainingWorkspace rows={trainings} ctx={globalContext} />}
       {view === 'reports' && <ReportsWorkspace data={data} ctx={globalContext} />}
     </section>
 
@@ -403,147 +384,20 @@ function FundraisingWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord
 }
 function DealRoomWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Deal Room" text="Investment opportunity workspaces with thesis, valuation, risk, closing readiness and IC preparation." action={<button onClick={() => ctx.open('opportunities')}>+ Deal</button>} /><div className="deal-room-grid">{rows.map((row) => <article key={row.id} className="deal-room-card"><div className="card-top"><div><p className="eyebrow">{row.reference_number}</p><h3>{row.opportunity_title}</h3></div><Badge value={row.status} /></div><p>{row.thesis || 'No thesis captured.'}</p><div className="deal-metrics"><span><small>Target</small><b>{money(row.target_amount)}</b></span><span><small>Valuation</small><b>{money(row.valuation)}</b></span><span><small>Close</small><b>{row.closing_date || '—'}</b></span></div><p className="risk-text">{row.risk_summary || 'No risk summary captured.'}</p><div className="row-actions"><button onClick={() => ctx.setDetail(row)}>Preview</button><button onClick={() => ctx.open('diligence', { opportunity_id: row.id }, 'create')}>+ DD</button><button onClick={() => ctx.open('opportunities', row, 'edit')}>Edit</button></div></article>)}{!rows.length && <Empty title="No opportunities" text="Create a deal or capital raise opportunity." />}</div></section> }
 function DiligenceWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { const cats = ['finance', 'legal', 'commercial', 'risk', 'operations']; return <section className="section-stack"><SectionTitle title="Due Diligence Workspace" text="Separated workstreams for finance, legal, commercial, risk and operations. Each task is live, owned and evidence-linked." action={<button className="primary orange" onClick={() => ctx.open('diligence')}>+ DD task</button>} /><div className="dd-grid">{cats.map((cat) => <div key={cat} className="dd-column"><h3>{cat}</h3>{rows.filter((row) => String(row.category) === cat).map((row) => <article key={row.id}><b>{row.task_title}</b><p>{row.notes || 'No notes.'}</p><div className="card-meta"><Badge value={row.status} /><span>{row.owner || 'Unassigned'}</span><span>{row.due_date || 'No due date'}</span></div><div className="row-actions"><button onClick={() => ctx.open('diligence', row, 'view')}>Open</button><button onClick={() => ctx.open('documents', { opportunity_id: row.opportunity_id, category: 'evidence' }, 'create')}>Evidence</button></div></article>)}{!rows.filter((row) => String(row.category) === cat).length && <div className="lane-empty">Clear</div>}</div>)}</div></section> }
+
+function TrainingWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) {
+  return <section className="section-stack">
+    <SectionTitle title="Fundraising Staff Training Library" text="Create, govern and publish HTML training pages for AngelCare fundraising staff, investor relations, VC preparation, national funding programs and capital readiness." action={<button className="primary" onClick={() => ctx.open('trainings')}>+ Training HTML page</button>} />
+    <div className="cards-grid dataroom-grid">{rows.map((row) => <article key={row.id} className="doc-card premium-card"><div className="card-top"><div><p className="eyebrow">{row.reference_number}</p><h3>{row.training_title || 'Untitled training page'}</h3></div><Badge value={row.publish_status || row.status} /></div><p>{row.summary || 'No training summary captured yet.'}</p><div className="card-meta"><span>{row.audience || 'Fundraising staff'}</span><span>{row.training_source || 'AngelCare Academy'}</span><span>{row.duration_minutes || 360} min</span></div><Priority label="Owner" value={row.owner || 'Unassigned'} /><Priority label="Category" value={String(row.category || 'fundraising_staff').replace(/_/g, ' ')} /><div className="row-actions"><button onClick={() => ctx.open('trainings', row, 'view')}>Open</button><button onClick={() => ctx.open('trainings', row, 'edit')}>Edit</button></div></article>)}{!rows.length && <Empty title="No training HTML pages" text="Create the first staff fundraising training page to make this workspace operational." />}</div>
+  </section>
+}
+
 function CommitmentsWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Commitments Tracking" text="Soft commitments, signed commitments, received capital, outstanding balances and documents readiness." action={<button className="primary" onClick={() => ctx.open('commitments')}>+ Commitment</button>} /><DataTable rows={rows} columns={[['reference_number', 'Reference'], ['investor_id', 'Investor'], ['opportunity_id', 'Opportunity'], ['status', 'Status'], ['committed_amount', 'Committed'], ['received_amount', 'Received'], ['expected_close_date', 'Expected Close']]} onOpen={(row) => ctx.open('commitments', row, 'view')} /></section> }
 function PaymentsWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Capital Payments Ledger" text="Track capital receipts, pending payments, rejected flows, proof links, audit notes and bank reconciliation state." action={<button className="primary green" onClick={() => ctx.open('payments')}>+ Payment</button>} /><DataTable rows={rows} columns={[['reference_number', 'Reference'], ['investor_id', 'Investor'], ['commitment_id', 'Commitment'], ['status', 'Status'], ['amount', 'Amount'], ['due_date', 'Due Date'], ['paid_date', 'Paid Date'], ['payment_method', 'Method']]} onOpen={(row) => ctx.open('payments', row, 'view')} /></section> }
 function DataRoomWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Data Room" text="Controlled document library with visibility, versioning, expiry dates, owners and investor/deal links." action={<button className="primary" onClick={() => ctx.open('documents')}>+ Document</button>} /><div className="cards-grid dataroom-grid">{rows.map((row) => <article key={row.id} className="doc-card"><div className="card-top"><h3>{row.document_title}</h3><Badge value={row.status} /></div><p>{row.category} · {row.visibility} · {row.version}</p><Priority label="Owner" value={row.owner || 'Unassigned'} /><Priority label="Expiry" value={row.expiry_date || 'No expiry'} /><div className="row-actions"><button onClick={() => ctx.open('documents', row, 'view')}>Open</button>{row.file_url && <a className="buttonlike" href={row.file_url} target="_blank" rel="noreferrer">View file</a>}</div></article>)}{!rows.length && <Empty title="No documents" text="Add a data-room document to start governance." />}</div></section> }
 function ReportsWorkspace({ data, ctx }: { data: AnyRecord; ctx: AnyRecord }) { const stats = data.stats || {}; return <section className="section-stack"><SectionTitle title="Board Reporting" text="Board-grade reporting layer for fundraising, commitments, diligence, payments and investor movement." action={<button onClick={() => window.print()}>Print screen</button>} /><div className="report-grid"><section><h3>Raise Summary</h3><Priority label="Target" value={`${money(stats.targetAmount)} Dhs`} /><Priority label="Committed" value={`${money(stats.committedAmount)} Dhs`} /><Priority label="Received" value={`${money(stats.receivedAmount)} Dhs`} /><MiniProgress label="Coverage" value={pct(stats.committedAmount, stats.targetAmount)} /></section><section><h3>Investor Quality</h3><Priority label="Investors" value={stats.investors || 0} /><Priority label="Pipeline" value={stats.opportunities || 0} /><Priority label="Diligence" value={stats.diligenceOpen || 0} /></section><section><h3>Finance Control</h3><Priority label="Pending" value={`${money(stats.pendingAmount)} Dhs`} /><Priority label="Overdue" value={stats.overduePayments || 0} /><Priority label="Documents" value={stats.dataRoomDocs || 0} /></section></div><Panel title="Report Actions"><div className="report-actions"><button onClick={() => ctx.open('notes', { category: 'board_report', note: 'Board report generated for review.' }, 'create')}>Create board note</button><button onClick={() => ctx.open('documents', { category: 'board_pack', document_title: 'Capital board pack' }, 'create')}>Create board pack document</button><button onClick={() => ctx.open('payments')}>Open payment control</button></div></Panel></section> }
 
 function DataTable({ rows, columns, onOpen }: { rows: AnyRecord[]; columns: [string, string][]; onOpen: (row: AnyRecord) => void }) { return <div className="enterprise-table"><table><thead><tr>{columns.map(([_, label]) => <th key={label}>{label}</th>)}<th>Actions</th></tr></thead><tbody>{rows.map((row) => <tr key={row.id}>{columns.map(([key]) => <td key={key}>{key.includes('amount') || key === 'amount' ? `${money(row[key])} ${row.currency || 'Dhs'}` : key === 'status' ? <Badge value={row[key]} /> : String(row[key] ?? '—')}</td>)}<td><button onClick={() => onOpen(row)}>Open</button></td></tr>)}</tbody></table>{!rows.length && <Empty title="No records" text="Nothing is currently registered in this workspace." />}</div> }
-
-
-function TrainingWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) {
-  const [viewer, setViewer] = useState<AnyRecord | null>(null)
-  const trainingRows = Array.isArray(rows) ? rows : []
-
-  if (viewer) {
-    return <HtmlTrainingViewer record={viewer} onBack={() => setViewer(null)} onEdit={() => ctx.open('trainings', viewer, 'edit')} />
-  }
-
-  return (
-    <section className="section-stack training-workspace">
-      <SectionTitle
-        title="Capital Command Training"
-        text="Create, save and open internal HTML training pages for finance, investor relations, fundraising operations, due diligence and capital workflows."
-        action={<button className="primary amber" onClick={() => ctx.open('trainings')}>+ Add HTML training page</button>}
-      />
-
-      <div className="training-hero">
-        <div>
-          <p className="eyebrow">Internal capability center</p>
-          <h2>Build living SOPs, onboarding pages and operational training directly inside Capital Command Center.</h2>
-          <p>Each training page is saved as a governed Capital OS record and opens inside the app with a return button.</p>
-        </div>
-        <div className="training-hero-stats">
-          <Priority label="Training pages" value={trainingRows.length} />
-          <Priority label="Published" value={trainingRows.filter((x) => x.status === 'published').length} />
-          <Priority label="Drafts" value={trainingRows.filter((x) => x.status !== 'published').length} />
-        </div>
-      </div>
-
-      <div className="training-card-grid">
-        {trainingRows.map((row) => (
-          <article key={row.id || row.reference_number} className="training-card premium-card">
-            <div className="card-top">
-              <div className="training-icon">▧</div>
-              <div>
-                <h3>{row.training_title || 'Untitled training page'}</h3>
-                <p>{row.category || 'capital operations'} · {row.audience || 'team'}</p>
-              </div>
-              <Badge value={row.status || 'draft'} />
-            </div>
-
-            <p>{row.summary || 'No training summary captured yet.'}</p>
-
-            <div className="training-meta">
-              <span>{row.reference_number}</span>
-              <span>{row.estimated_minutes || 0} min</span>
-              <span>{dataOf(row).version || 'v1'}</span>
-            </div>
-
-            <div className="row-actions">
-              <button onClick={() => setViewer(row)}>Open training</button>
-              <button onClick={() => ctx.open('trainings', row, 'edit')}>Edit HTML</button>
-              <button onClick={() => ctx.archive('trainings', row.id)}>Archive</button>
-            </div>
-          </article>
-        ))}
-
-        {!trainingRows.length && (
-          <Empty
-            title="No training pages yet"
-            text="Create your first HTML training page for fundraising SOPs, investor communication, diligence process, payment handling or board reporting."
-          />
-        )}
-      </div>
-    </section>
-  )
-}
-
-function HtmlTrainingViewer({ record, onBack, onEdit }: { record: AnyRecord; onBack: () => void; onEdit: () => void }) {
-  return (
-    <section className="training-viewer">
-      <div className="training-viewer-bar">
-        <button onClick={onBack}>← Return to Training</button>
-        <div>
-          <p className="eyebrow">Training page</p>
-          <h2>{record.training_title || 'Training page'}</h2>
-          <span>{record.reference_number} · {record.status || 'draft'} · {record.estimated_minutes || 0} min</span>
-        </div>
-        <button className="primary" onClick={onEdit}>Edit HTML</button>
-      </div>
-
-      <div className="training-html-frame">
-        <div dangerouslySetInnerHTML={{ __html: String(record.html_content || '<p>No HTML content saved.</p>') }} />
-      </div>
-    </section>
-  )
-}
-
-function TrainingForm({ record, locked, update, updateData, tab }: any) {
-  const d = dataOf(record)
-
-  return (
-    <FormShell>
-      {tab === 'overview' && (
-        <>
-          <Field label="Training title" value={record.training_title} onChange={(v) => update('training_title', v)} locked={locked} />
-          <SelectField label="Category" value={record.category || 'capital_operations'} onChange={(v) => update('category', v)} locked={locked} options={[['capital_operations','Capital operations'],['fundraising','Fundraising'],['investor_relations','Investor relations'],['due_diligence','Due diligence'],['payments','Payments'],['data_room','Data room'],['board_reporting','Board reporting'],['compliance','Compliance']]} />
-          <SelectField label="Status" value={record.status || 'draft'} onChange={(v) => update('status', v)} locked={locked} options={[['draft','Draft'],['review','Review'],['published','Published'],['archived','Archived']]} />
-          <SelectField label="Audience" value={record.audience || 'finance_team'} onChange={(v) => update('audience', v)} locked={locked} options={[['finance_team','Finance team'],['fundraising_team','Fundraising team'],['management','Management'],['board','Board'],['new_employee','New employee'],['all','All users']]} />
-          <Field type="number" label="Estimated minutes" value={record.estimated_minutes} onChange={(v) => update('estimated_minutes', v)} locked={locked} />
-          <Field label="Owner" value={record.owner} onChange={(v) => update('owner', v)} locked={locked} />
-          <TextArea label="Training summary" value={record.summary} onChange={(v) => update('summary', v)} locked={locked} placeholder="Explain what this training page teaches and when the employee should use it." />
-          <SmartList label="Training objectives" value={d.objectives || []} onChange={(v) => updateData('objectives', v)} locked={locked} placeholder="Objective, expected outcome, operational standard…" />
-        </>
-      )}
-
-      {tab === 'content' && (
-        <>
-          <TextArea label="HTML training page source" value={record.html_content} onChange={(v) => update('html_content', v)} locked={locked} placeholder="<section><h1>Training title</h1>...</section>" />
-          <div className="html-preview span2">
-            <div className="preview-head">
-              <b>Live HTML Preview</b>
-              <span>Preview is rendered inside the app.</span>
-            </div>
-            <div className="preview-body" dangerouslySetInnerHTML={{ __html: String(record.html_content || '<p>No HTML content yet.</p>') }} />
-          </div>
-        </>
-      )}
-
-      {tab === 'operations' && (
-        <>
-          <Field label="Version" value={d.version || 'v1'} onChange={(v) => updateData('version', v)} locked={locked} />
-          <SmartList label="Tags" value={d.tags || []} onChange={(v) => updateData('tags', v)} locked={locked} placeholder="Tag, topic, department…" />
-          <SmartList label="Completion checklist" value={d.checklist || []} onChange={(v) => updateData('checklist', v)} locked={locked} placeholder="Checklist item for the employee…" />
-          <TextArea label="Internal notes" value={d.notes || ''} onChange={(v) => updateData('notes', v)} locked={locked} />
-        </>
-      )}
-
-      {tab === 'audit' && <AuditBlock record={record} />}
-    </FormShell>
-  )
-}
-
 
 function EnterpriseModal({ modal, setModal, data, saving, onSave, onClose }: { modal: { entity: EntityKey; record: AnyRecord; mode: ModalMode; tab: string }; setModal: (m: any) => void; data: AnyRecord; saving: boolean; onSave: () => void; onClose: () => void }) {
   const meta = ENTITY_META[modal.entity]
@@ -615,6 +469,7 @@ function EntityForm({ entity, record, locked, update, updateData, data, tab }: {
   if (entity === 'commitments') return <CommitmentForm record={record} locked={locked} update={update} updateData={updateData} data={data} tab={tab} />
   if (entity === 'payments') return <PaymentForm record={record} locked={locked} update={update} updateData={updateData} data={data} tab={tab} />
   if (entity === 'diligence') return <DiligenceForm record={record} locked={locked} update={update} updateData={updateData} data={data} tab={tab} />
+  if (entity === 'trainings') return <TrainingForm record={record} locked={locked} update={update} updateData={updateData} data={data} tab={tab} />
   if (entity === 'documents') return <DocumentForm record={record} locked={locked} update={update} updateData={updateData} data={data} tab={tab} />
   return <NotesForm record={record} locked={locked} update={update} updateData={updateData} data={data} tab={tab} />
 }
@@ -1051,11 +906,50 @@ function CommitmentForm({ record, locked, update, updateData, data, tab }: any) 
 function PaymentForm({ record, locked, update, updateData, data, tab }: any) { const d = dataOf(record); return <FormShell>{tab === 'overview' && <><LinkedSelect label="Investor" value={record.investor_id} rows={data.investors || []} titleKey="investor_name" onChange={(v) => update('investor_id', v)} locked={locked} /><LinkedSelect label="Opportunity" value={record.opportunity_id} rows={data.opportunities || []} titleKey="opportunity_title" onChange={(v) => update('opportunity_id', v)} locked={locked} /><LinkedSelect label="Commitment" value={record.commitment_id} rows={data.commitments || []} titleKey="reference_number" onChange={(v) => update('commitment_id', v)} locked={locked} /><SelectField label="Payment type" value={record.payment_type} onChange={(v) => update('payment_type', v)} locked={locked} options={[['capital_receipt','Capital receipt'],['deposit','Deposit'],['subscription','Subscription'],['refund','Refund'],['adjustment','Adjustment']]} /></>}{tab === 'finance' && <><Field type="number" label="Amount" value={record.amount} onChange={(v) => update('amount', v)} locked={locked} /><Field label="Currency" value={record.currency} onChange={(v) => update('currency', v)} locked={locked} /><SelectField label="Status" value={record.status} onChange={(v) => update('status', v)} locked={locked} options={[['pending','Pending'],['paid','Paid'],['rejected','Rejected'],['cancelled','Cancelled']]} /><Field type="date" label="Due date" value={record.due_date} onChange={(v) => update('due_date', v)} locked={locked} /><Field type="date" label="Paid date" value={record.paid_date} onChange={(v) => update('paid_date', v)} locked={locked} /><SelectField label="Payment method" value={record.payment_method} onChange={(v) => update('payment_method', v)} locked={locked} options={[['bank_transfer','Bank transfer'],['cash','Cash'],['cheque','Cheque'],['wire','Wire'],['other','Other']]} /><TextArea label="Payment details" value={record.payment_details} onChange={(v) => update('payment_details', v)} locked={locked} /></>}{tab === 'risk' && <><Field label="Proof URL" value={record.proof_url} onChange={(v) => update('proof_url', v)} locked={locked} /><SelectField label="Bank reconciliation" value={d.bank_reconciliation || 'pending'} onChange={(v) => updateData('bank_reconciliation', v)} locked={locked} options={[['pending','Pending'],['matched','Matched'],['exception','Exception'],['rejected','Rejected']]} /><TextArea label="Finance note" value={record.finance_note} onChange={(v) => update('finance_note', v)} locked={locked} /></>}{tab === 'operations' && <SmartList label="Allocations / audit events" value={d.allocations || []} onChange={(v) => updateData('allocations', v)} locked={locked} placeholder="Allocation, amount, reference…" />}{tab === 'audit' && <AuditBlock record={record} />}</FormShell> }
 function DiligenceForm({ record, locked, update, updateData, data, tab }: any) { const d = dataOf(record); return <FormShell>{tab === 'overview' && <><LinkedSelect label="Opportunity" value={record.opportunity_id} rows={data.opportunities || []} titleKey="opportunity_title" onChange={(v) => update('opportunity_id', v)} locked={locked} /><LinkedSelect label="Investor" value={record.investor_id} rows={data.investors || []} titleKey="investor_name" onChange={(v) => update('investor_id', v)} locked={locked} /><Field label="Task title" value={record.task_title} onChange={(v) => update('task_title', v)} locked={locked} /><SelectField label="Category" value={record.category} onChange={(v) => update('category', v)} locked={locked} options={[['finance','Finance'],['legal','Legal'],['commercial','Commercial'],['risk','Risk'],['operations','Operations']]} /><SelectField label="Status" value={record.status} onChange={(v) => update('status', v)} locked={locked} options={[['open','Open'],['in_progress','In progress'],['blocked','Blocked'],['completed','Completed']]} /><Field label="Owner" value={record.owner} onChange={(v) => update('owner', v)} locked={locked} /><Field type="date" label="Due date" value={record.due_date} onChange={(v) => update('due_date', v)} locked={locked} /><TextArea label="Notes" value={record.notes} onChange={(v) => update('notes', v)} locked={locked} /></>}{tab === 'operations' && <><Field label="Evidence URL" value={record.evidence_url} onChange={(v) => update('evidence_url', v)} locked={locked} /><SmartList label="Signoffs" value={d.signoffs || []} onChange={(v) => updateData('signoffs', v)} locked={locked} placeholder="Reviewer, role, decision, date…" /></>}{tab === 'risk' && <><SelectField label="Priority" value={record.priority} onChange={(v) => update('priority', v)} locked={locked} options={[['low','Low'],['normal','Normal'],['high','High'],['critical','Critical']]} /><SmartList label="Blockers" value={d.blockers || []} onChange={(v) => updateData('blockers', v)} locked={locked} placeholder="Blocker, impact, owner…" /><SmartList label="Checklist" value={d.checklist || []} onChange={(v) => updateData('checklist', v)} locked={locked} placeholder="Checklist item…" /></>}{tab === 'audit' && <AuditBlock record={record} />}</FormShell> }
 function DocumentForm({ record, locked, update, updateData, data, tab }: any) { const d = dataOf(record); return <FormShell>{tab === 'overview' && <><Field label="Document title" value={record.document_title} onChange={(v) => update('document_title', v)} locked={locked} /><SelectField label="Category" value={record.category} onChange={(v) => update('category', v)} locked={locked} options={[['data_room','Data room'],['kyc','KYC'],['legal','Legal'],['financial','Financial'],['board_pack','Board pack'],['evidence','Evidence']]} /><Field label="File URL" value={record.file_url} onChange={(v) => update('file_url', v)} locked={locked} wide /><LinkedSelect label="Investor" value={record.investor_id} rows={data.investors || []} titleKey="investor_name" onChange={(v) => update('investor_id', v)} locked={locked} /><LinkedSelect label="Opportunity" value={record.opportunity_id} rows={data.opportunities || []} titleKey="opportunity_title" onChange={(v) => update('opportunity_id', v)} locked={locked} /><LinkedSelect label="Commitment" value={record.commitment_id} rows={data.commitments || []} titleKey="reference_number" onChange={(v) => update('commitment_id', v)} locked={locked} /></>}{tab === 'risk' && <><SelectField label="Visibility" value={record.visibility} onChange={(v) => update('visibility', v)} locked={locked} options={[['internal','Internal'],['investor','Investor'],['board','Board'],['restricted','Restricted']]} /><SelectField label="Status" value={record.status} onChange={(v) => update('status', v)} locked={locked} options={[['draft','Draft'],['approved','Approved'],['shared','Shared'],['expired','Expired'],['revoked','Revoked']]} /><Field label="Owner" value={record.owner} onChange={(v) => update('owner', v)} locked={locked} /><Field type="date" label="Expiry date" value={record.expiry_date} onChange={(v) => update('expiry_date', v)} locked={locked} /><SmartList label="Access list" value={d.access_list || []} onChange={(v) => updateData('access_list', v)} locked={locked} placeholder="Investor/user, role, permission…" /></>}{tab === 'audit' && <><Field label="Version" value={record.version} onChange={(v) => update('version', v)} locked={locked} /><SmartList label="Revision notes" value={d.revision_notes || []} onChange={(v) => updateData('revision_notes', v)} locked={locked} placeholder="Version note, author, date…" /><AuditBlock record={record} /></>}</FormShell> }
+
+function TrainingForm({ record, locked, update, updateData, data, tab }: any) {
+  const d = dataOf(record)
+
+  return <FormShell>
+    {tab === 'overview' && <>
+      <Field label="Training title" value={record.training_title} onChange={(v) => update('training_title', v)} locked={locked} wide placeholder="Fundraising onboarding, VC readiness, investor relations…" />
+      <Field label="Training source" value={record.training_source} onChange={(v) => update('training_source', v)} locked={locked} placeholder="AngelCare Academy / Capital Command" />
+      <SelectField label="Category" value={record.category || 'fundraising_staff'} onChange={(v) => update('category', v)} locked={locked} options={[["fundraising_staff","Fundraising staff"],["investor_relations","Investor relations"],["vc_equity","VC & equity"],["national_funding","National funding programs"],["international_funding","International funding"],["financial_infrastructure","Financial infrastructure"],["partner_programs","Partner programs"],["compliance","Compliance"]]} />
+      <SelectField label="Priority" value={record.priority || 'normal'} onChange={(v) => update('priority', v)} locked={locked} options={[["low","Low"],["normal","Normal"],["high","High"],["critical","Critical"]]} />
+      <Field label="Owner" value={record.owner} onChange={(v) => update('owner', v)} locked={locked} />
+      <Field type="number" label="Duration minutes" value={record.duration_minutes || 360} onChange={(v) => update('duration_minutes', v)} locked={locked} />
+      <LinkedSelect label="Linked investor" value={record.investor_id} rows={data.investors || []} titleKey="investor_name" onChange={(v) => update('investor_id', v)} locked={locked} />
+      <LinkedSelect label="Linked opportunity" value={record.opportunity_id} rows={data.opportunities || []} titleKey="opportunity_title" onChange={(v) => update('opportunity_id', v)} locked={locked} />
+      <TextArea label="Training summary" value={record.summary} onChange={(v) => update('summary', v)} locked={locked} placeholder="Explain what this page teaches and which fundraising staff should use it." />
+      <SmartList label="Learning objectives" value={d.learning_objectives || []} onChange={(v) => updateData('learning_objectives', v)} locked={locked} placeholder="Master investor pipeline qualification, build VC data-room logic…" />
+    </>}
+
+    {tab === 'content' && <>
+      <TextArea label="HTML training page content" value={record.html_content} onChange={(v) => update('html_content', v)} locked={locked} wide placeholder="Paste the complete production HTML page here. This field is saved in Supabase and can be reused for staff training delivery." />
+      <SmartList label="Modules / chapters" value={d.modules || []} onChange={(v) => updateData('modules', v)} locked={locked} placeholder="Module title, section objective, assessment point…" />
+    </>}
+
+    {tab === 'operations' && <>
+      <Field label="Audience" value={record.audience} onChange={(v) => update('audience', v)} locked={locked} placeholder="Fundraising staff, investor relations team, capital command operators…" />
+      <SelectField label="Publishing status" value={record.publish_status || record.status || 'draft'} onChange={(v) => { update('publish_status', v); update('status', v) }} locked={locked} options={[["draft","Draft"],["review","In review"],["approved","Approved"],["published","Published"],["archived","Archived"]]} />
+      <SmartList label="Staff roles" value={d.staff_roles || []} onChange={(v) => updateData('staff_roles', v)} locked={locked} placeholder="Fundraising analyst, investor relations officer, partnership manager…" />
+      <SmartList label="Access rules" value={d.access_rules || []} onChange={(v) => updateData('access_rules', v)} locked={locked} placeholder="Who can view, edit, approve, publish…" />
+      <TextArea label="Publishing notes" value={d.publishing_notes || ''} onChange={(v) => updateData('publishing_notes', v)} locked={locked} placeholder="Review requirements, launch note, release conditions, staff assignment logic…" />
+    </>}
+
+    {tab === 'audit' && <>
+      <Field label="Version" value={d.version || 'v1'} onChange={(v) => updateData('version', v)} locked={locked} />
+      <SmartList label="Review history" value={d.review_history || []} onChange={(v) => updateData('review_history', v)} locked={locked} placeholder="Reviewed by, decision, date, changes requested…" />
+      <AuditBlock record={record} />
+    </>}
+  </FormShell>
+}
+
 function NotesForm({ record, locked, update, updateData, data, tab }: any) { return <FormShell><LinkedSelect label="Investor" value={record.investor_id} rows={data.investors || []} titleKey="investor_name" onChange={(v) => update('investor_id', v)} locked={locked} /><LinkedSelect label="Opportunity" value={record.opportunity_id} rows={data.opportunities || []} titleKey="opportunity_title" onChange={(v) => update('opportunity_id', v)} locked={locked} /><LinkedSelect label="Commitment" value={record.commitment_id} rows={data.commitments || []} titleKey="reference_number" onChange={(v) => update('commitment_id', v)} locked={locked} /><SelectField label="Category" value={record.category} onChange={(v) => update('category', v)} locked={locked} options={[['general','General'],['investor_call','Investor call'],['board','Board'],['finance','Finance'],['legal','Legal'],['risk','Risk'],['followup','Follow-up']]} /><SelectField label="Priority" value={record.priority} onChange={(v) => update('priority', v)} locked={locked} options={[['low','Low'],['normal','Normal'],['high','High'],['critical','Critical']]} /><Field label="Owner" value={record.owner} onChange={(v) => update('owner', v)} locked={locked} /><Field type="datetime-local" label="Follow-up at" value={record.followup_at} onChange={(v) => update('followup_at', v)} locked={locked} /><TextArea label="Note" value={record.note} onChange={(v) => update('note', v)} locked={locked} /><AuditBlock record={record} /></FormShell> }
 function FormShell({ children }: { children: ReactNode }) { return <div className="form-grid premium-form">{children}</div> }
 function LinkedSelect({ label, value, rows, titleKey, onChange, locked }: { label: string; value: any; rows: AnyRecord[]; titleKey: string; onChange: (v: any) => void; locked: boolean }) { return <label><span>{label}</span><select disabled={locked} value={value || ''} onChange={(e) => onChange(e.target.value)}><option value="">Select</option>{rows.map((row) => <option key={row.id} value={row.id}>{row[titleKey] || row.reference_number || row.id}</option>)}</select></label> }
 function AuditBlock({ record }: { record: AnyRecord }) { return <div className="audit-grid span2"><Priority label="Reference" value={record.reference_number || 'Generated after save'} /><Priority label="Audit code" value={record.audit_code || dataOf(record).audit_code || 'Live audit code pending'} /><Priority label="Created" value={record.created_at || 'Not saved'} /><Priority label="Updated" value={record.updated_at || 'Not saved'} /></div> }
-function RecordSummary({ entity, record, data }: { entity: EntityKey; record: AnyRecord; data: AnyRecord }) { return <div className="summary-card"><p className="eyebrow">Record summary</p><h3>{record.investor_name || record.opportunity_title || record.document_title || record.task_title || record.reference_number || ENTITY_META[entity].short}</h3><Badge value={record.stage || record.status || record.priority} /><div className="summary-metrics"><Priority label="Reference" value={record.reference_number || 'Pending'} /><Priority label="Currency" value={record.currency || 'Dhs'} /><Priority label="Amount" value={`${money(record.amount || record.target_amount || record.committed_amount || record.ticket_size_max)} ${record.currency || 'Dhs'}`} /></div></div> }
+function RecordSummary({ entity, record, data }: { entity: EntityKey; record: AnyRecord; data: AnyRecord }) { return <div className="summary-card"><p className="eyebrow">Record summary</p><h3>{record.investor_name || record.opportunity_title || record.training_title || record.document_title || record.task_title || record.reference_number || ENTITY_META[entity].short}</h3><Badge value={record.stage || record.status || record.priority} /><div className="summary-metrics"><Priority label="Reference" value={record.reference_number || 'Pending'} /><Priority label="Currency" value={record.currency || 'Dhs'} /><Priority label="Amount" value={`${money(record.amount || record.target_amount || record.committed_amount || record.ticket_size_max)} ${record.currency || 'Dhs'}`} /></div></div> }
 function ContextActions({ entity, record, setModal, modal }: any) { return <div className="summary-card"><p className="eyebrow">Quick operations</p><button onClick={() => setModal({ ...modal, mode: 'edit' })}>Edit current record</button><button onClick={() => setModal({ ...modal, tab: 'audit' })}>Open audit tab</button><button onClick={() => navigator.clipboard?.writeText(record.reference_number || '')}>Copy reference</button><button onClick={() => window.print()}>Print screen view</button></div> }
 function InvestmentDetailPanel({ record, data, onClose, open }: { record: AnyRecord; data: AnyRecord; onClose: () => void; open: any }) { const tasks = (data.diligence || []).filter((x: AnyRecord) => Number(x.opportunity_id) === Number(record.id)); const docs = (data.documents || []).filter((x: AnyRecord) => Number(x.opportunity_id) === Number(record.id)); return <div className="modal-backdrop"><div className="detail-modal"><header><div><p className="eyebrow">Investment opportunity preview</p><h2>{record.opportunity_title}</h2></div><button onClick={onClose}>Close</button></header><div className="detail-grid"><section><h3>Investment Thesis</h3><p>{record.thesis || 'No thesis captured yet.'}</p><h3>Risk Summary</h3><p>{record.risk_summary || 'No risk summary captured yet.'}</p></section><section><h3>Core Metrics</h3><Priority label="Target" value={`${money(record.target_amount)} ${record.currency || 'Dhs'}`} /><Priority label="Valuation" value={`${money(record.valuation)} ${record.currency || 'Dhs'}`} /><Priority label="Probability" value={`${record.probability || 0}%`} /><Priority label="Closing" value={record.closing_date || 'Not set'} /></section><section><h3>Execution Links</h3><Priority label="Diligence tasks" value={tasks.length} /><Priority label="Documents" value={docs.length} /><button onClick={() => open('diligence', { opportunity_id: record.id }, 'create')}>+ Add DD Task</button><button onClick={() => open('documents', { opportunity_id: record.id }, 'create')}>+ Add Document</button></section></div></div></div> }
 
@@ -1114,28 +1008,5 @@ const css = `
 .followup-row{display:grid;grid-template-columns:160px 200px 180px 1fr auto;gap:10px;align-items:end;margin-top:10px;padding:12px;background:#fff;border-radius:18px;border:1px solid #e2e8f0}
 .communication-empty{grid-column:1/-1}
 .communication-planned{border-color:#bfdbfe}.communication-ready{border-color:#ddd6fe}.communication-sent{border-color:#bbf7d0}.communication-answered{border-color:#86efac}.communication-follow_up{border-color:#fed7aa}
-
-
-
-.training-workspace{animation:fadeIn .25s ease}
-.training-hero{display:grid;grid-template-columns:1.5fr .7fr;gap:18px;border:1px solid #fde68a;background:linear-gradient(135deg,#fffbeb,#fff,#eff6ff);border-radius:34px;padding:28px;box-shadow:0 22px 65px rgba(15,23,42,.08)}
-.training-hero h2{font-size:30px;line-height:1.08;margin:0 0 10px;color:#0f172a}
-.training-hero p{color:#64748b;font-weight:700;max-width:820px}
-.training-hero-stats{display:grid;gap:10px}
-.training-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
-.training-card{border-top:5px solid #f59e0b}
-.training-icon{width:48px;height:48px;border-radius:18px;display:grid;place-items:center;background:#fef3c7;color:#b45309;font-weight:950}
-.training-meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
-.training-meta span{border:1px solid #e2e8f0;background:#f8fafc;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900;color:#475569}
-.training-viewer{display:grid;gap:18px}
-.training-viewer-bar{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;border:1px solid #e2e8f0;background:#fff;border-radius:28px;padding:18px;box-shadow:0 20px 55px rgba(15,23,42,.08)}
-.training-viewer-bar h2{margin:0;font-size:26px;color:#0f172a}
-.training-viewer-bar span{font-size:12px;font-weight:800;color:#64748b}
-.training-html-frame{border:1px solid #dbeafe;background:#fff;border-radius:32px;padding:28px;box-shadow:0 30px 80px rgba(15,23,42,.1);min-height:520px;overflow:auto}
-.html-preview{grid-column:1/-1;border:1px solid #dbeafe;background:#fff;border-radius:24px;padding:18px}
-.preview-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}
-.preview-head b{color:#0f172a}
-.preview-head span{font-size:12px;font-weight:800;color:#64748b}
-.preview-body{border:1px dashed #cbd5e1;background:#f8fafc;border-radius:20px;padding:18px;min-height:240px;overflow:auto}
 
 `
