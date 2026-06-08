@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { chromium } from 'playwright'
 import QRCode from 'qrcode'
 
 export const runtime = 'nodejs'
@@ -610,6 +609,51 @@ async function buildCohortHtml(cohort: AnyRecord, origin: string, id: string) {
 </html>`
 }
 
+
+async function launchAcademyPdfBrowser() {
+  const isVercel = Boolean(process.env.VERCEL || process.env.AWS_REGION)
+
+  if (isVercel) {
+    const chromiumServerless = (await import('@sparticuz/chromium')).default
+    const puppeteer = await import('puppeteer-core')
+
+    return puppeteer.launch({
+      args: chromiumServerless.args,
+      defaultViewport: { width: 1440, height: 1100 },
+      executablePath: await chromiumServerless.executablePath(),
+      headless: true,
+    })
+  }
+
+  const { chromium } = await import('playwright')
+  return chromium.launch({ headless: true })
+}
+
+async function applyAcademyPrintMedia(page: any) {
+  if (typeof page.emulateMedia === 'function') {
+    await page.emulateMedia({ media: 'print' })
+    return
+  }
+
+  if (typeof page.emulateMediaType === 'function') {
+    await page.emulateMediaType('print')
+  }
+}
+
+
+async function newAcademyPdfPage(browser: any, viewport: { width: number; height: number }) {
+  const page = await browser.newPage()
+
+  if (typeof page.setViewportSize === 'function') {
+    await page.setViewportSize(viewport)
+  } else if (typeof page.setViewport === 'function') {
+    await page.setViewport(viewport)
+  }
+
+  return page
+}
+
+
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> | { id: string } }
@@ -623,7 +667,7 @@ export async function GET(
 
   const cookie = request.headers.get('cookie') || ''
   const origin = request.nextUrl.origin
-  let browser: Awaited<ReturnType<typeof chromium.launch>> | null = null
+  let browser: any = null
 
   try {
     const apiResponse = await fetch(`${origin}/api/academy/cohorts/${encodeURIComponent(id)}`, {
@@ -651,15 +695,15 @@ export async function GET(
       return NextResponse.json({ ok: false, error: 'Cohort data missing from API response' }, { status: 404 })
     }
 
-    browser = await chromium.launch({ headless: true })
-    const page = await browser.newPage({ viewport: { width: 1754, height: 1240 } })
+    browser = await launchAcademyPdfBrowser()
+    const page = await newAcademyPdfPage(browser, { width: 1754, height: 1240 })
 
     await page.setContent(await buildCohortHtml(cohort, origin, id), {
       waitUntil: 'domcontentloaded',
       timeout: 60000,
     })
 
-    await page.emulateMedia({ media: 'print' })
+    await applyAcademyPrintMedia(page)
 
     const pdf = await page.pdf({
       format: 'A4',
@@ -669,7 +713,7 @@ export async function GET(
       margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' },
     })
 
-    return new NextResponse(new Uint8Array(pdf), {
+    return new Response(Buffer.from(pdf) as unknown as BodyInit, {
       status: 200,
       headers: {
         'content-type': 'application/pdf',
