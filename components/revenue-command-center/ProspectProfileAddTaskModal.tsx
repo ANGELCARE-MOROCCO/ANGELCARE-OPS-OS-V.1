@@ -132,7 +132,7 @@ export function ProspectProfileAddTaskModal({
       onCreated?.(task)
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to create task.")
+      setError(err instanceof Error ? err.message : typeof err === "string" ? err : "Unable to create task. Please check the Revenue task API response.")
     } finally {
       setSaving(false)
     }

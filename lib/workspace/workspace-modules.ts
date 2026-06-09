@@ -256,6 +256,15 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         requiresElevated: false,
       },
       {
+        id: 'capital-tasks-command',
+        title: 'Tasks Command',
+        href: '/capital-command-center?workspace=tasks-command',
+        icon: 'clipboard',
+        categories: ['admin', 'revenue'],
+        requiresElevated: false,
+        description: 'Enterprise execution, tasks, projects, cycles, modules, fundraising follow-ups, accountability, and daily operational control.',
+      },
+      {
         id: 'capital-payments',
         title: 'Capital Payments',
         href: '/capital-command-center?workspace=payments',

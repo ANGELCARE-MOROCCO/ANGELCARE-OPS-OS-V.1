@@ -4,6 +4,24 @@ import { createClient } from "@/lib/supabase/client"
 
 const supabase = createClient()
 
+function readableError(error: unknown, fallback = "Unable to create task") {
+  if (error instanceof Error) return error.message || fallback
+  if (typeof error === "string") return error || fallback
+  if (error && typeof error === "object") {
+    const record = error as Record<string, unknown>
+    const message = typeof record.message === "string" ? record.message : ""
+    const details = typeof record.details === "string" ? record.details : ""
+    const hint = typeof record.hint === "string" ? record.hint : ""
+    const parts = [message, details, hint].filter(Boolean)
+    if (parts.length) return parts.join(" · ")
+    try {
+      const json = JSON.stringify(error)
+      if (json && json !== "{}") return json
+    } catch {}
+  }
+  return fallback
+}
+
 export type ProfileTaskProspect = {
   id: string
   name: string
@@ -48,8 +66,8 @@ export async function createProfileLinkedTask(input: ProfileTaskPayload) {
     body: JSON.stringify({ ...input, prospectSnapshot: input.prospectSnapshot }),
   })
 
-  const payload = await response.json()
-  if (!response.ok || !payload.ok) throw new Error(payload.error || "Unable to create task")
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok || !payload.ok) throw new Error(readableError(payload.error || payload, "Unable to create task"))
   return payload.task
 }
 
@@ -60,8 +78,16 @@ export async function loadProspectProfileTasks(prospectId: string) {
     .eq("entity_id", prospectId)
     .order("created_at", { ascending: false })
 
-  if (error) throw error
-  return data || []
+  if (!error) return data || []
+
+  const fallback = await supabase
+    .from("revenue_tasks")
+    .select("*")
+    .eq("entity_id", prospectId)
+    .order("created_at", { ascending: false })
+
+  if (fallback.error) throw new Error(readableError(fallback.error, "Unable to load prospect tasks"))
+  return fallback.data || []
 }
 
 export function subscribeProspectProfileTasks(prospectId: string, onChange: () => void) {

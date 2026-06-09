@@ -13,8 +13,27 @@ export function ok(payload: Record<string, unknown> = {}) {
   return NextResponse.json({ ok: true, ...payload })
 }
 
+export function revenueErrorMessage(error: unknown, fallback = "Unknown revenue command error") {
+  if (error instanceof Error) return error.message || fallback
+  if (typeof error === "string") return error || fallback
+  if (error && typeof error === "object") {
+    const record = error as Record<string, unknown>
+    const message = typeof record.message === "string" ? record.message : ""
+    const details = typeof record.details === "string" ? record.details : ""
+    const hint = typeof record.hint === "string" ? record.hint : ""
+    const code = typeof record.code === "string" ? record.code : ""
+    const parts = [message, details, hint, code ? `code ${code}` : ""].filter(Boolean)
+    if (parts.length) return parts.join(" · ")
+    try {
+      const json = JSON.stringify(error)
+      if (json && json !== "{}") return json
+    } catch {}
+  }
+  return String(error || fallback)
+}
+
 export function fail(error: unknown, status = 500) {
-  const message = error instanceof Error ? error.message : String(error || "Unknown revenue command error")
+  const message = revenueErrorMessage(error)
   return NextResponse.json({ ok: false, error: message }, { status })
 }
 

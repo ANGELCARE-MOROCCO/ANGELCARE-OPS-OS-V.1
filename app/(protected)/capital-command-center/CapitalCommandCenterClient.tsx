@@ -1,12 +1,13 @@
 'use client'
 
 import { getInvestorCommunicationTemplate, INVESTOR_COMMUNICATION_TEMPLATE_COUNT } from '@/lib/capital-command-center/investor-communication-templates'
+import TasksCommandWorkspace from '@/components/capital-command/TasksCommandWorkspace'
 
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
 type EntityKey = 'investors' | 'opportunities' | 'commitments' | 'payments' | 'diligence' | 'trainings' | 'documents' | 'notes'
-type ViewKey = 'command' | 'investors' | 'fundraising' | 'deals' | 'diligence' | 'trainings' | 'commitments' | 'payments' | 'dataroom' | 'reports'
+type ViewKey = 'command' | 'investors' | 'fundraising' | 'deals' | 'tasks' | 'diligence' | 'trainings' | 'commitments' | 'payments' | 'dataroom' | 'reports'
 type ModalMode = 'create' | 'edit' | 'view'
 type AnyRecord = Record<string, any>
 
@@ -15,6 +16,7 @@ const NAV: { key: ViewKey; label: string; sub: string; icon: string; theme: stri
   { key: 'investors', label: 'Investor CRM', sub: 'LPs, partners, institutions', icon: '♙', theme: 'indigo' },
   { key: 'fundraising', label: 'Fundraising Pipeline', sub: 'Lead to close workflow', icon: '◇', theme: 'violet' },
   { key: 'deals', label: 'Deal Room', sub: 'Opportunities and theses', icon: '▣', theme: 'cyan' },
+  { key: 'tasks', label: 'Tasks Command', sub: 'Projects, cycles, follow-ups', icon: '▦', theme: 'blue' },
   { key: 'diligence', label: 'Due Diligence', sub: 'Legal, finance, risk', icon: '☑', theme: 'orange' },
   { key: 'trainings', label: 'Fundraising Training', sub: 'Staff HTML courses', icon: '▧', theme: 'blue' },
   { key: 'commitments', label: 'Commitments', sub: 'Soft, signed, closed', icon: '▤', theme: 'emerald' },
@@ -279,6 +281,26 @@ export default function CapitalCommandCenterClient() {
 
   useEffect(() => { load() }, [])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const workspace = new URLSearchParams(window.location.search).get('workspace')
+    const map: Record<string, ViewKey> = {
+      investors: 'investors',
+      fundraising: 'fundraising',
+      deals: 'deals',
+      diligence: 'diligence',
+      training: 'trainings',
+      trainings: 'trainings',
+      commitments: 'commitments',
+      payments: 'payments',
+      dataroom: 'dataroom',
+      reports: 'reports',
+      'tasks-command': 'tasks',
+      tasks: 'tasks',
+    }
+    if (workspace && map[workspace]) setView(map[workspace])
+  }, [])
+
   const stats = data.stats || EMPTY_STATE.stats
   const investors = data.investors || []
   const opportunities = data.opportunities || []
@@ -319,6 +341,16 @@ export default function CapitalCommandCenterClient() {
 
   const globalContext = { investors, opportunities, commitments, payments, diligence, trainings, documents, notes, open, archive, setDetail }
 
+  if (view === 'tasks') {
+    return <main className="capital-shell capital-shell-tasks-command">
+      <CapitalSidebar view={view} setView={setView} />
+      <section className="capital-main capital-main-tasks-command">
+        <TasksCommandWorkspace />
+      </section>
+      <style jsx global>{css}</style>
+    </main>
+  }
+
   return <main className="capital-shell">
     <CapitalSidebar view={view} setView={setView} />
     <section className="capital-main">
@@ -346,6 +378,7 @@ export default function CapitalCommandCenterClient() {
       {view === 'investors' && <InvestorsWorkspace rows={filteredInvestors} ctx={globalContext} />}
       {view === 'fundraising' && <FundraisingWorkspace rows={filteredOpps} ctx={globalContext} />}
       {view === 'deals' && <DealRoomWorkspace rows={filteredOpps} ctx={globalContext} />}
+      {(view as string) === 'tasks' && <TasksCommandWorkspace />}
       {view === 'diligence' && <DiligenceWorkspace rows={diligence} ctx={globalContext} />}
       {view === 'trainings' && <TrainingWorkspace rows={trainings} ctx={globalContext} />}
       {view === 'commitments' && <CommitmentsWorkspace rows={commitments} ctx={globalContext} />}

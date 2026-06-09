@@ -187,45 +187,113 @@ function defaultProgramDetails(programs: string[]) {
   }))
 }
 
+
+function partnerTypeFromKind(kindOrType: unknown) {
+  return typeOption(kindOrType)
+}
+
+function normalizeProgramRows(value: unknown): any[] {
+  const rows = safeJson(value, [])
+  if (!Array.isArray(rows)) return []
+  return rows.map((row, index) => {
+    if (typeof row === "string") return { id: row, name: row, status: "active", price_mad: 0 }
+    if (row && typeof row === "object") {
+      const id = String(row.id || row.program_id || row.slug || row.name || row.title || `program-${index}`)
+      return { ...row, id, name: textValue(row.name || row.title || row.program_name || id, id), status: textValue(row.status || row.stage, "active"), price_mad: numberValue(row.price_mad || row.price || row.fee_mad || row.value_mad, 0) }
+    }
+    return null
+  }).filter(Boolean)
+}
+
+function partnerProgramRows(partner: Partner): any[] {
+  const raw = partner.raw && typeof partner.raw === "object" ? partner.raw : partner
+  const linked = normalizeProgramRows(partner.linked_programs || raw.linked_programs)
+  const details = normalizeProgramRows(partner.program_details || raw.program_details)
+  const direct = arrayValue(partner.programs || raw.programs || raw.assigned_programs || raw.program_names).map((name) => ({ id: name, name, status: "active", price_mad: 0 }))
+  const seen = new Set<string>()
+  return [...linked, ...details, ...direct].filter((program) => {
+    const key = String(program.id || program.name || program.title || "").toLowerCase()
+    if (!key || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+function displayProgramNames(partner: Partner): string[] {
+  return partnerProgramRows(partner).map((program) => textValue(program.name || program.title || program.id, "Program"))
+}
+
+function cleanPartnerSourceKey(row: Partner) {
+  const raw = row.raw && typeof row.raw === "object" ? row.raw : row
+  const candidate = String(row.source_prospect_key || raw.source_prospect_key || row.source_id || raw.source_id || row.id || raw.id || "")
+  return candidate.replace(/^prospect-/, "")
+}
+
 function normalize(partner: Partner): Partner {
   const raw = partner.raw && typeof partner.raw === "object" ? partner.raw : partner
-  const kind = textValue(partner.kind || raw.kind, "preschool").toLowerCase()
-  const type = textValue(partner.type, kind.includes("maternity") ? "Maternity Clinic" : kind.includes("ortho") ? "Orthophoniste" : kind.includes("hotel") ? "Hotel" : kind.includes("corporate") ? "Corporate" : kind.includes("association") ? "Association" : "Preschool & Kindergarten")
-  const value = numberValue(partner.value_mad ?? partner.revenueImpact ?? partner.pipeline_value ?? raw.value_mad ?? raw.pipeline_value, 0)
+  const baseKind = textValue(partner.kind || raw.kind || partner.partner_kind || raw.partner_kind, "preschool").toLowerCase()
+  const typeMeta = partnerTypeFromKind(baseKind || partner.type || raw.type || partner.category || raw.category)
+  const explicitType = textValue(partner.type || raw.type || partner.partner_type || raw.partner_type, typeMeta.label)
+  const explicitCategory = textValue(partner.category || raw.category || partner.partner_category || raw.partner_category, typeMeta.category)
+  const iconKey = extractIconKey({ ...raw, ...partner, kind: baseKind, type: explicitType })
+  const value = numberValue(partner.value_mad ?? raw.value_mad ?? partner.revenueImpact ?? raw.revenueImpact ?? partner.pipeline_value ?? raw.pipeline_value ?? partner.contract_value_mad ?? raw.contract_value_mad, 0)
+  const programRows = partnerProgramRows({ ...raw, ...partner })
+  const contactRows = safeJson(partner.partner_contacts || raw.partner_contacts, [])
+  const contacts = Array.isArray(contactRows) ? contactRows : []
+  const firstContact = contacts[0] && typeof contacts[0] === "object" ? contacts[0] : {}
   return {
+    ...raw,
     ...partner,
     raw,
     id: String(partner.id || raw.id),
-    source: partner.source || (String(partner.id || "").startsWith("prospect-") ? "prospect" : "partner"),
-    source_id: partner.source_id || raw.id || String(partner.id || "").replace(/^prospect-/, ""),
-    name: textValue(partner.name || raw.name || raw.company || raw.organization || raw.title, "Unnamed record"),
+    source: partner.source || raw.source || (String(partner.id || raw.id || "").startsWith("prospect-") ? "prospect" : "partner"),
+    source_id: partner.source_id || raw.source_id || raw.source_prospect_key || String(partner.id || raw.id || "").replace(/^prospect-/, ""),
+    source_prospect_key: partner.source_prospect_key || raw.source_prospect_key || (String(partner.id || raw.id || "").startsWith("prospect-") ? cleanPartnerSourceKey(partner) : raw.source_prospect_id || partner.source_prospect_id || ""),
+    name: textValue(partner.name || raw.name || raw.partnerName || raw.company || raw.organization || raw.title, "Unnamed record"),
     organization: textValue(partner.organization || raw.organization || raw.company || raw.name, "—"),
-    contact_name: textValue(partner.contact_name || raw.contact_name || raw.decision_maker || partner.contact, ""),
-    email: textValue(partner.email || raw.email, ""),
-    phone: textValue(partner.phone || raw.phone || raw.whatsapp, ""),
+    contact_name: textValue(partner.contact_name || raw.contact_name || raw.decision_maker || partner.contact || firstContact.name, ""),
+    email: textValue(partner.email || raw.email || firstContact.email, ""),
+    phone: textValue(partner.phone || raw.phone || raw.whatsapp || firstContact.phone, ""),
     website: textValue(partner.website || raw.website || raw.url, ""),
-    type,
-    kind,
-    type_icon: extractIconKey(partner),
-    category: textValue(partner.category || raw.category, type.includes("Preschool") ? "Education" : type.includes("Clinic") || type.includes("Ortho") ? "Healthcare" : type.includes("Hotel") ? "Hospitality" : "Partnership"),
+    type: explicitType,
+    kind: baseKind,
+    type_icon: iconKey,
+    icon_key: iconKey,
+    category: explicitCategory,
     city: textValue(partner.city || raw.city || raw.location, "—"),
     district: textValue(partner.district || raw.district || raw.area || raw.neighborhood, ""),
     status: textValue(partner.status || raw.status || raw.stage, "target").toLowerCase(),
-    owner: textValue(partner.owner || raw.owner || raw.assignee, "BD Officer"),
-    programs: arrayValue(partner.programs || raw.programs || raw.assigned_programs || raw.program_names),
-    program_details: safeJson(partner.program_details || raw.program_details || raw.offer_parameters || raw.program_settings, []),
+    owner: textValue(partner.owner || raw.owner || raw.assignee || raw.account_manager, "BD Officer"),
+    programs: programRows.map((program) => textValue(program.name || program.title || program.id, "Program")),
+    linked_programs: normalizeProgramRows(partner.linked_programs || raw.linked_programs),
+    program_details: normalizeProgramRows(partner.program_details || raw.program_details || raw.offer_parameters || raw.program_settings),
     offer_parameters: safeJson(partner.offer_parameters || raw.offer_parameters, []),
     pricing_parameters: safeJson(partner.pricing_parameters || raw.pricing_parameters, {}),
     management_controls: safeJson(partner.management_controls || raw.management_controls, {}),
+    linked_contracts: safeJson(partner.linked_contracts || raw.linked_contracts, []),
+    linked_offers: safeJson(partner.linked_offers || raw.linked_offers, []),
+    partner_contacts: contacts,
+    team_members: safeJson(partner.team_members || raw.team_members, contacts),
+    transactions: safeJson(partner.transactions || raw.transactions, []),
+    invoices: safeJson(partner.invoices || raw.invoices, []),
+    communications: safeJson(partner.communications || raw.communications, []),
+    documents: safeJson(partner.documents || raw.documents, []),
+    activity_log: safeJson(partner.activity_log || raw.activity_log, []),
+    contract_checklist: safeJson(partner.contract_checklist || raw.contract_checklist, []),
+    contract_checklist_done: safeJson(partner.contract_checklist_done || raw.contract_checklist_done, []),
     value_mad: value,
     revenueImpact: value,
+    contract_value_mad: numberValue(partner.contract_value_mad ?? raw.contract_value_mad ?? value, value),
     probability: numberValue(partner.probability ?? raw.probability, 0),
     health_score: numberValue(partner.health_score ?? partner.engagement ?? raw.health_score ?? raw.score, 0),
     engagement: numberValue(partner.engagement ?? partner.health_score ?? raw.health_score ?? raw.score, 0),
     referral_potential: numberValue(partner.referral_potential ?? raw.referral_potential, 0),
     joinedOn: partner.joinedOn || raw.joined_on || raw.created_at,
+    created_at: partner.created_at || raw.created_at,
     updated_at: partner.updated_at || raw.updated_at,
     summary: textValue(partner.summary || partner.context || raw.context || raw.notes || raw.description, "Synced live from Revenue Command Center source of truth."),
+    context: textValue(partner.context || partner.summary || raw.context || raw.notes || raw.description, ""),
+    notes: textValue(partner.notes || partner.summary || partner.context || raw.notes || raw.context, ""),
     next_action: textValue(partner.next_action || raw.next_action, "Review next partnership step."),
   }
 }
@@ -501,16 +569,32 @@ function PartnerEditModal({ partner, onClose, onSaved }: { partner: Partner; onC
   async function save() {
     setSaving(true); setError("")
     try {
+      const modalType = typeOption(form.kind || form.type || selectedType.kind)
+      const savedKind = textValue(form.kind, modalType.kind)
+      const savedType = textValue(form.type, modalType.label)
+      const savedCategory = textValue(form.category, modalType.category)
+      const savedIcon = String(form.type_icon || form.icon_key || modalType.iconKey)
+      const savedPrograms = selectedPrograms.length ? selectedPrograms : syntheticPrograms
+      const sourceProspectKey = form.source === "prospect" ? cleanPartnerSourceKey(form) : textValue(form.source_prospect_key || form.raw?.source_prospect_key, "")
       const payload = {
         ...form,
+        id: isNew ? undefined : form.id,
         name: textValue(form.name, "New AngelCare partnership"),
         organization: textValue(form.organization || form.name, "B2B Partner"),
-        programs: selectedPrograms.length ? selectedPrograms.map((p: any) => textValue(p.name || p.title || p.id, "Program")) : String(form.programs_text || "").split(/\n|,|;/).map((item) => item.trim()).filter(Boolean),
+        kind: savedKind,
+        type: savedType,
+        category: savedCategory,
+        type_icon: savedIcon,
+        icon_key: savedIcon,
+        source: "partner",
+        source_id: isNew ? "" : textValue(form.source_id || form.id, ""),
+        source_prospect_key: sourceProspectKey,
+        source_prospect_id: undefined,
+        programs: savedPrograms.map((p: any) => textValue(p.name || p.title || p.id, "Program")),
         documents: docs,
-        tags: [`icon:${String(form.type_icon || extractIconKey(form))}`, ...tags.filter((tag) => !tag.startsWith("icon:"))],
-        type_icon: String(form.type_icon || extractIconKey(form)),
+        tags: [`icon:${savedIcon}`, ...tags.filter((tag) => !tag.startsWith("icon:"))],
         partner_contacts: contacts,
-        linked_programs: selectedPrograms,
+        linked_programs: savedPrograms,
         linked_contracts: selectedContracts,
         linked_offers: selectedOffers,
         transactions: jsonArray("transactions", []),
@@ -524,13 +608,14 @@ function PartnerEditModal({ partner, onClose, onSaved }: { partner: Partner; onC
         offer_parameters: selectedOffers,
         pricing_parameters: pricingParameters,
         management_controls: safeJson(form.management_controls_text, {}),
-        summary: form.summary || form.context,
-        context: form.context || form.summary,
+        summary: form.summary || form.context || form.notes,
+        context: form.context || form.summary || form.notes,
+        notes: form.notes || form.summary || form.context,
       }
       const res = await fetch("/api/revenue-command-center/partnerships/enterprise", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: isNew ? "create" : "save", partnerId: isNew ? "" : partner.id, source: isNew ? "partner" : partner.source, sourceId: isNew ? "" : partner.source_id, payload }) })
       const json = await res.json()
-      if (!res.ok || json.ok === false) throw new Error(json.error || "Unable to save partner record")
-      onSaved(Array.isArray(json.partners) ? json.partners : [])
+      if (!res.ok || json.ok === false) throw new Error(typeof json.error === "string" ? json.error : JSON.stringify(json.error || json.sync?.warning || "Unable to save partner record"))
+      onSaved(Array.isArray(json.partners) ? json.partners : (json.partner ? [json.partner] : []))
       onClose()
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : String(saveError))
@@ -562,7 +647,7 @@ function PartnerEditModal({ partner, onClose, onSaved }: { partner: Partner; onC
 
         <main className="mx-auto max-w-[1780px] space-y-5 p-5 lg:p-8">
           <section className="grid gap-5 xl:grid-cols-[1.55fr_.55fr]">
-            <Card className="p-6"><div className="grid gap-6 lg:grid-cols-[140px_1fr_360px]"><div className="flex items-start justify-center lg:justify-start"><PartnerAvatar partner={{ ...form, type: partnerType }} size="lg" /></div><div className="space-y-4"><div className="grid gap-3 md:grid-cols-[1fr_220px]"><EditableField label="Partner name" value={form.name} onChange={(v) => patch("name", v)} /><SelectField label="Status" value={form.status || "target"} onChange={(v) => patch("status", v)} options={statusOptions} /></div><div className="grid gap-3 md:grid-cols-[1fr_220px]"><SelectField label="Category" value={form.category || selectedType.category} onChange={(v) => patch("category", v)} options={categoryOptions} /><SelectField label="Owner" value={form.owner || "BD Officer"} onChange={(v) => patch("owner", v)} options={ownerOptions} /></div><TypeAndIconPicker kind={form.kind || selectedType.kind} iconKey={form.type_icon || selectedType.iconKey} onKind={(v) => { const next = typeOption(v); patch("kind", v); patch("category", next.category); }} onIcon={(v) => patch("type_icon", v)} /><TextArea label="Partner positioning / business summary" value={form.summary || form.context} onChange={(v) => { patch("summary", v); patch("context", v) }} rows={3} /><div className="grid gap-3 md:grid-cols-5"><SelectField label="City" value={form.city || "Rabat"} onChange={(v) => patch("city", v)} options={cityOptions} /><EditableField label="District" value={form.district} onChange={(v) => patch("district", v)} /><EditableField label="Email" value={form.email} onChange={(v) => patch("email", v)} /><EditableField label="Phone" value={form.phone} onChange={(v) => patch("phone", v)} /><EditableField label="Website" value={form.website} onChange={(v) => patch("website", v)} /></div></div><div className="grid content-start gap-3"><InfoRow label="Partner Since" value={formatDate(form.joinedOn || form.created_at || new Date().toISOString())} /><InfoRow label="Partner ID" value={String(form.source_id || "NEW-PARTNER")} /><InfoRow label="Account Manager" value={form.owner || "BD Officer"} /><InfoRow label="Linked Programs" value={selectedPrograms.length || syntheticPrograms.length} /><InfoRow label="Contracts" value={selectedContracts.length} /></div></div></Card>
+            <Card className="p-6"><div className="grid gap-6 lg:grid-cols-[140px_1fr_360px]"><div className="flex items-start justify-center lg:justify-start"><PartnerAvatar partner={{ ...form, type: partnerType }} size="lg" /></div><div className="space-y-4"><div className="grid gap-3 md:grid-cols-[1fr_220px]"><EditableField label="Partner name" value={form.name} onChange={(v) => patch("name", v)} /><SelectField label="Status" value={form.status || "target"} onChange={(v) => patch("status", v)} options={statusOptions} /></div><div className="grid gap-3 md:grid-cols-[1fr_220px]"><SelectField label="Category" value={form.category || selectedType.category} onChange={(v) => patch("category", v)} options={categoryOptions} /><SelectField label="Owner" value={form.owner || "BD Officer"} onChange={(v) => patch("owner", v)} options={ownerOptions} /></div><TypeAndIconPicker kind={form.kind || selectedType.kind} iconKey={form.type_icon || selectedType.iconKey} onKind={(v) => { const next = typeOption(v); patch("kind", v); patch("type", next.label); patch("category", next.category); patch("type_icon", next.iconKey); patch("icon_key", next.iconKey); }} onIcon={(v) => { patch("type_icon", v); patch("icon_key", v); }} /><TextArea label="Partner positioning / business summary" value={form.summary || form.context} onChange={(v) => { patch("summary", v); patch("context", v) }} rows={3} /><div className="grid gap-3 md:grid-cols-5"><SelectField label="City" value={form.city || "Rabat"} onChange={(v) => patch("city", v)} options={cityOptions} /><EditableField label="District" value={form.district} onChange={(v) => patch("district", v)} /><EditableField label="Email" value={form.email} onChange={(v) => patch("email", v)} /><EditableField label="Phone" value={form.phone} onChange={(v) => patch("phone", v)} /><EditableField label="Website" value={form.website} onChange={(v) => patch("website", v)} /></div></div><div className="grid content-start gap-3"><InfoRow label="Partner Since" value={formatDate(form.joinedOn || form.created_at || new Date().toISOString())} /><InfoRow label="Partner ID" value={String(form.source_id || "NEW-PARTNER")} /><InfoRow label="Account Manager" value={form.owner || "BD Officer"} /><InfoRow label="Linked Programs" value={selectedPrograms.length || syntheticPrograms.length} /><InfoRow label="Contracts" value={selectedContracts.length} /></div></div></Card>
             <Card className="p-6"><div className="flex items-center justify-between"><h3 className="text-lg font-black text-white">Partner Health Score</h3><span className="rounded-xl border border-emerald-300/20 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-100">{health >= 85 ? "Excellent" : health >= 65 ? "Good" : health >= 40 ? "Watch" : "Needs setup"}</span></div><div className="mt-6 grid gap-6 md:grid-cols-[170px_1fr] xl:grid-cols-1 2xl:grid-cols-[170px_1fr]"><div className="relative mx-auto flex h-40 w-40 items-center justify-center rounded-full border-[10px] border-emerald-400/80 bg-emerald-500/5 shadow-[inset_0_0_50px_rgba(16,185,129,.12)]"><div className="text-center"><p className="text-5xl font-black text-emerald-200">{health}</p><p className="text-xs font-black text-white/55">/100</p></div></div><div className="space-y-3">{[["Engagement", engagement], ["Performance", performance], ["Compliance", compliance], ["Satisfaction", satisfaction]].map(([label, value]) => <div key={String(label)}><div className="flex justify-between text-xs font-black text-white/70"><span>{label}</span><span>{value}/100</span></div><div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-2 rounded-full bg-emerald-400" style={{ width: `${value}%` }} /></div></div>)}</div></div><button type="button" onClick={() => setTab("performance")} className="mt-5 text-sm font-black text-violet-200">View Health Details</button></Card>
           </section>
 
@@ -717,7 +802,7 @@ export default function PartnersDirectoryWorkspace({ partners = [], programs = [
   const totalRevenue = rows.reduce((sum, p) => sum + numberValue(p.value_mad), 0)
   const activePartners = rows.filter((p) => ["active", "growth"].includes(String(p.status))).length
   const avgEngagement = Math.round(rows.reduce((sum, p) => sum + numberValue(p.health_score), 0) / Math.max(1, rows.length))
-  const totalPrograms = rows.reduce((sum, p) => sum + arrayValue(p.programs).length, 0)
+  const totalPrograms = rows.reduce((sum, p) => sum + displayProgramNames(p).length, 0)
   const riskCount = rows.filter((p) => ["risk", "recovery", "inactive", "lost"].includes(String(p.status)) || numberValue(p.health_score) < 45).length
 
   return (
@@ -725,7 +810,7 @@ export default function PartnersDirectoryWorkspace({ partners = [], programs = [
       {editing ? <PartnerEditModal partner={editing} onClose={() => setEditing(null)} onSaved={(newRows) => { setLiveRows(newRows.map(normalize)); void onRefresh?.() }} /> : null}
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div><h1 className="text-4xl font-black tracking-[-0.05em] text-white">Partners Directory</h1><p className="mt-2 text-sm font-bold text-white/75">Browse, manage, edit, and sync live prospects and active partners from Revenue Command Center.</p></div>
-        <div className="flex flex-wrap gap-3"><span className="hidden rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-white/50 lg:inline-flex">{syncedProgramsCount} synced programs</span><button onClick={refresh} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-3 text-sm font-black text-white hover:bg-white/[0.12]"><RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Refresh Live</button>{hasPageCloseControl ? <button onClick={onClose} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-3 text-sm font-black text-white hover:bg-white/[0.12]"><X className="h-4 w-4" />Close</button> : null}<button onClick={() => setEditing({ id: "new", source: "partner", source_id: "new", name: "", organization: "", contact_name: "", email: "", phone: "", website: "", city: "", district: "", owner: "", status: "target", kind: "preschool", category: "Education Partner", type: "Preschool & Kindergarten", programs: [], value_mad: 0, probability: 35, health_score: 70, referral_potential: 50, summary: "", next_action: "" })} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg"><Plus className="h-4 w-4" />New Partner</button></div>
+        <div className="flex flex-wrap gap-3"><span className="hidden rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-white/50 lg:inline-flex">{syncedProgramsCount} synced programs</span><button onClick={refresh} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-3 text-sm font-black text-white hover:bg-white/[0.12]"><RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Refresh Live</button>{hasPageCloseControl ? <button onClick={onClose} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-3 text-sm font-black text-white hover:bg-white/[0.12]"><X className="h-4 w-4" />Close</button> : null}<button onClick={() => setEditing({ id: "new", source: "partner", source_id: "new", name: "", organization: "", contact_name: "", email: "", phone: "", website: "", city: "", district: "", owner: "BD Officer", status: "target", kind: "preschool", category: "Education Partner", type: "Preschool & Kindergarten", type_icon: "school", icon_key: "school", programs: [], linked_programs: [], program_details: [], linked_contracts: [], linked_offers: [], partner_contacts: [], value_mad: 0, probability: 35, health_score: 70, referral_potential: 50, summary: "", next_action: "" })} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg"><Plus className="h-4 w-4" />New Partner</button></div>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-6"><Kpi icon={FileText} label="Total Records" value={rows.length} delta="source" tone="violet" /><Kpi icon={ShieldCheck} label="Active Partners" value={activePartners} delta="status" tone="emerald" /><Kpi icon={ShieldAlert} label="Risk Records" value={riskCount} delta="watched" tone="rose" /><Kpi icon={Sparkles} label="Revenue Impact" value={money(totalRevenue)} delta="forecast" tone="cyan" /><Kpi icon={Gauge} label="Health Rate" value={`${avgEngagement}%`} delta="average" tone="amber" /><Kpi icon={TrendingUp} label="Programs" value={totalPrograms} delta="mapped" tone="violet" /></div>
@@ -735,7 +820,7 @@ export default function PartnersDirectoryWorkspace({ partners = [], programs = [
           <Card className="p-5"><div className="grid gap-4 xl:grid-cols-[1.6fr_repeat(4,1fr)_auto]"><label className="relative"><Search className="absolute left-4 top-3.5 h-5 w-5 text-white/55" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search partners by name, contact, phone, owner, city, or ID..." className="w-full rounded-2xl border border-white/15 bg-[#070d1c] py-3 pl-12 pr-4 text-sm font-bold text-white outline-none placeholder:text-white/40" /></label><select value={activeTab} onChange={(e) => setActiveTab(e.target.value)} className="rounded-2xl border border-white/15 bg-[#070d1c] px-4 py-3 text-sm font-black text-white outline-none">{typeTabs.map((tab) => <option key={tab}>{tab}</option>)}</select><select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="rounded-2xl border border-white/15 bg-[#070d1c] px-4 py-3 text-sm font-black text-white outline-none"><option value="all">All Statuses</option>{statusOptions.map((status) => <option key={status} value={status}>{status}</option>)}</select><select value={cityFilter} onChange={(e) => setCityFilter(e.target.value)} className="rounded-2xl border border-white/15 bg-[#070d1c] px-4 py-3 text-sm font-black text-white outline-none"><option value="all">All Cities</option>{cities.map((city) => <option key={city}>{city}</option>)}</select><button className="rounded-2xl border border-violet-300/25 bg-violet-600/20 px-4 py-3 text-sm font-black text-white"><Filter className="mr-2 inline h-4 w-4" />More Filters</button></div></Card>
           <div className="flex gap-3 overflow-x-auto pb-1">{typeTabs.map((tab) => { const count = tab === "All Partners" ? rows.length : rows.filter((p) => tab.includes(p.type) || p.type.includes(tab.replace(/s$/, "")) || tab.includes(p.category)).length; return <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-2xl border px-5 py-3 text-sm font-black text-white ${activeTab === tab ? "border-violet-300 bg-violet-600" : "border-white/15 bg-white/[0.07]"}`}>{tab} ({count})</button> })}</div>
 
-          <Card className="p-0"><div className="overflow-x-auto"><table className="w-full min-w-[1280px] text-left"><thead className="border-b border-white/15 text-xs uppercase tracking-[0.18em] text-white/65"><tr><th className="px-6 py-5"><input type="checkbox" className="h-4 w-4 accent-violet-500" /></th>{["Partner", "Type / Source", "Location", "Status", "Programs", "Revenue Impact", "Health", "Updated", "Actions"].map((h) => <th key={h} className="px-4 py-5">{h}</th>)}</tr></thead><tbody>{filtered.map((partner) => <tr key={partner.id} onClick={() => setSelectedId(partner.id)} className={`cursor-pointer border-b border-white/10 transition hover:bg-white/[0.05] ${selected?.id === partner.id ? "bg-violet-600/10" : ""}`}><td className="px-6 py-5"><input onClick={(e) => e.stopPropagation()} type="checkbox" className="h-4 w-4 accent-violet-500" /></td><td className="px-4 py-5"><div className="flex items-center gap-4"><PartnerAvatar partner={partner} /><div><p className="font-black text-white">{partner.name}</p><p className="text-xs font-bold text-white/75">{partner.contact_name || partner.owner}</p><p className="text-xs font-bold text-white/50">{partner.email || partner.phone || "No contact stored"}</p></div></div></td><td className="px-4 py-5"><TypeBadge type={partner.type} /><p className="mt-2 text-xs font-bold text-white/55">{partner.source === "prospect" ? "Revenue prospect" : "Active partner"}</p></td><td className="px-4 py-5"><p className="font-black text-white">{partner.city}</p><p className="text-xs font-bold text-white/55">{partner.district || partner.category}</p></td><td className="px-4 py-5"><StatusBadge status={partner.status} /></td><td className="px-4 py-5 text-sm font-black text-white">{partner.programs.length} Programs</td><td className="px-4 py-5"><p className="font-black text-white">{money(partner.value_mad)}</p><p className="text-xs font-black text-emerald-200">Forecast {money(numberValue(partner.value_mad) * (numberValue(partner.probability) / 100))}</p></td><td className="px-4 py-5"><div className="flex items-center gap-3"><span className="font-black text-white">{partner.health_score}%</span><div className="h-2 w-24 rounded-full bg-white/15"><div className="h-2 rounded-full bg-emerald-400" style={{ width: `${Math.max(0, Math.min(100, numberValue(partner.health_score)))}%` }} /></div></div></td><td className="px-4 py-5 text-sm font-bold text-white/70">{formatDate(partner.updated_at || partner.joinedOn)}</td><td className="px-4 py-5"><button onClick={(e) => { e.stopPropagation(); setEditing(partner) }} className="rounded-xl border border-white/15 bg-white/[0.07] p-3 hover:bg-violet-600"><Edit3 className="h-5 w-5 text-white" /></button></td></tr>)}</tbody></table>{!filtered.length ? <div className="p-10 text-center"><Database className="mx-auto h-10 w-10 text-white/35" /><p className="mt-3 text-lg font-black text-white">No live partner records found</p><p className="mt-1 text-sm font-bold text-white/55">Connect revenue_partnerships or revenue_prospects records, then refresh.</p></div> : null}</div><div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 text-sm font-bold text-white/70"><p>Showing {filtered.length ? 1 : 0} to {filtered.length} of {rows.length} live records</p><div className="flex items-center gap-3">{["‹", "1", "2", "3", "…", "29", "›"].map((x, i) => <button key={`${x}-${i}`} className={`rounded-xl px-3 py-2 ${x === "1" ? "bg-violet-600 text-white" : "bg-white/[0.07] text-white/70"}`}>{x}</button>)}</div><button onClick={() => { const csv = filtered.map((p) => [p.name, p.type, p.status, p.city, p.owner, p.value_mad].join(",")).join("\n"); const blob = new Blob([`name,type,status,city,owner,value_mad\n${csv}`], { type: "text/csv" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "angelcare-partners-directory.csv"; a.click(); URL.revokeObjectURL(url) }} className="rounded-xl border border-white/15 bg-white/[0.07] px-4 py-2 text-white"><ArrowDownToLine className="mr-2 inline h-4 w-4" />Export</button></div></Card>
+          <Card className="p-0"><div className="overflow-x-auto"><table className="w-full min-w-[1280px] text-left"><thead className="border-b border-white/15 text-xs uppercase tracking-[0.18em] text-white/65"><tr><th className="px-6 py-5"><input type="checkbox" className="h-4 w-4 accent-violet-500" /></th>{["Partner", "Type / Source", "Location", "Status", "Programs", "Revenue Impact", "Health", "Updated", "Actions"].map((h) => <th key={h} className="px-4 py-5">{h}</th>)}</tr></thead><tbody>{filtered.map((partner) => <tr key={partner.id} onClick={() => setSelectedId(partner.id)} className={`cursor-pointer border-b border-white/10 transition hover:bg-white/[0.05] ${selected?.id === partner.id ? "bg-violet-600/10" : ""}`}><td className="px-6 py-5"><input onClick={(e) => e.stopPropagation()} type="checkbox" className="h-4 w-4 accent-violet-500" /></td><td className="px-4 py-5"><div className="flex items-center gap-4"><PartnerAvatar partner={partner} /><div><p className="font-black text-white">{partner.name}</p><p className="text-xs font-bold text-white/75">{partner.contact_name || partner.owner}</p><p className="text-xs font-bold text-white/50">{partner.email || partner.phone || "No contact stored"}</p></div></div></td><td className="px-4 py-5"><TypeBadge type={partner.type} /><p className="mt-2 text-xs font-bold text-white/55">{partner.source === "prospect" ? "Revenue prospect" : "Active partner"}</p></td><td className="px-4 py-5"><p className="font-black text-white">{partner.city}</p><p className="text-xs font-bold text-white/55">{partner.district || partner.category}</p></td><td className="px-4 py-5"><StatusBadge status={partner.status} /></td><td className="px-4 py-5 text-sm font-black text-white">{displayProgramNames(partner).length} Programs</td><td className="px-4 py-5"><p className="font-black text-white">{money(partner.value_mad)}</p><p className="text-xs font-black text-emerald-200">Forecast {money(numberValue(partner.value_mad) * (numberValue(partner.probability) / 100))}</p></td><td className="px-4 py-5"><div className="flex items-center gap-3"><span className="font-black text-white">{partner.health_score}%</span><div className="h-2 w-24 rounded-full bg-white/15"><div className="h-2 rounded-full bg-emerald-400" style={{ width: `${Math.max(0, Math.min(100, numberValue(partner.health_score)))}%` }} /></div></div></td><td className="px-4 py-5 text-sm font-bold text-white/70">{formatDate(partner.updated_at || partner.joinedOn)}</td><td className="px-4 py-5"><button onClick={(e) => { e.stopPropagation(); setEditing(partner) }} className="rounded-xl border border-white/15 bg-white/[0.07] p-3 hover:bg-violet-600"><Edit3 className="h-5 w-5 text-white" /></button></td></tr>)}</tbody></table>{!filtered.length ? <div className="p-10 text-center"><Database className="mx-auto h-10 w-10 text-white/35" /><p className="mt-3 text-lg font-black text-white">No live partner records found</p><p className="mt-1 text-sm font-bold text-white/55">Connect revenue_partnerships or revenue_prospects records, then refresh.</p></div> : null}</div><div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 text-sm font-bold text-white/70"><p>Showing {filtered.length ? 1 : 0} to {filtered.length} of {rows.length} live records</p><div className="flex items-center gap-3">{["‹", "1", "2", "3", "…", "29", "›"].map((x, i) => <button key={`${x}-${i}`} className={`rounded-xl px-3 py-2 ${x === "1" ? "bg-violet-600 text-white" : "bg-white/[0.07] text-white/70"}`}>{x}</button>)}</div><button onClick={() => { const csv = filtered.map((p) => [p.name, p.type, p.status, p.city, p.owner, p.value_mad].join(",")).join("\n"); const blob = new Blob([`name,type,status,city,owner,value_mad\n${csv}`], { type: "text/csv" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "angelcare-partners-directory.csv"; a.click(); URL.revokeObjectURL(url) }} className="rounded-xl border border-white/15 bg-white/[0.07] px-4 py-2 text-white"><ArrowDownToLine className="mr-2 inline h-4 w-4" />Export</button></div></Card>
         </main>
         {selected ? <PartnerProfilePanel partner={selected} onEdit={() => setEditing(selected)} onDelete={() => deleteSelected(selected)} /> : null}
       </div>

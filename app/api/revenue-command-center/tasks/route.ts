@@ -1,4 +1,67 @@
-import { revenueClient, ok, fail, cleanString, cleanArray, ensureRevenueProspect, logRevenueActivity, logRevenueAction } from "@/lib/revenue-command-center/canonical-server"
+import { revenueClient, ok, fail, cleanString, cleanArray, ensureRevenueProspect, logRevenueActivity, logRevenueAction, revenueErrorMessage } from "@/lib/revenue-command-center/canonical-server"
+
+
+function missingColumnName(error: unknown) {
+  const message = revenueErrorMessage(error)
+  return message.match(/column\s+"?([a-zA-Z0-9_]+)"?\s+(?:of relation\s+"?[a-zA-Z0-9_]+"?\s+)?does not exist/i)?.[1] || null
+}
+
+async function insertTaskResilient(supabase: Awaited<ReturnType<typeof revenueClient>>, row: Record<string, unknown>) {
+  let attempt = { ...row }
+  const removable = new Set([
+    "entity_type",
+    "prospect_id",
+    "description",
+    "task_type",
+    "assigned_role",
+    "start_at",
+    "end_at",
+    "expected_outcome",
+    "location",
+    "metadata",
+  ])
+
+  for (let i = 0; i < 12; i += 1) {
+    const { data, error } = await supabase.from("revenue_tasks").insert(attempt).select("*").single()
+    if (!error) return data
+
+    const missing = missingColumnName(error)
+    if (missing && removable.has(missing)) {
+      delete attempt[missing]
+      continue
+    }
+
+    const message = revenueErrorMessage(error)
+    if (/invalid input syntax for type uuid/i.test(message)) {
+      delete attempt.prospect_id
+      continue
+    }
+
+    throw new Error(message)
+  }
+
+  throw new Error("Unable to create task after compatibility retries")
+}
+
+async function updateTaskResilient(supabase: Awaited<ReturnType<typeof revenueClient>>, id: string, patch: Record<string, unknown>) {
+  let attempt = { ...patch }
+  const removable = new Set(["description", "task_type", "assigned_role", "due_date", "start_at", "end_at", "expected_outcome", "location", "metadata", "archived_at", "completed_at"])
+
+  for (let i = 0; i < 12; i += 1) {
+    const { data, error } = await supabase.from("revenue_tasks").update(attempt).eq("id", id).select("*").single()
+    if (!error) return data
+
+    const missing = missingColumnName(error)
+    if (missing && removable.has(missing)) {
+      delete attempt[missing]
+      continue
+    }
+
+    throw new Error(revenueErrorMessage(error))
+  }
+
+  throw new Error("Unable to update task after compatibility retries")
+}
 
 export async function GET(request: Request) {
   const supabase = await revenueClient()
@@ -40,8 +103,7 @@ export async function POST(request: Request) {
       location: cleanString(body.location, ""),
       metadata: { ...(body.metadata || {}), checklist: cleanArray(body.checklist), prospectSnapshot: prospectSnapshot || undefined },
     }
-    const { data, error } = await supabase.from("revenue_tasks").insert(row).select("*").single()
-    if (error) return fail(error)
+    const data = await insertTaskResilient(supabase, row)
     await logRevenueActivity(supabase, { entityType: entityId ? "prospect" : "task", entityId: entityId || data.id, prospectId: entityId || null, eventType: "task_created", title: `Task created: ${data.title}`, metadata: { taskId: data.id } })
     await logRevenueAction(supabase, { actionType: "create_task", entityType: "task", entityId: data.id, payload: body, result: { id: data.id } })
     return ok({ task: data })
@@ -54,17 +116,16 @@ export async function PATCH(request: Request) {
   const supabase = await revenueClient()
   try {
     const body = await request.json()
-    if (!body.id) return fail("Missing task id", 400)
+    const taskId = cleanString(body.id || body.taskId || body.task_id)
+    if (!taskId) return fail("Missing task id", 400)
     if (body.mode === "archive" || body.action === "archive") {
-      const { data, error } = await supabase.from("revenue_tasks").update({ status: "archived", archived_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", body.id).select("*").single()
-      if (error) return fail(error)
+      const data = await updateTaskResilient(supabase, taskId, { status: "archived", archived_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       await logRevenueActivity(supabase, { entityType: "task", entityId: data.id, prospectId: data.prospect_id || null, eventType: "task_archived", title: `task archived: ${data.title || data.id}`, severity: "warning", metadata: { table: "revenue_tasks" } })
       await logRevenueAction(supabase, { actionType: "archive_task", entityType: "task", entityId: data.id, payload: body, result: { id: data.id } })
       return ok({ task: data })
     }
     if (body.mode === "restore" || body.action === "restore") {
-      const { data, error } = await supabase.from("revenue_tasks").update({ status: "active", archived_at: null, updated_at: new Date().toISOString() }).eq("id", body.id).select("*").single()
-      if (error) return fail(error)
+      const data = await updateTaskResilient(supabase, taskId, { status: "active", archived_at: null, updated_at: new Date().toISOString() })
       await logRevenueActivity(supabase, { entityType: "task", entityId: data.id, prospectId: data.prospect_id || null, eventType: "task_restored", title: `task restored: ${data.title || data.id}`, metadata: { table: "revenue_tasks" } })
       await logRevenueAction(supabase, { actionType: "restore_task", entityType: "task", entityId: data.id, payload: body, result: { id: data.id } })
       return ok({ task: data })
@@ -74,8 +135,7 @@ export async function PATCH(request: Request) {
       if (body[from] !== undefined) patch[to] = body[from]
     }
     if (body.metadata !== undefined) patch.metadata = body.metadata
-    const { data, error } = await supabase.from("revenue_tasks").update(patch).eq("id", body.id).select("*").single()
-    if (error) return fail(error)
+    const data = await updateTaskResilient(supabase, taskId, patch)
     await logRevenueActivity(supabase, { entityType: data.entity_type || "prospect", entityId: data.entity_id, prospectId: data.prospect_id, eventType: "task_updated", title: `Task updated: ${data.title}`, metadata: { taskId: data.id, patch } })
     await logRevenueAction(supabase, { actionType: "update_task", entityType: "task", entityId: data.id, payload: body, result: { id: data.id } })
     return ok({ task: data })
