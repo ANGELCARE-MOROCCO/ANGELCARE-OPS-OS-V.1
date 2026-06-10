@@ -1,12 +1,22 @@
-import { carelinkJson, recordMissionAction } from '@/lib/carelink/server'
+import { NextResponse } from 'next/server'
+import { canTransition } from '@/lib/carelink/lifecycle'
+import { getCareLinkMission, transitionMission } from '@/lib/carelink/repository'
+import type { CareLinkStatus } from '@/lib/carelink/types'
 
 export const dynamic = 'force-dynamic'
 
-type Ctx = { params: Promise<{ id: string }> | { id: string } }
+const TARGET_STATUS = 'en_route' as CareLinkStatus
 
-export async function POST(request: Request, context: Ctx) {
-  const { id } = await context.params
-  const body = await request.json().catch(() => ({}))
-  const result = await recordMissionAction(id, 'en-route', body && typeof body === 'object' ? body : {})
-  return carelinkJson({ ok: true, missionId: id, action: 'en-route', ...result, timestamp: new Date().toISOString() })
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params
+    const body = await request.json().catch(() => ({})) as { note?: string }
+    const mission = await getCareLinkMission(id)
+    if (!canTransition(mission.status, TARGET_STATUS)) {
+      return NextResponse.json({ ok: false, error: `Transition ${mission.status} -> ${TARGET_STATUS} blocked by lifecycle engine` }, { status: 409 })
+    }
+    return NextResponse.json({ ok: true, data: await transitionMission(id, TARGET_STATUS, body.note) })
+  } catch (error) {
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Unknown CareLink action error' }, { status: 500 })
+  }
 }

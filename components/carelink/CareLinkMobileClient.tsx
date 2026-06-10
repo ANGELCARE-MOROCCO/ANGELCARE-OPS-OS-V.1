@@ -31,7 +31,7 @@ type Props = {
   missionId?: string
 }
 
-const statusLabel: Record<CareLinkStatus, string> = {
+const statusLabel: Partial<Record<CareLinkStatus, string>> = {
   assigned: 'NOUVELLE MISSION',
   agent_notified: 'À CONFIRMER',
   agent_accepted: 'ACCEPTÉE',
@@ -78,7 +78,7 @@ export function CareLinkMobileClient({ initialDashboard, view = 'home', missionI
   const [dashboard, setDashboard] = useState(initialDashboard)
   const [busyAction, setBusyAction] = useState<string | null>(null)
   const selectedMission = useMemo(() => {
-    return dashboard.upcomingMissions.find((mission) => mission.id === missionId || mission.code === missionId) || dashboard.nextMission || dashboard.upcomingMissions[0]
+    return (dashboard.upcomingMissions || []).find((mission) => mission.id === missionId || mission.code === missionId) || dashboard.nextMission || (dashboard.upcomingMissions || [])[0] || null
   }, [dashboard.upcomingMissions, dashboard.nextMission, missionId])
 
   async function runAction(mission: CareLinkMission, action: string, payload: Record<string, any> = {}) {
@@ -93,8 +93,8 @@ export function CareLinkMobileClient({ initialDashboard, view = 'home', missionI
       if (json?.ok && json.status) {
         setDashboard((current) => ({
           ...current,
-          upcomingMissions: current.upcomingMissions.map((item) => item.id === mission.id ? { ...item, status: json.status, lastEventAt: new Date().toISOString() } : item),
-          todayMissions: current.todayMissions.map((item) => item.id === mission.id ? { ...item, status: json.status, lastEventAt: new Date().toISOString() } : item),
+          upcomingMissions: (current.upcomingMissions || []).map((item) => item.id === mission.id ? { ...item, status: json.status, lastEventAt: new Date().toISOString() } : item),
+          todayMissions: (current.todayMissions || []).map((item) => item.id === mission.id ? { ...item, status: json.status, lastEventAt: new Date().toISOString() } : item),
           nextMission: current.nextMission?.id === mission.id ? { ...current.nextMission, status: json.status, lastEventAt: new Date().toISOString() } : current.nextMission,
         }))
       }
@@ -107,9 +107,9 @@ export function CareLinkMobileClient({ initialDashboard, view = 'home', missionI
     <CareLinkMobileGate>
       <main className="min-h-dvh bg-[#f7fbff] pb-28 text-slate-950">
         {view === 'home' && <HomeView dashboard={dashboard} runAction={runAction} busyAction={busyAction} />}
-        {view === 'missions' && <MissionsView missions={dashboard.upcomingMissions} runAction={runAction} busyAction={busyAction} />}
+        {view === 'missions' && <MissionsView missions={dashboard.upcomingMissions || []} runAction={runAction} busyAction={busyAction} />}
         {view === 'mission' && selectedMission && <MissionDetailView mission={selectedMission} runAction={runAction} busyAction={busyAction} />}
-        {view === 'schedule' && <ScheduleView missions={dashboard.upcomingMissions} />}
+        {view === 'schedule' && <ScheduleView missions={dashboard.upcomingMissions || []} />}
         {view === 'messages' && <MessagesView dashboard={dashboard} />}
         {view === 'profile' && <ProfileView dashboard={dashboard} />}
         <BottomNav active={view === 'mission' ? 'missions' : view} />
@@ -126,7 +126,7 @@ function AppHeader({ dashboard, compact = false }: { dashboard: CareLinkDashboar
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-emerald-400 text-sm font-black text-white shadow-lg shadow-sky-100">AC</div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-sky-600">CareLink</p>
-            <p className="text-sm font-black text-slate-950">{compact ? 'PORTAIL TERRAIN' : dashboard.agent.fullName}</p>
+            <p className="text-sm font-black text-slate-950">{compact ? 'PORTAIL TERRAIN' : String((dashboard.agent as any)?.name || (dashboard.agent as any)?.full_name || 'ANGELCARE FIELD AGENT')}</p>
           </div>
         </Link>
         <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ function AppHeader({ dashboard, compact = false }: { dashboard: CareLinkDashboar
 }
 
 function HomeView({ dashboard, runAction, busyAction }: { dashboard: CareLinkDashboard; runAction: (mission: CareLinkMission, action: string, payload?: Record<string, any>) => void; busyAction: string | null }) {
-  const mission = dashboard.nextMission
+  const mission = dashboard.nextMission || (dashboard.upcomingMissions || [])[0] || null
   return (
     <>
       <AppHeader dashboard={dashboard} />
@@ -149,12 +149,12 @@ function HomeView({ dashboard, runAction, busyAction }: { dashboard: CareLinkDas
           <div className="absolute -bottom-12 left-8 h-32 w-32 rounded-full bg-emerald-100 blur-xl" />
           <div className="relative">
             <p className="text-[10px] font-black uppercase tracking-[0.34em] text-sky-600">Aujourd’hui terrain</p>
-            <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-950">BONJOUR, {dashboard.agent.fullName.split(' ')[0]}</h1>
+            <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-950">BONJOUR, {String((dashboard.agent as any)?.fullName || (dashboard.agent as any)?.full_name || (dashboard.agent as any)?.name || 'AngelCare').split(' ')[0]}</h1>
             <p className="mt-3 text-sm leading-6 text-slate-600">Votre centre mobile pour missions programmées, présence sécurisée, checklists et liaison dispatch AngelCare.</p>
             <div className="mt-5 grid grid-cols-3 gap-3">
-              <MetricCard label="MISSIONS" value={dashboard.stats.todayMissions} />
-              <MetricCard label="HEURES" value={`${dashboard.stats.weekHours}H`} />
-              <MetricCard label="SCORE" value={`${dashboard.stats.reliabilityScore}%`} />
+              <MetricCard label="MISSIONS" value={Number((dashboard.stats as any)?.todayMissions || 0)} />
+              <MetricCard label="HEURES" value={`${Number((dashboard.stats as any)?.weekHours || 0)}H`} />
+              <MetricCard label="SCORE" value={`${Number((dashboard.stats as any)?.reliabilityScore || 0)}%`} />
             </div>
           </div>
         </div>
@@ -180,7 +180,7 @@ function HomeView({ dashboard, runAction, busyAction }: { dashboard: CareLinkDas
         </div>
 
         <div className="space-y-3">
-          {dashboard.alerts.map((alert) => (
+          {(((dashboard.alerts as any[]) || [])).map((alert: any) => (
             <div key={alert.id} className="rounded-3xl border border-amber-100 bg-amber-50 p-4">
               <div className="flex gap-3">
                 <AlertTriangle className="shrink-0 text-amber-600" size={20} />
@@ -232,7 +232,7 @@ function MissionDetailView({ mission, runAction, busyAction }: { mission: CareLi
             <div className="mt-4 flex flex-wrap gap-2 text-xs font-black">
               <StatusBadge status={mission.status} />
               <span className="rounded-full bg-slate-100 px-3 py-2 text-slate-700">{mission.zone}</span>
-              <span className="rounded-full bg-emerald-50 px-3 py-2 text-emerald-700">{mission.hoursEstimate}H</span>
+              <span className="rounded-full bg-emerald-50 px-3 py-2 text-emerald-700">{String((mission as any).hoursEstimate || (mission as any).hours_estimate || 0)}H</span>
             </div>
             <div className="mt-5 grid grid-cols-5 gap-2">
               {timeline.map((step, index) => <div key={step} className="text-center"><div className={cx('mx-auto h-2 rounded-full', index <= 1 ? 'bg-sky-500' : 'bg-slate-200')} /><p className="mt-2 text-[8px] font-black text-slate-500">{step}</p></div>)}
@@ -242,10 +242,10 @@ function MissionDetailView({ mission, runAction, busyAction }: { mission: CareLi
       </section>
       <section className="mx-auto max-w-md space-y-5 px-5 pt-5">
         <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
-          <InfoRow icon={<Clock3 size={18} />} label="HORAIRES" value={`${formatDay(mission.scheduledStart)} · ${formatHour(mission.scheduledStart)} — ${formatHour(mission.scheduledEnd)}`} />
-          <InfoRow icon={<MapPin size={18} />} label="ZONE" value={`${mission.city} · ${mission.zone} · ${mission.addressHint}`} />
-          <InfoRow icon={<UserRound size={18} />} label="CLIENT" value={`${mission.clientName} · ${mission.beneficiaryName}${mission.beneficiaryAge ? ` · ${mission.beneficiaryAge}` : ''}`} />
-          <InfoRow icon={<Phone size={18} />} label="DISPATCH" value={`${mission.dispatcherName} · ${mission.dispatcherPhone}`} />
+          <InfoRow icon={<Clock3 size={18} />} label="HORAIRES" value={`${formatDay((mission as any).scheduledStart)} · ${formatHour((mission as any).scheduledStart)} — ${formatHour((mission as any).scheduledEnd)}`} />
+          <InfoRow icon={<MapPin size={18} />} label="ZONE" value={`${mission.city} · ${mission.zone} · ${(mission as any).addressHint}`} />
+          <InfoRow icon={<UserRound size={18} />} label="CLIENT" value={`${(mission as any).clientName} · ${(mission as any).beneficiaryName}${(mission as any).beneficiaryAge ? ` · ${(mission as any).beneficiaryAge}` : ''}`} />
+          <InfoRow icon={<Phone size={18} />} label="DISPATCH" value={`${(mission as any).dispatcherName} · ${(mission as any).dispatcherPhone}`} />
         </div>
 
         <ActionGrid mission={mission} runAction={runAction} busyAction={busyAction} />
@@ -260,9 +260,9 @@ function MissionDetailView({ mission, runAction, busyAction }: { mission: CareLi
           <div className="space-y-3">
             {mission.checklist.map((item) => (
               <label key={item.id} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-                <input type="checkbox" defaultChecked={item.completed} className="h-5 w-5 accent-sky-600" />
-                <span className="text-sm font-bold text-slate-800">{item.label}</span>
-                {item.required ? <span className="ml-auto rounded-full bg-rose-50 px-2 py-1 text-[10px] font-black text-rose-700">OBLIGATOIRE</span> : null}
+                <input type="checkbox" defaultChecked={Boolean((item as any).completed)} className="h-5 w-5 accent-sky-600" />
+                <span className="text-sm font-bold text-slate-800">{String((item as any).label || (item as any).title || (item as any).name || (item as any).description || 'Checklist item')}</span>
+                {Boolean((item as any).required) ? <span className="ml-auto rounded-full bg-rose-50 px-2 py-1 text-[10px] font-black text-rose-700">OBLIGATOIRE</span> : null}
               </label>
             ))}
           </div>
@@ -270,7 +270,7 @@ function MissionDetailView({ mission, runAction, busyAction }: { mission: CareLi
 
         <Panel title="SÉCURITÉ & INCIDENT" icon={<AlertTriangle size={18} />}>
           <div className="space-y-3 text-sm leading-6 text-slate-700">
-            {mission.safetyNotes.map((item) => <p key={item} className="rounded-2xl bg-amber-50 p-3 text-amber-900">{item}</p>)}
+            {(((mission as any).safetyNotes || []) as any[]).map((item: any) => <p key={item} className="rounded-2xl bg-amber-50 p-3 text-amber-900">{item}</p>)}
             <button onClick={() => runAction(mission, 'incident', { title: 'Incident terrain signalé', severity: 'medium' })} className="w-full rounded-2xl bg-rose-600 px-4 py-4 text-sm font-black text-white shadow-lg shadow-rose-100">SIGNALER UN INCIDENT</button>
           </div>
         </Panel>
@@ -299,7 +299,7 @@ function ScheduleView({ missions }: { missions: CareLinkMission[] }) {
               <p className="text-[10px] font-black text-sky-200">JUIN</p>
             </div>
             <div>
-              <p className="text-xs font-black text-sky-600">{formatHour(mission.scheduledStart)} — {formatHour(mission.scheduledEnd)}</p>
+              <p className="text-xs font-black text-sky-600">{formatHour((mission as any).scheduledStart)} — {formatHour((mission as any).scheduledEnd)}</p>
               <h2 className="mt-1 font-black text-slate-950">{mission.serviceType}</h2>
               <p className="mt-1 text-xs text-slate-500">{mission.zone} · {statusLabel[mission.status]}</p>
             </div>
@@ -321,7 +321,7 @@ function MessagesView({ dashboard }: { dashboard: CareLinkDashboard }) {
         </div>
       </section>
       <section className="mx-auto max-w-md space-y-4 px-5 pt-5">
-        {dashboard.messages.map((message) => (
+        {((dashboard.messages as any[]) || []).map((message: any) => (
           <article key={message.id} className={cx('rounded-[2rem] border p-4 shadow-sm', message.urgent ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white')}>
             <div className="flex items-start gap-3">
               <span className={cx('rounded-2xl p-3', message.urgent ? 'bg-amber-100 text-amber-700' : 'bg-sky-50 text-sky-700')}><MessageCircle size={20} /></span>
@@ -340,7 +340,7 @@ function MessagesView({ dashboard }: { dashboard: CareLinkDashboard }) {
 }
 
 function ProfileView({ dashboard }: { dashboard: CareLinkDashboard }) {
-  const agent = dashboard.agent
+  const agent = (dashboard.agent || {}) as any
   return (
     <>
       <section className="mx-auto max-w-md px-5 pt-6">
@@ -363,10 +363,10 @@ function ProfileView({ dashboard }: { dashboard: CareLinkDashboard }) {
           <MetricCard label="STATUT" value="OK" />
         </div>
         <Panel title="ZONES DE SERVICE" icon={<MapPin size={18} />}>
-          <div className="flex flex-wrap gap-2">{agent.zones.map((zone) => <span key={zone} className="rounded-full bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700">{zone}</span>)}</div>
+          <div className="flex flex-wrap gap-2">{(((agent as any).zones || []) as string[]).map((zone: string) => <span key={zone} className="rounded-full bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700">{zone}</span>)}</div>
         </Panel>
         <Panel title="COMPÉTENCES VALIDÉES" icon={<ShieldCheck size={18} />}>
-          <div className="space-y-2">{agent.skills.map((skill) => <p key={skill} className="rounded-2xl bg-emerald-50 p-3 text-sm font-bold text-emerald-800">{skill}</p>)}</div>
+          <div className="space-y-2">{(((agent as any).skills || []) as string[]).map((skill: string) => <p key={skill} className="rounded-2xl bg-emerald-50 p-3 text-sm font-bold text-emerald-800">{skill}</p>)}</div>
         </Panel>
         <Panel title="DOCUMENTS & CONFORMITÉ" icon={<FileText size={18} />}>
           <p className="text-sm leading-6 text-slate-600">Statut vérification : <b className="text-slate-950">{agent.verificationStatus.toUpperCase()}</b>. Conformité opérationnelle : <b className="text-slate-950">{agent.complianceStatus.toUpperCase()}</b>.</p>
@@ -402,10 +402,10 @@ function MissionCompactCard({ mission, runAction, busyAction, expanded = false }
           <ChevronRight className="text-slate-400" />
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-600">
-          <InfoPill icon={<Clock3 size={14} />} text={`${formatHour(mission.scheduledStart)} — ${formatHour(mission.scheduledEnd)}`} />
+          <InfoPill icon={<Clock3 size={14} />} text={`${formatHour((mission as any).scheduledStart)} — ${formatHour((mission as any).scheduledEnd)}`} />
           <InfoPill icon={<MapPin size={14} />} text={`${mission.city} · ${mission.zone}`} />
-          <InfoPill icon={<UserRound size={14} />} text={mission.clientName} />
-          <InfoPill icon={<CheckCircle2 size={14} />} text={statusLabel[mission.status]} />
+          <InfoPill icon={<UserRound size={14} />} text={(mission as any).clientName} />
+          <InfoPill icon={<CheckCircle2 size={14} />} text={statusLabel[mission.status] || String(mission.status || '').replaceAll('_', ' ').toUpperCase()} />
         </div>
       </Link>
       {expanded ? <p className="mt-4 text-sm leading-6 text-slate-600">{mission.instructions[0]}</p> : null}
@@ -463,7 +463,7 @@ function BottomNav({ active }: { active: View }) {
   return (
     <nav className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-md rounded-[2rem] border border-slate-200 bg-white/95 px-2 py-2 shadow-[0_18px_60px_rgba(15,23,42,0.18)] backdrop-blur-xl">
       <div className="grid grid-cols-5 gap-1">
-        {items.map((item) => <Link key={item.key} href={item.href} className={cx('flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[9px] font-black transition', active === item.key ? 'bg-slate-950 text-white' : 'text-slate-400')}>{item.icon}<span>{item.label}</span></Link>)}
+        {items.map((item) => <Link key={item.key} href={item.href} className={cx('flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[9px] font-black transition', active === item.key ? 'bg-slate-950 text-white' : 'text-slate-400')}>{item.icon}<span>{String((item as any).label || (item as any).title || (item as any).name || (item as any).description || 'Checklist item')}</span></Link>)}
       </div>
     </nav>
   )

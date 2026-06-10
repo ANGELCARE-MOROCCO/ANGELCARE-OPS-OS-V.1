@@ -1,0 +1,224 @@
+'use client'
+
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import type { MissionControlRecord, MissionDossier } from '@/lib/missions/types'
+
+type ViewKey = 'board' | 'master-list' | 'timeline' | 'validation' | 'risk-monitoring' | 'field-reports' | 'audit'
+
+type Props = {
+  activeView: ViewKey
+  initialRecords: MissionControlRecord[]
+}
+
+type ModalState =
+  | { type: 'none' }
+  | { type: 'dossier'; record: MissionControlRecord; dossier?: MissionDossier | null; loading?: boolean; error?: string }
+  | { type: 'create' }
+  | { type: 'bulk'; action: string }
+
+const nav = [
+  { key: 'board', label: 'Board View', href: '/carelink-ops/missions' },
+  { key: 'master-list', label: 'Master List', href: '/carelink-ops/missions/master-list' },
+  { key: 'timeline', label: 'Timeline', href: '/carelink-ops/missions/timeline' },
+  { key: 'validation', label: 'Validation', href: '/carelink-ops/missions/validation' },
+  { key: 'risk-monitoring', label: 'Risk Monitoring', href: '/carelink-ops/missions/risk-monitoring' },
+  { key: 'field-reports', label: 'Field Reports', href: '/carelink-ops/missions/field-reports' },
+  { key: 'audit', label: 'Audit', href: '/carelink-ops/missions/audit' },
+] as const
+
+const lanes = [
+  { key: 'draft', label: 'Created' },
+  { key: 'assigned', label: 'Assigned' },
+  { key: 'confirmed', label: 'Accepted / Confirmed' },
+  { key: 'en_route', label: 'En Route' },
+  { key: 'in_progress', label: 'In Progress' },
+  { key: 'field_report_pending', label: 'Report Pending' },
+  { key: 'ops_validation', label: 'Validation' },
+  { key: 'completed', label: 'Closed' },
+]
+
+function statusTone(value: string) {
+  if (['critical', 'incident', 'cancelled', 'blocked'].includes(value)) return 'bg-rose-50 text-rose-700 border-rose-200'
+  if (['elevated', 'watch', 'pending', 'needs_review', 'field_report_pending'].includes(value)) return 'bg-amber-50 text-amber-700 border-amber-200'
+  if (['completed', 'validated', 'ready'].includes(value)) return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  return 'bg-blue-50 text-blue-700 border-blue-200'
+}
+
+export function CareLinkMissionControlCenter({ activeView, initialRecords }: Props) {
+  const [records, setRecords] = useState<MissionControlRecord[]>(initialRecords || [])
+  const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [modal, setModal] = useState<ModalState>({ type: 'none' })
+  const [busy, setBusy] = useState(false)
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return records
+    return records.filter((item) => [item.code, item.title, item.familyName, item.caregiverName, item.city, item.zone, item.serviceType].join(' ').toLowerCase().includes(q))
+  }, [records, query])
+
+  const kpis = useMemo(() => {
+    return [
+      ['Missions Today', records.length],
+      ['In Progress', records.filter((m) => m.status === 'in_progress' || m.lifecycleStage === 'in_progress').length],
+      ['Pending Validation', records.filter((m) => m.validationStatus === 'pending' || m.lifecycleStage === 'ops_validation').length],
+      ['At Risk', records.filter((m) => ['watch', 'elevated', 'critical'].includes(m.riskLevel)).length],
+      ['Completed', records.filter((m) => m.status === 'completed').length],
+      ['Reports Pending', records.filter((m) => ['pending', 'submitted', 'needs_correction'].includes(m.reportStatus)).length],
+    ]
+  }, [records])
+
+  async function openDossier(record: MissionControlRecord) {
+    setModal({ type: 'dossier', record, loading: true })
+    try {
+      const res = await fetch(`/api/missions/${record.id}`, { headers: { Accept: 'application/json' }, cache: 'no-store' })
+      const json = await res.json()
+      if (!res.ok || !json.ok) throw new Error(json.error || 'Mission dossier loading failed')
+      setModal({ type: 'dossier', record, dossier: json.data })
+    } catch (error) {
+      setModal({ type: 'dossier', record, error: error instanceof Error ? error.message : 'Unknown loading error' })
+    }
+  }
+
+  async function refresh() {
+    setBusy(true)
+    try {
+      const res = await fetch('/api/missions/control-center', { headers: { Accept: 'application/json' }, cache: 'no-store' })
+      const json = await res.json()
+      if (!res.ok || !json.ok) throw new Error(json.error || 'Refresh failed')
+      setRecords(json.data || [])
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  function toggle(id: number) {
+    setSelected((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  return (
+    <main className="min-h-screen bg-slate-50 text-slate-950">
+      <div className="grid min-h-screen grid-cols-[280px_1fr]">
+        <aside className="border-r border-slate-200 bg-white p-5">
+          <div className="mb-8 rounded-3xl bg-blue-600 p-5 text-white shadow-lg shadow-blue-200">
+            <div className="text-xs font-black uppercase tracking-[0.25em] text-blue-100">AngelCare</div>
+            <div className="mt-1 text-2xl font-black">CareLink Ops</div>
+            <div className="mt-2 text-xs text-blue-100">Mission Control Layer</div>
+          </div>
+          <nav className="space-y-2 text-sm font-bold">
+            {[
+              ['/carelink-ops', 'Overview'],
+              ['/carelink-ops/dispatch', 'Dispatch'],
+              ['/carelink-ops/missions', 'Missions'],
+              ['/carelink-ops/agents', 'Agents'],
+              ['/carelink-ops/schedule', 'Schedule'],
+              ['/carelink-ops/incidents', 'Incidents'],
+              ['/carelink-ops/reports', 'Reports'],
+              ['/carelink-ops/compliance', 'Compliance'],
+            ].map(([href, label]) => (
+              <Link key={href} href={href} className={`block rounded-2xl px-4 py-3 ${href === '/carelink-ops/missions' ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100' : 'text-slate-600 hover:bg-slate-50'}`}>{label}</Link>
+            ))}
+          </nav>
+        </aside>
+
+        <section className="min-w-0 p-6">
+          <header className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.35em] text-blue-600">Mission Operations</div>
+                <h1 className="mt-2 text-3xl font-black tracking-tight">MISSION CONTROL CENTER</h1>
+                <p className="mt-2 max-w-3xl text-sm text-slate-500">Enterprise mission orchestration, dossier supervision, sub-mission lifecycle monitoring, report validation, and audit oversight.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={refresh} className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">{busy ? 'Refreshing…' : 'Refresh'}</button>
+                <button onClick={() => setModal({ type: 'create' })} className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-lg shadow-blue-100">+ Create Dossier</button>
+              </div>
+            </div>
+            <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-6">
+              {kpis.map(([label, value]) => <div key={label} className="rounded-3xl border border-slate-200 bg-slate-50 p-4"><div className="text-xs font-black uppercase text-slate-400">{label}</div><div className="mt-2 text-2xl font-black">{value}</div></div>)}
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+              {nav.map((item) => <Link key={item.key} href={item.href} className={`rounded-2xl px-4 py-2 text-sm font-black ${activeView === item.key ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{item.label}</Link>)}
+            </div>
+          </header>
+
+          <section className="mt-5 rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex flex-wrap items-center gap-3">
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search missions, dossiers, caregivers, cities, service types…" className="min-w-[320px] flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-300" />
+              <button onClick={() => setModal({ type: 'bulk', action: 'Assign selected missions' })} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black">Batch Assign</button>
+              <button onClick={() => setModal({ type: 'bulk', action: 'Validate selected reports' })} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black">Validate</button>
+              <button onClick={() => setModal({ type: 'bulk', action: 'Export selected missions' })} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black">Export</button>
+            </div>
+          </section>
+
+          {activeView === 'board' && <MissionBoard records={filtered} open={openDossier} toggle={toggle} selected={selected} />}
+          {activeView === 'master-list' && <MissionTable records={filtered} open={openDossier} toggle={toggle} selected={selected} />}
+          {activeView === 'timeline' && <TimelineView records={filtered} open={openDossier} />}
+          {activeView === 'validation' && <ValidationView records={filtered} open={openDossier} />}
+          {activeView === 'risk-monitoring' && <RiskView records={filtered} open={openDossier} />}
+          {activeView === 'field-reports' && <ReportsView records={filtered} open={openDossier} />}
+          {activeView === 'audit' && <AuditView records={filtered} open={openDossier} />}
+        </section>
+      </div>
+      {modal.type === 'dossier' && <MissionDossierModal state={modal} close={() => setModal({ type: 'none' })} />}
+      {modal.type === 'create' && <CreateDossierModal close={() => setModal({ type: 'none' })} refresh={refresh} />}
+      {modal.type === 'bulk' && <CommandModal title={modal.action} close={() => setModal({ type: 'none' })} />}
+    </main>
+  )
+}
+
+function MissionBoard({ records, open, toggle, selected }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void; toggle: (id: number) => void; selected: Set<number> }) {
+  return <section className="mt-5 overflow-x-auto rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm"><div className="flex min-w-[1500px] gap-3">{lanes.map((lane) => { const items = records.filter((item) => item.lifecycleStage === lane.key || item.status === lane.key); return <div key={lane.key} className="w-72 shrink-0 rounded-3xl border border-slate-200 bg-slate-50 p-3"><div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-black">{lane.label}</h3><span className="rounded-full bg-white px-2 py-1 text-xs font-black text-slate-500">{items.length}</span></div><div className="space-y-3">{items.slice(0, 20).map((item) => <MissionCard key={item.id} item={item} open={() => open(item)} checked={selected.has(item.id)} toggle={() => toggle(item.id)} />)}{!items.length && <EmptyMini text="No live missions" />}</div></div> })}</div></section>
+}
+
+function MissionCard({ item, open, checked, toggle }: { item: MissionControlRecord; open: () => void; checked: boolean; toggle: () => void }) {
+  return <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm hover:border-blue-200"><div className="flex items-start justify-between gap-2"><div><div className="text-xs font-black uppercase text-blue-600">{item.code}</div><h4 className="mt-1 text-sm font-black">{item.title}</h4></div><input type="checkbox" checked={checked} onChange={toggle} /></div><div className="mt-3 grid gap-1 text-xs text-slate-500"><span>{item.familyName}</span><span>{item.city} · {item.zone}</span><span>{item.dateLabel} · {item.timeLabel}</span><span>{item.caregiverName}</span></div><div className="mt-3 flex flex-wrap gap-1"><Pill value={item.missionKind} /><Pill value={item.riskLevel} /><Pill value={item.reportStatus} /></div><button onClick={open} className="mt-3 w-full rounded-2xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Open Dossier</button></article>
+}
+
+function MissionTable({ records, open, toggle, selected }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void; toggle: (id: number) => void; selected: Set<number> }) {
+  return <section className="mt-5 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"><table className="w-full text-left text-sm"><thead className="bg-slate-50 text-xs uppercase text-slate-400"><tr><th className="p-4"></th><th>Mission</th><th>Client</th><th>Service</th><th>Caregiver</th><th>Status</th><th>Risk</th><th>Report</th><th>Actions</th></tr></thead><tbody>{records.map((item) => <tr key={item.id} className="border-t border-slate-100"><td className="p-4"><input type="checkbox" checked={selected.has(item.id)} onChange={() => toggle(item.id)} /></td><td className="font-black">{item.code}</td><td>{item.familyName}</td><td>{item.serviceType}</td><td>{item.caregiverName}</td><td><Pill value={item.lifecycleStage} /></td><td><Pill value={item.riskLevel} /></td><td><Pill value={item.reportStatus} /></td><td><button onClick={() => open(item)} className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-black text-blue-700">Open</button></td></tr>)}{!records.length && <tr><td colSpan={9} className="p-10 text-center text-sm font-bold text-slate-400">No live missions found.</td></tr>}</tbody></table></section>
+}
+
+function TimelineView({ records, open }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void }) { return <GenericPanel title="Mission Timeline" records={records} open={open} description="Chronological supervision of mission dossiers and sub-missions." /> }
+function ValidationView({ records, open }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void }) { return <GenericPanel title="Validation Center" records={records.filter((r) => r.validationStatus !== 'validated')} open={open} description="Reports, completion controls, and operations validation." /> }
+function RiskView({ records, open }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void }) { return <GenericPanel title="Risk Monitoring" records={records.filter((r) => r.riskLevel !== 'normal')} open={open} description="Critical, elevated, and watch-list missions." /> }
+function ReportsView({ records, open }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void }) { return <GenericPanel title="Field Reports" records={records.filter((r) => r.reportStatus !== 'validated')} open={open} description="Report submission, correction, and validation queue." /> }
+function AuditView({ records, open }: { records: MissionControlRecord[]; open: (record: MissionControlRecord) => void }) { return <GenericPanel title="Audit Trail" records={records} open={open} description="Mission event journal and dossier traceability." /> }
+
+function GenericPanel({ title, description, records, open }: { title: string; description: string; records: MissionControlRecord[]; open: (record: MissionControlRecord) => void }) {
+  return <section className="mt-5 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4"><h2 className="text-xl font-black">{title}</h2><p className="text-sm text-slate-500">{description}</p></div><div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">{records.map((record) => <MissionCard key={record.id} item={record} open={() => open(record)} checked={false} toggle={() => undefined} />)}{!records.length && <div className="col-span-full rounded-3xl border border-dashed border-slate-200 p-10 text-center text-sm font-bold text-slate-400">No live records in this workspace.</div>}</div></section>
+}
+
+function MissionDossierModal({ state, close }: { state: Extract<ModalState, { type: 'dossier' }>; close: () => void }) {
+  return <div className="fixed inset-0 z-[1000] bg-slate-950/45 p-6 backdrop-blur-sm"><div className="ml-auto flex h-full max-w-5xl flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl"><div className="flex items-start justify-between border-b border-slate-100 p-6"><div><div className="text-xs font-black uppercase tracking-[0.25em] text-blue-600">Mission Dossier</div><h2 className="mt-2 text-2xl font-black">{state.record.code}</h2><p className="text-sm text-slate-500">{state.record.title} · {state.record.familyName}</p></div><button onClick={close} className="rounded-2xl bg-slate-100 px-4 py-2 font-black">Close</button></div>{state.loading && <div className="grid flex-1 place-items-center text-sm font-bold text-slate-400">Loading live dossier…</div>}{state.error && <div className="m-6 rounded-3xl border border-rose-200 bg-rose-50 p-5 text-sm font-bold text-rose-700">{state.error}</div>}{state.dossier && <div className="grid flex-1 grid-cols-[1.2fr_0.8fr] overflow-auto"><div className="space-y-4 p-6"><Section title="Client & Service"><Info label="Client" value={state.dossier.mission.familyName} /><Info label="Service" value={state.dossier.mission.serviceType} /><Info label="Location" value={`${state.dossier.mission.city} · ${state.dossier.mission.zone}`} /></Section><Section title="Sub-Missions"><div className="space-y-2">{state.dossier.subMissions.map((sub) => <div key={sub.id} className="rounded-2xl border border-slate-200 p-3"><div className="font-black">{sub.code}</div><div className="text-xs text-slate-500">{sub.dateLabel} · {sub.timeLabel} · {sub.lifecycleStage}</div></div>)}{!state.dossier.subMissions.length && <EmptyMini text="No sub-missions linked yet" />}</div></Section><Section title="Audit Events"><div className="space-y-2">{state.dossier.events.map((event, index) => <div key={`${event.event_type}-${index}`} className="rounded-2xl bg-slate-50 p-3"><div className="font-black">{event.event_type}</div><div className="text-xs text-slate-500">{event.content}</div></div>)}{!state.dossier.events.length && <EmptyMini text="No mission events yet" />}</div></Section></div><aside className="space-y-4 border-l border-slate-100 bg-slate-50 p-6"><Section title="Lifecycle"><Info label="Status" value={state.dossier.mission.status} /><Info label="Stage" value={state.dossier.mission.lifecycleStage} /><Info label="Readiness" value={state.dossier.mission.readinessStatus} /><Info label="Validation" value={state.dossier.mission.validationStatus} /><Info label="Report" value={state.dossier.mission.reportStatus} /></Section><Section title="Actions"><ActionButton label="Assign / Reassign" /><ActionButton label="Generate Sub-Missions" /><ActionButton label="Open Mission Order" /><ActionButton label="Validate Report" /><ActionButton label="Declare Incident" danger /></Section></aside></div>}</div></div>
+}
+
+function CreateDossierModal({ close, refresh }: { close: () => void; refresh: () => void }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  async function submit(formData: FormData) {
+    setBusy(true); setError('')
+    try {
+      const payload = Object.fromEntries(formData.entries())
+      const res = await fetch('/api/missions/dossiers', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) })
+      const json = await res.json()
+      if (!res.ok || !json.ok) throw new Error(json.error || 'Creation failed')
+      await refresh(); close()
+    } catch (e) { setError(e instanceof Error ? e.message : 'Unknown error') } finally { setBusy(false) }
+  }
+  return <div className="fixed inset-0 z-[1000] grid place-items-center bg-slate-950/45 p-6 backdrop-blur-sm"><form action={submit} className="w-full max-w-3xl rounded-[2rem] bg-white p-6 shadow-2xl"><div className="mb-5"><h2 className="text-2xl font-black">Create Mission Dossier</h2><p className="text-sm text-slate-500">Creates a live parent dossier in the existing missions table. No seeded data is inserted.</p></div><div className="grid gap-3 md:grid-cols-2"><Field name="familyId" label="Family ID" /><Field name="caregiverId" label="Caregiver ID optional" /><Field name="serviceType" label="Service Type" required /><Field name="missionDate" label="First Date" type="date" /><Field name="startTime" label="Start" type="time" /><Field name="endTime" label="End" type="time" /><Field name="city" label="City" /><Field name="zone" label="Zone" /></div>{error && <div className="mt-4 rounded-2xl bg-rose-50 p-3 text-sm font-bold text-rose-700">{error}</div>}<div className="mt-6 flex justify-end gap-2"><button type="button" onClick={close} className="rounded-2xl border border-slate-200 px-5 py-3 font-black">Cancel</button><button disabled={busy} className="rounded-2xl bg-blue-600 px-5 py-3 font-black text-white">{busy ? 'Creating…' : 'Create Dossier'}</button></div></form></div>
+}
+
+function CommandModal({ title, close }: { title: string; close: () => void }) { return <div className="fixed inset-0 z-[1000] grid place-items-center bg-slate-950/45 p-6 backdrop-blur-sm"><div className="max-w-xl rounded-[2rem] bg-white p-6 shadow-2xl"><h2 className="text-2xl font-black">{title}</h2><p className="mt-2 text-sm text-slate-500">This workflow is connected to live mission APIs. Select records first, then use the relevant action endpoint for batch execution.</p><button onClick={close} className="mt-6 rounded-2xl bg-slate-950 px-5 py-3 font-black text-white">Close</button></div></div> }
+function Section({ title, children }: { title: string; children: React.ReactNode }) { return <section className="rounded-3xl border border-slate-200 bg-white p-4"><h3 className="mb-3 text-sm font-black uppercase text-slate-400">{title}</h3>{children}</section> }
+function Info({ label, value }: { label: string; value: string }) { return <div className="mb-2 flex justify-between gap-4 text-sm"><span className="text-slate-500">{label}</span><span className="text-right font-black">{value}</span></div> }
+function Pill({ value }: { value: string }) { return <span className={`rounded-full border px-2 py-1 text-[10px] font-black uppercase ${statusTone(value)}`}>{value.replace(/_/g, ' ')}</span> }
+function EmptyMini({ text }: { text: string }) { return <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-xs font-bold text-slate-400">{text}</div> }
+function ActionButton({ label, danger }: { label: string; danger?: boolean }) { return <button className={`mb-2 w-full rounded-2xl px-4 py-3 text-sm font-black ${danger ? 'bg-rose-50 text-rose-700' : 'bg-slate-950 text-white'}`}>{label}</button> }
+function Field({ name, label, type = 'text', required }: { name: string; label: string; type?: string; required?: boolean }) { return <label className="text-sm font-bold text-slate-600">{label}<input name={name} type={type} required={required} className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-blue-300" /></label> }

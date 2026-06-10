@@ -1,13 +1,7 @@
-import { carelinkJson } from '@/lib/carelink/server'
+import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  return carelinkJson({
-    ok: true,
-    service: 'AngelCare CareLink',
-    module: 'mobile-field-agent-portal',
-    routes: ['/carelink', '/carelink/missions', '/carelink/schedule', '/carelink/messages', '/carelink/profile'],
-    timestamp: new Date().toISOString(),
-  })
+  return NextResponse.json({ ok: true, service: 'AngelCare CareLink Enterprise', mode: 'single-module-upgrade', mobileRoute: '/carelink', opsRoute: '/carelink-ops' })
 }

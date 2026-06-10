@@ -1,12 +1,1 @@
-import { carelinkJson, recordMissionAction } from '@/lib/carelink/server'
-
-export const dynamic = 'force-dynamic'
-
-type Ctx = { params: Promise<{ id: string }> | { id: string } }
-
-export async function POST(request: Request, context: Ctx) {
-  const { id } = await context.params
-  const body = await request.json().catch(() => ({}))
-  const result = await recordMissionAction(id, 'incident', body && typeof body === 'object' ? body : {})
-  return carelinkJson({ ok: true, missionId: id, action: 'incident', ...result, timestamp: new Date().toISOString() })
-}
+export { POST } from '@/app/api/missions/[id]/incident/route'

@@ -1,95 +1,184 @@
 export type CareLinkStatus =
+  | 'available'
+  | 'unavailable'
+  | 'on_mission'
+  | 'offline'
+  | 'blocked'
+  | 'pending'
+  | 'draft'
+  | 'created'
+  | 'ready_for_dispatch'
+  | 'matching'
+  | 'proposed'
   | 'assigned'
   | 'agent_notified'
   | 'agent_accepted'
   | 'agent_declined'
+  | 'dispatch_confirmed'
   | 'confirmed_by_dispatch'
+  | 'confirmed'
+  | 'accepted'
+  | 'pre_mission_check'
   | 'en_route'
+  | 'arrived_near_location'
+  | 'arrival_confirmed'
   | 'arrived'
+  | 'checked_in'
+  | 'mission_started'
   | 'started'
   | 'in_progress'
-  | 'completed'
+  | 'completion_requested'
+  | 'report_pending'
+  | 'report_submitted'
   | 'client_validated'
+  | 'dispatch_validated'
+  | 'validated'
+  | 'completed'
+  | 'closed'
+  | 'incident'
   | 'incident_reported'
   | 'cancelled'
   | 'no_show'
-  | 'closed'
+  | 'archived'
+  | (string & {})
 
-export type CareLinkAgent = {
+
+export type RiskLevel = 'low' | 'medium' | 'high' | 'critical'
+export type ReadinessStatus = 'ready' | 'warning' | 'blocked'
+
+export interface CareLinkAgent {
   id: string
-  userId?: string | null
-  staffId?: string | null
-  agentCode: string
+  code: string
   fullName: string
-  role: 'caregiver' | 'childcare_specialist' | 'field_agent' | 'dispatcher' | 'operations_manager'
+  role: string
   phone: string
   city: string
   zones: string[]
-  skills: string[]
   languages: string[]
-  availabilityStatus: 'available' | 'busy' | 'offline' | 'blocked'
-  verificationStatus: 'verified' | 'pending' | 'expired'
-  complianceStatus: 'clear' | 'attention' | 'blocked'
-  ratingScore: number
+  skills: string[]
+  status: 'active' | 'warning' | 'blocked'
+  complianceStatus: ReadinessStatus
   reliabilityScore: number
-  documentsDue: number
+  acceptanceRate: number
+  onTimeRate: number
+  reportRate: number
+  avatarInitials: string
 }
 
-export type CareLinkChecklistItem = {
+export interface CareLinkMission {
   id: string
-  label: string
+  code: string
+  serviceType: string
+  clientLabel: string
+  beneficiaryContext: string
+  city: string
+  zone: string
+  addressHint: string
+  scheduledStart: string
+  scheduledEnd: string
+  durationHours: number
+  status: CareLinkStatus
+  agentId: string
+  riskLevel: RiskLevel
+  readinessScore: number
+  readinessStatus: ReadinessStatus
+  instructions: string[]
+  checklist: CareLinkChecklistItem[]
+  lifecycle: CareLinkLifecycleEvent[]
+  dispatchThreadId: string
+  priority: 'normal' | 'high' | 'urgent'
+  risk_level?: string
+  sla_minutes_remaining?: number | null
+  report_status?: string
+  validation_status?: string
+  readiness_status?: string
+  sla_status?: string
+  urgency?: string
+  serviceCategory?: string
+  hoursEstimate?: number | string
+  clientName?: string
+  beneficiaryName?: string
+  beneficiaryAge?: number | string | null
+  dispatcherName?: string
+  dispatcherPhone?: string
+  safetyNotes?: string[]
+  mission_id?: string | number
+  mission_kind?: string
+  parent_mission_id?: string | number | null
+  occurrence_index?: number | null
+  total_occurrences?: number | null
+  [key: string]: any
+}
+
+export interface CareLinkChecklistItem {
+  id: string
+  phase: 'pre_arrival' | 'start' | 'during' | 'completion'
+  title: string
   required: boolean
   completed: boolean
 }
 
-export type CareLinkMission = {
+export interface CareLinkLifecycleEvent {
   id: string
-  code: string
-  serviceType: string
-  serviceCategory: 'childcare' | 'caregiver' | 'home_support' | 'medical_support'
-  clientName: string
-  beneficiaryName: string
-  beneficiaryAge?: string
-  scheduledStart: string
-  scheduledEnd: string
-  city: string
-  zone: string
-  addressHint: string
-  riskLevel: 'low' | 'medium' | 'high'
-  priority: 'normal' | 'urgent' | 'critical'
   status: CareLinkStatus
-  payEstimateMad: number
-  hoursEstimate: number
-  instructions: string[]
-  safetyNotes: string[]
-  checklist: CareLinkChecklistItem[]
-  dispatcherName: string
-  dispatcherPhone: string
-  lastEventAt: string
+  label: string
+  timestamp: string
+  actor: string
+  note?: string
 }
 
-export type CareLinkMessage = {
+export interface ReadinessResult {
+  score: number
+  status: ReadinessStatus
+  blockers: string[]
+  warnings: string[]
+  nextAction: string
+}
+
+export interface DispatchThread {
   id: string
   missionId?: string
-  sender: 'dispatch' | 'agent' | 'system'
   title: string
-  body: string
-  createdAt: string
-  urgent?: boolean
+  priority: 'normal' | 'urgent' | 'critical'
+  status: 'open' | 'waiting_agent' | 'waiting_dispatch' | 'resolved'
+  lastMessage: string
+  updatedAt: string
 }
 
+export interface OpsKpi {
+  label: string
+  value: string
+  delta: string
+  tone: 'blue' | 'green' | 'amber' | 'red' | 'slate'
+}
+
+/**
+ * Backward-compatible CareLink mobile types.
+ * Kept here so older mobile components can compile while the newer mission engine
+ * reads live data from the existing missions module.
+ */
+
+
+
+
+
 export type CareLinkDashboard = {
-  agent: CareLinkAgent
-  nextMission: CareLinkMission | null
-  todayMissions: CareLinkMission[]
-  upcomingMissions: CareLinkMission[]
-  messages: CareLinkMessage[]
-  alerts: Array<{ id: string; title: string; body: string; level: 'info' | 'warning' | 'critical' }>
-  stats: {
-    todayMissions: number
-    weekHours: number
-    pendingReports: number
-    reliabilityScore: number
-    documentsDue: number
-  }
+  ok?: boolean
+  source?: string
+  generatedAt?: string
+  agent?: Record<string, unknown> | null
+  profile?: Record<string, unknown> | null
+  status?: CareLinkStatus
+  missions?: CareLinkMission[]
+  todayMissions?: CareLinkMission[]
+  upcomingMissions?: CareLinkMission[]
+  activeMission?: CareLinkMission | null
+  nextMission?: CareLinkMission | null
+  schedule?: unknown[]
+  messages?: unknown[]
+  notifications?: unknown[]
+  kpis?: unknown[]
+  readiness?: Record<string, unknown> | null
+  compliance?: Record<string, unknown> | null
+  [key: string]: unknown
 }

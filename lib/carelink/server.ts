@@ -1,7 +1,30 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getSeedDashboard, seedAgent, seedMessages, seedMissions } from './seed'
 import type { CareLinkMission, CareLinkStatus } from './types'
+
+const seedAgent: any = null
+const seedMessages: any[] = []
+const seedMissions: any[] = []
+
+function getSeedDashboard(): any {
+  return {
+    agent: seedAgent,
+    status: 'offline',
+    upcomingMissions: [],
+    todayMissions: [],
+    nextMission: null,
+    activeMission: null,
+    messages: seedMessages,
+    alerts: [],
+    stats: {
+      todayMissions: 0,
+      weekHours: 0,
+      reliabilityScore: 0,
+    },
+  }
+}
+
+
 
 export const CARELINK_TABLES = {
   agents: 'carelink_field_agents',
@@ -53,7 +76,7 @@ export async function loadCarelinkDashboard() {
     const missions = rows.map(mapMissionRow)
     const dashboard = getSeedDashboard()
     dashboard.upcomingMissions = missions.length ? missions : seedMissions
-    dashboard.todayMissions = dashboard.upcomingMissions.filter((mission) => mission.scheduledStart.slice(0, 10) === new Date().toISOString().slice(0, 10))
+    dashboard.todayMissions = dashboard.upcomingMissions.filter((mission: any) => mission.scheduledStart.slice(0, 10) === new Date().toISOString().slice(0, 10))
     dashboard.nextMission = dashboard.upcomingMissions[0] || null
     dashboard.messages = messagesRes.error || !Array.isArray(messagesRes.data) ? seedMessages : messagesRes.data.map((row: any) => ({
       id: String(row.id),
@@ -65,7 +88,7 @@ export async function loadCarelinkDashboard() {
       urgent: Boolean(row.urgent),
     }))
     dashboard.stats.todayMissions = dashboard.todayMissions.length
-    dashboard.stats.weekHours = dashboard.upcomingMissions.reduce((sum, mission) => sum + mission.hoursEstimate, 0)
+    dashboard.stats.weekHours = dashboard.upcomingMissions.reduce((sum: number, mission: any) => sum + Number(mission.hoursEstimate || 0), 0)
     return { source: 'supabase', data: dashboard }
   } catch {
     return { source: 'seed', data: getSeedDashboard() }
@@ -85,7 +108,7 @@ export async function loadCarelinkMission(id: string) {
       if (!error && data) return { source: 'supabase', data: mapMissionRow(data) }
     } catch {}
   }
-  const mission = seedMissions.find((item) => item.id === id || item.code === id) || seedMissions[0] || null
+  const mission = seedMissions.find((item: any) => item.id === id || item.code === id) || seedMissions[0] || null
   return { source: 'seed', data: mission }
 }
 
@@ -171,6 +194,17 @@ function mapMissionRow(row: any): CareLinkMission {
     checklist: Array.isArray(row.checklist) ? row.checklist : [],
     dispatcherName: row.dispatcher_name || 'DISPATCH ANGELCARE',
     dispatcherPhone: row.dispatcher_phone || '+212 5 00 00 00 00',
+    clientLabel: row.client_label || row.client_name || row.family_name || 'Client',
+    beneficiaryContext: row.beneficiary_context || row.beneficiary_name || '',
+    durationHours: Number(row.duration_hours || row.hours_estimate || 0),
+    agentId: row.caregiver_id || row.agent_id || null,
+    agentName: row.caregiver_name || row.agent_name || '',
+    agentPhone: row.caregiver_phone || row.agent_phone || '',
+    updatedAt: row.updated_at || row.created_at || new Date(0).toISOString(),
+    readinessScore: Number(row.readiness_score || row.readinessScore || 0),
+    readinessStatus: row.readiness_status || row.readinessStatus || 'pending',
+    lifecycle: row.lifecycle || row.lifecycle_stage || row.status || 'draft',
+    dispatchThreadId: row.dispatch_thread_id || row.dispatchThreadId || null,
     lastEventAt: row.updated_at || row.created_at || new Date().toISOString(),
   }
 }

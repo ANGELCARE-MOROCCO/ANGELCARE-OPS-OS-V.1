@@ -1,9 +1,5 @@
-import { CareLinkMobileClient } from '@/components/carelink/CareLinkMobileClient'
-import { loadCarelinkDashboard } from '@/lib/carelink/server'
+import { CareLinkProfile } from '@/components/carelink/mobile/CareLinkProfile'
 
-export const dynamic = 'force-dynamic'
-
-export default async function CareLinkProfilePage() {
-  const { data } = await loadCarelinkDashboard()
-  return <CareLinkMobileClient initialDashboard={data} view="profile" />
+export default function Page() {
+  return <CareLinkProfile />
 }

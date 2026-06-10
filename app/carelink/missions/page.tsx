@@ -1,9 +1,4 @@
-import { CareLinkMobileClient } from '@/components/carelink/CareLinkMobileClient'
-import { loadCarelinkDashboard } from '@/lib/carelink/server'
-
+import { CareLinkMobileMissions } from '@/components/carelink/mobile/CareLinkMobileMissions'
+import { listMissionControlRecords } from '@/lib/missions/repository'
 export const dynamic = 'force-dynamic'
-
-export default async function CareLinkMissionsPage() {
-  const { data } = await loadCarelinkDashboard()
-  return <CareLinkMobileClient initialDashboard={data} view="missions" />
-}
+export default async function CareLinkMissionsPage() { const records = await listMissionControlRecords().catch(() => []); return <CareLinkMobileMissions records={records.filter((item) => item.missionKind !== 'dossier')} /> }

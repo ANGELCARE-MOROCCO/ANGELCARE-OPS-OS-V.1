@@ -1,12 +1,4 @@
-import { CareLinkMobileClient } from '@/components/carelink/CareLinkMobileClient'
-import { loadCarelinkDashboard } from '@/lib/carelink/server'
-
+import { CareLinkMobileMissionDetail } from '@/components/carelink/mobile/CareLinkMobileMissionDetail'
+import { getMissionDossier } from '@/lib/missions/repository'
 export const dynamic = 'force-dynamic'
-
-type Props = { params: Promise<{ id: string }> | { id: string } }
-
-export default async function CareLinkMissionDetailPage({ params }: Props) {
-  const resolved = await params
-  const { data } = await loadCarelinkDashboard()
-  return <CareLinkMobileClient initialDashboard={data} view="mission" missionId={resolved.id} />
-}
+export default async function CareLinkMissionDetailPage({ params }: { params: Promise<{ id: string }> }) { const { id } = await params; const dossier = await getMissionDossier(Number(id)).catch(() => null); return <CareLinkMobileMissionDetail dossier={dossier} /> }

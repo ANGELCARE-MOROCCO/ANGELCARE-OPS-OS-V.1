@@ -1,169 +1,72 @@
-import type { CareLinkAgent, CareLinkDashboard, CareLinkMessage, CareLinkMission } from './types'
+import type { CareLinkAgent, CareLinkMission, DispatchThread, OpsKpi } from './types'
 
-export const seedAgent: CareLinkAgent = {
-  id: 'agent-demo-001',
-  userId: null,
-  staffId: null,
-  agentCode: 'AC-FIELD-001',
-  fullName: 'SALMA EL HARRAK',
-  role: 'childcare_specialist',
-  phone: '+212 6 00 00 00 00',
-  city: 'Rabat',
-  zones: ['Agdal', 'Hay Riad', 'Souissi', 'Temara'],
-  skills: ['GARDE ENFANT', 'SOUTIEN FAMILIAL', 'ACTIVITÉS ÉVEIL', 'ACCOMPAGNEMENT DOMICILE'],
-  languages: ['FR', 'AR', 'DAR'],
-  availabilityStatus: 'available',
-  verificationStatus: 'verified',
-  complianceStatus: 'clear',
-  ratingScore: 4.8,
-  reliabilityScore: 96,
-  documentsDue: 1,
-}
-
-export const seedMissions: CareLinkMission[] = [
+export const carelinkAgents: CareLinkAgent[] = [
   {
-    id: 'mission-001',
-    code: 'AC-HOME-00421',
-    serviceType: 'GARDE ENFANT À DOMICILE',
-    serviceCategory: 'childcare',
-    clientName: 'FAMILLE B.',
-    beneficiaryName: 'ENFANT — DOSSIER PRIVÉ',
-    beneficiaryAge: '4 ANS',
-    scheduledStart: '2026-06-09T09:00:00+01:00',
-    scheduledEnd: '2026-06-09T13:00:00+01:00',
-    city: 'Rabat',
-    zone: 'Agdal',
-    addressHint: 'ADRESSE MASQUÉE — DISPONIBLE APRÈS CONFIRMATION DISPATCH',
-    riskLevel: 'low',
-    priority: 'normal',
-    status: 'agent_notified',
-    payEstimateMad: 260,
-    hoursEstimate: 4,
-    instructions: [
-      'RELIRE LES CONSIGNES PARENTS AVANT DÉMARRAGE.',
-      'PRÉVOIR ACTIVITÉS CALMES, HYDRATATION ET SUIVI REPAS.',
-      'NE PAS COMMUNIQUER D’INFORMATION FAMILIALE EN DEHORS DU CANAL DISPATCH.',
-    ],
-    safetyNotes: [
-      'CONFIRMER IDENTITÉ DU PARENT RÉFÉRENT.',
-      'SIGNALER IMMÉDIATEMENT TOUT RISQUE DOMESTIQUE OU INCIDENT.',
-    ],
-    checklist: [
-      { id: 'c1', label: 'ARRIVÉE CONFIRMÉE', required: true, completed: false },
-      { id: 'c2', label: 'IDENTITÉ CLIENT CONFIRMÉE', required: true, completed: false },
-      { id: 'c3', label: 'ENVIRONNEMENT SÉCURISÉ', required: true, completed: false },
-      { id: 'c4', label: 'CONSIGNES PARENTS RELUES', required: true, completed: false },
-      { id: 'c5', label: 'COMPTE RENDU FINAL À SOUMETTRE', required: true, completed: false },
-    ],
-    dispatcherName: 'DISPATCH ANGELCARE',
-    dispatcherPhone: '+212 5 00 00 00 00',
-    lastEventAt: '2026-06-08T16:10:00+01:00',
+    id: 'agent-001', code: 'AC-FLD-001', fullName: 'Imane El Fassi', role: 'Childcare Specialist', phone: '+212 6 00 00 00 01', city: 'Rabat', zones: ['Agdal', 'Hay Riad', 'Souissi'], languages: ['FR', 'AR', 'EN'], skills: ['Childcare', 'First aid', 'Home routines'], status: 'active', complianceStatus: 'ready', reliabilityScore: 94, acceptanceRate: 91, onTimeRate: 96, reportRate: 98, avatarInitials: 'IF',
   },
   {
-    id: 'mission-002',
-    code: 'AC-CARE-00422',
-    serviceType: 'ACCOMPAGNEMENT CAREGIVER PROGRAMMÉ',
-    serviceCategory: 'caregiver',
-    clientName: 'FAMILLE M.',
-    beneficiaryName: 'BÉNÉFICIAIRE SENIOR',
-    beneficiaryAge: '68 ANS',
-    scheduledStart: '2026-06-10T15:00:00+01:00',
-    scheduledEnd: '2026-06-10T18:00:00+01:00',
-    city: 'Temara',
-    zone: 'Wifak',
-    addressHint: 'ZONE TEMARA — DÉTAILS APRÈS ACCEPTATION',
-    riskLevel: 'medium',
-    priority: 'urgent',
-    status: 'confirmed_by_dispatch',
-    payEstimateMad: 240,
-    hoursEstimate: 3,
-    instructions: [
-      'OBSERVATION DE L’ÉTAT GÉNÉRAL ET CONFORT.',
-      'AIDE LÉGÈRE À LA MOBILITÉ SELON CONSIGNES.',
-      'NE PAS ADMINISTRER DE MÉDICAMENT SANS PROTOCOLE VALIDÉ.',
-    ],
-    safetyNotes: [
-      'SURVEILLER RISQUE DE CHUTE.',
-      'CONTACTER DISPATCH SI REFUS DE PRISE EN CHARGE OU CHANGEMENT D’ÉTAT.',
-    ],
-    checklist: [
-      { id: 'c1', label: 'ARRIVÉE CONFIRMÉE', required: true, completed: true },
-      { id: 'c2', label: 'IDENTITÉ BÉNÉFICIAIRE CONFIRMÉE', required: true, completed: false },
-      { id: 'c3', label: 'ÉTAT GÉNÉRAL OBSERVÉ', required: true, completed: false },
-      { id: 'c4', label: 'CONFORT / HYDRATATION VÉRIFIÉS', required: true, completed: false },
-      { id: 'c5', label: 'COMPTE RENDU FINAL À SOUMETTRE', required: true, completed: false },
-    ],
-    dispatcherName: 'DISPATCH ANGELCARE',
-    dispatcherPhone: '+212 5 00 00 00 00',
-    lastEventAt: '2026-06-08T18:00:00+01:00',
+    id: 'agent-002', code: 'AC-FLD-002', fullName: 'Salma Benali', role: 'Caregiver', phone: '+212 6 00 00 00 02', city: 'Casablanca', zones: ['Maarif', 'Anfa', 'Racine'], languages: ['FR', 'AR'], skills: ['Elder care', 'Mobility support', 'Meal support'], status: 'warning', complianceStatus: 'warning', reliabilityScore: 87, acceptanceRate: 86, onTimeRate: 89, reportRate: 93, avatarInitials: 'SB',
   },
   {
-    id: 'mission-003',
-    code: 'AC-HOME-00425',
-    serviceType: 'SUPPORT FAMILIAL PLANIFIÉ',
-    serviceCategory: 'home_support',
-    clientName: 'FAMILLE R.',
-    beneficiaryName: 'DOSSIER DOMICILE',
-    scheduledStart: '2026-06-12T10:00:00+01:00',
-    scheduledEnd: '2026-06-12T14:00:00+01:00',
-    city: 'Rabat',
-    zone: 'Hay Riad',
-    addressHint: 'HAY RIAD — ADRESSE MASQUÉE',
-    riskLevel: 'low',
-    priority: 'normal',
-    status: 'assigned',
-    payEstimateMad: 280,
-    hoursEstimate: 4,
-    instructions: ['MISSION PROGRAMMÉE EN ATTENTE DE CONFIRMATION AGENT.', 'RELIRE DOSSIER CLIENT AVANT J-1.'],
-    safetyNotes: ['CONFIRMER CRÉNEAU LA VEILLE AVEC DISPATCH.'],
-    checklist: [
-      { id: 'c1', label: 'MISSION ACCEPTÉE', required: true, completed: false },
-      { id: 'c2', label: 'DOSSIER RELU', required: true, completed: false },
-      { id: 'c3', label: 'RAPPORT FINAL', required: true, completed: false },
-    ],
-    dispatcherName: 'DISPATCH ANGELCARE',
-    dispatcherPhone: '+212 5 00 00 00 00',
-    lastEventAt: '2026-06-08T09:30:00+01:00',
+    id: 'agent-003', code: 'AC-FLD-003', fullName: 'Nadia Ait Omar', role: 'Home Care Field Agent', phone: '+212 6 00 00 00 03', city: 'Marrakech', zones: ['Gueliz', 'Hivernage'], languages: ['FR', 'AR'], skills: ['Care assistance', 'Hygiene support', 'Companion care'], status: 'active', complianceStatus: 'ready', reliabilityScore: 91, acceptanceRate: 90, onTimeRate: 92, reportRate: 95, avatarInitials: 'NA',
   },
 ]
 
-export const seedMessages: CareLinkMessage[] = [
+export const carelinkMissions: CareLinkMission[] = [
   {
-    id: 'msg-001',
-    missionId: 'mission-001',
-    sender: 'dispatch',
-    title: 'CONFIRMATION À TRAITER',
-    body: 'Merci de confirmer la mission Agdal avant 18:00 afin de verrouiller le planning client.',
-    createdAt: '2026-06-08T16:12:00+01:00',
-    urgent: true,
+    id: 'mission-001', code: 'AC-CL-2026-00421', serviceType: 'GARDE ENFANT À DOMICILE', clientLabel: 'Famille B.', beneficiaryContext: 'Enfant 4 ans · routine calme · repas déjà préparé', city: 'Rabat', zone: 'Agdal', addressHint: 'Adresse complète visible après confirmation dispatch', scheduledStart: '2026-06-09T09:00:00', scheduledEnd: '2026-06-09T13:00:00', durationHours: 4, status: 'dispatch_confirmed', agentId: 'agent-001', riskLevel: 'medium', readinessScore: 92, readinessStatus: 'ready', priority: 'high', dispatchThreadId: 'thread-001',
+    instructions: ['Relire les consignes parentales avant arrivée.', 'Confirmer l’environnement sécurisé.', 'Ne jamais administrer de médicament sans validation dispatch.', 'Soumettre le compte rendu final avant 14:00.'],
+    checklist: [
+      { id: 'c1', phase: 'pre_arrival', title: 'Consignes parents relues', required: true, completed: true },
+      { id: 'c2', phase: 'start', title: 'Identité client confirmée', required: true, completed: false },
+      { id: 'c3', phase: 'during', title: 'Hydratation / repas suivis', required: true, completed: false },
+      { id: 'c4', phase: 'completion', title: 'Compte rendu final rempli', required: true, completed: false },
+    ],
+    lifecycle: [
+      { id: 'e1', status: 'assigned', label: 'Mission assignée', timestamp: '2026-06-08T17:10:00', actor: 'Dispatch' },
+      { id: 'e2', status: 'agent_accepted', label: 'Acceptée par l’agent', timestamp: '2026-06-08T17:18:00', actor: 'Imane' },
+      { id: 'e3', status: 'dispatch_confirmed', label: 'Confirmée par dispatch', timestamp: '2026-06-08T17:30:00', actor: 'Operations' },
+    ],
   },
   {
-    id: 'msg-002',
-    sender: 'system',
-    title: 'DOCUMENT À METTRE À JOUR',
-    body: 'Votre attestation de disponibilité doit être renouvelée avant la prochaine validation mensuelle.',
-    createdAt: '2026-06-08T09:15:00+01:00',
+    id: 'mission-002', code: 'AC-CL-2026-00422', serviceType: 'ACCOMPAGNEMENT CAREGIVER', clientLabel: 'Bénéficiaire R.', beneficiaryContext: 'Senior · mobilité assistée · présence familiale partielle', city: 'Casablanca', zone: 'Racine', addressHint: 'Adresse sécurisée après acceptation', scheduledStart: '2026-06-09T15:00:00', scheduledEnd: '2026-06-09T19:00:00', durationHours: 4, status: 'assigned', agentId: 'agent-002', riskLevel: 'low', readinessScore: 74, readinessStatus: 'warning', priority: 'normal', dispatchThreadId: 'thread-002',
+    instructions: ['Confirmer disponibilité avant 11:00.', 'Prévoir 30 minutes de marge de déplacement.', 'Observer l’état général et signaler tout changement.'],
+    checklist: [
+      { id: 'c5', phase: 'pre_arrival', title: 'Disponibilité confirmée', required: true, completed: false },
+      { id: 'c6', phase: 'start', title: 'Identité bénéficiaire confirmée', required: true, completed: false },
+      { id: 'c7', phase: 'during', title: 'Aide mobilité réalisée avec prudence', required: true, completed: false },
+      { id: 'c8', phase: 'completion', title: 'Notes de confort soumises', required: true, completed: false },
+    ],
+    lifecycle: [{ id: 'e4', status: 'assigned', label: 'Mission assignée', timestamp: '2026-06-08T18:00:00', actor: 'Dispatch' }],
+  },
+  {
+    id: 'mission-003', code: 'AC-CL-2026-00423', serviceType: 'VISITE CONFORT À DOMICILE', clientLabel: 'Famille H.', beneficiaryContext: 'Adulte dépendant · visite courte · vérification environnement', city: 'Rabat', zone: 'Hay Riad', addressHint: 'Coordonnées disponibles dans le dossier sécurisé', scheduledStart: '2026-06-10T10:00:00', scheduledEnd: '2026-06-10T12:00:00', durationHours: 2, status: 'in_progress', agentId: 'agent-003', riskLevel: 'high', readinessScore: 81, readinessStatus: 'warning', priority: 'urgent', dispatchThreadId: 'thread-003',
+    instructions: ['Vérifier les accès au domicile.', 'Signaler immédiatement toute anomalie de sécurité.', 'Compte rendu renforcé requis.'],
+    checklist: [
+      { id: 'c9', phase: 'pre_arrival', title: 'Brief dispatch lu', required: true, completed: true },
+      { id: 'c10', phase: 'start', title: 'Arrivée confirmée', required: true, completed: true },
+      { id: 'c11', phase: 'during', title: 'Environnement observé', required: true, completed: false },
+      { id: 'c12', phase: 'completion', title: 'Rapport renforcé envoyé', required: true, completed: false },
+    ],
+    lifecycle: [
+      { id: 'e5', status: 'assigned', label: 'Mission assignée', timestamp: '2026-06-08T16:00:00', actor: 'Dispatch' },
+      { id: 'e6', status: 'agent_accepted', label: 'Acceptée', timestamp: '2026-06-08T16:05:00', actor: 'Nadia' },
+      { id: 'e7', status: 'en_route', label: 'En route', timestamp: '2026-06-10T09:25:00', actor: 'Nadia' },
+      { id: 'e8', status: 'mission_started', label: 'Mission démarrée', timestamp: '2026-06-10T10:03:00', actor: 'Nadia' },
+    ],
   },
 ]
 
-export function getSeedDashboard(): CareLinkDashboard {
-  const today = seedMissions.filter((mission) => mission.scheduledStart.startsWith('2026-06-09'))
-  return {
-    agent: seedAgent,
-    nextMission: seedMissions[0] || null,
-    todayMissions: today,
-    upcomingMissions: seedMissions,
-    messages: seedMessages,
-    alerts: [
-      { id: 'a1', title: 'MISSION À ACCEPTER', body: 'Une mission programmée attend votre confirmation.', level: 'warning' },
-      { id: 'a2', title: 'DOCUMENT ADMINISTRATIF', body: 'Un document arrive à échéance. Mettre à jour depuis Profil.', level: 'info' },
-    ],
-    stats: {
-      todayMissions: today.length,
-      weekHours: seedMissions.reduce((sum, mission) => sum + mission.hoursEstimate, 0),
-      pendingReports: 1,
-      reliabilityScore: seedAgent.reliabilityScore,
-      documentsDue: seedAgent.documentsDue,
-    },
-  }
-}
+export const dispatchThreads: DispatchThread[] = [
+  { id: 'thread-001', missionId: 'mission-001', title: 'Mission AC-CL-2026-00421', priority: 'urgent', status: 'waiting_agent', lastMessage: 'Merci de confirmer la lecture des consignes sensibles.', updatedAt: '2026-06-09T07:45:00' },
+  { id: 'thread-002', missionId: 'mission-002', title: 'Disponibilité mission caregiver', priority: 'normal', status: 'open', lastMessage: 'Mission proposée, en attente acceptation.', updatedAt: '2026-06-08T18:02:00' },
+  { id: 'thread-003', missionId: 'mission-003', title: 'Incident potentiel adresse', priority: 'critical', status: 'waiting_dispatch', lastMessage: 'Agent demande confirmation accès immeuble.', updatedAt: '2026-06-10T09:52:00' },
+]
+
+export const opsKpis: OpsKpi[] = [
+  { label: 'Missions aujourd’hui', value: '38', delta: '+12% vs hier', tone: 'blue' },
+  { label: 'En cours terrain', value: '11', delta: '4 à risque', tone: 'amber' },
+  { label: 'Agents disponibles', value: '24', delta: '7 zones couvertes', tone: 'green' },
+  { label: 'Rapports à valider', value: '16', delta: '6 renforcés', tone: 'slate' },
+  { label: 'Incidents ouverts', value: '3', delta: '1 critique', tone: 'red' },
+]

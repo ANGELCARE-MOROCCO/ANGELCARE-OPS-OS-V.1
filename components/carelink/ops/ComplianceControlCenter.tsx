@@ -1,0 +1,6 @@
+import { carelinkAgents } from '@/lib/carelink/seed'
+import { CareLinkOpsShell } from './CareLinkOpsShell'
+import { OpsPanel } from './OpsPrimitives'
+import { StatusPill } from '@/components/carelink/shared/CareLinkPrimitives'
+
+export function ComplianceControlCenter(){return <CareLinkOpsShell title="Compliance control center" subtitle="Documents, Academy training, blocages et éligibilité par service."><div className="grid grid-cols-2 gap-6"><OpsPanel title="Agents conformité"><div className="space-y-3">{carelinkAgents.map(a=><div key={a.id} className="flex items-center justify-between rounded-3xl bg-slate-50 p-4"><div><p className="font-black text-slate-950">{a.fullName}</p><p className="text-sm font-semibold text-slate-500">{a.skills.join(' · ')}</p></div><StatusPill tone={a.complianceStatus==='ready'?'green':'amber'}>{a.complianceStatus}</StatusPill></div>)}</div></OpsPanel><OpsPanel title="Matrice éligibilité"><div className="space-y-3">{['Childcare','Caregiver','Home comfort','Mobility support','First aid'].map((row,i)=><div key={row} className="flex justify-between rounded-3xl bg-slate-50 p-4"><p className="font-bold text-slate-700">{row}</p><StatusPill tone={i<3?'green':'amber'}>{i<3?'Actif':'À vérifier'}</StatusPill></div>)}</div></OpsPanel></div></CareLinkOpsShell>}

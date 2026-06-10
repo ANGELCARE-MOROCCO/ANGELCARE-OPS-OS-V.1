@@ -1,0 +1,302 @@
+'use client'
+
+import { useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
+
+type OptionItem = { id: number | string; label: string; meta?: string; city?: string; zone?: string; phone?: string; status?: string; skills?: string[] }
+type DossierOptions = { families: OptionItem[]; caregivers: OptionItem[]; contracts: OptionItem[]; submissionTemplates: OptionItem[] }
+type RouteRow = { id: string; type: string; from: string; fromDetails: string; to: string; toDetails: string; duration: string; distance: string; notes: string; costMad: string }
+type AllowanceRow = { id: string; type: string; basis: 'per_hour' | 'per_mission' | 'per_dossier'; scope: string; missionDate: string; quantity: string; unitRateMad: string }
+type ActivityRow = { id: string; timeBlock: string; activity: string; activityType: string; objective: string; instructions: string; materials: string; submissionTemplate: string; linkedSession: string }
+type SessionRow = { id: string; missionDate: string; day: string; startTime: string; endTime: string; duration: string; status: string }
+
+type Props = { close: () => void; refresh: () => void | Promise<void> }
+
+const serviceTypes = [
+  ['childcare_home', 'Childcare at Home', '⌂'],
+  ['baby_postpartum', 'Baby Post-Partum Support', '♙'],
+  ['special_child_home', 'Special Child at Home', '✤'],
+  ['special_child_school', 'Special Child at School', '▣'],
+  ['hybrid_support', 'Hybrid Support', '♧'],
+  ['animation', 'Animation', '◎'],
+  ['excursion', 'Excursion', '◇'],
+  ['academy', 'AngelCare Academy', '□'],
+  ['flashcartes', 'Flashcartes', '▱'],
+] as const
+
+const today = new Date().toISOString().slice(0, 10)
+const uid = () => Math.random().toString(36).slice(2, 10)
+const emptyOptions: DossierOptions = { families: [], caregivers: [], contracts: [], submissionTemplates: [] }
+
+function money(value: number) {
+  return `${value.toLocaleString('fr-MA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH`
+}
+
+function basisLabel(value: AllowanceRow['basis']) {
+  if (value === 'per_hour') return 'Per Hour'
+  if (value === 'per_dossier') return 'Per Dossier'
+  return 'Per Mission'
+}
+
+export function CareLinkCreateMissionDossierModal({ close, refresh }: Props) {
+  const [options, setOptions] = useState<DossierOptions>(emptyOptions)
+  const [loadingOptions, setLoadingOptions] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [familyId, setFamilyId] = useState('')
+  const [caregiverId, setCaregiverId] = useState('')
+  const [serviceType, setServiceType] = useState('childcare_home')
+  const [riskLevel, setRiskLevel] = useState('medium')
+  const [urgency, setUrgency] = useState('standard')
+  const [procedureLevel, setProcedureLevel] = useState('level_2')
+  const [transportRequired, setTransportRequired] = useState('no')
+  const [language, setLanguage] = useState('French')
+  const [notes, setNotes] = useState('')
+  const [startDate, setStartDate] = useState(today)
+  const [startTime, setStartTime] = useState('08:30')
+  const [endTime, setEndTime] = useState('17:30')
+  const [recurrence, setRecurrence] = useState<'single' | 'weekly' | 'custom'>('weekly')
+  const [allowanceMode, setAllowanceMode] = useState<'bulk' | 'per_date'>('bulk')
+  const [sectionsExpanded, setSectionsExpanded] = useState(true)
+
+  const [sessions, setSessions] = useState<SessionRow[]>([
+    { id: uid(), missionDate: today, day: 'Session 1', startTime: '08:30', endTime: '17:30', duration: '9h 00m', status: 'Planned' },
+  ])
+  const [routes, setRoutes] = useState<RouteRow[]>([])
+  const [allowances, setAllowances] = useState<AllowanceRow[]>([])
+  const [activities, setActivities] = useState<ActivityRow[]>([])
+
+  useEffect(() => {
+    let alive = true
+    async function load() {
+      setLoadingOptions(true)
+      try {
+        const res = await fetch('/api/missions/dossier-options', { headers: { Accept: 'application/json' }, cache: 'no-store' })
+        const json = await res.json().catch(() => null)
+        if (alive && res.ok && json?.ok) setOptions(json.data || emptyOptions)
+      } finally {
+        if (alive) setLoadingOptions(false)
+      }
+    }
+    load()
+    return () => { alive = false }
+  }, [])
+
+  const selectedFamily = options.families.find((item) => String(item.id) === familyId) || null
+  const selectedCaregiver = options.caregivers.find((item) => String(item.id) === caregiverId) || null
+  const selectedServiceLabel = serviceTypes.find(([key]) => key === serviceType)?.[1] || serviceType
+
+  const allowanceTotal = useMemo(() => allowances.reduce((sum, row) => {
+    const quantity = Number.parseFloat(String(row.quantity).replace(',', '.')) || 0
+    const rate = Number.parseFloat(String(row.unitRateMad).replace(',', '.')) || 0
+    return sum + quantity * rate
+  }, 0), [allowances])
+  const routeTotal = useMemo(() => routes.reduce((sum, row) => sum + (Number.parseFloat(String(row.costMad).replace(',', '.')) || 0), 0), [routes])
+  const total = allowanceTotal + routeTotal
+
+  const completion = useMemo(() => {
+    let points = 0
+    if (familyId) points += 16
+    if (serviceType) points += 14
+    if (notes || riskLevel || urgency) points += 14
+    if (sessions.length) points += 16
+    if (caregiverId) points += 12
+    if (routes.length || allowances.length || activities.length) points += 16
+    points += 8
+    return Math.min(points, 100)
+  }, [familyId, serviceType, notes, riskLevel, urgency, sessions.length, caregiverId, routes.length, allowances.length, activities.length])
+
+  function addRouteRow() {
+    setRoutes((rows) => [...rows, { id: uid(), type: 'Caregiver Travel', from: '', fromDetails: '', to: '', toDetails: '', duration: '', distance: '', notes: '', costMad: '0' }])
+  }
+  function addAllowanceRow() {
+    setAllowances((rows) => [...rows, { id: uid(), type: 'Allowance', basis: 'per_mission', scope: allowanceMode === 'bulk' ? 'Entire Dossier' : 'Mission Date', missionDate: startDate, quantity: '1', unitRateMad: '0' }])
+  }
+  function addActivityRow() {
+    setActivities((rows) => [...rows, { id: uid(), timeBlock: '', activity: '', activityType: 'Core', objective: '', instructions: '', materials: '', submissionTemplate: '', linkedSession: sessions[0]?.id || '' }])
+  }
+  function generateSessions() {
+    const base = new Date(startDate || today)
+    const next = Array.from({ length: recurrence === 'single' ? 1 : 6 }).map((_, index) => {
+      const d = new Date(base)
+      if (recurrence !== 'single') d.setDate(base.getDate() + index * 7)
+      const iso = d.toISOString().slice(0, 10)
+      return { id: uid(), missionDate: iso, day: `Session ${index + 1}`, startTime, endTime, duration: 'Auto', status: 'Planned' }
+    })
+    setSessions(next)
+  }
+  function updateRow<T extends { id: string }>(setter: Dispatch<SetStateAction<T[]>>, id: string, patch: Partial<T>) {
+    setter((rows) => rows.map((row) => row.id === id ? { ...row, ...patch } : row))
+  }
+  function removeRow<T extends { id: string }>(setter: Dispatch<SetStateAction<T[]>>, id: string) {
+    setter((rows) => rows.filter((row) => row.id !== id))
+  }
+  function duplicateRow<T extends { id: string }>(setter: Dispatch<SetStateAction<T[]>>, row: T) {
+    setter((rows) => [...rows, { ...row, id: uid() }])
+  }
+
+  async function submit(assignNow: boolean) {
+    setSaving(true)
+    setError('')
+    try {
+      const res = await fetch('/api/missions/dossiers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          familyId: familyId || null,
+          caregiverId: assignNow ? caregiverId || null : caregiverId || null,
+          serviceType: selectedServiceLabel,
+          missionDate: startDate || null,
+          startTime: startTime || null,
+          endTime: endTime || null,
+          city: selectedFamily?.city || null,
+          zone: selectedFamily?.zone || null,
+          notes,
+          recurrenceType: recurrence,
+          recurrenceRule: { source: 'carelink_ops_create_modal', recurrence, sessions: sessions.length },
+          recurrenceStartDate: startDate || null,
+          recurrenceEndDate: sessions[sessions.length - 1]?.missionDate || null,
+        }),
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok || !json?.ok) throw new Error(json?.error || 'Mission dossier creation failed')
+      const dossierId = json.data?.id
+      if (dossierId && sessions.length) {
+        await fetch(`/api/missions/dossiers/${dossierId}/generate-sub-missions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ occurrences: sessions.map((session) => ({ missionDate: session.missionDate, startTime: session.startTime, endTime: session.endTime, caregiverId: caregiverId || null })) }),
+        })
+      }
+      if (dossierId) {
+        await fetch(`/api/missions/${dossierId}/mission-order`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            routes: routes.map((row, index) => ({ sort_order: index, route_type: row.type, operation_label: row.type, outbound_departure: row.from, outbound_arrival: row.to, return_departure: row.fromDetails, return_arrival: row.toDetails, duration_label: row.duration, distance_label: row.distance, cost_mad: Number(row.costMad) || 0, notes: row.notes })),
+            parameterDays: sessions.map((row, index) => ({ sort_order: index, session_date: row.missionDate, session_time: `${row.startTime} - ${row.endTime}`, module_theme: row.day, status: row.status })),
+            programLines: activities.map((row, index) => ({ sort_order: index, session_label: row.timeBlock, session_datetime_label: row.timeBlock, theme_module: row.activity, ct_label: row.activityType, notes: [row.objective, row.instructions, row.materials, row.submissionTemplate, row.linkedSession].filter(Boolean).join('\n'), time_block_label: row.timeBlock, activity_label: row.activity, objective: row.objective, detailed_instructions: row.instructions, materials: row.materials, linked_submission_template: row.submissionTemplate, linked_sub_mission_id: row.linkedSession || null, is_billable: false })),
+            allowances: { allowance_mode: allowanceMode, currency: 'MAD', auto_calculation: true, allowance_rows: allowances, route_transport_total_mad: routeTotal, allowances_total_mad: allowanceTotal, mission_order_total_mad: total },
+          }),
+        })
+      }
+      await refresh()
+      close()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown creation error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[1200] bg-slate-950/45 p-4 backdrop-blur-[3px]">
+      <div className="mx-auto flex h-[94vh] max-w-[1560px] overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-2xl">
+        <aside className="hidden w-[168px] shrink-0 border-r border-slate-200 bg-slate-50/80 p-4 xl:block">
+          <div className="space-y-4 pt-14">
+            {[
+              ['1', 'Client & Family', 'Profile & context'], ['2', 'Service Type', 'Select service'], ['3', 'Mission Characteristics', 'Rules & requirements'], ['4', 'Schedule & Recurrence', 'When & how often'], ['5', 'Assignment', 'Caregiver matching'], ['6', 'Mission Order', 'Route, transport, costs'], ['7', 'Validation & Review', 'Review & confirm'],
+            ].map(([n, title, sub]) => <div key={n} className="flex gap-3"><div className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-black ${n === '1' ? 'bg-blue-600 text-white' : 'bg-white text-slate-500 ring-1 ring-slate-200'}`}>{n}</div><div><div className={`text-xs font-black ${n === '1' ? 'text-blue-700' : 'text-slate-700'}`}>{title}</div><div className="mt-0.5 text-[10px] font-semibold text-slate-400">{sub}</div></div></div>)}
+          </div>
+          <button onClick={() => setSectionsExpanded((v) => !v)} type="button" className="mt-8 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-black text-blue-700">{sectionsExpanded ? 'Collapse Sections' : 'Expand All Sections'}</button>
+        </aside>
+
+        <section className="flex min-w-0 flex-1 flex-col">
+          <header className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 bg-white px-7 py-5">
+            <div className="flex items-start gap-4">
+              <div className="grid h-14 w-14 place-items-center rounded-3xl bg-blue-50 text-2xl text-blue-600">▣</div>
+              <div><h2 className="text-2xl font-black tracking-tight text-slate-950">Create Mission Dossier</h2><p className="mt-1 text-sm font-semibold text-slate-500">Operational intake, assignment, and scheduling</p></div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={close} className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-black text-slate-700">Close</button>
+              <button type="button" className="rounded-xl border border-blue-200 bg-white px-5 py-2.5 text-sm font-black text-blue-700">▯ Save Draft</button>
+              <button type="button" disabled={saving} onClick={() => submit(false)} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-100">{saving ? 'Saving…' : 'Create Dossier'}</button>
+              <button type="button" disabled={saving} onClick={() => submit(true)} className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-teal-100">Create & Assign</button>
+              <button type="button" onClick={close} className="ml-1 rounded-full p-2 text-2xl leading-none text-slate-400 hover:bg-slate-100">×</button>
+            </div>
+          </header>
+
+          <div className="min-h-0 flex-1 overflow-y-auto bg-white px-6 py-5">
+            {error && <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{error}</div>}
+            <div className="grid gap-4 xl:grid-cols-[1fr_1fr_260px]">
+              <Card title="Client & Family" checked>
+                <label className="text-xs font-bold text-slate-500">Search and select family</label>
+                <select value={familyId} onChange={(e) => setFamilyId(e.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-bold outline-none focus:border-blue-300"><option value="">{loadingOptions ? 'Loading live families…' : 'Select a live family'}</option>{options.families.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select>
+                <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3"><div className="flex items-center justify-between"><div className="font-black">{selectedFamily?.label || 'No family selected'}</div>{selectedFamily?.status && <Pill text={selectedFamily.status} tone="green" />}</div><InfoLine label="City / Zone" value={[selectedFamily?.city, selectedFamily?.zone].filter(Boolean).join(' · ') || '—'} /><InfoLine label="Phone" value={selectedFamily?.phone || '—'} /><InfoLine label="Context" value={selectedFamily?.meta || 'Select a family to load live context'} /></div>
+              </Card>
+
+              <Card title="Service Type" checked>
+                <div className="grid grid-cols-3 gap-2">
+                  {serviceTypes.map(([key, label, icon]) => <button type="button" key={key} onClick={() => setServiceType(key)} className={`rounded-xl border p-3 text-center text-xs font-black ${serviceType === key ? 'border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}><div className="text-xl">{icon}</div><div className="mt-1 leading-tight">{label}</div></button>)}
+                </div>
+                <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-black text-blue-700">Selected Service: {selectedServiceLabel}</div>
+              </Card>
+
+              <aside className="row-span-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between"><h3 className="font-black">Validation & Review</h3><span className="text-emerald-600">●</span></div>
+                <div className="mt-5 flex items-center gap-4"><div className="grid h-24 w-24 place-items-center rounded-full border-[10px] border-emerald-500 border-r-slate-100 text-xl font-black">{completion}%</div><div><div className="font-black text-emerald-700">{completion > 80 ? 'Excellent' : 'In progress'}</div><p className="mt-1 text-xs font-semibold text-slate-500">Dossier readiness updates as live fields are completed.</p></div></div>
+                <div className="mt-5"><h4 className="text-sm font-black text-amber-600">Warnings</h4><ReviewLine ok={!!caregiverId} text="Backup / primary caregiver assigned" /><ReviewLine ok={transportRequired === 'no' || routes.length > 0} text="Transport configured when required" /></div>
+                <div className="mt-5"><div className="mb-2 flex justify-between text-sm font-black"><span>Required Fields</span><span className="text-emerald-600">Live</span></div><ReviewLine ok={!!familyId} text="Client & Family" /><ReviewLine ok={!!serviceType} text="Service Type" /><ReviewLine ok={!!sessions.length} text="Schedule & Recurrence" /><ReviewLine ok={routes.length + allowances.length + activities.length > 0} text="Mission Order" /></div>
+                <div className="mt-6 border-t border-slate-100 pt-4"><h4 className="font-black">Dossier Summary</h4><InfoLine label="Dossier ID" value="— Draft" /><InfoLine label="Status" value="Draft" /><InfoLine label="Currency" value="MAD (DH)" /><InfoLine label="Last Updated" value="Client-side draft" /></div>
+              </aside>
+
+              <Card title="Mission Characteristics" checked>
+                <div className="grid grid-cols-5 gap-2 text-xs font-bold"><Select label="Risk Level" value={riskLevel} setValue={setRiskLevel} values={['low','medium','high','critical']} /><Select label="Urgency" value={urgency} setValue={setUrgency} values={['standard','urgent','immediate']} /><Select label="Internal Procedure" value={procedureLevel} setValue={setProcedureLevel} values={['level_1','level_2','level_3']} /><Select label="Transport" value={transportRequired} setValue={setTransportRequired} values={['no','yes']} /><Select label="Language" value={language} setValue={setLanguage} values={['French','Arabic','English']} /></div>
+                <div className="mt-3 flex flex-wrap gap-2">{['Early Childhood Education','CPR Certified','Positive Discipline','First Aid'].map((skill) => <span key={skill} className="rounded-lg border border-blue-100 bg-blue-50 px-2 py-1 text-xs font-black text-blue-700">{skill}</span>)}<button type="button" className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-black">+ Add</button></div>
+                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Notes / special instructions, internal AngelCare procedure, safety instructions…" className="mt-3 w-full rounded-xl border border-slate-200 p-3 text-sm outline-none focus:border-blue-300" />
+              </Card>
+
+              <Card title="Schedule & Recurrence" checked>
+                <div className="grid grid-cols-4 gap-2 text-xs font-bold"><Field label="Start Date" type="date" value={startDate} onChange={setStartDate} /><Field label="Start" type="time" value={startTime} onChange={setStartTime} /><Field label="End" type="time" value={endTime} onChange={setEndTime} /><label>Recurrence<select value={recurrence} onChange={(e) => setRecurrence(e.target.value as typeof recurrence)} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2"><option value="single">Single</option><option value="weekly">Weekly</option><option value="custom">Custom</option></select></label></div>
+                <div className="mt-3 flex items-center justify-between"><div className="text-xs font-black text-blue-700">Linked Sub-Missions / Sessions Preview <span className="rounded-full bg-slate-100 px-2 py-1 text-slate-500">{sessions.length} occurrence(s)</span></div><button type="button" onClick={generateSessions} className="rounded-lg border border-blue-200 px-3 py-2 text-xs font-black text-blue-700">Generate Sessions</button></div>
+                <div className="mt-2 max-h-40 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-xs"><tbody>{sessions.map((row, i) => <tr key={row.id} className="border-b border-slate-100"><td className="p-2">{i + 1}</td><td>{row.missionDate}</td><td>{row.startTime}</td><td>{row.endTime}</td><td><Pill text={row.status} tone="green" /></td><td><button type="button" onClick={() => removeRow(setSessions, row.id)} className="text-rose-500">Delete</button></td></tr>)}</tbody></table></div>
+              </Card>
+
+              <Card title="Assignment" checked={!!caregiverId} className="xl:col-span-2">
+                <div className="grid gap-4 lg:grid-cols-[300px_1fr_220px]"><div><label className="text-xs font-bold text-slate-500">Selected Caregiver</label><select value={caregiverId} onChange={(e) => setCaregiverId(e.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm font-bold"><option value="">Select live caregiver</option>{options.caregivers.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select><InfoLine label="City" value={selectedCaregiver?.city || '—'} /><InfoLine label="Status" value={selectedCaregiver?.status || '—'} /></div><div className="rounded-2xl border border-amber-100 bg-amber-50 p-4"><div className="font-black text-amber-700">☆ Matching Recommendation</div><p className="mt-2 text-xs font-semibold text-amber-800">Use real caregiver availability, zone, skills and compliance before final assignment. No fake recommendation is generated.</p><div className="mt-3 h-2 rounded-full bg-white"><div className="h-2 w-0 rounded-full bg-emerald-500" /></div></div><div className="rounded-2xl border border-slate-200 p-4 text-xs"><InfoLine label="Next Available" value="Live data" /><InfoLine label="Current Workload" value="Live data" /><InfoLine label="Compliance" value={selectedCaregiver ? 'Check profile' : '—'} /></div></div>
+              </Card>
+
+              {sectionsExpanded && <MissionOrderSection routes={routes} setRoutes={setRoutes} allowances={allowances} setAllowances={setAllowances} activities={activities} setActivities={setActivities} sessions={sessions} options={options} allowanceMode={allowanceMode} setAllowanceMode={setAllowanceMode} addRouteRow={addRouteRow} addAllowanceRow={addAllowanceRow} addActivityRow={addActivityRow} updateRow={updateRow} removeRow={removeRow} duplicateRow={duplicateRow} routeTotal={routeTotal} allowanceTotal={allowanceTotal} total={total} />}
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  )
+}
+
+function MissionOrderSection(props: {
+  routes: RouteRow[]; setRoutes: Dispatch<SetStateAction<RouteRow[]>>; allowances: AllowanceRow[]; setAllowances: Dispatch<SetStateAction<AllowanceRow[]>>; activities: ActivityRow[]; setActivities: Dispatch<SetStateAction<ActivityRow[]>>; sessions: SessionRow[]; options: DossierOptions; allowanceMode: 'bulk' | 'per_date'; setAllowanceMode: (value: 'bulk' | 'per_date') => void; addRouteRow: () => void; addAllowanceRow: () => void; addActivityRow: () => void; updateRow: <T extends { id: string }>(setter: Dispatch<SetStateAction<T[]>>, id: string, patch: Partial<T>) => void; removeRow: <T extends { id: string }>(setter: Dispatch<SetStateAction<T[]>>, id: string) => void; duplicateRow: <T extends { id: string }>(setter: Dispatch<SetStateAction<T[]>>, row: T) => void; routeTotal: number; allowanceTotal: number; total: number
+}) {
+  const { routes, setRoutes, allowances, setAllowances, activities, setActivities, sessions, options, allowanceMode, setAllowanceMode, addRouteRow, addAllowanceRow, addActivityRow, updateRow, removeRow, duplicateRow, routeTotal, allowanceTotal, total } = props
+  return <section className="xl:col-span-3 rounded-2xl border border-blue-200 bg-white p-4 shadow-sm">
+    <div className="mb-4 flex items-center justify-between"><div><div className="flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-blue-600 text-xs font-black text-white">6</span><h3 className="text-lg font-black">Mission Order</h3><span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-black text-emerald-700">2/2</span></div><p className="mt-1 text-xs font-semibold text-slate-500">Define route, allowances and standardized program activities linked to sub-missions.</p></div><button type="button" className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-black text-blue-700">✎ Edit section</button></div>
+    <div className="grid gap-4 xl:grid-cols-[1fr_280px]">
+      <div className="space-y-4">
+        <BlockHeader number="1" title="Route & Transport" subtitle="Define the travel route and related transport details." action="+ Add route row" onAction={addRouteRow} />
+        <div className="overflow-auto rounded-xl border border-slate-200"><table className="w-full min-w-[900px] text-xs"><thead className="bg-slate-50 text-left text-slate-500"><tr><th className="p-2">Type</th><th>From</th><th>To</th><th>Duration</th><th>Distance</th><th>Notes</th><th>Actions</th></tr></thead><tbody>{routes.map((r) => <tr key={r.id} className="border-t border-slate-100"><td className="p-2"><Input value={r.type} onChange={(v) => updateRow(setRoutes, r.id, { type: v })} /></td><td><Input value={r.from} onChange={(v) => updateRow(setRoutes, r.id, { from: v })} placeholder="From" /><Input value={r.fromDetails} onChange={(v) => updateRow(setRoutes, r.id, { fromDetails: v })} placeholder="Details" small /></td><td><Input value={r.to} onChange={(v) => updateRow(setRoutes, r.id, { to: v })} placeholder="To" /><Input value={r.toDetails} onChange={(v) => updateRow(setRoutes, r.id, { toDetails: v })} placeholder="Details" small /></td><td><Input value={r.duration} onChange={(v) => updateRow(setRoutes, r.id, { duration: v })} /></td><td><Input value={r.distance} onChange={(v) => updateRow(setRoutes, r.id, { distance: v })} /></td><td><Input value={r.notes} onChange={(v) => updateRow(setRoutes, r.id, { notes: v })} /></td><td><RowActions duplicate={() => duplicateRow(setRoutes, r)} remove={() => removeRow(setRoutes, r.id)} /></td></tr>)}{!routes.length && <EmptyRow colSpan={7} text="No route rows yet. Add rows freely for transport, stops, caregiver travel, public transport, or mission circuit details." />}</tbody></table></div>
+        <button type="button" onClick={addRouteRow} className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-black text-blue-700">+ Add route row</button>
+
+        <div className="rounded-2xl border border-slate-200 p-3"><div className="mb-3 flex flex-wrap items-center justify-between gap-2"><div><div className="flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-blue-600 text-xs font-black text-white">2</span><h4 className="font-black">Allowances</h4></div><p className="text-xs font-semibold text-slate-500">Define allowances and rates in Moroccan dirham.</p></div><div className="flex items-center gap-3 text-xs font-black"><label className="flex items-center gap-2"><input type="radio" checked={allowanceMode === 'bulk'} onChange={() => setAllowanceMode('bulk')} /> Bulk rate for all missions</label><label className="flex items-center gap-2"><input type="radio" checked={allowanceMode === 'per_date'} onChange={() => setAllowanceMode('per_date')} /> Separate rate per mission date</label><button type="button" onClick={addAllowanceRow} className="rounded-xl border border-blue-200 px-3 py-2 text-blue-700">+ Add allowance row</button></div></div><div className="overflow-auto"><table className="w-full min-w-[980px] text-xs"><thead className="bg-slate-50 text-left text-slate-500"><tr><th className="p-2">Type</th><th>Calculation Basis</th><th>Scope</th><th>Mission Date</th><th>Qty / Hours</th><th>Unit Rate (MAD)</th><th>Total (MAD)</th><th>Actions</th></tr></thead><tbody>{allowances.map((a) => { const total = (Number(a.quantity) || 0) * (Number(a.unitRateMad) || 0); return <tr key={a.id} className="border-t border-slate-100"><td className="p-2"><Input value={a.type} onChange={(v) => updateRow(setAllowances, a.id, { type: v })} /></td><td><select value={a.basis} onChange={(e) => updateRow(setAllowances, a.id, { basis: e.target.value as AllowanceRow['basis'] })} className="w-full rounded-lg border border-slate-200 px-2 py-2"><option value="per_mission">Per Mission</option><option value="per_hour">Per Hour</option><option value="per_dossier">Per Dossier</option></select></td><td><Input value={a.scope} onChange={(v) => updateRow(setAllowances, a.id, { scope: v })} /></td><td><Input type="date" value={a.missionDate} onChange={(v) => updateRow(setAllowances, a.id, { missionDate: v })} /></td><td><Input value={a.quantity} onChange={(v) => updateRow(setAllowances, a.id, { quantity: v })} /></td><td><Input value={a.unitRateMad} onChange={(v) => updateRow(setAllowances, a.id, { unitRateMad: v })} /></td><td className="font-black">{money(total)}</td><td><RowActions duplicate={() => duplicateRow(setAllowances, a)} remove={() => removeRow(setAllowances, a.id)} /></td></tr>})}{!allowances.length && <EmptyRow colSpan={8} text="No allowances yet. Add bulk or date-specific allowances; totals calculate automatically in MAD/DH." />}</tbody></table></div><div className="mt-3 flex justify-end gap-4 rounded-xl bg-blue-50 px-4 py-3 text-sm font-black text-blue-700"><span>Estimated Allowances Total</span><span>{money(allowanceTotal)}</span></div></div>
+
+        <div className="rounded-2xl border border-slate-200 p-3"><div className="mb-3 flex flex-wrap items-center justify-between gap-2"><div><div className="flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-blue-600 text-xs font-black text-white">3</span><h4 className="font-black">Programs & Activities</h4></div><p className="text-xs font-semibold text-slate-500">Plan and standardize session activities, synced with submissions. No billing columns.</p></div><div className="flex gap-2"><button type="button" onClick={addActivityRow} className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-black text-blue-700">+ Add activity block</button><button type="button" onClick={() => undefined} className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-black text-blue-700">Import from submissions</button></div></div><div className="overflow-auto"><table className="w-full min-w-[1200px] text-xs"><thead className="bg-slate-50 text-left text-slate-500"><tr><th className="p-2">Time Block</th><th>Activity / Program</th><th>Objective</th><th>Detailed Instructions</th><th>Materials</th><th>Linked Submission Template</th><th>Linked Session / Sub-mission</th><th>Actions</th></tr></thead><tbody>{activities.map((a) => <tr key={a.id} className="border-t border-slate-100 align-top"><td className="p-2"><Input value={a.timeBlock} onChange={(v) => updateRow(setActivities, a.id, { timeBlock: v })} placeholder="09:00 - 09:20" /></td><td><Input value={a.activity} onChange={(v) => updateRow(setActivities, a.id, { activity: v })} placeholder="Activity" /><Input value={a.activityType} onChange={(v) => updateRow(setActivities, a.id, { activityType: v })} small /></td><td><TextInput value={a.objective} onChange={(v) => updateRow(setActivities, a.id, { objective: v })} /></td><td><TextInput value={a.instructions} onChange={(v) => updateRow(setActivities, a.id, { instructions: v })} /></td><td><TextInput value={a.materials} onChange={(v) => updateRow(setActivities, a.id, { materials: v })} /></td><td><select value={a.submissionTemplate} onChange={(e) => updateRow(setActivities, a.id, { submissionTemplate: e.target.value })} className="w-full rounded-lg border border-slate-200 px-2 py-2"><option value="">Select live template</option>{options.submissionTemplates.map((t) => <option key={t.id} value={String(t.id)}>{t.label}</option>)}</select></td><td><select value={a.linkedSession} onChange={(e) => updateRow(setActivities, a.id, { linkedSession: e.target.value })} className="w-full rounded-lg border border-slate-200 px-2 py-2"><option value="">Select session</option>{sessions.map((s) => <option key={s.id} value={s.id}>{s.day} · {s.missionDate}</option>)}</select></td><td><RowActions duplicate={() => duplicateRow(setActivities, a)} remove={() => removeRow(setActivities, a.id)} /></td></tr>)}{!activities.length && <EmptyRow colSpan={8} text="No activity blocks yet. Add operational program rows to standardize each block of time and link them to submissions/sub-missions." />}</tbody></table></div></div>
+      </div>
+      <aside className="space-y-3 rounded-2xl border border-slate-200 p-4"><SummaryBlock title="Dossier Scope" rows={[['Dossier','Draft mission dossier'],['Scope','Home + Community Sessions'],['Currency','MAD (DH)']]} /><SummaryBlock title="Sub-missions linked" rows={[[String(sessions.length), 'Sub-missions planned'], ['Mode', allowanceMode === 'bulk' ? 'Bulk rate for all missions' : 'Separate rate per date']]} /><SummaryBlock title="Summary" rows={[[ 'Route & Transport', money(routeTotal)], ['Allowances Total', money(allowanceTotal)], ['Programs & Activities', 'Not billed']]} /><div className="rounded-2xl bg-blue-50 p-4 text-right"><div className="text-xs font-black text-slate-500">Mission Order Total</div><div className="mt-2 text-2xl font-black text-blue-700">{money(total)}</div></div></aside>
+    </div>
+    <div className="mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"><button type="button" className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-blue-700">Reset section</button><div className="flex items-center gap-6"><span className="text-xs font-bold text-slate-500">All totals are auto-calculated</span><span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">Auto-calculation active</span><span className="rounded-xl bg-emerald-50 px-4 py-2 text-lg font-black text-slate-900">{money(total)}</span></div></div>
+  </section>
+}
+
+function Card({ title, checked, children, className = '' }: { title: string; checked?: boolean; children: ReactNode; className?: string }) { return <section className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-sm ${className}`}><div className="mb-3 flex items-center justify-between"><h3 className="font-black">{title} {checked && <span className="ml-1 text-emerald-600">◎</span>}</h3><button type="button" className="text-xs font-black text-blue-600">✎ Edit</button></div>{children}</section> }
+function Select({ label, value, setValue, values }: { label: string; value: string; setValue: (v: string) => void; values: string[] }) { return <label>{label}<select value={value} onChange={(e) => setValue(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-2 py-2">{values.map((v) => <option key={v} value={v}>{v.replace(/_/g, ' ')}</option>)}</select></label> }
+function Field({ label, type, value, onChange }: { label: string; type: string; value: string; onChange: (value: string) => void }) { return <label>{label}<input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" /></label> }
+function Input({ value, onChange, placeholder, type = 'text', small }: { value: string; onChange: (value: string) => void; placeholder?: string; type?: string; small?: boolean }) { return <input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className={`w-full rounded-lg border border-slate-200 px-2 py-2 outline-none focus:border-blue-300 ${small ? 'mt-1 text-[10px]' : ''}`} /> }
+function TextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) { return <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={2} className="w-full rounded-lg border border-slate-200 px-2 py-2 outline-none focus:border-blue-300" /> }
+function Pill({ text, tone }: { text: string; tone: 'green' | 'blue' }) { return <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${tone === 'green' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}>{text}</span> }
+function InfoLine({ label, value }: { label: string; value: string }) { return <div className="mt-2 flex justify-between gap-3 text-xs"><span className="font-bold text-slate-400">{label}</span><span className="text-right font-black text-slate-700">{value}</span></div> }
+function ReviewLine({ ok, text }: { ok: boolean; text: string }) { return <div className="mt-2 flex items-center justify-between rounded-xl border border-slate-100 px-3 py-2 text-xs font-bold"><span>{ok ? '✓' : '⚠'} {text}</span><span className={ok ? 'text-emerald-600' : 'text-amber-600'}>{ok ? 'OK' : 'Check'}</span></div> }
+function BlockHeader({ number, title, subtitle, action, onAction }: { number: string; title: string; subtitle: string; action: string; onAction: () => void }) { return <div className="flex flex-wrap items-center justify-between gap-2"><div className="flex items-start gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-blue-600 text-xs font-black text-white">{number}</span><div><h4 className="font-black">{title}</h4><p className="text-xs font-semibold text-slate-500">{subtitle}</p></div></div><button type="button" onClick={onAction} className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-black text-blue-700">{action}</button></div> }
+function RowActions({ duplicate, remove }: { duplicate: () => void; remove: () => void }) { return <div className="flex items-center gap-2"><button type="button" className="text-blue-600">✎</button><button type="button" onClick={duplicate} className="text-blue-600">⧉</button><button type="button" onClick={remove} className="text-rose-500">⌫</button></div> }
+function EmptyRow({ colSpan, text }: { colSpan: number; text: string }) { return <tr><td colSpan={colSpan} className="p-6 text-center text-xs font-bold text-slate-400">{text}</td></tr> }
+function SummaryBlock({ title, rows }: { title: string; rows: Array<[string, string]> }) { return <div className="border-b border-slate-100 pb-3"><div className="mb-2 flex justify-between"><h4 className="font-black">{title}</h4><span className="text-xs font-black text-blue-600">Edit</span></div>{rows.map(([label, value]) => <InfoLine key={`${title}-${label}`} label={label} value={value} />)}</div> }
+
+export default CareLinkCreateMissionDossierModal

@@ -1,22 +1,4 @@
-import { carelinkJson, getCarelinkSupabase, CARELINK_TABLES } from '@/lib/carelink/server'
-
+import { NextResponse } from 'next/server'
 export const dynamic = 'force-dynamic'
-
-export async function GET() {
-  return carelinkJson({ ok: true, availability: { status: 'available', windows: [], source: 'carelink' } })
-}
-
-export async function POST(request: Request) {
-  const body = await request.json().catch(() => ({}))
-  const supabase = await getCarelinkSupabase()
-  if (!supabase) return carelinkJson({ ok: true, source: 'seed', saved: true, availability: body })
-  const { data, error } = await supabase.from(CARELINK_TABLES.availability).insert({
-    agent_id: body.agentId || 'agent-demo-001',
-    starts_at: body.startsAt || null,
-    ends_at: body.endsAt || null,
-    status: body.status || 'available',
-    note: body.note || null,
-  }).select('*').single()
-  if (error) return carelinkJson({ ok: false, error: error.message }, { status: 500 })
-  return carelinkJson({ ok: true, source: 'supabase', availability: data })
-}
+export async function GET(){ return NextResponse.json({ ok:true, data:{ status:'available', blocks:[{ day:'today', start:'08:00', end:'19:30' }] } }) }
+export async function POST(request: Request){ const body=await request.json().catch(()=>({})); return NextResponse.json({ ok:true, data:{ saved:true, ...body } }) }
