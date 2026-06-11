@@ -131,7 +131,6 @@ const NAV_GROUPS: NavGroup[] = [
     accent: '#64748b',
     items: [
       { label: 'Users', href: '/users', icon: '🔐', keywords: ['users', 'permissions'] },
-      { label: 'B2B Partnerships', href: '/b2b-partnerships', icon: '🤝', keywords: ['b2b', 'partnerships', 'hotels', 'clinics', 'prospects', 'campaigns'] },
       { label: 'Profile', href: '/profile', icon: '👤', keywords: ['profile', 'account'] },
       { label: 'Locations', href: '/locations', icon: '📍', keywords: ['locations'] },
       { label: 'Config Admin', href: '/market-os/config-admin-control', icon: '🧰', keywords: ['settings', 'admin', 'config'] },

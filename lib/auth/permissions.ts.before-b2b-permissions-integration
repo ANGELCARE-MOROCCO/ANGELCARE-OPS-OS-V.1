@@ -434,16 +434,3 @@ export function getFirstAllowedRoute(user: any) {
   if (!user) return '/login'
   return '/workspace'
 }
-
-export const b2bPartnershipPermissionKeys = [
-  'b2b_partnerships.access',
-  'b2b_partnerships.read',
-  'b2b_partnerships.create',
-  'b2b_partnerships.update',
-  'b2b_partnerships.delete',
-  'b2b_partnerships.manage_templates',
-  'b2b_partnerships.manage_campaigns',
-  'b2b_partnerships.manage_automation',
-  'b2b_partnerships.manage_reports',
-  'b2b_partnerships.manage_settings',
-]

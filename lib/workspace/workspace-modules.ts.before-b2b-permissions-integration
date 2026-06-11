@@ -334,16 +334,6 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         categories: ['marketing', 'revenue'],
         permissions: ['market_os.partners.view', 'revenue.view'],
       },
-
-      {
-        id: 'b2b-partnerships',
-        title: 'B2B Partnerships',
-        href: '/b2b-partnerships',
-        icon: 'handshake',
-        categories: ['marketing', 'revenue', 'sales', 'operations'],
-        permissions: ['b2b_partnerships.access', 'b2b_partnerships.read'],
-      },
-
     ],
   },
   {

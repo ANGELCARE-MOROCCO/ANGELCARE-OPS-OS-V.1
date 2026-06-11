@@ -1,24 +1,5 @@
 'use client'
 
-
-const B2B_PERMISSION_GROUP = {
-  title: 'B2B Partnerships permissions',
-  description: 'CRM, prospection, campagnes, templates, tâches, propositions, reporting et automation B2B.',
-  permissions: [
-    'b2b_partnerships.access',
-    'b2b_partnerships.read',
-    'b2b_partnerships.create',
-    'b2b_partnerships.update',
-    'b2b_partnerships.delete',
-    'b2b_partnerships.manage_templates',
-    'b2b_partnerships.manage_campaigns',
-    'b2b_partnerships.manage_automation',
-    'b2b_partnerships.manage_reports',
-    'b2b_partnerships.manage_settings',
-  ],
-}
-
-
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState, useTransition } from 'react'
