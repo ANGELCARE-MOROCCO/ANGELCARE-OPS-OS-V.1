@@ -1,80 +1,67 @@
-type QueryClient = {
-  from: (table: string) => any
+type QueryClient = { from: (table: string) => any }
+type CountResponse = { count?: number | null; data?: any[] | null; error?: unknown }
+
+function value(result: PromiseSettledResult<CountResponse>, label: string): CountResponse {
+  if (result.status === 'rejected') {
+    console.error('[B2B_COMMAND_METRIC_REJECTED]', label, result.reason)
+    return { count: 0, data: [], error: result.reason }
+  }
+  if (result.value?.error) console.error('[B2B_COMMAND_METRIC_ERROR]', label, result.value.error)
+  return result.value || { count: 0, data: [] }
 }
 
-export async function getB2BDashboardMetrics(db: QueryClient) {
-  const since = new Date()
-  since.setDate(since.getDate() - 7)
+function count(row: CountResponse) {
+  return row.error ? 0 : row.count ?? 0
+}
 
-  const [
-    totalProspects,
-    qualifiedProspects,
-    hotelsPipeline,
-    clinicsPipeline,
-    decisionMakers,
-    outreachWeek,
-    callsWeek,
-    positiveReplies,
-    meetingsBooked,
-    meetingsCompleted,
-    proposalsSent,
-    pilotsAgreed,
-    signedPartners,
-    overdueFollowups,
-  ] = await Promise.all([
+export async function getB2BCommandMetrics(db: QueryClient) {
+  const now = new Date()
+  const week = new Date()
+  week.setDate(now.getDate() - 7)
+  const labels = [
+    'totalProspects','hotels','clinics','priorityA','interested','negotiation','pilots','signed','overdue','outreachWeek','meetingsWeek','proposalsActive','tasksOpen','programs','values'
+  ] as const
+  const queries = [
     db.from('b2b_prospects').select('id', { count: 'exact', head: true }).is('archived_at', null),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).in('priority_score', ['A', 'B']).is('archived_at', null),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).in('sector', ['Hotel', 'Resort', 'Family hotel', 'Boutique hotel', 'Event venue']).is('archived_at', null),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).in('sector', ['Pediatric clinic', 'Pediatrician', 'Child development center', 'Orthophonist', 'Psychomotor specialist', 'Family wellness center']).is('archived_at', null),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).not('decision_maker_name', 'is', null).is('archived_at', null),
-    db.from('b2b_outreach_logs').select('id', { count: 'exact', head: true }).gte('sent_at', since.toISOString()),
-    db.from('b2b_calls').select('id', { count: 'exact', head: true }).gte('created_at', since.toISOString()),
-    db.from('b2b_outreach_logs').select('id', { count: 'exact', head: true }).eq('outcome', 'Positive reply'),
-    db.from('b2b_meetings').select('id', { count: 'exact', head: true }).eq('status', 'Scheduled'),
-    db.from('b2b_meetings').select('id', { count: 'exact', head: true }).eq('status', 'Completed'),
-    db.from('b2b_proposals').select('id', { count: 'exact', head: true }).in('status', ['Sent', 'Viewed', 'Follow-up Needed', 'Negotiation']),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('status', 'Pilot Agreed'),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('status', 'Signed Partner'),
-    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).lt('next_follow_up_at', new Date().toISOString()).is('archived_at', null),
-  ])
-
-  const estimatedValues = await db
-    .from('b2b_prospects')
-    .select('estimated_monthly_value, estimated_annual_value')
-    .is('archived_at', null)
-
-  const rows = estimatedValues.data ?? []
-
-  const estimatedMonthlyRevenue = rows.reduce(
-    (sum: number, row: any) => sum + Number(row.estimated_monthly_value ?? 0),
-    0
-  )
-
-  const estimatedAnnualPartnershipValue = rows.reduce(
-    (sum: number, row: any) => sum + Number(row.estimated_annual_value ?? 0),
-    0
-  )
-
-  const total = totalProspects.count ?? 0
-  const signed = signedPartners.count ?? 0
-
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).in('sector', ['Hotel','Resort','Family hotel','Boutique hotel','Event venue']).is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).in('sector', ['Pediatric clinic','Pediatrician','Child development center','Orthophonist','Psychomotor specialist','Family wellness center']).is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('priority_score', 'A').is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('status', 'Interested').is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('status', 'Negotiation').is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('status', 'Pilot Agreed').is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).eq('status', 'Signed Partner').is('archived_at', null),
+    db.from('b2b_prospects').select('id', { count: 'exact', head: true }).lt('next_follow_up_at', now.toISOString()).is('archived_at', null),
+    db.from('b2b_outreach_logs').select('id', { count: 'exact', head: true }).gte('sent_at', week.toISOString()),
+    db.from('b2b_meetings').select('id', { count: 'exact', head: true }).gte('scheduled_at', week.toISOString()),
+    db.from('b2b_proposals').select('id', { count: 'exact', head: true }).in('status', ['Sent','Viewed','Follow-up Needed','Negotiation','Accepted']),
+    db.from('b2b_tasks').select('id', { count: 'exact', head: true }).in('status', ['To Do','In Progress','Blocked','Overdue']),
+    db.from('b2b_partner_programs').select('id', { count: 'exact', head: true }).eq('is_active', true),
+    db.from('b2b_prospects').select('estimated_monthly_value, estimated_annual_value').is('archived_at', null),
+  ]
+  const settled = await Promise.allSettled(queries)
+  const rows = Object.fromEntries(labels.map((label, i) => [label, value(settled[i], label)])) as Record<typeof labels[number], CountResponse>
+  const values = Array.isArray(rows.values.data) ? rows.values.data : []
+  const monthly = values.reduce((sum, item) => sum + Number(item.estimated_monthly_value || 0), 0)
+  const annual = values.reduce((sum, item) => sum + Number(item.estimated_annual_value || 0), 0)
+  const total = count(rows.totalProspects)
+  const signed = count(rows.signed)
   return {
     total_prospects: total,
-    qualified_prospects: qualifiedProspects.count ?? 0,
-    hotels_pipeline: hotelsPipeline.count ?? 0,
-    pediatric_clinics_pipeline: clinicsPipeline.count ?? 0,
-    decision_makers_identified: decisionMakers.count ?? 0,
-    outreach_sent_this_week: outreachWeek.count ?? 0,
-    calls_completed_this_week: callsWeek.count ?? 0,
-    positive_replies: positiveReplies.count ?? 0,
-    meetings_booked: meetingsBooked.count ?? 0,
-    meetings_completed: meetingsCompleted.count ?? 0,
-    proposals_sent: proposalsSent.count ?? 0,
-    pilots_agreed: pilotsAgreed.count ?? 0,
+    hotels_pipeline: count(rows.hotels),
+    pediatric_clinics_pipeline: count(rows.clinics),
+    priority_a_opportunities: count(rows.priorityA),
+    interested_prospects: count(rows.interested),
+    negotiations: count(rows.negotiation),
+    pilots_agreed: count(rows.pilots),
     signed_partners: signed,
-    estimated_monthly_revenue: estimatedMonthlyRevenue,
-    estimated_annual_partnership_value: estimatedAnnualPartnershipValue,
+    overdue_followups: count(rows.overdue),
+    outreach_sent_this_week: count(rows.outreachWeek),
+    meetings_this_week: count(rows.meetingsWeek),
+    active_proposals: count(rows.proposalsActive),
+    open_tasks: count(rows.tasksOpen),
+    active_partner_programs: count(rows.programs),
+    estimated_monthly_revenue: monthly,
+    estimated_annual_partnership_value: annual,
     conversion_rate: total > 0 ? Number(((signed / total) * 100).toFixed(2)) : 0,
-    overdue_followups: overdueFollowups.count ?? 0,
   }
 }

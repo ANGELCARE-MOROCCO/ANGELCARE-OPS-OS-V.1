@@ -1,5 +1,5 @@
-import B2BExecutionWorkflowsWorkspace from '@/components/b2b-partnerships/B2BExecutionWorkflowsWorkspace'
+import B2BPipelineOutreachCockpit from '@/components/b2b-partnerships/B2BPipelineOutreachCockpit'
 
-export default function Page() {
-  return <B2BExecutionWorkflowsWorkspace defaultMode="outreach" />
+export default function B2BOutreachPage() {
+  return <B2BPipelineOutreachCockpit initialWorkspace="outreach" />
 }

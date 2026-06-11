@@ -1,5 +1,5 @@
-import B2BProspectDirectoryWorkspace from '@/components/b2b-partnerships/B2BProspectDirectoryWorkspace'
+import B2BPipelineOutreachCockpit from '@/components/b2b-partnerships/B2BPipelineOutreachCockpit'
 
-export default function B2BPipelineBoardPage() {
-  return <B2BProspectDirectoryWorkspace defaultMode="pipeline" />
+export default function B2BPipelinePage() {
+  return <B2BPipelineOutreachCockpit initialWorkspace="pipeline" />
 }

@@ -1,0 +1,78 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { B2B_AUDIT_ACTIONS } from '@/lib/b2b-partnerships/constants'
+import { logB2BActivity, logB2BAuditEvent } from '@/lib/b2b-partnerships/audit'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+
+function text(value: unknown) {
+  return typeof value === 'string' && value.trim() ? value.trim() : null
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const url = new URL(req.url)
+    const prospectId = url.searchParams.get('prospect_id')
+    let query = db
+      .from('b2b_outreach_logs')
+      .select('*, prospect:b2b_prospects(name,city,sector)')
+      .order('sent_at', { ascending: false })
+      .limit(80)
+    if (prospectId) query = query.eq('prospect_id', prospectId)
+    const { data, error } = await query
+    if (error) return NextResponse.json({ ok: false, error: 'Unable to load outreach logs.' }, { status: 500 })
+    return NextResponse.json({ ok: true, data: data ?? [] })
+  } catch (error) {
+    console.error('[B2B_OUTREACH_GET_FAILED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to load outreach logs.' }, { status: 500 })
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+
+    const body = await req.json()
+    const prospectId = text(body.prospect_id)
+    if (!prospectId) return NextResponse.json({ ok: false, error: 'Prospect is required.' }, { status: 400 })
+
+    const { data: prospect } = await db.from('b2b_prospects').select('*').eq('id', prospectId).maybeSingle()
+    if (!prospect) return NextResponse.json({ ok: false, error: 'Prospect not found.' }, { status: 404 })
+
+    const permission = requireB2BPermission('update', { actorId: actor.id, actorRole: actor.role, assignedOwnerId: prospect.assigned_owner_id, createdBy: prospect.created_by })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const payload = {
+      prospect_id: prospectId,
+      contact_id: text(body.contact_id),
+      channel: text(body.channel) || 'Email',
+      template_key: text(body.template_key),
+      subject: text(body.subject),
+      message_body: text(body.message_body),
+      outcome: text(body.outcome) || 'No response',
+      sent_by: actor.id,
+      sent_at: text(body.sent_at) || new Date().toISOString(),
+      next_follow_up_at: text(body.next_follow_up_at),
+    }
+
+    const { data, error } = await db.from('b2b_outreach_logs').insert(payload).select('*').single()
+    if (error) return NextResponse.json({ ok: false, error: 'Unable to log outreach.' }, { status: 500 })
+
+    await db.from('b2b_prospects').update({ last_contact_at: payload.sent_at, next_follow_up_at: payload.next_follow_up_at, updated_by: actor.id }).eq('id', prospectId)
+    await logB2BActivity({ db, prospectId, actorId: actor.id, activityType: 'outreach.logged', title: `Outreach logged: ${payload.channel}`, description: payload.subject, metadata: { outcome: payload.outcome, next_follow_up_at: payload.next_follow_up_at } })
+    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_outreach_log', entityId: data.id, action: B2B_AUDIT_ACTIONS.OUTREACH_LOGGED, afterData: data })
+
+    return NextResponse.json({ ok: true, data }, { status: 201 })
+  } catch (error) {
+    console.error('[B2B_OUTREACH_POST_FAILED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to log outreach.' }, { status: 500 })
+  }
+}

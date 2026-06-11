@@ -1,5 +1,2 @@
-import B2BCompletionWorkspace from '@/components/b2b-partnerships/B2BCompletionWorkspace'
-
-export default function Page() {
-  return <B2BCompletionWorkspace defaultMode="reports" />
-}
+import B2BExecutiveReportsSuite from '@/components/b2b-partnerships/B2BExecutiveReportsSuite'
+export default function Page(){return <B2BExecutiveReportsSuite/>}

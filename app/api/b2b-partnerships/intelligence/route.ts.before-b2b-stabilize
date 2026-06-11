@@ -1,0 +1,77 @@
+import { NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+
+function count(rows: any[] | null | undefined, predicate: (row: any) => boolean) {
+  return Array.isArray(rows) ? rows.filter(predicate).length : 0
+}
+
+function daysAgo(value?: string | null) {
+  if (!value) return 9999
+  const diff = Date.now() - new Date(value).getTime()
+  return Math.floor(diff / 86400000)
+}
+
+export async function GET() {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const [prospectsRes, proposalsRes, tasksRes, meetingsRes, outreachRes] = await Promise.all([
+      db.from('b2b_prospects').select('*').is('archived_at', null).limit(500),
+      db.from('b2b_proposals').select('*').limit(500),
+      db.from('b2b_tasks').select('*').limit(500),
+      db.from('b2b_meetings').select('*').limit(500),
+      db.from('b2b_outreach_logs').select('*').limit(500),
+    ])
+
+    const prospects = prospectsRes.data || []
+    const proposals = proposalsRes.data || []
+    const tasks = tasksRes.data || []
+    const meetings = meetingsRes.data || []
+    const outreach = outreachRes.data || []
+
+    const signed = count(prospects, (p) => p.status === 'Signed Partner')
+    const priorityA = count(prospects, (p) => p.priority_score === 'A')
+    const inactivePriorityA = count(prospects, (p) => p.priority_score === 'A' && daysAgo(p.last_contact_at || p.updated_at) > 7)
+    const overdueTasks = count(tasks, (t) => t.due_date && new Date(t.due_date).getTime() < Date.now() && !['Done','Cancelled'].includes(t.status))
+    const sentProposals = count(proposals, (p) => ['Sent','Viewed','Follow-up Needed','Negotiation'].includes(p.status))
+    const totalPipelineValue = prospects.reduce((sum: number, p: any) => sum + Number(p.estimated_annual_value || 0), 0)
+    const meetingsThisWeek = count(meetings, (m) => daysAgo(m.scheduled_at || m.created_at) <= 7)
+    const outreachThisWeek = count(outreach, (o) => daysAgo(o.sent_at || o.created_at) <= 7)
+
+    const risks = [
+      inactivePriorityA ? { severity: 'critical', title: 'Priority A inactivity', count: inactivePriorityA, action: 'Review and assign next action today.' } : null,
+      overdueTasks ? { severity: 'high', title: 'Overdue execution tasks', count: overdueTasks, action: 'Clear overdue queue and update statuses.' } : null,
+      sentProposals && sentProposals > signed ? { severity: 'medium', title: 'Proposal follow-up needed', count: sentProposals, action: 'Follow sent proposals within 48h.' } : null,
+    ].filter(Boolean)
+
+    return NextResponse.json({ ok: true, data: {
+      metrics: {
+        total_prospects: prospects.length,
+        signed_partners: signed,
+        priority_a_opportunities: priorityA,
+        inactive_priority_a: inactivePriorityA,
+        overdue_tasks: overdueTasks,
+        sent_proposals: sentProposals,
+        pipeline_value: totalPipelineValue,
+        meetings_this_week: meetingsThisWeek,
+        outreach_this_week: outreachThisWeek,
+        conversion_rate: prospects.length ? Number(((signed / prospects.length) * 100).toFixed(2)) : 0,
+      },
+      risks,
+      recommendations: [
+        'Focus first on Priority A hotel and pediatric clinic accounts with identified decision makers.',
+        'Convert completed meetings into proposals within 72 hours.',
+        'Use template library for every outreach to maintain consistent premium positioning.',
+        'Push weekly report every Friday with objections and next-week plan.',
+      ],
+    }})
+  } catch (error) {
+    console.error('[B2B_INTELLIGENCE_FAILED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to load B2B executive intelligence.' }, { status: 500 })
+  }
+}

@@ -1,10 +1,3 @@
-/**
- * ANGELCARE B2B Partnerships Command Center runtime adapter.
- *
- * Server-only adapter wired to the existing ANGELCARE app runtime.
- * This file must never be imported from client components.
- */
-
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/getUser'
 
@@ -25,13 +18,10 @@ export async function getServerB2BDatabaseClient(): Promise<B2BDatabaseClient> {
 
 export async function getCurrentB2BAppUser(): Promise<B2BCurrentAppUser | null> {
   const user = await getCurrentUser()
-
-  if (!user?.id) {
-    return null
-  }
+  if (!user?.id) return null
 
   return {
-    id: String(user.id),
+    id: String((user as any).id),
     email: (user as any).email ?? null,
     role: (user as any).role ?? (user as any).role_key ?? null,
     role_key: (user as any).role_key ?? null,

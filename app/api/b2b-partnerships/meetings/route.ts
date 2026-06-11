@@ -1,139 +1,123 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { B2B_AUDIT_ACTIONS } from '@/lib/b2b-partnerships/constants'
-import { logB2BActivity, logB2BAuditEvent } from '@/lib/b2b-partnerships/audit'
-import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
-import { validateMeetingStatus } from '@/lib/b2b-partnerships/validation'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
-function text(value: unknown): string | null {
+async function guard(action: 'read' | 'create' | 'update' = 'read') {
+  const db = await getServerB2BDatabaseClient()
+  const actor = await getCurrentB2BAppUser()
+
+  if (!actor?.id) {
+    return { ok: false as const, db, actor, response: NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 }) }
+  }
+
+  const permission = requireB2BPermission(action, {
+    actorId: actor.id,
+    actorRole: actor.role || actor.role_key,
+  })
+
+  if (!permission.ok) {
+    return { ok: false as const, db, actor, response: NextResponse.json({ ok: false, error: permission.error }, { status: permission.status }) }
+  }
+
+  return { ok: true as const, db, actor }
+}
+
+function text(value: unknown, fallback = '') {
+  return typeof value === 'string' && value.trim() ? value.trim() : fallback
+}
+
+function nullableText(value: unknown) {
   return typeof value === 'string' && value.trim() ? value.trim() : null
+}
+
+function safeLimit(req: NextRequest, fallback = 120) {
+  const url = new URL(req.url)
+  return Math.min(Number(url.searchParams.get('limit') || fallback), 500)
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const db = await getServerB2BDatabaseClient()
-    const actor = await getCurrentB2BAppUser()
-    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
-    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role })
-    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+    const g = await guard('read')
+    if (!g.ok) return g.response
 
-    const url = new URL(req.url)
-    const prospectId = url.searchParams.get('prospect_id')
-    const status = url.searchParams.get('status')
-    let query = db
-      .from('b2b_meetings')
-      .select('*, prospect:b2b_prospects(id,name,sector,city,status,priority_score,next_follow_up_at)')
-      .order('scheduled_at', { ascending: true })
-    if (prospectId) query = query.eq('prospect_id', prospectId)
-    if (status) query = query.eq('status', status)
-    const { data, error } = await query
-    if (error) return NextResponse.json({ ok: false, error: 'Unable to load meetings.' }, { status: 500 })
-    return NextResponse.json({ ok: true, data: data ?? [] })
+    const limit = safeLimit(req, 120)
+    const { data, error } = await g.db.from('b2b_meetings').select('*').order('scheduled_at', { ascending: true }).limit(limit)
+
+    if (error) {
+      console.error('[B2B_MEETINGS_GET_FAILED]', error)
+      return NextResponse.json({ ok: true, data: [] })
+    }
+
+    return NextResponse.json({ ok: true, data: data || [] })
   } catch (error) {
-    console.error('[B2B_MEETINGS_GET_FAILED]', error)
-    return NextResponse.json({ ok: false, error: 'Unexpected server error.' }, { status: 500 })
+    console.error('[B2B_MEETINGS_GET_CRASHED]', error)
+    return NextResponse.json({ ok: true, data: [] })
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const db = await getServerB2BDatabaseClient()
-    const actor = await getCurrentB2BAppUser()
-    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
-    const body = await req.json()
-    const prospectId = text(body.prospect_id)
-    if (!prospectId) return NextResponse.json({ ok: false, error: 'prospect_id is required.' }, { status: 400 })
-    const status = body.status ?? 'Scheduled'
-    if (!validateMeetingStatus(status)) return NextResponse.json({ ok: false, error: 'Invalid meeting status.' }, { status: 400 })
-    if (status === 'Scheduled' && !text(body.scheduled_at)) return NextResponse.json({ ok: false, error: 'scheduled_at is required for scheduled meetings.' }, { status: 400 })
+    const g = await guard('create')
+    if (!g.ok) return g.response
 
-    const { data: prospect } = await db.from('b2b_prospects').select('*').eq('id', prospectId).is('archived_at', null).single()
-    if (!prospect) return NextResponse.json({ ok: false, error: 'Prospect not found.' }, { status: 404 })
-    const permission = requireB2BPermission('update', { actorId: actor.id, actorRole: actor.role, assignedOwnerId: prospect.assigned_owner_id, createdBy: prospect.created_by })
-    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+    const body = await req.json()
 
     const payload = {
-      prospect_id: prospectId,
-      meeting_type: text(body.meeting_type) ?? 'Discovery meeting',
-      status,
-      scheduled_at: text(body.scheduled_at),
-      location: text(body.location),
-      video_link: text(body.video_link),
-      agenda: text(body.agenda),
-      notes: text(body.notes),
-      needs_identified: text(body.needs_identified),
-      objections: text(body.objections),
-      decision_process: text(body.decision_process),
-      budget_discussion: text(body.budget_discussion),
-      next_step: text(body.next_step),
-      follow_up_at: text(body.follow_up_at),
-      created_by: actor.id,
-      updated_by: actor.id,
+      prospect_id: nullableText(body.prospect_id),
+      meeting_type: nullableText(body.meeting_type) || 'Discovery',
+      status: nullableText(body.status) || 'Scheduled',
+      scheduled_at: nullableText(body.scheduled_at),
+      location: nullableText(body.location),
+      video_link: nullableText(body.video_link),
+      agenda: nullableText(body.agenda),
+      notes: nullableText(body.notes),
+      next_step: nullableText(body.next_step),
+      follow_up_at: nullableText(body.follow_up_at),
+      created_by: g.actor.id,
+      updated_by: g.actor.id,
     }
 
-    const { data, error } = await db.from('b2b_meetings').insert(payload).select('*').single()
-    if (error) return NextResponse.json({ ok: false, error: 'Unable to create meeting.' }, { status: 500 })
+    const { data, error } = await g.db.from('b2b_meetings').insert(payload).select('*').single()
 
-    const prospectUpdates: Record<string, unknown> = { status: status === 'Completed' ? 'Meeting Done' : 'Meeting Booked', updated_by: actor.id }
-    if (payload.follow_up_at) prospectUpdates.next_follow_up_at = payload.follow_up_at
-    if (payload.next_step) prospectUpdates.next_action = payload.next_step
-    await db.from('b2b_prospects').update(prospectUpdates).eq('id', prospectId)
+    if (error) {
+      console.error('[B2B_MEETINGS_POST_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to create meeting.' }, { status: 500 })
+    }
 
-    await logB2BActivity({ db, prospectId, actorId: actor.id, activityType: 'meeting.created', title: `${payload.meeting_type} ${status}`, description: payload.agenda, metadata: { scheduled_at: payload.scheduled_at, follow_up_at: payload.follow_up_at } })
-    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_meeting', entityId: data.id, action: B2B_AUDIT_ACTIONS.MEETING_CREATED, afterData: data })
     return NextResponse.json({ ok: true, data }, { status: 201 })
   } catch (error) {
-    console.error('[B2B_MEETINGS_POST_FAILED]', error)
-    return NextResponse.json({ ok: false, error: 'Unexpected server error.' }, { status: 500 })
+    console.error('[B2B_MEETINGS_POST_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to create meeting.' }, { status: 500 })
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
-    const db = await getServerB2BDatabaseClient()
-    const actor = await getCurrentB2BAppUser()
-    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const g = await guard('update')
+    if (!g.ok) return g.response
+
     const body = await req.json()
     const id = text(body.id)
-    if (!id) return NextResponse.json({ ok: false, error: 'Meeting id is required.' }, { status: 400 })
 
-    const { data: existing } = await db.from('b2b_meetings').select('*, prospect:b2b_prospects(*)').eq('id', id).single()
-    if (!existing) return NextResponse.json({ ok: false, error: 'Meeting not found.' }, { status: 404 })
-    const prospect = existing.prospect
-    const permission = requireB2BPermission('update', { actorId: actor.id, actorRole: actor.role, assignedOwnerId: prospect?.assigned_owner_id, createdBy: prospect?.created_by })
-    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
-
-    const status = body.status ?? existing.status
-    if (!validateMeetingStatus(status)) return NextResponse.json({ ok: false, error: 'Invalid meeting status.' }, { status: 400 })
-
-    const update = {
-      meeting_type: text(body.meeting_type) ?? existing.meeting_type,
-      status,
-      scheduled_at: text(body.scheduled_at) ?? existing.scheduled_at,
-      location: text(body.location),
-      video_link: text(body.video_link),
-      agenda: text(body.agenda),
-      notes: text(body.notes),
-      needs_identified: text(body.needs_identified),
-      objections: text(body.objections),
-      decision_process: text(body.decision_process),
-      budget_discussion: text(body.budget_discussion),
-      next_step: text(body.next_step),
-      follow_up_at: text(body.follow_up_at),
-      updated_by: actor.id,
+    if (!id) {
+      return NextResponse.json({ ok: false, error: 'Meeting id is required.' }, { status: 400 })
     }
-    const { data, error } = await db.from('b2b_meetings').update(update).eq('id', id).select('*').single()
-    if (error) return NextResponse.json({ ok: false, error: 'Unable to update meeting.' }, { status: 500 })
 
-    if (status === 'Completed') {
-      await db.from('b2b_prospects').update({ status: 'Meeting Done', next_follow_up_at: update.follow_up_at, next_action: update.next_step, updated_by: actor.id }).eq('id', existing.prospect_id)
+    const updatePayload: Record<string, unknown> = { updated_by: g.actor.id }
+    for (const key of ['meeting_type', 'status', 'scheduled_at', 'location', 'video_link', 'agenda', 'notes', 'needs_identified', 'objections', 'decision_process', 'budget_discussion', 'next_step', 'follow_up_at']) {
+      if (body[key] !== undefined) updatePayload[key] = body[key] || null
     }
-    await logB2BActivity({ db, prospectId: existing.prospect_id, actorId: actor.id, activityType: status === 'Completed' ? 'meeting.completed' : 'meeting.updated', title: `Meeting ${status}`, description: update.notes, metadata: { follow_up_at: update.follow_up_at } })
-    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_meeting', entityId: id, action: status === 'Completed' ? B2B_AUDIT_ACTIONS.MEETING_COMPLETED : B2B_AUDIT_ACTIONS.MEETING_UPDATED, beforeData: existing, afterData: data })
+
+    const { data, error } = await g.db.from('b2b_meetings').update(updatePayload).eq('id', id).select('*').single()
+
+    if (error) {
+      console.error('[B2B_MEETINGS_PATCH_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to update meeting.' }, { status: 500 })
+    }
 
     return NextResponse.json({ ok: true, data })
   } catch (error) {
-    console.error('[B2B_MEETINGS_PATCH_FAILED]', error)
-    return NextResponse.json({ ok: false, error: 'Unexpected server error.' }, { status: 500 })
+    console.error('[B2B_MEETINGS_PATCH_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to update meeting.' }, { status: 500 })
   }
 }

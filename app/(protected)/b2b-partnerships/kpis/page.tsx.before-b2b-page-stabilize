@@ -1,0 +1,2 @@
+import B2BKpiExecutiveSuite from '@/components/b2b-partnerships/B2BKpiExecutiveSuite'
+export default function Page(){return <B2BKpiExecutiveSuite/>}

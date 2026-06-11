@@ -1,0 +1,131 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+import { logB2BActivity, logB2BAuditEvent } from '@/lib/b2b-partnerships/audit'
+import { B2B_AUDIT_ACTIONS } from '@/lib/b2b-partnerships/constants'
+
+function text(value: unknown, fallback = '') { return typeof value === 'string' && value.trim() ? value.trim() : fallback }
+function nullable(value: unknown) { return typeof value === 'string' && value.trim() ? value.trim() : null }
+
+export async function GET(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const url = new URL(req.url)
+    const limit = Math.min(Number(url.searchParams.get('limit') || 160), 400)
+    const status = url.searchParams.get('status')
+    const view = url.searchParams.get('view')
+    const now = new Date().toISOString()
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+
+    let query = db.from('b2b_tasks').select('*').order('start_at', { ascending: true, nullsFirst: false }).order('due_date', { ascending: true, nullsFirst: false }).limit(limit)
+    if (status && status !== 'all') query = query.eq('status', status)
+    if (view === 'today') query = query.or(`start_at.lte.${tomorrow},due_date.lte.${tomorrow}`).neq('status', 'Done')
+    if (view === 'overdue') query = query.or(`due_date.lt.${now},end_at.lt.${now}`).neq('status', 'Done')
+    if (view === 'mine') query = query.eq('assigned_to', actor.id)
+
+    const { data, error } = await query
+    if (error) return NextResponse.json({ ok: false, error: 'Unable to load advanced tasks.' }, { status: 500 })
+    return NextResponse.json({ ok: true, data: data || [] })
+  } catch (error) {
+    console.error('[B2B_ADVANCED_TASKS_GET_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to load advanced tasks.' }, { status: 500 })
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const permission = requireB2BPermission('create', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const body = await req.json()
+    const title = text(body.title)
+    if (!title) return NextResponse.json({ ok: false, error: 'Task title is required.' }, { status: 400 })
+
+    const payload = {
+      title,
+      task_type: nullable(body.task_type) || 'Update CRM',
+      prospect_id: nullable(body.prospect_id),
+      contact_id: nullable(body.contact_id),
+      assigned_to: nullable(body.assigned_to) || actor.id,
+      priority: nullable(body.priority) || 'Medium',
+      status: nullable(body.status) || 'To Do',
+      start_at: nullable(body.start_at),
+      end_at: nullable(body.end_at),
+      due_date: nullable(body.due_date) || nullable(body.end_at),
+      reminder_at: nullable(body.reminder_at),
+      description: nullable(body.description),
+      next_action: nullable(body.next_action),
+      completion_notes: nullable(body.completion_notes),
+      created_by: actor.id,
+      completed_at: body.status === 'Done' ? new Date().toISOString() : null,
+    }
+
+    const { data, error } = await db.from('b2b_tasks').insert(payload).select('*').single()
+    if (error) {
+      console.error('[B2B_ADVANCED_TASKS_POST_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to create advanced task.' }, { status: 500 })
+    }
+
+    await logB2BActivity({ db, prospectId: data.prospect_id, actorId: actor.id, activityType: 'task.created', title: `Task created: ${data.title}`, description: data.description, metadata: { start_at: data.start_at, end_at: data.end_at, reminder_at: data.reminder_at } })
+    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_task', entityId: data.id, action: B2B_AUDIT_ACTIONS.TASK_CREATED, afterData: data })
+    return NextResponse.json({ ok: true, data }, { status: 201 })
+  } catch (error) {
+    console.error('[B2B_ADVANCED_TASKS_POST_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to create advanced task.' }, { status: 500 })
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+
+    const body = await req.json()
+    const id = text(body.id)
+    if (!id) return NextResponse.json({ ok: false, error: 'Task id is required.' }, { status: 400 })
+
+    const { data: existing } = await db.from('b2b_tasks').select('*').eq('id', id).single()
+    if (!existing) return NextResponse.json({ ok: false, error: 'Task not found.' }, { status: 404 })
+
+    const permission = requireB2BPermission('update', { actorId: actor.id, actorRole: actor.role || actor.role_key, assignedOwnerId: existing.assigned_to, createdBy: existing.created_by })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const nextStatus = nullable(body.status) || existing.status
+    const update = {
+      title: nullable(body.title) || existing.title,
+      task_type: nullable(body.task_type) || existing.task_type,
+      prospect_id: nullable(body.prospect_id) || existing.prospect_id,
+      contact_id: nullable(body.contact_id) || existing.contact_id,
+      assigned_to: nullable(body.assigned_to) || existing.assigned_to,
+      priority: nullable(body.priority) || existing.priority,
+      status: nextStatus,
+      start_at: nullable(body.start_at) || existing.start_at,
+      end_at: nullable(body.end_at) || existing.end_at,
+      due_date: nullable(body.due_date) || existing.due_date,
+      reminder_at: nullable(body.reminder_at) || existing.reminder_at,
+      description: nullable(body.description) || existing.description,
+      next_action: nullable(body.next_action) || existing.next_action,
+      completion_notes: nullable(body.completion_notes) || existing.completion_notes,
+      status_reason: nullable(body.status_reason) || existing.status_reason,
+      completed_at: nextStatus === 'Done' ? (existing.completed_at || new Date().toISOString()) : existing.completed_at,
+    }
+
+    const { data, error } = await db.from('b2b_tasks').update(update).eq('id', id).select('*').single()
+    if (error) return NextResponse.json({ ok: false, error: 'Unable to update advanced task.' }, { status: 500 })
+    await logB2BActivity({ db, prospectId: data.prospect_id, actorId: actor.id, activityType: nextStatus === 'Done' ? 'task.completed' : 'task.updated', title: `${nextStatus}: ${data.title}`, description: data.completion_notes || data.description, metadata: { start_at: data.start_at, end_at: data.end_at, reminder_at: data.reminder_at } })
+    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_task', entityId: data.id, action: nextStatus === 'Done' ? B2B_AUDIT_ACTIONS.TASK_COMPLETED : B2B_AUDIT_ACTIONS.TASK_UPDATED, beforeData: existing, afterData: data })
+    return NextResponse.json({ ok: true, data })
+  } catch (error) {
+    console.error('[B2B_ADVANCED_TASKS_PATCH_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to update advanced task.' }, { status: 500 })
+  }
+}

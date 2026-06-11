@@ -1,0 +1,73 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+import { normalizeImportRow, validateNormalizedProspect, text, nullableText } from '@/lib/b2b-partnerships/mega-i-utils'
+
+export async function GET(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok:false, error:'Authentication required.' }, { status:401 })
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok:false, error:permission.error }, { status:permission.status })
+    const limit = Math.min(Number(new URL(req.url).searchParams.get('limit') || 50), 200)
+    const { data, error } = await db.from('b2b_import_batches').select('*').order('created_at', { ascending:false }).limit(limit)
+    if (error) return NextResponse.json({ ok:false, error:'Unable to load import batches.' }, { status:500 })
+    return NextResponse.json({ ok:true, data:data || [] })
+  } catch (error) {
+    console.error('[B2B_IMPORTS_GET_CRASHED]', error)
+    return NextResponse.json({ ok:false, error:'Unable to load import batches.' }, { status:500 })
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok:false, error:'Authentication required.' }, { status:401 })
+    const permission = requireB2BPermission('create', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok:false, error:permission.error }, { status:permission.status })
+    const body = await req.json()
+    const rows = Array.isArray(body.rows) ? body.rows : []
+    const defaults = { default_sector: body.default_sector, default_city: body.default_city, default_priority: body.default_priority }
+    const normalizedRows = rows.map((raw: Record<string, unknown>, index: number) => {
+      const normalized = normalizeImportRow(raw, defaults)
+      const validationErrors = validateNormalizedProspect(normalized)
+      return {
+        row_index: index + 1,
+        raw_data: raw,
+        normalized_data: normalized,
+        validation_status: validationErrors.length ? 'Invalid' : 'Valid',
+        validation_errors: validationErrors,
+      }
+    })
+    const validRows = normalizedRows.filter((r:any) => r.validation_status === 'Valid').length
+    const invalidRows = normalizedRows.length - validRows
+    const { data: batch, error: batchError } = await db.from('b2b_import_batches').insert({
+      name: text(body.name, `Import B2B ${new Date().toISOString().slice(0,10)}`),
+      source: text(body.source, 'manual_csv'),
+      segment: nullableText(body.segment),
+      default_sector: nullableText(body.default_sector),
+      default_city: nullableText(body.default_city),
+      default_priority: text(body.default_priority, 'B'),
+      default_owner_id: nullableText(body.default_owner_id) || actor.id,
+      status: 'Validated',
+      total_rows: normalizedRows.length,
+      valid_rows: validRows,
+      invalid_rows: invalidRows,
+      mapping: body.mapping || {},
+      notes: nullableText(body.notes),
+      created_by: actor.id,
+    }).select('*').single()
+    if (batchError) return NextResponse.json({ ok:false, error:'Unable to create import batch.' }, { status:500 })
+    if (normalizedRows.length) {
+      const payload = normalizedRows.map((row:any) => ({ ...row, batch_id: batch.id }))
+      const { error: rowError } = await db.from('b2b_import_rows').insert(payload)
+      if (rowError) console.error('[B2B_IMPORT_ROWS_INSERT_FAILED]', rowError)
+    }
+    return NextResponse.json({ ok:true, data:batch }, { status:201 })
+  } catch (error) {
+    console.error('[B2B_IMPORTS_POST_CRASHED]', error)
+    return NextResponse.json({ ok:false, error:'Unable to create import batch.' }, { status:500 })
+  }
+}

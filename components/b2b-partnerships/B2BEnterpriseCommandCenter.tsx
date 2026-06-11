@@ -1,0 +1,474 @@
+'use client'
+
+import { FormEvent, useEffect, useMemo, useState } from 'react'
+import styles from './B2BEnterpriseCommandCenter.module.css'
+
+type Metrics = {
+  total_prospects: number
+  hotels_pipeline: number
+  pediatric_clinics_pipeline: number
+  priority_a_opportunities: number
+  interested_prospects: number
+  negotiations: number
+  pilots_agreed: number
+  signed_partners: number
+  overdue_followups: number
+  outreach_sent_this_week: number
+  meetings_this_week: number
+  active_proposals: number
+  open_tasks: number
+  active_partner_programs: number
+  estimated_monthly_revenue: number
+  estimated_annual_partnership_value: number
+  conversion_rate: number
+}
+
+type Prospect = {
+  id: string
+  name: string
+  sector: string
+  city?: string | null
+  status: string
+  priority_score: string
+  relationship_warmth?: string | null
+  decision_maker_name?: string | null
+  decision_maker_role?: string | null
+  next_action?: string | null
+  next_follow_up_at?: string | null
+  estimated_monthly_value?: number | null
+  estimated_annual_value?: number | null
+  potential_service_fit?: string | null
+  pain_points?: string | null
+  opportunity_description?: string | null
+  updated_at?: string | null
+}
+
+type Program = {
+  id: string
+  name: string
+  sector_focus?: string | null
+  description?: string | null
+  services?: string[] | null
+  value_proposition?: string[] | null
+  pricing_models?: string[] | null
+}
+
+type ApiState<T> = {
+  data: T
+  loading: boolean
+  error: string | null
+  lastSync: string | null
+}
+
+type ModalKind = 'prospect' | 'import' | 'outreach' | 'meeting' | 'proposal' | 'report' | 'diagnostics' | 'target' | null
+
+const emptyMetrics: Metrics = {
+  total_prospects: 0,
+  hotels_pipeline: 0,
+  pediatric_clinics_pipeline: 0,
+  priority_a_opportunities: 0,
+  interested_prospects: 0,
+  negotiations: 0,
+  pilots_agreed: 0,
+  signed_partners: 0,
+  overdue_followups: 0,
+  outreach_sent_this_week: 0,
+  meetings_this_week: 0,
+  active_proposals: 0,
+  open_tasks: 0,
+  active_partner_programs: 0,
+  estimated_monthly_revenue: 0,
+  estimated_annual_partnership_value: 0,
+  conversion_rate: 0,
+}
+
+const sectors = [
+  'Hotel', 'Resort', 'Family hotel', 'Boutique hotel', 'Event venue', 'Pediatric clinic', 'Pediatrician', 'Child development center', 'Orthophonist', 'Psychomotor specialist', 'Family wellness center', 'School', 'Nursery', 'Corporate family service buyer', 'Other',
+]
+
+const statuses = ['New', 'Contacted', 'No Response', 'Interested', 'Meeting Booked', 'Meeting Done', 'Proposal Sent', 'Negotiation', 'Pilot Agreed', 'Signed Partner', 'Not Fit', 'Follow Up Later', 'Lost']
+const priorities = ['A', 'B', 'C']
+
+function money(value?: number | null) {
+  return new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD', maximumFractionDigits: 0 }).format(Number(value || 0))
+}
+
+function shortDate(value?: string | null) {
+  if (!value) return 'Non planifié'
+  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(value))
+}
+
+function isOverdue(value?: string | null) {
+  return Boolean(value && new Date(value) < new Date())
+}
+
+async function readJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, { cache: 'no-store' })
+  const json = await res.json().catch(() => null)
+  if (!res.ok || !json?.ok) throw new Error(json?.error || `Request failed: ${url}`)
+  return json.data as T
+}
+
+export default function B2BEnterpriseCommandCenter() {
+  const [metricsState, setMetricsState] = useState<ApiState<Metrics>>({ data: emptyMetrics, loading: true, error: null, lastSync: null })
+  const [prospectsState, setProspectsState] = useState<ApiState<Prospect[]>>({ data: [], loading: true, error: null, lastSync: null })
+  const [programsState, setProgramsState] = useState<ApiState<Program[]>>({ data: [], loading: true, error: null, lastSync: null })
+  const [modal, setModal] = useState<ModalKind>(null)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('Interface opérationnelle prête. Les actions sont connectées aux routes B2B lorsqu’elles sont disponibles.')
+  const [filter, setFilter] = useState('all')
+  const [query, setQuery] = useState('')
+  const [prospectForm, setProspectForm] = useState({
+    name: '', sector: 'Hotel', city: 'Rabat', decision_maker_name: '', decision_maker_role: '', phone: '', email: '', website: '', status: 'New', priority_score: 'A', relationship_warmth: 'Cold', potential_service_fit: '', pain_points: '', opportunity_description: '', estimated_monthly_value: '', estimated_annual_value: '', next_action: '', next_follow_up_at: '', fit_score: '8', urgency_score: '7', decision_power_score: '7', revenue_potential_score: '8',
+  })
+
+  async function loadAll() {
+    const syncedAt = new Date().toISOString()
+    setMetricsState((s) => ({ ...s, loading: true, error: null }))
+    setProspectsState((s) => ({ ...s, loading: true, error: null }))
+    setProgramsState((s) => ({ ...s, loading: true, error: null }))
+    const [metrics, prospects, programs] = await Promise.allSettled([
+      readJson<Metrics>('/api/b2b-partnerships/metrics'),
+      readJson<Prospect[]>('/api/b2b-partnerships/prospects?limit=80'),
+      readJson<Program[]>('/api/b2b-partnerships/partner-programs'),
+    ])
+    if (metrics.status === 'fulfilled') setMetricsState({ data: metrics.value, loading: false, error: null, lastSync: syncedAt })
+    else setMetricsState({ data: emptyMetrics, loading: false, error: metrics.reason?.message || 'Erreur métriques', lastSync: syncedAt })
+    if (prospects.status === 'fulfilled') setProspectsState({ data: prospects.value, loading: false, error: null, lastSync: syncedAt })
+    else setProspectsState({ data: [], loading: false, error: prospects.reason?.message || 'Erreur prospects', lastSync: syncedAt })
+    if (programs.status === 'fulfilled') setProgramsState({ data: programs.value, loading: false, error: null, lastSync: syncedAt })
+    else setProgramsState({ data: [], loading: false, error: programs.reason?.message || 'Erreur programmes', lastSync: syncedAt })
+  }
+
+  useEffect(() => {
+    loadAll()
+    const id = window.setInterval(loadAll, 30000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  const metrics = metricsState.data
+  const prospects = prospectsState.data
+  const priorityProspects = useMemo(() => prospects.filter((p) => p.priority_score === 'A').slice(0, 6), [prospects])
+  const overdueProspects = useMemo(() => prospects.filter((p) => isOverdue(p.next_follow_up_at)).slice(0, 6), [prospects])
+  const filteredProspects = useMemo(() => {
+    return prospects.filter((p) => {
+      const text = `${p.name} ${p.sector} ${p.city || ''} ${p.status} ${p.decision_maker_name || ''}`.toLowerCase()
+      const matchesQuery = !query || text.includes(query.toLowerCase())
+      const matchesFilter = filter === 'all' || p.sector === filter || p.status === filter || p.priority_score === filter
+      return matchesQuery && matchesFilter
+    }).slice(0, 10)
+  }, [filter, prospects, query])
+
+  async function submitProspect(event: FormEvent) {
+    event.preventDefault()
+    setBusy(true)
+    setMessage('Création du prospect B2B en cours...')
+    try {
+      const res = await fetch('/api/b2b-partnerships/prospects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prospectForm),
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok || !json?.ok) throw new Error(json?.error || 'Création impossible')
+      setMessage(`Prospect créé : ${json.data.name}`)
+      setModal(null)
+      setProspectForm((p) => ({ ...p, name: '', decision_maker_name: '', phone: '', email: '', website: '', potential_service_fit: '', pain_points: '', opportunity_description: '', estimated_monthly_value: '', estimated_annual_value: '', next_action: '' }))
+      await loadAll()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Erreur inconnue')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const apiError = metricsState.error || prospectsState.error || programsState.error
+
+  function openWorkspace(path: string) {
+    window.location.href = path
+  }
+
+  return (
+    <main className={styles.pageShell}>
+      <section className={styles.heroPanel}>
+        <div className={styles.heroContent}>
+          <span className={styles.eyebrow}>ANGELCARE B2B PARTNERSHIPS</span>
+          <h1>Command Center partenariats B2B</h1>
+          <p>Un cockpit blanc premium pour piloter hôtels, cliniques pédiatriques, décideurs, actions commerciales, rendez-vous, propositions et reporting exécutif.</p>
+          <div className={styles.heroActions}>
+            <button className={styles.primaryButton} onClick={() => setModal('prospect')}>Nouveau prospect</button>
+            <button className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/imports')}>Import Hub</button>
+            <button className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/templates')}>Templates & scripts</button>
+          <button type="button" className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/integration')}>Actions directes</button>
+            <button className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/campaigns')}>Créer campagne</button>
+            <button className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/meetings')}>Planifier réunion</button>
+          <button type="button" className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/automation')}>Automation & scoring</button>
+          <button type="button" className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/proposals')}>Créer proposition</button>
+          </div>
+        </div>
+        <aside className={styles.syncCard}>
+          <div className={apiError ? styles.syncDotError : styles.syncDot} />
+          <strong>{apiError ? 'Connexion à vérifier' : 'Live sync actif'}</strong>
+          <span>{metricsState.lastSync ? `Dernière synchro ${shortDate(metricsState.lastSync)}` : 'Synchronisation initiale'}</span>
+          <button onClick={loadAll} className={styles.smallButton}>Rafraîchir</button>
+          {apiError && <button onClick={() => setModal('diagnostics')} className={styles.warningButton}>Diagnostics</button>}
+        </aside>
+      </section>
+
+      <section className={styles.commandGrid}>
+        <Metric title="Pipeline total" value={String(metrics.total_prospects)} detail="Prospects actifs" tone="blue" />
+        <Metric title="Hôtels & hospitality" value={String(metrics.hotels_pipeline)} detail="Pipeline familles" tone="gold" />
+        <Metric title="Cliniques pédiatriques" value={String(metrics.pediatric_clinics_pipeline)} detail="Santé enfant" tone="teal" />
+        <Metric title="Valeur annuelle estimée" value={money(metrics.estimated_annual_partnership_value)} detail="Partnership value" tone="violet" />
+        <Metric title="Priorité A" value={String(metrics.priority_a_opportunities)} detail="À traiter maintenant" tone="red" />
+        <Metric title="Follow-ups overdue" value={String(metrics.overdue_followups)} detail="Risque commercial" tone="red" />
+        <Metric title="Propositions actives" value={String(metrics.active_proposals)} detail="Deal desk" tone="green" />
+        <Metric title="Conversion" value={`${metrics.conversion_rate}%`} detail="Signed / pipeline" tone="blue" />
+      </section>
+
+      <section className={styles.workspaceGrid}>
+        <div className={styles.mainColumn}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.eyebrowDark}>Executive cockpit</span>
+              <h2>Actions requises et opportunités prioritaires</h2>
+            </div>
+            <div className={styles.filters}>
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher prospect, ville, décideur..." />
+              <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+                <option value="all">Tous</option>
+                <option value="Hotel">Hôtels</option>
+                <option value="Pediatric clinic">Cliniques</option>
+                <option value="A">Priorité A</option>
+                <option value="Interested">Interested</option>
+                <option value="Negotiation">Negotiation</option>
+              </select>
+            </div>
+          </div>
+
+          {apiError && <DiagnosticsInline error={apiError} onOpen={() => setModal('diagnostics')} onRetry={loadAll} />}
+
+          <div className={styles.boardGrid}>
+            <ActionPanel title="Priorité A" subtitle="Opportunités qui doivent avancer cette semaine" items={priorityProspects} empty="Aucune priorité A active. Créez vos premiers hôtels ou cliniques stratégiques." action="Créer une priorité A" onAction={() => setModal('prospect')} />
+            <ActionPanel title="Relances en retard" subtitle="Prospects à risque de refroidissement" items={overdueProspects} empty="Aucune relance en retard. Discipline commerciale saine." action="Planifier relance" onAction={() => openWorkspace('/b2b-partnerships/outreach')} />
+          </div>
+
+          <div className={styles.crmPanel}>
+            <div className={styles.panelHeader}>
+              <div>
+                <h3>CRM exécutif — Prospects récents</h3>
+                <p>Vue courte pour agir rapidement. Les vues CRM profondes arrivent dans le package suivant.</p>
+              </div>
+              <button className={styles.primaryButtonSmall} onClick={() => setModal('prospect')}>Ajouter</button>
+            </div>
+            {filteredProspects.length ? (
+              <div className={styles.prospectList}>
+                {filteredProspects.map((prospect) => <ProspectRow key={prospect.id} prospect={prospect} />)}
+              </div>
+            ) : (
+              <div className={styles.emptyState}>
+                <strong>Démarrer le pipeline ANGELCARE</strong>
+                <p>Ajoutez vos premiers hôtels, cliniques pédiatriques, centres de développement ou prospects B2B afin d’activer le command center.</p>
+                <div className={styles.emptyActions}>
+                  <button className={styles.primaryButtonSmall} onClick={() => setModal('prospect')}>Ajouter un hôtel</button>
+                  <button className={styles.secondaryButtonSmall} onClick={() => setModal('prospect')}>Ajouter une clinique</button>
+                  <button className={styles.secondaryButtonSmall} onClick={() => openWorkspace('/b2b-partnerships/prospects')}>Importer une liste</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <aside className={styles.rightColumn}>
+          <div className={styles.executionCard}>
+            <span className={styles.eyebrowDark}>Intern execution OS</span>
+            <h3>Cadence hebdomadaire</h3>
+            <div className={styles.targetRows}>
+              <Target label="Prospects qualifiés" value={prospects.length} target={150} />
+              <Target label="Outreach semaine" value={metrics.outreach_sent_this_week} target={80} />
+              <Target label="Meetings semaine" value={metrics.meetings_this_week} target={15} />
+              <Target label="Propositions actives" value={metrics.active_proposals} target={5} />
+            </div>
+            <button className={styles.fullButton} onClick={() => openWorkspace('/b2b-partnerships/execution')}>Configurer objectifs</button>
+          </div>
+
+          <div className={styles.executionCard}>
+            <span className={styles.eyebrowDark}>Partner programs</span>
+            <h3>Offres B2B productisées</h3>
+            <div className={styles.programList}>
+              {(programsState.data.length ? programsState.data : fallbackPrograms).map((program) => (
+                <article key={program.id || program.name} className={styles.programCard}>
+                  <strong>{program.name}</strong>
+                  <p>{program.sector_focus || program.description}</p>
+                  <button onClick={() => openWorkspace('/b2b-partnerships/meetings')}>Planifier réunion</button>
+          <button type="button" className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/automation')}>Automation & scoring</button>
+          <button type="button" className={styles.secondaryButton} onClick={() => openWorkspace('/b2b-partnerships/proposals')}>Créer proposition</button>
+                </article>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section className={styles.workspaceTiles}>
+        {workspaceTiles.map((tile) => (
+          <article key={tile.title} className={styles.workspaceTile}>
+            <span>{tile.badge}</span>
+            <h3>{tile.title}</h3>
+            <p>{tile.description}</p>
+            <button onClick={() => openWorkspace(tile.href)}>{tile.action}</button>
+          </article>
+        ))}
+      </section>
+
+      <p className={styles.statusMessage}>{message}</p>
+
+      {modal === 'prospect' && <ProspectModal busy={busy} form={prospectForm} setForm={setProspectForm} onSubmit={submitProspect} onClose={() => setModal(null)} />}
+      {modal === 'diagnostics' && <DiagnosticsModal onClose={() => setModal(null)} error={apiError} onRetry={loadAll} />}
+    </main>
+  )
+}
+
+function Metric({ title, value, detail, tone }: { title: string; value: string; detail: string; tone: string }) {
+  return <article className={`${styles.metricCard} ${styles[`tone_${tone}`]}`}><span>{title}</span><strong>{value}</strong><small>{detail}</small></article>
+}
+
+function DiagnosticsInline({ error, onOpen, onRetry }: { error: string; onOpen: () => void; onRetry: () => void }) {
+  return <div className={styles.diagnosticsInline}><strong>Une connexion B2B nécessite une vérification.</strong><p>{error}</p><div><button onClick={onRetry}>Réessayer</button><button onClick={onOpen}>Ouvrir diagnostics</button></div></div>
+}
+
+function ActionPanel({ title, subtitle, items, empty, action, onAction }: { title: string; subtitle: string; items: Prospect[]; empty: string; action: string; onAction: () => void }) {
+  return <section className={styles.actionPanel}><div className={styles.panelHeader}><div><h3>{title}</h3><p>{subtitle}</p></div><button onClick={onAction}>{action}</button></div>{items.length ? <div className={styles.actionList}>{items.map((item) => <ProspectRow key={item.id} prospect={item} compact />)}</div> : <div className={styles.panelEmpty}>{empty}</div>}</section>
+}
+
+function ProspectRow({ prospect, compact = false }: { prospect: Prospect; compact?: boolean }) {
+  return <article className={compact ? styles.prospectRowCompact : styles.prospectRow}><div><strong>{prospect.name}</strong><small>{prospect.sector} · {prospect.city || 'Ville à qualifier'}</small></div><div className={styles.badgeGroup}><span className={styles.priorityBadge}>{prospect.priority_score}</span><span className={styles.statusBadge}>{prospect.status}</span>{isOverdue(prospect.next_follow_up_at) && <span className={styles.overdueBadge}>Overdue</span>}</div><div className={styles.rowMeta}><span>{prospect.decision_maker_name || 'Décideur à identifier'}</span><small>{shortDate(prospect.next_follow_up_at)}</small></div></article>
+}
+
+function Target({ label, value, target }: { label: string; value: number; target: number }) {
+  const pct = Math.min(100, Math.round((value / target) * 100))
+  return <div className={styles.targetRow}><div><strong>{label}</strong><span>{value} / {target}</span></div><div className={styles.progressTrack}><i style={{ width: `${pct}%` }} /></div></div>
+}
+
+function ProspectModal({ busy, form, setForm, onSubmit, onClose }: { busy: boolean; form: any; setForm: (f: any) => void; onSubmit: (e: FormEvent) => void; onClose: () => void }) {
+  function update(key: string, value: string) { setForm({ ...form, [key]: value }) }
+  return <div className={styles.modalBackdrop}><form className={styles.megaModal} onSubmit={onSubmit}><header className={styles.modalHeader}><div><span className={styles.eyebrowDark}>Création CRM B2B</span><h2>Nouveau prospect stratégique</h2><p>Large fiche corporate pour qualifier un hôtel, une clinique pédiatrique, un centre enfant ou un partenaire B2B.</p></div><button type="button" onClick={onClose}>×</button></header><div className={styles.modalBody}><section className={styles.modalSection}><h3>Identité & canal</h3><div className={styles.formGrid}><label>Nom prospect<input required value={form.name} onChange={(e) => update('name', e.target.value)} /></label><label>Secteur<select value={form.sector} onChange={(e) => update('sector', e.target.value)}>{sectors.map((s) => <option key={s}>{s}</option>)}</select></label><label>Ville<input value={form.city} onChange={(e) => update('city', e.target.value)} /></label><label>Site web<input value={form.website} onChange={(e) => update('website', e.target.value)} /></label><label>Téléphone<input value={form.phone} onChange={(e) => update('phone', e.target.value)} /></label><label>Email<input value={form.email} onChange={(e) => update('email', e.target.value)} /></label></div></section><section className={styles.modalSection}><h3>Décideur & relation</h3><div className={styles.formGrid}><label>Décideur<input value={form.decision_maker_name} onChange={(e) => update('decision_maker_name', e.target.value)} /></label><label>Rôle décideur<input value={form.decision_maker_role} onChange={(e) => update('decision_maker_role', e.target.value)} /></label><label>Status<select value={form.status} onChange={(e) => update('status', e.target.value)}>{statuses.map((s) => <option key={s}>{s}</option>)}</select></label><label>Priorité<select value={form.priority_score} onChange={(e) => update('priority_score', e.target.value)}>{priorities.map((p) => <option key={p}>{p}</option>)}</select></label><label>Chaleur relation<select value={form.relationship_warmth} onChange={(e) => update('relationship_warmth', e.target.value)}><option>Cold</option><option>Warm</option><option>Hot</option></select></label><label>Prochaine relance<input type="datetime-local" value={form.next_follow_up_at} onChange={(e) => update('next_follow_up_at', e.target.value)} /></label></div></section><section className={styles.modalSection}><h3>Fit ANGELCARE & valeur</h3><div className={styles.formGrid}><label>Fit score<input value={form.fit_score} onChange={(e) => update('fit_score', e.target.value)} /></label><label>Urgence<input value={form.urgency_score} onChange={(e) => update('urgency_score', e.target.value)} /></label><label>Pouvoir décision<input value={form.decision_power_score} onChange={(e) => update('decision_power_score', e.target.value)} /></label><label>Potentiel revenu<input value={form.revenue_potential_score} onChange={(e) => update('revenue_potential_score', e.target.value)} /></label><label>Valeur mensuelle estimée<input value={form.estimated_monthly_value} onChange={(e) => update('estimated_monthly_value', e.target.value)} /></label><label>Valeur annuelle estimée<input value={form.estimated_annual_value} onChange={(e) => update('estimated_annual_value', e.target.value)} /></label></div><label className={styles.fullLabel}>Fit service<textarea value={form.potential_service_fit} onChange={(e) => update('potential_service_fit', e.target.value)} placeholder="Kids club, garde encadrée, workshops enfants, support familles, referral clinique..." /></label><label className={styles.fullLabel}>Pain points<textarea value={form.pain_points} onChange={(e) => update('pain_points', e.target.value)} /></label><label className={styles.fullLabel}>Opportunité<textarea value={form.opportunity_description} onChange={(e) => update('opportunity_description', e.target.value)} /></label><label className={styles.fullLabel}>Next action<textarea value={form.next_action} onChange={(e) => update('next_action', e.target.value)} /></label></section></div><footer className={styles.modalFooter}><button type="button" onClick={onClose} className={styles.secondaryButton}>Annuler</button><button disabled={busy} className={styles.primaryButton}>{busy ? 'Création...' : 'Créer prospect B2B'}</button></footer></form></div>
+}
+
+function DiagnosticsModal({ onClose, error, onRetry }: { onClose: () => void; error: string | null; onRetry: () => void }) {
+  return (
+    <div className={styles.modalBackdrop}>
+      <section className={styles.megaModal}>
+        <header className={styles.modalHeader}>
+          <div>
+            <span className={styles.eyebrowDark}>Diagnostics production</span>
+            <h2>Connexion B2B à vérifier</h2>
+            <p>Contrôle des routes, de la session, des tables B2B et de la synchronisation live.</p>
+          </div>
+          <button type="button" onClick={onClose}>×</button>
+        </header>
+
+        <div className={styles.modalBody}>
+          <section className={styles.modalSection}>
+            <h3>État actuel</h3>
+            <div className={styles.deepGrid}>
+              <div>
+                <strong>API B2B</strong>
+                <p>{error || 'Routes B2B accessibles.'}</p>
+              </div>
+              <div>
+                <strong>Base de données</strong>
+                <p>Vérifier les tables b2b_prospects, b2b_tasks, b2b_meetings, b2b_proposals et les permissions serveur.</p>
+              </div>
+              <div>
+                <strong>Session utilisateur</strong>
+                <p>Les endpoints doivent utiliser la session connectée et le rôle app_users.</p>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.modalSection}>
+            <h3>Actions de récupération</h3>
+            <div className={styles.checkGrid}>
+              <span>Rafraîchir live sync</span>
+              <span>Vérifier runtime adapter</span>
+              <span>Vérifier migration B2B</span>
+              <span>Contrôler permissions</span>
+              <span>Tester endpoints</span>
+              <span>Relancer build</span>
+            </div>
+          </section>
+        </div>
+
+        <footer className={styles.modalFooter}>
+          <button type="button" onClick={onRetry} className={styles.secondaryButton}>Réessayer</button>
+          <button type="button" onClick={onClose} className={styles.primaryButton}>Fermer</button>
+        </footer>
+      </section>
+    </div>
+  )
+}
+
+const fallbackPrograms: Program[] = [
+  { id: 'hotel-program', name: 'ANGELCARE Family Hospitality Partnership', sector_focus: 'Hotels, resorts, family hospitality', description: 'Services familles, kids club, babysitting coordination, workshops et évènements enfants.' },
+  { id: 'clinic-program', name: 'ANGELCARE Family & Child Development Partnership', sector_focus: 'Pediatric clinics and child development centers', description: 'Orientation parentale, workshops, referral support et accompagnement enfant.' },
+]
+
+const workspaceTiles: Array<{ badge: string; title: string; description: string; action: string; href: string }> = [
+  {
+    badge: 'CRM',
+    title: 'Prospect Directory',
+    description: 'Gérer hôtels, cliniques, décideurs, scores, propriétaires, contacts et prochaines actions.',
+    action: 'Ouvrir CRM',
+    href: '/b2b-partnerships/prospects',
+  },
+  {
+    badge: 'PIPELINE',
+    title: 'Pipeline Board',
+    description: 'Piloter New → Signed Partner avec risques, priorités, transitions, raisons de perte et conversion.',
+    action: 'Voir pipeline',
+    href: '/b2b-partnerships/pipeline',
+  },
+  {
+    badge: 'OUTREACH',
+    title: 'Outreach Center',
+    description: 'Scripts hôtels, scripts cliniques, WhatsApp, LinkedIn, email, calls, objections et relances.',
+    action: 'Ouvrir outreach',
+    href: '/b2b-partnerships/outreach',
+  },
+  {
+    badge: 'MEETINGS',
+    title: 'Meetings & Follow-ups',
+    description: 'Rendez-vous, no-show, completed, next step, budget discussion, objections et suivi commercial.',
+    action: 'Planifier',
+    href: '/b2b-partnerships/meetings',
+  },
+  {
+    badge: 'EXECUTION',
+    title: 'Intern Execution OS',
+    description: 'Cadence quotidienne, objectifs hebdomadaires, checklist, relances et discipline terrain.',
+    action: 'Ouvrir execution OS',
+    href: '/b2b-partnerships/execution',
+  },
+  {
+    badge: 'TASKS',
+    title: 'Tasks & Assignments',
+    description: 'Board d’exécution, tâches du jour, overdue, priorité haute, manager supervision.',
+    action: 'Ouvrir tâches',
+    href: '/b2b-partnerships/tasks',
+  },
+  {
+    badge: 'DEAL DESK',
+    title: 'Partnership Proposals',
+    description: 'Créer offres, pilots, pricing, approval, négociation et conversion partenaire signé.',
+    action: 'Créer proposition',
+    href: '/b2b-partnerships/proposals',
+  },
+  {
+    badge: 'REPORTING',
+    title: 'Executive Reports',
+    description: 'Rapports hebdomadaires, objections, support needed, next-week plan et KPI exécutifs.',
+    action: 'Voir rapports',
+    href: '/b2b-partnerships/reports',
+  },
+]

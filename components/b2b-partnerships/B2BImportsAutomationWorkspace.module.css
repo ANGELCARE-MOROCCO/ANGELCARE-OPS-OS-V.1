@@ -1,0 +1,40 @@
+.workspace { display:grid; gap:22px; color:#0f172a; }
+.hero { padding:28px; border-radius:32px; background:#fff; border:1px solid #e5e7eb; box-shadow:0 22px 64px rgba(15,23,42,.08); display:flex; justify-content:space-between; gap:24px; align-items:flex-start; }
+.eyebrow { color:#64748b; font-size:11px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
+.hero h2 { margin:8px 0; font-size:40px; letter-spacing:-.055em; line-height:.98; }
+.hero p { margin:0; max-width:900px; color:#64748b; line-height:1.65; }
+.actions { display:flex; flex-wrap:wrap; gap:10px; }
+.primary,.secondary { min-height:44px; border-radius:15px; padding:0 16px; font-weight:900; cursor:pointer; }
+.primary { color:#fff; background:#2563eb; border:0; }
+.secondary { color:#0f172a; background:#fff; border:1px solid #e5e7eb; }
+.layout { display:grid; grid-template-columns: minmax(0,1fr) 390px; gap:18px; }
+.panel { padding:22px; border-radius:28px; background:#fff; border:1px solid #e5e7eb; box-shadow:0 18px 54px rgba(15,23,42,.07); }
+.panel h3 { margin:0 0 6px; font-size:20px; }
+.panel p { margin:0; color:#64748b; line-height:1.55; }
+.tableWrap { overflow:auto; margin-top:16px; border:1px solid #e5e7eb; border-radius:18px; }
+.tableWrap table { width:100%; border-collapse:collapse; }
+.tableWrap th { text-align:left; padding:12px; color:#64748b; background:#f8fafc; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+.tableWrap td { padding:14px 12px; border-top:1px solid #e5e7eb; font-size:13px; vertical-align:top; }
+.tableWrap td strong { display:block; color:#0f172a; }
+.tableWrap td small { display:block; color:#64748b; margin-top:4px; }
+.ruleList { display:grid; gap:10px; margin-top:16px; }
+.rule { padding:14px; border:1px solid #e5e7eb; border-radius:16px; background:#fbfdff; }
+.rule strong { display:block; }
+.rule small { display:block; color:#64748b; margin-top:5px; }
+.health { display:grid; gap:12px; }
+.healthCard { padding:16px; border-radius:18px; border:1px solid #e5e7eb; background:#f8fafc; }
+.healthCard strong { display:block; font-size:22px; }
+.modalBackdrop { position:fixed; inset:0; z-index:80; background:rgba(15,23,42,.58); display:grid; place-items:center; padding:30px; }
+.modal { width:min(1180px,96vw); max-height:92vh; overflow:auto; border-radius:34px; background:#fff; box-shadow:0 35px 100px rgba(15,23,42,.32); }
+.modalHeader { display:flex; justify-content:space-between; gap:20px; padding:26px; border-bottom:1px solid #e5e7eb; }
+.modalHeader h2 { margin:5px 0 0; font-size:28px; }
+.close { width:44px; height:44px; border-radius:15px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-size:22px; }
+.modalBody { display:grid; gap:18px; padding:26px; }
+.formGrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.formGrid label,.full { display:grid; gap:7px; color:#334155; font-size:12px; font-weight:900; }
+.full { grid-column:1/-1; }
+.input,.textarea,.select { width:100%; border:1px solid #dbe3ee; border-radius:15px; padding:13px 14px; font:inherit; background:#fff; color:#0f172a; }
+.textarea { min-height:150px; resize:vertical; }
+.modalFooter { display:flex; justify-content:flex-end; gap:10px; padding:20px 26px; border-top:1px solid #e5e7eb; }
+.empty { padding:28px; border-radius:24px; border:1px dashed #cbd5e1; background:#f8fafc; color:#64748b; }
+@media(max-width:1100px){.hero{display:grid}.layout{grid-template-columns:1fr}.formGrid{grid-template-columns:1fr}}

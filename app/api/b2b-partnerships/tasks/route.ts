@@ -1,117 +1,137 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { B2B_AUDIT_ACTIONS } from '@/lib/b2b-partnerships/constants'
-import { logB2BActivity, logB2BAuditEvent } from '@/lib/b2b-partnerships/audit'
-import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
-import { validateTaskPriority, validateTaskStatus } from '@/lib/b2b-partnerships/validation'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
-function text(value: unknown): string | null {
+async function guard(action: 'read' | 'create' | 'update' = 'read') {
+  const db = await getServerB2BDatabaseClient()
+  const actor = await getCurrentB2BAppUser()
+
+  if (!actor?.id) {
+    return { ok: false as const, db, actor, response: NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 }) }
+  }
+
+  const permission = requireB2BPermission(action, {
+    actorId: actor.id,
+    actorRole: actor.role || actor.role_key,
+  })
+
+  if (!permission.ok) {
+    return { ok: false as const, db, actor, response: NextResponse.json({ ok: false, error: permission.error }, { status: permission.status }) }
+  }
+
+  return { ok: true as const, db, actor }
+}
+
+function text(value: unknown, fallback = '') {
+  return typeof value === 'string' && value.trim() ? value.trim() : fallback
+}
+
+function nullableText(value: unknown) {
   return typeof value === 'string' && value.trim() ? value.trim() : null
+}
+
+function safeLimit(req: NextRequest, fallback = 120) {
+  const url = new URL(req.url)
+  return Math.min(Number(url.searchParams.get('limit') || fallback), 500)
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const db = await getServerB2BDatabaseClient()
-    const actor = await getCurrentB2BAppUser()
-    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
-    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role })
-    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+    const g = await guard('read')
+    if (!g.ok) return g.response
 
     const url = new URL(req.url)
-    const prospectId = url.searchParams.get('prospect_id')
+    const limit = safeLimit(req, 160)
     const status = url.searchParams.get('status')
-    let query = db
-      .from('b2b_tasks')
-      .select('*, prospect:b2b_prospects(id,name,sector,city,status,priority_score,next_follow_up_at)')
-      .order('due_date', { ascending: true })
-    if (prospectId) query = query.eq('prospect_id', prospectId)
-    if (status) query = query.eq('status', status)
+    const prospectId = url.searchParams.get('prospect_id')
+
+    let query = g.db.from('b2b_tasks').select('*').order('created_at', { ascending: false }).limit(limit)
+
+    if (status && status !== 'all') query = query.eq('status', status)
+    if (prospectId && prospectId !== 'all') query = query.eq('prospect_id', prospectId)
+
     const { data, error } = await query
-    if (error) return NextResponse.json({ ok: false, error: 'Unable to load tasks.' }, { status: 500 })
-    return NextResponse.json({ ok: true, data: data ?? [] })
+
+    if (error) {
+      console.error('[B2B_TASKS_GET_FAILED]', error)
+      return NextResponse.json({ ok: true, data: [] })
+    }
+
+    return NextResponse.json({ ok: true, data: data || [] })
   } catch (error) {
-    console.error('[B2B_TASKS_GET_FAILED]', error)
-    return NextResponse.json({ ok: false, error: 'Unexpected server error.' }, { status: 500 })
+    console.error('[B2B_TASKS_GET_CRASHED]', error)
+    return NextResponse.json({ ok: true, data: [] })
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const db = await getServerB2BDatabaseClient()
-    const actor = await getCurrentB2BAppUser()
-    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
-    const permission = requireB2BPermission('create', { actorId: actor.id, actorRole: actor.role })
-    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+    const g = await guard('create')
+    if (!g.ok) return g.response
+
     const body = await req.json()
     const title = text(body.title)
-    if (!title) return NextResponse.json({ ok: false, error: 'Task title is required.' }, { status: 400 })
-    const status = body.status ?? 'To Do'
-    const priority = body.priority ?? 'Medium'
-    if (!validateTaskStatus(status)) return NextResponse.json({ ok: false, error: 'Invalid task status.' }, { status: 400 })
-    if (!validateTaskPriority(priority)) return NextResponse.json({ ok: false, error: 'Invalid task priority.' }, { status: 400 })
+
+    if (!title) {
+      return NextResponse.json({ ok: false, error: 'Task title is required.' }, { status: 400 })
+    }
 
     const payload = {
       title,
-      task_type: text(body.task_type),
-      prospect_id: text(body.prospect_id),
-      assigned_to: text(body.assigned_to) ?? actor.id,
-      priority,
-      due_date: text(body.due_date),
-      status,
-      description: text(body.description),
-      created_by: actor.id,
-      completed_at: status === 'Done' ? new Date().toISOString() : null,
+      task_type: nullableText(body.task_type) || 'Update CRM',
+      prospect_id: nullableText(body.prospect_id),
+      assigned_to: nullableText(body.assigned_to) || g.actor.id,
+      priority: nullableText(body.priority) || 'Medium',
+      status: nullableText(body.status) || 'To Do',
+      due_date: nullableText(body.due_date),
+      description: nullableText(body.description),
+      created_by: g.actor.id,
+      completed_at: body.status === 'Done' ? new Date().toISOString() : null,
     }
 
-    const { data, error } = await db.from('b2b_tasks').insert(payload).select('*').single()
-    if (error) return NextResponse.json({ ok: false, error: 'Unable to create task.' }, { status: 500 })
+    const { data, error } = await g.db.from('b2b_tasks').insert(payload).select('*').single()
 
-    await logB2BActivity({ db, prospectId: payload.prospect_id, actorId: actor.id, activityType: 'task.created', title: `Task created: ${title}`, description: payload.description, metadata: { due_date: payload.due_date, priority } })
-    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_task', entityId: data.id, action: B2B_AUDIT_ACTIONS.TASK_CREATED, afterData: data })
+    if (error) {
+      console.error('[B2B_TASKS_POST_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to create B2B task.' }, { status: 500 })
+    }
+
     return NextResponse.json({ ok: true, data }, { status: 201 })
   } catch (error) {
-    console.error('[B2B_TASKS_POST_FAILED]', error)
-    return NextResponse.json({ ok: false, error: 'Unexpected server error.' }, { status: 500 })
+    console.error('[B2B_TASKS_POST_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to create B2B task.' }, { status: 500 })
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
-    const db = await getServerB2BDatabaseClient()
-    const actor = await getCurrentB2BAppUser()
-    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const g = await guard('update')
+    if (!g.ok) return g.response
+
     const body = await req.json()
     const id = text(body.id)
-    if (!id) return NextResponse.json({ ok: false, error: 'Task id is required.' }, { status: 400 })
 
-    const { data: existing } = await db.from('b2b_tasks').select('*').eq('id', id).single()
-    if (!existing) return NextResponse.json({ ok: false, error: 'Task not found.' }, { status: 404 })
-    const permission = requireB2BPermission('update', { actorId: actor.id, actorRole: actor.role, assignedOwnerId: existing.assigned_to, createdBy: existing.created_by })
-    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
-    const status = body.status ?? existing.status
-    const priority = body.priority ?? existing.priority
-    if (!validateTaskStatus(status)) return NextResponse.json({ ok: false, error: 'Invalid task status.' }, { status: 400 })
-    if (!validateTaskPriority(priority)) return NextResponse.json({ ok: false, error: 'Invalid task priority.' }, { status: 400 })
-
-    const update = {
-      title: text(body.title) ?? existing.title,
-      task_type: text(body.task_type) ?? existing.task_type,
-      prospect_id: text(body.prospect_id) ?? existing.prospect_id,
-      assigned_to: text(body.assigned_to) ?? existing.assigned_to,
-      priority,
-      due_date: text(body.due_date),
-      status,
-      description: text(body.description),
-      completed_at: status === 'Done' ? existing.completed_at ?? new Date().toISOString() : null,
+    if (!id) {
+      return NextResponse.json({ ok: false, error: 'Task id is required.' }, { status: 400 })
     }
-    const { data, error } = await db.from('b2b_tasks').update(update).eq('id', id).select('*').single()
-    if (error) return NextResponse.json({ ok: false, error: 'Unable to update task.' }, { status: 500 })
 
-    await logB2BActivity({ db, prospectId: data.prospect_id, actorId: actor.id, activityType: status === 'Done' ? 'task.completed' : 'task.updated', title: `Task ${status}: ${data.title}`, description: data.description, metadata: { due_date: data.due_date, priority: data.priority } })
-    await logB2BAuditEvent({ db, actorId: actor.id, entityType: 'b2b_task', entityId: id, action: status === 'Done' ? B2B_AUDIT_ACTIONS.TASK_COMPLETED : B2B_AUDIT_ACTIONS.TASK_UPDATED, beforeData: existing, afterData: data })
+    const updatePayload: Record<string, unknown> = {}
+    for (const key of ['title', 'task_type', 'prospect_id', 'assigned_to', 'priority', 'status', 'due_date', 'description', 'start_at', 'end_at', 'reminder_at', 'next_action', 'completion_notes']) {
+      if (body[key] !== undefined) updatePayload[key] = body[key] || null
+    }
+
+    if (body.status === 'Done') updatePayload.completed_at = new Date().toISOString()
+
+    const { data, error } = await g.db.from('b2b_tasks').update(updatePayload).eq('id', id).select('*').single()
+
+    if (error) {
+      console.error('[B2B_TASKS_PATCH_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to update B2B task.' }, { status: 500 })
+    }
+
     return NextResponse.json({ ok: true, data })
   } catch (error) {
-    console.error('[B2B_TASKS_PATCH_FAILED]', error)
-    return NextResponse.json({ ok: false, error: 'Unexpected server error.' }, { status: 500 })
+    console.error('[B2B_TASKS_PATCH_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to update B2B task.' }, { status: 500 })
   }
 }

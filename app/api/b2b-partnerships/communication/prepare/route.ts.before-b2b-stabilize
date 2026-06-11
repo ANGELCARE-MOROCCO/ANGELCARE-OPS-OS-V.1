@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+import { buildTemplateContext, renderB2BTemplateText } from '@/lib/b2b-partnerships/templates'
+
+export async function POST(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const permission = requireB2BPermission('create', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const body = await req.json()
+    const templateId = String(body.template_id || '')
+    const prospectId = body.prospect_id ? String(body.prospect_id) : null
+    const contactId = body.contact_id ? String(body.contact_id) : null
+
+    const { data: template, error: templateError } = await db.from('b2b_communication_templates').select('*').eq('id', templateId).maybeSingle()
+    if (templateError || !template) return NextResponse.json({ ok: false, error: 'Template not found.' }, { status: 404 })
+
+    let prospect = null
+    let contact = null
+    if (prospectId) {
+      const result = await db.from('b2b_prospects').select('*').eq('id', prospectId).maybeSingle()
+      prospect = result.data || null
+    }
+    if (contactId) {
+      const result = await db.from('b2b_contacts').select('*').eq('id', contactId).maybeSingle()
+      contact = result.data || null
+    }
+
+    const context = buildTemplateContext({ prospect, contact, actor, extra: body.context || {} })
+    const subject = renderB2BTemplateText(template.subject, context)
+    const bodyText = renderB2BTemplateText(template.body, context)
+    const shortBody = renderB2BTemplateText(template.short_body, context)
+
+    return NextResponse.json({ ok: true, data: { template, subject, body: bodyText, short_body: shortBody, context } })
+  } catch (error) {
+    console.error('[B2B_PREPARE_COMMUNICATION_FAILED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to prepare communication.' }, { status: 500 })
+  }
+}

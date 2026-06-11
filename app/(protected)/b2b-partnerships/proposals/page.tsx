@@ -1,5 +1,2 @@
-import B2BCompletionWorkspace from '@/components/b2b-partnerships/B2BCompletionWorkspace'
-
-export default function Page() {
-  return <B2BCompletionWorkspace defaultMode="proposals" />
-}
+import B2BCommercialDealDesk from '@/components/b2b-partnerships/B2BCommercialDealDesk'
+export default function Page(){return <B2BCommercialDealDesk/>}

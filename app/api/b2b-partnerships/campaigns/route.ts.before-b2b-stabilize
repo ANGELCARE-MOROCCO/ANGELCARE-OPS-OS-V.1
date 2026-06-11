@@ -1,0 +1,51 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+import { text, nullableText, numberValue } from '@/lib/b2b-partnerships/mega-i-utils'
+
+export async function GET(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok:false, error:'Authentication required.' }, { status:401 })
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok:false, error:permission.error }, { status:permission.status })
+    const limit = Math.min(Number(new URL(req.url).searchParams.get('limit') || 60), 200)
+    const { data, error } = await db.from('b2b_campaigns').select('*').order('created_at', { ascending:false }).limit(limit)
+    if (error) return NextResponse.json({ ok:false, error:'Unable to load campaigns.' }, { status:500 })
+    return NextResponse.json({ ok:true, data:data || [] })
+  } catch (error) {
+    console.error('[B2B_CAMPAIGNS_GET_CRASHED]', error)
+    return NextResponse.json({ ok:false, error:'Unable to load campaigns.' }, { status:500 })
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok:false, error:'Authentication required.' }, { status:401 })
+    const permission = requireB2BPermission('create', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok:false, error:permission.error }, { status:permission.status })
+    const body = await req.json()
+    const name = text(body.name)
+    if (!name) return NextResponse.json({ ok:false, error:'Campaign name is required.' }, { status:400 })
+    const { data, error } = await db.from('b2b_campaigns').insert({
+      name,
+      segment: text(body.segment, 'mixed'),
+      objective: nullableText(body.objective),
+      status: text(body.status, 'Draft'),
+      target_count: numberValue(body.target_count, 0),
+      start_at: nullableText(body.start_at),
+      end_at: nullableText(body.end_at),
+      owner_id: nullableText(body.owner_id) || actor.id,
+      notes: nullableText(body.notes),
+      created_by: actor.id,
+    }).select('*').single()
+    if (error) return NextResponse.json({ ok:false, error:'Unable to create campaign.' }, { status:500 })
+    return NextResponse.json({ ok:true, data }, { status:201 })
+  } catch (error) {
+    console.error('[B2B_CAMPAIGNS_POST_CRASHED]', error)
+    return NextResponse.json({ ok:false, error:'Unable to create campaign.' }, { status:500 })
+  }
+}

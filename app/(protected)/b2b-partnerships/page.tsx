@@ -1,7 +1,5 @@
-import B2BPartnershipsCommandCenter from '@/components/b2b-partnerships/B2BPartnershipsCommandCenter'
-
-export const dynamic = 'force-dynamic'
+import B2BEnterpriseCommandCenter from '@/components/b2b-partnerships/B2BEnterpriseCommandCenter'
 
 export default function B2BPartnershipsPage() {
-  return <B2BPartnershipsCommandCenter />
+  return <B2BEnterpriseCommandCenter />
 }

@@ -1,0 +1,2 @@
+import B2BMegaIWorkspace from '@/components/b2b-partnerships/B2BMegaIWorkspace'
+export default function Page() { return <B2BMegaIWorkspace mode="imports" /> }

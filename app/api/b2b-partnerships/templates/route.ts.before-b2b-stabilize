@@ -1,0 +1,79 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+
+function text(value: unknown) {
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const url = new URL(req.url)
+    const q = url.searchParams.get('q')
+    const channel = url.searchParams.get('channel')
+    const category = url.searchParams.get('category')
+    const segment = url.searchParams.get('segment')
+
+    let query = db.from('b2b_communication_templates').select('*').is('archived_at', null).order('is_default', { ascending: false }).order('created_at', { ascending: false })
+    if (channel && channel !== 'all') query = query.eq('channel', channel)
+    if (category && category !== 'all') query = query.eq('category', category)
+    if (segment && segment !== 'all') query = query.eq('prospect_segment', segment)
+    if (q) query = query.or(`name.ilike.%${q}%,body.ilike.%${q}%,subject.ilike.%${q}%,objective.ilike.%${q}%`)
+
+    const { data, error } = await query
+    if (error) return NextResponse.json({ ok: false, error: 'Unable to load B2B templates.' }, { status: 500 })
+    return NextResponse.json({ ok: true, data: data || [] })
+  } catch (error) {
+    console.error('[B2B_TEMPLATES_GET_FAILED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to load B2B templates.' }, { status: 500 })
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const db = await getServerB2BDatabaseClient()
+    const actor = await getCurrentB2BAppUser()
+    if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
+    const permission = requireB2BPermission('create', { actorId: actor.id, actorRole: actor.role || actor.role_key })
+    if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
+
+    const body = await req.json()
+    const name = text(body.name)
+    const templateBody = text(body.body)
+    if (!name || !templateBody) return NextResponse.json({ ok: false, error: 'Template name and body are required.' }, { status: 400 })
+
+    const payload = {
+      name,
+      category: text(body.category) || 'Premier contact',
+      channel: text(body.channel) || 'Email',
+      prospect_segment: text(body.prospect_segment) || 'General',
+      objective: text(body.objective) || null,
+      tone: text(body.tone) || 'Premium corporate',
+      subject: text(body.subject) || null,
+      body: templateBody,
+      short_body: text(body.short_body) || null,
+      cta: text(body.cta) || null,
+      recommended_next_step: text(body.recommended_next_step) || null,
+      variables: Array.isArray(body.variables) ? body.variables : [],
+      tags: Array.isArray(body.tags) ? body.tags : [],
+      usage_notes: text(body.usage_notes) || null,
+      is_active: body.is_active !== false,
+      is_default: Boolean(body.is_default),
+      created_by: actor.id,
+      updated_by: actor.id,
+    }
+
+    const { data, error } = await db.from('b2b_communication_templates').insert(payload).select('*').single()
+    if (error) return NextResponse.json({ ok: false, error: 'Unable to create template.' }, { status: 500 })
+    return NextResponse.json({ ok: true, data }, { status: 201 })
+  } catch (error) {
+    console.error('[B2B_TEMPLATES_POST_FAILED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to create template.' }, { status: 500 })
+  }
+}

@@ -1,5 +1,5 @@
-import B2BExecutionWorkflowsWorkspace from '@/components/b2b-partnerships/B2BExecutionWorkflowsWorkspace'
+import B2BConfigurableTasksWorkspace from '@/components/b2b-partnerships/B2BConfigurableTasksWorkspace'
 
-export default function Page() {
-  return <B2BExecutionWorkflowsWorkspace defaultMode="tasks" />
+export default function B2BTasksPage() {
+  return <B2BConfigurableTasksWorkspace />
 }
