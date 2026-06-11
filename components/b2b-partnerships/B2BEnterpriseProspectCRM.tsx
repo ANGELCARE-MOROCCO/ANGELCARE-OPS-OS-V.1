@@ -48,12 +48,36 @@ type Contact = {
   name: string
   role?: string | null
   phone?: string | null
+  mobile?: string | null
+  whatsapp?: string | null
   email?: string | null
   linkedin?: string | null
+  department?: string | null
+  is_primary?: boolean | null
   is_decision_maker?: boolean | null
   influence_level?: string | null
   preferred_channel?: string | null
   notes?: string | null
+  archived_at?: string | null
+}
+
+type ContactDraft = {
+  local_id: string
+  id?: string
+  name: string
+  role: string
+  department: string
+  phone: string
+  mobile: string
+  whatsapp: string
+  email: string
+  linkedin: string
+  influence_level: string
+  preferred_channel: string
+  notes: string
+  is_primary: boolean
+  is_decision_maker: boolean
+  _delete?: boolean
 }
 
 type Activity = {
@@ -97,6 +121,81 @@ const initialProspectForm = {
   potential_service_fit: '', current_family_services: '', pain_points: '', opportunity_description: '', estimated_monthly_value: '', estimated_annual_value: '',
   next_follow_up_at: '', next_action: '',
 }
+
+
+function localId() {
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `contact-${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+function newContactDraft(overrides: Partial<ContactDraft> = {}): ContactDraft {
+  return {
+    local_id: localId(),
+    name: '',
+    role: '',
+    department: '',
+    phone: '',
+    mobile: '',
+    whatsapp: '',
+    email: '',
+    linkedin: '',
+    influence_level: 'Medium',
+    preferred_channel: 'Email',
+    notes: '',
+    is_primary: false,
+    is_decision_maker: false,
+    ...overrides,
+  }
+}
+
+function contactToDraft(contact: Contact, index = 0): ContactDraft {
+  return newContactDraft({
+    id: contact.id,
+    name: contact.name || '',
+    role: contact.role || '',
+    department: contact.department || '',
+    phone: contact.phone || '',
+    mobile: contact.mobile || contact.phone || '',
+    whatsapp: contact.whatsapp || contact.mobile || contact.phone || '',
+    email: contact.email || '',
+    linkedin: contact.linkedin || '',
+    influence_level: contact.influence_level || 'Medium',
+    preferred_channel: contact.preferred_channel || 'Email',
+    notes: contact.notes || '',
+    is_primary: Boolean(contact.is_primary || index === 0),
+    is_decision_maker: Boolean(contact.is_decision_maker),
+  })
+}
+
+
+function formatDateTime(value?: string | null) {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function contactDraftIsEmpty(contact: ContactDraft) {
+  return ![
+    contact.name,
+    contact.role,
+    contact.department,
+    contact.phone,
+    contact.mobile,
+    contact.whatsapp,
+    contact.email,
+    contact.linkedin,
+    contact.notes,
+  ].some((value) => String(value || '').trim())
+}
+
 
 function money(value?: number | null) {
   return new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD', maximumFractionDigits: 0 }).format(Number(value || 0))
@@ -155,7 +254,8 @@ export default function B2BEnterpriseProspectCRM() {
   const [viewMode, setViewMode] = useState<'all' | 'hotels' | 'clinics' | 'priority' | 'overdue'>('all')
   const [modal, setModal] = useState<'create' | 'edit' | 'contact' | 'qualification' | null>(null)
   const [form, setForm] = useState<Record<string, string>>(initialProspectForm)
-  const [contactForm, setContactForm] = useState({ name: '', role: '', phone: '', email: '', linkedin: '', influence_level: 'Medium', preferred_channel: 'Email', notes: '', is_decision_maker: false })
+  const [contactForm, setContactForm] = useState({ name: '', role: '', department: '', phone: '', mobile: '', whatsapp: '', email: '', linkedin: '', influence_level: 'Medium', preferred_channel: 'Email', notes: '', is_primary: false, is_decision_maker: false })
+  const [contactDrafts, setContactDrafts] = useState<ContactDraft[]>([newContactDraft({ is_primary: true })])
 
   async function loadProspects() {
     try {
@@ -214,8 +314,81 @@ export default function B2BEnterpriseProspectCRM() {
     return { hotels, clinics, priorityA, overdue, monthly }
   }, [prospects])
 
+
+  function updateContactDraft(localId: string, patch: Partial<ContactDraft>) {
+    setContactDrafts((current) => current.map((contact) => (
+      contact.local_id === localId ? { ...contact, ...patch } : contact
+    )))
+  }
+
+  function addContactDraft() {
+    setContactDrafts((current) => [...current, newContactDraft({ is_primary: current.length === 0 })])
+  }
+
+  function removeContactDraft(localId: string) {
+    setContactDrafts((current) => {
+      const target = current.find((contact) => contact.local_id === localId)
+      if (target?.id) {
+        return current.map((contact) => (
+          contact.local_id === localId ? { ...contact, _delete: true } : contact
+        ))
+      }
+
+      const remaining = current.filter((contact) => contact.local_id !== localId)
+      return remaining.length ? remaining : [newContactDraft({ is_primary: true })]
+    })
+  }
+
+  function markPrimaryContact(localId: string) {
+    setContactDrafts((current) => current.map((contact) => ({
+      ...contact,
+      is_primary: contact.local_id === localId,
+    })))
+  }
+
+  async function syncContactDrafts(prospectId: string) {
+    const activeContacts = contactDrafts.filter((contact) => !contact._delete && !contactDraftIsEmpty(contact))
+
+    for (const contact of contactDrafts) {
+      if (contact._delete && contact.id) {
+        await fetch(`/api/b2b-partnerships/contacts/${contact.id}`, { method: 'DELETE' })
+      }
+    }
+
+    for (const contact of activeContacts) {
+      const payload = {
+        prospect_id: prospectId,
+        name: contact.name || 'Contact',
+        role: contact.role || null,
+        department: contact.department || null,
+        phone: contact.phone || null,
+        mobile: contact.mobile || contact.phone || null,
+        whatsapp: contact.whatsapp || contact.mobile || contact.phone || null,
+        email: contact.email || null,
+        linkedin: contact.linkedin || null,
+        influence_level: contact.influence_level || 'Medium',
+        preferred_channel: contact.preferred_channel || 'Email',
+        notes: contact.notes || null,
+        is_primary: Boolean(contact.is_primary),
+        is_decision_maker: Boolean(contact.is_decision_maker),
+      }
+
+      const response = await fetch(contact.id ? `/api/b2b-partnerships/contacts/${contact.id}` : '/api/b2b-partnerships/contacts', {
+        method: contact.id ? 'PATCH' : 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      const json = await response.json().catch(() => null)
+      if (!response.ok || !json?.ok) {
+        throw new Error(json?.error || 'Unable to save contact.')
+      }
+    }
+  }
+
   function openCreate() {
     setForm(initialProspectForm)
+    setContactDrafts([newContactDraft({ is_primary: true })])
     setModal('create')
   }
 
@@ -229,6 +402,18 @@ export default function B2BEnterpriseProspectCRM() {
       estimated_monthly_value: String(p.estimated_monthly_value ?? ''), estimated_annual_value: String(p.estimated_annual_value ?? ''),
       next_follow_up_at: p.next_follow_up_at ? p.next_follow_up_at.slice(0, 16) : '',
     })
+    setContactDrafts(Array.isArray(selected.contacts) && selected.contacts.length
+      ? selected.contacts.map((contact, index) => contactToDraft(contact, index))
+      : [newContactDraft({
+          name: p.main_contact_name || p.decision_maker_name || '',
+          role: p.main_contact_role || p.decision_maker_role || '',
+          phone: p.phone || p.decision_maker_phone || '',
+          mobile: p.phone || p.decision_maker_phone || '',
+          whatsapp: p.phone || p.decision_maker_phone || '',
+          email: p.email || p.decision_maker_email || '',
+          is_primary: true,
+          is_decision_maker: Boolean(p.decision_maker_name),
+        })])
     setModal('edit')
   }
 
@@ -241,6 +426,9 @@ export default function B2BEnterpriseProspectCRM() {
       const res = await fetch(url, { method: modal === 'edit' ? 'PATCH' : 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) })
       const json = await res.json()
       if (!json.ok) throw new Error(json.error || 'Unable to save prospect')
+      if (json.data?.id) {
+        await syncContactDrafts(json.data.id)
+      }
       setModal(null)
       await loadProspects()
       if (json.data?.id) await openDetail(json.data.id)
@@ -260,7 +448,7 @@ export default function B2BEnterpriseProspectCRM() {
       const json = await res.json()
       if (!json.ok) throw new Error(json.error || 'Unable to add contact')
       setModal(null)
-      setContactForm({ name: '', role: '', phone: '', email: '', linkedin: '', influence_level: 'Medium', preferred_channel: 'Email', notes: '', is_decision_maker: false })
+      setContactForm({ name: '', role: '', department: '', phone: '', mobile: '', whatsapp: '', email: '', linkedin: '', influence_level: 'Medium', preferred_channel: 'Email', notes: '', is_primary: false, is_decision_maker: false })
       await openDetail(selected.prospect.id)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to add contact')
@@ -268,6 +456,42 @@ export default function B2BEnterpriseProspectCRM() {
       setSaving(false)
     }
   }
+
+  const selectedActivities = Array.isArray((selected as any)?.activities)
+    ? (selected as any).activities
+    : Array.isArray((selected as any)?.timeline)
+      ? (selected as any).timeline
+      : []
+
+  const selectedContacts = Array.isArray((selected as any)?.contacts) ? (selected as any).contacts : []
+  const selectedTasks = Array.isArray((selected as any)?.tasks) ? (selected as any).tasks : []
+  const selectedMeetings = Array.isArray((selected as any)?.meetings) ? (selected as any).meetings : []
+  const selectedOutreach = Array.isArray((selected as any)?.outreach) ? (selected as any).outreach : []
+  const selectedCalls = Array.isArray((selected as any)?.calls) ? (selected as any).calls : []
+  const selectedProposals = Array.isArray((selected as any)?.proposals) ? (selected as any).proposals : []
+
+  const selectedProspectRecord = ((selected as any)?.prospect || selected || {}) as any
+  const selectedPrimaryContact = selectedContacts.find((contact: any) => contact?.is_primary) || selectedContacts[0]
+  const selectedDecisionMakers = selectedContacts.filter((contact: any) => contact?.is_decision_maker)
+  const selectedEmails = Array.from(new Set([
+    selectedProspectRecord.email,
+    selectedProspectRecord.decision_maker_email,
+    ...(Array.isArray(selectedProspectRecord.emails) ? selectedProspectRecord.emails : []),
+    ...selectedContacts.map((contact: any) => contact?.email),
+  ].filter(Boolean)))
+
+  const selectedPhones = Array.from(new Set([
+    selectedProspectRecord.phone,
+    selectedProspectRecord.decision_maker_phone,
+    ...(Array.isArray(selectedProspectRecord.phones) ? selectedProspectRecord.phones : []),
+    ...selectedContacts.flatMap((contact: any) => [contact?.phone, contact?.mobile, contact?.whatsapp]),
+  ].filter(Boolean)))
+
+  const selectedNextAction = selectedProspectRecord.next_action || selectedTasks.find((task: any) => task?.status !== 'Done')?.title || 'Define next action'
+  const selectedNextFollowUp = selectedProspectRecord.next_follow_up_at || selectedTasks.find((task: any) => task?.due_date)?.due_date
+  const selectedOpportunityValue = Number(selectedProspectRecord.estimated_annual_value || selectedProspectRecord.estimated_monthly_value || 0)
+
+
 
   return (
     <main className={styles.workspace}>
@@ -358,11 +582,82 @@ export default function B2BEnterpriseProspectCRM() {
                 <div><span>Revenue</span><strong>{selected.prospect.revenue_potential_score ?? '—'}/10</strong></div>
               </div>
 
-              <section className={styles.detailSection}><h3>Business fit</h3><p>{selected.prospect.potential_service_fit || 'No service fit defined yet.'}</p><h4>Pain points</h4><p>{selected.prospect.pain_points || 'No pain points captured yet.'}</p></section>
+              
+<section className={styles.selectedPremiumPanel}>
+  <div className={styles.selectedCommandHeader}>
+    <div>
+      <span className={styles.selectedEyebrow}>Enterprise prospect intelligence</span>
+      <h3>{selectedProspectRecord.name || 'Selected prospect'}</h3>
+      <p>
+        {selectedProspectRecord.sector || 'Sector pending'} · {selectedProspectRecord.city || 'City pending'} · {selectedProspectRecord.status || 'Status pending'}
+      </p>
+    </div>
+    <div className={styles.selectedHeaderBadges}>
+      <span>{selectedProspectRecord.priority_score || 'B'} Priority</span>
+      <span>{selectedProspectRecord.relationship_warmth || 'Cold'} warmth</span>
+      <span>{selectedContacts.length} contacts</span>
+    </div>
+  </div>
 
-              <section className={styles.detailSection}><div className={styles.sectionTitle}><h3>Decision makers & contacts</h3><button onClick={() => setModal('contact')} className={styles.smallButton}>Add contact</button></div>{selected.contacts.length === 0 ? <p>No contacts yet.</p> : selected.contacts.map((c) => <div key={c.id} className={styles.contactCard}><strong>{c.name}</strong><span>{c.role || 'Role pending'} · {c.email || c.phone || 'No contact channel'}</span>{c.is_decision_maker && <em>Decision maker</em>}</div>)}</section>
+  <div className={styles.selectedPremiumInsightGrid}>
+    <article className={styles.selectedInsightCard}>
+      <span className={styles.selectedInsightIcon}>🎯</span>
+      <small>Next action</small>
+      <strong>{selectedNextAction}</strong>
+      <em>{selectedNextFollowUp ? formatDateTime(selectedNextFollowUp) : 'No follow-up planned'}</em>
+    </article>
 
-              <section className={styles.detailSection}><h3>Execution timeline</h3>{selected.activities.length === 0 ? <p>No activity yet.</p> : selected.activities.slice(0, 8).map((a) => <div key={a.id} className={styles.timelineItem}><strong>{a.title}</strong><span>{a.description || a.activity_type}</span><small>{dateLabel(a.created_at)}</small></div>)}</section>
+    <article className={styles.selectedInsightCard}>
+      <span className={styles.selectedInsightIcon}>👥</span>
+      <small>Decision access</small>
+      <strong>{selectedDecisionMakers.length ? `${selectedDecisionMakers.length} decision maker(s)` : 'Decision maker pending'}</strong>
+      <em>{selectedPrimaryContact?.name || selectedProspectRecord.decision_maker_name || 'Add contact owner'}</em>
+    </article>
+
+    <article className={styles.selectedInsightCard}>
+      <span className={styles.selectedInsightIcon}>📞</span>
+      <small>Contact channels</small>
+      <strong>{selectedEmails.length} emails · {selectedPhones.length} phones</strong>
+      <em>{selectedEmails[0] || selectedPhones[0] || 'No channel confirmed'}</em>
+    </article>
+
+    <article className={styles.selectedInsightCard}>
+      <span className={styles.selectedInsightIcon}>💰</span>
+      <small>Commercial value</small>
+      <strong>{selectedOpportunityValue ? `${selectedOpportunityValue.toLocaleString('fr-FR')} MAD` : 'Value pending'}</strong>
+      <em>{selectedProspectRecord.opportunity_description || 'Opportunity still to qualify'}</em>
+    </article>
+  </div>
+
+  <div className={styles.selectedSignalGrid}>
+    <div>
+      <small>Primary contact</small>
+      <strong>{selectedPrimaryContact?.name || selectedProspectRecord.main_contact_name || 'Not assigned'}</strong>
+      <span>{selectedPrimaryContact?.role || selectedProspectRecord.main_contact_role || 'Role pending'}</span>
+    </div>
+    <div>
+      <small>Best email</small>
+      <strong>{selectedEmails[0] || 'No email'}</strong>
+      <span>{selectedEmails.length > 1 ? `${selectedEmails.length - 1} other email(s)` : 'Single channel'}</span>
+    </div>
+    <div>
+      <small>Best phone / WhatsApp</small>
+      <strong>{selectedPhones[0] || 'No phone'}</strong>
+      <span>{selectedPhones.length > 1 ? `${selectedPhones.length - 1} other number(s)` : 'Single channel'}</span>
+    </div>
+    <div>
+      <small>Pipeline quality</small>
+      <strong>{selectedProspectRecord.priority_score || 'B'} · {selectedProspectRecord.status || 'New'}</strong>
+      <span>{selectedActivities.length} timeline events</span>
+    </div>
+  </div>
+</section>
+
+<section className={styles.detailSection}><h3>Business fit</h3><p>{selected.prospect.potential_service_fit || 'No service fit defined yet.'}</p><h4>Pain points</h4><p>{selected.prospect.pain_points || 'No pain points captured yet.'}</p></section>
+
+              <section className={styles.detailSection}><div className={styles.sectionTitle}><h3>Decision makers & contacts</h3><button onClick={() => setModal('contact')} className={styles.smallButton}>Add contact</button></div>{selectedContacts.length === 0 ? <p>No contacts yet.</p> : selectedContacts.map((c: any) => <div key={c.id} className={styles.contactCard}><strong>{c.name}</strong><span>{c.role || 'Role pending'} · {c.email || c.phone || 'No contact channel'}</span>{c.is_decision_maker && <em>Decision maker</em>}</div>)}</section>
+
+              <section className={styles.detailSection}><h3>Execution timeline</h3>{selectedActivities.length === 0 ? <p>No activity yet.</p> : selected.activities.slice(0, 8).map((a) => <div key={a.id} className={styles.timelineItem}><strong>{a.title}</strong><span>{a.description || a.activity_type}</span><small>{dateLabel(a.created_at)}</small></div>)}</section>
             </div>
           )}
         </aside>
@@ -376,6 +671,44 @@ export default function B2BEnterpriseProspectCRM() {
               <section><h3>1. Identity & segment</h3><label>Prospect name<input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label><label>Sector<select value={form.sector} onChange={(e) => setForm({ ...form, sector: e.target.value })}>{sectors.map((s) => <option key={s}>{s}</option>)}</select></label><label>Sub-sector<input value={form.sub_sector} onChange={(e) => setForm({ ...form, sub_sector: e.target.value })} /></label><label>City<input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} /></label><label>Address<textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></label></section>
               <section><h3>2. Contact channels</h3><label>Phone<input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label><label>Email<input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label><label>Website<input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} /></label><label>LinkedIn<input value={form.linkedin} onChange={(e) => setForm({ ...form, linkedin: e.target.value })} /></label><label>Instagram<input value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} /></label></section>
               <section><h3>3. Decision maker</h3><label>Main contact<input value={form.main_contact_name} onChange={(e) => setForm({ ...form, main_contact_name: e.target.value })} /></label><label>Main contact role<input value={form.main_contact_role} onChange={(e) => setForm({ ...form, main_contact_role: e.target.value })} /></label><label>Decision maker<input value={form.decision_maker_name} onChange={(e) => setForm({ ...form, decision_maker_name: e.target.value })} /></label><label>Decision maker role<input value={form.decision_maker_role} onChange={(e) => setForm({ ...form, decision_maker_role: e.target.value })} /></label><label>Decision maker email<input value={form.decision_maker_email} onChange={(e) => setForm({ ...form, decision_maker_email: e.target.value })} /></label></section>
+              <section className={styles.contactsWide}>
+                <div className={styles.contactsHeader}>
+                  <div>
+                    <h3>7. Contacts multiples, emails & mobiles</h3>
+                    <p>Ajoutez plusieurs décideurs, commerciaux, réception, réservation, WhatsApp et emails par prospect.</p>
+                  </div>
+                  <button type="button" className={styles.smallButton} onClick={addContactDraft}>+ Ajouter contact</button>
+                </div>
+
+                <div className={styles.contactsManager}>
+                  {contactDrafts.filter((contact) => !contact._delete).map((contact, index) => (
+                    <article key={contact.local_id} className={styles.contactDraftCard}>
+                      <div className={styles.contactDraftTop}>
+                        <strong>Contact {index + 1}</strong>
+                        <div>
+                          <button type="button" className={contact.is_primary ? styles.primaryMini : styles.miniButton} onClick={() => markPrimaryContact(contact.local_id)}>Principal</button>
+                          <button type="button" className={styles.dangerMini} onClick={() => removeContactDraft(contact.local_id)}>Supprimer</button>
+                        </div>
+                      </div>
+
+                      <div className={styles.contactDraftGrid}>
+                        <label>Nom / service<input value={contact.name} onChange={(e) => updateContactDraft(contact.local_id, { name: e.target.value })} placeholder="Direction Commerciale, Sales Manager..." /></label>
+                        <label>Rôle<input value={contact.role} onChange={(e) => updateContactDraft(contact.local_id, { role: e.target.value })} placeholder="Directrice commerciale, Réservations..." /></label>
+                        <label>Département<input value={contact.department} onChange={(e) => updateContactDraft(contact.local_id, { department: e.target.value })} placeholder="Sales, Réservation, Direction..." /></label>
+                        <label>Email<input value={contact.email} onChange={(e) => updateContactDraft(contact.local_id, { email: e.target.value })} placeholder="sales@hotel.com" /></label>
+                        <label>Téléphone<input value={contact.phone} onChange={(e) => updateContactDraft(contact.local_id, { phone: e.target.value })} placeholder="0537..." /></label>
+                        <label>Mobile<input value={contact.mobile} onChange={(e) => updateContactDraft(contact.local_id, { mobile: e.target.value })} placeholder="06..." /></label>
+                        <label>WhatsApp<input value={contact.whatsapp} onChange={(e) => updateContactDraft(contact.local_id, { whatsapp: e.target.value })} placeholder="WhatsApp direct" /></label>
+                        <label>LinkedIn<input value={contact.linkedin} onChange={(e) => updateContactDraft(contact.local_id, { linkedin: e.target.value })} placeholder="Profil LinkedIn" /></label>
+                        <label>Influence<select value={contact.influence_level} onChange={(e) => updateContactDraft(contact.local_id, { influence_level: e.target.value })}><option>Low</option><option>Medium</option><option>High</option><option>Final decision maker</option></select></label>
+                        <label>Canal préféré<select value={contact.preferred_channel} onChange={(e) => updateContactDraft(contact.local_id, { preferred_channel: e.target.value })}><option>Email</option><option>Phone</option><option>WhatsApp</option><option>LinkedIn</option></select></label>
+                        <label className={styles.contactNote}>Notes<textarea value={contact.notes} onChange={(e) => updateContactDraft(contact.local_id, { notes: e.target.value })} placeholder="Disponibilité, accès décideur, objections, contexte..." /></label>
+                        <label className={styles.checkbox}><input type="checkbox" checked={contact.is_decision_maker} onChange={(e) => updateContactDraft(contact.local_id, { is_decision_maker: e.target.checked })} /> Décideur / influence forte</label>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
               <section><h3>4. Qualification scoring</h3><label>Status<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>{statuses.map((s) => <option key={s}>{s}</option>)}</select></label><label>Priority<select value={form.priority_score} onChange={(e) => setForm({ ...form, priority_score: e.target.value })}>{priorityScores.map((s) => <option key={s}>{s}</option>)}</select></label><label>Relationship warmth<select value={form.relationship_warmth} onChange={(e) => setForm({ ...form, relationship_warmth: e.target.value })}>{warmth.map((s) => <option key={s}>{s}</option>)}</select></label><label>Fit score<input type="number" min="1" max="10" value={form.fit_score} onChange={(e) => setForm({ ...form, fit_score: e.target.value })} /></label><label>Revenue score<input type="number" min="1" max="10" value={form.revenue_potential_score} onChange={(e) => setForm({ ...form, revenue_potential_score: e.target.value })} /></label></section>
               <section className={styles.wide}><h3>5. ANGELCARE service fit</h3><label>Current child/family services<textarea value={form.current_family_services} onChange={(e) => setForm({ ...form, current_family_services: e.target.value })} /></label><label>Potential ANGELCARE fit<textarea value={form.potential_service_fit} onChange={(e) => setForm({ ...form, potential_service_fit: e.target.value })} /></label><label>Pain points<textarea value={form.pain_points} onChange={(e) => setForm({ ...form, pain_points: e.target.value })} /></label></section>
               <section className={styles.wide}><h3>6. Commercial opportunity & next action</h3><label>Opportunity description<textarea value={form.opportunity_description} onChange={(e) => setForm({ ...form, opportunity_description: e.target.value })} /></label><label>Estimated monthly value<input type="number" value={form.estimated_monthly_value} onChange={(e) => setForm({ ...form, estimated_monthly_value: e.target.value })} /></label><label>Estimated annual value<input type="number" value={form.estimated_annual_value} onChange={(e) => setForm({ ...form, estimated_annual_value: e.target.value })} /></label><label>Next follow-up<input type="datetime-local" value={form.next_follow_up_at} onChange={(e) => setForm({ ...form, next_follow_up_at: e.target.value })} /></label><label>Next action<textarea value={form.next_action} onChange={(e) => setForm({ ...form, next_action: e.target.value })} /></label></section>
@@ -389,7 +722,7 @@ export default function B2BEnterpriseProspectCRM() {
         <div className={styles.modalBackdrop} onClick={() => setModal(null)}>
           <form className={styles.contactModal} onSubmit={submitContact} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}><div><p className={styles.eyebrow}>Decision-maker layer</p><h2>Add contact for {selected.prospect.name}</h2><span>Capture influence level, preferred channel, and decision-maker status.</span></div><button type="button" onClick={() => setModal(null)}>×</button></div>
-            <div className={styles.contactGrid}><label>Name<input required value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} /></label><label>Role<input value={contactForm.role} onChange={(e) => setContactForm({ ...contactForm, role: e.target.value })} /></label><label>Phone<input value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></label><label>Email<input value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></label><label>LinkedIn<input value={contactForm.linkedin} onChange={(e) => setContactForm({ ...contactForm, linkedin: e.target.value })} /></label><label>Influence<select value={contactForm.influence_level} onChange={(e) => setContactForm({ ...contactForm, influence_level: e.target.value })}><option>Low</option><option>Medium</option><option>High</option><option>Final decision maker</option></select></label><label className={styles.wide}>Notes<textarea value={contactForm.notes} onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })} /></label><label className={styles.checkbox}><input type="checkbox" checked={contactForm.is_decision_maker} onChange={(e) => setContactForm({ ...contactForm, is_decision_maker: e.target.checked })} /> Mark as decision maker</label></div>
+            <div className={styles.contactGrid}><label>Name / service<input required value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} /></label><label>Role<input value={contactForm.role} onChange={(e) => setContactForm({ ...contactForm, role: e.target.value })} /></label><label>Department<input value={contactForm.department} onChange={(e) => setContactForm({ ...contactForm, department: e.target.value })} /></label><label>Email<input value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></label><label>Phone<input value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></label><label>Mobile<input value={contactForm.mobile} onChange={(e) => setContactForm({ ...contactForm, mobile: e.target.value })} /></label><label>WhatsApp<input value={contactForm.whatsapp} onChange={(e) => setContactForm({ ...contactForm, whatsapp: e.target.value })} /></label><label>LinkedIn<input value={contactForm.linkedin} onChange={(e) => setContactForm({ ...contactForm, linkedin: e.target.value })} /></label><label>Influence<select value={contactForm.influence_level} onChange={(e) => setContactForm({ ...contactForm, influence_level: e.target.value })}><option>Low</option><option>Medium</option><option>High</option><option>Final decision maker</option></select></label><label>Preferred channel<select value={contactForm.preferred_channel} onChange={(e) => setContactForm({ ...contactForm, preferred_channel: e.target.value })}><option>Email</option><option>Phone</option><option>WhatsApp</option><option>LinkedIn</option></select></label><label className={styles.wide}>Notes<textarea value={contactForm.notes} onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })} /></label><label className={styles.checkbox}><input type="checkbox" checked={contactForm.is_primary} onChange={(e) => setContactForm({ ...contactForm, is_primary: e.target.checked })} /> Primary contact</label><label className={styles.checkbox}><input type="checkbox" checked={contactForm.is_decision_maker} onChange={(e) => setContactForm({ ...contactForm, is_decision_maker: e.target.checked })} /> Mark as decision maker</label></div>
             <div className={styles.modalFooter}><button type="button" className={styles.ghostButton} onClick={() => setModal(null)}>Cancel</button><button disabled={saving} className={styles.primaryButton}>{saving ? 'Saving...' : 'Add contact'}</button></div>
           </form>
         </div>

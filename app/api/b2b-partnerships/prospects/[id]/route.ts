@@ -1,0 +1,262 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
+import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
+
+type RouteContext = {
+  params: Promise<{ id: string }>
+}
+
+async function guard(action: 'read' | 'create' | 'update' | 'archive' = 'read') {
+  const db = await getServerB2BDatabaseClient()
+  const actor = await getCurrentB2BAppUser()
+
+  if (!actor?.id) {
+    return {
+      ok: false as const,
+      db,
+      actor,
+      response: NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 }),
+    }
+  }
+
+  const permission = requireB2BPermission(action, {
+    actorId: actor.id,
+    actorRole: actor.role || actor.role_key,
+    permissions: actor.permissions,
+  })
+
+  if (!permission.ok) {
+    return {
+      ok: false as const,
+      db,
+      actor,
+      response: NextResponse.json({ ok: false, error: permission.error }, { status: permission.status }),
+    }
+  }
+
+  return { ok: true as const, db, actor }
+}
+
+function cleanPatch(body: Record<string, unknown>) {
+  const allowed = [
+    'name',
+    'sector',
+    'sub_sector',
+    'city',
+    'address',
+    'website',
+    'instagram',
+    'linkedin',
+    'google_maps_url',
+    'phone',
+    'email',
+    'main_contact_name',
+    'main_contact_role',
+    'decision_maker_name',
+    'decision_maker_role',
+    'decision_maker_phone',
+    'decision_maker_email',
+    'status',
+    'priority_score',
+    'relationship_warmth',
+    'fit_score',
+    'urgency_score',
+    'decision_power_score',
+    'revenue_potential_score',
+    'potential_service_fit',
+    'current_family_services',
+    'pain_points',
+    'opportunity_description',
+    'estimated_monthly_value',
+    'estimated_annual_value',
+    'assigned_owner_id',
+    'next_action',
+    'next_follow_up_at',
+    'internal_notes',
+  ]
+
+  const patch: Record<string, unknown> = {}
+
+  for (const key of allowed) {
+    if (body[key] !== undefined) {
+      patch[key] = body[key] === '' ? null : body[key]
+    }
+  }
+
+  patch.updated_at = new Date().toISOString()
+
+  return patch
+}
+
+export async function GET(_req: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params
+    const g = await guard('read')
+    if (!g.ok) return g.response
+
+    const { data: prospect, error } = await g.db
+      .from('b2b_prospects')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle()
+
+    if (error) {
+      console.error('[B2B_PROSPECT_DETAIL_GET_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to load B2B prospect.' }, { status: 500 })
+    }
+
+    if (!prospect) {
+      return NextResponse.json({ ok: false, error: 'Prospect not found.' }, { status: 404 })
+    }
+
+    const [
+      contactsResult,
+      tasksResult,
+      meetingsResult,
+      outreachResult,
+      callsResult,
+      proposalsResult,
+      directActionsResult,
+    ] = await Promise.allSettled([
+      g.db.from('b2b_contacts').select('*').eq('prospect_id', id).order('created_at', { ascending: false }),
+      g.db.from('b2b_tasks').select('*').eq('prospect_id', id).order('created_at', { ascending: false }),
+      g.db.from('b2b_meetings').select('*').eq('prospect_id', id).order('scheduled_at', { ascending: false }),
+      g.db.from('b2b_outreach_logs').select('*').eq('prospect_id', id).order('sent_at', { ascending: false }),
+      g.db.from('b2b_calls').select('*').eq('prospect_id', id).order('created_at', { ascending: false }),
+      g.db.from('b2b_proposals').select('*').eq('prospect_id', id).order('created_at', { ascending: false }),
+      g.db.from('b2b_direct_actions').select('*').eq('prospect_id', id).order('created_at', { ascending: false }),
+    ])
+
+    function rows(result: PromiseSettledResult<any>) {
+      if (result.status !== 'fulfilled') return []
+      if (result.value?.error) return []
+      return result.value?.data || []
+    }
+
+    const timeline = [
+      ...rows(directActionsResult).map((x: any) => ({
+            id: `direct-${x.id}`,
+            type: 'direct_action',
+            title: x.subject || x.action_type || x.channel || 'Direct action',
+            description: x.message_body || x.outcome || '',
+            created_at: x.created_at,
+            raw: x,
+          })),
+          ...rows(tasksResult).map((x: any) => ({
+            id: `task-${x.id}`,
+            type: 'task',
+            title: x.title || 'Task',
+            description: x.description || x.status || '',
+            created_at: x.created_at || x.due_date,
+            raw: x,
+          })),
+          ...rows(meetingsResult).map((x: any) => ({
+            id: `meeting-${x.id}`,
+            type: 'meeting',
+            title: x.agenda || x.meeting_type || 'Meeting',
+            description: x.notes || x.status || '',
+            created_at: x.scheduled_at || x.created_at,
+            raw: x,
+          })),
+          ...rows(outreachResult).map((x: any) => ({
+            id: `outreach-${x.id}`,
+            type: 'outreach',
+            title: x.subject || x.channel || 'Outreach',
+            description: x.message_body || x.outcome || '',
+            created_at: x.sent_at || x.created_at,
+            raw: x,
+          })),
+          ...rows(callsResult).map((x: any) => ({
+            id: `call-${x.id}`,
+            type: 'call',
+            title: x.call_result || x.call_type || 'Call',
+            description: x.summary || x.next_step || '',
+            created_at: x.created_at,
+            raw: x,
+          })),
+          ...rows(proposalsResult).map((x: any) => ({
+            id: `proposal-${x.id}`,
+            type: 'proposal',
+            title: x.proposal_title || x.title || 'Proposal',
+            description: x.status || '',
+            created_at: x.created_at,
+            raw: x,
+          })),
+        ].sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
+
+    return NextResponse.json({
+      ok: true,
+      data: {
+        prospect,
+        contacts: rows(contactsResult),
+        tasks: rows(tasksResult),
+        meetings: rows(meetingsResult),
+        outreach: rows(outreachResult),
+        calls: rows(callsResult),
+        proposals: rows(proposalsResult),
+        direct_actions: rows(directActionsResult),
+        timeline,
+        activities: timeline,
+      },
+    })
+  } catch (error) {
+    console.error('[B2B_PROSPECT_DETAIL_GET_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to load B2B prospect.' }, { status: 500 })
+  }
+}
+
+export async function PATCH(req: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params
+    const g = await guard('update')
+    if (!g.ok) return g.response
+
+    const body = await req.json()
+    const patch = cleanPatch(body)
+
+    const { data, error } = await g.db
+      .from('b2b_prospects')
+      .update(patch)
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (error) {
+      console.error('[B2B_PROSPECT_DETAIL_PATCH_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to update B2B prospect.' }, { status: 500 })
+    }
+
+    return NextResponse.json({ ok: true, data })
+  } catch (error) {
+    console.error('[B2B_PROSPECT_DETAIL_PATCH_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to update B2B prospect.' }, { status: 500 })
+  }
+}
+
+export async function DELETE(_req: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params
+    const g = await guard('archive')
+    if (!g.ok) return g.response
+
+    const { data, error } = await g.db
+      .from('b2b_prospects')
+      .update({
+        archived_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (error) {
+      console.error('[B2B_PROSPECT_DETAIL_DELETE_FAILED]', error)
+      return NextResponse.json({ ok: false, error: 'Unable to archive B2B prospect.' }, { status: 500 })
+    }
+
+    return NextResponse.json({ ok: true, data })
+  } catch (error) {
+    console.error('[B2B_PROSPECT_DETAIL_DELETE_CRASHED]', error)
+    return NextResponse.json({ ok: false, error: 'Unable to archive B2B prospect.' }, { status: 500 })
+  }
+}

@@ -61,6 +61,18 @@ export const MODULE_PERMISSIONS = {
     'marketing.home',
     'marketing.view',
   ],
+  b2b_partnerships: [
+    'b2b_partnerships.access',
+    'b2b_partnerships.read',
+    'b2b_partnerships.create',
+    'b2b_partnerships.update',
+    'b2b_partnerships.delete',
+    'b2b_partnerships.manage_templates',
+    'b2b_partnerships.manage_campaigns',
+    'b2b_partnerships.manage_automation',
+    'b2b_partnerships.manage_reports',
+    'b2b_partnerships.manage_settings',
+  ],
   staff_portal: [
     'staff_portal.view',
     'staff_portal.manager',

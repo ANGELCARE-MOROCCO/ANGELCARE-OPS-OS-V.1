@@ -45,3 +45,1115 @@
 .empty { padding:28px; border-radius:24px; border:1px dashed #cbd5e1; background:#f8fafc; color:#64748b; }
 @media(max-width:1100px){.hero,.board{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:720px){.grid,.formGrid{grid-template-columns:1fr}.hero{padding:20px}.hero h2{font-size:32px}}
+
+/* ============================================================
+   ANGELCARE B2B — CAMPAIGNS & SEQUENCES PREMIUM UIX
+   Page: /b2b-partnerships/campaigns
+   UI-only. No backend / API / CRUD / data logic changes.
+   ============================================================ */
+
+.campaignPremiumSurface {
+  position: relative;
+  background:
+    radial-gradient(circle at 7% 4%, rgba(37, 99, 235, .15), transparent 30%),
+    radial-gradient(circle at 94% 6%, rgba(245, 158, 11, .12), transparent 29%),
+    radial-gradient(circle at 70% 96%, rgba(236, 72, 153, .09), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #edf4f8 100%) !important;
+}
+
+/* Premium campaign command hero */
+.campaignPremiumSurface .hero,
+.campaignPremiumSurface .header,
+.campaignPremiumSurface .commandHero,
+.campaignPremiumSurface .campaignHero,
+.campaignPremiumSurface .sequenceHero {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  border-radius: 38px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(37, 99, 235, .20), transparent 30%),
+    radial-gradient(circle at 14% 88%, rgba(245, 158, 11, .14), transparent 34%),
+    radial-gradient(circle at 96% 92%, rgba(236, 72, 153, .10), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 54%, #f4f8ff 100%) !important;
+  box-shadow:
+    0 34px 96px rgba(15, 23, 42, .12),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.campaignPremiumSurface .hero::before,
+.campaignPremiumSurface .header::before,
+.campaignPremiumSurface .commandHero::before,
+.campaignPremiumSurface .campaignHero::before,
+.campaignPremiumSurface .sequenceHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .032) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.68), transparent 76%);
+}
+
+.campaignPremiumSurface .hero::after,
+.campaignPremiumSurface .header::after,
+.campaignPremiumSurface .commandHero::after,
+.campaignPremiumSurface .campaignHero::after,
+.campaignPremiumSurface .sequenceHero::after {
+  content: "🚀";
+  position: absolute;
+  right: 34px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 106px;
+  height: 106px;
+  border-radius: 36px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(245, 158, 11, .12)),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, .94);
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .18);
+  font-size: 46px;
+}
+
+.campaignPremiumSurface .hero :global(h1),
+.campaignPremiumSurface .header :global(h1),
+.campaignPremiumSurface .commandHero :global(h1),
+.campaignPremiumSurface .campaignHero :global(h1),
+.campaignPremiumSurface .sequenceHero :global(h1) {
+  color: #07111f !important;
+  letter-spacing: -0.07em !important;
+  line-height: .93 !important;
+  font-weight: 950 !important;
+}
+
+.campaignPremiumSurface .hero :global(p),
+.campaignPremiumSurface .header :global(p),
+.campaignPremiumSurface .commandHero :global(p),
+.campaignPremiumSurface .campaignHero :global(p),
+.campaignPremiumSurface .sequenceHero :global(p) {
+  color: #64748b !important;
+  line-height: 1.72;
+  max-width: 890px;
+}
+
+/* Premium badges */
+.campaignPremiumSurface .badge,
+.campaignPremiumSurface .eyebrow,
+.campaignPremiumSurface .kicker,
+.campaignPremiumSurface .label,
+.campaignPremiumSurface .heroBadge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  border-radius: 999px !important;
+  padding: 8px 12px !important;
+  background: linear-gradient(135deg, #eff6ff, #fff7ed) !important;
+  color: #2563eb !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, .08);
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: .10em !important;
+  text-transform: uppercase !important;
+}
+
+.campaignPremiumSurface .badge::before,
+.campaignPremiumSurface .eyebrow::before,
+.campaignPremiumSurface .kicker::before,
+.campaignPremiumSurface .label::before,
+.campaignPremiumSurface .heroBadge::before {
+  content: "●";
+  color: #f59e0b;
+  font-size: 9px;
+  text-shadow: 0 0 0 4px rgba(245, 158, 11, .14);
+}
+
+/* Main campaign sections */
+.campaignPremiumSurface .panel,
+.campaignPremiumSurface .section,
+.campaignPremiumSurface .sectionCard,
+.campaignPremiumSurface .campaignPanel,
+.campaignPremiumSurface .sequencePanel,
+.campaignPremiumSurface .enginePanel,
+.campaignPremiumSurface .workflowPanel,
+.campaignPremiumSurface .libraryPanel,
+.campaignPremiumSurface .timelinePanel,
+.campaignPremiumSurface .card,
+.campaignPremiumSurface .box,
+.campaignPremiumSurface .tile {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 34px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 28px 76px rgba(15, 23, 42, .088),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+/* Premium grid texture on large surfaces */
+.campaignPremiumSurface .panel::after,
+.campaignPremiumSurface .sectionCard::after,
+.campaignPremiumSurface .campaignPanel::after,
+.campaignPremiumSurface .sequencePanel::after,
+.campaignPremiumSurface .enginePanel::after,
+.campaignPremiumSurface .workflowPanel::after,
+.campaignPremiumSurface .timelinePanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .52;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .024) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.60), transparent 78%);
+}
+
+/* KPI / metrics cards */
+.campaignPremiumSurface .metricCard,
+.campaignPremiumSurface .statCard,
+.campaignPremiumSurface .kpiCard,
+.campaignPremiumSurface .summaryCard,
+.campaignPremiumSurface .campaignMetric,
+.campaignPremiumSurface .sequenceMetric,
+.campaignPremiumSurface .scoreCard {
+  position: relative !important;
+  overflow: hidden;
+  border-radius: 29px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.97), rgba(248,250,252,.91)) !important;
+  box-shadow: 0 22px 56px rgba(15, 23, 42, .078) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.campaignPremiumSurface .metricCard:hover,
+.campaignPremiumSurface .statCard:hover,
+.campaignPremiumSurface .kpiCard:hover,
+.campaignPremiumSurface .summaryCard:hover,
+.campaignPremiumSurface .campaignMetric:hover,
+.campaignPremiumSurface .sequenceMetric:hover,
+.campaignPremiumSurface .scoreCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(147, 197, 253, .98) !important;
+  box-shadow: 0 32px 72px rgba(37, 99, 235, .13) !important;
+}
+
+.campaignPremiumSurface .metricCard::before,
+.campaignPremiumSurface .statCard::before,
+.campaignPremiumSurface .kpiCard::before,
+.campaignPremiumSurface .summaryCard::before,
+.campaignPremiumSurface .campaignMetric::before,
+.campaignPremiumSurface .sequenceMetric::before,
+.campaignPremiumSurface .scoreCard::before {
+  content: "📣";
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 15px;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, .10);
+}
+
+.campaignPremiumSurface .metricCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .statCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .kpiCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .summaryCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .campaignMetric:nth-of-type(2n)::before {
+  content: "🧭";
+  color: #c2410c;
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.campaignPremiumSurface .metricCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .statCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .kpiCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .summaryCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .sequenceMetric:nth-of-type(3n)::before {
+  content: "✅";
+  color: #047857;
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+}
+
+/* Campaign cards / sequence cards */
+.campaignPremiumSurface .campaignCard,
+.campaignPremiumSurface .sequenceCard,
+.campaignPremiumSurface .stepCard,
+.campaignPremiumSurface .workflowCard,
+.campaignPremiumSurface .automationCard,
+.campaignPremiumSurface .audienceCard,
+.campaignPremiumSurface .assetCard,
+.campaignPremiumSurface .card {
+  position: relative !important;
+  overflow: hidden;
+  border-radius: 27px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .075) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.campaignPremiumSurface .campaignCard:hover,
+.campaignPremiumSurface .sequenceCard:hover,
+.campaignPremiumSurface .stepCard:hover,
+.campaignPremiumSurface .workflowCard:hover,
+.campaignPremiumSurface .automationCard:hover,
+.campaignPremiumSurface .audienceCard:hover,
+.campaignPremiumSurface .assetCard:hover,
+.campaignPremiumSurface .card:hover {
+  transform: translateY(-3px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .14) !important;
+}
+
+.campaignPremiumSurface .campaignCard::before,
+.campaignPremiumSurface .sequenceCard::before,
+.campaignPremiumSurface .stepCard::before,
+.campaignPremiumSurface .workflowCard::before,
+.campaignPremiumSurface .automationCard::before,
+.campaignPremiumSurface .audienceCard::before,
+.campaignPremiumSurface .assetCard::before {
+  content: "🚀";
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  margin-bottom: 13px;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, .11);
+  font-size: 18px;
+}
+
+.campaignPremiumSurface .campaignCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .sequenceCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .stepCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .workflowCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .automationCard:nth-of-type(2n)::before,
+.campaignPremiumSurface .audienceCard:nth-of-type(2n)::before {
+  content: "📧";
+  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  border-color: #ddd6fe;
+}
+
+.campaignPremiumSurface .campaignCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .sequenceCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .stepCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .workflowCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .automationCard:nth-of-type(3n)::before,
+.campaignPremiumSurface .audienceCard:nth-of-type(3n)::before {
+  content: "💬";
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border-color: #bbf7d0;
+}
+
+.campaignPremiumSurface .campaignCard:nth-of-type(4n)::before,
+.campaignPremiumSurface .sequenceCard:nth-of-type(4n)::before,
+.campaignPremiumSurface .stepCard:nth-of-type(4n)::before,
+.campaignPremiumSurface .workflowCard:nth-of-type(4n)::before,
+.campaignPremiumSurface .automationCard:nth-of-type(4n)::before,
+.campaignPremiumSurface .audienceCard:nth-of-type(4n)::before {
+  content: "☎️";
+  background: linear-gradient(135deg, #fff7ed, #fefce8);
+  border-color: #fed7aa;
+}
+
+/* Typography */
+.campaignPremiumSurface .campaignCard :global(h3),
+.campaignPremiumSurface .sequenceCard :global(h3),
+.campaignPremiumSurface .stepCard :global(h3),
+.campaignPremiumSurface .workflowCard :global(h3),
+.campaignPremiumSurface .automationCard :global(h3),
+.campaignPremiumSurface .audienceCard :global(h3),
+.campaignPremiumSurface .assetCard :global(h3),
+.campaignPremiumSurface .card :global(h3),
+.campaignPremiumSurface .card :global(strong),
+.campaignPremiumSurface .panel :global(h2),
+.campaignPremiumSurface .panel :global(h3),
+.campaignPremiumSurface .sectionCard :global(h2),
+.campaignPremiumSurface .sectionCard :global(h3) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em;
+}
+
+.campaignPremiumSurface .campaignCard :global(p),
+.campaignPremiumSurface .sequenceCard :global(p),
+.campaignPremiumSurface .stepCard :global(p),
+.campaignPremiumSurface .workflowCard :global(p),
+.campaignPremiumSurface .automationCard :global(p),
+.campaignPremiumSurface .audienceCard :global(p),
+.campaignPremiumSurface .assetCard :global(p),
+.campaignPremiumSurface .card :global(p),
+.campaignPremiumSurface .card :global(small),
+.campaignPremiumSurface .panel :global(p),
+.campaignPremiumSurface .sectionCard :global(p) {
+  color: #64748b !important;
+  line-height: 1.58;
+}
+
+/* Campaign status / segment / channel tags */
+.campaignPremiumSurface .pill,
+.campaignPremiumSurface .tag,
+.campaignPremiumSurface .status,
+.campaignPremiumSurface .chip,
+.campaignPremiumSurface .badgeSoft,
+.campaignPremiumSurface .channelPill,
+.campaignPremiumSurface .segmentTag,
+.campaignPremiumSurface .statusPill,
+.campaignPremiumSurface .objectiveTag,
+.campaignPremiumSurface .sequenceTag,
+.campaignPremiumSurface .campaignTag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .04);
+}
+
+.campaignPremiumSurface .pill::before,
+.campaignPremiumSurface .tag::before,
+.campaignPremiumSurface .status::before,
+.campaignPremiumSurface .chip::before,
+.campaignPremiumSurface .badgeSoft::before,
+.campaignPremiumSurface .channelPill::before,
+.campaignPremiumSurface .segmentTag::before,
+.campaignPremiumSurface .statusPill::before,
+.campaignPremiumSurface .objectiveTag::before,
+.campaignPremiumSurface .sequenceTag::before,
+.campaignPremiumSurface .campaignTag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+/* Recognizable channel/status helpers if classes exist */
+.campaignPremiumSurface .email,
+.campaignPremiumSurface .emailPill,
+.campaignPremiumSurface .mail,
+.campaignPremiumSurface .mailPill {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+.campaignPremiumSurface .whatsapp,
+.campaignPremiumSurface .whatsappPill {
+  background: #ecfdf5 !important;
+  border-color: #bbf7d0 !important;
+  color: #047857 !important;
+}
+
+.campaignPremiumSurface .call,
+.campaignPremiumSurface .phone,
+.campaignPremiumSurface .callPill,
+.campaignPremiumSurface .phonePill {
+  background: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+
+.campaignPremiumSurface .draft,
+.campaignPremiumSurface .draftPill {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.campaignPremiumSurface .active,
+.campaignPremiumSurface .activePill,
+.campaignPremiumSurface .running,
+.campaignPremiumSurface .runningPill {
+  background: #ecfdf5 !important;
+  border-color: #bbf7d0 !important;
+  color: #047857 !important;
+}
+
+.campaignPremiumSurface .paused,
+.campaignPremiumSurface .pausedPill {
+  background: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+
+/* Tabs and filters */
+.campaignPremiumSurface .tabs,
+.campaignPremiumSurface .segmentTabs,
+.campaignPremiumSurface .channelTabs,
+.campaignPremiumSurface .modeTabs,
+.campaignPremiumSurface .filters,
+.campaignPremiumSurface .toolbar,
+.campaignPremiumSurface .searchBar,
+.campaignPremiumSurface .campaignToolbar,
+.campaignPremiumSurface .sequenceToolbar {
+  position: relative;
+  z-index: 1;
+  padding: 14px !important;
+  border-radius: 25px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(248,250,252,.88)) !important;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, .055);
+  backdrop-filter: blur(18px);
+}
+
+.campaignPremiumSurface .tab,
+.campaignPremiumSurface .segmentTab,
+.campaignPremiumSurface .channelTab,
+.campaignPremiumSurface .modeTab {
+  border-radius: 16px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: #64748b !important;
+  font-weight: 900 !important;
+  transition: .16s ease;
+}
+
+.campaignPremiumSurface .tab:hover,
+.campaignPremiumSurface .segmentTab:hover,
+.campaignPremiumSurface .channelTab:hover,
+.campaignPremiumSurface .modeTab:hover {
+  transform: translateY(-1px);
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, .05);
+}
+
+.campaignPremiumSurface .tab[aria-selected="true"],
+.campaignPremiumSurface .segmentTab[aria-selected="true"],
+.campaignPremiumSurface .channelTab[aria-selected="true"],
+.campaignPremiumSurface .modeTab[aria-selected="true"],
+.campaignPremiumSurface .tab.active,
+.campaignPremiumSurface .segmentTab.active,
+.campaignPremiumSurface .channelTab.active,
+.campaignPremiumSurface .modeTab.active {
+  color: #1d4ed8 !important;
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, .09);
+}
+
+/* Inputs */
+.campaignPremiumSurface .filters :global(input),
+.campaignPremiumSurface .toolbar :global(input),
+.campaignPremiumSurface .searchBar :global(input),
+.campaignPremiumSurface .campaignToolbar :global(input),
+.campaignPremiumSurface .sequenceToolbar :global(input),
+.campaignPremiumSurface .filters :global(select),
+.campaignPremiumSurface .toolbar :global(select),
+.campaignPremiumSurface .searchBar :global(select),
+.campaignPremiumSurface .campaignToolbar :global(select),
+.campaignPremiumSurface .sequenceToolbar :global(select),
+.campaignPremiumSurface .formPanel :global(input),
+.campaignPremiumSurface .formPanel :global(select),
+.campaignPremiumSurface .formPanel :global(textarea),
+.campaignPremiumSurface .composer :global(input),
+.campaignPremiumSurface .composer :global(select),
+.campaignPremiumSurface .composer :global(textarea),
+.campaignPremiumSurface .panel :global(input),
+.campaignPremiumSurface .panel :global(select),
+.campaignPremiumSurface .panel :global(textarea),
+.campaignPremiumSurface .sectionCard :global(input),
+.campaignPremiumSurface .sectionCard :global(select),
+.campaignPremiumSurface .sectionCard :global(textarea) {
+  min-height: 48px !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+.campaignPremiumSurface .formPanel :global(textarea),
+.campaignPremiumSurface .composer :global(textarea),
+.campaignPremiumSurface .panel :global(textarea),
+.campaignPremiumSurface .sectionCard :global(textarea) {
+  min-height: 130px !important;
+  line-height: 1.55;
+}
+
+.campaignPremiumSurface .filters :global(input:focus),
+.campaignPremiumSurface .toolbar :global(input:focus),
+.campaignPremiumSurface .searchBar :global(input:focus),
+.campaignPremiumSurface .campaignToolbar :global(input:focus),
+.campaignPremiumSurface .sequenceToolbar :global(input:focus),
+.campaignPremiumSurface .filters :global(select:focus),
+.campaignPremiumSurface .toolbar :global(select:focus),
+.campaignPremiumSurface .searchBar :global(select:focus),
+.campaignPremiumSurface .campaignToolbar :global(select:focus),
+.campaignPremiumSurface .sequenceToolbar :global(select:focus),
+.campaignPremiumSurface .formPanel :global(input:focus),
+.campaignPremiumSurface .formPanel :global(select:focus),
+.campaignPremiumSurface .formPanel :global(textarea:focus),
+.campaignPremiumSurface .composer :global(input:focus),
+.campaignPremiumSurface .composer :global(select:focus),
+.campaignPremiumSurface .composer :global(textarea:focus),
+.campaignPremiumSurface .panel :global(input:focus),
+.campaignPremiumSurface .panel :global(select:focus),
+.campaignPremiumSurface .panel :global(textarea:focus),
+.campaignPremiumSurface .sectionCard :global(input:focus),
+.campaignPremiumSurface .sectionCard :global(select:focus),
+.campaignPremiumSurface .sectionCard :global(textarea:focus) {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10) !important;
+}
+
+/* Sequence builder / step list */
+.campaignPremiumSurface .steps,
+.campaignPremiumSurface .stepList,
+.campaignPremiumSurface .sequenceSteps,
+.campaignPremiumSurface .builder,
+.campaignPremiumSurface .sequenceBuilder {
+  position: relative;
+  border-radius: 30px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    linear-gradient(180deg, #ffffff, #f8fbff) !important;
+  box-shadow: 0 24px 62px rgba(15, 23, 42, .075);
+}
+
+.campaignPremiumSurface .step,
+.campaignPremiumSurface .sequenceStep,
+.campaignPremiumSurface .stepItem {
+  position: relative;
+  border-radius: 22px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .055);
+}
+
+.campaignPremiumSurface .step::before,
+.campaignPremiumSurface .sequenceStep::before,
+.campaignPremiumSurface .stepItem::before {
+  content: "↳";
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-weight: 950;
+  margin-bottom: 8px;
+}
+
+/* Tables */
+.campaignPremiumSurface .tableWrap,
+.campaignPremiumSurface .tableContainer,
+.campaignPremiumSurface .campaignTable,
+.campaignPremiumSurface .sequenceTable {
+  border-radius: 30px !important;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background: #ffffff !important;
+  box-shadow: 0 25px 68px rgba(15, 23, 42, .078);
+}
+
+.campaignPremiumSurface .tableWrap :global(thead),
+.campaignPremiumSurface .tableContainer :global(thead),
+.campaignPremiumSurface .campaignTable :global(thead),
+.campaignPremiumSurface .sequenceTable :global(thead) {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 52%, #fff7ed 100%) !important;
+}
+
+.campaignPremiumSurface .tableWrap :global(th),
+.campaignPremiumSurface .tableContainer :global(th),
+.campaignPremiumSurface .campaignTable :global(th),
+.campaignPremiumSurface .sequenceTable :global(th) {
+  height: 58px !important;
+  padding: 0 18px !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+}
+
+.campaignPremiumSurface .tableWrap :global(td),
+.campaignPremiumSurface .tableContainer :global(td),
+.campaignPremiumSurface .campaignTable :global(td),
+.campaignPremiumSurface .sequenceTable :global(td) {
+  padding: 16px 18px !important;
+  border-top: 1px solid rgba(226, 232, 240, .88) !important;
+}
+
+/* Buttons */
+.campaignPremiumSurface .panel :global(button),
+.campaignPremiumSurface .card :global(button),
+.campaignPremiumSurface .sectionCard :global(button),
+.campaignPremiumSurface .campaignCard :global(button),
+.campaignPremiumSurface .sequenceCard :global(button),
+.campaignPremiumSurface .workflowCard :global(button),
+.campaignPremiumSurface .formPanel :global(button),
+.campaignPremiumSurface .composer :global(button),
+.campaignPremiumSurface .toolbar :global(button),
+.campaignPremiumSurface .campaignToolbar :global(button) {
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.campaignPremiumSurface .panel :global(button:hover),
+.campaignPremiumSurface .card :global(button:hover),
+.campaignPremiumSurface .sectionCard :global(button:hover),
+.campaignPremiumSurface .campaignCard :global(button:hover),
+.campaignPremiumSurface .sequenceCard :global(button:hover),
+.campaignPremiumSurface .workflowCard :global(button:hover),
+.campaignPremiumSurface .formPanel :global(button:hover),
+.campaignPremiumSurface .composer :global(button:hover),
+.campaignPremiumSurface .toolbar :global(button:hover),
+.campaignPremiumSurface .campaignToolbar :global(button:hover) {
+  transform: translateY(-2px);
+}
+
+.primaryButton,
+.actionButton,
+.submitButton {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 48%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, .20) !important;
+}
+
+.secondaryButton,
+.smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+/* Empty states */
+.campaignPremiumSurface .empty,
+.campaignPremiumSurface .emptyState,
+.campaignPremiumSurface .noData,
+.campaignPremiumSurface .emptyPanel {
+  border: 1px dashed #cbd5e1 !important;
+  border-radius: 25px !important;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, .08), transparent 55%),
+    #ffffff !important;
+  color: #64748b !important;
+  min-height: 132px;
+}
+
+/* Modals above overhead panel */
+.campaignPremiumSurface .modalBackdrop {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.campaignPremiumSurface .modal,
+.campaignPremiumSurface .megaModal,
+.campaignPremiumSurface .detailModal,
+.campaignPremiumSurface .drawer,
+.campaignPremiumSurface .sidePanel {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .campaignPremiumSurface .hero::after,
+  .campaignPremiumSurface .header::after,
+  .campaignPremiumSurface .commandHero::after,
+  .campaignPremiumSurface .campaignHero::after,
+  .campaignPremiumSurface .sequenceHero::after {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .campaignPremiumSurface .panel,
+  .campaignPremiumSurface .sectionCard,
+  .campaignPremiumSurface .campaignCard,
+  .campaignPremiumSurface .sequenceCard,
+  .campaignPremiumSurface .workflowCard {
+    border-radius: 24px !important;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — CAMPAIGNS FORCE-SCOPED PREMIUM UI
+   Guaranteed visible under .campaignPremiumSurface.
+   UI-only. No backend / API / logic changes.
+   ============================================================ */
+
+.campaignPremiumSurface {
+  position: relative;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 6% 3%, rgba(37, 99, 235, .18), transparent 28%),
+    radial-gradient(circle at 96% 6%, rgba(245, 158, 11, .16), transparent 30%),
+    radial-gradient(circle at 70% 98%, rgba(236, 72, 153, .11), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #edf4f8 100%) !important;
+}
+
+/* Immediate large page blocks */
+.campaignPremiumSurface > :global(section),
+.campaignPremiumSurface > :global(div),
+.campaignPremiumSurface :global(main > section),
+.campaignPremiumSurface :global(main > div) {
+  position: relative;
+}
+
+/* Hero-level blocks: first big visible section */
+.campaignPremiumSurface > :global(section:first-child),
+.campaignPremiumSurface > :global(div:first-child),
+.campaignPremiumSurface :global(main > section:first-child),
+.campaignPremiumSurface :global(main > div:first-child) {
+  overflow: hidden !important;
+  border-radius: 40px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(37, 99, 235, .22), transparent 30%),
+    radial-gradient(circle at 14% 88%, rgba(245, 158, 11, .16), transparent 34%),
+    radial-gradient(circle at 96% 92%, rgba(236, 72, 153, .12), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 54%, #f4f8ff 100%) !important;
+  box-shadow:
+    0 36px 100px rgba(15, 23, 42, .13),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.campaignPremiumSurface > :global(section:first-child)::before,
+.campaignPremiumSurface > :global(div:first-child)::before,
+.campaignPremiumSurface :global(main > section:first-child)::before,
+.campaignPremiumSurface :global(main > div:first-child)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .032) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.68), transparent 76%);
+}
+
+.campaignPremiumSurface > :global(section:first-child)::after,
+.campaignPremiumSurface > :global(div:first-child)::after,
+.campaignPremiumSurface :global(main > section:first-child)::after,
+.campaignPremiumSurface :global(main > div:first-child)::after {
+  content: "🚀";
+  position: absolute;
+  right: 34px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 106px;
+  height: 106px;
+  border-radius: 36px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(245, 158, 11, .12)),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, .94);
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .18);
+  font-size: 46px;
+}
+
+/* Typography */
+.campaignPremiumSurface :global(h1) {
+  color: #07111f !important;
+  letter-spacing: -0.07em !important;
+  line-height: .93 !important;
+  font-weight: 950 !important;
+}
+
+.campaignPremiumSurface :global(h2),
+.campaignPremiumSurface :global(h3) {
+  color: #07111f !important;
+  letter-spacing: -0.04em !important;
+  font-weight: 950 !important;
+}
+
+.campaignPremiumSurface :global(p),
+.campaignPremiumSurface :global(small) {
+  color: #64748b !important;
+  line-height: 1.62;
+}
+
+/* All cards/articles/panels inside campaigns */
+.campaignPremiumSurface :global(article),
+.campaignPremiumSurface :global(section article),
+.campaignPremiumSurface :global([class*="card"]),
+.campaignPremiumSurface :global([class*="Card"]),
+.campaignPremiumSurface :global([class*="panel"]),
+.campaignPremiumSurface :global([class*="Panel"]),
+.campaignPremiumSurface :global([class*="section"]),
+.campaignPremiumSurface :global([class*="Section"]),
+.campaignPremiumSurface :global([class*="campaign"]),
+.campaignPremiumSurface :global([class*="Campaign"]),
+.campaignPremiumSurface :global([class*="sequence"]),
+.campaignPremiumSurface :global([class*="Sequence"]) {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 24px 64px rgba(15, 23, 42, .08),
+    inset 0 1px 0 rgba(255,255,255,.94) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.campaignPremiumSurface :global(article:hover),
+.campaignPremiumSurface :global([class*="card"]:hover),
+.campaignPremiumSurface :global([class*="Card"]:hover),
+.campaignPremiumSurface :global([class*="panel"]:hover),
+.campaignPremiumSurface :global([class*="Panel"]:hover),
+.campaignPremiumSurface :global([class*="campaign"]:hover),
+.campaignPremiumSurface :global([class*="Campaign"]:hover),
+.campaignPremiumSurface :global([class*="sequence"]:hover),
+.campaignPremiumSurface :global([class*="Sequence"]:hover) {
+  transform: translateY(-3px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 34px 78px rgba(37, 99, 235, .14) !important;
+}
+
+/* Visual icons for real campaign cards */
+.campaignPremiumSurface :global(article)::before,
+.campaignPremiumSurface :global([class*="card"])::before,
+.campaignPremiumSurface :global([class*="Card"])::before {
+  content: "📣";
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  margin-bottom: 13px;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, .11);
+  font-size: 18px;
+}
+
+.campaignPremiumSurface :global(article:nth-of-type(2n))::before {
+  content: "📧";
+  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  border-color: #ddd6fe;
+}
+
+.campaignPremiumSurface :global(article:nth-of-type(3n))::before {
+  content: "💬";
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border-color: #bbf7d0;
+}
+
+.campaignPremiumSurface :global(article:nth-of-type(4n))::before {
+  content: "☎️";
+  background: linear-gradient(135deg, #fff7ed, #fefce8);
+  border-color: #fed7aa;
+}
+
+/* Metric-looking blocks */
+.campaignPremiumSurface :global([class*="metric"]),
+.campaignPremiumSurface :global([class*="Metric"]),
+.campaignPremiumSurface :global([class*="stat"]),
+.campaignPremiumSurface :global([class*="Stat"]),
+.campaignPremiumSurface :global([class*="kpi"]),
+.campaignPremiumSurface :global([class*="Kpi"]),
+.campaignPremiumSurface :global([class*="summary"]),
+.campaignPremiumSurface :global([class*="Summary"]) {
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at top right, rgba(245, 158, 11, .13), transparent 34%),
+    linear-gradient(135deg, #ffffff, #f8fbff) !important;
+  box-shadow: 0 22px 58px rgba(15, 23, 42, .078) !important;
+}
+
+/* Tags / pills / statuses */
+.campaignPremiumSurface :global([class*="pill"]),
+.campaignPremiumSurface :global([class*="Pill"]),
+.campaignPremiumSurface :global([class*="tag"]),
+.campaignPremiumSurface :global([class*="Tag"]),
+.campaignPremiumSurface :global([class*="badge"]),
+.campaignPremiumSurface :global([class*="Badge"]),
+.campaignPremiumSurface :global([class*="status"]),
+.campaignPremiumSurface :global([class*="Status"]),
+.campaignPremiumSurface :global(span) {
+  border-radius: 999px;
+}
+
+.campaignPremiumSurface :global([class*="pill"]),
+.campaignPremiumSurface :global([class*="Pill"]),
+.campaignPremiumSurface :global([class*="tag"]),
+.campaignPremiumSurface :global([class*="Tag"]),
+.campaignPremiumSurface :global([class*="badge"]),
+.campaignPremiumSurface :global([class*="Badge"]),
+.campaignPremiumSurface :global([class*="status"]),
+.campaignPremiumSurface :global([class*="Status"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .04);
+}
+
+/* Forms / sequence builder */
+.campaignPremiumSurface :global(input),
+.campaignPremiumSurface :global(select),
+.campaignPremiumSurface :global(textarea) {
+  min-height: 48px !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+.campaignPremiumSurface :global(textarea) {
+  min-height: 130px !important;
+  line-height: 1.55;
+}
+
+.campaignPremiumSurface :global(input:focus),
+.campaignPremiumSurface :global(select:focus),
+.campaignPremiumSurface :global(textarea:focus) {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10) !important;
+}
+
+/* Tables */
+.campaignPremiumSurface :global(table) {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden;
+  border-radius: 28px !important;
+  background: #ffffff !important;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, .07);
+}
+
+.campaignPremiumSurface :global(thead) {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 52%, #fff7ed 100%) !important;
+}
+
+.campaignPremiumSurface :global(th) {
+  height: 58px !important;
+  padding: 0 18px !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+}
+
+.campaignPremiumSurface :global(td) {
+  padding: 16px 18px !important;
+  border-top: 1px solid rgba(226, 232, 240, .88) !important;
+}
+
+/* Buttons */
+.campaignPremiumSurface :global(button) {
+  min-height: 42px;
+  border-radius: 16px !important;
+  font-weight: 950 !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.campaignPremiumSurface :global(button:hover) {
+  transform: translateY(-2px);
+}
+
+.campaignPremiumSurface :global(button:first-of-type) {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 48%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, .20) !important;
+}
+
+/* Empty states */
+.campaignPremiumSurface :global([class*="empty"]),
+.campaignPremiumSurface :global([class*="Empty"]),
+.campaignPremiumSurface :global([class*="noData"]),
+.campaignPremiumSurface :global([class*="NoData"]) {
+  border: 1px dashed #cbd5e1 !important;
+  border-radius: 25px !important;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, .08), transparent 55%),
+    #ffffff !important;
+  color: #64748b !important;
+  min-height: 132px;
+}
+
+/* Modal layer */
+.campaignPremiumSurface :global([class*="modalBackdrop"]),
+.campaignPremiumSurface :global([class*="ModalBackdrop"]),
+.campaignPremiumSurface :global([class*="overlay"]),
+.campaignPremiumSurface :global([class*="Overlay"]) {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.campaignPremiumSurface :global([class*="modal"]),
+.campaignPremiumSurface :global([class*="Modal"]),
+.campaignPremiumSurface :global([class*="drawer"]),
+.campaignPremiumSurface :global([class*="Drawer"]) {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .campaignPremiumSurface > :global(section:first-child)::after,
+  .campaignPremiumSurface > :global(div:first-child)::after,
+  .campaignPremiumSurface :global(main > section:first-child)::after,
+  .campaignPremiumSurface :global(main > div:first-child)::after {
+    display: none;
+  }
+}
+

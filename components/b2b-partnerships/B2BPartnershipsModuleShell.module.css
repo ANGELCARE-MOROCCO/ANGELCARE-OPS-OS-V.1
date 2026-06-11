@@ -1,3 +1,465 @@
 .shell{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;min-height:calc(100vh - 110px);padding:22px;background:linear-gradient(180deg,#f8fafc 0%,#eef3f8 100%)}
 .sidebar{position:sticky;top:96px;align-self:start;height:calc(100vh - 130px);overflow:auto;padding:18px;border:1px solid rgba(226,232,240,.95);border-radius:30px;background:rgba(255,255,255,.96);box-shadow:0 24px 70px rgba(15,23,42,.08)}
 .brandBlock{padding:18px;border-radius:24px;background:#fff;border:1px solid #e5e7eb}.brandPill{display:inline-flex;width:fit-content;padding:8px 11px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.brandBlock h2{margin:12px 0 8px;color:#0f172a;font-size:24px;font-weight:950;letter-spacing:-.04em}.brandBlock p{margin:0;color:#64748b;font-size:13px;line-height:1.55}.nav{display:grid;gap:9px;margin-top:18px}.navItem{display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:center;padding:13px;border:1px solid transparent;border-radius:18px;text-decoration:none;color:#334155;background:transparent;transition:.18s ease}.navItem:hover{border-color:#dbeafe;background:#f8fafc;transform:translateX(2px)}.navItem.active{border-color:#bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff);box-shadow:0 16px 36px rgba(37,99,235,.12)}.navIcon{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:#fff;border:1px solid #e5e7eb;box-shadow:0 10px 22px rgba(15,23,42,.06)}.navItem strong{display:block;color:#0f172a;font-size:13px;font-weight:900}.navItem small{display:block;margin-top:3px;color:#64748b;font-size:11px;line-height:1.35}.sidebarPanel{margin-top:18px;padding:18px;border-radius:24px;background:#fff;border:1px solid #e5e7eb;color:#0f172a;box-shadow:0 18px 42px rgba(15,23,42,.08)}.panelLabel{display:inline-flex;margin-bottom:9px;color:#1d4ed8;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.sidebarPanel strong{display:block;font-size:17px;font-weight:900}.sidebarPanel p{margin:8px 0 14px;color:#64748b;font-size:12px;line-height:1.5}.panelStats{display:grid;gap:7px}.panelStats span{padding:9px 10px;border:1px solid #e5e7eb;border-radius:13px;background:#f8fafc;color:#334155;font-size:11px;font-weight:800}.main{min-width:0}.moduleHeader{display:flex;justify-content:space-between;gap:22px;align-items:center;margin-bottom:18px;padding:22px 24px;border:1px solid rgba(226,232,240,.9);border-radius:30px;background:rgba(255,255,255,.96);box-shadow:0 24px 70px rgba(15,23,42,.08)}.eyebrow{display:inline-flex;margin-bottom:7px;color:#64748b;font-size:11px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.moduleHeader h1{margin:0;color:#0f172a;font-size:clamp(28px,3vw,44px);line-height:.95;font-weight:950;letter-spacing:-.055em}.moduleHeader p{margin:10px 0 0;color:#64748b;max-width:680px;line-height:1.55}.headerActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}.primaryAction,.secondaryAction{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:15px;font-size:13px;font-weight:900;text-decoration:none;white-space:nowrap}.primaryAction{color:white;background:#2563eb;box-shadow:0 14px 30px rgba(37,99,235,.25)}.secondaryAction{color:#0f172a;background:white;border:1px solid #e5e7eb}.content{min-width:0}@media(max-width:1180px){.shell{grid-template-columns:1fr}.sidebar{position:static;height:auto}.nav{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.shell{padding:12px}.nav{grid-template-columns:1fr}.moduleHeader{flex-direction:column;align-items:stretch}.headerActions{justify-content:flex-start}}
+
+/* ============================================================
+   ANGELCARE B2B — REAL INTEGRATION HUB PREMIUM UI PATCH
+   Applied to the actual CSS module imported by the Integration page.
+   CSS-only. No backend / logic / API changes.
+   ============================================================ */
+
+.root,
+.page,
+.workspace,
+.shell,
+.container,
+.hub,
+.integration,
+.command,
+.layout {
+  background:
+    radial-gradient(circle at 8% 4%, rgba(37, 99, 235, .16), transparent 30%),
+    radial-gradient(circle at 94% 8%, rgba(16, 185, 129, .13), transparent 28%),
+    radial-gradient(circle at 70% 94%, rgba(168, 85, 247, .11), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #eef4f8 100%) !important;
+}
+
+.hero,
+.header,
+.top,
+.banner,
+.commandHero,
+.integrationHero {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  border-radius: 38px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(37, 99, 235, .20), transparent 30%),
+    radial-gradient(circle at 14% 88%, rgba(16, 185, 129, .15), transparent 34%),
+    radial-gradient(circle at 96% 90%, rgba(168, 85, 247, .12), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 52%, #f5f9ff 100%) !important;
+  box-shadow:
+    0 34px 96px rgba(15, 23, 42, .12),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.hero::before,
+.header::before,
+.top::before,
+.banner::before,
+.commandHero::before,
+.integrationHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .034) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .034) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.72), transparent 78%);
+}
+
+.hero::after,
+.header::after,
+.top::after,
+.banner::after,
+.commandHero::after,
+.integrationHero::after {
+  content: "🔗";
+  position: absolute;
+  right: 34px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 106px;
+  height: 106px;
+  border-radius: 36px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(16, 185, 129, .12)),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, .94);
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .19);
+  font-size: 46px;
+}
+
+.hero h1,
+.header h1,
+.top h1,
+.banner h1,
+.commandHero h1,
+.integrationHero h1 {
+  max-width: 980px;
+  color: #07111f !important;
+  letter-spacing: -0.07em !important;
+  line-height: .93 !important;
+  font-weight: 950 !important;
+}
+
+.hero p,
+.header p,
+.top p,
+.banner p,
+.commandHero p,
+.integrationHero p {
+  max-width: 870px;
+  color: #64748b !important;
+  font-size: 15px;
+  line-height: 1.72;
+}
+
+.badge,
+.eyebrow,
+.kicker,
+.label,
+.tagline,
+.heroBadge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  border-radius: 999px !important;
+  padding: 8px 12px !important;
+  background: linear-gradient(135deg, #eff6ff, #ecfdf5) !important;
+  color: #2563eb !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, .08);
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+}
+
+.grid,
+.cards,
+.metrics,
+.kpis,
+.summary,
+.stats {
+  position: relative;
+}
+
+.card,
+.metric,
+.kpi,
+.stat,
+.panel,
+.section,
+.block,
+.box,
+.tile,
+.module,
+.workflow,
+.action,
+.actionCard,
+.directAction,
+.timeline,
+.history,
+.feed,
+.composer,
+.form,
+.console,
+.diagnostics {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .09), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 24px 64px rgba(15, 23, 42, .08),
+    inset 0 1px 0 rgba(255,255,255,.94) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.card:hover,
+.metric:hover,
+.kpi:hover,
+.stat:hover,
+.panel:hover,
+.section:hover,
+.block:hover,
+.box:hover,
+.tile:hover,
+.module:hover,
+.workflow:hover,
+.action:hover,
+.actionCard:hover,
+.directAction:hover {
+  transform: translateY(-3px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 34px 78px rgba(37, 99, 235, .14) !important;
+}
+
+.card::before,
+.metric::before,
+.kpi::before,
+.stat::before,
+.tile::before,
+.module::before,
+.workflow::before,
+.action::before,
+.actionCard::before,
+.directAction::before {
+  content: "⚡";
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  margin-bottom: 13px;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, .11);
+  color: #1d4ed8;
+  font-weight: 950;
+  font-size: 18px;
+}
+
+.card:nth-of-type(2n)::before,
+.metric:nth-of-type(2n)::before,
+.kpi:nth-of-type(2n)::before,
+.stat:nth-of-type(2n)::before,
+.tile:nth-of-type(2n)::before,
+.module:nth-of-type(2n)::before,
+.workflow:nth-of-type(2n)::before,
+.action:nth-of-type(2n)::before,
+.actionCard:nth-of-type(2n)::before,
+.directAction:nth-of-type(2n)::before {
+  content: "✅";
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border-color: #bbf7d0;
+  color: #047857;
+}
+
+.card:nth-of-type(3n)::before,
+.metric:nth-of-type(3n)::before,
+.kpi:nth-of-type(3n)::before,
+.stat:nth-of-type(3n)::before,
+.tile:nth-of-type(3n)::before,
+.module:nth-of-type(3n)::before,
+.workflow:nth-of-type(3n)::before,
+.action:nth-of-type(3n)::before,
+.actionCard:nth-of-type(3n)::before,
+.directAction:nth-of-type(3n)::before {
+  content: "🧩";
+  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  border-color: #ddd6fe;
+  color: #7c3aed;
+}
+
+.card:nth-of-type(4n)::before,
+.metric:nth-of-type(4n)::before,
+.kpi:nth-of-type(4n)::before,
+.stat:nth-of-type(4n)::before,
+.tile:nth-of-type(4n)::before,
+.module:nth-of-type(4n)::before,
+.workflow:nth-of-type(4n)::before,
+.action:nth-of-type(4n)::before,
+.actionCard:nth-of-type(4n)::before,
+.directAction:nth-of-type(4n)::before {
+  content: "📨";
+  background: linear-gradient(135deg, #fff7ed, #fefce8);
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+.card h2,
+.card h3,
+.card h4,
+.metric h3,
+.kpi h3,
+.stat h3,
+.panel h2,
+.panel h3,
+.section h2,
+.section h3,
+.block h2,
+.block h3,
+.box h3,
+.tile h3,
+.module h3,
+.workflow h3,
+.action h3,
+.actionCard h3,
+.directAction h3,
+.card strong {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em;
+}
+
+.card p,
+.metric p,
+.kpi p,
+.stat p,
+.panel p,
+.section p,
+.block p,
+.box p,
+.tile p,
+.module p,
+.workflow p,
+.action p,
+.actionCard p,
+.directAction p,
+.card small {
+  color: #64748b !important;
+  line-height: 1.58;
+}
+
+.pill,
+.tag,
+.status,
+.chip,
+.badgeSoft,
+.statusPill,
+.channelPill,
+.syncPill,
+.routePill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .04);
+}
+
+.pill::before,
+.tag::before,
+.status::before,
+.chip::before,
+.badgeSoft::before,
+.statusPill::before,
+.channelPill::before,
+.syncPill::before,
+.routePill::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+.ready,
+.success,
+.ok,
+.active {
+  background: #ecfdf5 !important;
+  border-color: #bbf7d0 !important;
+  color: #047857 !important;
+}
+
+.warning,
+.pending,
+.review {
+  background: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+
+.error,
+.danger,
+.failed {
+  background: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+:global(input),
+:global(select),
+:global(textarea) {
+  border-radius: 18px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: linear-gradient(180deg, #ffffff, #fbfdff) !important;
+  color: #0f172a !important;
+  font-weight: 750;
+}
+
+:global(input:focus),
+:global(select:focus),
+:global(textarea:focus) {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10) !important;
+}
+
+:global(button) {
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+:global(button:hover) {
+  transform: translateY(-2px);
+}
+
+.primaryButton,
+.actionButton,
+.submitButton {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 48%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, .20) !important;
+}
+
+.secondaryButton,
+.smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+.empty,
+.emptyState,
+.noData {
+  border: 1px dashed #cbd5e1 !important;
+  border-radius: 25px !important;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, .08), transparent 55%),
+    #ffffff !important;
+  color: #64748b !important;
+  min-height: 132px;
+}
+
+.modalBackdrop {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.modal,
+.megaModal,
+.detailModal,
+.drawer,
+.sidePanel {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .hero::after,
+  .header::after,
+  .top::after,
+  .banner::after,
+  .commandHero::after,
+  .integrationHero::after {
+    display: none;
+  }
+}
+

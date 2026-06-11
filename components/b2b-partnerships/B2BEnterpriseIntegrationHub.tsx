@@ -127,7 +127,7 @@ export default function B2BEnterpriseIntegrationHub() {
     } catch(e) { setError(e instanceof Error ? e.message : 'Unable to log direct action') } finally { setBusy(false) }
   }
 
-  return <div className={styles.workspace}>
+  return <div className={`${styles.workspace} ${styles.integrationPremiumSurface}`}>
     <section className={styles.hero}>
       <div>
         <span className={styles.pill}>MEGA H · Enterprise integration</span>

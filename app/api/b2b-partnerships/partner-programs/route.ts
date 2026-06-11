@@ -13,6 +13,7 @@ async function guard(action: 'read' | 'create' | 'update' = 'read') {
   const permission = requireB2BPermission(action, {
     actorId: actor.id,
     actorRole: actor.role || actor.role_key,
+      permissions: actor.permissions,
   })
 
   if (!permission.ok) {

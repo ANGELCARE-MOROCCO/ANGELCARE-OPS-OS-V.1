@@ -1,5 +1,5 @@
-import B2BConfigurableTasksWorkspace from '@/components/b2b-partnerships/B2BConfigurableTasksWorkspace'
+import B2BTasksPremiumWorkspace from '@/components/b2b-partnerships/B2BTasksPremiumWorkspace'
 
-export default function B2BTasksPage() {
-  return <B2BConfigurableTasksWorkspace />
+export default function Page() {
+  return <B2BTasksPremiumWorkspace />
 }

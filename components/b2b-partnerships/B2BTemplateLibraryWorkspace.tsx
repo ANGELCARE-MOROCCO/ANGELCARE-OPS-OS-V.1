@@ -192,7 +192,7 @@ export default function B2BTemplateLibraryWorkspace() {
   }
 
   return (
-    <main className={styles.workspace}>
+    <main className={`${styles.workspace} ${styles.templatePremiumSurface}`}>
       <section className={styles.hero}>
         <div>
           <span className={styles.kicker}>Communication Engine</span>

@@ -49,3 +49,541 @@
 .directActions a { min-height: 44px; padding: 0 16px; background: #0f172a; color: white; }
 @media (max-width: 1100px) { .hero, .gridLayout { grid-template-columns: 1fr; } .statsGrid, .templateList { grid-template-columns: repeat(2, minmax(0, 1fr)); } .controlBar { grid-template-columns: 1fr 1fr; } .prospectPanel { position: static; } }
 @media (max-width: 720px) { .statsGrid, .templateList, .controlBar, .modalGrid, .pickGrid { grid-template-columns: 1fr; } .hero { padding: 18px; } }
+
+/* ============================================================
+   ANGELCARE B2B — TEMPLATE LIBRARY SURGICAL PREMIUM UI
+   Page: /b2b-partnerships/templates
+   UI-only. No backend / API / CRUD / data logic changes.
+   ============================================================ */
+
+.templatePremiumSurface {
+  position: relative;
+  background:
+    radial-gradient(circle at 7% 4%, rgba(37, 99, 235, .15), transparent 30%),
+    radial-gradient(circle at 94% 6%, rgba(236, 72, 153, .10), transparent 28%),
+    radial-gradient(circle at 70% 96%, rgba(16, 185, 129, .10), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #edf4f8 100%) !important;
+}
+
+/* Hero / library command banner */
+.templatePremiumSurface .hero,
+.templatePremiumSurface .header,
+.templatePremiumSurface .commandHero,
+.templatePremiumSurface .libraryHero,
+.templatePremiumSurface .templateHero {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  border-radius: 38px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(37, 99, 235, .19), transparent 30%),
+    radial-gradient(circle at 14% 88%, rgba(236, 72, 153, .12), transparent 34%),
+    radial-gradient(circle at 96% 92%, rgba(16, 185, 129, .11), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 54%, #f4f8ff 100%) !important;
+  box-shadow:
+    0 34px 96px rgba(15, 23, 42, .12),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.templatePremiumSurface .hero::before,
+.templatePremiumSurface .header::before,
+.templatePremiumSurface .commandHero::before,
+.templatePremiumSurface .libraryHero::before,
+.templatePremiumSurface .templateHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .032) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.68), transparent 76%);
+}
+
+.templatePremiumSurface .hero::after,
+.templatePremiumSurface .header::after,
+.templatePremiumSurface .commandHero::after,
+.templatePremiumSurface .libraryHero::after,
+.templatePremiumSurface .templateHero::after {
+  content: "✉️";
+  position: absolute;
+  right: 34px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 106px;
+  height: 106px;
+  border-radius: 36px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(236, 72, 153, .11)),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, .94);
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .18);
+  font-size: 46px;
+}
+
+.templatePremiumSurface .hero :global(h1),
+.templatePremiumSurface .header :global(h1),
+.templatePremiumSurface .commandHero :global(h1),
+.templatePremiumSurface .libraryHero :global(h1),
+.templatePremiumSurface .templateHero :global(h1) {
+  color: #07111f !important;
+  letter-spacing: -0.07em !important;
+  line-height: .93 !important;
+  font-weight: 950 !important;
+}
+
+.templatePremiumSurface .hero :global(p),
+.templatePremiumSurface .header :global(p),
+.templatePremiumSurface .commandHero :global(p),
+.templatePremiumSurface .libraryHero :global(p),
+.templatePremiumSurface .templateHero :global(p) {
+  color: #64748b !important;
+  line-height: 1.72;
+  max-width: 880px;
+}
+
+/* Main panels */
+.templatePremiumSurface .panel,
+.templatePremiumSurface .section,
+.templatePremiumSurface .sectionCard,
+.templatePremiumSurface .libraryPanel,
+.templatePremiumSurface .templatePanel,
+.templatePremiumSurface .previewPanel,
+.templatePremiumSurface .composerPanel,
+.templatePremiumSurface .filtersPanel,
+.templatePremiumSurface .categoryPanel,
+.templatePremiumSurface .card,
+.templatePremiumSurface .box,
+.templatePremiumSurface .tile {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 32px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 26px 72px rgba(15, 23, 42, .085),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+/* Subtle premium grid texture */
+.templatePremiumSurface .panel::after,
+.templatePremiumSurface .sectionCard::after,
+.templatePremiumSurface .libraryPanel::after,
+.templatePremiumSurface .templatePanel::after,
+.templatePremiumSurface .previewPanel::after,
+.templatePremiumSurface .composerPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .52;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .024) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.60), transparent 78%);
+}
+
+/* Template cards / script cards */
+.templatePremiumSurface .templateCard,
+.templatePremiumSurface .scriptCard,
+.templatePremiumSurface .messageCard,
+.templatePremiumSurface .emailCard,
+.templatePremiumSurface .whatsappCard,
+.templatePremiumSurface .callCard,
+.templatePremiumSurface .libraryCard,
+.templatePremiumSurface .assetCard,
+.templatePremiumSurface .card {
+  position: relative !important;
+  overflow: hidden;
+  border-radius: 26px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .075) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.templatePremiumSurface .templateCard:hover,
+.templatePremiumSurface .scriptCard:hover,
+.templatePremiumSurface .messageCard:hover,
+.templatePremiumSurface .emailCard:hover,
+.templatePremiumSurface .whatsappCard:hover,
+.templatePremiumSurface .callCard:hover,
+.templatePremiumSurface .libraryCard:hover,
+.templatePremiumSurface .assetCard:hover,
+.templatePremiumSurface .card:hover {
+  transform: translateY(-3px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .14) !important;
+}
+
+/* Icons by card order */
+.templatePremiumSurface .templateCard::before,
+.templatePremiumSurface .scriptCard::before,
+.templatePremiumSurface .messageCard::before,
+.templatePremiumSurface .emailCard::before,
+.templatePremiumSurface .whatsappCard::before,
+.templatePremiumSurface .callCard::before,
+.templatePremiumSurface .libraryCard::before,
+.templatePremiumSurface .assetCard::before {
+  content: "📧";
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  margin-bottom: 13px;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, .11);
+  font-size: 18px;
+}
+
+.templatePremiumSurface .templateCard:nth-of-type(2n)::before,
+.templatePremiumSurface .scriptCard:nth-of-type(2n)::before,
+.templatePremiumSurface .messageCard:nth-of-type(2n)::before,
+.templatePremiumSurface .libraryCard:nth-of-type(2n)::before,
+.templatePremiumSurface .assetCard:nth-of-type(2n)::before {
+  content: "💬";
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border-color: #bbf7d0;
+}
+
+.templatePremiumSurface .templateCard:nth-of-type(3n)::before,
+.templatePremiumSurface .scriptCard:nth-of-type(3n)::before,
+.templatePremiumSurface .messageCard:nth-of-type(3n)::before,
+.templatePremiumSurface .libraryCard:nth-of-type(3n)::before,
+.templatePremiumSurface .assetCard:nth-of-type(3n)::before {
+  content: "☎️";
+  background: linear-gradient(135deg, #fff7ed, #fefce8);
+  border-color: #fed7aa;
+}
+
+.templatePremiumSurface .templateCard:nth-of-type(4n)::before,
+.templatePremiumSurface .scriptCard:nth-of-type(4n)::before,
+.templatePremiumSurface .messageCard:nth-of-type(4n)::before,
+.templatePremiumSurface .libraryCard:nth-of-type(4n)::before,
+.templatePremiumSurface .assetCard:nth-of-type(4n)::before {
+  content: "✨";
+  background: linear-gradient(135deg, #fdf2f8, #f5f3ff);
+  border-color: #fbcfe8;
+}
+
+/* Titles and text */
+.templatePremiumSurface .templateCard :global(h3),
+.templatePremiumSurface .scriptCard :global(h3),
+.templatePremiumSurface .messageCard :global(h3),
+.templatePremiumSurface .emailCard :global(h3),
+.templatePremiumSurface .whatsappCard :global(h3),
+.templatePremiumSurface .callCard :global(h3),
+.templatePremiumSurface .libraryCard :global(h3),
+.templatePremiumSurface .assetCard :global(h3),
+.templatePremiumSurface .card :global(h3),
+.templatePremiumSurface .card :global(strong),
+.templatePremiumSurface .panel :global(h2),
+.templatePremiumSurface .panel :global(h3),
+.templatePremiumSurface .sectionCard :global(h2),
+.templatePremiumSurface .sectionCard :global(h3) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em;
+}
+
+.templatePremiumSurface .templateCard :global(p),
+.templatePremiumSurface .scriptCard :global(p),
+.templatePremiumSurface .messageCard :global(p),
+.templatePremiumSurface .emailCard :global(p),
+.templatePremiumSurface .whatsappCard :global(p),
+.templatePremiumSurface .callCard :global(p),
+.templatePremiumSurface .libraryCard :global(p),
+.templatePremiumSurface .assetCard :global(p),
+.templatePremiumSurface .card :global(p),
+.templatePremiumSurface .card :global(small),
+.templatePremiumSurface .panel :global(p),
+.templatePremiumSurface .sectionCard :global(p) {
+  color: #64748b !important;
+  line-height: 1.58;
+}
+
+/* Channel/category tags */
+.templatePremiumSurface .pill,
+.templatePremiumSurface .tag,
+.templatePremiumSurface .status,
+.templatePremiumSurface .chip,
+.templatePremiumSurface .badge,
+.templatePremiumSurface .badgeSoft,
+.templatePremiumSurface .channelPill,
+.templatePremiumSurface .categoryTag,
+.templatePremiumSurface .intentTag,
+.templatePremiumSurface .segmentTag,
+.templatePremiumSurface .templateTag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .04);
+}
+
+.templatePremiumSurface .pill::before,
+.templatePremiumSurface .tag::before,
+.templatePremiumSurface .status::before,
+.templatePremiumSurface .chip::before,
+.templatePremiumSurface .badge::before,
+.templatePremiumSurface .badgeSoft::before,
+.templatePremiumSurface .channelPill::before,
+.templatePremiumSurface .categoryTag::before,
+.templatePremiumSurface .intentTag::before,
+.templatePremiumSurface .segmentTag::before,
+.templatePremiumSurface .templateTag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+/* Recognizable channel classes if present */
+.templatePremiumSurface .email,
+.templatePremiumSurface .emailPill,
+.templatePremiumSurface .mail,
+.templatePremiumSurface .mailPill {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+.templatePremiumSurface .whatsapp,
+.templatePremiumSurface .whatsappPill {
+  background: #ecfdf5 !important;
+  border-color: #bbf7d0 !important;
+  color: #047857 !important;
+}
+
+.templatePremiumSurface .call,
+.templatePremiumSurface .phone,
+.templatePremiumSurface .callPill,
+.templatePremiumSurface .phonePill {
+  background: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+
+/* Filters and search */
+.templatePremiumSurface .filters,
+.templatePremiumSurface .toolbar,
+.templatePremiumSurface .searchBar,
+.templatePremiumSurface .libraryToolbar,
+.templatePremiumSurface .templateToolbar,
+.templatePremiumSurface .categoryTabs,
+.templatePremiumSurface .tabs {
+  position: relative;
+  z-index: 1;
+  padding: 14px !important;
+  border-radius: 25px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(248,250,252,.88)) !important;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, .055);
+  backdrop-filter: blur(18px);
+}
+
+.templatePremiumSurface .filters :global(input),
+.templatePremiumSurface .toolbar :global(input),
+.templatePremiumSurface .searchBar :global(input),
+.templatePremiumSurface .libraryToolbar :global(input),
+.templatePremiumSurface .templateToolbar :global(input),
+.templatePremiumSurface .filters :global(select),
+.templatePremiumSurface .toolbar :global(select),
+.templatePremiumSurface .searchBar :global(select),
+.templatePremiumSurface .libraryToolbar :global(select),
+.templatePremiumSurface .templateToolbar :global(select) {
+  min-height: 48px !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+/* Preview / composer / body text blocks */
+.templatePremiumSurface .preview,
+.templatePremiumSurface .messagePreview,
+.templatePremiumSurface .scriptPreview,
+.templatePremiumSurface .templatePreview,
+.templatePremiumSurface .composer,
+.templatePremiumSurface .editor,
+.templatePremiumSurface .formPanel,
+.templatePremiumSurface .bodyPanel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    #ffffff !important;
+  box-shadow: 0 24px 62px rgba(15, 23, 42, .075) !important;
+}
+
+.templatePremiumSurface .preview::before,
+.templatePremiumSurface .messagePreview::before,
+.templatePremiumSurface .scriptPreview::before,
+.templatePremiumSurface .templatePreview::before {
+  content: "✨ READY SCRIPT";
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .09em;
+}
+
+/* Inputs */
+.templatePremiumSurface .composer :global(input),
+.templatePremiumSurface .composer :global(select),
+.templatePremiumSurface .composer :global(textarea),
+.templatePremiumSurface .editor :global(input),
+.templatePremiumSurface .editor :global(select),
+.templatePremiumSurface .editor :global(textarea),
+.templatePremiumSurface .formPanel :global(input),
+.templatePremiumSurface .formPanel :global(select),
+.templatePremiumSurface .formPanel :global(textarea),
+.templatePremiumSurface .panel :global(input),
+.templatePremiumSurface .panel :global(select),
+.templatePremiumSurface .panel :global(textarea),
+.templatePremiumSurface .sectionCard :global(input),
+.templatePremiumSurface .sectionCard :global(select),
+.templatePremiumSurface .sectionCard :global(textarea) {
+  border-radius: 18px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: linear-gradient(180deg, #ffffff, #fbfdff) !important;
+  color: #0f172a !important;
+  font-weight: 750;
+}
+
+.templatePremiumSurface .composer :global(input:focus),
+.templatePremiumSurface .composer :global(select:focus),
+.templatePremiumSurface .composer :global(textarea:focus),
+.templatePremiumSurface .editor :global(input:focus),
+.templatePremiumSurface .editor :global(select:focus),
+.templatePremiumSurface .editor :global(textarea:focus),
+.templatePremiumSurface .formPanel :global(input:focus),
+.templatePremiumSurface .formPanel :global(select:focus),
+.templatePremiumSurface .formPanel :global(textarea:focus),
+.templatePremiumSurface .panel :global(input:focus),
+.templatePremiumSurface .panel :global(select:focus),
+.templatePremiumSurface .panel :global(textarea:focus),
+.templatePremiumSurface .sectionCard :global(input:focus),
+.templatePremiumSurface .sectionCard :global(select:focus),
+.templatePremiumSurface .sectionCard :global(textarea:focus) {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10) !important;
+}
+
+/* Buttons */
+.templatePremiumSurface .panel :global(button),
+.templatePremiumSurface .card :global(button),
+.templatePremiumSurface .sectionCard :global(button),
+.templatePremiumSurface .templateCard :global(button),
+.templatePremiumSurface .scriptCard :global(button),
+.templatePremiumSurface .messageCard :global(button),
+.templatePremiumSurface .composer :global(button),
+.templatePremiumSurface .formPanel :global(button),
+.templatePremiumSurface .toolbar :global(button) {
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.templatePremiumSurface .panel :global(button:hover),
+.templatePremiumSurface .card :global(button:hover),
+.templatePremiumSurface .sectionCard :global(button:hover),
+.templatePremiumSurface .templateCard :global(button:hover),
+.templatePremiumSurface .scriptCard :global(button:hover),
+.templatePremiumSurface .messageCard :global(button:hover),
+.templatePremiumSurface .composer :global(button:hover),
+.templatePremiumSurface .formPanel :global(button:hover),
+.templatePremiumSurface .toolbar :global(button:hover) {
+  transform: translateY(-2px);
+}
+
+/* Known local buttons */
+.primaryButton,
+.actionButton,
+.submitButton {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 48%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, .20) !important;
+}
+
+.secondaryButton,
+.smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+/* Empty states */
+.templatePremiumSurface .empty,
+.templatePremiumSurface .emptyState,
+.templatePremiumSurface .noData {
+  border: 1px dashed #cbd5e1 !important;
+  border-radius: 25px !important;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, .08), transparent 55%),
+    #ffffff !important;
+  color: #64748b !important;
+  min-height: 132px;
+}
+
+/* Modal visual polish */
+.templatePremiumSurface .modalBackdrop {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.templatePremiumSurface .modal,
+.templatePremiumSurface .megaModal,
+.templatePremiumSurface .detailModal,
+.templatePremiumSurface .drawer,
+.templatePremiumSurface .sidePanel {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .templatePremiumSurface .hero::after,
+  .templatePremiumSurface .header::after,
+  .templatePremiumSurface .commandHero::after,
+  .templatePremiumSurface .libraryHero::after,
+  .templatePremiumSurface .templateHero::after {
+    display: none;
+  }
+}
+

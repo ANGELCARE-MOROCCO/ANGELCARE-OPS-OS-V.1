@@ -1,0 +1,3044 @@
+.workspace {
+  display: grid;
+  gap: 22px;
+  padding: 6px 0 36px;
+  color: #0f172a;
+}
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 22px;
+  padding: 30px;
+  border: 1px solid #e5e7eb;
+  border-radius: 34px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 74%, #eff6ff 100%);
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.08);
+}
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  margin: 14px 0 12px;
+  max-width: 920px;
+  font-size: clamp(34px, 5vw, 72px);
+  line-height: .9;
+  letter-spacing: -.065em;
+  font-weight: 980;
+}
+.hero p {
+  margin: 0;
+  max-width: 820px;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+.primaryButton,
+.secondaryButton,
+.dangerButton {
+  min-height: 46px;
+  padding: 0 17px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.primaryButton {
+  border: 0;
+  color: #fff;
+  background: #0f172a;
+  box-shadow: 0 16px 30px rgba(15,23,42,.24);
+}
+.secondaryButton {
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  background: #fff;
+}
+.dangerButton {
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  background: #fff7ed;
+}
+.sideCard,
+.panel,
+.card,
+.modal {
+  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 22px 56px rgba(15,23,42,.07);
+}
+.sideCard {
+  border-radius: 28px;
+  padding: 22px;
+}
+.sideCard strong {
+  display:block;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.sideCard span {
+  color:#64748b;
+  line-height: 1.55;
+}
+.kpis {
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.kpi {
+  padding: 18px;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+.kpi small {
+  display:block;
+  color:#64748b;
+  font-weight:900;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.kpi strong {
+  display:block;
+  margin-top: 12px;
+  font-size: 30px;
+  letter-spacing:-.04em;
+}
+.grid {
+  display:grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr);
+  gap: 20px;
+}
+.panel {
+  border-radius: 28px;
+  padding: 22px;
+}
+.panelHeader {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom: 18px;
+}
+.panelHeader h2 {
+  margin:0;
+  font-size: 24px;
+  letter-spacing:-.035em;
+}
+.panelHeader p {
+  margin:6px 0 0;
+  color:#64748b;
+  line-height:1.55;
+}
+.tableWrap {
+  overflow:auto;
+  border:1px solid #e5e7eb;
+  border-radius:20px;
+}
+.tableWrap table {
+  width:100%;
+  border-collapse:collapse;
+  min-width: 760px;
+}
+.tableWrap th {
+  padding:13px 14px;
+  text-align:left;
+  color:#64748b;
+  background:#f8fafc;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.tableWrap td {
+  padding:14px;
+  border-top:1px solid #eef2f7;
+  vertical-align:top;
+  font-size:13px;
+}
+.tableWrap td strong {
+  display:block;
+  margin-bottom:4px;
+}
+.tableWrap td small {
+  color:#64748b;
+}
+.badge {
+  display:inline-flex;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#1d4ed8;
+  font-weight:900;
+  font-size:11px;
+}
+.formGrid {
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.field {
+  display:grid;
+  gap:7px;
+}
+.field label {
+  font-size:12px;
+  font-weight:900;
+  color:#334155;
+}
+.field input,
+.field select,
+.field textarea {
+  width:100%;
+  border:1px solid #dbe3ef;
+  border-radius:14px;
+  padding:12px 13px;
+  color:#0f172a;
+  background:#fff;
+  font:inherit;
+}
+.field textarea {
+  min-height:110px;
+  resize:vertical;
+}
+.full { grid-column:1 / -1; }
+.cards {
+  display:grid;
+  gap:12px;
+}
+.card {
+  border-radius:22px;
+  padding:16px;
+}
+.card h3 {
+  margin:0 0 8px;
+  letter-spacing:-.025em;
+}
+.card p { margin:0; color:#64748b; line-height:1.55; }
+.modalBackdrop {
+  position:fixed;
+  inset:0;
+  z-index:60;
+  display:grid;
+  place-items:center;
+  padding:30px;
+  background:rgba(15,23,42,.48);
+  backdrop-filter: blur(7px);
+}
+.modal {
+  width:min(1180px, 96vw);
+  max-height: 90vh;
+  overflow:auto;
+  border-radius:32px;
+}
+.modalHeader,
+.modalFooter {
+  padding:22px 26px;
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:center;
+  border-bottom:1px solid #e5e7eb;
+}
+.modalHeader h2 { margin:6px 0 0; font-size:28px; letter-spacing:-.04em; }
+.modalHeader button {
+  width:44px; height:44px; border-radius:14px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-size:22px;
+}
+.modalBody { padding:26px; display:grid; gap:20px; }
+.modalFooter { border-top:1px solid #e5e7eb; border-bottom:0; justify-content:flex-end; }
+.error {
+  padding:14px 16px;
+  border:1px solid #fecaca;
+  background:#fff1f2;
+  color:#991b1b;
+  border-radius:18px;
+  font-weight:800;
+}
+@media (max-width: 1100px) {
+  .hero, .grid { grid-template-columns:1fr; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .formGrid, .kpis { grid-template-columns:1fr; }
+  .hero { padding:20px; }
+}
+
+/* ============================================================
+   ANGELCARE B2B — REAL CAMPAIGNS PREMIUM UI
+   Target: B2BMegaIWorkspace mode="campaigns"
+   UI-only. No backend / API / CRUD / data logic changes.
+   ============================================================ */
+
+.campaignsPremiumSurface {
+  position: relative;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 6% 3%, rgba(37, 99, 235, .17), transparent 30%),
+    radial-gradient(circle at 96% 6%, rgba(245, 158, 11, .15), transparent 30%),
+    radial-gradient(circle at 70% 96%, rgba(236, 72, 153, .11), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #edf4f8 100%) !important;
+}
+
+/* Proof + page identity */
+.campaignsPremiumSurface::before {
+  content: "🚀 CAMPAIGN COMMAND CENTER";
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 34px;
+  margin: 0 0 14px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #eff6ff, #fff7ed);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, .12);
+}
+
+/* Hero */
+.campaignsPremiumSurface .hero,
+.campaignsPremiumSurface .header,
+.campaignsPremiumSurface .topbar {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 40px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(37, 99, 235, .22), transparent 30%),
+    radial-gradient(circle at 14% 88%, rgba(245, 158, 11, .16), transparent 34%),
+    radial-gradient(circle at 96% 92%, rgba(236, 72, 153, .12), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 54%, #f4f8ff 100%) !important;
+  box-shadow:
+    0 36px 100px rgba(15, 23, 42, .13),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.campaignsPremiumSurface .hero::before,
+.campaignsPremiumSurface .header::before,
+.campaignsPremiumSurface .topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .032) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.68), transparent 76%);
+}
+
+.campaignsPremiumSurface .hero::after,
+.campaignsPremiumSurface .header::after,
+.campaignsPremiumSurface .topbar::after {
+  content: "📣";
+  position: absolute;
+  right: 34px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 106px;
+  height: 106px;
+  border-radius: 36px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(245, 158, 11, .12)),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, .94);
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .18);
+  font-size: 46px;
+}
+
+.campaignsPremiumSurface .hero :global(h1),
+.campaignsPremiumSurface .hero :global(h2),
+.campaignsPremiumSurface .header :global(h1),
+.campaignsPremiumSurface .header :global(h2),
+.campaignsPremiumSurface .topbar :global(h1),
+.campaignsPremiumSurface .topbar :global(h2) {
+  color: #07111f !important;
+  letter-spacing: -0.07em !important;
+  line-height: .93 !important;
+  font-weight: 950 !important;
+}
+
+.campaignsPremiumSurface .hero :global(p),
+.campaignsPremiumSurface .header :global(p),
+.campaignsPremiumSurface .topbar :global(p) {
+  color: #64748b !important;
+  line-height: 1.72;
+  max-width: 880px;
+}
+
+/* KPI strip */
+.campaignsPremiumSurface .kpis,
+.campaignsPremiumSurface .metrics,
+.campaignsPremiumSurface .summaryGrid {
+  gap: 14px !important;
+}
+
+.campaignsPremiumSurface .kpi,
+.campaignsPremiumSurface .metric,
+.campaignsPremiumSurface .stat {
+  position: relative !important;
+  overflow: hidden;
+  border-radius: 28px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.97), rgba(248,250,252,.91)) !important;
+  box-shadow: 0 22px 56px rgba(15, 23, 42, .078) !important;
+}
+
+.campaignsPremiumSurface .kpi::after,
+.campaignsPremiumSurface .metric::after,
+.campaignsPremiumSurface .stat::after {
+  content: "";
+  position: absolute;
+  top: -42px;
+  right: -40px;
+  width: 116px;
+  height: 116px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, .13), rgba(245, 158, 11, .09));
+}
+
+.campaignsPremiumSurface .kpi :global(small),
+.campaignsPremiumSurface .metric :global(small),
+.campaignsPremiumSurface .stat :global(small) {
+  color: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+
+.campaignsPremiumSurface .kpi :global(strong),
+.campaignsPremiumSurface .metric :global(strong),
+.campaignsPremiumSurface .stat :global(strong) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.05em;
+}
+
+/* Main campaign layout */
+.campaignsPremiumSurface .grid {
+  gap: 18px !important;
+}
+
+.campaignsPremiumSurface .panel {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 34px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .09), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 28px 76px rgba(15, 23, 42, .088),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.campaignsPremiumSurface .panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .52;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .024) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.60), transparent 78%);
+}
+
+.campaignsPremiumSurface .panelHeader {
+  position: relative;
+  z-index: 1;
+}
+
+.campaignsPremiumSurface .panelHeader :global(h2),
+.campaignsPremiumSurface .panelHeader :global(h3) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.campaignsPremiumSurface .panelHeader :global(p) {
+  color: #64748b !important;
+  line-height: 1.6;
+}
+
+/* Campaign table */
+.campaignsPremiumSurface .tableWrap {
+  position: relative;
+  z-index: 1;
+  margin-top: 14px;
+  border-radius: 30px !important;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background: #ffffff !important;
+  box-shadow: 0 25px 68px rgba(15, 23, 42, .078);
+}
+
+.campaignsPremiumSurface .tableWrap :global(table) {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.campaignsPremiumSurface .tableWrap :global(thead) {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 52%, #fff7ed 100%) !important;
+}
+
+.campaignsPremiumSurface .tableWrap :global(th) {
+  height: 58px !important;
+  padding: 0 18px !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+}
+
+.campaignsPremiumSurface .tableWrap :global(td) {
+  padding: 16px 18px !important;
+  border-top: 1px solid rgba(226, 232, 240, .88) !important;
+  color: #0f172a !important;
+}
+
+.campaignsPremiumSurface .tableWrap :global(tbody tr) {
+  transition: background .16s ease, box-shadow .16s ease;
+}
+
+.campaignsPremiumSurface .tableWrap :global(tbody tr:hover) {
+  background: linear-gradient(90deg, rgba(37, 99, 235, .055), rgba(245, 158, 11, .04)) !important;
+  box-shadow: inset 4px 0 0 #2563eb;
+}
+
+.campaignsPremiumSurface .tableWrap :global(td:first-child) {
+  position: relative;
+  padding-left: 62px !important;
+}
+
+.campaignsPremiumSurface .tableWrap :global(td:first-child)::before {
+  content: "🚀";
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, .10);
+  font-size: 15px;
+}
+
+.campaignsPremiumSurface .tableWrap :global(td strong) {
+  display: block;
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.02em;
+}
+
+.campaignsPremiumSurface .tableWrap :global(td small) {
+  display: block;
+  margin-top: 5px;
+  color: #64748b !important;
+}
+
+/* Badge / status */
+.campaignsPremiumSurface .badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid #bfdbfe !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, .06);
+}
+
+.campaignsPremiumSurface .badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+/* Sequence cards */
+.campaignsPremiumSurface .cards {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px !important;
+}
+
+.campaignsPremiumSurface .card {
+  position: relative !important;
+  overflow: hidden;
+  border-radius: 27px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .075) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.campaignsPremiumSurface .card:hover {
+  transform: translateY(-3px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 30px 70px rgba(37, 99, 235, .14) !important;
+}
+
+.campaignsPremiumSurface .card::before {
+  content: "🧭";
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  margin-bottom: 13px;
+  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  border: 1px solid #ddd6fe;
+  box-shadow: 0 12px 26px rgba(124, 58, 237, .10);
+  font-size: 18px;
+}
+
+.campaignsPremiumSurface .card:nth-child(2n)::before {
+  content: "📧";
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border-color: #bfdbfe;
+}
+
+.campaignsPremiumSurface .card:nth-child(3n)::before {
+  content: "💬";
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border-color: #bbf7d0;
+}
+
+.campaignsPremiumSurface .card :global(h3) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em;
+}
+
+.campaignsPremiumSurface .card :global(p) {
+  color: #64748b !important;
+  line-height: 1.58;
+}
+
+/* Buttons */
+.campaignsPremiumSurface .primaryButton,
+.campaignsPremiumSurface .actionButton,
+.campaignsPremiumSurface .submitButton {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 48%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, .20) !important;
+}
+
+.campaignsPremiumSurface .secondaryButton,
+.campaignsPremiumSurface .smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+.campaignsPremiumSurface :global(button) {
+  border-radius: 16px !important;
+  font-weight: 950 !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.campaignsPremiumSurface :global(button:hover) {
+  transform: translateY(-2px);
+}
+
+/* Inputs / modals if opened */
+.campaignsPremiumSurface :global(input),
+.campaignsPremiumSurface :global(select),
+.campaignsPremiumSurface :global(textarea) {
+  border-radius: 18px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+.campaignsPremiumSurface :global(input:focus),
+.campaignsPremiumSurface :global(select:focus),
+.campaignsPremiumSurface :global(textarea:focus) {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10) !important;
+}
+
+.campaignsPremiumSurface .modalBackdrop {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.campaignsPremiumSurface .modal,
+.campaignsPremiumSurface .drawer {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .campaignsPremiumSurface .hero::after,
+  .campaignsPremiumSurface .header::after,
+  .campaignsPremiumSurface .topbar::after {
+    display: none;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — SEQUENCE OPEN / EDIT / DELETE UI
+   Target: B2BMegaIWorkspace campaigns mode
+   ============================================================ */
+
+.sequenceMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.sequenceMeta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.sequenceMeta span:nth-child(2) {
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+  color: #047857;
+}
+
+.sequenceEditorBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58);
+  backdrop-filter: blur(14px);
+}
+
+.sequenceEditorModal {
+  width: min(1180px, 96vw);
+  max-height: min(860px, 92vh);
+  overflow: auto;
+  border-radius: 36px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(37, 99, 235, .13), transparent 34%),
+    radial-gradient(circle at 6% 100%, rgba(16, 185, 129, .10), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 46px 120px rgba(15, 23, 42, .34);
+  padding: 28px;
+}
+
+.sequenceEditorHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sequenceEditorEyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #eff6ff, #ecfdf5);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.sequenceEditorHeader h2 {
+  margin: 12px 0 8px;
+  color: #07111f;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: .95;
+  letter-spacing: -.06em;
+  font-weight: 950;
+}
+
+.sequenceEditorHeader p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.sequenceIconButton {
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .08);
+}
+
+.sequenceEditorGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.sequenceEditorGrid label {
+  display: grid;
+  gap: 8px;
+}
+
+.sequenceEditorGrid label span {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.sequenceEditorGrid input,
+.sequenceEditorGrid select,
+.sequenceEditorGrid textarea {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 800;
+  padding: 13px 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.88);
+}
+
+.sequenceEditorGrid textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.sequenceEditorGrid small {
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.sequenceEditorWide {
+  grid-column: 1 / -1;
+}
+
+.sequenceEditorPreview {
+  margin-top: 22px;
+  border-radius: 28px;
+  border: 1px solid #e5e7eb;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    #ffffff;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .07);
+  padding: 20px;
+}
+
+.sequenceEditorPreview h3 {
+  margin: 0 0 14px;
+  color: #07111f;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: -.03em;
+}
+
+.sequencePreviewSteps {
+  display: grid;
+  gap: 10px;
+}
+
+.sequencePreviewStep {
+  display: grid;
+  grid-template-columns: 42px 120px 70px 1fr;
+  align-items: center;
+  gap: 12px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  padding: 12px;
+}
+
+.sequencePreviewStep b {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.sequencePreviewStep span {
+  color: #0f172a;
+  font-weight: 950;
+}
+
+.sequencePreviewStep strong {
+  color: #047857;
+  font-weight: 950;
+}
+
+.sequencePreviewStep p {
+  margin: 0;
+  color: #64748b;
+}
+
+.sequenceEditorActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sequenceEditorActions > div {
+  display: flex;
+  gap: 10px;
+}
+
+.dangerButton {
+  min-height: 46px;
+  border-radius: 16px;
+  border: 1px solid #fecdd3;
+  background: #fff1f2;
+  color: #be123c;
+  font-weight: 950;
+  padding: 0 16px;
+}
+
+@media (max-width: 900px) {
+  .sequenceEditorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sequencePreviewStep {
+    grid-template-columns: 38px 1fr;
+  }
+
+  .sequencePreviewStep p {
+    grid-column: 1 / -1;
+  }
+
+  .sequenceEditorActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sequenceEditorActions > div {
+    flex-direction: column;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — CAMPAIGN OPEN / EDIT / DELETE UI
+   Target: B2BMegaIWorkspace campaigns mode
+   ============================================================ */
+
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.rowActions button:first-child {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06) !important;
+}
+
+.campaignEditorBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58);
+  backdrop-filter: blur(14px);
+}
+
+.campaignEditorModal {
+  width: min(1180px, 96vw);
+  max-height: min(860px, 92vh);
+  overflow: auto;
+  border-radius: 36px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(37, 99, 235, .13), transparent 34%),
+    radial-gradient(circle at 6% 100%, rgba(245, 158, 11, .12), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 46px 120px rgba(15, 23, 42, .34);
+  padding: 28px;
+}
+
+.campaignEditorHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.campaignEditorEyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #eff6ff, #fff7ed);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.campaignEditorHeader h2 {
+  margin: 12px 0 8px;
+  color: #07111f;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: .95;
+  letter-spacing: -.06em;
+  font-weight: 950;
+}
+
+.campaignEditorHeader p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.campaignIconButton {
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .08);
+}
+
+.campaignEditorGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.campaignEditorGrid label {
+  display: grid;
+  gap: 8px;
+}
+
+.campaignEditorGrid label span {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.campaignEditorGrid input,
+.campaignEditorGrid select,
+.campaignEditorGrid textarea {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 800;
+  padding: 13px 14px;
+}
+
+.campaignEditorGrid textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.campaignEditorWide {
+  grid-column: 1 / -1;
+}
+
+.campaignEditorPreview {
+  margin-top: 22px;
+  border-radius: 28px;
+  border: 1px solid #e5e7eb;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    #ffffff;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .07);
+  padding: 20px;
+}
+
+.campaignEditorPreview h3 {
+  margin: 0 0 14px;
+  color: #07111f;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: -.03em;
+}
+
+.campaignPreviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.campaignPreviewGrid article {
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  padding: 14px;
+}
+
+.campaignPreviewGrid span {
+  display: block;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.campaignPreviewGrid strong {
+  color: #07111f;
+  font-weight: 950;
+}
+
+.campaignPreviewGrid p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.campaignEditorActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.campaignEditorActions > div {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .campaignEditorGrid,
+  .campaignPreviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .campaignEditorActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .campaignEditorActions > div {
+    flex-direction: column;
+  }
+}
+
+
+
+/* ============================================================
+   ANGELCARE B2B — IMPORT HUB PREMIUM UI V2 CLEAN
+   Page: /b2b-partnerships/imports
+   UI-only. No backend / API / import logic changes.
+   ============================================================ */
+
+.importsPremiumSurface {
+  position: relative;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 5% 0%, rgba(37, 99, 235, .10), transparent 28%),
+    radial-gradient(circle at 96% 7%, rgba(16, 185, 129, .12), transparent 30%),
+    radial-gradient(circle at 78% 100%, rgba(245, 158, 11, .08), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #eef5f8 100%) !important;
+}
+
+/* Never allow the wrapper itself to create fake visual blocks */
+.importsPremiumSurface::before,
+.importsPremiumSurface::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Main hero */
+.importsPremiumSurface .hero,
+.importsPremiumSurface .header,
+.importsPremiumSurface .topbar,
+.importsPremiumSurface .importHero,
+.importsPremiumSurface .commandHero {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 34px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(37, 99, 235, .12), transparent 26%),
+    radial-gradient(circle at 92% 14%, rgba(16, 185, 129, .16), transparent 30%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 52%, #ecfdf5 100%) !important;
+  box-shadow:
+    0 28px 72px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Controlled hero decoration, not overlapping content */
+.importsPremiumSurface .hero > :first-child::before,
+.importsPremiumSurface .header > :first-child::before,
+.importsPremiumSurface .topbar > :first-child::before,
+.importsPremiumSurface .importHero > :first-child::before,
+.importsPremiumSurface .commandHero > :first-child::before {
+  content: "📥 IMPORT HUB";
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  margin-bottom: 12px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+}
+
+.importsPremiumSurface .hero :global(h1),
+.importsPremiumSurface .header :global(h1),
+.importsPremiumSurface .topbar :global(h1),
+.importsPremiumSurface .importHero :global(h1),
+.importsPremiumSurface .commandHero :global(h1),
+.importsPremiumSurface :global(h1) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.065em !important;
+  line-height: .94 !important;
+}
+
+.importsPremiumSurface :global(h2),
+.importsPremiumSurface :global(h3),
+.importsPremiumSurface :global(strong) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+}
+
+.importsPremiumSurface :global(p),
+.importsPremiumSurface :global(small) {
+  color: #64748b !important;
+  line-height: 1.62;
+}
+
+/* KPI cards: imports, campaigns, sequences, prospects CRM */
+.importsPremiumSurface .kpis,
+.importsPremiumSurface .metrics,
+.importsPremiumSurface .summaryGrid,
+.importsPremiumSurface .stats {
+  gap: 14px !important;
+}
+
+.importsPremiumSurface .kpi,
+.importsPremiumSurface .metric,
+.importsPremiumSurface .stat,
+.importsPremiumSurface :global([class*="metric"]),
+.importsPremiumSurface :global([class*="Metric"]),
+.importsPremiumSurface :global([class*="stat"]),
+.importsPremiumSurface :global([class*="Stat"]) {
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 96px;
+  border-radius: 24px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(16, 185, 129, .12), transparent 35%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 18px 44px rgba(15, 23, 42, .07),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.importsPremiumSurface .kpi::after,
+.importsPremiumSurface .metric::after,
+.importsPremiumSurface .stat::after,
+.importsPremiumSurface :global([class*="metric"])::after,
+.importsPremiumSurface :global([class*="Metric"])::after,
+.importsPremiumSurface :global([class*="stat"])::after,
+.importsPremiumSurface :global([class*="Stat"])::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  top: -32px;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, .13), rgba(37, 99, 235, .09));
+}
+
+.importsPremiumSurface .kpi :global(small),
+.importsPremiumSurface .metric :global(small),
+.importsPremiumSurface .stat :global(small) {
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 950 !important;
+}
+
+/* Panels: import batches and CSV standards */
+.importsPremiumSurface .panel,
+.importsPremiumSurface .card,
+.importsPremiumSurface .section,
+.importsPremiumSurface .sectionCard,
+.importsPremiumSurface .importPanel,
+.importsPremiumSurface .batchPanel,
+.importsPremiumSurface .standardsPanel,
+.importsPremiumSurface .validationPanel,
+.importsPremiumSurface .stagingPanel,
+.importsPremiumSurface :global([class*="panel"]),
+.importsPremiumSurface :global([class*="Panel"]) {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .065), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 24px 60px rgba(15, 23, 42, .075),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+/* Panel header labels */
+.importsPremiumSurface .panel :global(h2)::before,
+.importsPremiumSurface .sectionCard :global(h2)::before {
+  content: "●";
+  margin-right: 8px;
+  color: #10b981;
+  font-size: 12px;
+}
+
+/* Table */
+.importsPremiumSurface .tableWrap,
+.importsPremiumSurface .tableContainer,
+.importsPremiumSurface .importTable,
+.importsPremiumSurface .batchTable {
+  overflow: hidden !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, .06);
+}
+
+.importsPremiumSurface :global(table) {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.importsPremiumSurface :global(thead) {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 55%, #ecfdf5 100%) !important;
+}
+
+.importsPremiumSurface :global(th) {
+  height: 54px !important;
+  padding: 0 16px !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+}
+
+.importsPremiumSurface :global(td) {
+  padding: 15px 16px !important;
+  border-top: 1px solid rgba(226, 232, 240, .88) !important;
+  color: #0f172a !important;
+}
+
+.importsPremiumSurface :global(tbody tr:hover) {
+  background: linear-gradient(90deg, rgba(16, 185, 129, .055), rgba(37, 99, 235, .035)) !important;
+  box-shadow: inset 4px 0 0 #10b981;
+}
+
+/* Status/tag/badge */
+.importsPremiumSurface .pill,
+.importsPremiumSurface .tag,
+.importsPremiumSurface .status,
+.importsPremiumSurface .chip,
+.importsPremiumSurface .badge,
+.importsPremiumSurface :global([class*="pill"]),
+.importsPremiumSurface :global([class*="Pill"]),
+.importsPremiumSurface :global([class*="tag"]),
+.importsPremiumSurface :global([class*="Tag"]),
+.importsPremiumSurface :global([class*="badge"]),
+.importsPremiumSurface :global([class*="Badge"]),
+.importsPremiumSurface :global([class*="status"]),
+.importsPremiumSurface :global([class*="Status"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 28px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  border: 1px solid #bbf7d0 !important;
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(16, 185, 129, .07);
+}
+
+/* CSV standards cards on the right */
+.importsPremiumSurface .standardsPanel :global(article),
+.importsPremiumSurface .standardsPanel :global(div),
+.importsPremiumSurface :global([class*="standard"]),
+.importsPremiumSurface :global([class*="Standard"]),
+.importsPremiumSurface :global([class*="schema"]),
+.importsPremiumSurface :global([class*="Schema"]) {
+  border-radius: 20px !important;
+}
+
+.importsPremiumSurface .standardsPanel :global(article),
+.importsPremiumSurface :global([class*="standard"]),
+.importsPremiumSurface :global([class*="Standard"]) {
+  background:
+    linear-gradient(135deg, #ffffff 0%, #fffdf7 100%) !important;
+  border: 1px solid #fde68a !important;
+  box-shadow: 0 12px 28px rgba(245, 158, 11, .06);
+}
+
+/* Buttons */
+.importsPremiumSurface :global(button) {
+  border-radius: 15px !important;
+  font-weight: 950 !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.importsPremiumSurface :global(button:hover) {
+  transform: translateY(-2px);
+}
+
+.importsPremiumSurface :global(button:first-of-type),
+.importsPremiumSurface .primaryButton,
+.importsPremiumSurface .actionButton,
+.importsPremiumSurface .submitButton {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 50%, #065f46 100%) !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 16px 34px rgba(16, 185, 129, .18) !important;
+}
+
+.importsPremiumSurface .secondaryButton,
+.importsPremiumSurface .smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+/* Forms / modal */
+.importsPremiumSurface :global(input),
+.importsPremiumSurface :global(select),
+.importsPremiumSurface :global(textarea) {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+.importsPremiumSurface :global(textarea) {
+  min-height: 160px !important;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.importsPremiumSurface :global(input:focus),
+.importsPremiumSurface :global(select:focus),
+.importsPremiumSurface :global(textarea:focus) {
+  outline: none !important;
+  border-color: #86efac !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, .12) !important;
+}
+
+.importsPremiumSurface .modalBackdrop,
+.importsPremiumSurface :global([class*="modalBackdrop"]),
+.importsPremiumSurface :global([class*="ModalBackdrop"]),
+.importsPremiumSurface :global([class*="overlay"]),
+.importsPremiumSurface :global([class*="Overlay"]) {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.importsPremiumSurface .modal,
+.importsPremiumSurface .drawer,
+.importsPremiumSurface :global([class*="modal"]),
+.importsPremiumSurface :global([class*="Modal"]),
+.importsPremiumSurface :global([class*="drawer"]),
+.importsPremiumSurface :global([class*="Drawer"]) {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .importsPremiumSurface .hero,
+  .importsPremiumSurface .header,
+  .importsPremiumSurface .topbar,
+  .importsPremiumSurface .importHero,
+  .importsPremiumSurface .commandHero {
+    border-radius: 28px !important;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — IMPORT HUB PREMIUM UI V2 CLEAN
+   Page: /b2b-partnerships/imports
+   UI-only. No backend / API / import logic changes.
+   ============================================================ */
+
+.importsPremiumSurface {
+  position: relative;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 5% 0%, rgba(37, 99, 235, .10), transparent 28%),
+    radial-gradient(circle at 96% 7%, rgba(16, 185, 129, .12), transparent 30%),
+    radial-gradient(circle at 78% 100%, rgba(245, 158, 11, .08), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #eef5f8 100%) !important;
+}
+
+/* Never allow the wrapper itself to create fake visual blocks */
+.importsPremiumSurface::before,
+.importsPremiumSurface::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Main hero */
+.importsPremiumSurface .hero,
+.importsPremiumSurface .header,
+.importsPremiumSurface .topbar,
+.importsPremiumSurface .importHero,
+.importsPremiumSurface .commandHero {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 34px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(37, 99, 235, .12), transparent 26%),
+    radial-gradient(circle at 92% 14%, rgba(16, 185, 129, .16), transparent 30%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 52%, #ecfdf5 100%) !important;
+  box-shadow:
+    0 28px 72px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Controlled hero decoration, not overlapping content */
+.importsPremiumSurface .hero > :first-child::before,
+.importsPremiumSurface .header > :first-child::before,
+.importsPremiumSurface .topbar > :first-child::before,
+.importsPremiumSurface .importHero > :first-child::before,
+.importsPremiumSurface .commandHero > :first-child::before {
+  content: "📥 IMPORT HUB";
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  margin-bottom: 12px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+}
+
+.importsPremiumSurface .hero :global(h1),
+.importsPremiumSurface .header :global(h1),
+.importsPremiumSurface .topbar :global(h1),
+.importsPremiumSurface .importHero :global(h1),
+.importsPremiumSurface .commandHero :global(h1),
+.importsPremiumSurface :global(h1) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.065em !important;
+  line-height: .94 !important;
+}
+
+.importsPremiumSurface :global(h2),
+.importsPremiumSurface :global(h3),
+.importsPremiumSurface :global(strong) {
+  color: #07111f !important;
+  font-weight: 950 !important;
+}
+
+.importsPremiumSurface :global(p),
+.importsPremiumSurface :global(small) {
+  color: #64748b !important;
+  line-height: 1.62;
+}
+
+/* KPI cards: imports, campaigns, sequences, prospects CRM */
+.importsPremiumSurface .kpis,
+.importsPremiumSurface .metrics,
+.importsPremiumSurface .summaryGrid,
+.importsPremiumSurface .stats {
+  gap: 14px !important;
+}
+
+.importsPremiumSurface .kpi,
+.importsPremiumSurface .metric,
+.importsPremiumSurface .stat,
+.importsPremiumSurface :global([class*="metric"]),
+.importsPremiumSurface :global([class*="Metric"]),
+.importsPremiumSurface :global([class*="stat"]),
+.importsPremiumSurface :global([class*="Stat"]) {
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 96px;
+  border-radius: 24px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(16, 185, 129, .12), transparent 35%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 18px 44px rgba(15, 23, 42, .07),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.importsPremiumSurface .kpi::after,
+.importsPremiumSurface .metric::after,
+.importsPremiumSurface .stat::after,
+.importsPremiumSurface :global([class*="metric"])::after,
+.importsPremiumSurface :global([class*="Metric"])::after,
+.importsPremiumSurface :global([class*="stat"])::after,
+.importsPremiumSurface :global([class*="Stat"])::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  top: -32px;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, .13), rgba(37, 99, 235, .09));
+}
+
+.importsPremiumSurface .kpi :global(small),
+.importsPremiumSurface .metric :global(small),
+.importsPremiumSurface .stat :global(small) {
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 950 !important;
+}
+
+/* Panels: import batches and CSV standards */
+.importsPremiumSurface .panel,
+.importsPremiumSurface .card,
+.importsPremiumSurface .section,
+.importsPremiumSurface .sectionCard,
+.importsPremiumSurface .importPanel,
+.importsPremiumSurface .batchPanel,
+.importsPremiumSurface .standardsPanel,
+.importsPremiumSurface .validationPanel,
+.importsPremiumSurface .stagingPanel,
+.importsPremiumSurface :global([class*="panel"]),
+.importsPremiumSurface :global([class*="Panel"]) {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .065), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 24px 60px rgba(15, 23, 42, .075),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+/* Panel header labels */
+.importsPremiumSurface .panel :global(h2)::before,
+.importsPremiumSurface .sectionCard :global(h2)::before {
+  content: "●";
+  margin-right: 8px;
+  color: #10b981;
+  font-size: 12px;
+}
+
+/* Table */
+.importsPremiumSurface .tableWrap,
+.importsPremiumSurface .tableContainer,
+.importsPremiumSurface .importTable,
+.importsPremiumSurface .batchTable {
+  overflow: hidden !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, .06);
+}
+
+.importsPremiumSurface :global(table) {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.importsPremiumSurface :global(thead) {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 55%, #ecfdf5 100%) !important;
+}
+
+.importsPremiumSurface :global(th) {
+  height: 54px !important;
+  padding: 0 16px !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+}
+
+.importsPremiumSurface :global(td) {
+  padding: 15px 16px !important;
+  border-top: 1px solid rgba(226, 232, 240, .88) !important;
+  color: #0f172a !important;
+}
+
+.importsPremiumSurface :global(tbody tr:hover) {
+  background: linear-gradient(90deg, rgba(16, 185, 129, .055), rgba(37, 99, 235, .035)) !important;
+  box-shadow: inset 4px 0 0 #10b981;
+}
+
+/* Status/tag/badge */
+.importsPremiumSurface .pill,
+.importsPremiumSurface .tag,
+.importsPremiumSurface .status,
+.importsPremiumSurface .chip,
+.importsPremiumSurface .badge,
+.importsPremiumSurface :global([class*="pill"]),
+.importsPremiumSurface :global([class*="Pill"]),
+.importsPremiumSurface :global([class*="tag"]),
+.importsPremiumSurface :global([class*="Tag"]),
+.importsPremiumSurface :global([class*="badge"]),
+.importsPremiumSurface :global([class*="Badge"]),
+.importsPremiumSurface :global([class*="status"]),
+.importsPremiumSurface :global([class*="Status"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px;
+  min-height: 28px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  border: 1px solid #bbf7d0 !important;
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 18px rgba(16, 185, 129, .07);
+}
+
+/* CSV standards cards on the right */
+.importsPremiumSurface .standardsPanel :global(article),
+.importsPremiumSurface .standardsPanel :global(div),
+.importsPremiumSurface :global([class*="standard"]),
+.importsPremiumSurface :global([class*="Standard"]),
+.importsPremiumSurface :global([class*="schema"]),
+.importsPremiumSurface :global([class*="Schema"]) {
+  border-radius: 20px !important;
+}
+
+.importsPremiumSurface .standardsPanel :global(article),
+.importsPremiumSurface :global([class*="standard"]),
+.importsPremiumSurface :global([class*="Standard"]) {
+  background:
+    linear-gradient(135deg, #ffffff 0%, #fffdf7 100%) !important;
+  border: 1px solid #fde68a !important;
+  box-shadow: 0 12px 28px rgba(245, 158, 11, .06);
+}
+
+/* Buttons */
+.importsPremiumSurface :global(button) {
+  border-radius: 15px !important;
+  font-weight: 950 !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+.importsPremiumSurface :global(button:hover) {
+  transform: translateY(-2px);
+}
+
+.importsPremiumSurface :global(button:first-of-type),
+.importsPremiumSurface .primaryButton,
+.importsPremiumSurface .actionButton,
+.importsPremiumSurface .submitButton {
+  background: linear-gradient(135deg, #07111f 0%, #0f172a 50%, #065f46 100%) !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 16px 34px rgba(16, 185, 129, .18) !important;
+}
+
+.importsPremiumSurface .secondaryButton,
+.importsPremiumSurface .smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+/* Forms / modal */
+.importsPremiumSurface :global(input),
+.importsPremiumSurface :global(select),
+.importsPremiumSurface :global(textarea) {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+.importsPremiumSurface :global(textarea) {
+  min-height: 160px !important;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.importsPremiumSurface :global(input:focus),
+.importsPremiumSurface :global(select:focus),
+.importsPremiumSurface :global(textarea:focus) {
+  outline: none !important;
+  border-color: #86efac !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, .12) !important;
+}
+
+.importsPremiumSurface .modalBackdrop,
+.importsPremiumSurface :global([class*="modalBackdrop"]),
+.importsPremiumSurface :global([class*="ModalBackdrop"]),
+.importsPremiumSurface :global([class*="overlay"]),
+.importsPremiumSurface :global([class*="Overlay"]) {
+  z-index: 2147483000 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.importsPremiumSurface .modal,
+.importsPremiumSurface .drawer,
+.importsPremiumSurface :global([class*="modal"]),
+.importsPremiumSurface :global([class*="Modal"]),
+.importsPremiumSurface :global([class*="drawer"]),
+.importsPremiumSurface :global([class*="Drawer"]) {
+  z-index: 2147483001 !important;
+  border: 1px solid rgba(226, 232, 240, .98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, .10), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+@media (max-width: 1200px) {
+  .importsPremiumSurface .hero,
+  .importsPremiumSurface .header,
+  .importsPremiumSurface .topbar,
+  .importsPremiumSurface .importHero,
+  .importsPremiumSurface .commandHero {
+    border-radius: 28px !important;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — IMPORT BATCHES WOW COMMAND UI
+   Real section upgrade: clickable cards + drawer.
+   ============================================================ */
+
+.importBatchesWowPanel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 38px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(37, 99, 235, .12), transparent 32%),
+    radial-gradient(circle at 96% 10%, rgba(16, 185, 129, .16), transparent 32%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 58%, #ecfdf5 100%);
+  box-shadow:
+    0 34px 92px rgba(15, 23, 42, .12),
+    inset 0 1px 0 rgba(255,255,255,.96);
+  padding: 28px;
+}
+
+.importBatchesWowPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, .028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, .028) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.62), transparent 76%);
+}
+
+.importBatchesWowHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.importBatchesEyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importBatchesWowHeader h2 {
+  margin: 14px 0 8px;
+  color: #07111f;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: .94;
+  letter-spacing: -.06em;
+  font-weight: 950;
+}
+
+.importBatchesWowHeader p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+  max-width: 760px;
+}
+
+.importBatchesHeaderStats {
+  display: flex;
+  gap: 12px;
+}
+
+.importBatchesHeaderStats article {
+  min-width: 120px;
+  border-radius: 24px;
+  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,.84);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, .07);
+  padding: 16px;
+}
+
+.importBatchesHeaderStats span {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importBatchesHeaderStats strong {
+  display: block;
+  margin-top: 8px;
+  color: #07111f;
+  font-size: 32px;
+  font-weight: 950;
+  letter-spacing: -.05em;
+}
+
+.importBatchCardGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.importBatchCommandCard {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-height: 260px;
+  border-radius: 30px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(37, 99, 235, .13), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 24px 62px rgba(15, 23, 42, .09);
+  padding: 22px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.importBatchCommandCard:hover {
+  transform: translateY(-5px);
+  border-color: #86efac;
+  box-shadow: 0 34px 82px rgba(16, 185, 129, .16);
+}
+
+.importBatchCommandCard::after {
+  content: "";
+  position: absolute;
+  right: -44px;
+  top: -46px;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, .16), rgba(37, 99, 235, .10));
+}
+
+.importBatchCardTop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.importBatchIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+  border: 1px solid #bbf7d0;
+  box-shadow: 0 14px 32px rgba(16, 185, 129, .13);
+  font-size: 22px;
+}
+
+.importBatchStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.importBatchCommandCard h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #07111f;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -.04em;
+  line-height: 1.05;
+}
+
+.importBatchCommandCard p {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 18px;
+  color: #64748b;
+}
+
+.importBatchMetrics {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.importBatchMetrics div {
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,.82);
+  padding: 12px;
+}
+
+.importBatchMetrics span {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.importBatchMetrics strong {
+  display: block;
+  margin-top: 6px;
+  color: #07111f;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.importBatchProgress {
+  position: relative;
+  z-index: 1;
+  height: 10px;
+  overflow: hidden;
+  margin: 18px 0;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.importBatchProgress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #10b981, #2563eb);
+}
+
+.importBatchActions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.importBatchActions button {
+  min-height: 42px;
+  border-radius: 15px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 950;
+  padding: 0 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+}
+
+.importBatchActions button:first-child {
+  background: linear-gradient(135deg, #07111f, #065f46);
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.importBatchEmptyWow {
+  border-radius: 30px;
+  border: 1px dashed #cbd5e1;
+  background: #ffffff;
+  padding: 28px;
+  min-height: 220px;
+}
+
+.importBatchEmptyWow div {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 22px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+.importBatchEmptyWow h3 {
+  margin: 0 0 8px;
+  color: #07111f;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.importBatchEmptyWow p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Import batch drawer */
+.importBatchDrawerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, .18), transparent 34%),
+    rgba(15, 23, 42, .58);
+  backdrop-filter: blur(14px);
+}
+
+.importBatchDrawer {
+  width: min(1180px, 96vw);
+  max-height: min(860px, 92vh);
+  overflow: auto;
+  border-radius: 36px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(16, 185, 129, .13), transparent 34%),
+    radial-gradient(circle at 6% 100%, rgba(37, 99, 235, .10), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 46px 120px rgba(15, 23, 42, .34);
+  padding: 28px;
+}
+
+.importBatchDrawerHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.importBatchDrawerHeader span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importBatchDrawerHeader h2 {
+  margin: 12px 0 8px;
+  color: #07111f;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: .95;
+  letter-spacing: -.06em;
+  font-weight: 950;
+}
+
+.importBatchDrawerHeader p {
+  margin: 0;
+  color: #64748b;
+}
+
+.importBatchDrawerHeader button {
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .08);
+}
+
+.importBatchDrawerMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.importBatchDrawerMetrics article,
+.importBatchQualityGrid article {
+  border-radius: 22px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .055);
+  padding: 16px;
+}
+
+.importBatchDrawerMetrics span {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importBatchDrawerMetrics strong {
+  display: block;
+  margin-top: 8px;
+  color: #07111f;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.importBatchQualityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.importBatchQualityGrid h3,
+.importBatchRowsPreview h3 {
+  margin: 0 0 8px;
+  color: #07111f;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.importBatchQualityGrid p,
+.importBatchRowsPreview p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.58;
+}
+
+.importBatchRowsPreview {
+  margin-top: 18px;
+  border-radius: 26px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, .06);
+  padding: 18px;
+}
+
+.importBatchRowsList {
+  display: grid;
+  gap: 10px;
+}
+
+.importBatchRowsList article {
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.importBatchRowsList strong {
+  display: block;
+  color: #07111f;
+  font-weight: 950;
+}
+
+.importBatchRowsList p {
+  margin-top: 4px;
+}
+
+.importBatchDrawerActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+@media (max-width: 900px) {
+  .importBatchesWowHeader,
+  .importBatchesHeaderStats {
+    flex-direction: column;
+  }
+
+  .importBatchDrawerMetrics,
+  .importBatchQualityGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — IMPORTS VIEW PREMIUM SAFE UPGRADE
+   Exact target: ImportsView inside B2BMegaIWorkspace.tsx
+   ============================================================ */
+
+.importsCommandLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(360px, .85fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.importsCommandMain {
+  display: grid;
+  gap: 22px;
+}
+
+.importsCommandHero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 38px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(37, 99, 235, .14), transparent 32%),
+    radial-gradient(circle at 96% 10%, rgba(16, 185, 129, .18), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 58%, #ecfdf5 100%);
+  box-shadow:
+    0 34px 92px rgba(15, 23, 42, .12),
+    inset 0 1px 0 rgba(255,255,255,.96);
+  padding: 30px;
+}
+
+.importsCommandHero::after {
+  content: "📊";
+  position: absolute;
+  right: 30px;
+  top: 28px;
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 30px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid #dbeafe;
+  box-shadow: 0 22px 52px rgba(37, 99, 235, .15);
+  font-size: 36px;
+}
+
+.importsCommandEyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 31px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importsCommandHero h2 {
+  max-width: 760px;
+  margin: 14px 0 10px;
+  color: #07111f;
+  font-size: clamp(34px, 4.4vw, 64px);
+  line-height: .92;
+  letter-spacing: -.07em;
+  font-weight: 950;
+}
+
+.importsCommandHero p {
+  max-width: 760px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+.importsHeroStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+  padding-right: 100px;
+}
+
+.importsHeroStats article {
+  border-radius: 22px;
+  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, .07);
+  padding: 15px;
+}
+
+.importsHeroStats span,
+.importBatchBoardPills span,
+.importBatchMetrics span,
+.importBatchModalMetrics span {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importsHeroStats strong {
+  display: block;
+  margin-top: 7px;
+  color: #07111f;
+  font-size: 30px;
+  font-weight: 950;
+  letter-spacing: -.05em;
+}
+
+.importBatchBoard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 38px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, .09), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow:
+    0 30px 78px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255,255,255,.96);
+  padding: 26px;
+}
+
+.importBatchBoardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.importBatchBoardHeader h3 {
+  margin: 0 0 8px;
+  color: #07111f;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -.05em;
+  font-weight: 950;
+}
+
+.importBatchBoardHeader p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.importBatchBoardPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.importBatchBoardPills span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.importBatchBoardPills span:nth-child(2) {
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+  color: #047857;
+}
+
+.importBatchCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.importBatchCard {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-height: 270px;
+  border-radius: 30px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(37, 99, 235, .13), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 24px 62px rgba(15, 23, 42, .085);
+  padding: 22px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.importBatchCard:hover {
+  transform: translateY(-5px);
+  border-color: #86efac;
+  box-shadow: 0 34px 82px rgba(16, 185, 129, .16);
+}
+
+.importBatchCard::after {
+  content: "";
+  position: absolute;
+  right: -42px;
+  top: -44px;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, .16), rgba(37, 99, 235, .10));
+}
+
+.importBatchCardTop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.importBatchIcon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 21px;
+  background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+  border: 1px solid #bbf7d0;
+  box-shadow: 0 14px 32px rgba(16, 185, 129, .13);
+  font-size: 23px;
+}
+
+.importBatchStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.importBatchCard h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #07111f;
+  font-size: 23px;
+  font-weight: 950;
+  letter-spacing: -.045em;
+  line-height: 1.05;
+}
+
+.importBatchCard p {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 18px;
+  color: #64748b;
+}
+
+.importBatchMetrics {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.importBatchMetrics div {
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,.84);
+  padding: 12px;
+}
+
+.importBatchMetrics strong {
+  display: block;
+  margin-top: 6px;
+  color: #07111f;
+  font-size: 23px;
+  font-weight: 950;
+}
+
+.importBatchProgress {
+  position: relative;
+  z-index: 1;
+  height: 10px;
+  overflow: hidden;
+  margin: 18px 0;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.importBatchProgress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #10b981, #2563eb);
+}
+
+.importBatchCardFooter {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.importBatchCardFooter button {
+  min-height: 42px;
+  border-radius: 15px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 950;
+  padding: 0 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+}
+
+.importBatchCardFooter button:first-child {
+  background: linear-gradient(135deg, #07111f, #065f46);
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.importBatchEmpty {
+  border-radius: 30px;
+  border: 1px dashed #cbd5e1;
+  background: #ffffff;
+  padding: 28px;
+  min-height: 220px;
+}
+
+.importBatchEmpty div {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 22px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+.importBatchEmpty h3 {
+  margin: 0 0 8px;
+  color: #07111f;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.importBatchEmpty p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.csvStandardsCommand {
+  position: sticky;
+  top: 20px;
+  overflow: hidden;
+  border-radius: 38px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(245, 158, 11, .13), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #fffdf7 100%);
+  box-shadow:
+    0 30px 78px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255,255,255,.96);
+  padding: 26px;
+}
+
+.csvStandardsHeader span {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.csvStandardsHeader h2 {
+  margin: 14px 0 8px;
+  color: #07111f;
+  font-size: 34px;
+  line-height: .98;
+  letter-spacing: -.055em;
+  font-weight: 950;
+}
+
+.csvStandardsHeader p {
+  margin: 0 0 18px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.csvStandardCards {
+  display: grid;
+  gap: 12px;
+}
+
+.csvStandardCards article {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  column-gap: 13px;
+  align-items: center;
+  border-radius: 23px;
+  border: 1px solid #fde68a;
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 14px 32px rgba(245, 158, 11, .07);
+  padding: 14px;
+}
+
+.csvStandardCards article div {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  font-size: 20px;
+}
+
+.csvStandardCards h3 {
+  margin: 0;
+  color: #07111f;
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.csvStandardCards p {
+  margin: 4px 0 0;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.importBatchModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, .18), transparent 34%),
+    rgba(15, 23, 42, .58);
+  backdrop-filter: blur(14px);
+}
+
+.importBatchModal {
+  width: min(1120px, 96vw);
+  max-height: min(820px, 92vh);
+  overflow: auto;
+  border-radius: 36px;
+  border: 1px solid rgba(226, 232, 240, .98);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(16, 185, 129, .13), transparent 34%),
+    radial-gradient(circle at 6% 100%, rgba(37, 99, 235, .10), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 46px 120px rgba(15, 23, 42, .34);
+  padding: 28px;
+}
+
+.importBatchModalHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.importBatchModalHeader span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.importBatchModalHeader h2 {
+  margin: 12px 0 8px;
+  color: #07111f;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: .95;
+  letter-spacing: -.06em;
+  font-weight: 950;
+}
+
+.importBatchModalHeader p {
+  margin: 0;
+  color: #64748b;
+}
+
+.importBatchModalHeader button {
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .08);
+}
+
+.importBatchModalMetrics,
+.importBatchModalGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.importBatchModalMetrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.importBatchModalGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.importBatchModalMetrics article,
+.importBatchModalGrid article {
+  border-radius: 22px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .055);
+  padding: 16px;
+}
+
+.importBatchModalMetrics strong {
+  display: block;
+  margin-top: 8px;
+  color: #07111f;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.importBatchModalGrid h3 {
+  margin: 0 0 8px;
+  color: #07111f;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.importBatchModalGrid p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.58;
+}
+
+.importBatchModalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+@media (max-width: 1200px) {
+  .importsCommandLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .csvStandardsCommand {
+    position: relative;
+    top: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .importsHeroStats,
+  .importBatchModalMetrics,
+  .importBatchModalGrid {
+    grid-template-columns: 1fr;
+    padding-right: 0;
+  }
+
+  .importBatchBoardHeader {
+    flex-direction: column;
+  }
+}
+

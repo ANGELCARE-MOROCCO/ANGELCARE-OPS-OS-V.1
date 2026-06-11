@@ -8,7 +8,8 @@ export async function GET() {
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
     if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
-    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key, permissions: actor.permissions })
+    const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key,
+      permissions: actor.permissions })
     if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
     const data = await getB2BCommandMetrics(db)
     return NextResponse.json({ ok: true, data })

@@ -1,5 +1,5 @@
-import B2BMeetingsTasksExecutionOS from '@/components/b2b-partnerships/B2BMeetingsTasksExecutionOS'
+import B2BMeetingsPremiumWorkspace from '@/components/b2b-partnerships/B2BMeetingsPremiumWorkspace'
 
-export default function B2BMeetingsPage() {
-  return <B2BMeetingsTasksExecutionOS initialWorkspace="meetings" />
+export default function Page() {
+  return <B2BMeetingsPremiumWorkspace />
 }

@@ -471,3 +471,1434 @@
   .contactGrid { grid-template-columns: 1fr; }
   .wide { grid-column: auto; }
 }
+
+/* B2B modal must sit above ANGELCARE overhead panel / terminal / connect widgets */
+.modalBackdrop {
+  z-index: 2147483000 !important;
+  align-items: flex-start !important;
+  padding-top: 92px !important;
+}
+
+.megaModal,
+.contactModal {
+  position: relative;
+  z-index: 2147483001 !important;
+}
+
+.contactsWide {
+  grid-column: 1 / -1;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 34%),
+    #fbfdff;
+}
+
+.contactsHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.contactsHeader h3 {
+  margin: 0 0 5px;
+}
+
+.contactsHeader p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.contactsManager {
+  display: grid;
+  gap: 14px;
+}
+
+.contactDraftCard {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, .05);
+}
+
+.contactDraftTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.contactDraftTop strong {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.contactDraftTop div {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.contactDraftGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.contactDraftGrid label {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  font-size: 12px;
+  color: #334155;
+  font-weight: 900;
+}
+
+.contactNote {
+  grid-column: span 2;
+}
+
+.miniButton,
+.primaryMini,
+.dangerMini {
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  background: #ffffff;
+  color: #334155;
+}
+
+.primaryMini {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.dangerMini {
+  color: #b91c1c;
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+
+@media (max-width: 1100px) {
+  .contactDraftGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contactNote {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .modalBackdrop {
+    padding-top: 72px !important;
+  }
+
+  .contactDraftGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .contactsHeader {
+    flex-direction: column;
+  }
+}
+
+/* ============================================================
+   ANGELCARE B2B — PROSPECT DIRECTORY UI UPGRADE V1
+   UI-only visual enhancement. No backend / logic changes.
+   ============================================================ */
+
+.workspace,
+.page,
+.crmWorkspace,
+.prospectWorkspace {
+  background:
+    radial-gradient(circle at 8% 6%, rgba(37, 99, 235, 0.10), transparent 28%),
+    radial-gradient(circle at 94% 10%, rgba(16, 185, 129, 0.10), transparent 26%),
+    linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
+}
+
+.hero,
+.header,
+.commandHero,
+.crmHero,
+.directoryHero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  background:
+    radial-gradient(circle at 86% 16%, rgba(37, 99, 235, 0.16), transparent 28%),
+    radial-gradient(circle at 16% 84%, rgba(245, 158, 11, 0.12), transparent 30%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 55%, #f5f9ff 100%) !important;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.10) !important;
+}
+
+.hero::before,
+.header::before,
+.commandHero::before,
+.crmHero::before,
+.directoryHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.7), transparent 70%);
+}
+
+.hero::after,
+.header::after,
+.commandHero::after,
+.crmHero::after,
+.directoryHero::after {
+  content: "🏢";
+  position: absolute;
+  right: 34px;
+  bottom: 24px;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(16, 185, 129, 0.12)),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 24px 54px rgba(37, 99, 235, 0.16);
+  font-size: 42px;
+}
+
+.eyebrow,
+.kicker,
+.badge,
+.heroBadge {
+  background: linear-gradient(135deg, #eff6ff, #ecfeff) !important;
+  color: #2563eb !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+}
+
+.hero h1,
+.header h1,
+.commandHero h1,
+.crmHero h1,
+.directoryHero h1 {
+  max-width: 920px;
+  color: #07111f !important;
+  letter-spacing: -0.065em !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.hero p,
+.header p,
+.commandHero p,
+.crmHero p,
+.directoryHero p {
+  max-width: 840px;
+  color: #64748b !important;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* KPI cards / metric cards */
+.metricCard,
+.statCard,
+.kpiCard,
+.summaryCard,
+.scoreCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.07) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.metricCard:hover,
+.statCard:hover,
+.kpiCard:hover,
+.summaryCard:hover,
+.scoreCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(147, 197, 253, 0.95) !important;
+  box-shadow: 0 26px 58px rgba(37, 99, 235, 0.12) !important;
+}
+
+.metricCard::after,
+.statCard::after,
+.kpiCard::after,
+.summaryCard::after,
+.scoreCard::after {
+  content: "";
+  position: absolute;
+  top: -38px;
+  right: -34px;
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(16, 185, 129, 0.10));
+}
+
+.metricCard:nth-of-type(2n)::after,
+.statCard:nth-of-type(2n)::after,
+.kpiCard:nth-of-type(2n)::after,
+.summaryCard:nth-of-type(2n)::after {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(251, 191, 36, 0.08));
+}
+
+.metricCard:nth-of-type(3n)::after,
+.statCard:nth-of-type(3n)::after,
+.kpiCard:nth-of-type(3n)::after,
+.summaryCard:nth-of-type(3n)::after {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.13), rgba(59, 130, 246, 0.08));
+}
+
+/* Tabs / category cards */
+.tab,
+.segmentCard,
+.filterCard,
+.categoryCard,
+.pipelineCard {
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(248,250,252,.92)) !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.055) !important;
+  transition: 0.18s ease;
+}
+
+.tab:hover,
+.segmentCard:hover,
+.filterCard:hover,
+.categoryCard:hover,
+.pipelineCard:hover {
+  transform: translateY(-2px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 20px 44px rgba(37, 99, 235, 0.10) !important;
+}
+
+/* Main directory panel */
+.panel,
+.tablePanel,
+.directoryPanel,
+.crmPanel,
+.sectionCard {
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.92)) !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.075) !important;
+}
+
+/* Search/filter bar */
+.filters,
+.toolbar,
+.searchBar,
+.directoryToolbar {
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  background: rgba(255,255,255,.86) !important;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.05);
+}
+
+.filters input,
+.toolbar input,
+.searchBar input,
+.directoryToolbar input,
+.filters select,
+.toolbar select,
+.searchBar select,
+.directoryToolbar select {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.02);
+}
+
+.filters input:focus,
+.toolbar input:focus,
+.searchBar input:focus,
+.directoryToolbar input:focus,
+.filters select:focus,
+.toolbar select:focus,
+.searchBar select:focus,
+.directoryToolbar select:focus {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10) !important;
+}
+
+/* Tables */
+.tableWrap,
+.tableContainer,
+.directoryTable {
+  border-radius: 24px !important;
+  overflow: hidden;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.055);
+}
+
+.tableWrap :global(table),
+.tableContainer :global(table),
+.directoryTable :global(table) {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.tableWrap :global(thead),
+.tableContainer :global(thead),
+.directoryTable :global(thead) {
+  background:
+    linear-gradient(135deg, #f8fafc 0%, #eef6ff 100%) !important;
+}
+
+.tableWrap :global(th),
+.tableContainer :global(th),
+.directoryTable :global(th) {
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: .11em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+}
+
+.tableWrap :global(td),
+.tableContainer :global(td),
+.directoryTable :global(td) {
+  border-top: 1px solid #eef2f7 !important;
+}
+
+.tableWrap :global(tbody tr),
+.tableContainer :global(tbody tr),
+.directoryTable :global(tbody tr) {
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.tableWrap :global(tbody tr:hover),
+.tableContainer :global(tbody tr:hover),
+.directoryTable :global(tbody tr:hover) {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.045), rgba(16, 185, 129, 0.035)) !important;
+}
+
+/* Pills / tags */
+.status,
+.priority,
+.tag,
+.pill,
+.badgeSoft,
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.status::before,
+.priority::before,
+.tag::before,
+.pill::before,
+.badgeSoft::before,
+.statusPill::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+/* Buttons */
+.primaryButton,
+.secondaryButton,
+.smallButton,
+.tableAction,
+.actionButton,
+button.smallButton,
+button.tableAction {
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease !important;
+}
+
+.primaryButton,
+.actionButton,
+button.primaryButton {
+  background: linear-gradient(135deg, #0f172a, #1e40af) !important;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, .20) !important;
+}
+
+.primaryButton:hover,
+.actionButton:hover,
+button.primaryButton:hover,
+.tableAction:hover,
+.smallButton:hover {
+  transform: translateY(-2px);
+}
+
+.tableAction,
+button.tableAction {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, .16);
+}
+
+.secondaryButton,
+.smallButton,
+button.secondaryButton,
+button.smallButton {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .055);
+}
+
+/* Detail drawer / modal */
+.modalBackdrop {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18), transparent 34%),
+    rgba(15, 23, 42, .58) !important;
+  backdrop-filter: blur(12px);
+}
+
+.megaModal,
+.contactModal,
+.detailModal {
+  border: 1px solid rgba(226, 232, 240, 0.98) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .10), transparent 26%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  box-shadow: 0 40px 110px rgba(15, 23, 42, .30) !important;
+}
+
+.detailSection,
+.formSection {
+  border: 1px solid #e5e7eb !important;
+  background: rgba(255,255,255,.88) !important;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, .055);
+}
+
+.sectionTitle h3,
+.detailSection h3,
+.formSection h3 {
+  letter-spacing: -0.025em;
+  color: #0f172a !important;
+}
+
+/* Contact cards */
+.contactCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e5e7eb !important;
+  background:
+    linear-gradient(135deg, #ffffff, #f8fbff) !important;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .055);
+}
+
+.contactCard::before {
+  content: "👤";
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 13px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  margin-bottom: 8px;
+}
+
+/* Empty states */
+.emptyState,
+.empty,
+.noData {
+  border: 1px dashed #cbd5e1 !important;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, .08), transparent 55%),
+    #ffffff !important;
+  color: #64748b !important;
+}
+
+/* Import/add prospect buttons at top of directory */
+.toolbarActions,
+.headerActions,
+.heroActions {
+  gap: 10px !important;
+}
+
+@media (max-width: 1100px) {
+  .hero::after,
+  .header::after,
+  .commandHero::after,
+  .crmHero::after,
+  .directoryHero::after {
+    display: none;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — SELECTED PROSPECT DETAIL PREMIUM UI
+   UI-only. No backend / logic / API changes.
+   ============================================================ */
+
+.selectedPremiumPanel {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.16), transparent 34%),
+    radial-gradient(circle at 5% 100%, rgba(16, 185, 129, 0.13), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 58%, #f5f9ff 100%);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.10);
+}
+
+.selectedPremiumPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.68), transparent 78%);
+}
+
+.selectedCommandHeader,
+.selectedPremiumInsightGrid,
+.selectedSignalGrid {
+  position: relative;
+  z-index: 1;
+}
+
+.selectedCommandHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.selectedEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+}
+
+.selectedEyebrow::before {
+  content: "◆";
+  color: #10b981;
+  font-size: 9px;
+}
+
+.selectedCommandHeader h3 {
+  margin: 14px 0 8px;
+  color: #07111f;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 0.94;
+  letter-spacing: -0.058em;
+  font-weight: 950;
+}
+
+.selectedCommandHeader p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.selectedHeaderBadges {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: 360px;
+}
+
+.selectedHeaderBadges span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
+}
+
+.selectedHeaderBadges span:first-child {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.selectedHeaderBadges span:nth-child(2) {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+.selectedHeaderBadges span:nth-child(3) {
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+  color: #047857;
+}
+
+.selectedPremiumInsightGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.selectedInsightCard {
+  position: relative;
+  overflow: hidden;
+  min-height: 168px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.96);
+  background: rgba(255, 255, 255, 0.91);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.07);
+  transition: 0.18s ease;
+}
+
+.selectedInsightCard:hover {
+  transform: translateY(-3px);
+  border-color: #bfdbfe;
+  box-shadow: 0 26px 58px rgba(37, 99, 235, 0.12);
+}
+
+.selectedInsightCard::after {
+  content: "";
+  position: absolute;
+  right: -38px;
+  top: -38px;
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(16, 185, 129, .10));
+}
+
+.selectedInsightCard:nth-child(2)::after {
+  background: linear-gradient(135deg, rgba(168, 85, 247, .15), rgba(59, 130, 246, .10));
+}
+
+.selectedInsightCard:nth-child(3)::after {
+  background: linear-gradient(135deg, rgba(245, 158, 11, .16), rgba(251, 191, 36, .08));
+}
+
+.selectedInsightCard:nth-child(4)::after {
+  background: linear-gradient(135deg, rgba(16, 185, 129, .16), rgba(20, 184, 166, .10));
+}
+
+.selectedInsightIcon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  font-size: 22px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+}
+
+.selectedInsightCard small,
+.selectedInsightCard strong,
+.selectedInsightCard em {
+  position: relative;
+  z-index: 1;
+}
+
+.selectedInsightCard small {
+  display: block;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.selectedInsightCard strong {
+  display: block;
+  color: #0f172a;
+  font-size: 17px;
+  line-height: 1.25;
+  font-weight: 950;
+  letter-spacing: -0.025em;
+}
+
+.selectedInsightCard em {
+  display: block;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.45;
+  font-style: normal;
+}
+
+.selectedSignalGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.selectedSignalGrid div {
+  padding: 15px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 20px;
+  background: rgba(248, 250, 252, 0.84);
+}
+
+.selectedSignalGrid small {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.selectedSignalGrid strong {
+  display: block;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 950;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectedSignalGrid span {
+  display: block;
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* Upgrade score tiles inside selected detail */
+.scoreGrid,
+.detailScoreGrid,
+.scoringGrid {
+  gap: 14px !important;
+}
+
+.scoreCard,
+.detailScoreCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(135deg, #ffffff, #f8fbff) !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 38px rgba(15, 23, 42, .065) !important;
+}
+
+.scoreCard::before,
+.detailScoreCard::before {
+  content: "●";
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  color: #2563eb;
+  font-size: 13px;
+  text-shadow: 0 0 0 8px rgba(37, 99, 235, .10);
+}
+
+/* Upgrade selected detail sections */
+.detailSection {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px !important;
+  border: 1px solid rgba(226, 232, 240, .96) !important;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, .06), transparent 30%),
+    #ffffff !important;
+  box-shadow: 0 22px 56px rgba(15, 23, 42, .075) !important;
+}
+
+.detailSection h3 {
+  color: #0f172a !important;
+  font-size: 19px !important;
+  letter-spacing: -0.028em;
+}
+
+.detailSection p {
+  color: #64748b;
+  line-height: 1.62;
+}
+
+/* Contact section */
+.contactCard {
+  display: grid;
+  gap: 7px;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, .09), transparent 36%),
+    linear-gradient(135deg, #ffffff, #f8fafc) !important;
+}
+
+.contactCard strong {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 950;
+}
+
+.contactCard span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.contactCard em {
+  width: fit-content;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+/* Timeline cards */
+.timelineCard,
+.activityCard,
+.detailSection article {
+  border-radius: 22px !important;
+}
+
+.detailSection article {
+  background:
+    linear-gradient(135deg, #ffffff, #f8fbff) !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .055);
+}
+
+.detailSection article strong {
+  color: #0f172a;
+  letter-spacing: -0.025em;
+}
+
+.detailSection article p,
+.detailSection article span {
+  color: #64748b;
+}
+
+/* Empty states inside selected prospect */
+.detailSection > p {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px dashed #cbd5e1;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, .06), transparent 55%),
+    #fbfdff;
+}
+
+@media (max-width: 1250px) {
+  .selectedPremiumInsightGrid,
+  .selectedSignalGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .selectedCommandHeader {
+    flex-direction: column;
+  }
+
+  .selectedHeaderBadges {
+    justify-content: flex-start;
+    max-width: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .selectedPremiumPanel {
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .selectedPremiumInsightGrid,
+  .selectedSignalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .selectedCommandHeader h3 {
+    font-size: 30px;
+  }
+}
+
+
+/* ============================================================
+   ANGELCARE B2B — ENTERPRISE DIRECTORY TABLE MAGIC UI
+   CSS-only visual upgrade. No logic / backend changes.
+   ============================================================ */
+
+/* Main directory container */
+.tablePanel,
+.directoryPanel,
+.crmPanel,
+.sectionCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px !important;
+  border: 1px solid rgba(226, 232, 240, 0.96) !important;
+  background:
+    radial-gradient(circle at 6% 0%, rgba(37, 99, 235, 0.10), transparent 30%),
+    radial-gradient(circle at 94% 8%, rgba(16, 185, 129, 0.10), transparent 26%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 32px 90px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255,255,255,0.9) !important;
+}
+
+/* Subtle premium grid texture */
+.tablePanel::before,
+.directoryPanel::before,
+.crmPanel::before,
+.sectionCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.58;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.028) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.72), transparent 72%);
+}
+
+/* Directory title area */
+.tablePanel > h3,
+.directoryPanel > h3,
+.crmPanel > h3,
+.sectionCard > h3,
+.tablePanel h2,
+.directoryPanel h2,
+.crmPanel h2,
+.sectionCard h2 {
+  position: relative;
+  z-index: 1;
+  color: #07111f !important;
+  letter-spacing: -0.045em;
+  font-weight: 950 !important;
+}
+
+.tablePanel > p,
+.directoryPanel > p,
+.crmPanel > p,
+.sectionCard > p {
+  position: relative;
+  z-index: 1;
+  color: #64748b !important;
+}
+
+/* Top action buttons */
+.tablePanel button,
+.directoryPanel button,
+.crmPanel button,
+.sectionCard button {
+  position: relative;
+  z-index: 1;
+}
+
+/* Import/Add buttons stronger visual polish */
+.tablePanel button:not(.tableAction),
+.directoryPanel button:not(.tableAction),
+.crmPanel button:not(.tableAction),
+.sectionCard button:not(.tableAction) {
+  border-radius: 17px !important;
+  font-weight: 900 !important;
+}
+
+.tablePanel button:last-of-type,
+.directoryPanel button:last-of-type,
+.crmPanel button:last-of-type,
+.sectionCard button:last-of-type {
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.18);
+}
+
+/* Search and filters bar */
+.filters,
+.toolbar,
+.searchBar,
+.directoryToolbar {
+  position: relative;
+  z-index: 1;
+  padding: 14px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(248,250,252,.88)) !important;
+  box-shadow:
+    0 18px 46px rgba(15, 23, 42, 0.055),
+    inset 0 1px 0 rgba(255,255,255,.92);
+}
+
+.filters input,
+.toolbar input,
+.searchBar input,
+.directoryToolbar input {
+  min-height: 48px !important;
+  border-radius: 17px !important;
+  background:
+    linear-gradient(180deg, #ffffff, #fbfdff) !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-weight: 700;
+}
+
+.filters input::placeholder,
+.toolbar input::placeholder,
+.searchBar input::placeholder,
+.directoryToolbar input::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 650;
+}
+
+.filters select,
+.toolbar select,
+.searchBar select,
+.directoryToolbar select {
+  min-height: 48px !important;
+  border-radius: 17px !important;
+  background:
+    linear-gradient(180deg, #ffffff, #fbfdff) !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-weight: 800;
+}
+
+/* Table shell */
+.tableWrap,
+.tableContainer,
+.directoryTable {
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+  border-radius: 28px !important;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.98) !important;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+  box-shadow:
+    0 24px 64px rgba(15, 23, 42, 0.075),
+    inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+/* Table header */
+.tableWrap :global(thead),
+.tableContainer :global(thead),
+.directoryTable :global(thead) {
+  background:
+    linear-gradient(135deg, #f8fafc 0%, #eef6ff 50%, #f0fdfa 100%) !important;
+}
+
+.tableWrap :global(th),
+.tableContainer :global(th),
+.directoryTable :global(th) {
+  height: 58px !important;
+  padding: 0 18px !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Table rows */
+.tableWrap :global(tbody tr),
+.tableContainer :global(tbody tr),
+.directoryTable :global(tbody tr) {
+  position: relative;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.86);
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.tableWrap :global(tbody tr:nth-child(odd)),
+.tableContainer :global(tbody tr:nth-child(odd)),
+.directoryTable :global(tbody tr:nth-child(odd)) {
+  background: rgba(248, 250, 252, 0.52);
+}
+
+.tableWrap :global(tbody tr:hover),
+.tableContainer :global(tbody tr:hover),
+.directoryTable :global(tbody tr:hover) {
+  background:
+    linear-gradient(90deg, rgba(37, 99, 235, 0.065), rgba(16, 185, 129, 0.045)) !important;
+  box-shadow: inset 4px 0 0 #2563eb;
+}
+
+.tableWrap :global(td),
+.tableContainer :global(td),
+.directoryTable :global(td) {
+  padding: 16px 18px !important;
+  border-top: 1px solid rgba(226, 232, 240, 0.88) !important;
+  color: #0f172a !important;
+  vertical-align: middle !important;
+}
+
+/* Prospect name cell visual identity */
+.tableWrap :global(td:first-child),
+.tableContainer :global(td:first-child),
+.directoryTable :global(td:first-child) {
+  position: relative;
+  padding-left: 62px !important;
+}
+
+.tableWrap :global(td:first-child::before),
+.tableContainer :global(td:first-child::before),
+.directoryTable :global(td:first-child::before) {
+  content: "🏢";
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.10);
+  font-size: 16px;
+}
+
+.tableWrap :global(td:first-child strong),
+.tableContainer :global(td:first-child strong),
+.directoryTable :global(td:first-child strong) {
+  display: block;
+  color: #07111f !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.015em;
+}
+
+.tableWrap :global(td:first-child small),
+.tableContainer :global(td:first-child small),
+.directoryTable :global(td:first-child small) {
+  display: block;
+  margin-top: 5px;
+  color: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 650;
+}
+
+/* Decision maker column */
+.tableWrap :global(td:nth-child(3) strong),
+.tableContainer :global(td:nth-child(3) strong),
+.directoryTable :global(td:nth-child(3) strong) {
+  color: #0f172a !important;
+  font-weight: 950 !important;
+}
+
+.tableWrap :global(td:nth-child(3) small),
+.tableContainer :global(td:nth-child(3) small),
+.directoryTable :global(td:nth-child(3) small) {
+  display: block;
+  margin-top: 5px;
+  color: #64748b !important;
+  font-size: 11px !important;
+}
+
+/* Sector/status/priority pills */
+.tableWrap :global(td:nth-child(2) span),
+.tableContainer :global(td:nth-child(2) span),
+.directoryTable :global(td:nth-child(2) span),
+.tableWrap :global(td:nth-child(4) span),
+.tableContainer :global(td:nth-child(4) span),
+.directoryTable :global(td:nth-child(4) span),
+.tableWrap :global(td:nth-child(5) span),
+.tableContainer :global(td:nth-child(5) span),
+.directoryTable :global(td:nth-child(5) span),
+.status,
+.priority,
+.pill,
+.tag,
+.statusPill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center;
+  gap: 7px;
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e5e7eb !important;
+  color: #334155 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.045);
+}
+
+/* Sector chip */
+.tableWrap :global(td:nth-child(2) span),
+.tableContainer :global(td:nth-child(2) span),
+.directoryTable :global(td:nth-child(2) span) {
+  background: linear-gradient(135deg, #f8fafc, #eff6ff) !important;
+  border-color: #dbeafe !important;
+  color: #1e3a8a !important;
+}
+
+/* Priority visual */
+.tableWrap :global(td:nth-child(4) span),
+.tableContainer :global(td:nth-child(4) span),
+.directoryTable :global(td:nth-child(4) span) {
+  background: linear-gradient(135deg, #fff7ed, #fefce8) !important;
+  border-color: #fed7aa !important;
+  color: #b45309 !important;
+}
+
+/* Status visual */
+.tableWrap :global(td:nth-child(5) span),
+.tableContainer :global(td:nth-child(5) span),
+.directoryTable :global(td:nth-child(5) span) {
+  background: linear-gradient(135deg, #eff6ff, #ecfeff) !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+/* Next action column */
+.tableWrap :global(td:nth-child(7) strong),
+.tableContainer :global(td:nth-child(7) strong),
+.directoryTable :global(td:nth-child(7) strong) {
+  color: #0f172a !important;
+  font-size: 13px;
+  font-weight: 950 !important;
+}
+
+.tableWrap :global(td:nth-child(7) small),
+.tableContainer :global(td:nth-child(7) small),
+.directoryTable :global(td:nth-child(7) small) {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 850;
+}
+
+/* Value column */
+.tableWrap :global(td:nth-child(6)),
+.tableContainer :global(td:nth-child(6)),
+.directoryTable :global(td:nth-child(6)) {
+  font-weight: 950 !important;
+  color: #0f172a !important;
+}
+
+/* Open button */
+.tableAction,
+button.tableAction,
+.tableWrap :global(button),
+.tableContainer :global(button),
+.directoryTable :global(button) {
+  min-height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 15px !important;
+  border: 1px solid rgba(15, 23, 42, 0.92) !important;
+  background:
+    linear-gradient(135deg, #07111f 0%, #0f172a 48%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.20);
+}
+
+.tableAction:hover,
+button.tableAction:hover,
+.tableWrap :global(button:hover),
+.tableContainer :global(button:hover),
+.directoryTable :global(button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 42px rgba(37, 99, 235, 0.24);
+}
+
+/* Empty table row */
+.tableWrap :global(tbody td[colspan]),
+.tableContainer :global(tbody td[colspan]),
+.directoryTable :global(tbody td[colspan]) {
+  padding: 34px !important;
+  color: #64748b !important;
+  font-size: 14px;
+  text-align: center;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, 0.08), transparent 55%),
+    #ffffff !important;
+}
+
+/* Slight compact polish for very large lists */
+@media (min-width: 1400px) {
+  .tableWrap :global(td),
+  .tableContainer :global(td),
+  .directoryTable :global(td) {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .tableWrap,
+  .tableContainer,
+  .directoryTable {
+    overflow-x: auto;
+  }
+
+  .tableWrap :global(table),
+  .tableContainer :global(table),
+  .directoryTable :global(table) {
+    min-width: 980px;
+  }
+}
+
