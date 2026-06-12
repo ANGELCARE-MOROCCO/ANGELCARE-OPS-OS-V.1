@@ -1,2 +1,5 @@
-import B2BExecutiveReportsSuite from '@/components/b2b-partnerships/B2BExecutiveReportsSuite'
-export default function Page(){return <B2BExecutiveReportsSuite/>}
+import B2BReportsPremiumWorkspace from '@/components/b2b-partnerships/B2BReportsPremiumWorkspace'
+
+export default function Page() {
+  return <B2BReportsPremiumWorkspace />
+}

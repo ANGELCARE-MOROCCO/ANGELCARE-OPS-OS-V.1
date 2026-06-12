@@ -1,0 +1,864 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+import styles from './B2BProposalsPremiumWorkspace.module.css'
+
+type AnyRow = Record<string, any>
+type WorkspaceView = 'command' | 'library' | 'pipeline' | 'builder' | 'print'
+type ModalMode = 'create' | 'view' | 'edit' | null
+
+const SECTOR_LIBRARY = [
+  {
+    key: 'hospitality',
+    label: 'Hôtels, resorts & résidences premium',
+    icon: '🏨',
+    partnerTypes: ['Hôtel 5 étoiles', 'Resort', 'Boutique hôtel', 'Résidence premium', 'Groupe hôtelier'],
+    services: [
+      'Baby-sitting hôtelier premium sur demande',
+      'Kids concierge pour familles VIP',
+      'Garde enfants événementielle et mariage',
+      'Accompagnement familles longues durées',
+      'Service d’urgence parental pendant séjour',
+      'Formation équipes guest relations aux demandes familles',
+      'Pack expérience famille et fidélisation client',
+    ],
+    advantages: [
+      'Augmentation de la satisfaction familles',
+      'Différenciation face aux hôtels concurrents',
+      'Réduction des objections des clients voyageant avec enfants',
+      'Service premium sans recruter une équipe interne permanente',
+      'Activation d’une nouvelle source de valeur et de revenus indirects',
+    ],
+  },
+  {
+    key: 'healthcare',
+    label: 'Cliniques pédiatriques, cabinets & santé familiale',
+    icon: '🏥',
+    partnerTypes: ['Clinique pédiatrique', 'Cabinet pédiatre', 'Centre médical', 'Clinique privée', 'Laboratoire santé familiale'],
+    services: [
+      'Orientation parents vers services de garde fiables',
+      'Support post-consultation non médical pour familles',
+      'Accompagnement organisationnel parents-enfants',
+      'Partenariat de confiance pour familles récurrentes',
+      'Programme prévention bien-être familial',
+      'Sessions éducatives parents et routines enfants',
+    ],
+    advantages: [
+      'Renforcement de la confiance parents',
+      'Meilleure continuité relationnelle après consultation',
+      'Positionnement premium de la structure médicale',
+      'Service complémentaire sans acte médical ni substitution clinique',
+      'Création d’un écosystème famille autour du cabinet',
+    ],
+  },
+  {
+    key: 'education',
+    label: 'Écoles privées, crèches & centres éducatifs',
+    icon: '🎓',
+    partnerTypes: ['École privée', 'Crèche', 'Centre de langues', 'Centre éducatif', 'Club enfants'],
+    services: [
+      'Garde périscolaire premium',
+      'Accompagnement sortie école',
+      'Support familles actives et expatriées',
+      'Ateliers bien-être enfant et autonomie',
+      'Staffing ponctuel événements parents-école',
+      'Programme fidélité familles partenaires',
+    ],
+    advantages: [
+      'Meilleure rétention familles',
+      'Extension de valeur hors horaires scolaires',
+      'Réponse concrète aux contraintes des parents actifs',
+      'Partenariat différenciant pour établissement privé',
+      'Image moderne, familiale et premium',
+    ],
+  },
+  {
+    key: 'corporate',
+    label: 'Entreprises, banques & employeurs premium',
+    icon: '🏢',
+    partnerTypes: ['Entreprise', 'Banque', 'Assurance', 'Call center premium', 'Siège corporate'],
+    services: [
+      'Programme parentalité collaborateurs',
+      'Garde d’urgence pour salariés parents',
+      'Conciergerie famille entreprise',
+      'Support retour maternité/paternité',
+      'Ateliers équilibre travail-famille',
+      'Avantage social premium pour talents',
+    ],
+    advantages: [
+      'Réduction du stress parental',
+      'Amélioration de la productivité des collaborateurs parents',
+      'Attractivité RH et marque employeur',
+      'Avantage social différenciant',
+      'Solution flexible sans internalisation lourde',
+    ],
+  },
+  {
+    key: 'events',
+    label: 'Événements, mariages & lieux de réception',
+    icon: '🎉',
+    partnerTypes: ['Lieu événementiel', 'Wedding planner', 'Agence événementielle', 'Salle de réception', 'Traiteur premium'],
+    services: [
+      'Kids corner encadré',
+      'Baby-sitting événementiel',
+      'Animation calme et sécurité enfants',
+      'Accompagnement enfants pendant mariage',
+      'Pack familles invitées VIP',
+      'Coordination pré-événement avec organisateur',
+    ],
+    advantages: [
+      'Expérience invité améliorée',
+      'Parents plus disponibles pendant événement',
+      'Différenciation commerciale des lieux et agences',
+      'Réduction de la charge organisationnelle',
+      'Option premium facile à vendre',
+    ],
+  },
+]
+
+const DEFAULT_SERVICES = SECTOR_LIBRARY.flatMap((sector) => sector.services)
+
+function normalizeArray(payload: any): AnyRow[] {
+  if (Array.isArray(payload)) return payload
+  if (Array.isArray(payload?.data)) return payload.data
+  if (Array.isArray(payload?.items)) return payload.items
+  if (Array.isArray(payload?.rows)) return payload.rows
+  if (Array.isArray(payload?.proposals)) return payload.proposals
+  return []
+}
+
+function normalizeDate(value: any) {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function formatDate(value: any) {
+  const date = normalizeDate(value)
+  if (!date) return 'Date pending'
+  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }).format(date)
+}
+
+function proposalTitle(row: AnyRow) {
+  return row.title || row.name || row.proposal_title || `Proposition ${row.partner_name || row.prospect_name || 'B2B'}`
+}
+
+function proposalPartner(row: AnyRow) {
+  return row.partner_name || row.prospect_name || row.company_name || row.account_name || 'Partenaire à définir'
+}
+
+function proposalStatus(row: AnyRow) {
+  return row.status || row.proposal_status || 'draft'
+}
+
+function proposalSector(row: AnyRow) {
+  return row.sector || row.segment || row.partner_sector || 'hospitality'
+}
+
+function sectorConfig(key: string) {
+  return SECTOR_LIBRARY.find((sector) => sector.key === key) || SECTOR_LIBRARY[0]
+}
+
+async function fetchJson(path: string) {
+  const response = await fetch(path, { cache: 'no-store' })
+  const text = await response.text()
+  let payload: any = null
+
+  try {
+    payload = text ? JSON.parse(text) : null
+  } catch {
+    throw new Error(`Non-JSON response from ${path}`)
+  }
+
+  if (!response.ok || payload?.ok === false) {
+    throw new Error(payload?.error || `Request failed: ${path}`)
+  }
+
+  return payload
+}
+
+export default function B2BProposalsPremiumWorkspace() {
+  const [view, setView] = useState<WorkspaceView>('command')
+  const [proposals, setProposals] = useState<AnyRow[]>([])
+  const [prospects, setProspects] = useState<AnyRow[]>([])
+  const [selectedProposal, setSelectedProposal] = useState<AnyRow | null>(null)
+  const [modalMode, setModalMode] = useState<ModalMode>(null)
+  const [selectedSector, setSelectedSector] = useState('hospitality')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [form, setForm] = useState<AnyRow>({
+    title: '',
+    partner_name: '',
+    sector: 'hospitality',
+    status: 'draft',
+    commercial_owner: '',
+    validity_date: '',
+    estimated_value: '',
+    services: [],
+    objective: '',
+    commercial_terms: '',
+    next_action: '',
+    notes: '',
+  })
+
+  async function load() {
+    setLoading(true)
+    setError('')
+
+    try {
+      const [proposalsPayload, prospectsPayload] = await Promise.allSettled([
+        fetchJson('/api/b2b-partnerships/proposals'),
+        fetchJson('/api/b2b-partnerships/prospects?limit=180'),
+      ])
+
+      if (proposalsPayload.status === 'fulfilled') setProposals(normalizeArray(proposalsPayload.value))
+      if (prospectsPayload.status === 'fulfilled') setProspects(normalizeArray(prospectsPayload.value))
+
+      const failures = [proposalsPayload, prospectsPayload]
+        .filter((item) => item.status === 'rejected')
+        .map((item: any) => item.reason?.message)
+        .filter(Boolean)
+
+      if (failures.length) setError(failures.join(' · '))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to sync proposals workspace.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  const draftCount = proposals.filter((row) => String(proposalStatus(row)).toLowerCase().includes('draft')).length
+  const sentCount = proposals.filter((row) => String(proposalStatus(row)).toLowerCase().includes('sent')).length
+  const wonCount = proposals.filter((row) => ['won', 'signed', 'accepted'].some((s) => String(proposalStatus(row)).toLowerCase().includes(s))).length
+  const pendingCount = proposals.filter((row) => ['pending', 'review', 'negotiation'].some((s) => String(proposalStatus(row)).toLowerCase().includes(s))).length
+
+  const metrics = [
+    { label: 'Total proposals', value: proposals.length, helper: 'All commercial records', icon: '🧾' },
+    { label: 'Draft', value: draftCount, helper: 'Needs completion', icon: '✍️' },
+    { label: 'Sent', value: sentCount, helper: 'Already shared', icon: '📤' },
+    { label: 'Pending', value: pendingCount, helper: 'Under review', icon: '⏳' },
+    { label: 'Won', value: wonCount, helper: 'Accepted / signed', icon: '✅' },
+  ]
+
+  function openCreate(sector = selectedSector) {
+    const config = sectorConfig(sector)
+    setSelectedProposal(null)
+    setSelectedSector(sector)
+    setForm({
+      title: `Proposition de partenariat ANGELCARE — ${config.label}`,
+      partner_name: '',
+      sector,
+      status: 'draft',
+      commercial_owner: '',
+      validity_date: '',
+      estimated_value: '',
+      services: config.services.slice(0, 3),
+      objective: `Mettre en place un partenariat structuré entre ANGELCARE et le partenaire afin d'améliorer l'expérience familles, renforcer la valeur perçue et créer une collaboration gagnant-gagnant.`,
+      commercial_terms: 'Modalités à adapter selon le volume, la saisonnalité, le niveau de service et les standards opérationnels du partenaire.',
+      next_action: 'Qualifier le décideur, valider les services retenus et programmer une présentation commerciale.',
+      notes: '',
+    })
+    setModalMode('create')
+  }
+
+  function openView(proposal: AnyRow) {
+    const sector = proposalSector(proposal)
+    setSelectedProposal(proposal)
+    setSelectedSector(sector)
+    setForm({
+      title: proposalTitle(proposal),
+      partner_name: proposalPartner(proposal),
+      sector,
+      status: proposalStatus(proposal),
+      commercial_owner: proposal.commercial_owner || proposal.owner_name || '',
+      validity_date: proposal.validity_date || proposal.valid_until || '',
+      estimated_value: proposal.estimated_value || proposal.amount || '',
+      services: Array.isArray(proposal.services) ? proposal.services : Array.isArray(proposal.service_scope) ? proposal.service_scope : sectorConfig(sector).services.slice(0, 3),
+      objective: proposal.objective || proposal.description || '',
+      commercial_terms: proposal.commercial_terms || proposal.terms || '',
+      next_action: proposal.next_action || proposal.next_step || '',
+      notes: proposal.notes || '',
+    })
+    setModalMode('view')
+  }
+
+  function openEdit() {
+    if (!selectedProposal) return
+    setModalMode('edit')
+  }
+
+  function toggleService(service: string) {
+    const services = Array.isArray(form.services) ? form.services : []
+    setForm({
+      ...form,
+      services: services.includes(service)
+        ? services.filter((item: string) => item !== service)
+        : [...services, service],
+    })
+  }
+
+  async function mutateProposal(method: 'POST' | 'PATCH' | 'DELETE') {
+    const id = selectedProposal?.id
+    const path = method === 'POST' ? '/api/b2b-partnerships/proposals' : `/api/b2b-partnerships/proposals/${id}`
+
+    const response = await fetch(path, {
+      method,
+      headers: method === 'DELETE' ? undefined : { 'Content-Type': 'application/json' },
+      body: method === 'DELETE' ? undefined : JSON.stringify({
+        ...form,
+        name: form.title,
+        title: form.title,
+        partner_name: form.partner_name,
+        prospect_name: form.partner_name,
+        sector: form.sector,
+        service_scope: form.services,
+        services: form.services,
+      }),
+    })
+
+    const text = await response.text()
+    let json: any = null
+    try { json = text ? JSON.parse(text) : null } catch { json = null }
+
+    if (!response.ok || json?.ok === false) {
+      throw new Error(json?.error || `Request failed: ${method} ${path}`)
+    }
+  }
+
+  async function saveProposal() {
+    setLoading(true)
+    setError('')
+
+    try {
+      if (modalMode === 'create') await mutateProposal('POST')
+      if (modalMode === 'edit' && selectedProposal?.id) await mutateProposal('PATCH')
+      setModalMode(null)
+      setSelectedProposal(null)
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to save proposal.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function deleteProposal() {
+    if (!selectedProposal?.id) return
+    if (!window.confirm('Delete this proposal?')) return
+
+    setLoading(true)
+    setError('')
+
+    try {
+      await mutateProposal('DELETE')
+      setModalMode(null)
+      setSelectedProposal(null)
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to delete proposal.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function printProposal() {
+    window.print()
+  }
+
+  const currentSector = sectorConfig(String(form.sector || selectedSector))
+  const selectedServices = Array.isArray(form.services) && form.services.length ? form.services : currentSector.services.slice(0, 3)
+
+  const matchedProspect = prospects.find((prospect) => {
+    const names = [
+      prospect.name,
+      prospect.prospect_name,
+      prospect.company_name,
+      prospect.account_name,
+      prospect.partner_name,
+    ].filter(Boolean).map((value) => String(value).toLowerCase().trim())
+
+    return names.includes(String(form.partner_name || '').toLowerCase().trim())
+  }) || selectedProposal || {}
+
+  const recipientName = form.partner_name || matchedProspect.name || matchedProspect.company_name || matchedProspect.prospect_name || 'Partenaire à compléter'
+  const recipientContact = matchedProspect.decision_maker_name || matchedProspect.contact_name || matchedProspect.contact_person || matchedProspect.primary_contact || 'Direction Générale / Direction Commerciale'
+  const recipientRole = matchedProspect.decision_maker_role || matchedProspect.contact_role || matchedProspect.role || 'Décideur référent'
+  const recipientEmail = matchedProspect.decision_maker_email || matchedProspect.email || matchedProspect.contact_email || 'Email à compléter'
+  const recipientPhone = matchedProspect.phone || matchedProspect.mobile || matchedProspect.whatsapp || 'Téléphone à compléter'
+  const recipientAddress = matchedProspect.address || matchedProspect.city || matchedProspect.zone || 'Adresse / ville à compléter'
+  const docReference = `ANG-B2B-${String(form.sector || selectedSector).toUpperCase()}-${new Date().getFullYear()}-${String(recipientName).replace(/[^A-Za-z0-9]/g, '').slice(0, 6).toUpperCase() || 'PROP'}`
+
+  return (
+    <main className={styles.workspace}>
+      <section className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}>B2B proposal intelligence</span>
+          <h1>Partnership proposals, offers & official A4 generator</h1>
+          <p>Créez, pilotez, éditez, imprimez et personnalisez les propositions ANGELCARE pour hôtels, cliniques, écoles, entreprises, événements et partenaires premium.</p>
+        </div>
+
+        <aside className={styles.heroCommand}>
+          <span>Proposal workspace</span>
+          <strong>{loading ? 'Syncing…' : 'Live proposal OS'}</strong>
+          <button type="button" onClick={load} disabled={loading}>{loading ? 'Syncing…' : 'Sync proposals'}</button>
+          <button type="button" className={styles.createButton} onClick={() => openCreate()}>+ New proposal</button>
+        </aside>
+      </section>
+
+      {error && (
+        <section className={styles.warning}>
+          <strong>Proposal sync warning</strong>
+          <p>{error}</p>
+        </section>
+      )}
+
+      <section className={styles.metrics}>
+        {metrics.map((metric) => (
+          <article key={metric.label}>
+            <div>{metric.icon}</div>
+            <span>{metric.label}</span>
+            <strong>{metric.value}</strong>
+            <p>{metric.helper}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className={styles.navbar}>
+        {(['command', 'library', 'pipeline', 'builder', 'print'] as WorkspaceView[]).map((item) => (
+          <button key={item} type="button" className={view === item ? styles.activeView : ''} onClick={() => setView(item)}>
+            {item === 'command' ? 'Command Center' : item === 'library' ? 'Proposal Library' : item === 'pipeline' ? 'Pipeline' : item === 'builder' ? 'Offer Builder' : 'A4 Print Studio'}
+          </button>
+        ))}
+      </section>
+
+      {view === 'library' && (
+        <section className={styles.libraryGrid}>
+          {SECTOR_LIBRARY.map((sector) => (
+            <article key={sector.key} className={styles.sectorCard}>
+              <div className={styles.sectorIcon}>{sector.icon}</div>
+              <h2>{sector.label}</h2>
+              <p>{sector.partnerTypes.join(' · ')}</p>
+              <div className={styles.serviceChips}>
+                {sector.services.slice(0, 5).map((service) => <span key={service}>{service}</span>)}
+              </div>
+              <button type="button" onClick={() => openCreate(sector.key)}>Create {sector.label} proposal</button>
+            </article>
+          ))}
+        </section>
+      )}
+
+      {view === 'builder' && (
+        <section className={styles.builderPanel}>
+          <div className={styles.panelHeader}>
+            <span>Smart offer builder</span>
+            <h2>All partnership sectors and service scopes</h2>
+            <p>Choose a sector to instantly prepare a proposal structure with services, advantages and official French commercial text.</p>
+          </div>
+
+          <div className={styles.builderGrid}>
+            {SECTOR_LIBRARY.map((sector) => (
+              <article key={sector.key} className={selectedSector === sector.key ? styles.selectedBuilderCard : ''} onClick={() => setSelectedSector(sector.key)}>
+                <div>{sector.icon}</div>
+                <h3>{sector.label}</h3>
+                <p>{sector.advantages.slice(0, 2).join(' · ')}</p>
+                <button type="button" onClick={(event) => { event.stopPropagation(); openCreate(sector.key) }}>Generate proposal</button>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {view === 'print' && (
+        <section className={styles.printStudio}>
+          <div className={styles.panelHeader}>
+            <span>A4 proposal studio</span>
+            <h2>Official French corporate proposal generator</h2>
+            <p>Open any proposal or create a new one, then print the complete official ANGELCARE A4 proposal directly from the modal.</p>
+          </div>
+
+          <div className={styles.printTemplates}>
+            {SECTOR_LIBRARY.map((sector) => (
+              <article key={sector.key}>
+                <div>{sector.icon}</div>
+                <h3>{sector.label}</h3>
+                <p>Proposition structurée en français avec contexte, services, avantages, modèle gagnant-gagnant, conditions et prochaines étapes.</p>
+                <button type="button" onClick={() => openCreate(sector.key)}>Open print proposal</button>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {(view === 'command' || view === 'pipeline') && (
+        <section className={styles.executionGrid}>
+          <div className={styles.proposalsPanel}>
+            <div className={styles.panelHeader}>
+              <span>{view === 'pipeline' ? 'Proposal pipeline' : 'Proposal command board'}</span>
+              <h2>{view === 'pipeline' ? 'Commercial proposal pipeline' : 'All proposal records'}</h2>
+              <p>Every proposal card is clickable and can be viewed, edited, deleted or printed as an official French A4 proposal.</p>
+            </div>
+
+            <div className={styles.proposalCards}>
+              {proposals.map((proposal) => {
+                const sector = sectorConfig(proposalSector(proposal))
+                return (
+                  <article key={proposal.id || proposalTitle(proposal)} className={styles.proposalCard} onClick={() => openView(proposal)}>
+                    <div className={styles.proposalTop}>
+                      <div className={styles.proposalIcon}>{sector.icon}</div>
+                      <span>{proposalStatus(proposal)}</span>
+                    </div>
+
+                    <h3>{proposalTitle(proposal)}</h3>
+                    <p>{proposalPartner(proposal)}</p>
+
+                    <div className={styles.proposalMeta}>
+                      <span>🏷️ {sector.label}</span>
+                      <span>📅 {formatDate(proposal.created_at || proposal.updated_at)}</span>
+                      <span>💼 {proposal.commercial_owner || proposal.owner_name || 'Owner pending'}</span>
+                      <span>💰 {proposal.estimated_value || proposal.amount || 'Value pending'}</span>
+                    </div>
+
+                    <div className={styles.proposalFooter}>
+                      <button type="button" onClick={(event) => { event.stopPropagation(); openView(proposal) }}>Open proposal</button>
+                      <strong>{proposal.next_action || 'Ready to qualify'}</strong>
+                    </div>
+                  </article>
+                )
+              })}
+
+              {!proposals.length && (
+                <article className={styles.emptyState}>
+                  <div>🧾</div>
+                  <h3>No proposals yet</h3>
+                  <p>Create your first proposal for hotels, clinics, schools, corporates or event partners using the Proposal Library.</p>
+                </article>
+              )}
+            </div>
+          </div>
+
+          <aside className={styles.commandPanel}>
+            <div className={styles.panelHeader}>
+              <span>Proposal playbook</span>
+              <h2>Commercial discipline</h2>
+              <p>Every proposal should be precise, convincing, sector-aware and easy to print as an official document.</p>
+            </div>
+
+            <div className={styles.commandList}>
+              <article><div>🎯</div><h3>Sector-fit</h3><p>Each proposal must reflect the partner type and real operational pain points.</p></article>
+              <article><div>🤝</div><h3>Win-win logic</h3><p>Show value for partner, families, guests, clients and ANGELCARE.</p></article>
+              <article><div>🧾</div><h3>Official A4</h3><p>Keep proposal printable, structured, French, corporate and decision-maker ready.</p></article>
+              <article><div>🚀</div><h3>Next action</h3><p>Every proposal needs a follow-up, presentation or signature step.</p></article>
+            </div>
+          </aside>
+        </section>
+      )}
+
+      {modalMode && (
+        <div className={styles.modalBackdrop}>
+          <section className={styles.proposalModal}>
+            <div className={styles.modalHeader}>
+              <div>
+                <span>{modalMode === 'create' ? 'Create proposal' : modalMode === 'edit' ? 'Edit proposal' : 'Proposal command record'}</span>
+                <h2>{form.title || 'ANGELCARE B2B Proposal'}</h2>
+                <p>{form.partner_name || 'Partner pending'} · {currentSector.label}</p>
+              </div>
+              <button type="button" onClick={() => { setModalMode(null); setSelectedProposal(null) }}>×</button>
+            </div>
+
+            <div className={styles.modalWorkspace}>
+              <div className={styles.modalEditor}>
+                {modalMode === 'view' ? (
+                  <>
+                    <div className={styles.modalMetrics}>
+                      <article><span>Partner</span><strong>{form.partner_name || 'Pending'}</strong></article>
+                      <article><span>Sector</span><strong>{currentSector.label}</strong></article>
+                      <article><span>Status</span><strong>{form.status}</strong></article>
+                      <article><span>Value</span><strong>{form.estimated_value || 'Pending'}</strong></article>
+                    </div>
+
+                    <div className={styles.modalGrid}>
+                      <article><h3>Objective</h3><p>{form.objective || 'No objective captured yet.'}</p></article>
+                      <article><h3>Commercial terms</h3><p>{form.commercial_terms || 'Commercial terms to be defined.'}</p></article>
+                      <article><h3>Next action</h3><p>{form.next_action || 'Define next step before sending.'}</p></article>
+                    </div>
+
+                    <div className={styles.serviceReview}>
+                      <h3>Included services</h3>
+                      <div>{selectedServices.map((service: string) => <span key={service}>{service}</span>)}</div>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.formGrid}>
+                    <label className={styles.fullField}>
+                      Proposal title
+                      <input value={form.title || ''} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                    </label>
+
+                    <label>
+                      Partner / prospect
+                      <input value={form.partner_name || ''} onChange={(e) => setForm({ ...form, partner_name: e.target.value })} list="proposal-prospects" />
+                      <datalist id="proposal-prospects">
+                        {prospects.map((prospect) => <option key={prospect.id || prospect.name} value={prospect.name || prospect.prospect_name || prospect.company_name || ''} />)}
+                      </datalist>
+                    </label>
+
+                    <label>
+                      Sector
+                      <select value={form.sector || 'hospitality'} onChange={(e) => { setForm({ ...form, sector: e.target.value, services: sectorConfig(e.target.value).services.slice(0, 3) }); setSelectedSector(e.target.value) }}>
+                        {SECTOR_LIBRARY.map((sector) => <option key={sector.key} value={sector.key}>{sector.label}</option>)}
+                      </select>
+                    </label>
+
+                    <label>
+                      Status
+                      <select value={form.status || 'draft'} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                        <option value="draft">Draft</option>
+                        <option value="sent">Sent</option>
+                        <option value="pending_review">Pending review</option>
+                        <option value="negotiation">Negotiation</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="signed">Signed</option>
+                        <option value="lost">Lost</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      Estimated value
+                      <input value={form.estimated_value || ''} onChange={(e) => setForm({ ...form, estimated_value: e.target.value })} placeholder="MAD / monthly / annual potential" />
+                    </label>
+
+                    <label>
+                      Commercial owner
+                      <input value={form.commercial_owner || ''} onChange={(e) => setForm({ ...form, commercial_owner: e.target.value })} />
+                    </label>
+
+                    <label>
+                      Validity date
+                      <input type="date" value={form.validity_date || ''} onChange={(e) => setForm({ ...form, validity_date: e.target.value })} />
+                    </label>
+
+                    <label className={styles.fullField}>
+                      Objective
+                      <textarea value={form.objective || ''} onChange={(e) => setForm({ ...form, objective: e.target.value })} />
+                    </label>
+
+                    <label className={styles.fullField}>
+                      Commercial terms
+                      <textarea value={form.commercial_terms || ''} onChange={(e) => setForm({ ...form, commercial_terms: e.target.value })} />
+                    </label>
+
+                    <label className={styles.fullField}>
+                      Next action
+                      <textarea value={form.next_action || ''} onChange={(e) => setForm({ ...form, next_action: e.target.value })} />
+                    </label>
+
+                    <label className={styles.fullField}>
+                      Internal notes
+                      <textarea value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+                    </label>
+                  </div>
+                )}
+
+                <div className={styles.servicePicker}>
+                  <h3>Service scope by sector</h3>
+                  <p>{currentSector.label}</p>
+                  <div>
+                    {currentSector.services.map((service) => (
+                      <button key={service} type="button" className={selectedServices.includes(service) ? styles.serviceSelected : ''} onClick={() => toggleService(service)}>
+                        {service}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.modalActions}>
+                  <button type="button" className={styles.secondaryButton} onClick={() => { setModalMode(null); setSelectedProposal(null) }}>Close</button>
+                  {modalMode === 'view' && <button type="button" onClick={openEdit}>Edit proposal</button>}
+                  {modalMode !== 'view' && <button type="button" disabled={loading} onClick={saveProposal}>{loading ? 'Saving…' : modalMode === 'create' ? 'Create proposal' : 'Save changes'}</button>}
+                  {modalMode !== 'create' && selectedProposal?.id && <button type="button" className={styles.deleteButton} onClick={deleteProposal}>Delete</button>}
+                  <button type="button" className={styles.printButton} onClick={printProposal}>Print official A4</button>
+                </div>
+              </div>
+
+              <aside className={styles.a4Preview}>
+                <div className={styles.a4Document}>
+                  <header className={styles.a4TopHeader}>
+                    <div className={styles.a4BrandBlock}>
+                      <strong>ANGELCARE</strong>
+                      <span>Département Partenariats B2B & Comptes Stratégiques</span>
+                      <small>Services premium d'accompagnement familial, child care et solutions partenaires</small>
+                    </div>
+
+                    <div className={styles.a4RefBlock}>
+                      <span>Document de proposition</span>
+                      <strong>{docReference}</strong>
+                      <small>{formatDate(new Date())}</small>
+                    </div>
+                  </header>
+
+                  <section className={styles.a4MetaGrid}>
+                    <article>
+                      <span>Émetteur</span>
+                      <strong>ANGELCARE</strong>
+                      <p>Département B2B Partnerships<br />Direction Développement Commercial<br />Rabat / Maroc</p>
+                    </article>
+
+                    <article>
+                      <span>Destinataire</span>
+                      <strong>{recipientName}</strong>
+                      <p>{recipientContact}<br />{recipientRole}<br />{recipientEmail}<br />{recipientPhone}<br />{recipientAddress}</p>
+                    </article>
+
+                    <article>
+                      <span>Secteur partenaire</span>
+                      <strong>{currentSector.label}</strong>
+                      <p>{currentSector.partnerTypes.join(' · ')}</p>
+                    </article>
+                  </section>
+
+                  <section className={styles.a4Cover}>
+                    <span>Proposition confidentielle de partenariat</span>
+                    <h1>{form.title || `Proposition de partenariat — ${currentSector.label}`}</h1>
+                    <p>
+                      Proposition structurée pour {recipientName}, préparée par ANGELCARE afin de créer une collaboration B2B premium,
+                      opérationnelle et mesurable autour des besoins familles, clients, collaborateurs ou invités selon le contexte du partenaire.
+                    </p>
+                  </section>
+
+                  <section className={styles.a4ExecutiveBox}>
+                    <h2>Résumé exécutif</h2>
+                    <p>
+                      ANGELCARE propose à {recipientName} un partenariat à forte valeur ajoutée, conçu pour améliorer l'expérience des familles,
+                      renforcer la différenciation du partenaire et mettre à disposition une solution flexible sans charge opérationnelle lourde.
+                      L'approche recommandée repose sur une sélection de services adaptés au secteur {currentSector.label}, un modèle gagnant-gagnant,
+                      des standards d'exécution clairs et une capacité de déploiement progressive.
+                    </p>
+                  </section>
+
+                  <section>
+                    <h2>1. Contexte et enjeu partenaire</h2>
+                    <p>
+                      Les familles, parents actifs, clients premium, patients, collaborateurs ou invités attendent aujourd'hui des solutions fiables,
+                      rassurantes et simples à activer. Pour un partenaire positionné sur l'excellence, l'absence d'une réponse structurée à ces besoins
+                      peut créer une friction dans l'expérience client, limiter la fidélisation et réduire la perception de service premium.
+                    </p>
+                    <p>
+                      Dans ce contexte, ANGELCARE intervient comme partenaire spécialisé, capable de fournir un cadre professionnel et une offre adaptée
+                      aux attentes du secteur: {currentSector.label}.
+                    </p>
+                  </section>
+
+                  <section>
+                    <h2>2. Objectif de la collaboration</h2>
+                    <p>
+                      {form.objective || 'Mettre en place une offre premium, flexible et mesurable permettant au partenaire de mieux servir les familles tout en créant une collaboration gagnant-gagnant durable.'}
+                    </p>
+                  </section>
+
+                  <section>
+                    <h2>3. Périmètre de services proposé</h2>
+                    <table className={styles.a4ServiceTable}>
+                      <thead>
+                        <tr>
+                          <th>Service</th>
+                          <th>Objectif opérationnel</th>
+                          <th>Valeur partenaire</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedServices.map((service: string) => (
+                          <tr key={service}>
+                            <td>{service}</td>
+                            <td>Répondre à un besoin famille identifié avec un cadre clair, activable et professionnel.</td>
+                            <td>Renforcer l'expérience client, la différenciation et la satisfaction.</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </section>
+
+                  <section>
+                    <h2>4. Création de valeur et logique gagnant-gagnant</h2>
+                    <div className={styles.a4ValueGrid}>
+                      <article>
+                        <strong>Pour le partenaire</strong>
+                        <ul>
+                          {currentSector.advantages.slice(0, 4).map((advantage) => <li key={advantage}>{advantage}</li>)}
+                        </ul>
+                      </article>
+                      <article>
+                        <strong>Pour les familles</strong>
+                        <ul>
+                          <li>Accès à une solution rassurante, structurée et adaptée.</li>
+                          <li>Réduction de la charge mentale liée à l'organisation familiale.</li>
+                          <li>Meilleure expérience globale avec le partenaire.</li>
+                        </ul>
+                      </article>
+                      <article>
+                        <strong>Pour ANGELCARE</strong>
+                        <ul>
+                          <li>Déploiement B2B durable auprès d'acteurs premium.</li>
+                          <li>Relation commerciale mesurable et évolutive.</li>
+                          <li>Création d'un standard de service différenciant.</li>
+                        </ul>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section>
+                    <h2>5. Modèle opérationnel proposé</h2>
+                    <ol>
+                      <li><strong>Cadrage:</strong> validation du besoin, du volume potentiel, des profils familles et des contraintes du partenaire.</li>
+                      <li><strong>Offre pilote:</strong> lancement contrôlé sur un périmètre limité afin de mesurer adoption, satisfaction et faisabilité.</li>
+                      <li><strong>Standardisation:</strong> mise en place des procédures, supports de communication, points de contact et indicateurs.</li>
+                      <li><strong>Déploiement:</strong> extension progressive selon les résultats, la saisonnalité et les objectifs commerciaux.</li>
+                    </ol>
+                  </section>
+
+                  <section>
+                    <h2>6. Conditions commerciales indicatives</h2>
+                    <p>
+                      {form.commercial_terms || 'Les modalités commerciales seront définies selon le volume, la fréquence, le niveau de service, la saisonnalité, le modèle de collaboration retenu et les standards opérationnels attendus.'}
+                    </p>
+                    <p>
+                      Valeur estimative / potentiel: <strong>{form.estimated_value || 'À qualifier après cadrage commercial'}</strong>.
+                      Validité de la proposition: <strong>{form.validity_date ? formatDate(form.validity_date) : 'À définir'}</strong>.
+                    </p>
+                  </section>
+
+                  <section>
+                    <h2>7. Gouvernance, suivi et indicateurs</h2>
+                    <p>
+                      ANGELCARE recommande un pilotage simple autour d'indicateurs concrets: demandes reçues, taux d'activation, satisfaction familles,
+                      incidents évités, récurrence, feedback partenaire, revenus générés ou valeur indirecte créée.
+                    </p>
+                  </section>
+
+                  <section>
+                    <h2>8. Prochaines étapes recommandées</h2>
+                    <p>{form.next_action || 'Valider les services prioritaires, identifier le décideur, organiser une réunion de présentation et préparer une version finale adaptée au partenaire.'}</p>
+                  </section>
+
+                  <footer className={styles.a4Footer}>
+                    <div>
+                      <strong>ANGELCARE · B2B Partnerships</strong>
+                      <span>Proposition confidentielle · Usage réservé au destinataire indiqué</span>
+                    </div>
+                    <div>
+                      <span>{docReference}</span>
+                      <span>Page 1 / 1</span>
+                    </div>
+                  </footer>
+                </div>
+              </aside>
+            </div>
+          </section>
+        </div>
+      )}
+    </main>
+  )
+}

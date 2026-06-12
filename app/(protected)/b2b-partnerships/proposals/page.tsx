@@ -1,2 +1,5 @@
-import B2BCommercialDealDesk from '@/components/b2b-partnerships/B2BCommercialDealDesk'
-export default function Page(){return <B2BCommercialDealDesk/>}
+import B2BProposalsPremiumWorkspace from '@/components/b2b-partnerships/B2BProposalsPremiumWorkspace'
+
+export default function Page() {
+  return <B2BProposalsPremiumWorkspace />
+}

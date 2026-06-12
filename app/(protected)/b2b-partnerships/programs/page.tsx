@@ -1,2 +1,5 @@
-import B2BPartnerProgramsWorkspace from '@/components/b2b-partnerships/B2BPartnerProgramsWorkspace'
-export default function Page(){return <B2BPartnerProgramsWorkspace/>}
+import B2BProgramsPremiumWorkspace from '@/components/b2b-partnerships/B2BProgramsPremiumWorkspace'
+
+export default function Page() {
+  return <B2BProgramsPremiumWorkspace />
+}

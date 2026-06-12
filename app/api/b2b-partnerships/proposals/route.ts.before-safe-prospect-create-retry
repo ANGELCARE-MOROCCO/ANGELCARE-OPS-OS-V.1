@@ -73,7 +73,7 @@ async function findProspectId(db: any, body: any, actorId?: string | null) {
 
   const prospectPayload = {
     name: partnerName,
-    sector: cleanText(body.sector || body.segment || body.partner_sector, 'Hotel'),
+    sector: cleanText(body.sector || body.segment || body.partner_sector, 'Hospitality'),
     city: cleanText(body.city || body.partner_city || body.location, 'Rabat'),
     status: 'New',
     priority: 'B',
@@ -85,22 +85,11 @@ async function findProspectId(db: any, body: any, actorId?: string | null) {
     .select('id')
     .single()
 
-  if (created?.id) return created.id
+  if (createError) {
+    throw new Error(createError.message || 'Unable to create linked prospect before proposal creation.')
+  }
 
-  // Fallback for older/light prospect schemas: create with only the mandatory name.
-  const { data: minimalCreated, error: minimalError } = await db
-    .from('b2b_prospects')
-    .insert({ name: partnerName })
-    .select('id')
-    .single()
-
-  if (minimalCreated?.id) return minimalCreated.id
-
-  throw new Error(
-    minimalError?.message ||
-    createError?.message ||
-    'Unable to create linked prospect before proposal creation.'
-  )
+  return created.id
 }
 
 function buildProposalPayload(body: any, actorId?: string | null, prospectId?: string | null) {

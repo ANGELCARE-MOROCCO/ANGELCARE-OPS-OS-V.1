@@ -60,8 +60,8 @@ async function findProspectId(db: any, body: any, actorId?: string | null) {
 
   const { data: existing, error: lookupError } = await db
     .from('b2b_prospects')
-    .select('id,name')
-    .ilike('name', `%${safeName}%`)
+    .select('id,name,company_name')
+    .or(`name.ilike.%${safeName}%,company_name.ilike.%${safeName}%`)
     .limit(1)
     .maybeSingle()
 
@@ -71,12 +71,24 @@ async function findProspectId(db: any, body: any, actorId?: string | null) {
 
   if (existing?.id) return existing.id
 
+  const sector = cleanText(body.sector || body.segment || body.partner_sector, 'hospitality')
+  const city = cleanText(body.city || body.partner_city || body.location, 'Rabat')
+  const status = 'New'
+  const priority = 'B'
+
   const prospectPayload = {
     name: partnerName,
-    sector: cleanText(body.sector || body.segment || body.partner_sector, 'Hotel'),
-    city: cleanText(body.city || body.partner_city || body.location, 'Rabat'),
-    status: 'New',
-    priority: 'B',
+    company_name: partnerName,
+    sector,
+    city,
+    status,
+    priority,
+    source: 'proposal_builder',
+    decision_maker_name: cleanText(body.decision_maker_name || body.contact_name, null as any),
+    decision_maker_role: cleanText(body.decision_maker_role || body.contact_role, null as any),
+    email: cleanText(body.email || body.partner_email || body.contact_email, null as any),
+    phone: cleanText(body.phone || body.partner_phone || body.mobile, null as any),
+    created_by: actorId || null,
   }
 
   const { data: created, error: createError } = await db
@@ -85,22 +97,11 @@ async function findProspectId(db: any, body: any, actorId?: string | null) {
     .select('id')
     .single()
 
-  if (created?.id) return created.id
+  if (createError) {
+    throw new Error(createError.message || 'Unable to create linked prospect before proposal creation.')
+  }
 
-  // Fallback for older/light prospect schemas: create with only the mandatory name.
-  const { data: minimalCreated, error: minimalError } = await db
-    .from('b2b_prospects')
-    .insert({ name: partnerName })
-    .select('id')
-    .single()
-
-  if (minimalCreated?.id) return minimalCreated.id
-
-  throw new Error(
-    minimalError?.message ||
-    createError?.message ||
-    'Unable to create linked prospect before proposal creation.'
-  )
+  return created.id
 }
 
 function buildProposalPayload(body: any, actorId?: string | null, prospectId?: string | null) {
@@ -211,7 +212,6 @@ export async function POST(req: NextRequest) {
           error: error.message || 'Unable to create proposal.',
           details: error,
           attempted_payload: payload,
-          linked_prospect_id: prospectId,
         },
         { status: 500 }
       )
@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
       afterData: data,
     })
 
-    return NextResponse.json({ ok: true, data, linked_prospect_id: prospectId, attempted_payload: payload })
+    return NextResponse.json({ ok: true, data })
   } catch (error) {
     console.error('[B2B_PROPOSAL_POST_FAILED]', error)
     return NextResponse.json(
