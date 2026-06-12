@@ -1,5 +1,0 @@
-import B2BExecutiveIntelligenceWorkspace from '@/components/b2b-partnerships/B2BExecutiveIntelligenceWorkspace'
-
-export default function B2BIntelligencePage() {
-  return <B2BExecutiveIntelligenceWorkspace />
-}
