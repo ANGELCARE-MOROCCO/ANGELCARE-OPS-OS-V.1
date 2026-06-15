@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
+import { resolvedSessionCode, stripMissionCodeSuffix } from '@/lib/missions/mission-codes'
 
 type OptionItem = {
   id: number | string
@@ -22,6 +23,9 @@ type DossierOptions = {
 
 type SessionRow = {
   id: string
+  missionCode?: string
+  code?: string
+  subMissionId?: string
   missionDate: string
   startTime: string
   endTime: string
@@ -68,7 +72,165 @@ type ActivityRow = {
   notes: string
 }
 
-type Props = { close: () => void; refresh: () => void | Promise<void> }
+
+function __modalText(value: unknown, fallback = '') {
+  if (typeof value === 'string') return value.trim()
+  if (typeof value === 'number') return String(value)
+  return fallback
+}
+
+function __modalId(value: unknown) {
+  if (value === null || value === undefined || value === '') return ''
+  return String(value)
+}
+
+function __modalDate(value: unknown) {
+  if (!value) return ''
+  const d = new Date(String(value))
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toISOString().slice(0, 10)
+}
+
+function __modalTime(value: unknown) {
+  if (!value) return ''
+  if (typeof value === 'string' && /^\d{1,2}:\d{2}/.test(value)) return value.slice(0, 5)
+  const d = new Date(String(value))
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toTimeString().slice(0, 5)
+}
+
+function __modalMissionValue(mission: any, keys: string[], fallback = '') {
+  for (const key of keys) {
+    const value = mission?.[key]
+    if (value !== undefined && value !== null && value !== '') return value
+  }
+  return fallback
+}
+
+
+function __modalObject(value: unknown): Record<string, any> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, any> : {}
+}
+
+function __modalArray(value: unknown): any[] {
+  return Array.isArray(value) ? value : []
+}
+
+function __modalJsonObject(value: unknown): Record<string, any> {
+  if (value && typeof value === 'object' && !Array.isArray(value)) return value as Record<string, any>
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value)
+      return __modalObject(parsed)
+    } catch {
+      return {}
+    }
+  }
+  return {}
+}
+
+function __modalTimePair(value: unknown) {
+  const text = typeof value === 'string' ? value : ''
+  const parts = text.split(/→|-|–|—/).map((part) => part.trim()).filter(Boolean)
+  return { start: __modalTime(parts[0]), end: __modalTime(parts[1]) }
+}
+
+function __modalServiceKey(value: unknown) {
+  const raw = __modalText(value, 'childcare_home')
+  const exact = serviceTypes.find((service) => service.key === raw)
+  if (exact) return exact.key
+  const normalized = raw.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
+  const byLabel = serviceTypes.find((service) => service.label.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') === normalized)
+  return byLabel?.key || 'childcare_home'
+}
+
+function __modalDossierPayload(input: any) {
+  const wrapper = __modalObject(input)
+  return __modalObject(wrapper.data || wrapper.dossier || wrapper)
+}
+
+function __modalExistingRows(source: Record<string, any>, keys: string[]) {
+  for (const key of keys) {
+    const value = source[key]
+    if (Array.isArray(value) && value.length) return value
+  }
+  return []
+}
+
+function __modalHydrateSessions(source: Record<string, any>) {
+  const rows = __modalExistingRows(source, ['sessions', 'subMissions', 'sub_missions', 'parameterDays', 'parameter_days'])
+  return rows.map((row: any, index: number) => {
+    const pair = __modalTimePair(row.session_time || row.timeLabel || row.time_label)
+    return {
+      id: __modalId(row.id || row.sub_mission_id || row.subMissionId) || uid(),
+      missionDate: __modalDate(row.missionDate || row.mission_date || row.session_date || row.dateLabel || row.date_label || row.scheduledStart || row.scheduled_start),
+      startTime: __modalTime(row.startTime || row.start_time) || pair.start,
+      endTime: __modalTime(row.endTime || row.end_time) || pair.end,
+      duration: __modalText(row.duration || row.duration_label, 'Auto'),
+      status: __modalText(row.status || row.lifecycleStage || row.lifecycle_stage, `Session ${index + 1}`),
+      caregiverId: __modalId(row.caregiverId || row.caregiver_id || row.assigned_agent_id),
+    }
+  })
+}
+
+function __modalHydrateRoutes(source: Record<string, any>) {
+  const rows = __modalExistingRows(source, ['routes', 'mission_routes'])
+  return rows.map((row: any) => ({
+    id: __modalId(row.id) || uid(),
+    type: __modalText(row.type || row.route_type || row.operation_label, 'Caregiver Travel'),
+    from: __modalText(row.from || row.outbound_departure),
+    fromDetails: __modalText(row.fromDetails || row.from_details || row.return_departure),
+    to: __modalText(row.to || row.outbound_arrival),
+    toDetails: __modalText(row.toDetails || row.to_details || row.return_arrival),
+    duration: __modalText(row.duration || row.duration_label),
+    distance: __modalText(row.distance || row.distance_label),
+    notes: __modalText(row.notes),
+    costMad: __modalText(row.costMad || row.cost_mad || row.cost),
+  }))
+}
+
+function __modalHydrateAllowances(source: Record<string, any>) {
+  const directRows = __modalExistingRows(source, ['allowanceRows', 'allowancesRows', 'mission_allowances_rows'])
+  if (directRows.length) return directRows
+  const allowanceValue = source.allowances || source.mission_allowances
+  if (Array.isArray(allowanceValue)) return allowanceValue.map((row: any) => ({ ...row, id: __modalId(row.id) || uid() }))
+  const allowanceObject = __modalObject(allowanceValue)
+  const notes = __modalJsonObject(allowanceObject.manual_notes)
+  const storedRows = __modalArray(notes.rows)
+  if (storedRows.length) return storedRows.map((row: any) => ({ ...row, id: __modalId(row.id) || uid() }))
+  if (allowanceObject.grade_fee || allowanceObject.manual_notes) {
+    return [{
+      id: uid(),
+      type: allowanceObject.meal_allowance ? 'Meal allowance' : 'Mission allowance',
+      basis: allowanceObject.hourly_fee ? 'per_hour' : 'per_dossier',
+      scope: 'dossier',
+      linkedSessionId: '',
+      missionDate: '',
+      quantity: '1',
+      unitRateMad: __modalText(allowanceObject.grade_fee || notes.totalMad || 0),
+      notes: typeof allowanceObject.manual_notes === 'string' ? allowanceObject.manual_notes : '',
+    }]
+  }
+  return []
+}
+
+function __modalHydrateActivities(source: Record<string, any>) {
+  const rows = __modalExistingRows(source, ['activities', 'program', 'programLines', 'program_lines'])
+  return rows.map((row: any) => ({
+    id: __modalId(row.id) || uid(),
+    timeBlock: __modalText(row.timeBlock || row.time_block || row.session_label || row.session_datetime_label),
+    activity: __modalText(row.activity || row.theme_module),
+    activityType: __modalText(row.activityType || row.activity_type || row.ct_label, 'Core'),
+    objective: __modalText(row.objective || row.m1),
+    instructions: __modalText(row.instructions || row.m2),
+    materials: __modalText(row.materials || row.m3),
+    submissionTemplate: __modalText(row.submissionTemplate || row.submission_template || row.code_atelier),
+    linkedSession: __modalText(row.linkedSession || row.linked_session),
+    notes: __modalText(row.notes),
+  }))
+}
+
+type Props = { close: () => void; refresh: () => void | Promise<void>; initialMission?: any; mode?: 'create' | 'edit' }
 
 const emptyOptions: DossierOptions = { families: [], caregivers: [], contracts: [], submissionTemplates: [] }
 const uid = () => Math.random().toString(36).slice(2, 10)
@@ -106,7 +268,8 @@ function parseNumber(value: string) {
 }
 
 function sessionLabel(row: SessionRow, index: number) {
-  return `Session ${index + 1}${row.missionDate ? ` · ${row.missionDate}` : ''}${row.startTime ? ` · ${row.startTime}` : ''}`
+  const code = row.missionCode || row.code
+  return `${code ? `${code} · ` : ''}Session ${index + 1}${row.missionDate ? ` · ${row.missionDate}` : ''}${row.startTime ? ` · ${row.startTime}` : ''}`
 }
 
 function toneClasses(tone: string, selected = false) {
@@ -124,10 +287,23 @@ function toneClasses(tone: string, selected = false) {
   return tones[tone] || tones.blue
 }
 
-export function CareLinkCreateMissionDossierModal({ close, refresh }: Props) {
+export function CareLinkCreateMissionDossierModal({ close, refresh, initialMission, mode = 'create' }: Props) {
+
+
+
+
+  const [requestId] = useState(() =>
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${uid()}`
+  )
   const [options, setOptions] = useState<DossierOptions>(emptyOptions)
   const [loadingOptions, setLoadingOptions] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [saveProgress, setSaveProgress] = useState(0)
+  const [saveStage, setSaveStage] = useState<'idle' | 'saving' | 'completed' | 'error'>('idle')
+  const [saveMessage, setSaveMessage] = useState('')
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [error, setError] = useState('')
   const [familyId, setFamilyId] = useState('')
   const [caregiverId, setCaregiverId] = useState('')
@@ -151,10 +327,130 @@ export function CareLinkCreateMissionDossierModal({ close, refresh }: Props) {
   const [routes, setRoutes] = useState<RouteRow[]>([])
   const [allowances, setAllowances] = useState<AllowanceRow[]>([])
   const [activities, setActivities] = useState<ActivityRow[]>([])
+  const isExistingDossier = mode === 'edit' && Boolean(initialMission)
+  const [editingExisting, setEditingExisting] = useState(!isExistingDossier)
+  const existingMissionId = useMemo(() => {
+    const dossier = initialMission ? __modalDossierPayload(initialMission) : null
+    const raw = __modalObject(dossier?.raw || dossier?.parent || dossier?.mission?.raw || dossier)
+    const mission = __modalObject(dossier?.mission)
+    return __modalId(raw.id || raw.mission_id || raw.parent_mission_id || mission.id || mission.missionId || (initialMission as any)?.id || (initialMission as any)?.missionId)
+  }, [initialMission])
+  const dossierBaseCode = useMemo(() => {
+    const stripSuffix = stripMissionCodeSuffix
+    const dossier = initialMission ? __modalDossierPayload(initialMission) : null
+    const raw = __modalObject(dossier?.raw || dossier?.parent || dossier?.mission?.raw || dossier)
+    const mission = __modalObject(dossier?.mission)
+    const recurrenceRule = __modalJsonObject(raw.recurrence_rule || raw.recurrenceRule || mission.recurrence_rule || mission.recurrenceRule)
+    const snapshot = __modalJsonObject(recurrenceRule.liveEditSnapshot || recurrenceRule.live_edit_snapshot)
+    const existing =
+      stripSuffix(snapshot.dossierCode) ||
+      stripSuffix(snapshot.baseCode) ||
+      stripSuffix(raw.dossier_reference) ||
+      stripSuffix(raw.mission_reference) ||
+      stripSuffix(raw.code) ||
+      stripSuffix(mission.dossier_reference) ||
+      stripSuffix(mission.mission_reference) ||
+      stripSuffix((initialMission as any)?.dossier_reference) ||
+      stripSuffix((initialMission as any)?.mission_reference)
+
+    if (existing) return existing
+
+    return `DRAFT-${requestId.slice(0, 8).toUpperCase()}`
+  }, [initialMission, requestId])
+
+  function sessionDisplayCode(row: SessionRow, index: number) {
+    const explicit = String(row.missionCode || row.code || '').trim()
+    if (explicit && !/^pending/i.test(explicit)) return explicit
+
+    const total = Math.max(sessions.length, 1)
+    return resolvedSessionCode(dossierBaseCode, index, total)
+  }
+
+  useEffect(() => {
+    if (!initialMission) return
+
+    const dossier = __modalDossierPayload(initialMission)
+    const raw = __modalObject(dossier.raw || dossier.parent || dossier.mission?.raw || dossier)
+    const mission = __modalObject(dossier.mission)
+    const recurrenceRule = __modalJsonObject(raw.recurrence_rule || raw.recurrenceRule || mission.recurrenceRule || mission.recurrence_rule)
+    const parameters = __modalObject(dossier.parameters || raw.parameters)
+    const merged = { ...raw, ...mission, parameters }
+
+    try {
+      setFamilyId(__modalId(__modalMissionValue(merged, ['family_id', 'familyId'])))
+      setCaregiverId(__modalId(__modalMissionValue(merged, ['caregiver_id', 'caregiverId', 'agentId', 'agent_id'])))
+      setBackupCaregiverId(__modalId(recurrenceRule.backupCaregiverId || recurrenceRule.backup_caregiver_id || __modalMissionValue(merged, ['backup_caregiver_id', 'backupCaregiverId'])))
+      setServiceType(__modalServiceKey(__modalMissionValue(merged, ['service_type', 'serviceType', 'title', 'mission_type', 'designation'], 'childcare_home')))
+      setRiskLevel(__modalText(__modalMissionValue(merged, ['risk_level', 'riskLevel', 'risk']), 'medium').toLowerCase())
+      setUrgency(__modalText(__modalMissionValue(merged, ['urgency', 'priority']), 'standard').toLowerCase())
+      setProcedureLevel(__modalText(__modalMissionValue(merged, ['internal_procedure_level', 'internalProcedureLevel']), 'level_2'))
+      setTransportRequired(__modalText(__modalMissionValue(merged, ['transport_required', 'transportRequired', 'mission_scope', 'transport', 'transport_mode', 'transportMode']), 'no').toLowerCase().includes('yes') ? 'yes' : __modalText(__modalMissionValue(merged, ['transport_required', 'transportRequired', 'mission_scope']), 'no'))
+      setLanguage(__modalText(__modalMissionValue(merged, ['language']), 'French'))
+      setStartDate(__modalDate(__modalMissionValue(merged, ['mission_date', 'missionDate', 'scheduled_date', 'scheduledDate', 'start_date', 'startDate', 'date', 'scheduledStart', 'scheduled_start', 'created_at'])))
+      setStartTime(__modalTime(__modalMissionValue(merged, ['start_time', 'startTime', 'scheduled_start_time', 'scheduledStartTime', 'starts_at', 'scheduled_at'])))
+      setEndTime(__modalTime(__modalMissionValue(merged, ['end_time', 'endTime', 'scheduled_end_time', 'scheduledEndTime', 'ends_at', 'scheduled_end'])))
+      setNotes(__modalText(__modalMissionValue(merged, ['notes', 'instructions', 'special_instructions', 'description', 'mission_reason'])))
+      setRecurrence((__modalText(__modalMissionValue(merged, ['recurrence_type', 'recurrenceType']), 'weekly') as 'single' | 'weekly' | 'custom'))
+      setAllowanceMode((__modalText(recurrenceRule.allowanceMode || parameters.hourly_option, 'bulk') as 'bulk' | 'per_date'))
+
+      const existingSkills = Array.isArray(recurrenceRule.skills)
+        ? recurrenceRule.skills
+        : Array.isArray((merged as any).requiredSkills)
+          ? (merged as any).requiredSkills
+          : Array.isArray((merged as any).required_skills)
+            ? (merged as any).required_skills
+            : []
+      if (existingSkills.length) setSkills(existingSkills.map((skill: unknown) => String(skill)).filter(Boolean))
+
+      const sessionRows = __modalHydrateSessions({ ...dossier, ...raw })
+      setSessions(sessionRows)
+
+      const baseHydrationSource = { ...dossier, ...raw }
+      const reportPayload = __modalObject((dossier as any).report || (raw as any).report)
+      const reportMetadata = __modalJsonObject(reportPayload.metadata || reportPayload.meta || reportPayload.payload)
+      const mobileBrief = __modalJsonObject(
+        reportMetadata.mobileBrief ||
+        reportMetadata.mobile_brief ||
+        reportMetadata.brief ||
+        reportMetadata.dossier ||
+        reportMetadata.payload ||
+        (dossier as any).mobileBrief ||
+        (raw as any).mobileBrief
+      )
+
+      const routeRows = __modalExistingRows(baseHydrationSource, ['routes', 'mission_routes'])
+      const fallbackRouteRows = __modalExistingRows(mobileBrief, ['routes', 'routeRows', 'mission_routes', 'transportRoutes'])
+
+      const allowanceRows = __modalExistingRows(baseHydrationSource, ['allowanceRows', 'allowancesRows', 'mission_allowances_rows'])
+      const fallbackAllowanceRows = __modalExistingRows(mobileBrief, ['allowanceRows', 'allowancesRows', 'allowances', 'payments', 'compensations'])
+
+      const programRows = __modalExistingRows(baseHydrationSource, ['programLines', 'mission_program_lines', 'activities', 'program'])
+      const fallbackProgramRows = __modalExistingRows(mobileBrief, ['programLines', 'mission_program_lines', 'activities', 'program', 'activityRows'])
+
+      const hydrationSource = {
+        ...mobileBrief,
+        ...baseHydrationSource,
+        routes: routeRows.length ? routeRows : fallbackRouteRows,
+        mission_routes: routeRows.length ? routeRows : fallbackRouteRows,
+        allowanceRows: allowanceRows.length ? allowanceRows : fallbackAllowanceRows,
+        allowancesRows: allowanceRows.length ? allowanceRows : fallbackAllowanceRows,
+        mission_allowances_rows: allowanceRows.length ? allowanceRows : fallbackAllowanceRows,
+        programLines: programRows.length ? programRows : fallbackProgramRows,
+        mission_program_lines: programRows.length ? programRows : fallbackProgramRows,
+        activities: programRows.length ? programRows : fallbackProgramRows,
+      }
+
+      setRoutes(__modalHydrateRoutes(hydrationSource))
+      setAllowances(__modalHydrateAllowances(hydrationSource))
+      setActivities(__modalHydrateActivities(hydrationSource))
+    } catch (error) {
+      console.warn('Unable to hydrate mission dossier modal', error)
+    }
+  }, [initialMission])
 
   useEffect(() => {
     let alive = true
-    async function load() {
+  async function load() {
       setLoadingOptions(true)
       try {
         const res = await fetch('/api/missions/dossier-options', { headers: { Accept: 'application/json' }, cache: 'no-store' })
@@ -316,70 +612,181 @@ export function CareLinkCreateMissionDossierModal({ close, refresh }: Props) {
     setter((rows) => [...rows, { ...row, id: uid() }])
   }
 
-  async function submit(assignNow: boolean) {
+  function buildDossierPayload(assignNow: boolean) {
+    return {
+      requestId,
+      assignNow,
+      familyId: familyId || null,
+      caregiverId: caregiverId || null,
+      backupCaregiverId: backupCaregiverId || null,
+      serviceType: selectedService.label,
+      missionDate: startDate || sessions[0]?.missionDate || null,
+      startTime: startTime || sessions[0]?.startTime || null,
+      endTime: endTime || sessions[0]?.endTime || null,
+      city: selectedFamily?.city || null,
+      zone: selectedFamily?.zone || null,
+      notes,
+      riskLevel,
+      urgency,
+      internalProcedureLevel: procedureLevel,
+      transportRequired,
+      language,
+      requiredSkills: skills,
+      allowanceMode,
+      recurrenceType: recurrence,
+      recurrenceRule: {
+        source: isExistingDossier ? 'carelink_ops_existing_dossier_modal' : 'carelink_ops_create_modal',
+        recurrence,
+        assignNow,
+        backupCaregiverId: backupCaregiverId || null,
+        skills,
+        allowanceMode,
+        sessions: sessions.length,
+      },
+      recurrenceStartDate: startDate || sessions[0]?.missionDate || null,
+      recurrenceEndDate: sessions[sessions.length - 1]?.missionDate || null,
+      sessions: sessions.map((session, index) => ({ ...session, order: index + 1, missionCode: sessionDisplayCode(session, index), code: sessionDisplayCode(session, index), subMissionId: session.subMissionId || null })),
+      routes: routes.map((row, index) => ({ ...row, order: index + 1 })),
+      allowances: allowances.map((row, index) => ({ ...row, order: index + 1 })),
+      activities: activities.map((row, index) => ({ ...row, order: index + 1 })),
+      parameters: {
+        forfait: 'dossier',
+        hourly_option: allowanceMode,
+        type_service: selectedService.label,
+        children_range: String(Math.max(sessions.length, 1)),
+        participant_profile: selectedFamily?.meta || null,
+        client_type: selectedFamily?.status || null,
+        client_profile: selectedFamily?.meta || null,
+        dossier_number: isExistingDossier && existingMissionId ? `DOSSIER-${existingMissionId}` : `REQ-${requestId.slice(0, 8).toUpperCase()}`,
+        designation: `Dossier ${selectedService.label}`,
+        client_name: selectedFamily?.label || null,
+        client_address: selectedFamily ? [selectedFamily.city, selectedFamily.zone].filter(Boolean).join(' · ') || null : null,
+        client_city: selectedFamily?.city || null,
+        mission_reason: notes || `Dossier ${selectedService.label}`,
+      },
+    }
+  }
+
+  async function deleteExistingDossier() {
+    if (!isExistingDossier || !existingMissionId) {
+      setError('Unable to resolve existing mission dossier ID for deletion.')
+      return
+    }
+
+    setDeleteConfirmOpen(false)
     setSaving(true)
+    setSaveStage('saving')
+    setSaveProgress(0)
+    setSaveMessage('Preparing mission dossier deletion…')
     setError('')
+
+    let progressTimer: ReturnType<typeof setInterval> | null = null
+
     try {
-      const res = await fetch('/api/missions/dossiers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          familyId: familyId || null,
-          caregiverId: caregiverId || null,
-          serviceType: selectedService.label,
-          missionDate: startDate || sessions[0]?.missionDate || null,
-          startTime: startTime || sessions[0]?.startTime || null,
-          endTime: endTime || sessions[0]?.endTime || null,
-          city: selectedFamily?.city || null,
-          zone: selectedFamily?.zone || null,
-          notes,
-          recurrenceType: recurrence,
-          recurrenceRule: {
-            source: 'carelink_ops_create_modal',
-            recurrence,
-            assignNow,
-            backupCaregiverId: backupCaregiverId || null,
-            skills,
-            allowanceMode,
-            sessions: sessions.length,
-          },
-          recurrenceStartDate: startDate || sessions[0]?.missionDate || null,
-          recurrenceEndDate: sessions[sessions.length - 1]?.missionDate || null,
-        }),
+      progressTimer = setInterval(() => {
+        setSaveProgress((value) => {
+          if (value >= 92) return value
+          return Math.min(92, value + Math.max(3, Math.round((92 - value) / 6)))
+        })
+      }, 220)
+
+      const res = await fetch(`/api/missions/dossiers/${existingMissionId}`, {
+        method: 'DELETE',
+        headers: { Accept: 'application/json' },
       })
+
       const json = await res.json().catch(() => null)
-      if (!res.ok || !json?.ok) throw new Error(json?.error || 'Mission dossier creation failed')
-      const dossierId = json.data?.id
+      if (!res.ok || !json?.ok) throw new Error(json?.error || 'Mission dossier deletion failed')
 
-      if (dossierId && sessions.length) {
-        await fetch(`/api/missions/dossiers/${dossierId}/generate-sub-missions`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ occurrences: sessions.map((session) => ({ missionDate: session.missionDate, startTime: session.startTime, endTime: session.endTime, caregiverId: session.caregiverId || caregiverId || null })) }),
-        })
-      }
-
-      if (dossierId) {
-        await fetch(`/api/missions/${dossierId}/mission-order`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            routes: routes.map((row, index) => ({ sort_order: index, route_type: row.type, operation_label: row.type, outbound_departure: row.from, outbound_arrival: row.to, return_departure: row.fromDetails, return_arrival: row.toDetails, duration_label: row.duration, distance_label: row.distance, cost_mad: parseNumber(row.costMad), notes: row.notes })),
-            parameterDays: sessions.map((row, index) => ({ sort_order: index, session_date: row.missionDate, session_time: `${row.startTime} - ${row.endTime}`, module_theme: `Session ${index + 1}`, status: row.status, caregiver_id: row.caregiverId || null })),
-            programLines: activities.map((row, index) => ({ sort_order: index, session_label: row.timeBlock, session_datetime_label: row.timeBlock, theme_module: row.activity, ct_label: row.activityType, notes: [row.objective, row.instructions, row.materials, row.submissionTemplate, row.linkedSession, row.notes].filter(Boolean).join('\n') })),
-            allowances: allowances.map((row, index) => ({ sort_order: index, allowance_type: row.type, calculation_basis: row.basis, scope: row.scope, mission_date: row.missionDate || null, linked_session_id: row.linkedSessionId || null, quantity: parseNumber(row.quantity), unit_rate_mad: parseNumber(row.unitRateMad), total_mad: calculateAllowance(row, sessions), notes: row.notes })),
-          }),
-        })
-      }
+      if (progressTimer) clearInterval(progressTimer)
+      setSaveProgress(100)
+      setSaveStage('completed')
+      setSaveMessage('Deletion completed · dossier removed from live CareLink workspaces.')
 
       await refresh()
-      close()
+
+      window.setTimeout(() => {
+        close()
+      }, 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Mission dossier creation failed')
+      if (progressTimer) clearInterval(progressTimer)
+      setSaveStage('error')
+      setSaveMessage(err instanceof Error ? err.message : 'Mission dossier deletion failed')
+      setError(err instanceof Error ? err.message : 'Mission dossier deletion failed')
     } finally {
       setSaving(false)
     }
   }
+
+  async function submit(assignNow: boolean) {
+    if (isExistingDossier && !editingExisting) {
+      setEditingExisting(true)
+      return
+    }
+
+    if (isExistingDossier && !existingMissionId) {
+      setError('Unable to resolve existing mission dossier ID for live update.')
+      return
+    }
+
+    setSaving(true)
+    setSaveStage('saving')
+    setSaveProgress(3)
+    setSaveMessage(isExistingDossier ? 'Preparing live dossier synchronization…' : 'Preparing mission dossier creation…')
+    setError('')
+
+    let progressTimer: ReturnType<typeof setInterval> | null = null
+
+    try {
+      progressTimer = setInterval(() => {
+        setSaveProgress((value) => {
+          if (value >= 92) return value
+          return Math.min(92, value + Math.max(2, Math.round((92 - value) / 7)))
+        })
+      }, 260)
+
+      const endpoint = isExistingDossier
+        ? `/api/missions/dossiers/${existingMissionId}`
+        : '/api/missions/dossiers'
+
+      const res = await fetch(endpoint, {
+        method: isExistingDossier ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(buildDossierPayload(assignNow)),
+      })
+
+      const json = await res.json().catch(() => null)
+      if (!res.ok || !json?.ok) throw new Error(json?.error || (isExistingDossier ? 'Mission dossier update failed' : 'Mission dossier creation failed'))
+
+      if (progressTimer) clearInterval(progressTimer)
+      setSaveProgress(100)
+      setSaveStage('completed')
+      setSaveMessage(isExistingDossier ? 'saveFlowTitle · dossier redistributed everywhere.' : 'Dossier created and distributed successfully.')
+
+      await refresh()
+
+      window.setTimeout(() => {
+        close()
+      }, 3000)
+    } catch (err) {
+      if (progressTimer) clearInterval(progressTimer)
+      setSaveStage('error')
+      setSaveMessage(err instanceof Error ? err.message : (isExistingDossier ? 'Mission dossier update failed' : 'Mission dossier creation failed'))
+      setError(err instanceof Error ? err.message : (isExistingDossier ? 'Mission dossier update failed' : 'Mission dossier creation failed'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const saveFlowIsDelete = saveMessage.toLowerCase().includes('delet')
+  const saveFlowEyebrow = saveFlowIsDelete ? 'Live dossier deletion' : 'Live dossier synchronization'
+  const saveFlowTitle =
+    saveStage === 'completed'
+      ? saveFlowIsDelete ? 'Deletion completed' : 'Saving completed'
+      : saveStage === 'error'
+        ? saveFlowIsDelete ? 'Deletion failed' : 'Saving failed'
+        : saveFlowIsDelete ? 'Deletion in progress' : 'Saving in progress'
+
 
   return (
     <div className="fixed inset-0 z-[1000] grid place-items-center bg-slate-950/45 p-2 backdrop-blur-sm">
@@ -399,21 +806,119 @@ export function CareLinkCreateMissionDossierModal({ close, refresh }: Props) {
         <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-white">
           <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-100 bg-white/95 px-7 py-5 backdrop-blur">
             <div>
-              <h2 className="text-2xl font-black tracking-tight text-slate-950">Create Mission Dossier</h2>
-              <p className="text-sm font-semibold text-slate-500">Operational intake, assignment, recurrence, mission order and sub-missions.</p>
+              <h2 className="text-2xl font-black tracking-tight text-slate-950">{mode === 'edit' ? 'Mission Dossier Preview' : 'Create Mission Dossier'}</h2>
+              <p className="text-sm font-semibold text-slate-500">{mode === 'edit' && initialMission ? (editingExisting ? 'Live editing enabled · save will redistribute routes, payments, program and mobile brief.' : 'Read-only preview · click Edit dossier to modify this existing operation.') : 'Operational intake, assignment, recurrence, mission order and sub-missions.'}</p>
+              {mode === 'edit' && initialMission ? (
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  {!editingExisting ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setEditingExisting(true)}
+                        className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-100"
+                      >
+                        Edit dossier
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteConfirmOpen(true)}
+                        className="rounded-xl border border-rose-200 bg-rose-50 px-5 py-2.5 text-sm font-black text-rose-700 shadow-sm hover:bg-rose-100"
+                      >
+                        Delete dossier
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => submit(false)}
+                      className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-100 disabled:opacity-60"
+                    >
+                      {saving ? 'Saving…' : 'Save live changes'}
+                    </button>
+                  )}
+                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                    {editingExisting ? 'Edit mode active' : 'Preview mode'}
+                  </span>
+                </div>
+              ) : null}
             </div>
             <div className="flex items-center gap-2">
               <button type="button" onClick={close} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-600">Close</button>
-              <button type="button" disabled={saving} className="rounded-xl border border-blue-200 bg-white px-4 py-2 text-sm font-black text-blue-700">Save Draft</button>
-              <button type="button" disabled={saving} onClick={() => submit(false)} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-100">{saving ? 'Saving…' : 'Create Dossier'}</button>
-              <button type="button" disabled={saving} onClick={() => submit(true)} className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-100">Create & Assign</button>
+              {mode === 'edit' ? (
+                <span className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-700">Existing dossier loaded</span>
+              ) : (
+                <>
+                  <button type="button" disabled={saving} className="rounded-xl border border-blue-200 bg-white px-4 py-2 text-sm font-black text-blue-700">Save Draft</button>
+                  <button type="button" disabled={saving} onClick={() => submit(false)} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-100">{saving ? 'Saving…' : 'Create Dossier'}</button>
+                  <button type="button" disabled={saving} onClick={() => submit(true)} className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-emerald-100">Create & Assign</button>
+                </>
+              )}
               <button type="button" onClick={close} className="ml-2 text-xl font-black text-slate-400">×</button>
             </div>
           </div>
 
           {error ? <div className="mx-7 mt-5 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">{error}</div> : null}
 
-          <div className="grid grid-cols-[minmax(0,1fr)_310px] gap-5 p-7">
+          {deleteConfirmOpen ? (
+            <div className="fixed inset-0 z-[1250] grid place-items-center bg-slate-950/40 p-4 backdrop-blur-sm">
+              <div className="w-full max-w-lg rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl">
+                <div className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">Delete mission dossier</div>
+                <h3 className="mt-2 text-2xl font-black text-slate-950">Confirm mission dossier deletion</h3>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-500">
+                  This will remove the parent dossier and all linked sub-missions from live CareLink pages. Operational history is archived for audit safety.
+                </p>
+                <div className="mt-6 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+                  This action will sync across overview, missions, dispatch, enterprise, and mobile brief sources.
+                </div>
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteConfirmOpen(false)}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={deleteExistingDossier}
+                    className="rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-rose-100 disabled:opacity-60"
+                  >
+                    Delete dossier
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {(saving || saveStage === 'completed' || saveStage === 'error') ? (
+            <div className="fixed inset-0 z-[1200] grid place-items-center bg-slate-950/35 p-4 backdrop-blur-sm">
+              <div className="w-full max-w-lg rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-xs font-black uppercase tracking-[0.25em] text-blue-600">{saveFlowEyebrow}</div>
+                    <h3 className="mt-2 text-2xl font-black text-slate-950">{saveStage === 'completed' ? 'Saving completed' : saveStage === 'error' ? 'Saving failed' : 'saveFlowTitle'}</h3>
+                    <p className="mt-2 text-sm font-semibold text-slate-500">{saveMessage || 'Synchronizing mission dossier sections…'}</p>
+                  </div>
+                  <button type="button" onClick={close} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-black text-slate-500">×</button>
+                </div>
+                <div className="mt-6">
+                  <div className="mb-2 flex items-center justify-between text-xs font-black text-slate-500">
+                    <span>{saveStage === 'completed' ? 'Completed' : saveStage === 'error' ? 'Needs attention' : 'Syncing live data'}</span>
+                    <span>{saveProgress}%</span>
+                  </div>
+                  <div className="h-4 overflow-hidden rounded-full bg-slate-100">
+                    <div className={`h-full rounded-full transition-all duration-300 ${saveStage === 'error' ? 'bg-rose-500' : saveStage === 'completed' ? 'bg-emerald-500' : 'bg-blue-600'}`} style={{ width: `${saveProgress}%` }} />
+                  </div>
+                  {saveStage === 'completed' ? <div className="mt-4 rounded-2xl bg-emerald-50 p-4 text-sm font-black text-emerald-700">Everything saved and redistributed. This window will close automatically in 3 seconds.</div> : null}
+                  {saveStage === 'error' ? <div className="mt-4 rounded-2xl bg-rose-50 p-4 text-sm font-black text-rose-700">{saveMessage}</div> : null}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          <div className={`grid grid-cols-[minmax(0,1fr)_310px] gap-5 p-7 ${isExistingDossier && !editingExisting ? 'pointer-events-none opacity-80' : ''}`}>
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-5">
                 <Card title="Client & Family" checked>
@@ -485,8 +990,8 @@ export function CareLinkCreateMissionDossierModal({ close, refresh }: Props) {
                   </div>
                   <div className="mt-3 max-h-56 overflow-auto rounded-2xl border border-slate-200">
                     <table className="w-full text-xs">
-                      <thead className="sticky top-0 bg-slate-50 text-left text-slate-500"><tr><th className="p-2">✓</th><th>Date</th><th>Start</th><th>End</th><th>Caregiver</th><th>Status</th><th>Actions</th></tr></thead>
-                      <tbody>{sessions.map((row, index) => <tr key={row.id} className="border-t border-slate-100"><td className="p-2"><input type="checkbox" checked={selectedSessionIds.includes(row.id)} onChange={() => toggleSession(row.id)} /></td><td><Input type="date" value={row.missionDate} onChange={(value) => updateRow(setSessions, row.id, { missionDate: value })} /></td><td><Input type="time" value={row.startTime} onChange={(value) => updateRow(setSessions, row.id, { startTime: value })} /></td><td><Input type="time" value={row.endTime} onChange={(value) => updateRow(setSessions, row.id, { endTime: value })} /></td><td><select value={row.caregiverId} onChange={(e) => updateRow(setSessions, row.id, { caregiverId: e.target.value })} className="w-full rounded-lg border border-slate-200 px-2 py-2"><option value="">Use primary</option>{options.caregivers.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}</select></td><td><Badge text={row.status || `Session ${index + 1}`} tone="emerald" /></td><td><RowActions duplicate={() => duplicateSession(row)} remove={() => removeRow(setSessions, row.id)} /></td></tr>)}{!sessions.length && <EmptyRow colSpan={7} text="No sub-missions yet. Add sessions manually or generate recurring sessions." />}</tbody>
+                      <thead className="sticky top-0 bg-slate-50 text-left text-slate-500"><tr><th className="p-2">✓</th><th>Code</th><th>Date</th><th>Start</th><th>End</th><th>Caregiver</th><th>Status</th><th>Actions</th></tr></thead>
+                      <tbody>{sessions.map((row, index) => <tr key={row.id} className="border-t border-slate-100"><td className="p-2"><input type="checkbox" checked={selectedSessionIds.includes(row.id)} onChange={() => toggleSession(row.id)} /></td><td><div className="rounded-lg border border-blue-100 bg-blue-50 px-2 py-2 text-xs font-black text-blue-700">{sessionDisplayCode(row, index)}</div></td><td><Input type="date" value={row.missionDate} onChange={(value) => updateRow(setSessions, row.id, { missionDate: value })} /></td><td><Input type="time" value={row.startTime} onChange={(value) => updateRow(setSessions, row.id, { startTime: value })} /></td><td><Input type="time" value={row.endTime} onChange={(value) => updateRow(setSessions, row.id, { endTime: value })} /></td><td><select value={row.caregiverId} onChange={(e) => updateRow(setSessions, row.id, { caregiverId: e.target.value })} className="w-full rounded-lg border border-slate-200 px-2 py-2"><option value="">Use primary</option>{options.caregivers.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}</select></td><td><Badge text={row.status || `Session ${index + 1}`} tone="emerald" /></td><td><RowActions duplicate={() => duplicateSession(row)} remove={() => removeRow(setSessions, row.id)} /></td></tr>)}{!sessions.length && <EmptyRow colSpan={7} text="No sub-missions yet. Add sessions manually or generate recurring sessions." />}</tbody>
                     </table>
                   </div>
                 </Card>
@@ -620,10 +1125,10 @@ function MissionOrderSection(props: {
 
 function Step({ n, title, active }: { n: string; title: string; active?: boolean }) { return <div className="mb-4 flex gap-3"><span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-black ${active ? 'bg-blue-600 text-white' : 'bg-white text-slate-500 ring-1 ring-slate-200'}`}>{n}</span><div><div className={`text-xs font-black ${active ? 'text-blue-700' : 'text-slate-700'}`}>{title}</div><div className="text-[10px] font-semibold text-slate-400">{n === '6' ? 'Rows, transport, costs' : n === '5' ? 'Caregiver matching' : n === '7' ? 'Review & confirm' : n === '4' ? 'When & how often' : n === '3' ? 'Rules & requirements' : n === '2' ? 'Select service' : 'Profile & context'}</div></div></div> }
 function Card({ title, checked, children }: { title: string; checked?: boolean; children: ReactNode }) { return <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="mb-3 flex items-center justify-between"><h3 className="font-black text-slate-950">{title} {checked ? <span className="ml-1 text-emerald-600">◎</span> : null}</h3><button type="button" className="text-xs font-black text-blue-600">✎ Edit</button></div>{children}</section> }
-function Select({ label, value, setValue, values }: { label: string; value: string; setValue: (v: string) => void; values: string[] }) { return <label>{label}<select value={value} onChange={(e) => setValue(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-2 py-2 capitalize outline-none focus:border-blue-300">{values.map((v) => <option key={v} value={v}>{v.replace(/_/g, ' ')}</option>)}</select></label> }
-function Field({ label, type, value, onChange }: { label: string; type: string; value: string; onChange: (value: string) => void }) { return <label>{label}<input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 outline-none focus:border-blue-300" /></label> }
-function Input({ value, onChange, placeholder, type = 'text', small }: { value: string; onChange: (value: string) => void; placeholder?: string; type?: string; small?: boolean }) { return <input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className={`w-full rounded-lg border border-slate-200 px-2 py-2 outline-none focus:border-blue-300 ${small ? 'mt-1 text-[10px]' : ''}`} /> }
-function TextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) { return <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={2} className="w-full rounded-lg border border-slate-200 px-2 py-2 outline-none focus:border-blue-300" /> }
+function Select({ label, value, setValue, values }: { label: string; value: string; setValue: (v: string) => void; values: string[] }) { return <label>{label}<select value={value ?? ''} onChange={(e) => setValue(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-2 py-2 capitalize outline-none focus:border-blue-300">{values.map((v) => <option key={v} value={v}>{v.replace(/_/g, ' ')}</option>)}</select></label> }
+function Field({ label, type, value, onChange }: { label: string; type: string; value: string; onChange: (value: string) => void }) { return <label>{label}<input type={type} value={value ?? ''} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 outline-none focus:border-blue-300" /></label> }
+function Input({ value, onChange, placeholder, type = 'text', small }: { value: string; onChange: (value: string) => void; placeholder?: string; type?: string; small?: boolean }) { return <input type={type} value={value ?? ''} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className={`w-full rounded-lg border border-slate-200 px-2 py-2 outline-none focus:border-blue-300 ${small ? 'mt-1 text-[10px]' : ''}`} /> }
+function TextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) { return <textarea value={value ?? ''} onChange={(e) => onChange(e.target.value)} rows={2} className="w-full rounded-lg border border-slate-200 px-2 py-2 outline-none focus:border-blue-300" /> }
 function Badge({ text, tone }: { text: string; tone: 'emerald' | 'blue' | 'amber' }) { const cls = tone === 'emerald' ? 'bg-emerald-50 text-emerald-700 ring-emerald-100' : tone === 'amber' ? 'bg-amber-50 text-amber-700 ring-amber-100' : 'bg-blue-50 text-blue-700 ring-blue-100'; return <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-black ring-1 ${cls}`}>{text}</span> }
 function InfoLine({ label, value }: { label: string; value: string }) { return <div className="mt-2 flex justify-between gap-3 text-xs"><span className="font-bold text-slate-400">{label}</span><span className="text-right font-black text-slate-700">{value}</span></div> }
 function Score({ label, value }: { label: string; value: number }) { return <div className="rounded-xl border border-slate-100 bg-white px-2 py-2"><div className="text-slate-400">{label}</div><div className={value ? 'text-emerald-700' : 'text-slate-400'}>{value ? `${value}%` : 'Live'}</div></div> }

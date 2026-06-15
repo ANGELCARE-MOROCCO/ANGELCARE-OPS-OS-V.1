@@ -1,8 +1,9 @@
-import { CareLinkOpsProductionDashboard } from '@/components/carelink/ops/CareLinkOpsProductionDashboard'
-import { buildCareLinkOpsDashboard } from '@/lib/carelink/ops-dashboard-data'
+import { CareLinkFieldAgentPremiumApp } from '@/components/carelink/mobile/CareLinkFieldAgentPremiumApp'
+import { loadCarelinkMobileWorkspace } from '@/lib/carelink/mobile-adapter'
 
 export const dynamic = 'force-dynamic'
 
-export default function CareLinkOpsPage() {
-  return <CareLinkOpsProductionDashboard initialPayload={buildCareLinkOpsDashboard()} />
+export default async function CareLinkPage() {
+  const dashboard = await loadCarelinkMobileWorkspace()
+  return <CareLinkFieldAgentPremiumApp records={dashboard.records} workspace={dashboard} view="home" />
 }

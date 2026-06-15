@@ -735,3 +735,30 @@ table {
 .vt-popup-actions button:last-child {
   background: linear-gradient(135deg, #ef4444, #b91c1c);
 }
+/* CareLink live radar map safety */
+.carelink-radar-map .leaflet-container {
+  z-index: 1 !important;
+}
+
+.carelink-radar-map .leaflet-pane,
+.carelink-radar-map .leaflet-top,
+.carelink-radar-map .leaflet-bottom,
+.carelink-radar-map .leaflet-control {
+  z-index: 1 !important;
+}
+
+/* CareLink radar clickable point safety */
+.carelink-radar-map .leaflet-overlay-pane svg,
+.carelink-radar-map .leaflet-pane svg {
+  pointer-events: auto !important;
+}
+
+.carelink-radar-map .leaflet-interactive.carelink-radar-click-point {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.carelink-radar-map .leaflet-pane[name="carelink-radar-halos"],
+.carelink-radar-map .carelink-radar-halo {
+  pointer-events: none !important;
+}

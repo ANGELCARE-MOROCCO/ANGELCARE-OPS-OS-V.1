@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
   title: 'AngelCare CareLink',
-  description: 'Portail mobile AngelCare CareLink pour agents terrain, caregivers et childcare specialists.',
+  description: 'Portail mobile AngelCare CareLink pour agents terrain, aidants et spécialistes enfance.',
 }
 
 export const viewport: Viewport = {

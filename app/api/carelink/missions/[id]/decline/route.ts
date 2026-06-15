@@ -1,22 +1,52 @@
 import { NextResponse } from 'next/server'
-import { canTransition } from '@/lib/carelink/lifecycle'
-import { getCareLinkMission, transitionMission } from '@/lib/carelink/repository'
-import type { CareLinkStatus } from '@/lib/carelink/types'
+import { patchMission } from '@/lib/missions/repository'
+import { recordMissionEvent } from '@/lib/missions/events'
+import { createAlert, createNotification } from '@/lib/carelink/mobile-persistence'
 
 export const dynamic = 'force-dynamic'
-
-const TARGET_STATUS = 'agent_declined' as CareLinkStatus
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const body = await request.json().catch(() => ({})) as { note?: string }
-    const mission = await getCareLinkMission(id)
-    if (!canTransition(mission.status, TARGET_STATUS)) {
-      return NextResponse.json({ ok: false, error: `Transition ${mission.status} -> ${TARGET_STATUS} blocked by lifecycle engine` }, { status: 409 })
-    }
-    return NextResponse.json({ ok: true, data: await transitionMission(id, TARGET_STATUS, body.note) })
+    const mission = await patchMission(Number(id), {
+      status: 'agent_declined',
+      lifecycle_stage: 'agent_declined',
+      cancelled_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    await recordMissionEvent({
+      missionId: Number(id),
+      eventType: 'mobile_decline',
+      content: body.note || 'Mission refusée depuis CareLink mobile',
+      source: 'carelink_mobile',
+    })
+    await Promise.allSettled([
+      createNotification({
+        type: 'mission_update',
+        title: 'Mission refusée',
+        body: body.note || `La mission ${String(mission.id)} a été refusée.`,
+        priority: 'high',
+        missionId: Number(id),
+        caregiverId: mission.caregiver_id ? Number(mission.caregiver_id) : null,
+        linkedEntityType: 'mission',
+        linkedEntityId: String(mission.id),
+        metadata: { status: mission.status, lifecycle_stage: mission.lifecycle_stage },
+      }),
+      createAlert({
+        type: 'mission_declined',
+        title: 'Mission refusée par l’agent',
+        body: body.note || `La mission ${String(mission.id)} a été refusée et doit être reprise par le dispatch.`,
+        priority: 'high',
+        missionId: Number(id),
+        caregiverId: mission.caregiver_id ? Number(mission.caregiver_id) : null,
+        linkedEntityType: 'mission',
+        linkedEntityId: String(mission.id),
+        metadata: { status: mission.status, lifecycle_stage: mission.lifecycle_stage },
+      }),
+    ])
+    return NextResponse.json({ ok: true, data: mission })
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Unknown CareLink action error' }, { status: 500 })
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Decline failed' }, { status: 500 })
   }
 }

@@ -7,7 +7,7 @@ export function computeReadiness(agent: CareLinkAgent | undefined, mission: Care
   if (!mission) blockers.push('Mission introuvable')
   if (agent?.complianceStatus === 'blocked') blockers.push('Conformité agent bloquante')
   if (agent?.complianceStatus === 'warning') warnings.push('Document ou formation à vérifier')
-  if (mission?.readinessStatus === 'blocked') blockers.push('Readiness mission bloquée')
+  if (mission?.readinessStatus === 'blocked') blockers.push('Préparation de mission bloquée')
   if (mission?.readinessStatus === 'warning') warnings.push('Mission avec points de vigilance')
   const required = mission?.checklist.filter((item) => item.required).length || 0
   const completed = mission?.checklist.filter((item) => item.required && item.completed).length || 0

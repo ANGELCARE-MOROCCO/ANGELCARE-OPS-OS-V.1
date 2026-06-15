@@ -441,7 +441,538 @@ function TrainingWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord })
 function CommitmentsWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Commitments Tracking" text="Soft commitments, signed commitments, received capital, outstanding balances and documents readiness." action={<button className="primary" onClick={() => ctx.open('commitments')}>+ Commitment</button>} /><DataTable rows={rows} columns={[['reference_number', 'Reference'], ['investor_id', 'Investor'], ['opportunity_id', 'Opportunity'], ['status', 'Status'], ['committed_amount', 'Committed'], ['received_amount', 'Received'], ['expected_close_date', 'Expected Close']]} onOpen={(row) => ctx.open('commitments', row, 'view')} /></section> }
 function PaymentsWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Capital Payments Ledger" text="Track capital receipts, pending payments, rejected flows, proof links, audit notes and bank reconciliation state." action={<button className="primary green" onClick={() => ctx.open('payments')}>+ Payment</button>} /><DataTable rows={rows} columns={[['reference_number', 'Reference'], ['investor_id', 'Investor'], ['commitment_id', 'Commitment'], ['status', 'Status'], ['amount', 'Amount'], ['due_date', 'Due Date'], ['paid_date', 'Paid Date'], ['payment_method', 'Method']]} onOpen={(row) => ctx.open('payments', row, 'view')} /></section> }
 function DataRoomWorkspace({ rows, ctx }: { rows: AnyRecord[]; ctx: AnyRecord }) { return <section className="section-stack"><SectionTitle title="Data Room" text="Controlled document library with visibility, versioning, expiry dates, owners and investor/deal links." action={<button className="primary" onClick={() => ctx.open('documents')}>+ Document</button>} /><div className="cards-grid dataroom-grid">{rows.map((row) => <article key={row.id} className="doc-card"><div className="card-top"><h3>{row.document_title}</h3><Badge value={row.status} /></div><p>{row.category} · {row.visibility} · {row.version}</p><Priority label="Owner" value={row.owner || 'Unassigned'} /><Priority label="Expiry" value={row.expiry_date || 'No expiry'} /><div className="row-actions"><button onClick={() => ctx.open('documents', row, 'view')}>Open</button>{row.file_url && <a className="buttonlike" href={row.file_url} target="_blank" rel="noreferrer">View file</a>}</div></article>)}{!rows.length && <Empty title="No documents" text="Add a data-room document to start governance." />}</div></section> }
-function ReportsWorkspace({ data, ctx }: { data: AnyRecord; ctx: AnyRecord }) { const stats = data.stats || {}; return <section className="section-stack"><SectionTitle title="Board Reporting" text="Board-grade reporting layer for fundraising, commitments, diligence, payments and investor movement." action={<button onClick={() => window.print()}>Print screen</button>} /><div className="report-grid"><section><h3>Raise Summary</h3><Priority label="Target" value={`${money(stats.targetAmount)} Dhs`} /><Priority label="Committed" value={`${money(stats.committedAmount)} Dhs`} /><Priority label="Received" value={`${money(stats.receivedAmount)} Dhs`} /><MiniProgress label="Coverage" value={pct(stats.committedAmount, stats.targetAmount)} /></section><section><h3>Investor Quality</h3><Priority label="Investors" value={stats.investors || 0} /><Priority label="Pipeline" value={stats.opportunities || 0} /><Priority label="Diligence" value={stats.diligenceOpen || 0} /></section><section><h3>Finance Control</h3><Priority label="Pending" value={`${money(stats.pendingAmount)} Dhs`} /><Priority label="Overdue" value={stats.overduePayments || 0} /><Priority label="Documents" value={stats.dataRoomDocs || 0} /></section></div><Panel title="Report Actions"><div className="report-actions"><button onClick={() => ctx.open('notes', { category: 'board_report', note: 'Board report generated for review.' }, 'create')}>Create board note</button><button onClick={() => ctx.open('documents', { category: 'board_pack', document_title: 'Capital board pack' }, 'create')}>Create board pack document</button><button onClick={() => ctx.open('payments')}>Open payment control</button></div></Panel></section> }
+
+const BOARD_REPORT_TEMPLATES = [
+  {
+    id: 'daily-work',
+    code: 'DR',
+    name: 'Daily Work Report',
+    type: 'daily_work_report',
+    audience: 'Internal execution',
+    variant: 'operational',
+    description: 'Daily user report for work completed, blockers, next actions and operational priorities.',
+    sections: [
+      { title: 'Executive snapshot', body: 'Summarize what changed today, what moved forward, and what requires attention.' },
+      { title: 'Completed work', body: 'List the completed tasks, delivered outputs, and evidence links.' },
+      { title: 'Blockers and risks', body: 'Explain blockers, ownership, impact and required escalation.' },
+      { title: 'Tomorrow priorities', body: 'Define the top priorities for the next working cycle.' },
+    ],
+  },
+  {
+    id: 'investor-update',
+    code: 'INV',
+    name: 'Investor Report',
+    type: 'investor_report',
+    audience: 'Investors / LPs',
+    variant: 'investor',
+    description: 'Investor-facing memo covering traction, fundraising progress, capital ask, risks and next steps.',
+    sections: [
+      { title: 'Investment headline', body: 'State the strongest investor-grade message in one concise paragraph.' },
+      { title: 'Fundraising progress', body: 'Summarize target, committed, received, pending and next investor actions.' },
+      { title: 'Traction and proof', body: 'Highlight customers, partnerships, pipeline, data-room progress and operational proof.' },
+      { title: 'Use of funds and milestones', body: 'Explain how capital converts into measurable execution milestones.' },
+      { title: 'Risks and mitigation', body: 'State the real risks and how AngelCare is managing them.' },
+    ],
+  },
+  {
+    id: 'pipeline-review',
+    code: 'PIPE',
+    name: 'Pipeline Report',
+    type: 'pipeline_report',
+    audience: 'Capital team',
+    variant: 'executive',
+    description: 'Pipeline review for investor stages, opportunities, owners, follow-ups and close probability.',
+    sections: [
+      { title: 'Pipeline movement', body: 'Explain new opportunities, stage changes, warm leads and lost/paused opportunities.' },
+      { title: 'Priority accounts', body: 'List the highest-value investors or partners requiring follow-up.' },
+      { title: 'Close plan', body: 'Define who owns the next step, deadline, dependency and expected outcome.' },
+    ],
+  },
+  {
+    id: 'diligence-progress',
+    code: 'DD',
+    name: 'Due Diligence Report',
+    type: 'due_diligence_report',
+    audience: 'Board / legal / finance',
+    variant: 'board',
+    description: 'Board-grade diligence report covering open checkpoints, risks, documents and decision needs.',
+    sections: [
+      { title: 'Diligence status', body: 'Summarize open, completed and blocked diligence items.' },
+      { title: 'Risk register', body: 'Identify legal, finance, operational and data-room risks.' },
+      { title: 'Documents required', body: 'List missing documents, owners and due dates.' },
+      { title: 'Decision requests', body: 'State the decisions required from leadership or board.' },
+    ],
+  },
+  {
+    id: 'capital-ledger',
+    code: 'LED',
+    name: 'Capital Ledger Report',
+    type: 'capital_ledger_report',
+    audience: 'Finance / board',
+    variant: 'executive',
+    description: 'Finance-control report for commitments, receipts, pending payments and capital movement.',
+    sections: [
+      { title: 'Capital movement', body: 'Summarize committed, received, pending and overdue capital.' },
+      { title: 'Payment control', body: 'Explain receipt status, expected dates and document dependencies.' },
+      { title: 'Finance exceptions', body: 'Flag any inconsistencies, overdue items or validation needs.' },
+    ],
+  },
+  {
+    id: 'board-pack-note',
+    code: 'BRD',
+    name: 'Board Pack Note',
+    type: 'board_pack_note',
+    audience: 'Board / executive committee',
+    variant: 'board',
+    description: 'A concise board memo for decisions, financial posture, risks and next governance actions.',
+    sections: [
+      { title: 'Board headline', body: 'Give the board a sharp summary of the capital position and decisions required.' },
+      { title: 'Strategic context', body: 'Explain what changed since the last board update.' },
+      { title: 'Metrics and movement', body: 'Summarize financial and operational indicators.' },
+      { title: 'Decisions required', body: 'List approvals, escalations or guidance needed.' },
+    ],
+  },
+  {
+    id: 'monthly-performance',
+    code: 'MCP',
+    name: 'Monthly Capital Performance Report',
+    type: 'monthly_capital_performance_report',
+    audience: 'Executive leadership',
+    variant: 'strategy',
+    description: 'Monthly capital performance review with KPIs, risk, pipeline, execution and recommendations.',
+    sections: [
+      { title: 'Monthly performance summary', body: 'Explain the month in one board-grade narrative.' },
+      { title: 'Capital KPIs', body: 'Cover target, committed, received, pending, diligence, data room and investor quality.' },
+      { title: 'Performance diagnosis', body: 'Explain what is working, what is delayed and why.' },
+      { title: 'Strategic recommendations', body: 'Recommend actions for next month.' },
+    ],
+  },
+] as const
+
+type BoardReportStatus = 'draft' | 'in_review' | 'approved' | 'archived'
+type BoardReportSection = { title: string; body: string }
+type BoardReportRecord = {
+  id?: string
+  reference_code: string
+  title: string
+  report_type: string
+  template_id: string
+  report_date: string
+  reporting_period: string
+  author_name: string
+  audience: string
+  status: BoardReportStatus
+  summary: string
+  highlights: string
+  risks: string
+  next_steps: string
+  decisions_required: string
+  sections: BoardReportSection[]
+  metrics: AnyRecord
+  preview_variant: string
+  approval_notes: string
+  approved_at?: string | null
+  approved_by?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+function templateById(id: string) {
+  return BOARD_REPORT_TEMPLATES.find((template) => template.id === id) || BOARD_REPORT_TEMPLATES[0]
+}
+
+function safeSections(value: any, templateId = 'daily-work'): BoardReportSection[] {
+  if (Array.isArray(value)) {
+    return value.map((section) => ({
+      title: String(section?.title || 'Untitled section'),
+      body: String(section?.body || ''),
+    }))
+  }
+  return templateById(templateId).sections.map((section) => ({ ...section }))
+}
+
+function boardReportPrefix(type: string, templateId: string) {
+  const template = templateById(templateId)
+  if (template?.code) return template.code
+  if (String(type).includes('investor')) return 'INV'
+  if (String(type).includes('diligence')) return 'DD'
+  if (String(type).includes('ledger')) return 'LED'
+  if (String(type).includes('board')) return 'BRD'
+  return 'RPT'
+}
+
+function nextBoardReference(type: string, templateId: string, existing: BoardReportRecord[]) {
+  const year = new Date().getFullYear()
+  const prefix = boardReportPrefix(type, templateId)
+  const count = existing.filter((report) => String(report.reference_code || '').includes(`CCR-${prefix}-${year}`)).length + 1
+  return `CCR-${prefix}-${year}-${String(count).padStart(4, '0')}`
+}
+
+function defaultBoardReport(existing: BoardReportRecord[] = [], templateId = 'daily-work'): BoardReportRecord {
+  const template = templateById(templateId)
+  const date = today()
+  return {
+    reference_code: nextBoardReference(template.type, template.id, existing),
+    title: template.name,
+    report_type: template.type,
+    template_id: template.id,
+    report_date: date,
+    reporting_period: date,
+    author_name: 'Capital Command User',
+    audience: template.audience,
+    status: 'draft',
+    summary: template.description,
+    highlights: '',
+    risks: '',
+    next_steps: '',
+    decisions_required: '',
+    sections: template.sections.map((section) => ({ ...section })),
+    metrics: {},
+    preview_variant: template.variant,
+    approval_notes: '',
+    approved_at: null,
+    approved_by: null,
+  }
+}
+
+function normalizeBoardReport(row: AnyRecord): BoardReportRecord {
+  const templateId = String(row.template_id || row.template_key || 'daily-work')
+  return {
+    id: row.id ? String(row.id) : undefined,
+    reference_code: String(row.reference_code || row.reference_number || nextBoardReference(String(row.report_type || ''), templateId, [])),
+    title: String(row.title || templateById(templateId).name),
+    report_type: String(row.report_type || templateById(templateId).type),
+    template_id: templateId,
+    report_date: String(row.report_date || today()),
+    reporting_period: String(row.reporting_period || row.report_date || today()),
+    author_name: String(row.author_name || 'Capital Command User'),
+    audience: String(row.audience || templateById(templateId).audience),
+    status: (['draft', 'in_review', 'approved', 'archived'].includes(String(row.status)) ? String(row.status) : 'draft') as BoardReportStatus,
+    summary: String(row.summary || ''),
+    highlights: String(row.highlights || ''),
+    risks: String(row.risks || ''),
+    next_steps: String(row.next_steps || ''),
+    decisions_required: String(row.decisions_required || ''),
+    sections: safeSections(row.sections, templateId),
+    metrics: row.metrics && typeof row.metrics === 'object' && !Array.isArray(row.metrics) ? row.metrics : {},
+    preview_variant: String(row.preview_variant || templateById(templateId).variant),
+    approval_notes: String(row.approval_notes || ''),
+    approved_at: row.approved_at || null,
+    approved_by: row.approved_by || null,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  }
+}
+
+function ReportsWorkspace({ data, ctx }: { data: AnyRecord; ctx: AnyRecord }) {
+  const stats = data.stats || {}
+  const [tab, setTab] = useState<'overview' | 'workspace' | 'templates' | 'preview' | 'saved' | 'approval' | 'archive' | 'settings'>('overview')
+  const [reports, setReports] = useState<BoardReportRecord[]>([])
+  const [current, setCurrent] = useState<BoardReportRecord>(() => defaultBoardReport([], 'daily-work'))
+  const [loadingReports, setLoadingReports] = useState(false)
+  const [savingReport, setSavingReport] = useState(false)
+  const [reportError, setReportError] = useState('')
+  const [selectedTemplate, setSelectedTemplate] = useState('daily-work')
+
+  const locked = current.status === 'approved'
+  const draftReports = reports.filter((report) => report.status === 'draft')
+  const reviewReports = reports.filter((report) => report.status === 'in_review')
+  const approvedReports = reports.filter((report) => report.status === 'approved')
+  const archivedReports = reports.filter((report) => report.status === 'archived')
+  const reportStats = [
+    { label: 'Draft reports', value: draftReports.length, text: 'editable working papers', tone: 'blue' },
+    { label: 'In review', value: reviewReports.length, text: 'awaiting approval', tone: 'amber' },
+    { label: 'Approved', value: approvedReports.length, text: 'locked board records', tone: 'green' },
+    { label: 'Archived', value: archivedReports.length, text: 'historical reporting', tone: 'slate' },
+    { label: 'Templates', value: BOARD_REPORT_TEMPLATES.length, text: 'preloaded report models', tone: 'violet' },
+  ]
+
+  useEffect(() => {
+    let alive = true
+    async function loadReports() {
+      setLoadingReports(true)
+      setReportError('')
+      try {
+        const res = await fetch('/api/capital-command-center/reports/board', { cache: 'no-store' })
+        const payload = await res.json().catch(() => null)
+        const rows = payload?.ok && Array.isArray(payload.data?.reports) ? payload.data.reports.map(normalizeBoardReport) : []
+        if (!alive) return
+        const localRows = rows.length ? rows : JSON.parse(window.localStorage.getItem('angelcare-board-reports') || '[]').map(normalizeBoardReport)
+        setReports(localRows)
+        if (localRows[0]) setCurrent(localRows[0])
+      } catch (error: any) {
+        if (!alive) return
+        const localRows = JSON.parse(window.localStorage.getItem('angelcare-board-reports') || '[]').map(normalizeBoardReport)
+        setReports(localRows)
+        if (localRows[0]) setCurrent(localRows[0])
+        setReportError(error?.message || 'Reports API unavailable; local fallback loaded.')
+      } finally {
+        if (alive) setLoadingReports(false)
+      }
+    }
+    loadReports()
+    return () => { alive = false }
+  }, [])
+
+  function updateReport(key: keyof BoardReportRecord, value: any) {
+    if (locked) return
+    setCurrent((report) => ({ ...report, [key]: value }))
+  }
+
+  function updateSection(index: number, key: keyof BoardReportSection, value: string) {
+    if (locked) return
+    setCurrent((report) => ({
+      ...report,
+      sections: report.sections.map((section, i) => i === index ? { ...section, [key]: value } : section),
+    }))
+  }
+
+  function changeTemplate(templateId: string) {
+    const template = templateById(templateId)
+    setSelectedTemplate(templateId)
+    setCurrent((report) => ({
+      ...defaultBoardReport(reports, templateId),
+      id: report.id,
+      status: report.id ? report.status : 'draft',
+      reference_code: report.id ? report.reference_code : nextBoardReference(template.type, template.id, reports),
+    }))
+  }
+
+  function createReport(templateId = selectedTemplate) {
+    const report = defaultBoardReport(reports, templateId)
+    setCurrent(report)
+    setTab('workspace')
+  }
+
+  async function saveReport(nextStatus?: BoardReportStatus) {
+    setSavingReport(true)
+    setReportError('')
+    const reportToSave: BoardReportRecord = { ...current, status: nextStatus || current.status }
+    if (nextStatus === 'approved') {
+      reportToSave.approved_at = new Date().toISOString()
+      reportToSave.approved_by = reportToSave.approved_by || 'Capital Command'
+    }
+    try {
+      const res = await fetch('/api/capital-command-center/reports/board', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reportToSave),
+      })
+      const payload = await res.json().catch(() => null)
+      const saved = payload?.ok && payload.data?.report ? normalizeBoardReport(payload.data.report) : { ...reportToSave, id: reportToSave.id || `local-${Date.now()}`, updated_at: new Date().toISOString() }
+      const nextReports = [saved, ...reports.filter((report) => report.id !== saved.id && report.reference_code !== saved.reference_code)]
+      setReports(nextReports)
+      setCurrent(saved)
+      window.localStorage.setItem('angelcare-board-reports', JSON.stringify(nextReports))
+    } catch (error: any) {
+      const saved = { ...reportToSave, id: reportToSave.id || `local-${Date.now()}`, updated_at: new Date().toISOString() }
+      const nextReports = [saved, ...reports.filter((report) => report.id !== saved.id && report.reference_code !== saved.reference_code)]
+      setReports(nextReports)
+      setCurrent(saved)
+      window.localStorage.setItem('angelcare-board-reports', JSON.stringify(nextReports))
+      setReportError(error?.message || 'Saved locally because the reports API did not respond.')
+    } finally {
+      setSavingReport(false)
+    }
+  }
+
+  function duplicateReport(report = current) {
+    const duplicate = {
+      ...report,
+      id: undefined,
+      reference_code: nextBoardReference(report.report_type, report.template_id, reports),
+      title: `${report.title} — Copy`,
+      status: 'draft' as BoardReportStatus,
+      approved_at: null,
+      approved_by: null,
+    }
+    setCurrent(duplicate)
+    setTab('workspace')
+  }
+
+  function archiveReport(report = current) {
+    setCurrent({ ...report, status: 'archived' })
+    saveReport('archived')
+  }
+
+  function printPreview() {
+    document.body.classList.add('printing-board-report')
+    const cleanup = () => {
+      document.body.classList.remove('printing-board-report')
+      window.removeEventListener('afterprint', cleanup)
+    }
+    window.addEventListener('afterprint', cleanup)
+    setTimeout(() => window.print(), 80)
+    setTimeout(cleanup, 3000)
+  }
+
+  function openReport(report: BoardReportRecord) {
+    setCurrent(report)
+    setTab('workspace')
+  }
+
+  const selectedTemplateModel = templateById(current.template_id)
+
+  return <section className="board-reporting-pro">
+    <header className="board-hero">
+      <div>
+        <p className="eyebrow">Executive board reporting OS</p>
+        <h2>Board Reporting</h2>
+        <p>Premium reporting workspace for daily execution notes, investor reports, pipeline reviews, diligence progress, capital ledger control and board-grade reporting packs.</p>
+      </div>
+      <div className="board-hero-actions">
+        <button className="primary" onClick={() => createReport('daily-work')}>Create new report</button>
+        <button onClick={() => setTab('templates')}>Choose template</button>
+        <button onClick={printPreview}>Print A4 preview</button>
+      </div>
+    </header>
+
+    <nav className="report-subnav">
+      {[
+        ['overview', 'Overview'],
+        ['workspace', 'Reports Workspace'],
+        ['templates', 'Templates'],
+        ['preview', 'Live Preview'],
+        ['saved', 'Saved Reports'],
+        ['approval', 'Approval Queue'],
+        ['archive', 'Archive'],
+        ['settings', 'Settings'],
+      ].map(([key, label]) => <button key={key} onClick={() => setTab(key as any)} className={tab === key ? 'active' : ''}>{label}</button>)}
+    </nav>
+
+    {reportError && <div className="report-alert">{reportError}</div>}
+
+    {tab === 'overview' && <div className="report-tab-space">
+      <div className="report-metrics-strip">
+        {reportStats.map((item) => <article key={item.label} className={`report-metric ${item.tone}`}><span>{item.label}</span><strong>{item.value}</strong><small>{item.text}</small></article>)}
+      </div>
+      <div className="board-overview-grid">
+        <section className="board-panel large">
+          <div className="panel-head"><div><h3>Capital reporting control</h3><p>Live summary based on current Capital Command data and report workspace state.</p></div><button onClick={() => setTab('workspace')}>Open workspace</button></div>
+          <div className="report-grid compact">
+            <div><h4>Raise Summary</h4><Priority label="Target" value={`${money(stats.targetAmount)} Dhs`} /><Priority label="Committed" value={`${money(stats.committedAmount)} Dhs`} /><Priority label="Received" value={`${money(stats.receivedAmount)} Dhs`} /><MiniProgress label="Coverage" value={pct(stats.committedAmount, stats.targetAmount)} /></div>
+            <div><h4>Investor Quality</h4><Priority label="Investors" value={stats.investors || 0} /><Priority label="Pipeline" value={stats.opportunities || 0} /><Priority label="Diligence" value={stats.diligenceOpen || 0} /></div>
+            <div><h4>Finance Control</h4><Priority label="Pending" value={`${money(stats.pendingAmount)} Dhs`} /><Priority label="Overdue" value={stats.overduePayments || 0} /><Priority label="Documents" value={stats.dataRoomDocs || 0} /></div>
+          </div>
+        </section>
+        <section className="board-panel">
+          <div className="panel-head"><div><h3>Recent reports</h3><p>Latest generated or edited board records.</p></div></div>
+          <ReportList reports={reports.slice(0, 5)} openReport={openReport} emptyText={loadingReports ? 'Loading reports…' : 'No reports saved yet.'} />
+        </section>
+      </div>
+      <section className="board-panel">
+        <div className="panel-head"><div><h3>Report actions</h3><p>Create operational notes, investor memos, board pack documents and payment control follow-ups.</p></div></div>
+        <div className="report-action-grid">
+          <button onClick={() => createReport('daily-work')}>Daily Work Report</button>
+          <button onClick={() => createReport('investor-update')}>Investor Update</button>
+          <button onClick={() => createReport('board-pack-note')}>Board Pack Note</button>
+          <button onClick={() => ctx.open('notes', { category: 'board_report', note: 'Board report generated for review.' }, 'create')}>Create board note</button>
+          <button onClick={() => ctx.open('documents', { category: 'board_pack', document_title: 'Capital board pack' }, 'create')}>Create board pack document</button>
+          <button onClick={() => ctx.open('payments')}>Open payment control</button>
+        </div>
+      </section>
+    </div>}
+
+    {tab === 'templates' && <div className="report-tab-space">
+      <div className="template-grid">
+        {BOARD_REPORT_TEMPLATES.map((template) => <article key={template.id} className={current.template_id === template.id ? 'template-card active' : 'template-card'}>
+          <div><span>{template.code}</span><h3>{template.name}</h3><p>{template.description}</p></div>
+          <small>{template.audience} · {template.variant}</small>
+          <ul>{template.sections.slice(0, 4).map((section) => <li key={section.title}>{section.title}</li>)}</ul>
+          <div className="template-actions"><button onClick={() => changeTemplate(template.id)}>Use template</button><button className="primary" onClick={() => createReport(template.id)}>Create report</button></div>
+        </article>)}
+      </div>
+    </div>}
+
+    {(tab === 'workspace' || tab === 'preview') && <div className="report-builder-grid">
+      <section className="board-panel report-editor">
+        <div className="panel-head"><div><h3>Report editor</h3><p>{locked ? 'Approved reports are locked. Duplicate to create a new editable draft.' : 'Edit the structured sections and preview the A4 report live.'}</p></div><span className={`report-status ${current.status}`}>{current.status.replace('_', ' ')}</span></div>
+        <div className="form-grid four">
+          <ReportField label="Title" value={current.title} locked={locked} onChange={(value) => updateReport('title', value)} />
+          <label><span>Report type</span><select value={current.template_id} disabled={locked} onChange={(e) => changeTemplate(e.target.value)}>{BOARD_REPORT_TEMPLATES.map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}</select></label>
+          <ReportField label="Report date" type="date" value={current.report_date} locked={locked} onChange={(value) => updateReport('report_date', value)} />
+          <ReportField label="Reporting period" value={current.reporting_period} locked={locked} onChange={(value) => updateReport('reporting_period', value)} />
+          <ReportField label="Author" value={current.author_name} locked={locked} onChange={(value) => updateReport('author_name', value)} />
+          <ReportField label="Audience" value={current.audience} locked={locked} onChange={(value) => updateReport('audience', value)} />
+          <label><span>Status</span><select value={current.status} disabled={locked} onChange={(e) => updateReport('status', e.target.value)}><option value="draft">Draft</option><option value="in_review">In review</option><option value="approved">Approved</option><option value="archived">Archived</option></select></label>
+          <ReportField label="Reference code" value={current.reference_code} locked={locked} onChange={(value) => updateReport('reference_code', value)} />
+        </div>
+        <div className="editor-section-grid">
+          <label><span>Executive summary</span><textarea disabled={locked} value={current.summary} onChange={(e) => updateReport('summary', e.target.value)} /></label>
+          <label><span>Highlights</span><textarea disabled={locked} value={current.highlights} onChange={(e) => updateReport('highlights', e.target.value)} /></label>
+          <label><span>Risks</span><textarea disabled={locked} value={current.risks} onChange={(e) => updateReport('risks', e.target.value)} /></label>
+          <label><span>Next steps</span><textarea disabled={locked} value={current.next_steps} onChange={(e) => updateReport('next_steps', e.target.value)} /></label>
+        </div>
+        <label className="wide-field"><span>Decisions required</span><textarea disabled={locked} value={current.decisions_required} onChange={(e) => updateReport('decisions_required', e.target.value)} /></label>
+        <div className="editable-sections">
+          <div className="panel-head mini"><div><h3>Structured report sections</h3><p>Preloaded from {selectedTemplateModel.name}. Customize each area before saving.</p></div></div>
+          {current.sections.map((section, index) => <article key={`${section.title}-${index}`} className="editable-section">
+            <ReportField label={`Section ${index + 1} heading`} value={section.title} locked={locked} onChange={(value) => updateSection(index, 'title', value)} />
+            <label><span>Section content</span><textarea disabled={locked} value={section.body} onChange={(e) => updateSection(index, 'body', e.target.value)} /></label>
+          </article>)}
+        </div>
+        <label className="wide-field"><span>Approval notes</span><textarea disabled={current.status === 'approved'} value={current.approval_notes} onChange={(e) => updateReport('approval_notes', e.target.value)} /></label>
+        <div className="report-editor-actions">
+          <button className="primary" disabled={savingReport || locked} onClick={() => saveReport('draft')}>{savingReport ? 'Saving…' : 'Save draft'}</button>
+          <button disabled={savingReport || locked} onClick={() => saveReport('in_review')}>Send to review</button>
+          <button disabled={savingReport || locked} onClick={() => saveReport('approved')}>Mark approved</button>
+          <button onClick={() => duplicateReport()}>Duplicate</button>
+          <button onClick={printPreview}>Print</button>
+          <button disabled={savingReport} onClick={() => archiveReport()}>Archive</button>
+        </div>
+      </section>
+      <ReportPreview report={current} stats={stats} />
+    </div>}
+
+    {tab === 'saved' && <div className="report-tab-space saved-report-columns">
+      <SavedColumn title="Draft Reports" reports={draftReports} openReport={openReport} duplicateReport={duplicateReport} />
+      <SavedColumn title="In Review" reports={reviewReports} openReport={openReport} duplicateReport={duplicateReport} />
+      <SavedColumn title="Approved Reports" reports={approvedReports} openReport={openReport} duplicateReport={duplicateReport} />
+    </div>}
+
+    {tab === 'approval' && <div className="report-tab-space"><section className="board-panel"><div className="panel-head"><div><h3>Approval Queue</h3><p>Reports awaiting review and decision.</p></div></div><ReportList reports={reviewReports} openReport={openReport} emptyText="No reports are awaiting approval." /></section></div>}
+    {tab === 'archive' && <div className="report-tab-space"><section className="board-panel"><div className="panel-head"><div><h3>Archive</h3><p>Archived reporting history.</p></div></div><ReportList reports={archivedReports} openReport={openReport} emptyText="No archived reports." /></section></div>}
+    {tab === 'settings' && <div className="report-tab-space">
+      <section className="board-panel"><h3>Reporting settings</h3><div className="matrix-list"><Priority label="Reference format" value="CCR-{TYPE}-{YEAR}-{SEQ}" /><Priority label="Approved reports" value="Read-only / duplicate to edit" /><Priority label="Print mode" value="Browser A4 preview" /><Priority label="Storage" value="Supabase with local fallback" /></div></section>
+    </div>}
+  </section>
+}
+
+function ReportField({ label, value, onChange, locked, type = 'text' }: { label: string; value: any; onChange: (value: string) => void; locked?: boolean; type?: string }) {
+  return <label><span>{label}</span><input type={type} disabled={locked} value={value || ''} onChange={(e) => onChange(e.target.value)} /></label>
+}
+
+function ReportList({ reports, openReport, emptyText }: { reports: BoardReportRecord[]; openReport: (report: BoardReportRecord) => void; emptyText: string }) {
+  if (!reports.length) return <Empty title={emptyText} text="Create a new report or choose a preloaded reporting template." />
+  return <div className="report-list">{reports.map((report) => <button key={report.id || report.reference_code} onClick={() => openReport(report)}>
+    <b>{report.reference_code}</b><span>{report.title}</span><small>{report.status.replace('_', ' ')} · {report.report_date} · {report.author_name || '—'}</small>
+  </button>)}</div>
+}
+
+function SavedColumn({ title, reports, openReport, duplicateReport }: { title: string; reports: BoardReportRecord[]; openReport: (report: BoardReportRecord) => void; duplicateReport: (report: BoardReportRecord) => void }) {
+  return <section className="board-panel"><div className="panel-head"><div><h3>{title}</h3><p>{reports.length} reports</p></div></div><div className="saved-card-list">{reports.map((report) => <article key={report.id || report.reference_code} className="saved-report-card"><span className={`report-status ${report.status}`}>{report.status.replace('_', ' ')}</span><h4>{report.title}</h4><p>{report.reference_code} · {report.report_date}</p><div><button onClick={() => openReport(report)}>Open</button><button onClick={() => duplicateReport(report)}>Duplicate</button></div></article>)}{!reports.length && <Empty title="No reports" text="Nothing currently registered in this status." />}</div></section>
+}
+
+function ReportPreview({ report, stats }: { report: BoardReportRecord; stats: AnyRecord }) {
+  return <aside className={`report-preview-shell ${report.preview_variant}`}>
+    <div className="a4-preview">
+      <header><div><span>AngelCare Capital Command</span><h1>{report.title || 'Untitled report'}</h1><p>{report.audience} · {report.reporting_period}</p></div><b>{report.reference_code}</b></header>
+      <section className="preview-summary"><p>{report.summary || 'Executive summary will appear here.'}</p></section>
+      <div className="preview-kpis">
+        <div><span>Target raise</span><b>{money(stats.targetAmount)} Dhs</b></div>
+        <div><span>Committed</span><b>{money(stats.committedAmount)} Dhs</b></div>
+        <div><span>Received</span><b>{money(stats.receivedAmount)} Dhs</b></div>
+        <div><span>Diligence open</span><b>{stats.diligenceOpen || 0}</b></div>
+      </div>
+      {report.highlights && <section><h2>Highlights</h2><p>{report.highlights}</p></section>}
+      {report.risks && <section><h2>Risks</h2><p>{report.risks}</p></section>}
+      {report.sections.map((section, index) => <section key={`${section.title}-${index}`}><h2>{section.title}</h2><p>{section.body || 'Section content pending.'}</p></section>)}
+      {report.decisions_required && <section className="decision-box"><h2>Decisions required</h2><p>{report.decisions_required}</p></section>}
+      {report.next_steps && <section><h2>Next steps</h2><p>{report.next_steps}</p></section>}
+      <footer><span>{report.author_name || 'Capital Command'}</span><span>{report.report_date}</span><span>{report.status.replace('_', ' ')}</span></footer>
+    </div>
+  </aside>
+}
 
 function DataTable({ rows, columns, onOpen }: { rows: AnyRecord[]; columns: [string, string][]; onOpen: (row: AnyRecord) => void }) { return <div className="enterprise-table"><table><thead><tr>{columns.map(([_, label]) => <th key={label}>{label}</th>)}<th>Actions</th></tr></thead><tbody>{rows.map((row) => <tr key={row.id}>{columns.map(([key]) => <td key={key}>{key.includes('amount') || key === 'amount' ? `${money(row[key])} ${row.currency || 'Dhs'}` : key === 'status' ? <Badge value={row[key]} /> : String(row[key] ?? '—')}</td>)}<td><button onClick={() => onOpen(row)}>Open</button></td></tr>)}</tbody></table>{!rows.length && <Empty title="No records" text="Nothing is currently registered in this workspace." />}</div> }
 
@@ -1061,5 +1592,228 @@ const css = `
 .followup-row{display:grid;grid-template-columns:160px 200px 180px 1fr auto;gap:10px;align-items:end;margin-top:10px;padding:12px;background:#fff;border-radius:18px;border:1px solid #e2e8f0}
 .communication-empty{grid-column:1/-1}
 .communication-planned{border-color:#bfdbfe}.communication-ready{border-color:#ddd6fe}.communication-sent{border-color:#bbf7d0}.communication-answered{border-color:#86efac}.communication-follow_up{border-color:#fed7aa}
+
+/* Board Reporting Pro Workspace */
+.board-reporting-pro{display:grid;gap:18px}
+.board-hero{border:1px solid #dbe7f4;background:linear-gradient(110deg,#ffffff 0%,#f7fbff 48%,#eef6ff 100%);border-radius:28px;padding:26px 28px;box-shadow:0 24px 70px rgba(15,23,42,.08);display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.board-hero h2{font-size:38px;letter-spacing:-.055em;margin:4px 0 10px;color:#0f172a}
+.board-hero p{max-width:760px;color:#64748b;font-weight:700;line-height:1.55}
+.board-hero-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.report-subnav{display:flex;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid #dfe8f3;border-radius:24px;padding:10px;box-shadow:0 14px 45px rgba(15,23,42,.05)}
+.report-subnav button{border:1px solid transparent;background:#f8fafc;border-radius:16px;padding:11px 14px;font-weight:950;color:#475569;cursor:pointer}
+.report-subnav button.active{background:#eaf2ff;border-color:#bfdbfe;color:#1d4ed8;box-shadow:inset 0 0 0 1px #dbeafe}
+.report-alert{border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;border-radius:18px;padding:12px 14px;font-weight:800}
+.report-tab-space{display:grid;gap:16px}
+.report-metrics-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.report-metric{background:#fff;border:1px solid #dfe8f3;border-radius:22px;padding:18px;box-shadow:0 18px 48px rgba(15,23,42,.06);position:relative;overflow:hidden}
+.report-metric:before{content:'';position:absolute;left:0;top:18px;width:5px;height:44px;border-radius:999px;background:#2563eb}
+.report-metric.green:before{background:#16a34a}.report-metric.amber:before{background:#f59e0b}.report-metric.violet:before{background:#7c3aed}.report-metric.slate:before{background:#64748b}
+.report-metric span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8;font-weight:1000}.report-metric strong{font-size:30px;display:block;margin:8px 0;color:#0f172a}.report-metric small{color:#64748b;font-weight:800}
+.board-overview-grid{display:grid;grid-template-columns:1.55fr .75fr;gap:16px}
+.board-panel{background:#fff;border:1px solid #dfe8f3;border-radius:26px;padding:20px;box-shadow:0 22px 60px rgba(15,23,42,.07)}
+.board-panel.large{min-height:320px}
+.panel-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:16px}
+.panel-head h3{font-size:20px;letter-spacing:-.04em;margin:0;color:#0f172a}
+.panel-head p{margin:6px 0 0;color:#64748b;font-weight:700}
+.panel-head.mini{margin-top:8px}
+.report-grid.compact{grid-template-columns:repeat(3,1fr)}
+.report-action-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.report-action-grid button,.template-actions button,.saved-report-card button,.report-list button{border:1px solid #d8e3f0;background:#f8fafc;border-radius:16px;padding:12px 14px;font-weight:950;color:#0f172a;cursor:pointer;text-align:left}
+.report-action-grid button:hover,.template-actions button:hover,.saved-report-card button:hover,.report-list button:hover{border-color:#93c5fd;background:#eff6ff;color:#1d4ed8}
+.template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.template-card{background:#fff;border:1px solid #dfe8f3;border-radius:26px;padding:20px;display:grid;gap:14px;box-shadow:0 22px 56px rgba(15,23,42,.06)}
+.template-card.active{border-color:#93c5fd;box-shadow:0 22px 70px rgba(37,99,235,.12)}
+.template-card span{width:44px;height:44px;border-radius:16px;background:#eff6ff;color:#1d4ed8;display:grid;place-items:center;font-weight:1000;font-size:12px}
+.template-card h3{font-size:22px;margin:10px 0 8px;color:#0f172a;letter-spacing:-.04em}.template-card p,.template-card small{color:#64748b;font-weight:750}.template-card ul{margin:0;padding-left:18px;color:#334155;font-weight:750;line-height:1.7}
+.template-actions{display:flex;gap:8px;flex-wrap:wrap}.template-actions .primary{background:#2563eb;color:#fff}
+.report-builder-grid{display:grid;grid-template-columns:minmax(0,1.05fr) 520px;gap:18px;align-items:start}
+.report-editor{display:grid;gap:16px}
+.report-status{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:1000;background:#f1f5f9;color:#475569}
+.report-status.draft{background:#eff6ff;color:#1d4ed8}.report-status.in_review{background:#fff7ed;color:#c2410c}.report-status.approved{background:#ecfdf5;color:#047857}.report-status.archived{background:#f1f5f9;color:#64748b}
+.form-grid.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.report-editor label span,.wide-field span{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:#64748b;font-weight:1000;display:block;margin-bottom:7px}
+.report-editor input,.report-editor select,.report-editor textarea{width:100%;border:1px solid #d8e3f0;background:#fff;border-radius:16px;padding:12px 13px;color:#0f172a;font-weight:800;outline:none}
+.report-editor textarea{min-height:110px;resize:vertical;line-height:1.55}
+.report-editor input:disabled,.report-editor select:disabled,.report-editor textarea:disabled{background:#f8fafc;color:#64748b}
+.editor-section-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wide-field{display:block}
+.editable-sections{display:grid;gap:12px}
+.editable-section{border:1px solid #e2e8f0;background:#f8fafc;border-radius:22px;padding:14px;display:grid;gap:10px}
+.report-editor-actions{display:flex;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,.72),#fff);border-top:1px solid #e2e8f0;padding-top:14px}
+.report-editor-actions button,.board-hero-actions button,.panel-head button{border:1px solid #d8e3f0;background:#fff;border-radius:16px;padding:11px 14px;font-weight:950;color:#0f172a;cursor:pointer}
+.report-editor-actions button.primary,.board-hero-actions button.primary{background:#2563eb;border-color:#2563eb;color:#fff;box-shadow:0 12px 28px rgba(37,99,235,.18)}
+.report-preview-shell{position:sticky;top:112px}
+.a4-preview{width:100%;aspect-ratio:1/1.414;background:#fff;border:1px solid #d8e3f0;border-radius:18px;box-shadow:0 28px 80px rgba(15,23,42,.12);padding:34px;overflow:auto;color:#111827}
+.a4-preview header{display:flex;justify-content:space-between;gap:18px;border-bottom:3px solid #111827;padding-bottom:18px;margin-bottom:20px}
+.a4-preview header span{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:#2563eb;font-weight:1000}
+.a4-preview header h1{font-size:28px;line-height:1.05;letter-spacing:-.055em;margin:6px 0;color:#111827}
+.a4-preview header p,.a4-preview section p{color:#475569;line-height:1.62;font-weight:650}
+.a4-preview header b{font-size:12px;background:#111827;color:#fff;border-radius:999px;padding:9px 11px;height:max-content}
+.preview-summary{background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:14px;margin-bottom:16px}
+.preview-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.preview-kpis div{border:1px solid #e2e8f0;border-radius:14px;padding:10px;background:#fff}
+.preview-kpis span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#64748b;font-weight:1000}.preview-kpis b{display:block;margin-top:5px;color:#111827}
+.a4-preview section{margin:16px 0}.a4-preview h2{font-size:15px;text-transform:uppercase;letter-spacing:.12em;color:#111827;border-bottom:1px solid #e5e7eb;padding-bottom:7px;margin-bottom:8px}
+.decision-box{background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:13px}
+.a4-preview footer{display:flex;justify-content:space-between;border-top:1px solid #e5e7eb;margin-top:22px;padding-top:12px;color:#64748b;font-weight:900;font-size:11px}
+.report-list{display:grid;gap:8px}.report-list button{display:grid;gap:3px}.report-list b{color:#2563eb}.report-list span{font-weight:1000;color:#0f172a}.report-list small{color:#64748b}
+.saved-report-columns{grid-template-columns:repeat(3,1fr)}
+.saved-card-list{display:grid;gap:10px}.saved-report-card{border:1px solid #e2e8f0;background:#f8fafc;border-radius:20px;padding:14px}.saved-report-card h4{font-size:16px;color:#0f172a;margin:10px 0 5px}.saved-report-card p{color:#64748b;font-weight:800}.saved-report-card div{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.matrix-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media print{.capital-sidebar,.top-command,.report-subnav,.board-hero-actions,.report-editor,.section-title,.kpi-row,.search-row{display:none!important}.capital-shell{display:block;background:#fff}.capital-main{padding:0}.report-builder-grid{display:block}.report-preview-shell{position:static}.a4-preview{box-shadow:none;border:0;border-radius:0;aspect-ratio:auto;width:100%;height:auto}}
+@media(max-width:1200px){.report-builder-grid,.board-overview-grid{grid-template-columns:1fr}.report-preview-shell{position:static}.template-grid,.saved-report-columns,.report-metrics-strip{grid-template-columns:1fr 1fr}.report-action-grid{grid-template-columns:repeat(3,1fr)}.form-grid.four,.preview-kpis,.matrix-list{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.board-hero{display:grid}.template-grid,.saved-report-columns,.report-metrics-strip,.report-action-grid,.form-grid.four,.editor-section-grid,.preview-kpis,.matrix-list,.report-grid.compact{grid-template-columns:1fr}}
+
+
+/* Board Reporting A4-only print isolation + premium template variants */
+body.printing-board-report .top-command,
+body.printing-board-report .capital-sidebar,
+body.printing-board-report .board-hero,
+body.printing-board-report .report-subnav,
+body.printing-board-report .report-editor,
+body.printing-board-report .kpi-row,
+body.printing-board-report .search-row,
+body.printing-board-report .connect-pill,
+body.printing-board-report .voice-terminal,
+body.printing-board-report .operator-card,
+body.printing-board-report .board-panel,
+body.printing-board-report .report-metrics-strip,
+body.printing-board-report .section-title{
+  display:none!important;
+}
+
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body.printing-board-report{
+    background:#fff!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body.printing-board-report *{
+    visibility:hidden!important;
+  }
+  body.printing-board-report .a4-preview,
+  body.printing-board-report .a4-preview *{
+    visibility:visible!important;
+  }
+  body.printing-board-report .capital-shell,
+  body.printing-board-report .capital-main,
+  body.printing-board-report .board-reporting-pro,
+  body.printing-board-report .report-builder-grid,
+  body.printing-board-report .report-preview-shell{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    background:#fff!important;
+    overflow:visible!important;
+  }
+  body.printing-board-report .a4-preview{
+    position:absolute!important;
+    left:0!important;
+    top:0!important;
+    width:210mm!important;
+    min-height:297mm!important;
+    height:auto!important;
+    aspect-ratio:auto!important;
+    margin:0!important;
+    padding:18mm!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    background:#fff!important;
+    color:#0f172a!important;
+  }
+  body.printing-board-report .a4-preview header{
+    page-break-inside:avoid;
+  }
+  body.printing-board-report .a4-preview section{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+  body.printing-board-report .a4-preview footer{
+    margin-top:18mm!important;
+  }
+}
+
+/* Corporate report template variants */
+.report-preview-shell.operational .a4-preview header{
+  border-bottom-color:#2563eb;
+}
+.report-preview-shell.operational .a4-preview header span{
+  color:#2563eb;
+}
+.report-preview-shell.operational .preview-summary{
+  background:linear-gradient(135deg,#eff6ff,#ffffff);
+  border-color:#bfdbfe;
+}
+.report-preview-shell.operational .preview-kpis div{
+  background:#ffffff;
+  border-color:#dbeafe;
+}
+
+.report-preview-shell.investor .a4-preview{
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+}
+.report-preview-shell.investor .a4-preview header{
+  border-bottom-color:#0f172a;
+}
+.report-preview-shell.investor .a4-preview header span{
+  color:#1d4ed8;
+}
+.report-preview-shell.investor .a4-preview header b{
+  background:#1d4ed8;
+}
+.report-preview-shell.investor .preview-summary{
+  border-left:6px solid #2563eb;
+  background:#f8fbff;
+}
+.report-preview-shell.investor .preview-kpis div{
+  border-top:4px solid #2563eb;
+}
+
+.report-preview-shell.board .a4-preview{
+  background:#fff;
+}
+.report-preview-shell.board .a4-preview header{
+  border-bottom:5px solid #111827;
+}
+.report-preview-shell.board .a4-preview header span{
+  color:#111827;
+}
+.report-preview-shell.board .a4-preview header b{
+  background:#111827;
+  color:#fff;
+}
+.report-preview-shell.board .preview-summary{
+  background:#f8fafc;
+  border:2px solid #111827;
+}
+.report-preview-shell.board .decision-box{
+  background:#fff7ed;
+  border:2px solid #f97316;
+}
+
+.report-preview-shell.executive .a4-preview,
+.report-preview-shell.strategy .a4-preview{
+  background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
+}
+.report-preview-shell.executive .a4-preview header,
+.report-preview-shell.strategy .a4-preview header{
+  border-bottom-color:#334155;
+}
+.report-preview-shell.executive .a4-preview header span,
+.report-preview-shell.strategy .a4-preview header span{
+  color:#475569;
+}
+.report-preview-shell.executive .preview-kpis div,
+.report-preview-shell.strategy .preview-kpis div{
+  background:#f8fafc;
+}
+.report-preview-shell.strategy .preview-summary{
+  background:linear-gradient(135deg,#f8fafc,#eef2ff);
+  border-color:#c7d2fe;
+}
 
 `

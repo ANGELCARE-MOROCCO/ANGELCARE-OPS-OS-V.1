@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import {
   AlertTriangle,
   Bell,
@@ -138,38 +138,157 @@ function AppHeader({ dashboard, compact = false }: { dashboard: CareLinkDashboar
   )
 }
 
-function HomeView({ dashboard, runAction, busyAction }: { dashboard: CareLinkDashboard; runAction: (mission: CareLinkMission, action: string, payload?: Record<string, any>) => void; busyAction: string | null }) {
+
+function moneyDh(value: unknown) {
+  const amount = Number(value || 0)
+  return `${amount.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} DH`
+}
+
+function firstPhone(...values: unknown[]) {
+  const raw = values.find((value) => typeof value === 'string' && value.trim().length > 0)
+  return String(raw || '')
+}
+
+function HomeView({
+  dashboard,
+  runAction,
+  busyAction,
+}: {
+  dashboard: CareLinkDashboard
+  runAction: (mission: CareLinkMission, action: string, payload?: Record<string, any>) => void
+  busyAction: string | null
+}) {
   const mission = dashboard.nextMission || (dashboard.upcomingMissions || [])[0] || null
+  const agent = (dashboard.agent || {}) as any
+  const stats = (dashboard.stats || {}) as any
+  const finance = ((dashboard as any).payments || (dashboard as any).compensations || (dashboard as any).finance || {}) as any
+  const alerts = (((dashboard.alerts as any[]) || []))
+  const dispatchPhone = firstPhone((mission as any)?.dispatcherPhone, (dashboard as any).dispatchPhone, (dashboard as any).dispatcherPhone, agent.dispatchPhone)
+  const emergencyPhone = firstPhone((dashboard as any).emergencyPhone, (dashboard as any).emergencyServicesPhone, agent.emergencyPhone, '15')
+  const todayMissions = Number(stats.todayMissions || (dashboard.todayMissions || []).length || 0)
+  const weekHours = Number(stats.weekHours || 0)
+  const reliability = Number(stats.reliabilityScore || agent.reliabilityScore || 0)
+  const readinessStatus = String(agent.readinessStatus || (dashboard.readiness as any)?.status || 'ready')
+  const readiness = readinessStatus === 'ready' ? 'PRÊTE' : readinessStatus === 'warning' ? 'VIGILANCE' : readinessStatus === 'blocked' ? 'BLOQUÉE' : readinessStatus.toUpperCase()
+  const missionStatus = mission ? (statusLabel[mission.status] || String(mission.status || '').replaceAll('_', ' ').toUpperCase()) : 'AUCUNE MISSION EN DIRECT'
+
   return (
     <>
       <AppHeader dashboard={dashboard} />
+
       <section className="mx-auto max-w-md px-5 pt-5">
-        <div className="relative overflow-hidden rounded-[2rem] bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.10)] ring-1 ring-slate-200">
-          <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-sky-100 blur-xl" />
-          <div className="absolute -bottom-12 left-8 h-32 w-32 rounded-full bg-emerald-100 blur-xl" />
+        <div className="relative overflow-hidden rounded-[2.25rem] bg-slate-950 p-5 text-white shadow-[0_22px_70px_rgba(15,23,42,0.28)]">
+          <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-sky-500/30 blur-2xl" />
+          <div className="absolute -bottom-20 left-6 h-44 w-44 rounded-full bg-emerald-400/25 blur-2xl" />
+
           <div className="relative">
-            <p className="text-[10px] font-black uppercase tracking-[0.34em] text-sky-600">Aujourd’hui terrain</p>
-            <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-950">BONJOUR, {String((dashboard.agent as any)?.fullName || (dashboard.agent as any)?.full_name || (dashboard.agent as any)?.name || 'AngelCare').split(' ')[0]}</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Votre centre mobile pour missions programmées, présence sécurisée, checklists et liaison dispatch AngelCare.</p>
-            <div className="mt-5 grid grid-cols-3 gap-3">
-              <MetricCard label="MISSIONS" value={Number((dashboard.stats as any)?.todayMissions || 0)} />
-              <MetricCard label="HEURES" value={`${Number((dashboard.stats as any)?.weekHours || 0)}H`} />
-              <MetricCard label="SCORE" value={`${Number((dashboard.stats as any)?.reliabilityScore || 0)}%`} />
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.34em] text-sky-200">Commande agent terrain</p>
+                <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight">
+                  BONJOUR, {String(agent.fullName || agent.full_name || agent.name || 'AngelCare').split(' ')[0]}
+                </h1>
+                <p className="mt-3 max-w-[18rem] text-sm leading-6 text-slate-200">
+                  Centre terrain complet pour missions, présence, urgences, paiements et liaison dispatch.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-white/10 p-3 ring-1 ring-white/15 backdrop-blur">
+                <ShieldCheck size={24} className="text-emerald-300" />
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              <MetricCard label="MISSIONS" value={todayMissions} />
+              <MetricCard label="HEURES" value={`${weekHours}H`} />
+              <MetricCard label="SCORE" value={`${reliability}%`} />
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <a
+                href={dispatchPhone ? `tel:${dispatchPhone}` : '/carelink/messages'}
+                className="rounded-3xl bg-white px-4 py-4 text-slate-950 shadow-xl shadow-slate-950/10 active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="rounded-2xl bg-sky-50 p-3 text-sky-700"><Phone size={19} /></span>
+                  <div>
+                    <p className="text-xs font-black">APPELER LE DISPATCH</p>
+                    <p className="mt-1 text-[10px] font-bold text-slate-500">Coordination en direct</p>
+                  </div>
+                </div>
+              </a>
+
+              <a
+                href={`tel:${emergencyPhone}`}
+                className="rounded-3xl bg-rose-500 px-4 py-4 text-white shadow-xl shadow-rose-500/20 active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="rounded-2xl bg-white/15 p-3"><AlertTriangle size={19} /></span>
+                  <div>
+                    <p className="text-xs font-black">URGENCE</p>
+                    <p className="mt-1 text-[10px] font-bold text-rose-50">Aide immédiate</p>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-md space-y-5 px-5 pt-6">
+      <section className="mx-auto max-w-md px-5 pt-4">
+        <div className="grid grid-cols-2 gap-3">
+          <LiveBoardCard icon={<CheckCircle2 size={18} />} label="PRÉPARATION" value={readiness} helper="Conformité et disponibilité" tone="emerald" />
+          <LiveBoardCard icon={<Clock3 size={18} />} label="STATUT SUIVANT" value={missionStatus} helper="Cycle de vie de la mission" tone="sky" />
+          <LiveBoardCard icon={<AlertTriangle size={18} />} label="ALERTES" value={alerts.length} helper="Nécessite une attention" tone="amber" />
+          <LiveBoardCard icon={<Navigation size={18} />} label="TRAJET" value={mission ? 'PRÊT' : '—'} helper="Tableau des trajets terrain" tone="indigo" />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-md space-y-5 px-5 pt-5">
         <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-600">PROCHAINE MISSION</p>
-              <h2 className="mt-2 text-xl font-black text-slate-950">{mission?.serviceType || 'AUCUNE MISSION'}</h2>
+              <h2 className="mt-2 text-xl font-black text-slate-950">{mission?.serviceType || 'AUCUNE MISSION ACTIVE'}</h2>
+              {mission ? (
+                <p className="mt-1 text-xs font-bold text-slate-500">
+                  {formatDay(String((mission as any).scheduledStart || new Date().toISOString()))} · {formatHour(String((mission as any).scheduledStart || new Date().toISOString()))}
+                </p>
+              ) : null}
             </div>
-            <span className="rounded-2xl bg-sky-50 p-3 text-sky-600"><Navigation size={20} /></span>
+
+            <Link href={mission ? `/carelink/missions/${mission.id}` : '/carelink/missions'} className="rounded-2xl bg-sky-50 p-3 text-sky-600">
+              <ChevronRight size={20} />
+            </Link>
           </div>
-          {mission ? <MissionCompactCard mission={mission} runAction={runAction} busyAction={busyAction} /> : null}
+
+          {mission ? (
+            <MissionCompactCard mission={mission} runAction={runAction} busyAction={busyAction} />
+          ) : (
+            <div className="mt-4 rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-5 text-sm font-bold text-slate-500">
+              Aucune mission live chargée. Les missions assignées apparaîtront ici depuis le dispatch.
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-600">PAYMENTS & COMPENSATIONS</p>
+              <h2 className="mt-2 text-xl font-black text-slate-950">{moneyDh(finance.totalDue || finance.monthTotal || finance.total || stats.compensationTotal)}</h2>
+            </div>
+            <span className="rounded-2xl bg-emerald-50 p-3 text-emerald-700"><FileText size={20} /></span>
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <FinanceMiniCard label="À PAYER" value={moneyDh(finance.pending || finance.toPay || finance.due)} />
+            <FinanceMiniCard label="PAYÉ" value={moneyDh(finance.paid || finance.settled)} />
+            <FinanceMiniCard label="PRIMES" value={moneyDh(finance.bonuses || finance.compensations)} />
+          </div>
+
+          <div className="mt-3 rounded-2xl bg-slate-50 p-3 text-xs leading-5 text-slate-600">
+            Les montants sont synchronisés depuis les missions, indemnités, transport et validations finance lorsqu’ils sont disponibles.
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -179,30 +298,86 @@ function HomeView({ dashboard, runAction, busyAction }: { dashboard: CareLinkDas
           <QuickTile href="/carelink/profile" icon={<ShieldCheck size={20} />} title="PROFIL" subtitle="Conformité et zones" tone="violet" />
         </div>
 
-        <div className="space-y-3">
-          {(((dashboard.alerts as any[]) || [])).map((alert: any) => (
-            <div key={alert.id} className="rounded-3xl border border-amber-100 bg-amber-50 p-4">
-              <div className="flex gap-3">
-                <AlertTriangle className="shrink-0 text-amber-600" size={20} />
-                <div>
-                  <p className="text-sm font-black text-amber-900">{alert.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-amber-800">{alert.body}</p>
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-amber-600">LIVE OPERATIONS BOARD</p>
+              <h2 className="mt-2 text-lg font-black text-slate-950">Actions et alertes terrain</h2>
+            </div>
+            <Sparkles className="text-amber-500" size={20} />
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {alerts.length ? alerts.map((alert: any) => (
+              <div key={alert.id || alert.title} className="rounded-3xl border border-amber-100 bg-amber-50 p-4">
+                <div className="flex gap-3">
+                  <AlertTriangle className="shrink-0 text-amber-600" size={20} />
+                  <div>
+                    <p className="text-sm font-black text-amber-900">{alert.title || 'Operational alert'}</p>
+                    <p className="mt-1 text-xs leading-5 text-amber-800">{alert.body || alert.description || 'Vérifiez les consignes du dispatch.'}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )) : (
+              <div className="rounded-3xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-bold text-emerald-800">
+                Aucune alerte terrain critique. Continuez à surveiller votre tableau de mission et les messages du dispatch.
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </>
   )
 }
 
+function LiveBoardCard({
+  icon,
+  label,
+  value,
+  helper,
+  tone,
+}: {
+  icon: ReactNode
+  label: string
+  value: ReactNode
+  helper: string
+  tone: 'emerald' | 'sky' | 'amber' | 'indigo'
+}) {
+  const tones = {
+    emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
+    sky: 'bg-sky-50 text-sky-700 ring-sky-100',
+    amber: 'bg-amber-50 text-amber-700 ring-amber-100',
+    indigo: 'bg-indigo-50 text-indigo-700 ring-indigo-100',
+  }
+
+  return (
+    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-3 shadow-sm">
+      <div className="flex items-center gap-2">
+        <span className={cx('rounded-2xl p-2 ring-1', tones[tone])}>{icon}</span>
+        <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">{label}</span>
+      </div>
+      <p className="mt-3 truncate text-lg font-black text-slate-950">{value}</p>
+      <p className="mt-1 text-[10px] font-bold text-slate-500">{helper}</p>
+    </div>
+  )
+}
+
+function FinanceMiniCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-slate-50 p-3">
+      <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">{label}</p>
+      <p className="mt-1 text-sm font-black text-slate-950">{value}</p>
+    </div>
+  )
+}
+
+
 function MissionsView({ missions, runAction, busyAction }: { missions: CareLinkMission[]; runAction: (mission: CareLinkMission, action: string, payload?: Record<string, any>) => void; busyAction: string | null }) {
   return (
     <>
       <section className="mx-auto max-w-md px-5 pt-6">
         <div className="rounded-[2rem] bg-gradient-to-br from-sky-500 to-blue-600 p-5 text-white shadow-xl shadow-sky-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-sky-100">Mission Queue</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-sky-100">File de mission</p>
           <h1 className="mt-2 text-3xl font-black">MES MISSIONS</h1>
           <p className="mt-2 text-sm leading-6 text-sky-50">Priorisez les confirmations, préparez les départs et gardez chaque intervention traçable.</p>
         </div>
@@ -380,7 +555,7 @@ function MetricCard({ label, value }: { label: string; value: string | number })
   return <div className="rounded-3xl border border-slate-200 bg-white p-3 text-center shadow-sm"><p className="text-[10px] font-black tracking-[0.25em] text-slate-400">{label}</p><p className="mt-1 text-xl font-black text-slate-950">{value}</p></div>
 }
 
-function QuickTile({ href, icon, title, subtitle, tone }: { href: string; icon: React.ReactNode; title: string; subtitle: string; tone: 'sky' | 'emerald' | 'amber' | 'violet' }) {
+function QuickTile({ href, icon, title, subtitle, tone }: { href: string; icon: ReactNode; title: string; subtitle: string; tone: 'sky' | 'emerald' | 'amber' | 'violet' }) {
   const tones = {
     sky: 'bg-sky-50 text-sky-700 ring-sky-100',
     emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
@@ -440,15 +615,15 @@ function ActionGrid({ mission, runAction, busyAction, compact = false }: { missi
   )
 }
 
-function InfoPill({ icon, text }: { icon: React.ReactNode; text: string }) {
+function InfoPill({ icon, text }: { icon: ReactNode; text: string }) {
   return <span className="flex items-center gap-2 rounded-2xl bg-slate-50 px-3 py-2 text-slate-600 ring-1 ring-slate-100">{icon}{text}</span>
 }
 
-function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function InfoRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return <div className="flex gap-3 border-b border-slate-100 py-3 last:border-0"><div className="text-sky-600">{icon}</div><div><p className="text-[10px] font-black tracking-[0.25em] text-slate-400">{label}</p><p className="mt-1 text-sm font-bold leading-6 text-slate-950">{value}</p></div></div>
 }
 
-function Panel({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+function Panel({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
   return <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm"><div className="mb-4 flex items-center gap-2 text-sky-600">{icon}<h2 className="text-sm font-black tracking-[0.18em] text-slate-950">{title}</h2></div>{children}</section>
 }
 

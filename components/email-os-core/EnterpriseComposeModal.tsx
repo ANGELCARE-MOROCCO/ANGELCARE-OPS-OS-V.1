@@ -356,8 +356,8 @@ export default function EnterpriseComposeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/40 p-3 backdrop-blur-sm">
-      <div className="grid h-[94vh] w-full max-w-[1580px] grid-cols-[minmax(0,1fr)_400px] overflow-hidden rounded-[28px] border border-violet-100 bg-white shadow-2xl">
+    <div className="fixed left-0 right-0 bottom-0 top-[86px] z-[80] flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm">
+      <div className="grid h-[calc(100vh-118px)] w-full max-w-[1580px] grid-cols-[minmax(0,1fr)_400px] overflow-hidden rounded-[28px] border border-violet-100 bg-white shadow-2xl">
         <section className="flex min-h-0 flex-col">
           <header className="flex h-16 items-center justify-between border-b border-violet-100 px-7">
             <h2 className="text-2xl font-black text-slate-950">New Message</h2>

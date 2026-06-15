@@ -1,39 +1,34 @@
 import { NextResponse } from 'next/server'
-import { getCareLinkOpsDispatchPayload } from '../../../../../lib/carelink/ops-dispatch-repository'
+import { getCareLinkOpsLiveMissionBridge } from '@/lib/carelink/ops-live-missions-bridge'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export async function GET() {
   try {
-    const payload = await getCareLinkOpsDispatchPayload()
-    return NextResponse.json(payload, {
-      status: 200,
-      headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' },
+    const live = await getCareLinkOpsLiveMissionBridge()
+
+    return NextResponse.json({
+      ...live,
+      ok: true,
+      generatedAt: new Date().toISOString(),
+      payload: live,
+      dispatch: live,
+      dispatchBoard: live.dispatchLanes,
+      missionFlow: live.dispatchLanes,
+      lanes: live.dispatchLanes,
+      missions: live.missions,
+      queue: live.missions,
     })
   } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        source: 'error',
-        generatedAt: new Date(0).toISOString(),
-        message: error instanceof Error ? error.message : 'Unknown CareLink Ops dispatch error',
-        kpis: [],
-        lanes: [],
-        missions: [],
-        agents: [],
-        sectors: [],
-        incidents: [],
-        communications: [],
-        auditTrail: [],
-        metadata: {
-          dbConnected: false,
-          schemaReady: false,
-          tablesChecked: [],
-          warnings: [error instanceof Error ? error.message : 'Unknown error'],
-        },
-      },
-      { status: 500, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } },
-    )
+    return NextResponse.json({
+      ok: false,
+      error: error instanceof Error ? error.message : 'Unable to load dispatch live missions',
+      missions: [],
+      lanes: [],
+      dispatchLanes: [],
+      summary: {},
+      metrics: {},
+    }, { status: 200 })
   }
 }

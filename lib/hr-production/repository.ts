@@ -37,10 +37,13 @@ export const HR_ALLOWED_WRITE_TABLES = new Set<string>(Object.values(HR_TABLES))
 
 const FALLBACK_TABLES: Record<string, string[]> = {
   [HR_TABLES.staff]: ['hr_staff', 'staff_profiles', 'profiles'],
+  [HR_TABLES.candidates]: ['hr_recruitment_candidates'],
   [HR_TABLES.openings]: ['hr_job_openings', 'hr_openings'],
   [HR_TABLES.attendance]: ['hr_attendance', 'attendance_records', 'app_attendance_logs'],
   [HR_TABLES.rosters]: ['hr_rosters', 'roster_assignments'],
   [HR_TABLES.documents]: ['hr_employee_documents', 'staff_documents'],
+  [HR_TABLES.onboarding]: ['hr_onboarding_journeys', 'hr_onboarding_steps', 'hr_onboarding_checklists'],
+  [HR_TABLES.training]: ['hr_training_assignments', 'hr_training_programs'],
 
   [HR_TABLES.contracts]: ['hr_staff_contracts', 'contracts'],
   [HR_TABLES.performance]: ['hr_reviews', 'performance_reviews'],
@@ -52,18 +55,24 @@ async function safeSelect(table: string, limit = 200): Promise<HRResult> {
   const supabase = await createClient()
   const attempts = [table, ...(FALLBACK_TABLES[table] || [])]
   const errors: string[] = []
+  let emptyResult: HRResult | null = null
 
   for (const t of attempts) {
     try {
       const { data, error } = await supabase.from(t).select('*').limit(limit)
-      if (!error) return { data: data || [], error: null, table: t }
-      errors.push(`${t}: ${error.message}`)
+      if (!error) {
+        const rows = Array.isArray(data) ? data : []
+        if (rows.length) return { data: rows, error: null, table: t }
+        emptyResult = emptyResult || { data: rows, error: null, table: t }
+      } else {
+        errors.push(`${t}: ${error.message}`)
+      }
     } catch (err: any) {
       errors.push(`${t}: ${err?.message || String(err)}`)
     }
   }
 
-  return { data: [], error: errors.join(' | '), table }
+  return emptyResult || { data: [], error: errors.join(' | '), table }
 }
 
 export async function getHRDashboardData(): Promise<HRDashboardData> {

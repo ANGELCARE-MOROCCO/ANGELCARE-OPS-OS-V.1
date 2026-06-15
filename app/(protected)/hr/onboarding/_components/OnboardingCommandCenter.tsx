@@ -307,6 +307,14 @@ export default function OnboardingCommandCenter({
     (completed / Math.max(1, allTasks.length)) * 100,
   );
 
+  function refreshOnboardingClientState() {
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 250);
+    }
+  }
+
   function log(title: string) {
     setToast(`${title} · synced ${new Date().toLocaleTimeString()}`);
     setFeed((f) => [
@@ -360,25 +368,66 @@ export default function OnboardingCommandCenter({
     });
   }
   function completePhase() {
-    const nextProgress = Math.min(100, Number(selected.progress || 0) + 14);
+    const onboardingStages = [
+      "Offer & Acceptance",
+      "Pre-Boarding",
+      "Document Collection",
+      "Orientation",
+      "Training & Setup",
+      "Integration",
+      "Probation & Review",
+    ];
+
+    const currentProgress = Number(selected.progress || 0);
+    const nextProgress = Math.min(100, currentProgress + 14);
+
+    const currentStatus = String(selected.status || "Offer & Acceptance");
+    const currentStageIndex = onboardingStages.findIndex(
+      (stageName) => stageName.toLowerCase() === currentStatus.toLowerCase(),
+    );
+
+    const nextStage =
+      onboardingStages[
+        Math.min(
+          onboardingStages.length - 1,
+          Math.max(0, currentStageIndex === -1 ? 0 : currentStageIndex + 1),
+        )
+      ] || "In Progress";
+
+    const nextStatus = nextProgress >= 100 ? "Completed" : nextStage;
+
+    const updatedJourney = {
+      progress: nextProgress,
+      status: nextStatus,
+    };
+
     setJourneys((j) =>
       j.map((x) =>
-        x.id === selected.id
+        String(x.id) === String(selected.id)
           ? {
               ...x,
-              progress: nextProgress,
-              status: nextProgress >= 100 ? "Completed" : x.status,
+              ...updatedJourney,
             }
           : x,
       ),
     );
+
     startTransition(() => {
       void (async () => {
-        await updateOnboardingJourney(selected.id, { progress: nextProgress });
-        log("Journey phase advanced");
+        const result = await updateOnboardingJourney(selected.id, updatedJourney);
+
+        if (!result?.ok) {
+          console.error("[ONBOARDING PHASE SAVE FAILED]", result?.error);
+          setToast(`Stage save failed · ${result?.error || "database rejected update"}`);
+          return;
+        }
+
+        log(`Journey phase advanced to ${nextStatus}`);
+        window.setTimeout(() => window.location.reload(), 250);
       })();
     });
   }
+
   function deleteJourney() {
     const rest = journeys.filter((j) => j.id !== selected.id);
     setJourneys(rest.length ? rest : fallbackJourneys);
@@ -968,9 +1017,9 @@ function SummaryPanel({ progress, completed, total }: any) {
   );
 }
 function DocumentsPanel({ docs, setModal, setDocsLive }: any) {
-  function del(x: any) {
+  async function del(x: any) {
     setDocsLive((d: Row[]) => d.filter((y) => y.id !== x.id));
-    deleteOnboardingDocument(String(x.id));
+    await deleteOnboardingDocument(String(x.id));
   }
   return (
     <div className="card p-5">
@@ -1008,11 +1057,19 @@ function DocumentsPanel({ docs, setModal, setDocsLive }: any) {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() =>
-                updateOnboardingDocument(String(doc.id), {
+              onClick={async () => {
+                setDocsLive((d: Row[]) =>
+                  d.map((x) =>
+                    String(x.id) === String(doc.id)
+                      ? { ...x, status: "Downloaded", updated_at: new Date().toISOString() }
+                      : x,
+                  ),
+                );
+                await updateOnboardingDocument(String(doc.id), {
                   status: "Downloaded",
-                })
-              }
+                  updated_at: new Date().toISOString(),
+                });
+              }}
               className="rounded-xl bg-slate-50 p-2"
             >
               <Download className="h-4 w-4" />
@@ -1379,7 +1436,7 @@ function ExecutionModal({
     const meta = stageMeta.find((s) => s.name === next);
     if (meta) setProgress(meta.percent);
   }
-  function pushEvent(title: string, body: string, type = "activity") {
+  async function pushEvent(title: string, body: string, type = "activity") {
     const event = {
       id: `local-event-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       journey_id: selected.id,
@@ -1389,9 +1446,10 @@ function ExecutionModal({
       created_at: new Date().toISOString(),
     };
     setLocalEvents((e) => [event, ...e]);
-    addOnboardingNote(event);
+    await addOnboardingNote(event);
+    return event;
   }
-  function save() {
+  async function save() {
     if (isJourney) {
       const j: Journey = {
         id: `local-${Date.now()}`,
@@ -1408,7 +1466,7 @@ function ExecutionModal({
         progress: progress || selectedStageMeta.percent,
         owner,
       };
-      createOnboardingJourney({
+      const createdJourney = await createOnboardingJourney({
         ...j,
         candidate_name: j.title,
         job_title: j.position,
@@ -1416,44 +1474,63 @@ function ExecutionModal({
         risk_notes: risk,
         launch_note: note,
         current_phase: stage,
+        stage,
+        completion: progress || selectedStageMeta.percent,
+        completion_percent: progress || selectedStageMeta.percent,
         stage_pack: selectedStageMeta,
       });
-      groups.forEach(([group, items], gi) =>
-        (items as string[]).forEach((task, i) =>
-          createOnboardingTask({
+
+      if (!createdJourney?.ok) {
+        console.error("[ONBOARDING JOURNEY CREATE FAILED]", createdJourney?.error);
+        alert(`Journey save failed: ${createdJourney?.error || "unknown error"}`);
+        return;
+      }
+
+      const persistedJourney = createdJourney.data || j;
+      const persistedJourneyId = String(persistedJourney.id || j.id);
+
+      await Promise.all(
+        groups.flatMap(([group, items], gi) =>
+          (items as string[]).map((task, i) =>
+            createOnboardingTask({
+              journey_id: persistedJourneyId,
+              title: task,
+              group,
+              owner: gi < 2 ? owner : gi === 2 ? "IT Team" : "Training Team",
+              priority: gi < 2 ? "High" : "Normal",
+              status:
+                gi === 0 && stageMeta.findIndex((x) => x.name === stage) > 1
+                  ? "Completed"
+                  : "Pending",
+              due_at: due,
+            }),
+          ),
+        ),
+      );
+      await Promise.all(
+        defaultDocs.map((doc, i) =>
+          createOnboardingDocument({
             journey_id: j.id,
-            title: task,
-            group,
-            owner: gi < 2 ? owner : gi === 2 ? "IT Team" : "Training Team",
-            priority: gi < 2 ? "High" : "Normal",
-            status:
-              gi === 0 && stageMeta.findIndex((x) => x.name === stage) > 1
-                ? "Completed"
-                : "Pending",
-            due_at: due,
+            title: doc,
+            owner: i < 3 ? owner : "Compliance Team",
+            status: i < 2 ? "Required" : "Pending",
           }),
         ),
       );
-      defaultDocs.forEach((doc, i) =>
-        createOnboardingDocument({
-          journey_id: j.id,
-          title: doc,
-          owner: i < 3 ? owner : "Compliance Team",
-          status: i < 2 ? "Required" : "Pending",
-        }),
-      );
-      addOnboardingNote({
-        journey_id: j.id,
+      await addOnboardingNote({
+        journey_id: persistedJourneyId,
         title: "Journey launched from onboarding lifecycle modal",
         body: `${j.title} · ${stage} · ${progress || selectedStageMeta.percent}% · ${priority}`,
         type: "journey_create",
       });
-      onCreateJourney(j);
+      onCreateJourney({ ...j, ...persistedJourney, id: persistedJourneyId });
+      window.setTimeout(() => window.location.reload(), 250);
       return;
     }
     if (isEdit) {
-      updateOnboardingJourney(selected.id, {
-        title: candidateName,
+      const nextProgress = Number(progress || selected.progress || 0);
+      const updatedJourney = {
+        title: candidateName || selected.title,
         position,
         status: stage,
         department,
@@ -1461,17 +1538,26 @@ function ExecutionModal({
         employment_type: employmentType,
         owner,
         manager,
-        progress,
+        progress: nextProgress,
         risk_notes: risk,
-        current_phase: stage,
-        updated_at: new Date().toISOString(),
-      });
-      pushEvent(
+      };
+
+      const result = await updateOnboardingJourney(selected.id, updatedJourney);
+
+      if (!result?.ok) {
+        console.error("[ONBOARDING JOURNEY UPDATE FAILED]", result?.error);
+        alert(`Journey update failed: ${result?.error || "database rejected update"}`);
+        return;
+      }
+
+      await pushEvent(
         "Journey updated from lifecycle control",
-        `${candidateName || selected.title} moved/control set to ${stage} · ${progress}% · owner ${owner} · manager ${manager}`,
+        `${candidateName || selected.title} moved/control set to ${stage} · ${nextProgress}% · owner ${owner} · manager ${manager}`,
         "journey_update",
       );
+
       onClose();
+      window.setTimeout(() => window.location.reload(), 250);
       return;
     }
     if (isDocument) {
@@ -1485,8 +1571,8 @@ function ExecutionModal({
         due_at: due,
         comment: risk || "Document registered from onboarding quick action.",
       };
-      createOnboardingDocument(doc);
-      addOnboardingNote({
+      await createOnboardingDocument(doc);
+      await addOnboardingNote({
         journey_id: selected.id,
         title: "Document added from quick action",
         body: `${doc.title} · owner ${owner} · status ${doc.status}`,
@@ -1509,14 +1595,14 @@ function ExecutionModal({
         due_at: due,
         created_at: new Date().toISOString(),
       };
-      createOnboardingReminder(reminder);
+      await createOnboardingReminder(reminder);
       onNote(reminder);
       window.open(whatsappHref, "_blank", "noopener,noreferrer");
       return;
     }
     if (isReassign) {
-      reassignOnboardingOwner(selected.id, owner);
-      addOnboardingNote({
+      await reassignOnboardingOwner(selected.id, owner);
+      await addOnboardingNote({
         journey_id: selected.id,
         title: "Owner reassigned from quick action",
         body: `${selected.title} reassigned to ${owner}. Reason: ${risk || note || "Operational continuity"}`,
@@ -1526,7 +1612,7 @@ function ExecutionModal({
       return;
     }
     if (isProfile) {
-      addOnboardingNote({
+      await addOnboardingNote({
         journey_id: selected.id,
         title: "Profile reviewed from quick action",
         body: `${selected.title} profile opened and reviewed by onboarding operator.`,
@@ -1547,7 +1633,7 @@ function ExecutionModal({
         due_at: due,
         comment: risk || "Created from the onboarding stage-aware task modal.",
       };
-      createOnboardingTask(t);
+      await createOnboardingTask(t);
       onCreateTask(t);
       return;
     }
@@ -1560,10 +1646,10 @@ function ExecutionModal({
       type: "timeline_note",
       created_at: new Date().toISOString(),
     };
-    addOnboardingNote(n);
+    await addOnboardingNote(n);
     onNote(n);
   }
-  function timelineAction(kind: string, milestone: string) {
+  async function timelineAction(kind: string, milestone: string) {
     const label =
       kind === "evidence"
         ? "Evidence opened"
@@ -1574,7 +1660,7 @@ function ExecutionModal({
     if (kind === "evidence") setEvidenceOpen(milestone);
     if (kind === "comment") setCommentOpen(milestone);
     if (kind === "escalate") setEscalationOpen(milestone);
-    pushEvent(label, body, kind);
+    await pushEvent(label, body, kind);
   }
 
   const modalIcon = isTimeline

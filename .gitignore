@@ -8,3 +8,12 @@ build
 coverage
 .DS_Store
 *.log
+
+# Local patch backups
+*.bak
+*.bak-*
+*.broken-*
+*.broken-*-current
+*.broken-jsx-current
+*.before-*
+*.tsbuildinfo

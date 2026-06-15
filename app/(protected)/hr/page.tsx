@@ -38,8 +38,10 @@ import {
 } from 'lucide-react'
 import { getHRDashboardData } from '@/lib/hr-production/repository'
 import { getHRProductionMetrics, getHRProductionScore } from '@/lib/hr-production/metrics'
-import { HR_PRODUCTION_NAV } from '@/lib/hr-production/navigation'
-import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
+import InteractiveMoroccoHRMap from '@/components/hr-production/InteractiveMoroccoHRMap'
+import HRStaffIntelligenceNavigator from '@/components/hr-production/HRStaffIntelligenceNavigator'
+import HRRecentActivityCommand from '@/components/hr-production/HRRecentActivityCommand'
+import InteractiveHeadcountTrend from '@/components/hr-production/InteractiveHeadcountTrend'
 
 const sidebarGroups = [
   { label: 'Overview', items: [
@@ -86,102 +88,1000 @@ function formatNumber(value: number) {
   return new Intl.NumberFormat('en-US').format(Math.max(0, Number(value || 0)))
 }
 
-function MetricCard({ title, value, delta, icon: Icon, tone = 'violet' }: { title: string; value: string; delta: string; icon: any; tone?: 'violet' | 'cyan' | 'green' | 'rose' | 'amber' | 'blue' }) {
-  const tones: Record<string, string> = {
-    violet: 'from-violet-500 to-fuchsia-500 text-white shadow-violet-200',
-    cyan: 'from-cyan-400 to-sky-500 text-white shadow-cyan-200',
-    green: 'from-emerald-400 to-teal-500 text-white shadow-emerald-200',
-    rose: 'from-rose-400 to-orange-400 text-white shadow-rose-200',
-    amber: 'from-amber-400 to-yellow-500 text-white shadow-amber-200',
-    blue: 'from-blue-500 to-indigo-500 text-white shadow-blue-200',
-  }
+function rowCount(value: unknown) {
+  return Array.isArray(value) ? value.length : 0
+}
+
+function sourceConfidence(data: any): 'live' | 'partial' | 'empty' {
+  const loadedRows =
+    rowCount(data.staff) +
+    rowCount(data.openings) +
+    rowCount(data.candidates) +
+    rowCount(data.attendance) +
+    rowCount(data.rosters) +
+    rowCount(data.documents) +
+    rowCount(data.approvals) +
+    rowCount(data.training) +
+    rowCount(data.performance)
+  const errors = Object.keys(data.errors || {}).length
+  if (loadedRows > 0 && errors === 0) return 'live'
+  if (loadedRows > 0) return 'partial'
+  return 'empty'
+}
+
+function sourceLabel(confidence: 'live' | 'partial' | 'empty') {
+  if (confidence === 'live') return 'Supabase live'
+  if (confidence === 'partial') return 'Partial Supabase sync'
+  return 'No live HR rows'
+}
+
+function MetricCard({
+  title,
+  value,
+  detail,
+  icon: Icon,
+  tone = "violet",
+  confidence = "live",
+}: {
+  title: string;
+  value: string;
+  detail: string;
+  icon: any;
+  tone?: "amber" | "blue" | "green" | "cyan" | "violet" | "rose";
+  confidence?: "partial" | "live" | "empty";
+}) {
+  const toneClass =
+    tone === "amber"
+      ? "from-amber-50 to-white text-amber-700 border-amber-100"
+      : tone === "blue"
+        ? "from-blue-50 to-white text-blue-700 border-blue-100"
+        : tone === "green"
+          ? "from-emerald-50 to-white text-emerald-700 border-emerald-100"
+          : tone === "cyan"
+            ? "from-cyan-50 to-white text-cyan-700 border-cyan-100"
+            : tone === "rose"
+              ? "from-rose-50 to-white text-rose-700 border-rose-100"
+              : "from-violet-50 to-white text-violet-700 border-violet-100";
+
   return (
-    <div className="group min-w-[188px] flex-1 border-r border-slate-100/80 px-5 py-4 last:border-r-0 hover:bg-white/80">
-      <div className="flex items-center gap-4">
-        <div className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br shadow-lg ${tones[tone]}`}><Icon className="h-6 w-6" /></div>
+    <div className={`rounded-[28px] border bg-gradient-to-br p-5 shadow-sm ${toneClass}`}>
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{title}</p>
-          <p className="mt-1 text-2xl font-black tracking-tight text-slate-950">{value}</p>
-          <p className="mt-1 text-[11px] font-black text-emerald-500">↑ {delta} live synced</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-70">
+            {title}
+          </p>
+          <p className="mt-3 text-3xl font-black tracking-[-0.04em] text-slate-950">
+            {value}
+          </p>
+          <p className="mt-2 text-xs font-bold leading-5 text-slate-500">
+            {detail}
+          </p>
         </div>
+        {Icon ? (
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white/80 shadow-sm">
+            <Icon className="h-5 w-5" />
+          </span>
+        ) : null}
       </div>
+      <span className="mt-4 inline-flex rounded-full bg-white/80 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
+        {confidence}
+      </span>
+    </div>
+  );
+}
+
+
+type HRWorkforceGraphRow = Record<string, any>
+
+function hrWfgRows(value: unknown): HRWorkforceGraphRow[] {
+  return Array.isArray(value) ? value as HRWorkforceGraphRow[] : []
+}
+
+function hrWfgText(value: unknown) {
+  return String(value || '').trim()
+}
+
+function hrWfgLower(value: unknown) {
+  return hrWfgText(value).toLowerCase()
+}
+
+function hrWfgDepartment(row: HRWorkforceGraphRow) {
+  return hrWfgText(row.department_name || row.department || row.team_name || row.team || row.business_unit || row.unit || 'Unassigned')
+}
+
+function hrWfgStatus(row: HRWorkforceGraphRow) {
+  return hrWfgLower(row.employment_status || row.status || row.state || row.hr_status)
+}
+
+function hrWfgActive(row: HRWorkforceGraphRow) {
+  const status = hrWfgStatus(row)
+  return !['inactive', 'terminated', 'archived', 'deleted', 'offboarded', 'left', 'resigned'].includes(status)
+}
+
+function hrWfgPending(row: HRWorkforceGraphRow) {
+  const status = hrWfgStatus(row)
+  return ['pending', 'draft', 'invited', 'onboarding', 'probation', 'in_review', 'in review'].includes(status)
+}
+
+function hrWfgRisk(row: HRWorkforceGraphRow) {
+  const status = hrWfgStatus(row)
+  const risk = hrWfgLower(row.risk_level || row.hr_risk || row.compliance_status || row.document_status)
+  return ['risk', 'at_risk', 'at risk', 'blocked', 'expired', 'missing', 'suspended'].some((key) => status.includes(key) || risk.includes(key))
+}
+
+function hrWfgDate(row: HRWorkforceGraphRow) {
+  const value = row.hire_date || row.hired_at || row.start_date || row.joined_at || row.created_at || row.updated_at
+  const date = value ? new Date(String(value)) : null
+  return date && !Number.isNaN(date.getTime()) ? date : null
+}
+
+function hrWfgMonthKey(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+}
+
+function hrWfgLastMonths(count = 12) {
+  const now = new Date()
+  const months: string[] = []
+  for (let i = count - 1; i >= 0; i -= 1) {
+    months.push(hrWfgMonthKey(new Date(now.getFullYear(), now.getMonth() - i, 1)))
+  }
+  return months
+}
+
+function hrWfgMonthLabel(key: string) {
+  const [year, month] = key.split('-')
+  return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('en-US', { month: 'short' })
+}
+
+function hrWfgPct(part: number, total: number) {
+  return total > 0 ? Math.round((part / total) * 100) : 0
+}
+
+function hrWfgConic(groups: { label: string; count: number; color?: string }[], total: number, colors: string[]) {
+  if (!groups.length || total <= 0) return '#e2e8f0 0% 100%'
+  let start = 0
+  return groups.map((group, index) => {
+    const size = (group.count / total) * 100
+    const end = index === groups.length - 1 ? 100 : start + size
+    const segment = `${group.color || colors[index % colors.length]} ${start}% ${end}%`
+    start = end
+    return segment
+  }).join(', ')
+}
+
+function hrWfgGroupCounts(items: HRWorkforceGraphRow[], picker: (row: HRWorkforceGraphRow) => string) {
+  const map = new Map<string, number>()
+  for (const item of items) {
+    const key = picker(item)
+    map.set(key, (map.get(key) || 0) + 1)
+  }
+  return [...map.entries()]
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+}
+
+function hrWfgTrend(staff: HRWorkforceGraphRow[], totalStaff: number) {
+  const months = hrWfgLastMonths(12)
+  const monthly = new Map<string, number>()
+  for (const month of months) monthly.set(month, 0)
+
+  for (const row of staff) {
+    const date = hrWfgDate(row)
+    if (!date) continue
+    const key = hrWfgMonthKey(date)
+    if (monthly.has(key)) monthly.set(key, (monthly.get(key) || 0) + 1)
+  }
+
+  const hasRealDates = [...monthly.values()].some(Boolean)
+  let running = Math.max(0, totalStaff - [...monthly.values()].reduce((sum, value) => sum + value, 0))
+  const values = months.map((month) => {
+    running += monthly.get(month) || 0
+    return running
+  })
+
+  return {
+    months,
+    values: hasRealDates ? values : months.map(() => totalStaff),
+    hasRealDates,
+  }
+}
+
+function HRWorkforceGraphDeck({
+  data,
+  totalStaff,
+  activeStaff,
+  pendingApprovals,
+  validatedAttendance,
+  openQuality,
+}: {
+  data: any
+  totalStaff: number
+  activeStaff: number
+  pendingApprovals: number
+  validatedAttendance: number
+  openQuality: number
+}) {
+  const staff = hrWfgRows(data.staff)
+  const attendance = hrWfgRows(data.attendance)
+  const colors = ['#8b5cf6', '#2563eb', '#06b6d4', '#14b8a6', '#22c55e', '#f59e0b', '#64748b', '#a855f7']
+
+  const departments = hrWfgGroupCounts(staff, hrWfgDepartment).slice(0, 7)
+  const departmentTotal = staff.length || totalStaff
+  const departmentConic = hrWfgConic(departments, Math.max(departmentTotal, 1), colors)
+
+  const trend = hrWfgTrend(staff, totalStaff)
+
+  const active = staff.length ? staff.filter(hrWfgActive).length : activeStaff
+  const pending = staff.filter(hrWfgPending).length + pendingApprovals
+  const atRisk = staff.filter(hrWfgRisk).length + openQuality
+  const inactive = Math.max(0, totalStaff - active)
+
+  const statusGroups = [
+    { label: 'Active', count: active, color: '#22c55e' },
+    { label: 'Validated attendance', count: validatedAttendance, color: '#3b82f6' },
+    { label: 'Pending', count: pending, color: '#f59e0b' },
+    { label: 'At risk', count: atRisk, color: '#ef4444' },
+    { label: 'Inactive / other', count: inactive, color: '#64748b' },
+  ].filter((item) => item.count > 0)
+
+  const statusTotal = Math.max(statusGroups.reduce((sum, item) => sum + item.count, 0), 1)
+  const statusConic = hrWfgConic(statusGroups, statusTotal, colors)
+
+  return (
+    <>
+      <Panel title="Workforce Overview" subtitle={staff.length ? 'Live headcount by department' : 'Waiting for live staff rows'} className="col-span-12 xl:col-span-4" hideView>
+        <div className="space-y-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Production view</p>
+              <p className="mt-1 text-sm font-bold text-slate-600">{staff.length ? `${staff.length} staff/profile rows loaded` : 'No staff records loaded yet'}</p>
+            </div>
+            <div className="flex gap-2">
+              <span className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">● Live</span>
+              <span className="rounded-xl border border-violet-100 bg-violet-50 px-3 py-2 text-xs font-black text-violet-700">{departments.length} groups</span>
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-[190px_1fr]">
+            <div className="relative grid h-44 w-44 place-items-center rounded-full shadow-inner" style={{ background: `conic-gradient(${departmentConic})` }}>
+              <div className="absolute inset-2 rounded-full border border-white/70" />
+              <div className="grid h-24 w-24 place-items-center rounded-full bg-white shadow-[inset_0_4px_20px_rgba(15,23,42,0.06)]">
+                <div className="text-center">
+                  <div className="text-2xl font-black text-slate-950">{formatNumber(departmentTotal)}</div>
+                  <div className="text-[10px] font-black text-slate-400">Live total</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {departments.map((group, index) => (
+                <div key={group.label} className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
+                  <div className="mb-1 flex items-center justify-between text-xs font-black text-slate-700">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ background: colors[index % colors.length] }} />
+                      <span className="truncate">{group.label}</span>
+                    </span>
+                    <span>{group.count} · {hrWfgPct(group.count, departmentTotal)}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-slate-100">
+                    <div className="h-1.5 rounded-full" style={{ width: `${hrWfgPct(group.count, departmentTotal)}%`, background: colors[index % colors.length] }} />
+                  </div>
+                </div>
+              ))}
+              {!departments.length ? <Empty title="No department distribution" text="Add department/team fields on staff profiles to activate this view." /> : null}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-2xl bg-slate-50 px-3 py-2 text-center text-[11px] font-black text-slate-600">Coverage · {hrWfgPct(departmentTotal, Math.max(totalStaff, 1))}%</div>
+            <div className="rounded-2xl bg-slate-50 px-3 py-2 text-center text-[11px] font-black text-slate-600">Departments · {departments.length}</div>
+            <div className="rounded-2xl bg-slate-50 px-3 py-2 text-center text-[11px] font-black text-slate-600">{staff.length ? 'Synced' : 'Awaiting data'}</div>
+          </div>
+        </div>
+      </Panel>
+
+      <InteractiveHeadcountTrend
+        months={trend.months.map(hrWfgMonthLabel)}
+        values={trend.values}
+        hasRealDates={trend.hasRealDates}
+        attendanceRows={attendance.length}
+      />
+
+      <Panel title="Workforce by Status" subtitle="Operational split from HR records" className="col-span-12 xl:col-span-4" hideView>
+        <div className="space-y-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Live status model</p>
+              <p className="mt-1 text-sm font-bold text-slate-600">Built from staff, approvals, attendance and risk indicators.</p>
+            </div>
+            <span className={`rounded-xl border px-3 py-2 text-xs font-black ${atRisk > 0 ? 'border-rose-100 bg-rose-50 text-rose-700' : 'border-emerald-100 bg-emerald-50 text-emerald-700'}`}>{atRisk > 0 ? `${atRisk} risk signal(s)` : 'Stable'}</span>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-[170px_1fr]">
+            <div className="grid h-40 w-40 place-items-center rounded-full shadow-inner" style={{ background: `conic-gradient(${statusConic})` }}>
+              <div className="grid h-24 w-24 place-items-center rounded-full bg-white shadow-[inset_0_4px_20px_rgba(15,23,42,0.06)]">
+                <div className="text-center">
+                  <b className="text-2xl text-slate-950">{formatNumber(totalStaff)}</b>
+                  <div className="text-[10px] font-black text-slate-400">Total</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {statusGroups.map((item) => (
+                <div key={item.label} className="block rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
+                  <div className="mb-1 flex justify-between text-xs font-black text-slate-700">
+                    <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />{item.label}</span>
+                    <span>{item.count}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-slate-100">
+                    <div className="h-1.5 rounded-full" style={{ width: `${hrWfgPct(item.count, statusTotal)}%`, background: item.color }} />
+                  </div>
+                </div>
+              ))}
+              {!statusGroups.length ? <Empty title="No workforce status data" text="Staff status records are required to activate this operational split." /> : null}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-2xl bg-slate-50 px-3 py-2 text-center text-[11px] font-black text-slate-600">Active · {active}</div>
+            <div className="rounded-2xl bg-slate-50 px-3 py-2 text-center text-[11px] font-black text-slate-600">Pending · {pending}</div>
+            <div className="rounded-2xl bg-slate-50 px-3 py-2 text-center text-[11px] font-black text-slate-600">At risk · {atRisk}</div>
+          </div>
+        </div>
+      </Panel>
+    </>
+  )
+}
+
+
+type HRLiveInsightRow = Record<string, any>
+
+function hrLisRows(value: unknown): HRLiveInsightRow[] {
+  return Array.isArray(value) ? value as HRLiveInsightRow[] : []
+}
+
+function hrLisText(value: unknown) {
+  return String(value || '').toLowerCase()
+}
+
+function hrLisNumber(value: unknown) {
+  const n = Number(value || 0)
+  return Number.isFinite(n) ? n : 0
+}
+
+function hrLisDate(value: unknown) {
+  if (!value) return null
+  const d = new Date(String(value))
+  return Number.isNaN(d.getTime()) ? null : d
+}
+
+function hrLisDaysBetween(start: unknown, end: unknown) {
+  const a = hrLisDate(start)
+  const b = hrLisDate(end)
+  if (!a || !b) return null
+  return Math.max(0, Math.round((b.getTime() - a.getTime()) / 86400000))
+}
+
+function hrLisAverage(values: number[]) {
+  const clean = values.filter((value) => Number.isFinite(value))
+  if (!clean.length) return null
+  return clean.reduce((sum, value) => sum + value, 0) / clean.length
+}
+
+function hrLisStatus(row: HRLiveInsightRow) {
+  return hrLisText(row.status || row.state || row.attendance_status || row.pipeline_status || row.training_status || row.review_status)
+}
+
+function hrLisAbsent(row: HRLiveInsightRow) {
+  const status = hrLisStatus(row)
+  const type = hrLisText(row.type || row.exception_type || row.reason)
+  return ['absent', 'absence', 'no_show', 'no show'].some((key) => status.includes(key) || type.includes(key))
+}
+
+function hrLisOvertime(row: HRLiveInsightRow) {
+  const status = hrLisStatus(row)
+  const overtimeMinutes = hrLisNumber(row.overtime_minutes || row.extra_minutes)
+  const overtimeHours = hrLisNumber(row.overtime_hours || row.extra_hours)
+  return overtimeMinutes > 0 || overtimeHours > 0 || status.includes('overtime') || status.includes('extra')
+}
+
+function hrLisOffered(row: HRLiveInsightRow) {
+  const status = hrLisText(row.status || row.pipeline_status || row.offer_status || row.stage)
+  return ['offer', 'offered', 'accepted', 'hired'].some((key) => status.includes(key))
+}
+
+function hrLisAccepted(row: HRLiveInsightRow) {
+  const status = hrLisText(row.status || row.pipeline_status || row.offer_status || row.stage)
+  return ['accepted', 'hired', 'joined', 'signed'].some((key) => status.includes(key))
+}
+
+function hrLisTrainingComplete(row: HRLiveInsightRow) {
+  const status = hrLisText(row.status || row.training_status || row.completion_status)
+  const progress = hrLisNumber(row.progress || row.completion_rate || row.completion_percent)
+  return progress >= 100 || ['complete', 'completed', 'validated', 'passed', 'certified'].some((key) => status.includes(key))
+}
+
+function hrLisRating(row: HRLiveInsightRow) {
+  const raw = hrLisNumber(row.rating || row.score || row.overall_score || row.performance_score || row.engagement_score)
+  if (!raw) return null
+  if (raw > 5 && raw <= 100) return raw / 20
+  if (raw > 5 && raw <= 10) return raw / 2
+  return Math.min(raw, 5)
+}
+
+function hrLisTone(value: number | null, goodMin: number, warningMin: number, reverse = false) {
+  if (value === null) return 'slate'
+  if (reverse) {
+    if (value <= goodMin) return 'emerald'
+    if (value <= warningMin) return 'amber'
+    return 'rose'
+  }
+  if (value >= goodMin) return 'emerald'
+  if (value >= warningMin) return 'amber'
+  return 'rose'
+}
+
+function HRLiveInsightCard({
+  title,
+  value,
+  subtitle,
+  tone,
+  progress,
+  source,
+  detail,
+}: {
+  title: string
+  value: string
+  subtitle: string
+  tone: 'emerald' | 'cyan' | 'violet' | 'blue' | 'amber' | 'rose' | 'slate'
+  progress: number
+  source: string
+  detail: string
+}) {
+  const toneMap: Record<string, string> = {
+    emerald: 'from-emerald-400 to-teal-500 text-emerald-600',
+    cyan: 'from-cyan-400 to-sky-500 text-cyan-600',
+    violet: 'from-violet-500 to-fuchsia-500 text-violet-600',
+    blue: 'from-blue-500 to-indigo-500 text-blue-600',
+    amber: 'from-amber-400 to-orange-400 text-amber-600',
+    rose: 'from-rose-400 to-red-500 text-rose-600',
+    slate: 'from-slate-400 to-slate-600 text-slate-600',
+  }
+
+  const gradient = toneMap[tone].split(' ').slice(0, 2).join(' ')
+  const textClass = toneMap[tone].split(' ').at(-1) || 'text-slate-600'
+
+  return (
+    <article className="group relative overflow-hidden rounded-[24px] border border-white/80 bg-white/95 p-4 shadow-[0_18px_55px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(124,58,237,0.16)]">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className={`grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br ${gradient} text-white shadow-lg`}>
+          <span className="text-lg font-black">↗</span>
+        </div>
+        <span className={`rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${textClass}`}>
+          Live
+        </span>
+      </div>
+
+      <p className="text-[11px] font-black uppercase tracking-wide text-slate-400">{title}</p>
+      <p className="mt-1 text-2xl font-black tracking-tight text-slate-950">{value}</p>
+      <p className="mt-1 min-h-[28px] text-[11px] font-black text-slate-500">{subtitle}</p>
+
+      <div className="mt-3 h-1.5 rounded-full bg-slate-100">
+        <div className={`h-1.5 rounded-full bg-gradient-to-r ${gradient}`} style={{ width: `${Math.max(0, Math.min(progress, 100))}%` }} />
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2 text-[10px] font-black text-slate-400">
+        <span className="rounded-xl bg-slate-50 px-2 py-1">{source}</span>
+        <span className="rounded-xl bg-slate-50 px-2 py-1 text-right">{detail}</span>
+      </div>
+    </article>
+  )
+}
+
+function HRLiveInsightStrip({ data, metrics }: { data: any; metrics: any }) {
+  const attendance = hrLisRows(data.attendance)
+  const payroll = hrLisRows((data as any).payroll)
+  const candidates = hrLisRows((data as any).candidates)
+  const training = hrLisRows(data.training)
+  const performance = hrLisRows(data.performance)
+
+  const attendanceRecords = Number(metrics.attendanceRecords || attendance.length || 0)
+  const absentCount = attendance.filter(hrLisAbsent).length
+  const exceptionCount = Number(metrics.attendanceExceptions || 0)
+  const absenteeismRate = attendanceRecords ? Math.round((absentCount / attendanceRecords) * 100) : null
+
+  const overtimeSignals = attendance.filter(hrLisOvertime).length + payroll.filter(hrLisOvertime).length
+  const overtimeProgress = attendanceRecords ? Math.round((overtimeSignals / Math.max(attendanceRecords, 1)) * 100) : 0
+
+  const hiredCandidates = candidates.filter((row) => ['hired', 'joined', 'accepted'].some((key) => hrLisStatus(row).includes(key)))
+  const hireDurations = hiredCandidates
+    .map((row) => hrLisDaysBetween(row.applied_at || row.created_at || row.application_date, row.hired_at || row.hire_date || row.updated_at))
+    .filter((value): value is number => value !== null)
+  const avgHireDays = hrLisAverage(hireDurations)
+
+  const offered = candidates.filter(hrLisOffered)
+  const accepted = offered.filter(hrLisAccepted)
+  const offerAcceptance = offered.length ? Math.round((accepted.length / offered.length) * 100) : null
+
+  const completedTraining = training.filter(hrLisTrainingComplete).length
+  const trainingCompletion = training.length ? Math.round((completedTraining / training.length) * 100) : null
+
+  const ratings = performance.map(hrLisRating).filter((value): value is number => value !== null)
+  const engagement = hrLisAverage(ratings)
+
+  const cards = [
+    {
+      title: 'Absenteeism Rate',
+      value: absenteeismRate === null ? '—' : `${absenteeismRate}%`,
+      subtitle: attendanceRecords ? `${absentCount} absence signal(s) from ${attendanceRecords} attendance rows` : 'Waiting for attendance records',
+      tone: hrLisTone(absenteeismRate, 3, 8, true),
+      progress: absenteeismRate ?? 0,
+      source: `${attendance.length} attendance`,
+      detail: `${exceptionCount} exceptions`,
+    },
+    {
+      title: 'Overtime Control',
+      value: `${overtimeSignals}`,
+      subtitle: overtimeSignals ? 'Overtime signals requiring workforce review' : 'No overtime signals detected',
+      tone: overtimeSignals > 10 ? 'rose' : overtimeSignals > 0 ? 'amber' : 'emerald',
+      progress: overtimeProgress,
+      source: `${attendance.length + payroll.length} rows`,
+      detail: `${overtimeProgress}% exposure`,
+    },
+    {
+      title: 'Time to Hire',
+      value: avgHireDays === null ? '—' : `${Math.round(avgHireDays)} days`,
+      subtitle: hireDurations.length ? `Average from ${hireDurations.length} hired candidate(s)` : 'Needs applied/hired dates',
+      tone: avgHireDays === null ? 'slate' : avgHireDays <= 14 ? 'emerald' : avgHireDays <= 30 ? 'amber' : 'rose',
+      progress: avgHireDays === null ? 0 : Math.max(8, Math.min(100, 100 - Math.round(avgHireDays))),
+      source: `${candidates.length} candidates`,
+      detail: `${hiredCandidates.length} hired`,
+    },
+    {
+      title: 'Offer Acceptance',
+      value: offerAcceptance === null ? '—' : `${offerAcceptance}%`,
+      subtitle: offered.length ? `${accepted.length} accepted from ${offered.length} offer-stage candidates` : 'No offer-stage candidates yet',
+      tone: hrLisTone(offerAcceptance, 80, 55),
+      progress: offerAcceptance ?? 0,
+      source: `${offered.length} offers`,
+      detail: `${accepted.length} accepted`,
+    },
+    {
+      title: 'Training Completion',
+      value: trainingCompletion === null ? '—' : `${trainingCompletion}%`,
+      subtitle: training.length ? `${completedTraining} completed from ${training.length} training records` : 'Waiting for training rows',
+      tone: hrLisTone(trainingCompletion, 85, 60),
+      progress: trainingCompletion ?? 0,
+      source: `${training.length} records`,
+      detail: `${completedTraining} complete`,
+    },
+    {
+      title: 'Employee Engagement',
+      value: engagement === null ? '—' : `${engagement.toFixed(1)} / 5`,
+      subtitle: ratings.length ? `Average from ${ratings.length} performance review(s)` : 'Needs review scores',
+      tone: engagement === null ? 'slate' : engagement >= 4 ? 'emerald' : engagement >= 3 ? 'amber' : 'rose',
+      progress: engagement === null ? 0 : Math.round((engagement / 5) * 100),
+      source: `${performance.length} reviews`,
+      detail: ratings.length ? 'scored' : 'unscored',
+    },
+  ] as const
+
+  return (
+    <div className="col-span-12 grid grid-cols-2 gap-4 lg:grid-cols-6">
+      {cards.map((card) => <HRLiveInsightCard key={card.title} {...card} />)}
     </div>
   )
 }
 
-function Panel({ title, subtitle, children, className = '' }: { title: string; subtitle?: string; children: React.ReactNode; className?: string }) {
+
+type HRMiniRow = Record<string, any>
+
+function hrMiniRows(value: unknown): HRMiniRow[] {
+  return Array.isArray(value) ? value as HRMiniRow[] : []
+}
+
+function hrMiniText(value: unknown, fallback = '') {
+  const v = String(value || '').trim()
+  return v || fallback
+}
+
+function hrMiniLower(value: unknown) {
+  return hrMiniText(value).toLowerCase()
+}
+
+function hrMiniStatus(row: HRMiniRow) {
+  return hrMiniLower(row.status || row.stage || row.pipeline_status || row.application_status || row.candidate_status)
+}
+
+function hrMiniDepartment(row: HRMiniRow) {
+  return hrMiniText(row.department_name || row.department || row.team_name || row.team || row.business_unit || row.target_department, 'Unassigned')
+}
+
+function hrMiniRecruitStage(row: HRMiniRow) {
+  const status = hrMiniStatus(row)
+  if (['hired', 'joined', 'accepted'].some((x) => status.includes(x))) return 'Hired'
+  if (['offer', 'offered'].some((x) => status.includes(x))) return 'Offered'
+  if (['interview', 'meeting'].some((x) => status.includes(x))) return 'Interview'
+  if (['screen', 'shortlist', 'qualified'].some((x) => status.includes(x))) return 'Screening'
+  return 'Applicants'
+}
+
+function HRRecruitmentPipelinePanel({ data }: { data: any }) {
+  const candidates = hrMiniRows((data as any).candidates || (data as any).recruitment)
+  const openings = hrMiniRows((data as any).openings)
+  const stages = ['Applicants', 'Screening', 'Interview', 'Offered', 'Hired']
+  const stageCounts = stages.map((stage) => ({
+    stage,
+    count: candidates.filter((candidate) => hrMiniRecruitStage(candidate) === stage).length,
+  }))
+
+  const total = Math.max(candidates.length, stageCounts.reduce((sum, item) => sum + item.count, 0), 1)
+  const departmentMap = new Map<string, number>()
+
+  for (const candidate of candidates) {
+    const department = hrMiniDepartment(candidate)
+    departmentMap.set(department, (departmentMap.get(department) || 0) + 1)
+  }
+
+  for (const opening of openings) {
+    const department = hrMiniDepartment(opening)
+    if (!departmentMap.has(department)) departmentMap.set(department, 0)
+  }
+
+  const departmentRows = [...departmentMap.entries()]
+    .map(([department, count]) => ({ department, count }))
+    .sort((a, b) => b.count - a.count || a.department.localeCompare(b.department))
+    .slice(0, 6)
+
+  const hiredCount = stageCounts.find((x) => x.stage === 'Hired')?.count || 0
+  const offeredCount = stageCounts.find((x) => x.stage === 'Offered')?.count || 0
+  const conversion = candidates.length ? Math.round((hiredCount / candidates.length) * 100) : 0
+  const offerAcceptance = offeredCount ? Math.round((hiredCount / offeredCount) * 100) : 0
+
   return (
-    <section className={`relative overflow-hidden rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_24px_70px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 backdrop-blur-xl ${className}`}>
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300 to-transparent" />
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div><h2 className="text-sm font-black text-slate-950">{title}</h2>{subtitle ? <p className="mt-1 text-xs font-bold text-slate-400">{subtitle}</p> : null}</div>
-        <Link href="/hr/documents" className="rounded-full bg-violet-50 px-3 py-1 text-[11px] font-black text-violet-700 hover:bg-violet-100">View →</Link>
+    <Panel title="Recruitment Pipeline" subtitle="Live candidate stages and department demand" className="col-span-12 xl:col-span-4" hideView>
+      <div className="space-y-5">
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-2xl bg-violet-50 px-3 py-2 text-xs font-black text-violet-700">Candidates<br/><span className="text-lg text-slate-950">{candidates.length}</span></div>
+          <div className="rounded-2xl bg-blue-50 px-3 py-2 text-xs font-black text-blue-700">Open roles<br/><span className="text-lg text-slate-950">{openings.length}</span></div>
+          <div className="rounded-2xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">Conversion<br/><span className="text-lg text-slate-950">{conversion}%</span></div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-5">
+          <div className="space-y-2">
+            {stageCounts.map((item, index) => (
+              <div key={item.stage} className="rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50 to-white px-4 py-3 shadow-sm">
+                <div className="mb-2 flex items-center justify-between text-xs font-black text-slate-800">
+                  <span>{item.stage}</span>
+                  <span className="rounded-lg bg-white px-2 py-1 shadow-sm">{item.count}</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-100">
+                  <div className="h-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{ width: `${Math.max(4, Math.round((item.count / total) * 100))}%` }} />
+                </div>
+                <p className="mt-1 text-[10px] font-black text-slate-400">Stage {index + 1} · {Math.round((item.count / total) * 100)}%</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-3 text-xs font-bold">
+            <div className="rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Offer acceptance</p>
+              <p className="mt-1 text-2xl font-black text-slate-950">{offerAcceptance}%</p>
+              <p className="text-[11px] font-bold text-slate-500">{hiredCount} hired from {offeredCount} offer-stage candidates</p>
+            </div>
+
+            {departmentRows.map((row) => (
+              <div key={row.department}>
+                <div className="mb-1 flex justify-between">
+                  <span>{row.department}</span>
+                  <span>{row.count}</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-100">
+                  <div className="h-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{ width: `${Math.max(4, Math.round((row.count / Math.max(1, candidates.length)) * 100))}%` }} />
+                </div>
+              </div>
+            ))}
+
+            {!candidates.length ? <Empty title="No live candidates" text="Recruitment pipeline will activate when candidate rows are loaded." /> : null}
+          </div>
+        </div>
+      </div>
+    </Panel>
+  )
+}
+
+const HR_DASHBOARD_CITY_COORDS: Record<string, { lat: number; lng: number; aliases: string[] }> = {
+  Rabat: { lat: 34.0209, lng: -6.8416, aliases: ['rabat'] },
+  Salé: { lat: 34.0531, lng: -6.7985, aliases: ['sale', 'salé'] },
+  Temara: { lat: 33.9287, lng: -6.9067, aliases: ['temara', 'témara'] },
+  Casablanca: { lat: 33.5731, lng: -7.5898, aliases: ['casablanca', 'casa'] },
+  Bouznika: { lat: 33.7894, lng: -7.1597, aliases: ['bouznika'] },
+  Tiflet: { lat: 33.8947, lng: -6.3065, aliases: ['tiflet', 'tifelet'] },
+  'Beni Mellal': { lat: 32.3373, lng: -6.3498, aliases: ['beni mellal', 'béni mellal', 'bni mellal'] },
+  Tanger: { lat: 35.7595, lng: -5.834, aliases: ['tanger', 'tangier'] },
+  Marrakech: { lat: 31.6295, lng: -7.9811, aliases: ['marrakech', 'marrakesh'] },
+  Agadir: { lat: 30.4278, lng: -9.5981, aliases: ['agadir'] },
+  'Fès': { lat: 34.0331, lng: -5.0003, aliases: ['fes', 'fès', 'fez'] },
+}
+
+function hrMiniCity(row: HRMiniRow) {
+  const raw = hrMiniLower(row.city || row.work_city || row.location_city || row.base_city || row.home_city || row.employee_city || row.staff_city || row.current_city || row.region || row.address || row.metadata?.city || row.data?.city)
+  for (const [city, meta] of Object.entries(HR_DASHBOARD_CITY_COORDS)) {
+    if (meta.aliases.some((alias) => raw.includes(alias))) return city
+  }
+  return raw ? hrMiniText(row.city || row.location || row.region, 'Location missing') : 'Location missing'
+}
+
+function hrMiniHash(value: string) {
+  let hash = 0
+  for (let i = 0; i < value.length; i += 1) {
+    hash = value.charCodeAt(i) + ((hash << 5) - hash)
+    hash |= 0
+  }
+  return Math.abs(hash)
+}
+
+function hrMiniCoords(city: string) {
+  const known = HR_DASHBOARD_CITY_COORDS[city]
+  if (known) return { lat: known.lat, lng: known.lng }
+  const hash = hrMiniHash(city)
+  const angle = ((hash % 360) * Math.PI) / 180
+  const radius = 0.35 + (hash % 9) * 0.055
+  return {
+    lat: HR_DASHBOARD_CITY_COORDS.Rabat.lat + Math.sin(angle) * radius,
+    lng: HR_DASHBOARD_CITY_COORDS.Rabat.lng + Math.cos(angle) * radius,
+  }
+}
+
+function hrMiniActive(row: HRMiniRow) {
+  const status = hrMiniLower(row.employment_status || row.status || row.state || row.hr_status)
+  return !['inactive', 'terminated', 'archived', 'deleted', 'offboarded', 'left', 'resigned'].includes(status)
+}
+
+function hrMiniPending(row: HRMiniRow) {
+  const status = hrMiniLower(row.employment_status || row.status || row.state || row.hr_status)
+  return ['pending', 'draft', 'invited', 'onboarding', 'probation', 'in_review', 'in review'].some((key) => status.includes(key))
+}
+
+function hrMiniRisk(row: HRMiniRow) {
+  const status = hrMiniLower(row.employment_status || row.status || row.state || row.hr_status)
+  const risk = hrMiniLower(row.risk_level || row.hr_risk || row.compliance_status || row.document_status)
+  return ['risk', 'at_risk', 'at risk', 'blocked', 'expired', 'missing', 'suspended'].some((key) => status.includes(key) || risk.includes(key))
+}
+
+function HRMapPanel({ data, activeStaff, pendingApprovals, openQuality }: { data: any; activeStaff: number; pendingApprovals: number; openQuality: number }) {
+  const staff = hrMiniRows(data.staff)
+  const cityMap = new Map<string, any>()
+
+  for (const row of staff) {
+    const city = hrMiniCity(row)
+    const coords = hrMiniCoords(city)
+    const marker = cityMap.get(city) || {
+      city,
+      lat: coords.lat,
+      lng: coords.lng,
+      count: 0,
+      active: 0,
+      pending: 0,
+      risk: 0,
+      employees: [],
+    }
+
+    marker.count += 1
+    if (hrMiniActive(row)) marker.active += 1
+    if (hrMiniPending(row)) marker.pending += 1
+    if (hrMiniRisk(row)) marker.risk += 1
+    marker.employees.push({
+      id: String(row.id || row.employee_id || row.staff_id || `${city}-${marker.count}`),
+      name: hrMiniText(row.full_name || row.name || row.employee_name || row.staff_name || `${row.first_name || ''} ${row.last_name || ''}`.trim(), 'Unnamed employee'),
+      role: hrMiniText(row.position_title || row.position || row.role || row.job_title || row.function_title, 'Role not specified'),
+      department: hrMiniDepartment(row),
+      status: hrMiniText(row.employment_status || row.status || row.state, 'unknown'),
+      city,
+      lat: coords.lat,
+      lng: coords.lng,
+      active: hrMiniActive(row),
+      pending: hrMiniPending(row),
+      risk: hrMiniRisk(row),
+    })
+    cityMap.set(city, marker)
+  }
+
+  if (!staff.length && activeStaff > 0) {
+    const coords = hrMiniCoords('Rabat')
+    cityMap.set('Rabat', {
+      city: 'Rabat',
+      lat: coords.lat,
+      lng: coords.lng,
+      count: activeStaff,
+      active: activeStaff,
+      pending: pendingApprovals,
+      risk: openQuality,
+      employees: [],
+    })
+  }
+
+  const markers = [...cityMap.values()].sort((a, b) => b.count - a.count || a.city.localeCompare(b.city))
+  const riskTotal = markers.reduce((sum, marker) => sum + marker.risk, 0) || openQuality
+
+  return (
+    <Panel title="Employee Distribution by Location" subtitle="Interactive OpenStreetMap HR zoning" className="col-span-12 xl:col-span-4" hideView>
+      <InteractiveMoroccoHRMap markers={markers} total={staff.length || activeStaff} approvals={pendingApprovals} risks={riskTotal} />
+    </Panel>
+  )
+}
+
+function hrMiniPerfRating(row: HRMiniRow) {
+  const raw = Number(row.rating || row.score || row.overall_score || row.performance_score || row.review_score || row.engagement_score || row.final_score || 0)
+  if (!Number.isFinite(raw) || raw <= 0) return null
+  if (raw > 10 && raw <= 100) return Math.min(5, raw / 20)
+  if (raw > 5 && raw <= 10) return Math.min(5, raw / 2)
+  return Math.min(5, raw)
+}
+
+function hrMiniPerfBand(score: number | null) {
+  if (score === null) return 'Unscored'
+  if (score >= 4.5) return 'Excellent'
+  if (score >= 3.8) return 'Good'
+  if (score >= 3) return 'Average'
+  if (score >= 2) return 'Below Average'
+  return 'Poor'
+}
+
+function hrMiniPerfColor(label: string) {
+  if (label === 'Excellent') return '#22c55e'
+  if (label === 'Good') return '#3b82f6'
+  if (label === 'Average') return '#f59e0b'
+  if (label === 'Below Average') return '#ef4444'
+  if (label === 'Poor') return '#64748b'
+  return '#cbd5e1'
+}
+
+function hrMiniConic(parts: { label: string; count: number; color: string }[]) {
+  const total = Math.max(1, parts.reduce((sum, part) => sum + part.count, 0))
+  let start = 0
+  return parts.map((part, index) => {
+    const size = (part.count / total) * 100
+    const end = index === parts.length - 1 ? 100 : start + size
+    const segment = `${part.color} ${start}% ${end}%`
+    start = end
+    return segment
+  }).join(', ')
+}
+
+function HRPerformanceOverviewPanel({ data, activeStaff }: { data: any; activeStaff: number }) {
+  const reviews = hrMiniRows(data.performance)
+  const staff = hrMiniRows(data.staff)
+  const scored = reviews
+    .map((row) => ({ row, score: hrMiniPerfRating(row) }))
+    .filter((item): item is { row: HRMiniRow; score: number } => item.score !== null)
+
+  const avgScore = scored.length ? scored.reduce((sum, item) => sum + item.score, 0) / scored.length : null
+  const labels = ['Excellent', 'Good', 'Average', 'Below Average', 'Poor']
+  const bands = labels.map((label) => ({
+    label,
+    count: scored.filter((item) => hrMiniPerfBand(item.score) === label).length,
+    color: hrMiniPerfColor(label),
+  }))
+  const totalScored = Math.max(1, scored.length)
+  const conic = hrMiniConic(bands)
+  const coverage = staff.length ? Math.round((reviews.length / Math.max(staff.length, 1)) * 100) : reviews.length ? 100 : 0
+  const riskReviews = scored.filter((item) => item.score < 3).sort((a, b) => a.score - b.score).slice(0, 3)
+  const topReviews = scored.filter((item) => item.score >= 4).sort((a, b) => b.score - a.score).slice(0, 3)
+
+  return (
+    <Panel title="Performance Overview" subtitle="Live review scores, coverage and coaching signals" className="col-span-12 xl:col-span-4" hideView>
+      <div className="space-y-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Production performance model</p>
+            <p className="mt-1 text-sm font-bold text-slate-600">{reviews.length ? `${reviews.length} review row(s) loaded` : 'No performance review rows loaded yet'}</p>
+          </div>
+          <div className={`rounded-2xl px-3 py-2 text-xs font-black ${avgScore !== null ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+            {avgScore !== null ? 'Live scored' : 'Needs scores'}
+          </div>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-[170px_1fr]">
+          <div className="grid h-40 w-40 place-items-center rounded-full shadow-inner" style={{ background: `conic-gradient(${conic})` }}>
+            <div className="grid h-24 w-24 place-items-center rounded-full bg-white text-center shadow-[inset_0_4px_20px_rgba(15,23,42,0.06)]">
+              <div>
+                <b className="text-2xl text-slate-950">{avgScore === null ? '—' : avgScore.toFixed(1)}</b>
+                <div className="text-[10px] font-black text-slate-400">/ 5 average</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {bands.map((band) => (
+              <div key={band.label} className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
+                <div className="mb-1 flex justify-between text-xs font-black text-slate-700">
+                  <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ background: band.color }} />{band.label}</span>
+                  <span>{band.count} · {Math.round((band.count / totalScored) * 100)}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-slate-100">
+                  <div className="h-1.5 rounded-full" style={{ width: `${Math.round((band.count / totalScored) * 100)}%`, background: band.color }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2">
+          <div className="rounded-2xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Coverage<br/><span className={coverage >= 80 ? 'text-emerald-600' : coverage >= 40 ? 'text-amber-600' : 'text-rose-600'}>{coverage}%</span></div>
+          <div className="rounded-2xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Scored<br/><span className="text-slate-950">{scored.length}</span></div>
+          <div className="rounded-2xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Top<br/><span className="text-emerald-600">{topReviews.length}</span></div>
+          <div className="rounded-2xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Risk<br/><span className={riskReviews.length ? 'text-rose-600' : 'text-emerald-600'}>{riskReviews.length}</span></div>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-3xl border border-slate-100 bg-white p-3 shadow-sm">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Top performers</p>
+            <div className="space-y-2">
+              {topReviews.map((item, index) => (
+                <div key={`top-${index}`} className="rounded-2xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-800">
+                  {hrMiniText(item.row.employee_name || item.row.staff_name || item.row.full_name || item.row.name, 'Employee')} · {item.score.toFixed(1)}
+                </div>
+              ))}
+              {!topReviews.length ? <p className="text-xs font-bold text-slate-400">No top scored reviews yet.</p> : null}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-100 bg-white p-3 shadow-sm">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Coaching watchlist</p>
+            <div className="space-y-2">
+              {riskReviews.map((item, index) => (
+                <div key={`risk-${index}`} className="rounded-2xl bg-rose-50 px-3 py-2 text-xs font-black text-rose-800">
+                  {hrMiniText(item.row.employee_name || item.row.staff_name || item.row.full_name || item.row.name, 'Employee')} · {item.score.toFixed(1)}
+                </div>
+              ))}
+              {!riskReviews.length ? <p className="text-xs font-bold text-slate-400">No low-score risk detected.</p> : null}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  )
+}
+
+
+function Panel({
+  title,
+  subtitle,
+  children,
+  className = '',
+  hideView = false,
+}: {
+  title: string
+  subtitle?: string
+  children: React.ReactNode
+  className?: string
+  hideView?: boolean
+}) {
+  return (
+    <section className={`overflow-hidden rounded-[30px] border border-white/80 bg-white/95 p-5 shadow-[0_24px_70px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 backdrop-blur-xl ${className}`}>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-black tracking-tight text-slate-950">{title}</h2>
+          {subtitle ? <p className="mt-1 text-sm font-bold text-slate-400">{subtitle}</p> : null}
+        </div>
+        {!hideView ? (
+          <button className="rounded-full bg-violet-50 px-3 py-2 text-xs font-black text-violet-700">
+            View →
+          </button>
+        ) : null}
       </div>
       {children}
     </section>
   )
 }
 
-function Donut({ value, label }: { value: string; label: string }) {
+function Empty({ title, text }: { title: string; text: string }) {
   return (
-    <div className="relative grid h-44 w-44 place-items-center rounded-full shadow-inner" style={{ background: 'conic-gradient(#8b5cf6 0 35%, #4f46e5 35% 57%, #0ea5e9 57% 72%, #14b8a6 72% 86%, #e2e8f0 86% 100%)' }}>
-      <div className="absolute inset-2 rounded-full border border-white/70" />
-      <div className="grid h-24 w-24 place-items-center rounded-full bg-white shadow-[inset_0_4px_20px_rgba(15,23,42,0.06)]">
-        <div className="text-center"><div className="text-2xl font-black text-slate-950">{value}</div><div className="text-xs font-black text-slate-400">{label}</div></div>
-      </div>
-    </div>
-  )
-}
-
-function MiniSparkline() {
-  const points = '0,92 45,68 90,72 135,48 180,58 225,36 270,34 315,30 360,24 405,28 450,16 495,20 540,8'
-  return (
-    <div className="relative h-56 rounded-3xl bg-gradient-to-b from-violet-50/80 to-white p-4">
-      <svg viewBox="0 0 540 110" className="h-full w-full overflow-visible">
-        <defs><linearGradient id="trend" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.34"/><stop offset="100%" stopColor="#8b5cf6" stopOpacity="0"/></linearGradient></defs>
-        {[0,1,2,3].map((i) => <line key={i} x1="0" x2="540" y1={20 + i * 24} y2={20 + i * 24} stroke="#e2e8f0" strokeDasharray="5 8" />)}
-        <polygon points={`0,110 ${points} 540,110`} fill="url(#trend)" />
-        <polyline points={points} fill="none" stroke="#8b5cf6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-        {points.split(' ').map((p, i) => { const [x, y] = p.split(','); return <circle key={i} cx={x} cy={y} r="5" fill="white" stroke="#8b5cf6" strokeWidth="3" /> })}
-      </svg>
-      <div className="absolute right-6 top-5 rounded-xl bg-violet-600 px-3 py-1 text-xs font-black text-white shadow-lg">Live</div>
-    </div>
-  )
-}
-
-function MoroccoMap({ activeStaff, pendingApprovals, openQuality }: { activeStaff: number; pendingApprovals: number; openQuality: number }) {
-  const locations = [
-    { city: 'Tanger', x: 47, y: 10, value: Math.max(12, Math.round(activeStaff * 0.08)) },
-    { city: 'Rabat', x: 44, y: 29, value: Math.max(20, Math.round(activeStaff * 0.18)) },
-    { city: 'Casablanca', x: 38, y: 38, value: Math.max(35, Math.round(activeStaff * 0.28)) },
-    { city: 'Fès', x: 57, y: 31, value: Math.max(10, Math.round(activeStaff * 0.09)) },
-    { city: 'Marrakech', x: 39, y: 55, value: Math.max(16, Math.round(activeStaff * 0.13)) },
-    { city: 'Agadir', x: 29, y: 69, value: Math.max(8, Math.round(activeStaff * 0.07)) },
-    { city: 'Oujda', x: 77, y: 31, value: Math.max(4, Math.round(activeStaff * 0.03)) },
-  ]
-  return (
-    <div className="relative h-[285px] overflow-hidden rounded-[30px] border border-violet-100 bg-[radial-gradient(circle_at_50%_20%,#eef2ff_0,#fafafa_44%,#ffffff_100%)]">
-      <div className="absolute left-4 top-4 z-10 rounded-2xl bg-white/90 p-3 text-[11px] font-black text-slate-700 shadow-xl ring-1 ring-slate-100 backdrop-blur">
-        <p className="mb-1 text-violet-700">Morocco HR grid</p>
-        <p>{formatNumber(activeStaff)} active profiles</p>
-        <p>{pendingApprovals} approvals · {openQuality} risks</p>
-      </div>
-      <svg viewBox="0 0 420 310" className="absolute inset-0 h-full w-full">
-        <defs>
-          <linearGradient id="moroccoFill" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stopColor="#ddd6fe"/><stop offset="48%" stopColor="#a78bfa"/><stop offset="100%" stopColor="#6d28d9"/></linearGradient>
-          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="11" floodColor="#7c3aed" floodOpacity="0.22"/></filter>
-        </defs>
-        <path filter="url(#softShadow)" d="M208 16 L230 33 L251 27 L276 43 L296 67 L326 78 L350 105 L339 137 L363 166 L348 196 L311 205 L291 228 L255 232 L226 252 L185 250 L166 276 L132 286 L93 276 L71 250 L83 220 L67 190 L88 164 L83 132 L103 103 L128 89 L142 58 L174 44 Z" fill="url(#moroccoFill)" stroke="white" strokeWidth="4" />
-        {['M142 58 L208 16 M128 89 L230 33 M103 103 L251 27 M83 132 L276 43 M88 164 L326 78 M67 190 L339 137 M83 220 L363 166 M71 250 L348 196 M132 286 L291 228 M166 276 L255 232'].map((d) => <path key={d} d={d} stroke="white" strokeOpacity="0.45" strokeWidth="2" />)}
-        <path d="M208 16 L230 33 L251 27 L276 43 L296 67 L326 78 L350 105 L339 137 L363 166 L348 196 L311 205 L291 228 L255 232 L226 252 L185 250 L166 276 L132 286 L93 276 L71 250 L83 220 L67 190 L88 164 L83 132 L103 103 L128 89 L142 58 L174 44 Z" fill="none" stroke="#4c1d95" strokeOpacity="0.2" strokeWidth="2" />
-        {locations.map((l) => (
-          <g key={l.city} transform={`translate(${(l.x / 100) * 420} ${(l.y / 100) * 310})`}>
-            <circle r={8 + Math.min(16, l.value / Math.max(1, activeStaff) * 80)} fill="#7c3aed" opacity="0.2" />
-            <circle r="6" fill="white" stroke="#7c3aed" strokeWidth="4" />
-            <text x="10" y="4" fontSize="11" fontWeight="800" fill="#334155">{l.city}</text>
-          </g>
-        ))}
-      </svg>
+    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-center">
+      <p className="text-sm font-black text-slate-700">{title}</p>
+      <p className="mt-1 text-xs font-bold text-slate-400">{text}</p>
     </div>
   )
 }
@@ -190,16 +1090,46 @@ export default async function Page() {
   const data = await getHRDashboardData()
   const metrics = getHRProductionMetrics(data)
   const score = getHRProductionScore(data)
-  const activeStaff = Number(metrics.activeStaff || 0)
-  const totalStaff = Math.max(activeStaff + Number(metrics.openRoles || 0) + 64, activeStaff)
-  const pendingApprovals = Number(metrics.pendingApprovals || 0)
-  const openQuality = Number(metrics.openQuality || 0)
-  const missingDocs = Number(metrics.missingDocs || 0)
-  const rosterConflicts = Number(metrics.rosterConflicts || 0)
-  const attendanceRecords = Number(metrics.attendanceRecords || 0)
-  const validatedAttendance = Number(metrics.validatedAttendance || 0)
-  const attendanceRate = attendanceRecords ? Math.round((validatedAttendance / attendanceRecords) * 100) : score
+  const confidence = sourceConfidence(data)
+  const confidenceLabel = sourceLabel(confidence)
+  const sourceErrors = Object.keys(data.errors || {}).length
+
+  const totalStaff = Number(metrics.totalStaff || metrics.staffCount || rowCount(data.staff) || 0)
+  const activeStaff = Number(metrics.activeStaff || metrics.activeCount || 0)
+  const openRoles = Number(metrics.openRoles || metrics.openingsCount || 0)
+  const pendingApprovals = Number(metrics.pendingApprovals || metrics.approvalsPending || 0)
+  const openQuality = Number(metrics.openQuality || metrics.openQualityIssues || 0)
+  const missingDocs = Number(metrics.missingDocs || metrics.missingDocuments || 0)
+  const rosterConflicts = Number(metrics.rosterConflicts || metrics.conflictsCount || 0)
+  const attendanceRecords = Number(metrics.attendanceRecords || metrics.attendanceCount || 0)
+  const attendanceExceptions = Number(metrics.attendanceExceptions || metrics.exceptionsCount || 0)
+  const validatedAttendance = Number(metrics.validatedAttendance || metrics.validatedAttendanceRecords || 0)
+  const attendanceRate = attendanceRecords ? Math.round((validatedAttendance / attendanceRecords) * 100) : 0
   const openTasks = Number(metrics.openTasks || 0)
+
+  const staffNavigatorEmployees = (Array.isArray(data.staff) ? data.staff : []).map((row: any, index: number) => {
+    const status = String(row.employment_status || row.status || row.state || row.hr_status || '').toLowerCase()
+    const riskSource = String(row.risk_level || row.hr_risk || row.compliance_status || row.document_status || '').toLowerCase()
+    const risk = ['risk', 'at_risk', 'at risk', 'blocked', 'expired', 'missing', 'suspended'].some((key) =>
+      status.includes(key) || riskSource.includes(key)
+    )
+    const pending = ['pending', 'draft', 'invited', 'onboarding', 'probation', 'in_review', 'in review'].some((key) => status.includes(key))
+    const active = !['inactive', 'terminated', 'archived', 'deleted', 'offboarded', 'left', 'resigned'].includes(status)
+
+    return {
+      id: String(row.id || row.employee_id || row.staff_id || `employee-${index}`),
+      name: String(row.full_name || row.name || row.employee_name || row.staff_name || `${row.first_name || ''} ${row.last_name || ''}`.trim() || 'Unnamed employee'),
+      department: String(row.department_name || row.department || row.team_name || row.team || row.business_unit || 'Unassigned'),
+      city: String(row.city || row.work_city || row.location_city || row.base_city || row.home_city || row.employee_city || row.staff_city || row.current_city || row.region || 'Location missing'),
+      role: String(row.position_title || row.position || row.role || row.job_title || row.function_title || 'Role not specified'),
+      status: String(row.employment_status || row.status || row.state || 'unknown'),
+      risk,
+      pending,
+      active,
+    }
+  })
+
+  const hrRiskScore = sourceErrors + openQuality + missingDocs + rosterConflicts + attendanceExceptions
 
   const alerts = [
     ['High Attrition Risk', `${Math.max(openQuality, 1)} workforce signals need HR review`, '10m ago'],
@@ -207,6 +1137,61 @@ export default async function Page() {
     ['Compliance Alert', `${missingDocs} documents require attention`, '2h ago'],
     ['Roster Conflict', `${rosterConflicts} schedule conflicts detected`, '5h ago'],
   ]
+
+
+  const hrRecentActivityItems = [
+    ...((Array.isArray((data as any).tasks) ? (data as any).tasks : []).slice(0, 10).map((row: any, index: number) => ({
+      id: String(row.id || `task-${index}`),
+      title: String(row.title || row.name || 'HR task'),
+      subtitle: String(row.description || row.summary || 'HR execution item'),
+      category: 'Workforce',
+      categoryKey: 'workforce' as const,
+      status: String(row.status || 'open'),
+      priority: String(row.priority || 'medium'),
+      owner: String(row.assignee_name || row.owner_name || row.actor_name || 'HR team'),
+      department: String(row.department || row.department_name || 'HR Operations'),
+      created_at: String(row.created_at || row.updated_at || new Date().toISOString()),
+    }))),
+    ...((Array.isArray((data as any).recruitment) ? (data as any).recruitment : Array.isArray((data as any).candidates) ? (data as any).candidates : []).slice(0, 8).map((row: any, index: number) => ({
+      id: String(row.id || `recruitment-${index}`),
+      title: String(row.title || row.position_title || row.role || row.name || 'Recruitment activity'),
+      subtitle: String(row.stage || row.status || row.notes || 'Candidate pipeline item'),
+      category: 'Recruitment',
+      categoryKey: 'recruitment' as const,
+      status: String(row.status || row.stage || 'open'),
+      priority: String(row.priority || 'high'),
+      owner: String(row.owner_name || row.recruiter_name || row.candidate_name || 'Talent team'),
+      department: String(row.department || row.department_name || 'Recruitment'),
+      created_at: String(row.created_at || row.updated_at || new Date().toISOString()),
+    }))),
+    ...((Array.isArray((data as any).documents) ? (data as any).documents : []).slice(0, 6).map((row: any, index: number) => ({
+      id: String(row.id || `document-${index}`),
+      title: String(row.title || row.name || 'Compliance document'),
+      subtitle: String(row.document_type || row.status || 'Document workflow item'),
+      category: 'Compliance',
+      categoryKey: 'compliance' as const,
+      status: String(row.status || 'review'),
+      priority: String(row.priority || 'medium'),
+      owner: String(row.owner_name || row.actor_name || 'Compliance desk'),
+      department: String(row.department || 'Compliance'),
+      created_at: String(row.created_at || row.updated_at || new Date().toISOString()),
+    }))),
+    ...((Array.isArray((data as any).approvals) ? (data as any).approvals : []).slice(0, 6).map((row: any, index: number) => ({
+      id: String(row.id || `approval-${index}`),
+      title: String(row.title || row.name || 'Approval request'),
+      subtitle: String(row.request_type || row.status || 'Validation workflow'),
+      category: 'Approvals',
+      categoryKey: 'approvals' as const,
+      status: String(row.status || 'pending'),
+      priority: String(row.priority || 'medium'),
+      owner: String(row.owner_name || row.requester_name || 'HR approval desk'),
+      department: String(row.department || 'HR'),
+      created_at: String(row.created_at || row.updated_at || new Date().toISOString()),
+    }))),
+  ]
+    .filter(Boolean)
+    .sort((a, b) => new Date(String(b.created_at)).getTime() - new Date(String(a.created_at)).getTime())
+    .slice(0, 24)
 
   return (
     <main className="fixed inset-x-0 bottom-0 top-[112px] z-[40] overflow-hidden bg-[#f8fafc] text-slate-900">
@@ -228,7 +1213,10 @@ export default async function Page() {
               <div>
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-violet-500"><LayoutDashboard className="h-4 w-4" /> Dashboard</div>
                 <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-950">HR Operational Overview</h1>
-                <p className="text-sm font-semibold text-slate-500">Persistent overhead panel · single-page navigation · live workforce, compliance and execution control.</p>
+                <p className="text-sm font-semibold text-slate-500">
+                  Persistent overhead panel · real HR repository snapshot · {confidenceLabel}
+                  {sourceErrors ? ` · ${sourceErrors} source warning(s)` : ' · all queried sources healthy'}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="hidden items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm xl:flex"><Search className="h-4 w-4" /> Search HR</div>
@@ -238,37 +1226,37 @@ export default async function Page() {
               </div>
             </header>
             <div className="mt-4 flex overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/80">
-              <MetricCard title="Total Employees" value={formatNumber(totalStaff)} delta="8.5%" icon={Users} tone="violet" />
-              <MetricCard title="Active Employees" value={formatNumber(activeStaff)} delta="6.3%" icon={UserCheck} tone="cyan" />
-              <MetricCard title="Open Positions" value={formatNumber(metrics.openRoles)} delta="5" icon={BriefcaseBusiness} tone="violet" />
-              <MetricCard title="Pending Approvals" value={formatNumber(pendingApprovals)} delta="33%" icon={ClipboardCheck} tone="green" />
-              <MetricCard title="HR Risk" value={`${Math.max(openQuality, rosterConflicts, missingDocs)}`} delta="1.2%" icon={ShieldCheck} tone="rose" />
-              <MetricCard title="Labor Control" value={`${score}%`} delta="7.1%" icon={CircleDollarSign} tone="blue" />
+              <MetricCard title="Total Employees" value={formatNumber(totalStaff)} detail={`${rowCount(data.staff)} staff/profile row(s)`} icon={Users} tone="violet" confidence={confidence} />
+              <MetricCard title="Active Employees" value={formatNumber(activeStaff)} detail={`${totalStaff ? Math.round((activeStaff / Math.max(totalStaff, 1)) * 100) : 0}% active from staff status`} icon={UserCheck} tone="cyan" confidence={confidence} />
+              <MetricCard title="Open Positions" value={formatNumber(openRoles)} detail={`${rowCount(data.openings)} opening row(s)`} icon={BriefcaseBusiness} tone="violet" confidence={confidence} />
+              <MetricCard title="Pending Approvals" value={formatNumber(pendingApprovals)} detail={`${rowCount(data.approvals)} approval row(s)`} icon={ClipboardCheck} tone="green" confidence={confidence} />
+              <MetricCard title="HR Risk" value={formatNumber(hrRiskScore)} detail={`${missingDocs} docs · ${rosterConflicts} roster · ${attendanceExceptions} attendance`} icon={ShieldCheck} tone="rose" confidence={confidence} />
+              <MetricCard title="Labor Control" value={`${score}%`} detail={`${confidenceLabel}${sourceErrors ? ` · ${sourceErrors} warning(s)` : ''}`} icon={CircleDollarSign} tone="blue" confidence={confidence} />
             </div>
+            {confidence !== 'live' ? (
+              <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-black text-amber-800">
+                HR production readiness notice: {confidenceLabel}. The dashboard now refuses inflated fallback numbers and only displays loaded HR records. Open Diagnostics or Sync Center to repair missing tables/sources.
+              </div>
+            ) : null}
           </div>
 
-          <div className="mb-5"><HRModuleCommandBridge context="HR dashboard" /></div>
-
           <div id="dashboard" className="grid grid-cols-12 gap-4">
-            <Panel title="Workforce Overview" subtitle="Headcount by department" className="col-span-12 xl:col-span-4"><div className="flex items-center justify-around gap-4"><Donut value={formatNumber(totalStaff)} label="Total" /><div className="flex-1 space-y-3 text-xs font-bold">{['Operations 28%', 'Sales & Marketing 20%', 'Customer Care 16%', 'Product & Tech 15%', 'Finance 8%', 'HR 6%', 'Other 7%'].map((x, i) => <div key={x} className="flex items-center justify-between"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ background: ['#8b5cf6','#ef4444','#3b82f6','#06b6d4','#14b8a6','#64748b','#a855f7'][i] }} />{x.split(' ').slice(0,-1).join(' ')}</span><span className="text-slate-400">{x.split(' ').at(-1)}</span></div>)}</div></div></Panel>
-            <Panel title="Headcount Trend" subtitle="Last 12 months" className="col-span-12 xl:col-span-4"><MiniSparkline /></Panel>
-            <Panel title="Workforce by Status" subtitle="Operational split" className="col-span-12 xl:col-span-4"><div className="flex items-center gap-5"><div className="grid h-36 w-36 place-items-center rounded-full" style={{ background: 'conic-gradient(#22c55e 0 82%, #38bdf8 82% 89%, #64748b 89% 96%, #f59e0b 96% 100%)' }}><div className="grid h-20 w-20 place-items-center rounded-full bg-white"><div className="text-center text-xl font-black">{formatNumber(totalStaff)}<div className="text-[10px] text-slate-400">Total</div></div></div></div><div className="space-y-2 text-xs font-bold"><p>Active · {activeStaff}</p><p>Validated · {validatedAttendance}</p><p>Pending · {pendingApprovals}</p><p>At Risk · {openQuality}</p></div></div></Panel>
+            <HRWorkforceGraphDeck
+              data={data}
+              totalStaff={totalStaff}
+              activeStaff={activeStaff}
+              pendingApprovals={pendingApprovals}
+              validatedAttendance={validatedAttendance}
+              openQuality={openQuality}
+            />
 
-            <div className="col-span-12 grid grid-cols-2 gap-4 lg:grid-cols-6">
-              {[["Absenteeism Rate",`${Math.max(0, 100 - attendanceRate)}%`,TrendingDown],["Overtime Control",`${openTasks}`,Clock3],["Time to Hire",'24 days',Target],["Offer Acceptance",'86%',CheckCircle2],["Training Completion",`${Math.max(78, score)}%`,GraduationCap],["Employee Engagement",'4.6 / 5',Sparkles]].map(([t,v,I]: any) => <div key={t} className="group rounded-[24px] border border-white/80 bg-white/90 p-4 shadow-[0_18px_55px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(124,58,237,0.16)]"><div className="mb-3 flex items-center justify-between"><div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-400 text-white shadow-lg"><I className="h-4 w-4" /></div><TrendingUp className="h-4 w-4 text-emerald-400" /></div><p className="text-[11px] font-black uppercase tracking-wide text-slate-400">{t}</p><p className="text-2xl font-black text-slate-950">{v}</p><p className="text-[11px] font-black text-emerald-500">Synced from HR data</p></div>)}
-            </div>
+            <HRLiveInsightStrip data={data} metrics={metrics} />
 
-            <Panel title="Recruitment Pipeline" subtitle="Applicants to hired" className="col-span-12 xl:col-span-4"><div className="grid grid-cols-2 gap-5"><div className="space-y-2">{[['Applicants',362],['Screening',148],['Interview',62],['Offered',26],['Hired',16]].map(([l,n]: any) => <div key={l} className="rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50 to-white px-4 py-2 text-center text-xs font-black text-violet-700 shadow-sm">{l}<span className="ml-3 rounded-lg bg-white px-2 py-1 shadow-sm">{n}</span></div>)}</div><div className="space-y-3 text-xs font-bold">{['Product & Tech','Operations','Sales & Marketing','Customer Care','Finance','HR'].map((x,i)=><div key={x}><div className="mb-1 flex justify-between"><span>{x}</span><span>{10-i}</span></div><div className="h-2 rounded-full bg-slate-100"><div className="h-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{width:`${92-i*12}%`}} /></div></div>)}</div></div></Panel>
-            <Panel title="Employee Distribution by Location" subtitle="Reality-oriented Morocco coverage map" className="col-span-12 xl:col-span-4"><MoroccoMap activeStaff={activeStaff} pendingApprovals={pendingApprovals} openQuality={openQuality} /></Panel>
-            <Panel title="Performance Overview" subtitle="This quarter" className="col-span-12 xl:col-span-4"><div className="flex items-center gap-6"><div className="grid h-40 w-40 place-items-center rounded-full shadow-inner" style={{ background: 'conic-gradient(#22c55e 0 26%, #3b82f6 26% 69%, #f59e0b 69% 89%, #ef4444 89% 97%, #64748b 97% 100%)' }}><div className="grid h-24 w-24 place-items-center rounded-full bg-white text-center"><b className="text-2xl">4.2 / 5</b><span className="text-amber-400">★★★★★</span></div></div><div className="space-y-2 text-xs font-bold"><p>Excellent · 26%</p><p>Good · 43%</p><p>Average · 20%</p><p>Below Average · 8%</p><p>Poor · 3%</p></div></div></Panel>
-
-            <Panel title="Alerts & Notifications" subtitle="Live HR control" className="col-span-12 xl:col-span-4"><div className="space-y-3">{alerts.map((a) => <Link href="/hr/notifications" key={a[0]} className="block rounded-2xl border border-slate-100 bg-slate-50 p-3 transition hover:border-violet-200 hover:bg-white hover:shadow-lg"><div className="flex justify-between gap-2"><b className="text-xs text-slate-800">{a[0]}</b><span className="text-[10px] font-bold text-slate-400">{a[2]}</span></div><p className="mt-1 text-[11px] font-semibold text-slate-500">{a[1]}</p></Link>)}</div></Panel>
-            <Panel title="Attendance Overview" subtitle="This month" className="col-span-12 xl:col-span-4"><div className="grid grid-cols-4 gap-3 text-center"><div><b className="text-2xl">{attendanceRate}%</b><p className="text-xs font-bold text-slate-400">Attendance</p></div><div><b className="text-2xl">{pendingApprovals}</b><p className="text-xs font-bold text-slate-400">On Leave</p></div><div><b className="text-2xl">28%</b><p className="text-xs font-bold text-slate-400">Remote</p></div><div><b className="text-2xl">{rosterConflicts}</b><p className="text-xs font-bold text-slate-400">Conflicts</p></div></div></Panel>
-            <Panel title="Labor Cost Overview" subtitle="Budget control" className="col-span-12 xl:col-span-4"><div className="flex items-center justify-between"><div><p className="text-3xl font-black">$857,430</p><p className="text-xs font-bold text-emerald-500">Controlled against plan</p></div><Donut value="71%" label="Salaries" /></div></Panel>
-
-            <Panel title="Quick Actions" subtitle="Execution shortcuts" className="col-span-12 xl:col-span-4"><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{quickActions.map((a) => <Link key={a.label} href={a.href} className="rounded-2xl border border-slate-100 bg-slate-50 p-3 text-center text-[11px] font-black text-slate-700 transition hover:-translate-y-1 hover:border-violet-200 hover:bg-violet-50"><a.icon className="mx-auto mb-2 h-5 w-5 text-violet-500" />{a.label}</Link>)}</div></Panel>
-            <Panel title="HR Route Matrix" subtitle="Existing HR routes preserved and reachable inside the single-page model" className="col-span-12 xl:col-span-8"><div className="grid grid-cols-2 gap-2 md:grid-cols-4">{HR_PRODUCTION_NAV.slice(0, 24).map((x) => <Link key={x.href} href={x.href} className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black text-slate-700 transition hover:bg-white hover:text-violet-700 hover:shadow-md">{x.label}</Link>)}</div></Panel>
-            <Panel title="Recent Activities" subtitle="Operational trail" className="col-span-12 xl:col-span-4"><div className="space-y-3">{(data.tasks || []).slice(0, 5).map((task: any, i: number) => <div key={task.id || task.title || i} className="flex gap-3 rounded-2xl bg-slate-50 p-3"><div className="grid h-8 w-8 place-items-center rounded-full bg-white text-xs font-black text-violet-600 shadow-sm">{i + 1}</div><div><b className="text-xs text-slate-800">{task.title || 'HR execution activity'}</b><p className="text-[11px] font-semibold text-slate-500">{task.owner || 'HR Operations'} · {task.status || 'open'}</p></div></div>)}</div></Panel>
+            <HRRecruitmentPipelinePanel data={data} />
+            <HRMapPanel data={data} activeStaff={activeStaff} pendingApprovals={pendingApprovals} openQuality={openQuality} />
+            <HRPerformanceOverviewPanel data={data} activeStaff={activeStaff} />
+            <HRStaffIntelligenceNavigator employees={staffNavigatorEmployees} />
+            <HRRecentActivityCommand items={hrRecentActivityItems} />
           </div>
         </section>
       </div>

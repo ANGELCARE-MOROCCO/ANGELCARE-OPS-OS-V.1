@@ -94,6 +94,33 @@ export async function POST(req: NextRequest) {
     } else {
       if (data?.id) assignmentIds.push(String(data.id))
       created.push(data || payload)
+      try {
+        await supabase.from('hr_training_records').upsert({
+          id: data?.id || payload.training_id || undefined,
+          training_id: payload.training_id,
+          staff_id: payload.staff_id,
+          user_id: payload.user_id,
+          staff_name: payload.staff_name,
+          employee_name: payload.employee_name,
+          staff_email: payload.staff_email,
+          position_title: payload.position_title,
+          department: payload.department,
+          title: payload.title,
+          training_title: payload.training_title,
+          category: payload.category,
+          status: payload.status,
+          progress_percent: payload.progress_percent,
+          assigned_at: payload.assigned_at,
+          due_at: payload.due_at,
+          due_date: payload.due_date,
+          priority: payload.priority,
+          notes: payload.notes,
+          metadata: payload.metadata,
+          last_activity_at: payload.last_activity_at,
+          updated_at: now(),
+          created_at: now(),
+        }, { onConflict: 'id' })
+      } catch {}
       await insertActivity(supabase, {
         action: 'training_assigned_to_employee',
         entity_id: data?.id || null,
@@ -107,6 +134,7 @@ export async function POST(req: NextRequest) {
   revalidatePath('/hr/training')
   revalidatePath('/hr')
   revalidatePath('/hr/employees')
+  revalidatePath('/hr/staff')
 
-  return NextResponse.json({ ok: errors.length === 0, assignmentIds, created, errors, count: created.length }, { status: errors.length && !created.length ? 500 : 200 })
+  return NextResponse.json({ ok: errors.length === 0, mutationApplied: created.length > 0, assignmentIds, created, errors, count: created.length }, { status: errors.length && !created.length ? 500 : 200 })
 }

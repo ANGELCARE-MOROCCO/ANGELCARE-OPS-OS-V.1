@@ -2,6 +2,24 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { CareLinkMission, CareLinkStatus } from './types'
 
+import { resolvedMissionCode } from '@/lib/missions/mission-codes'
+
+function __carelinkMissionIsVisible(row: any) {
+  if (!row) return false
+  const status = String(row.status || row.lifecycle_stage || row.lifecycleStage || row.dossier_status || row.dossierStatus || '').toLowerCase()
+  if (row.is_archived === true || row.isArchived === true) return false
+  if (status.includes('deleted') || status.includes('archived') || status.includes('cancelled')) return false
+  return true
+}
+
+
+function __carelinkLiveMissionVisible(row: any) {
+  const status = String(row?.status || row?.lifecycle_stage || row?.lifecycleStage || row?.dossier_status || '').toLowerCase()
+  if (row?.is_archived === true || row?.isArchived === true) return false
+  if (status.includes('deleted') || status.includes('cancelled') || status.includes('archived')) return false
+  return true
+}
+
 const seedAgent: any = null
 const seedMessages: any[] = []
 const seedMissions: any[] = []
@@ -173,7 +191,7 @@ function arr(value: unknown): string[] {
 function mapMissionRow(row: any): CareLinkMission {
   return {
     id: String(row.id),
-    code: row.mission_code || row.code || `AC-MISSION-${row.id}`,
+    code: resolvedMissionCode(row),
     serviceType: row.service_type || 'MISSION TERRAIN ANGELCARE',
     serviceCategory: (row.service_category || 'home_support') as CareLinkMission['serviceCategory'],
     clientName: row.client_name || 'CLIENT PRIVÉ',
@@ -206,5 +224,5 @@ function mapMissionRow(row: any): CareLinkMission {
     lifecycle: row.lifecycle || row.lifecycle_stage || row.status || 'draft',
     dispatchThreadId: row.dispatch_thread_id || row.dispatchThreadId || null,
     lastEventAt: row.updated_at || row.created_at || new Date().toISOString(),
-  }
+  } as CareLinkMission
 }

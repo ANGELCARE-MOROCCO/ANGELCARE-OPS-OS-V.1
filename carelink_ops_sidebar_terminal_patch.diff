@@ -1,0 +1,534 @@
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/audit/page.tsx carelink_patch_app/app/carelink-ops/audit/page.tsx
+--- carelink_original_app/app/carelink-ops/audit/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/audit/page.tsx	2026-06-13 04:35:07.026658866 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Audit" subtitle="Action trail, mission events, compliance history and operational traceability.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Audit command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Audit</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/calendar/page.tsx carelink_patch_app/app/carelink-ops/calendar/page.tsx
+--- carelink_original_app/app/carelink-ops/calendar/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/calendar/page.tsx	2026-06-13 04:35:07.024802672 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Calendar" subtitle="Mission calendar, service windows, booking pressure and field availability.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Calendar command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Calendar</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/messages/page.tsx carelink_patch_app/app/carelink-ops/messages/page.tsx
+--- carelink_original_app/app/carelink-ops/messages/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/messages/page.tsx	2026-06-13 04:35:07.026291955 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Messages" subtitle="Dispatch communication, mission threads and operational follow-up.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Messages command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Messages</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/notifications/page.tsx carelink_patch_app/app/carelink-ops/notifications/page.tsx
+--- carelink_original_app/app/carelink-ops/notifications/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/notifications/page.tsx	2026-06-13 04:35:07.026152164 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Notifications" subtitle="Operational alerts, reminders, acknowledgements and live notifications.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Notifications command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Notifications</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/payments/page.tsx carelink_patch_app/app/carelink-ops/payments/page.tsx
+--- carelink_original_app/app/carelink-ops/payments/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/payments/page.tsx	2026-06-13 04:35:07.025981150 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Payments" subtitle="Mission payment validation, allowances, disputes and finance handoff.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Payments command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Payments</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/performance/page.tsx carelink_patch_app/app/carelink-ops/performance/page.tsx
+--- carelink_original_app/app/carelink-ops/performance/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/performance/page.tsx	2026-06-13 04:35:07.027817847 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Performance" subtitle="Operational KPIs, agent performance, reliability and SLA trends.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Performance command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Performance</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/quality/page.tsx carelink_patch_app/app/carelink-ops/quality/page.tsx
+--- carelink_original_app/app/carelink-ops/quality/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/quality/page.tsx	2026-06-13 04:35:07.025410179 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Quality" subtitle="Service quality control, field scoring, report quality and corrective actions.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Quality command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Quality</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/readiness/page.tsx carelink_patch_app/app/carelink-ops/readiness/page.tsx
+--- carelink_original_app/app/carelink-ops/readiness/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/readiness/page.tsx	2026-06-13 04:35:07.027557825 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Readiness" subtitle="Agent readiness, document blockers, eligibility and mission preparation.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Readiness command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Readiness</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/replacements/page.tsx carelink_patch_app/app/carelink-ops/replacements/page.tsx
+--- carelink_original_app/app/carelink-ops/replacements/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/replacements/page.tsx	2026-06-13 04:35:07.027703338 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Replacements" subtitle="Replacement requests, backup coverage and escalation handling.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Replacements command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Replacements</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/service-config/page.tsx carelink_patch_app/app/carelink-ops/service-config/page.tsx
+--- carelink_original_app/app/carelink-ops/service-config/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/service-config/page.tsx	2026-06-13 04:35:07.027177705 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Service Config" subtitle="Service rules, mission templates, SLA settings and operational configuration.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Service Config command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Service Config</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/app/carelink-ops/workforce/page.tsx carelink_patch_app/app/carelink-ops/workforce/page.tsx
+--- carelink_original_app/app/carelink-ops/workforce/page.tsx	1970-01-01 00:00:00.000000000 +0000
++++ carelink_patch_app/app/carelink-ops/workforce/page.tsx	2026-06-13 04:35:07.025797186 +0000
+@@ -0,0 +1,27 @@
++import { CareLinkOpsShell } from '@/components/carelink/ops/CareLinkOpsShell'
++import { OpsPanel } from '@/components/carelink/ops/OpsPrimitives'
++
++export default function Page() {
++  return (
++    <CareLinkOpsShell title="Workforce" subtitle="Agent workforce coverage, readiness, zones, availability and capacity.">
++      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
++        <OpsPanel title="Workforce command workspace">
++          <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-6">
++            <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">CareLink Ops</p>
++            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Workforce</h2>
++            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
++              This route is now connected to the full CareLink Ops sidebar structure. Live production panels can be attached here without changing the navigation or layout shell.
++            </p>
++          </div>
++        </OpsPanel>
++        <OpsPanel title="Operational readiness">
++          <div className="space-y-3 text-sm font-semibold text-slate-600">
++            <div className="rounded-2xl bg-slate-50 p-4">Sidebar route active and stable.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">No HR files or HR production hardening code touched.</div>
++            <div className="rounded-2xl bg-slate-50 p-4">Ready for dedicated live CRUD wiring when this page is expanded.</div>
++          </div>
++        </OpsPanel>
++      </div>
++    </CareLinkOpsShell>
++  )
++}
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/components/carelink/ops/CareLinkOpsProductionDashboard.tsx carelink_patch_app/components/carelink/ops/CareLinkOpsProductionDashboard.tsx
+--- carelink_original_app/components/carelink/ops/CareLinkOpsProductionDashboard.tsx	2026-06-10 21:44:12.000000000 +0000
++++ carelink_patch_app/components/carelink/ops/CareLinkOpsProductionDashboard.tsx	2026-06-13 04:34:35.993389695 +0000
+@@ -1,5 +1,6 @@
+ 'use client'
+ 
++import Link from 'next/link'
+ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+ import type { ReactNode } from 'react'
+ import type {
+@@ -52,7 +53,27 @@
+   { key: 'at_risk', label: 'At risk', count: 0, tone: 'red', items: [] },
+ ]
+ 
+-const navItems = ['Overview', 'Dispatch', 'Missions', 'Agents', 'Schedule', 'Incidents', 'Reports', 'Compliance', 'Settings']
++const navItems = [
++  { label: 'Control Room', href: '/carelink-ops' },
++  { label: 'Missions', href: '/carelink-ops/missions' },
++  { label: 'Agents', href: '/carelink-ops/agents' },
++  { label: 'Schedule', href: '/carelink-ops/schedule' },
++  { label: 'Calendar', href: '/carelink-ops/calendar' },
++  { label: 'Incidents', href: '/carelink-ops/incidents' },
++  { label: 'Reports', href: '/carelink-ops/reports' },
++  { label: 'Compliance', href: '/carelink-ops/compliance' },
++  { label: 'Quality', href: '/carelink-ops/quality' },
++  { label: 'Workforce', href: '/carelink-ops/workforce' },
++  { label: 'Payments', href: '/carelink-ops/payments' },
++  { label: 'Notifications', href: '/carelink-ops/notifications' },
++  { label: 'Messages', href: '/carelink-ops/messages' },
++  { label: 'Audit', href: '/carelink-ops/audit' },
++  { label: 'Service Config', href: '/carelink-ops/service-config' },
++  { label: 'Readiness', href: '/carelink-ops/readiness' },
++  { label: 'Replacements', href: '/carelink-ops/replacements' },
++  { label: 'Performance', href: '/carelink-ops/performance' },
++  { label: 'Settings', href: '/carelink-ops/settings' },
++] as const
+ 
+ const toneClasses: Record<string, string> = {
+   blue: 'border-blue-200 bg-blue-50 text-blue-700',
+@@ -100,14 +121,24 @@
+   // CARELINK_OPS_MAIN_SIDEBAR_NAV_FIX: make the left CareLink Ops sidebar real navigation on the overview page.
+   useEffect(() => {
+     const routes: Record<string, string> = {
+-      overview: '/carelink-ops',
+-      dispatch: '/carelink-ops/dispatch',
++      'control room': '/carelink-ops',
+       missions: '/carelink-ops/missions',
+       agents: '/carelink-ops/agents',
+       schedule: '/carelink-ops/schedule',
++      calendar: '/carelink-ops/calendar',
+       incidents: '/carelink-ops/incidents',
+       reports: '/carelink-ops/reports',
+       compliance: '/carelink-ops/compliance',
++      quality: '/carelink-ops/quality',
++      workforce: '/carelink-ops/workforce',
++      payments: '/carelink-ops/payments',
++      notifications: '/carelink-ops/notifications',
++      messages: '/carelink-ops/messages',
++      audit: '/carelink-ops/audit',
++      'service config': '/carelink-ops/service-config',
++      readiness: '/carelink-ops/readiness',
++      replacements: '/carelink-ops/replacements',
++      performance: '/carelink-ops/performance',
+       settings: '/carelink-ops/settings',
+     }
+ 
+@@ -209,14 +240,15 @@
+           </div>
+           <nav className="mt-8 space-y-1">
+             {navItems.map((item) => (
+-              <button
+-                key={item}
+-                onClick={() => runAction(`open_${item.toLowerCase()}`)}
+-                className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-sm font-bold transition ${item === 'Overview' ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100' : 'text-slate-700 hover:bg-slate-50'}`}
++              <Link
++                key={item.href}
++                href={item.href}
++                onClick={() => runAction(`open_${item.label.toLowerCase().replace(/\s+/g, '_')}`)}
++                className={`flex w-full items-center justify-between rounded-[1.55rem] px-5 py-4 text-[15px] font-black tracking-[-0.01em] transition ${item.href === '/carelink-ops' ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100' : 'text-slate-900 hover:bg-slate-50'}`}
+               >
+-                <span>{item}</span>
+-                {item === 'Incidents' && visiblePayload.incidents.length ? <span className="rounded-full bg-rose-500 px-2 py-0.5 text-xs text-white">{visiblePayload.incidents.length}</span> : null}
+-              </button>
++                <span>{item.label}</span>
++                {item.label === 'Incidents' && visiblePayload.incidents.length ? <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs text-rose-700">{visiblePayload.incidents.length}</span> : null}
++              </Link>
+             ))}
+           </nav>
+           <div className="absolute bottom-5 left-4 right-4 space-y-3">
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/components/carelink/ops/CareLinkOpsShell.tsx carelink_patch_app/components/carelink/ops/CareLinkOpsShell.tsx
+--- carelink_original_app/components/carelink/ops/CareLinkOpsShell.tsx	2026-06-09 20:37:42.000000000 +0000
++++ carelink_patch_app/components/carelink/ops/CareLinkOpsShell.tsx	2026-06-13 04:34:18.765286805 +0000
+@@ -5,7 +5,53 @@
+ import { CARELINK_OPS_NAV } from '@/lib/carelink/constants'
+ import { DesktopOnlyGate } from './DesktopOnlyGate'
+ 
++function isActiveRoute(pathname: string, href: string) {
++  if (href === '/carelink-ops') return pathname === href
++  return pathname === href || pathname.startsWith(`${href}/`)
++}
++
+ export function CareLinkOpsShell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+   const pathname = usePathname()
+-  return <DesktopOnlyGate><main className="min-h-screen bg-slate-50"><aside className="fixed inset-y-0 left-0 w-72 border-r border-slate-200 bg-white p-5"><div className="rounded-[2rem] bg-blue-600 p-5 text-white"><p className="text-xs font-black uppercase tracking-[0.3em] text-blue-100">AngelCare</p><h1 className="mt-2 text-2xl font-black">CareLink Ops</h1><p className="mt-2 text-xs font-semibold text-blue-100">Desktop field operations control.</p></div><nav className="mt-6 space-y-1">{CARELINK_OPS_NAV.map((item)=>{const active=pathname===item.href; return <Link key={item.href} href={item.href} className={`block rounded-2xl px-4 py-3 text-sm font-black ${active?'bg-blue-50 text-blue-700':'text-slate-600 hover:bg-slate-100'}`}>{item.label}</Link>})}</nav></aside><section className="pl-72"><header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 px-8 py-5 backdrop-blur"><p className="text-xs font-black uppercase tracking-[0.35em] text-blue-600">CareLink Field Mission OS</p><h1 className="mt-2 text-3xl font-black text-slate-950">{title}</h1><p className="mt-1 text-sm font-semibold text-slate-500">{subtitle}</p></header><div className="p-8">{children}</div></section></main></DesktopOnlyGate>
++
++  return (
++    <DesktopOnlyGate>
++      <main className="min-h-screen bg-slate-50">
++        <aside className="fixed inset-y-0 left-0 w-72 overflow-y-auto border-r border-slate-200 bg-white px-5 py-6">
++          <div className="rounded-[2rem] bg-blue-600 p-5 text-white shadow-lg shadow-blue-100">
++            <p className="text-xs font-black uppercase tracking-[0.3em] text-blue-100">AngelCare</p>
++            <h1 className="mt-2 text-2xl font-black">CareLink Ops</h1>
++            <p className="mt-2 text-xs font-semibold text-blue-100">Desktop field operations control.</p>
++          </div>
++
++          <nav className="mt-7 space-y-2 pb-6">
++            {CARELINK_OPS_NAV.map((item) => {
++              const active = isActiveRoute(pathname, item.href)
++              return (
++                <Link
++                  key={item.href}
++                  href={item.href}
++                  className={`flex items-center justify-between rounded-[1.55rem] px-5 py-4 text-[15px] font-black tracking-[-0.01em] transition ${
++                    active
++                      ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100'
++                      : 'text-slate-900 hover:bg-slate-50'
++                  }`}
++                >
++                  <span>{item.label}</span>
++                </Link>
++              )
++            })}
++          </nav>
++        </aside>
++
++        <section className="pl-72">
++          <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 px-8 py-5 backdrop-blur">
++            <p className="text-xs font-black uppercase tracking-[0.35em] text-blue-600">CareLink Field Mission OS</p>
++            <h1 className="mt-2 text-3xl font-black text-slate-950">{title}</h1>
++            <p className="mt-1 text-sm font-semibold text-slate-500">{subtitle}</p>
++          </header>
++          <div className="p-8">{children}</div>
++        </section>
++      </main>
++    </DesktopOnlyGate>
++  )
+ }
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/components/carelink/ops/enterprise/CareLinkOpsEnterpriseWorkspace.tsx carelink_patch_app/components/carelink/ops/enterprise/CareLinkOpsEnterpriseWorkspace.tsx
+--- carelink_original_app/components/carelink/ops/enterprise/CareLinkOpsEnterpriseWorkspace.tsx	2026-06-13 01:05:41.000000000 +0000
++++ carelink_patch_app/components/carelink/ops/enterprise/CareLinkOpsEnterpriseWorkspace.tsx	2026-06-13 04:34:42.304163456 +0000
+@@ -45,7 +45,7 @@
+   | 'performance'
+ 
+ const ROUTES: Array<{ key: ViewKey; label: string; href: string }> = [
+-  { key: 'control-room', label: 'Control Room', href: '/carelink-ops/control-room' },
++  { key: 'control-room', label: 'Control Room', href: '/carelink-ops' },
+   { key: 'missions', label: 'Missions', href: '/carelink-ops/missions' },
+   { key: 'agents', label: 'Agents', href: '/carelink-ops/agents' },
+   { key: 'schedule', label: 'Schedule', href: '/carelink-ops/schedule' },
+diff -ruN '--exclude=node_modules' '--exclude=.next' carelink_original_app/lib/carelink/constants.ts carelink_patch_app/lib/carelink/constants.ts
+--- carelink_original_app/lib/carelink/constants.ts	2026-06-09 20:37:42.000000000 +0000
++++ carelink_patch_app/lib/carelink/constants.ts	2026-06-13 04:34:18.588715939 +0000
+@@ -43,13 +43,23 @@
+ ]
+ 
+ export const CARELINK_OPS_NAV = [
+-  { href: '/carelink-ops', label: 'Vue générale' },
+-  { href: '/carelink-ops/dispatch', label: 'Dispatch' },
++  { href: '/carelink-ops', label: 'Control Room' },
+   { href: '/carelink-ops/missions', label: 'Missions' },
+   { href: '/carelink-ops/agents', label: 'Agents' },
+-  { href: '/carelink-ops/schedule', label: 'Planning' },
++  { href: '/carelink-ops/schedule', label: 'Schedule' },
++  { href: '/carelink-ops/calendar', label: 'Calendar' },
+   { href: '/carelink-ops/incidents', label: 'Incidents' },
+-  { href: '/carelink-ops/reports', label: 'Rapports' },
+-  { href: '/carelink-ops/compliance', label: 'Conformité' },
+-  { href: '/carelink-ops/settings', label: 'Réglages' },
+-]
++  { href: '/carelink-ops/reports', label: 'Reports' },
++  { href: '/carelink-ops/compliance', label: 'Compliance' },
++  { href: '/carelink-ops/quality', label: 'Quality' },
++  { href: '/carelink-ops/workforce', label: 'Workforce' },
++  { href: '/carelink-ops/payments', label: 'Payments' },
++  { href: '/carelink-ops/notifications', label: 'Notifications' },
++  { href: '/carelink-ops/messages', label: 'Messages' },
++  { href: '/carelink-ops/audit', label: 'Audit' },
++  { href: '/carelink-ops/service-config', label: 'Service Config' },
++  { href: '/carelink-ops/readiness', label: 'Readiness' },
++  { href: '/carelink-ops/replacements', label: 'Replacements' },
++  { href: '/carelink-ops/performance', label: 'Performance' },
++  { href: '/carelink-ops/settings', label: 'Settings' },
++] as const

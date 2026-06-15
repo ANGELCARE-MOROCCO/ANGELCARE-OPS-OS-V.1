@@ -124,6 +124,13 @@ export type MissionDossier = {
   transport: Record<string, unknown> | null
   allowances: Record<string, unknown> | null
   programLines: Record<string, unknown>[]
+  checklistItems?: Record<string, unknown>[]
+  report?: Record<string, unknown> | null
+  dispatchMessages?: Record<string, unknown>[]
+  notifications?: Record<string, unknown>[]
+  alerts?: Record<string, unknown>[]
+  paymentDisputes?: Record<string, unknown>[]
+  documents?: Record<string, unknown>[]
 }
 
 export type ServiceCharacteristic = {

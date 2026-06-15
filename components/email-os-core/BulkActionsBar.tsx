@@ -27,7 +27,7 @@ export default function BulkActionsBar({
   if (selectedIds.length === 0) return null
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-[70] flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-2xl">
+    <div className="fixed bottom-24 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-2xl">
       <span className="mr-2 text-sm font-black text-slate-700">{selectedIds.length} selected</span>
 
       <button onClick={() => run("assign")} className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold hover:bg-slate-50">

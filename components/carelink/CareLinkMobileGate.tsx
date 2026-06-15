@@ -33,16 +33,16 @@ export function CareLinkMobileGate({ children }: { children: React.ReactNode }) 
               AC
             </div>
             <p className="mt-8 text-xs font-black uppercase tracking-[0.45em] text-sky-600">AngelCare CareLink</p>
-            <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950">PORTAIL MOBILE UNIQUEMENT</h1>
+            <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950">PORTAIL RÉSERVÉ AU MOBILE</h1>
             <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-slate-600">
-              Ce portail est réservé aux caregivers, childcare specialists et agents terrain AngelCare. Il doit être utilisé depuis un téléphone ou une tablette pour sécuriser la présence, le statut mission, les checklists et les comptes rendus terrain.
+              Ce portail est réservé aux aidants, spécialistes enfance et agents terrain AngelCare. Il doit être utilisé depuis un téléphone ou une tablette pour sécuriser la présence, le statut mission, les checklists et les comptes rendus terrain.
             </p>
             <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-5 text-left text-sm text-slate-700">
               <p className="font-bold text-slate-950">Lien mobile direct :</p>
               <p className="mt-2 break-all font-mono text-sky-700">http://localhost:3000/carelink</p>
             </div>
             <p className="mt-5 text-xs leading-5 text-slate-500">
-              Pour prévisualiser sur desktop en développement, ajoutez NEXT_PUBLIC_CARELINK_DESKTOP_PREVIEW=true dans .env.local puis redémarrez npm run dev.
+              Pour prévisualiser sur desktop en développement, ajoutez `NEXT_PUBLIC_CARELINK_DESKTOP_PREVIEW=true` dans `.env.local`, puis redémarrez `npm run dev`.
             </p>
           </div>
         </section>

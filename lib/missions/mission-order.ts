@@ -16,7 +16,7 @@ async function replaceRows(table: string, missionId: number, rows: Record<string
   const { error: deleteError } = await supabase.from(table).delete().eq('mission_id', missionId)
   if (deleteError) throw new Error(deleteError.message)
   if (!rows.length) return []
-  const payload = rows.map((row, index) => ({ ...row, mission_id: missionId, sort_order: Number(row.sort_order ?? index) }))
+  const payload = rows.map((row, index) => ({ ...row, mission_id: missionId, sort_order: Number(row.sort_order ?? row.line_order ?? index) }))
   const { data, error } = await supabase.from(table).insert(payload).select('*')
   if (error) throw new Error(error.message)
   return data || []

@@ -1,5 +1,12 @@
-import { ComplianceControlCenter } from '@/components/carelink/ops/ComplianceControlCenter'
+import { CareLinkOpsEnterpriseRoutePage } from '@/components/carelink/ops/enterprise/CareLinkOpsEnterpriseRoutePage'
 
-export default function Page() {
-  return <ComplianceControlCenter />
+export const dynamic = 'force-dynamic'
+
+export default async function Page() {
+  return await CareLinkOpsEnterpriseRoutePage({
+    view: 'compliance',
+    title: 'Compliance Control Center',
+    subtitle: 'Documents, readiness blockers, training and service eligibility.',
+    apiPath: '/api/carelink/ops/compliance',
+  })
 }

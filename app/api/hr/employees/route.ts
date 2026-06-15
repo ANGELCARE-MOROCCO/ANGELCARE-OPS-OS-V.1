@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 
 const STAFF_TABLE_ATTEMPTS = ['hr_staff_profiles', 'hr_staff', 'staff_profiles', 'profiles']
 const USER_TABLE_ATTEMPTS = ['app_users', 'users', 'profiles']
 const RELATED_TABLES = [
   'hr_attendance_records', 'hr_attendance', 'attendance_records', 'attendance_events',
-  'hr_leave_requests', 'hr_payroll_inputs', 'hr_contracts', 'hr_documents', 'hr_training_records',
+  'hr_leave_requests', 'hr_payroll_inputs', 'hr_contracts', 'hr_documents', 'hr_training_records', 'hr_training_assignments',
   'hr_roster_assignments', 'hr_rosters', 'hr_performance_reviews', 'hr_onboarding_tasks',
 ]
 const AUDIT_TABLE_ATTEMPTS = ['hr_audit_logs', 'hr_activity_timeline', 'hr_activity_log', 'hr_audit_trail']
@@ -135,7 +136,7 @@ async function enrichEmployee(supabase: any, employee: any) {
     documents: ['hr_documents'],
     contracts: ['hr_contracts'],
     roster: ['hr_roster_assignments', 'hr_rosters'],
-    training: ['hr_training_records'],
+    training: ['hr_training_records', 'hr_training_assignments'],
     performance: ['hr_performance_reviews'],
     onboarding: ['hr_onboarding_tasks'],
   }
@@ -239,6 +240,11 @@ export async function POST(request: Request) {
     const result = await insertWithFallback(supabase, row)
     if (!result.data) return NextResponse.json({ ok: false, error: 'Could not insert employee into any known staff table.', details: result.errors }, { status: 500 })
     await logActivity(supabase, result.data, body.save_as_draft ? 'employee_draft_created' : 'employee_created', `${result.data?.full_name || result.data?.name || body.email || 'Employee'} was created from the Employees Command Center.`)
+    revalidatePath('/hr/employees')
+    revalidatePath('/hr/staff')
+    revalidatePath('/hr/onboarding')
+    revalidatePath('/hr/training')
+    revalidatePath('/hr')
     return NextResponse.json({ ok: true, employee: result.data, table: result.table, warnings: result.errors })
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err?.message || 'Unexpected employee creation error' }, { status: 500 })
@@ -256,6 +262,11 @@ export async function PATCH(request: Request) {
     const result = await updateWithFallback(supabase, id, email, row)
     if (!result.data) return NextResponse.json({ ok: false, error: 'Could not update employee in known staff tables.', details: result.errors }, { status: 500 })
     await logActivity(supabase, result.data, 'employee_updated', `${result.data?.full_name || result.data?.name || email || id} was updated from the live staff modal.`)
+    revalidatePath('/hr/employees')
+    revalidatePath('/hr/staff')
+    revalidatePath('/hr/onboarding')
+    revalidatePath('/hr/training')
+    revalidatePath('/hr')
     return NextResponse.json({ ok: true, employee: await enrichEmployee(supabase, result.data), table: result.table, warnings: result.errors })
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err?.message || 'Employee update failed' }, { status: 500 })
@@ -278,11 +289,21 @@ export async function DELETE(request: Request) {
       const result = await updateWithFallback(supabase, id, email, archiveRow)
       if (!result.data) return NextResponse.json({ ok: false, error: 'Could not safely archive employee in known staff tables.', details: result.errors }, { status: 500 })
       await logActivity(supabase, result.data, 'employee_archived', `Employee ${email || id} was safely archived from the Employees Command Center.`)
+      revalidatePath('/hr/employees')
+      revalidatePath('/hr/staff')
+      revalidatePath('/hr/onboarding')
+      revalidatePath('/hr/training')
+      revalidatePath('/hr')
       return NextResponse.json({ ok: true, mode: 'safe_archive', employee: result.data, table: result.table, warnings: result.errors })
     }
 
     const result = await deleteFromKnownTables(supabase, id, email)
     await logActivity(supabase, before, 'employee_hard_deleted', `Employee ${email || id} was hard-deleted after explicit confirmation.`)
+    revalidatePath('/hr/employees')
+    revalidatePath('/hr/staff')
+    revalidatePath('/hr/onboarding')
+    revalidatePath('/hr/training')
+    revalidatePath('/hr')
     return NextResponse.json({ ok: true, mode: 'hard_delete', deleted: result.deleted, warnings: result.errors })
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err?.message || 'Employee archive/delete failed' }, { status: 500 })

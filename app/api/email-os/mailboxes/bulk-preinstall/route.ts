@@ -91,6 +91,40 @@ function credentialId(email: string) {
   return `cred_${email.toLowerCase().replace("@", "_").replace(/\./g, "_")}`
 }
 
+function mailboxEnvKey(email: string) {
+  return String(email || "")
+    .toLowerCase()
+    .split("@")[0]
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .toUpperCase()
+}
+
+function firstEnv(names: string[]) {
+  for (const name of names) {
+    const value = process.env[name]
+    if (typeof value === "string" && value.trim()) return value.trim()
+  }
+  return ""
+}
+
+function passwordFromEnv(email: string) {
+  const key = mailboxEnvKey(email)
+  return firstEnv([
+    `EMAIL_OS_${key}_PASSWORD`,
+    `EMAIL_OS_${key}_SMTP_PASSWORD`,
+    `MAILBOX_${key}_PASSWORD`,
+    `MAILBOX_${key}_SMTP_PASSWORD`,
+    `${key}_PASSWORD`,
+    `${key}_SMTP_PASSWORD`,
+  ])
+}
+
+function normalizeEmail(email: string) {
+  return String(email || "").trim().toLowerCase()
+}
+
+
 export async function POST() {
   try {
     const db = createEmailOSCoreDb()
@@ -112,9 +146,9 @@ export async function POST() {
     })
 
     const mailboxes = accounts.map((account) => ({
-      id: mailboxId(account.email),
+      id: mailboxId(normalizeEmail(account.email)),
       name: account.name,
-      address: account.email,
+      address: normalizeEmail(account.email),
       provider: "smtp_imap",
       status: "active",
       owner: account.owner,
@@ -124,11 +158,11 @@ export async function POST() {
 
     const credentials = accounts.map((account) => ({
       id: credentialId(account.email),
-      mailbox_id: mailboxId(account.email),
+      mailbox_id: mailboxId(normalizeEmail(account.email)),
       provider_profile_id: "provider_menara_default",
-      email_address: account.email,
-      username: account.email,
-      password_ref: account.password,
+      email_address: normalizeEmail(account.email),
+      username: normalizeEmail(account.email),
+      password_ref: passwordFromEnv(account.email) || account.password,
       status: "active",
       last_tested_at: null,
       last_test_status: null,

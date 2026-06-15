@@ -32,7 +32,33 @@ export function canTransition(from: CareLinkStatus, to: CareLinkStatus) {
 }
 
 export function transitionLabel(status: CareLinkStatus) {
-  return status.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  const labels: Partial<Record<CareLinkStatus, string>> = {
+    draft: 'Brouillon',
+    ready_for_dispatch: 'Prête pour dispatch',
+    matching: 'Appariement',
+    assigned: 'Assignée',
+    agent_notified: 'Agent notifié',
+    agent_accepted: 'Acceptée',
+    agent_declined: 'Refusée',
+    dispatch_confirmed: 'Confirmée par dispatch',
+    pre_mission_check: 'Préparation',
+    en_route: 'En route',
+    arrived_near_location: 'Arrivée à proximité',
+    arrival_confirmed: 'Arrivée confirmée',
+    mission_started: 'Mission démarrée',
+    in_progress: 'En cours',
+    mid_mission_checkpoint: 'Point de contrôle',
+    completion_requested: 'Clôture demandée',
+    final_report_submitted: 'Rapport final soumis',
+    dispatch_validated: 'Validée par dispatch',
+    hours_validated: 'Heures validées',
+    incident_review: 'Revue d’incident',
+    closed: 'Clôturée',
+    finance_ready: 'Prête pour finance',
+    cancelled: 'Annulée',
+    no_show: 'Absence',
+  }
+  return labels[status] || status.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
 
 export function nextBestAgentAction(status: CareLinkStatus) {

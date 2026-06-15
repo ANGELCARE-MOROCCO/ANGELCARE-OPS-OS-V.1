@@ -6,6 +6,17 @@ import { createClient } from '@/lib/supabase/server'
 type ActionResult = { ok: boolean; data?: any; error?: string }
 const PATH = '/hr/onboarding'
 
+function revalidateOnboardingSurface() {
+  revalidatePath('/hr/onboarding')
+  revalidatePath('/hr')
+  revalidatePath('/hr/employees')
+  revalidatePath('/hr/staff')
+  revalidatePath('/hr/recruitment')
+  revalidatePath('/hr/recruitment/candidates')
+  revalidatePath('/hr/documents')
+  revalidatePath('/hr/training')
+}
+
 async function db() { return createClient() }
 
 async function insertAny(tables: string[], payload: Record<string, any>): Promise<ActionResult> {
@@ -14,7 +25,7 @@ async function insertAny(tables: string[], payload: Record<string, any>): Promis
   for (const table of tables) {
     try {
       const { data, error } = await supabase.from(table).insert(payload).select('*').single()
-      if (!error) { revalidatePath(PATH); return { ok: true, data } }
+      if (!error) { revalidateOnboardingSurface(); return { ok: true, data } }
       last = error.message
     } catch (e: any) { last = e?.message || 'Insert failed' }
   }
@@ -27,7 +38,7 @@ async function updateAny(tables: string[], id: string, payload: Record<string, a
   for (const table of tables) {
     try {
       const { data, error } = await supabase.from(table).update(payload).eq('id', id).select('*').maybeSingle()
-      if (!error) { revalidatePath(PATH); return { ok: true, data } }
+      if (!error) { revalidateOnboardingSurface(); return { ok: true, data } }
       last = error.message
     } catch (e: any) { last = e?.message || 'Update failed' }
   }
@@ -40,7 +51,7 @@ async function deleteAny(tables: string[], id: string): Promise<ActionResult> {
   for (const table of tables) {
     try {
       const { error } = await supabase.from(table).delete().eq('id', id)
-      if (!error) { revalidatePath(PATH); return { ok: true } }
+      if (!error) { revalidateOnboardingSurface(); return { ok: true } }
       last = error.message
     } catch (e: any) { last = e?.message || 'Delete failed' }
   }

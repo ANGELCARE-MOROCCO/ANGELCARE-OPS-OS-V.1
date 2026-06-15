@@ -1,11 +1,11 @@
 import type { WorkspaceActionRequest, WorkspaceActionResponse } from './ops-dispatch-workspace'
 
 const TABLES = {
-  missions: 'carelink_ops_missions',
-  agents: 'carelink_ops_agents',
+  missions: 'missions',
+  agents: 'caregivers',
   sectors: 'carelink_ops_city_sectors',
-  incidents: 'carelink_ops_incidents',
-  communications: 'carelink_ops_communications',
+  incidents: 'incidents',
+  communications: 'carelink_dispatch_messages',
   audit: 'carelink_ops_audit_events',
   scheduleBlocks: 'carelink_ops_schedule_blocks',
 } as const
@@ -68,6 +68,10 @@ function cleanPayload(payload: Record<string, unknown>, allowed: string[]) {
   const out: Record<string, unknown> = {}
   for (const key of allowed) {
     if (payload[key] === undefined) continue
+    if (key === 'assigned_agent_id') {
+      out.caregiver_id = payload[key] === '' ? null : payload[key]
+      continue
+    }
     if (['skills', 'required_skills', 'blockers'].includes(key)) out[key] = cleanArray(payload[key])
     else out[key] = payload[key] === '' ? null : payload[key]
   }
@@ -109,7 +113,55 @@ export async function runCareLinkDispatchWorkspaceAction(input: WorkspaceActionR
   const payload = input.payload || {}
   const id = input.entityId || input.missionId || input.agentId || ''
 
-  const missionFields = ['mission_code', 'status', 'service_type', 'client_name', 'beneficiary_name', 'city', 'zone', 'address', 'scheduled_start', 'scheduled_end', 'priority', 'readiness_score', 'sla_minutes_remaining', 'risk_level', 'assigned_agent_id', 'assigned_agent_name', 'required_skills', 'blockers', 'notes', 'latitude', 'longitude', 'metadata']
+  const missionFields = [
+    'mission_code',
+    'status',
+    'service_type',
+    'client_name',
+    'beneficiary_name',
+    'city',
+    'zone',
+    'address',
+    'scheduled_start',
+    'scheduled_end',
+    'priority',
+    'readiness_score',
+    'sla_minutes_remaining',
+    'risk_level',
+    'caregiver_id',
+    'assigned_agent_id',
+    'mission_kind',
+    'mission_group_id',
+    'parent_mission_id',
+    'occurrence_index',
+    'recurrence_type',
+    'recurrence_rule',
+    'recurrence_start_date',
+    'recurrence_end_date',
+    'lifecycle_stage',
+    'readiness_status',
+    'validation_status',
+    'report_status',
+    'service_family',
+    'mission_scope',
+    'internal_procedure_level',
+    'ops_priority',
+    'sla_status',
+    'confirmed_at',
+    'started_at',
+    'completed_at',
+    'incident_at',
+    'cancelled_at',
+    'dossier_reference',
+    'is_archived',
+    'ops_notes',
+    'required_skills',
+    'blockers',
+    'notes',
+    'latitude',
+    'longitude',
+    'metadata',
+  ]
   const agentFields = ['agent_code', 'full_name', 'status', 'city', 'zone', 'skills', 'readiness_score', 'reliability_score', 'active_missions_count', 'next_available_at', 'latitude', 'longitude', 'metadata']
   const sectorFields = ['city_name', 'sector_name', 'region', 'lat', 'lng', 'polygon_geojson', 'load_level', 'active_missions_count', 'open_agents_count', 'metadata']
   const incidentFields = ['mission_id', 'mission_code', 'incident_type', 'severity', 'status', 'city', 'zone', 'summary', 'owner_name', 'sla_due_at', 'metadata']
@@ -119,8 +171,8 @@ export async function runCareLinkDispatchWorkspaceAction(input: WorkspaceActionR
   if (input.action === 'create_mission') return insert(TABLES.missions, 'mission', input.action, { status: 'new_request', ...payload }, missionFields)
   if (input.action === 'update_mission' && id) return update(TABLES.missions, 'mission', input.action, id, payload, missionFields)
   if (input.action === 'delete_mission' && id) return remove(TABLES.missions, 'mission', input.action, id)
-  if (input.action === 'assign_mission' && input.missionId && input.agentId) return update(TABLES.missions, 'mission', input.action, input.missionId, { assigned_agent_id: input.agentId, status: 'assigned', ...payload }, missionFields)
-  if (input.action === 'reassign_mission' && input.missionId && input.agentId) return update(TABLES.missions, 'mission', input.action, input.missionId, { assigned_agent_id: input.agentId, status: 'assigned', ...payload }, missionFields)
+  if (input.action === 'assign_mission' && input.missionId && input.agentId) return update(TABLES.missions, 'mission', input.action, input.missionId, { caregiver_id: input.agentId, status: 'assigned', ...payload }, missionFields)
+  if (input.action === 'reassign_mission' && input.missionId && input.agentId) return update(TABLES.missions, 'mission', input.action, input.missionId, { caregiver_id: input.agentId, status: 'assigned', ...payload }, missionFields)
   if (input.action === 'set_status' && input.missionId) return update(TABLES.missions, 'mission', input.action, input.missionId, { status: payload.status || 'ready_for_dispatch' }, missionFields)
   if (input.action === 'escalate_mission' && input.missionId) return update(TABLES.missions, 'mission', input.action, input.missionId, { status: 'escalation', risk_level: 'high', ...payload }, missionFields)
 

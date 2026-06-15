@@ -1,4 +1,13 @@
-import { NextResponse } from 'next/server'
-import { getCareLinkOpsDashboard } from '@/lib/carelink/repository'
+import { loadCareLinkOpsSnapshot } from '@/lib/carelink/ops-enterprise'
+import { opsError, opsJson } from '../_helpers'
+
 export const dynamic = 'force-dynamic'
-export async function GET(){ const data = await getCareLinkOpsDashboard(); return NextResponse.json({ ok:true, section:'schedule', data }) }
+export const revalidate = 0
+
+export async function GET() {
+  try {
+    return opsJson(await loadCareLinkOpsSnapshot())
+  } catch (error) {
+    return opsError(error, 'Impossible de charger le planning Ops')
+  }
+}

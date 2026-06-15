@@ -60,8 +60,6 @@ export default async function Page() {
   }
 
   return <>
-    <div className="fixed inset-x-5 top-[124px] z-[80]"><HRModuleCommandBridge context="Onboarding Management" compact />
-      <HRRealtimeSyncPanel domain="onboarding" title="Onboarding realtime sync" compact /></div>
-    <OnboardingCommandCenter initialData={seed} />
+<OnboardingCommandCenter initialData={seed} />
   </>
 }

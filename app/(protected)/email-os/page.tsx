@@ -1,10 +1,10 @@
 import EmailOSErrorBoundary from "@/components/email-os-core/EmailOSErrorBoundary"
-import EmailOSWorkspacePro from "@/components/email-os-core/EmailOSWorkspacePro"
+import EmailOSEnterpriseProductionWorkspace from "@/components/email-os-core/EmailOSEnterpriseProductionWorkspace"
 
 export default function Page() {
   return (
     <EmailOSErrorBoundary>
-      <EmailOSWorkspacePro />
+      <EmailOSEnterpriseProductionWorkspace />
     </EmailOSErrorBoundary>
   )
 }

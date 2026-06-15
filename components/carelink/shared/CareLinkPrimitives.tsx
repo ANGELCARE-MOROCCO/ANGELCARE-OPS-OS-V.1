@@ -16,7 +16,7 @@ export function StatusPill({ children, tone = 'blue' }: { children: React.ReactN
 
 export function ReadinessBadge({ status, score }: { status: ReadinessStatus; score: number }) {
   const tone = status === 'ready' ? 'green' : status === 'warning' ? 'amber' : 'red'
-  return <StatusPill tone={tone}>{score}% readiness</StatusPill>
+  return <StatusPill tone={tone}>{score}% de préparation</StatusPill>
 }
 
 export function RiskBadge({ risk }: { risk: RiskLevel }) {
@@ -46,7 +46,7 @@ export function MissionCard({ mission, href }: { mission: CareLinkMission; href?
 }
 
 export function LifecycleTimeline({ mission }: { mission: CareLinkMission }) {
-  return <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm"><h3 className="text-base font-black text-slate-950">Cycle de vie mission</h3><div className="mt-5 space-y-4">{mission.lifecycle.map((event, index) => <div key={event.id} className="flex gap-3"><div className="flex flex-col items-center"><div className="h-3 w-3 rounded-full bg-blue-600" />{index < mission.lifecycle.length - 1 && <div className="h-10 w-px bg-slate-200" />}</div><div><p className="text-sm font-black text-slate-900">{event.label}</p><p className="text-xs font-semibold text-slate-500">{event.actor} · {new Date(event.timestamp).toLocaleString('fr-FR')}</p>{event.note && <p className="mt-1 text-xs text-slate-500">{event.note}</p>}</div></div>)}</div></div>
+  return <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm"><h3 className="text-base font-black text-slate-950">Cycle de vie de la mission</h3><div className="mt-5 space-y-4">{mission.lifecycle.map((event, index) => <div key={event.id} className="flex gap-3"><div className="flex flex-col items-center"><div className="h-3 w-3 rounded-full bg-blue-600" />{index < mission.lifecycle.length - 1 && <div className="h-10 w-px bg-slate-200" />}</div><div><p className="text-sm font-black text-slate-900">{event.label}</p><p className="text-xs font-semibold text-slate-500">{event.actor} · {new Date(event.timestamp).toLocaleString('fr-FR')}</p>{event.note && <p className="mt-1 text-xs text-slate-500">{event.note}</p>}</div></div>)}</div></div>
 }
 
 export function EmptyState({ title, body }: { title: string; body: string }) {

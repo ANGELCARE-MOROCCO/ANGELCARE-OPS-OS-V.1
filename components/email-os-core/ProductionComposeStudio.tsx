@@ -331,7 +331,7 @@ export default function ProductionComposeStudio() {
   return (
     <section className="min-h-full bg-slate-50">
       {successOpen ? (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/40 p-4">
+        <div className="fixed left-0 right-0 bottom-0 top-[86px] z-[80] flex items-center justify-center bg-slate-950/40 p-4">
           <div className="w-full max-w-xl rounded-[32px] border border-emerald-200 bg-white p-6 shadow-2xl">
             <div className="flex items-start gap-4">
               <div className="rounded-3xl bg-emerald-50 p-4 text-emerald-700">

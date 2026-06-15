@@ -17,6 +17,7 @@ function option(row: AnyRecord, labelKeys: string[], metaKeys: string[] = []) {
     zone: row.zone || null,
     phone: row.phone || row.mobile || null,
     status: row.current_status || row.status || null,
+    isArchived: Boolean(row.is_archived),
     skills: Array.isArray(row.skill_tags) ? row.skill_tags : [],
   }
 }
@@ -43,8 +44,8 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     data: {
-      families: families.filter((item: AnyRecord) => item.status !== 'archived'),
-      caregivers: caregivers.filter((item: AnyRecord) => item.status !== 'archived'),
+      families: families.filter((item: AnyRecord) => item.id != null && !item.isArchived && item.status !== 'archived'),
+      caregivers: caregivers.filter((item: AnyRecord) => item.id != null && !item.isArchived && item.status !== 'archived'),
       contracts,
       submissionTemplates,
     },

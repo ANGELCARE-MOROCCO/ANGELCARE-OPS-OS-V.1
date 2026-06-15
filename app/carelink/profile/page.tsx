@@ -1,5 +1,9 @@
-import { CareLinkProfile } from '@/components/carelink/mobile/CareLinkProfile'
+import { CareLinkFieldAgentPremiumApp } from '@/components/carelink/mobile/CareLinkFieldAgentPremiumApp'
+import { loadCarelinkMobileWorkspace } from '@/lib/carelink/mobile-adapter'
 
-export default function Page() {
-  return <CareLinkProfile />
+export const dynamic = 'force-dynamic'
+
+export default async function CareLinkProfilePage() {
+  const workspace = await loadCarelinkMobileWorkspace()
+  return <CareLinkFieldAgentPremiumApp records={workspace.records} workspace={workspace} view="profile" />
 }
