@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
@@ -373,7 +374,8 @@ export default function ProspectsDirectoryCommandCenter() {
 
   useEffect(() => {
     void refresh()
-    const interval = window.setInterval(() => void refresh(), 6000)
+    if (!shouldStartAutoRefresh()) return
+    const interval = window.setInterval(() => void refresh(), safeRefreshInterval(6000))
     const onStorage = (event: StorageEvent) => {
       if (!event.key || event.key.includes("revenue") || event.key.includes("prospects")) void refresh()
     }

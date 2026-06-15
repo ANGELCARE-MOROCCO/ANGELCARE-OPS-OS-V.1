@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from "next/link"
 import { useEffect, useMemo, useState, type ReactNode } from "react"
@@ -176,7 +177,8 @@ export default function RevenuePartnershipsEnterpriseLivePage() {
     }
   }
 
-  useEffect(() => { load(); const id = setInterval(load, 15000); return () => clearInterval(id) }, [])
+  if (!shouldStartAutoRefresh()) return
+  useEffect(() => { load(); const id = setInterval(load, safeRefreshInterval(15000)); return () => clearInterval(id) }, [])
 
   const partners = data.partners || []
   const filtered = useMemo(() => partners.filter((p) => {

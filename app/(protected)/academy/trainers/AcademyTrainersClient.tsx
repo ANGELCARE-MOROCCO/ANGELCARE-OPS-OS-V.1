@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 
@@ -327,7 +328,8 @@ export default function AcademyTrainersClient() {
   useEffect(() => {
     loadData()
 
-    const interval = window.setInterval(loadData, 15000)
+    if (!shouldStartAutoRefresh()) return
+    const interval = window.setInterval(loadData, safeRefreshInterval(15000))
 
     function handleFocus() {
       loadData()

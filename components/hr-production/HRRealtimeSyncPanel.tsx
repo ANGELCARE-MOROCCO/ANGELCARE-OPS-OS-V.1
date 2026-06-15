@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Activity, AlertTriangle, CheckCircle2, ClipboardList, Download, RefreshCw, ShieldCheck, Wifi, X } from 'lucide-react'
@@ -87,7 +88,8 @@ export default function HRRealtimeSyncPanel({ domain, title, compact = true }: P
   useEffect(() => { load(false) }, [endpoint])
   useEffect(() => {
     if (!auto) return
-    const id = window.setInterval(() => load(false), 15000)
+    if (!shouldStartAutoRefresh()) return
+    const id = window.setInterval(() => load(false), safeRefreshInterval(15000))
     return () => window.clearInterval(id)
   }, [auto, endpoint])
 

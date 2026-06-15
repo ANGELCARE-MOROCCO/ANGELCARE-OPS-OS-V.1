@@ -1,4 +1,19 @@
 'use client'
+import {
+  BadgeCheck,
+  CheckCircle2,
+  ChevronRight,
+  CircleAlert,
+  ClipboardList,
+  FileText,
+  Filter,
+  MapPinned,
+  Route,
+  Search,
+  ShieldAlert,
+  Sparkles,
+  Users,
+} from 'lucide-react'
 
 
 import Link from 'next/link'
@@ -318,14 +333,820 @@ function __dispatchBuildLiveIncidents(rows: DispatchLiveRecord[]) {
     }))
 }
 
-function __dispatchBuildLiveQueue(rows: DispatchLiveRecord[]) {
-  return rows.map((row) => ({
-    ...row,
-    mission: row.code || row.missionCode || row.mission_code,
-    priority: row.priority || 'standard',
-    ready: row.readinessScore || row.readiness_score || 0,
-  }))
+
+function __dispatchBuildLiveQueue(rows: any[] = []) {
+  const visible = Array.isArray(rows) ? rows : []
+
+  const isVisible = (mission: any) => {
+    const status = String(
+      mission?.status ||
+        mission?.lifecycle_stage ||
+        mission?.lifecycleStage ||
+        mission?.dispatch_status ||
+        mission?.dispatchStatus ||
+        mission?.mission_status ||
+        mission?.missionStatus ||
+        mission?.state ||
+        '',
+    ).toLowerCase()
+
+    const deletedAt =
+      mission?.deleted_at ||
+      mission?.deletedAt ||
+      mission?.archived_at ||
+      mission?.archivedAt
+
+    const hidden =
+      mission?.is_archived === true ||
+      mission?.isArchived === true ||
+      mission?.archived === true ||
+      mission?.deleted === true ||
+      mission?.is_deleted === true ||
+      mission?.isDeleted === true ||
+      Boolean(deletedAt) ||
+      status.includes('deleted') ||
+      status.includes('archived') ||
+      status.includes('cancelled') ||
+      status.includes('canceled') ||
+      status.includes('removed') ||
+      status.includes('trash') ||
+      status.includes('closed') ||
+      status.includes('completed')
+
+    return !hidden
+  }
+
+  const missionCode = (mission: any, index: number) =>
+    String(
+      mission?.code ||
+        mission?.mission_code ||
+        mission?.missionCode ||
+        mission?.mission_reference ||
+        mission?.dossier_reference ||
+        mission?.reference ||
+        `MISSION-${index + 1}`,
+    )
+
+  const laneOf = (mission: any) => {
+    const raw = String(
+      mission?.laneKey ||
+        mission?.dispatchLane ||
+        mission?.dispatch_lane ||
+        mission?.workflow_lane ||
+        mission?.workflowLane ||
+        mission?.status ||
+        mission?.mission_status ||
+        mission?.missionStatus ||
+        'new_requests',
+    ).toLowerCase()
+
+    if (raw.includes('validation')) return 'validation'
+    if (raw.includes('report')) return 'report_pending'
+    if (raw.includes('risk') || raw.includes('incident') || raw.includes('escalat')) return 'at_risk'
+    if (raw.includes('progress') || raw.includes('onsite') || raw.includes('on_site')) return 'in_progress'
+    if (raw.includes('route') || raw.includes('en_route')) return 'en_route'
+    if (raw.includes('accept') || raw.includes('confirm')) return 'accepted'
+    if (raw.includes('assign')) return 'assigned'
+    return 'new_requests'
+  }
+
+  return visible
+    .filter(isVisible)
+    .map((mission: any, index: number) => ({
+      id: String(mission?.id || mission?.mission_id || mission?.missionId || missionCode(mission, index)),
+      missionId: String(mission?.id || mission?.mission_id || mission?.missionId || missionCode(mission, index)),
+      mission_id: mission?.mission_id || mission?.id,
+      code: missionCode(mission, index),
+      missionCode: missionCode(mission, index),
+      mission_code: missionCode(mission, index),
+      title: mission?.title || mission?.service_type || mission?.serviceType || 'Mission',
+      serviceType: mission?.serviceType || mission?.service_type || mission?.title || 'Mission',
+      service_type: mission?.service_type || mission?.serviceType || mission?.title || 'Mission',
+      clientName: mission?.clientName || mission?.client_name || mission?.familyName || mission?.family_name || '',
+      client_name: mission?.client_name || mission?.clientName || mission?.family_name || mission?.familyName || '',
+      familyName: mission?.familyName || mission?.family_name || mission?.clientName || mission?.client_name || '',
+      family_name: mission?.family_name || mission?.familyName || mission?.client_name || mission?.clientName || '',
+      caregiverName: mission?.caregiverName || mission?.caregiver_name || mission?.agentName || mission?.agent_name || '',
+      caregiver_name: mission?.caregiver_name || mission?.caregiverName || mission?.agent_name || mission?.agentName || '',
+      agentName: mission?.agentName || mission?.agent_name || mission?.caregiverName || mission?.caregiver_name || '',
+      agent_name: mission?.agent_name || mission?.agentName || mission?.caregiver_name || mission?.caregiverName || '',
+      city: mission?.city || mission?.mission_city || mission?.client_city || '',
+      zone: mission?.zone || mission?.sector || mission?.area || '',
+      priority: mission?.priority || mission?.risk_level || mission?.riskLevel || 'normal',
+      status: mission?.status || mission?.mission_status || mission?.missionStatus || 'new_requests',
+      laneKey: laneOf(mission),
+      dispatchLane: laneOf(mission),
+      workflow_lane: laneOf(mission),
+      scheduledStart: mission?.scheduledStart || mission?.scheduled_start || mission?.missionDate || mission?.mission_date || '',
+      scheduled_start: mission?.scheduled_start || mission?.scheduledStart || mission?.mission_date || mission?.missionDate || '',
+      scheduledEnd: mission?.scheduledEnd || mission?.scheduled_end || '',
+      scheduled_end: mission?.scheduled_end || mission?.scheduledEnd || '',
+      readiness: mission?.readiness || mission?.readiness_score || mission?.readinessScore || 0,
+      blockers: Array.isArray(mission?.blockers) ? mission.blockers : [],
+      raw: mission,
+    }))
 }
+
+function SlaKpi({ label, value, helper, tone }: { label: string; value: string | number; helper: string; tone: string }) {
+  const tones: Record<string, string> = {
+    blue: 'border-blue-200 from-blue-50 text-blue-700',
+    rose: 'border-rose-200 from-rose-50 text-rose-700',
+    orange: 'border-orange-200 from-orange-50 text-orange-700',
+    violet: 'border-violet-200 from-violet-50 text-violet-700',
+    cyan: 'border-cyan-200 from-cyan-50 text-cyan-700',
+    amber: 'border-amber-200 from-amber-50 text-amber-700',
+    emerald: 'border-emerald-200 from-emerald-50 text-emerald-700',
+  }
+
+  return (
+    <div className={`rounded-2xl border bg-gradient-to-br to-white p-4 ${tones[tone] || tones.blue}`}>
+      <div className="text-[11px] font-black uppercase tracking-[0.24em]">{label}</div>
+      <div className="mt-2 text-2xl font-black text-slate-950">{value}</div>
+      <div className="mt-1 text-xs font-semibold text-slate-500">{helper}</div>
+    </div>
+  )
+}
+
+function SlaInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-slate-50 p-3">
+      <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{label}</div>
+      <div className="mt-1 truncate text-sm font-black text-slate-800">{value}</div>
+    </div>
+  )
+}
+
+function SlaActionButton({ children, onClick, tone }: { children: any; onClick: () => void; tone: string }) {
+  const tones: Record<string, string> = {
+    rose: 'border-rose-200 bg-rose-50 text-rose-700',
+    blue: 'border-blue-200 bg-blue-50 text-blue-700',
+    amber: 'border-amber-200 bg-amber-50 text-amber-700',
+    emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    cyan: 'border-cyan-200 bg-cyan-50 text-cyan-700',
+  }
+
+  return (
+    <button onClick={onClick} className={`rounded-2xl border px-3 py-2 text-xs font-black transition hover:-translate-y-0.5 hover:shadow-sm ${tones[tone] || tones.blue}`}>
+      {children}
+    </button>
+  )
+}
+
+
+function SlaEscalations(props: any = {}) {
+const payload = props.payload || {}
+  const log = typeof props.log === 'function' ? props.log : (_entry: string) => {}
+
+  const [query, setQuery] = useState('')
+  const [severityFilter, setSeverityFilter] = useState('all')
+  const [cityFilter, setCityFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [command, setCommand] = useState<any | null>(null)
+  const [commandNote, setCommandNote] = useState('')
+  const [commandOwner, setCommandOwner] = useState('operations')
+  const [commandUrgency, setCommandUrgency] = useState('normal')
+  const [actionBusy, setActionBusy] = useState(false)
+  const [actionEvents, setActionEvents] = useState<any[]>([])
+
+  const read = useCallback((row: any, keys: string[], fallback: any = '') => {
+    for (const key of keys) {
+      const value = row?.[key]
+      if (value !== undefined && value !== null && value !== '') return value
+    }
+    return fallback
+  }, [])
+
+  const slug = useCallback((value: any) => String(value || '').trim().toLowerCase(), [])
+
+  const isVisibleMission = useCallback((mission: any) => {
+    const status = slug(
+      read(
+        mission,
+        [
+          'status',
+          'lifecycle_stage',
+          'lifecycleStage',
+          'dispatch_status',
+          'dispatchStatus',
+          'dossier_status',
+          'dossierStatus',
+          'mission_status',
+          'missionStatus',
+          'state',
+        ],
+        '',
+      ),
+    )
+
+    const deletedAt = mission?.deleted_at || mission?.deletedAt || mission?.archived_at || mission?.archivedAt
+
+    const hidden =
+      mission?.is_archived === true ||
+      mission?.isArchived === true ||
+      mission?.archived === true ||
+      mission?.deleted === true ||
+      mission?.is_deleted === true ||
+      mission?.isDeleted === true ||
+      Boolean(deletedAt) ||
+      status.includes('deleted') ||
+      status.includes('archived') ||
+      status.includes('cancelled') ||
+      status.includes('canceled') ||
+      status.includes('removed') ||
+      status.includes('trash') ||
+      status.includes('closed') ||
+      status.includes('completed')
+
+    return !hidden
+  }, [read, slug])
+
+  const collectRows = useCallback((items: any, target: any[]) => {
+    if (Array.isArray(items)) target.push(...items)
+  }, [])
+
+  const liveMissions = useMemo(() => {
+    const rows: any[] = []
+
+    collectRows(props.missions, rows)
+    collectRows(props.records, rows)
+    collectRows(payload.missions, rows)
+    collectRows(payload.records, rows)
+    collectRows(payload.dossiers, rows)
+    collectRows(payload.items, rows)
+    collectRows(payload.queue, rows)
+
+    for (const lanes of [props.lanes, payload.lanes, payload.dispatchLanes]) {
+      if (!Array.isArray(lanes)) continue
+      for (const lane of lanes) {
+        collectRows(lane?.missions, rows)
+        collectRows(lane?.items, rows)
+        collectRows(lane?.records, rows)
+      }
+    }
+
+    const seen = new Set<string>()
+
+    return rows.filter((row: any, index: number) => {
+      if (!row || !isVisibleMission(row)) return false
+      const key = String(
+        row?.id ||
+          row?.mission_id ||
+          row?.missionId ||
+          row?.code ||
+          row?.mission_code ||
+          row?.missionCode ||
+          row?.mission_reference ||
+          row?.dossier_reference ||
+          index,
+      )
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [payload, props.missions, props.records, props.lanes, collectRows, isVisibleMission])
+
+  const liveIncidents = useMemo(() => {
+    const rows: any[] = []
+
+    collectRows(props.incidents, rows)
+    collectRows(props.alerts, rows)
+    collectRows(props.escalations, rows)
+    collectRows(payload.incidents, rows)
+    collectRows(payload.alerts, rows)
+    collectRows(payload.escalations, rows)
+    collectRows(payload.risks, rows)
+    collectRows(payload.events, rows)
+
+    return rows.filter(Boolean)
+  }, [payload, props.incidents, props.alerts, props.escalations, collectRows])
+
+  const signals = useMemo(() => {
+    const missionSignals = liveMissions.map((mission: any, index: number) => {
+      const code = String(
+        read(
+          mission,
+          ['code', 'mission_code', 'missionCode', 'mission_reference', 'dossier_reference', 'reference'],
+          `MISSION-${index + 1}`,
+        ),
+      )
+
+      const status = slug(read(mission, ['status', 'lifecycle_stage', 'dispatch_status', 'mission_status', 'state'], 'open'))
+      const city = String(read(mission, ['city', 'mission_city', 'client_city'], 'Unknown city'))
+      const zone = String(read(mission, ['zone', 'sector', 'area'], ''))
+      const service = String(read(mission, ['service_type', 'serviceType', 'title', 'mission_title'], 'Mission'))
+      const client = String(read(mission, ['client_name', 'clientName', 'family_name', 'familyName'], 'Client not specified'))
+      const caregiver = String(read(mission, ['caregiver_name', 'caregiverName', 'agent_name', 'agentName'], 'Unassigned'))
+
+      const riskRaw = slug(read(mission, ['risk_level', 'riskLevel', 'priority'], 'normal'))
+      const hasAssignee = caregiver !== 'Unassigned'
+      const hasReport = Boolean(read(mission, ['report_id', 'reportId', 'report_status', 'reportStatus'], ''))
+      const hasRoute = Boolean(read(mission, ['route_id', 'routeReady', 'route_ready', 'has_route'], false))
+      const confirmed = Boolean(read(mission, ['confirmed', 'caregiver_confirmed', 'agent_confirmed'], false))
+
+      const blockers: string[] = []
+      if (!hasAssignee) blockers.push('Caregiver not assigned')
+      if (hasAssignee && !confirmed && (status.includes('assign') || status.includes('accept'))) blockers.push('Caregiver confirmation missing')
+      if (!hasRoute && (status.includes('route') || status.includes('accept'))) blockers.push('Route readiness missing')
+      if (status.includes('report') && !hasReport) blockers.push('Report pending')
+      if (riskRaw.includes('high') || riskRaw.includes('urgent') || riskRaw.includes('critical')) blockers.push('High priority risk')
+
+      let severity: 'critical' | 'high' | 'medium' | 'low' = 'low'
+      if (riskRaw.includes('critical') || riskRaw.includes('urgent')) severity = 'critical'
+      else if (riskRaw.includes('high') || status.includes('risk') || blockers.length >= 3) severity = 'high'
+      else if (blockers.length || status.includes('report') || status.includes('validation')) severity = 'medium'
+
+      const type =
+        status.includes('report') || status.includes('validation')
+          ? 'validation'
+          : !hasAssignee
+            ? 'assignment'
+            : !hasRoute
+              ? 'route'
+              : severity === 'critical' || severity === 'high'
+                ? 'risk'
+                : 'sla'
+
+      const nextAction =
+        severity === 'critical'
+          ? 'Open emergency escalation'
+          : type === 'assignment'
+            ? 'Assign or reassign caregiver'
+            : type === 'route'
+              ? 'Review route readiness'
+              : type === 'validation'
+                ? 'Validate report handoff'
+                : 'Monitor SLA'
+
+      return {
+        id: String(read(mission, ['id', 'mission_id', 'missionId'], code)),
+        source: 'mission',
+        code,
+        title: service,
+        client,
+        caregiver,
+        city,
+        zone,
+        type,
+        severity,
+        status: status || 'open',
+        blockers,
+        nextAction,
+        raw: mission,
+      }
+    })
+
+    const incidentSignals = liveIncidents.map((incident: any, index: number) => {
+      const code = String(
+        read(
+          incident,
+          ['code', 'incident_code', 'incidentCode', 'reference', 'mission_code', 'missionCode'],
+          `INC-${index + 1}`,
+        ),
+      )
+
+      const city = String(read(incident, ['city', 'mission_city', 'client_city'], 'Unknown city'))
+      const severityRaw = slug(read(incident, ['severity', 'risk_level', 'riskLevel', 'priority'], 'medium'))
+      const status = slug(read(incident, ['status', 'state', 'incident_status'], 'open'))
+
+      const severity: 'critical' | 'high' | 'medium' | 'low' =
+        severityRaw.includes('critical') || severityRaw.includes('urgent')
+          ? 'critical'
+          : severityRaw.includes('high')
+            ? 'high'
+            : severityRaw.includes('low')
+              ? 'low'
+              : 'medium'
+
+      return {
+        id: String(read(incident, ['id', 'incident_id', 'incidentId'], code)),
+        source: 'incident',
+        code,
+        title: String(read(incident, ['title', 'subject', 'event_type', 'type'], 'Incident alert')),
+        client: String(read(incident, ['client_name', 'family_name', 'mission_client'], 'Client not specified')),
+        caregiver: String(read(incident, ['caregiver_name', 'agent_name', 'assignee_name'], 'Unassigned')),
+        city,
+        zone: String(read(incident, ['zone', 'sector', 'area'], '')),
+        type: 'incident',
+        severity,
+        status: status || 'open',
+        blockers: [String(read(incident, ['description', 'message', 'content'], 'Incident requires dispatcher review'))],
+        nextAction: severity === 'critical' ? 'Escalate immediately' : 'Review incident',
+        raw: incident,
+      }
+    })
+
+    return [...missionSignals, ...incidentSignals]
+  }, [liveMissions, liveIncidents, read, slug])
+
+  const cityOptions = useMemo(() => {
+    return ['all', ...Array.from(new Set(signals.map((item: any) => item.city).filter(Boolean))).sort()]
+  }, [signals])
+
+  const filteredSignals = useMemo(() => {
+    const q = query.trim().toLowerCase()
+
+    return signals.filter((item: any) => {
+      const haystack = [
+        item.code,
+        item.title,
+        item.client,
+        item.caregiver,
+        item.city,
+        item.zone,
+        item.type,
+        item.severity,
+        item.status,
+        item.nextAction,
+        ...item.blockers,
+      ].join(' ').toLowerCase()
+
+      if (q && !haystack.includes(q)) return false
+      if (severityFilter !== 'all' && item.severity !== severityFilter) return false
+      if (cityFilter !== 'all' && item.city !== cityFilter) return false
+      if (typeFilter !== 'all' && item.type !== typeFilter) return false
+      if (statusFilter !== 'all' && !String(item.status).includes(statusFilter)) return false
+
+      return true
+    })
+  }, [signals, query, severityFilter, cityFilter, typeFilter, statusFilter])
+
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds])
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
+  }
+
+  const kpis = useMemo(() => {
+    return {
+      total: filteredSignals.length,
+      critical: filteredSignals.filter((item: any) => item.severity === 'critical').length,
+      high: filteredSignals.filter((item: any) => item.severity === 'high').length,
+      incidents: filteredSignals.filter((item: any) => item.source === 'incident' || item.type === 'incident').length,
+      assignment: filteredSignals.filter((item: any) => item.type === 'assignment').length,
+      validation: filteredSignals.filter((item: any) => item.type === 'validation').length,
+    }
+  }, [filteredSignals])
+
+  const severityTone = (severity: string) => {
+    if (severity === 'critical') return 'border-rose-300 bg-rose-50 text-rose-800'
+    if (severity === 'high') return 'border-orange-300 bg-orange-50 text-orange-800'
+    if (severity === 'medium') return 'border-amber-300 bg-amber-50 text-amber-800'
+    return 'border-emerald-200 bg-emerald-50 text-emerald-700'
+  }
+
+  const severityBar = (severity: string) => {
+    if (severity === 'critical') return 'bg-rose-600'
+    if (severity === 'high') return 'bg-orange-500'
+    if (severity === 'medium') return 'bg-amber-500'
+    return 'bg-emerald-500'
+  }
+
+  const typeLabel = (type: string) => {
+    if (type === 'assignment') return 'Assignment'
+    if (type === 'route') return 'Route'
+    if (type === 'validation') return 'Validation'
+    if (type === 'incident') return 'Incident'
+    if (type === 'risk') return 'Risk'
+    return 'SLA'
+  }
+
+  const openCommand = (action: string, item?: any) => {
+    setCommand({ action, item: item || null, selectedIds })
+    setCommandNote('')
+    setCommandOwner('operations')
+    setCommandUrgency(item?.severity === 'critical' ? 'critical' : 'normal')
+  }
+
+  const submitCommand = async () => {
+    if (!command) return
+
+    const commandPayload = {
+      action: command.action,
+      missionId: command.item?.raw?.id || command.item?.raw?.mission_id || command.item?.id,
+      signalId: command.item?.id,
+      selectedIds: command.item ? [command.item.id] : selectedIds,
+      urgency: commandUrgency,
+      owner: commandOwner,
+      note: commandNote,
+      source: 'dispatch_sla_escalations',
+      createdAt: new Date().toISOString(),
+    }
+
+    setActionBusy(true)
+
+    let ok = false
+    let endpoint = ''
+
+    for (const url of [
+      '/api/carelink/ops/dispatch/action',
+      '/api/carelink/ops/control-room/action',
+      '/api/carelink/ops/dispatch',
+    ]) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(commandPayload),
+        })
+
+        if (response.ok) {
+          ok = true
+          endpoint = url
+          break
+        }
+      } catch (_error) {}
+    }
+
+    const event = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      action: command.action,
+      code: command.item?.code || `${selectedIds.length} selected`,
+      urgency: commandUrgency,
+      owner: commandOwner,
+      note: commandNote || 'No note',
+      status: ok ? 'synced' : 'local-pending',
+      endpoint,
+      createdAt: new Date().toISOString(),
+    }
+
+    setActionEvents((current) => [event, ...current].slice(0, 12))
+    log(`SLA & Escalations · ${command.action} · ${event.code} · ${event.status}`)
+    setActionBusy(false)
+    setCommand(null)
+
+    if (ok && typeof window !== 'undefined') {
+      window.setTimeout(() => window.location.reload(), 500)
+    }
+  }
+
+  return (
+    <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-rose-700 ring-1 ring-rose-100">
+            <span>🚨</span>
+            SLA command
+          </div>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">SLA & Escalations</h2>
+          <p className="mt-2 max-w-3xl text-sm font-semibold text-slate-500">
+            Live incident control, mission-risk detection, SLA blockers, validation pressure and escalation command workflows.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:min-w-[540px]">
+          <SlaKpi label="Open signals" value={kpis.total} helper="Live actionable alerts" tone="blue" />
+          <SlaKpi label="Critical" value={kpis.critical} helper="Immediate dispatch action" tone="rose" />
+          <SlaKpi label="High risk" value={kpis.high} helper="Needs senior review" tone="orange" />
+          <SlaKpi label="Incidents" value={kpis.incidents} helper="Incident feed" tone="violet" />
+          <SlaKpi label="Assignment" value={kpis.assignment} helper="Caregiver blockers" tone="cyan" />
+          <SlaKpi label="Validation" value={kpis.validation} helper="Report handoff" tone="amber" />
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4">
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,2fr)_repeat(5,minmax(0,0.8fr))]">
+          <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <span className="text-slate-400">⌕</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search mission, client, caregiver, city, blocker, SLA, incident..."
+              className="w-full bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+            />
+          </label>
+
+          <select value={severityFilter} onChange={(event) => setSeverityFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All severity</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+
+          <select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            {cityOptions.map((option) => <option key={option} value={option}>{option === 'all' ? 'All cities' : option}</option>)}
+          </select>
+
+          <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All types</option>
+            <option value="incident">Incident</option>
+            <option value="risk">Risk</option>
+            <option value="assignment">Assignment</option>
+            <option value="route">Route</option>
+            <option value="validation">Validation</option>
+            <option value="sla">SLA</option>
+          </select>
+
+          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All statuses</option>
+            <option value="open">Open</option>
+            <option value="risk">Risk</option>
+            <option value="report">Report</option>
+            <option value="validation">Validation</option>
+          </select>
+
+          <div className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-center text-sm font-black text-slate-600">
+            {filteredSignals.length} live signal(s)
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
+        <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50/70 p-4">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-black text-slate-950">Live escalation queue</h3>
+              <p className="text-sm font-semibold text-slate-500">Mission risks, incident records and SLA blockers requiring operational decision.</p>
+            </div>
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600 ring-1 ring-slate-200">
+              {selectedIds.length} selected
+            </span>
+          </div>
+
+          {filteredSignals.length ? (
+            <div className="max-h-[640px] space-y-3 overflow-y-auto pr-1">
+              {filteredSignals.map((item: any) => (
+                <article key={`${item.source}-${item.id}`} className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <div className={`h-1.5 ${severityBar(item.severity)}`} />
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">{typeLabel(item.type)} signal</div>
+                        <h4 className="mt-1 truncate text-xl font-black text-slate-950">{item.code}</h4>
+                        <p className="mt-1 text-sm font-bold text-slate-600">{item.title}</p>
+                      </div>
+
+                      <input
+                        type="checkbox"
+                        checked={selectedSet.has(item.id)}
+                        onChange={() => toggleSelected(item.id)}
+                        className="mt-1 h-5 w-5 rounded border-slate-300 text-rose-600"
+                      />
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className={`rounded-full border px-2.5 py-1 text-[11px] font-black capitalize ${severityTone(item.severity)}`}>
+                        {item.severity}
+                      </span>
+                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600 ring-1 ring-slate-200">
+                        {item.city}
+                      </span>
+                      {item.zone ? (
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600 ring-1 ring-slate-200">
+                          {item.zone}
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-black text-blue-700 ring-1 ring-blue-100">
+                        {typeLabel(item.type)}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <SlaInfo label="Client" value={item.client} />
+                      <SlaInfo label="Caregiver" value={item.caregiver} />
+                      <SlaInfo label="Status" value={item.status} />
+                      <SlaInfo label="Next action" value={item.nextAction} />
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {item.blockers.length ? (
+                        item.blockers.slice(0, 4).map((blocker: string, index: number) => (
+                          <span key={index} className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-black text-rose-700 ring-1 ring-rose-200">
+                            {blocker}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-black text-emerald-700 ring-1 ring-emerald-200">
+                          No blocker detected
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+                      <SlaActionButton tone="rose" onClick={() => openCommand('escalate', item)}>Escalate</SlaActionButton>
+                      <SlaActionButton tone="blue" onClick={() => openCommand('assign-owner', item)}>Assign owner</SlaActionButton>
+                      <SlaActionButton tone="amber" onClick={() => openCommand('request-update', item)}>Request update</SlaActionButton>
+                      <SlaActionButton tone="emerald" onClick={() => openCommand('mark-reviewed', item)}>Mark reviewed</SlaActionButton>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-white p-10 text-center">
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-slate-50 text-2xl shadow-sm">✅</div>
+              <h3 className="mt-4 text-xl font-black text-slate-800">No incidents</h3>
+              <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold text-slate-500">
+                Incident alerts and SLA escalations will appear here from live incident, mission, report and risk records.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <aside className="space-y-4">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="text-lg font-black text-slate-950">Command actions</h3>
+            <p className="mt-1 text-sm font-semibold text-slate-500">Apply controlled actions to selected SLA signals.</p>
+
+            <div className="mt-4 grid gap-2">
+              <button disabled={!selectedIds.length} onClick={() => openCommand('bulk-escalate')} className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-sm font-black text-rose-700 disabled:cursor-not-allowed disabled:opacity-50">
+                Escalate selected
+              </button>
+              <button disabled={!selectedIds.length} onClick={() => openCommand('bulk-request-update')} className="rounded-2xl border border-amber-200 bg-white px-4 py-3 text-sm font-black text-amber-700 disabled:cursor-not-allowed disabled:opacity-50">
+                Request field update
+              </button>
+              <button disabled={!selectedIds.length} onClick={() => openCommand('bulk-mark-reviewed')} className="rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-black text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">
+                Mark reviewed
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="text-lg font-black text-slate-950">Action timeline</h3>
+            <p className="mt-1 text-sm font-semibold text-slate-500">Latest SLA actions from this session.</p>
+
+            <div className="mt-4 space-y-2">
+              {actionEvents.length ? actionEvents.map((event) => (
+                <div key={event.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs font-black text-slate-900">{event.action}</div>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${event.status === 'synced' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                      {event.status}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-xs font-semibold text-slate-500">{event.code} · {event.owner} · {event.urgency}</div>
+                </div>
+              )) : (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-center text-sm font-bold text-slate-500">
+                  No SLA action executed yet.
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      {command ? (
+        <div className="fixed inset-0 z-[10050] grid place-items-center bg-slate-950/45 p-5 backdrop-blur-sm">
+          <div className="w-full max-w-2xl rounded-[2rem] bg-white p-6 shadow-2xl">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-5">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.32em] text-rose-600">SLA command</p>
+                <h3 className="mt-2 text-2xl font-black text-slate-950">{command.action.replace(/-/g, ' ')}</h3>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{command.item?.code || `${selectedIds.length} selected signal(s)`}</p>
+              </div>
+              <button onClick={() => setCommand(null)} className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-black text-slate-700">Close</button>
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Owner</span>
+                <select value={commandOwner} onChange={(event) => setCommandOwner(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none">
+                  <option value="operations">Operations</option>
+                  <option value="dispatch_lead">Dispatch lead</option>
+                  <option value="field_supervisor">Field supervisor</option>
+                  <option value="quality_validation">Quality validation</option>
+                </select>
+              </label>
+
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Urgency</span>
+                <select value={commandUrgency} onChange={(event) => setCommandUrgency(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none">
+                  <option value="normal">Normal</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </label>
+            </div>
+
+            <label className="mt-5 grid gap-2">
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Command note</span>
+              <textarea
+                value={commandNote}
+                onChange={(event) => setCommandNote(event.target.value)}
+                rows={5}
+                placeholder="Write escalation reason, field instruction, owner note, validation issue, or client/caregiver follow-up..."
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold outline-none focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              />
+            </label>
+
+            <div className="mt-5 flex justify-end gap-3">
+              <button onClick={() => setCommand(null)} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">
+                Cancel
+              </button>
+              <button disabled={actionBusy} onClick={submitCommand} className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+                {actionBusy ? 'Executing...' : 'Execute command'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
 
 
 declare global {
@@ -383,6 +1204,108 @@ const EMPTY_PAYLOAD: DispatchPayload = {
   auditTrail: [],
   metadata: { dbConnected: false, schemaReady: false, tablesChecked: [], warnings: [] },
 }
+
+
+function sanitizeCareLinkDispatchPayloadForVisibleLiveMissions(payload: any) {
+  const isVisibleMission = (mission: any) => {
+    const status = String(
+      mission?.status ||
+        mission?.lifecycle_stage ||
+        mission?.lifecycleStage ||
+        mission?.dispatch_status ||
+        mission?.dispatchStatus ||
+        mission?.dossier_status ||
+        mission?.dossierStatus ||
+        mission?.state ||
+        mission?.mission_status ||
+        mission?.missionStatus ||
+        '',
+    ).toLowerCase()
+
+    const deletedAt =
+      mission?.deleted_at ||
+      mission?.deletedAt ||
+      mission?.archived_at ||
+      mission?.archivedAt
+
+    const flagDeleted =
+      mission?.is_archived === true ||
+      mission?.isArchived === true ||
+      mission?.archived === true ||
+      mission?.deleted === true ||
+      mission?.is_deleted === true ||
+      mission?.isDeleted === true ||
+      Boolean(deletedAt)
+
+    const textDeleted =
+      status.includes('deleted') ||
+      status.includes('delete') ||
+      status.includes('archived') ||
+      status.includes('archive') ||
+      status.includes('cancelled') ||
+      status.includes('canceled') ||
+      status.includes('removed') ||
+      status.includes('trash') ||
+      status.includes('void')
+
+    return !flagDeleted && !textDeleted
+  }
+
+  const sanitizeRows = (rows: any) => {
+    if (!Array.isArray(rows)) return []
+
+    const seen = new Set<string>()
+
+    return rows.filter((mission: any, index: number) => {
+      if (!isVisibleMission(mission)) return false
+
+      const key = String(
+        mission?.id ||
+          mission?.mission_id ||
+          mission?.missionId ||
+          mission?.code ||
+          mission?.missionCode ||
+          mission?.mission_code ||
+          mission?.mission_reference ||
+          mission?.dossier_reference ||
+          index,
+      )
+
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }
+
+  const clone: any = { ...(payload || {}) }
+
+  clone.missions = sanitizeRows(clone.missions)
+  clone.records = sanitizeRows(clone.records)
+  clone.dossiers = sanitizeRows(clone.dossiers)
+  clone.items = sanitizeRows(clone.items)
+  clone.queue = sanitizeRows(clone.queue)
+
+  clone.lanes = Array.isArray(clone.lanes)
+    ? clone.lanes.map((lane: any) => ({
+        ...lane,
+        missions: sanitizeRows(lane?.missions),
+        items: sanitizeRows(lane?.items),
+        records: sanitizeRows(lane?.records),
+      }))
+    : []
+
+  clone.dispatchLanes = Array.isArray(clone.dispatchLanes)
+    ? clone.dispatchLanes.map((lane: any) => ({
+        ...lane,
+        missions: sanitizeRows(lane?.missions),
+        items: sanitizeRows(lane?.items),
+        records: sanitizeRows(lane?.records),
+      }))
+    : clone.dispatchLanes
+
+  return clone
+}
+
 
 function normalizePayload(payload?: Partial<DispatchPayload> | null): DispatchPayload {
   return {
@@ -459,7 +1382,7 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
   const [actionBusy, setActionBusy] = useState(false)
   const [log, setLog] = useState<string[]>([])
 
-  const safePayload = useMemo(() => normalizePayload(payload), [payload])
+  const safePayload = useMemo(() => sanitizeCareLinkDispatchPayloadForVisibleLiveMissions(normalizePayload(payload)), [payload])
 
   const filteredMissions = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -632,9 +1555,11 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <DispatchQueue missions={filteredMissions} selectedMissionIds={selectedMissionIds} toggleMission={toggleMission} openMission={openMissionDossier} />
-              <AgentAvailability agents={safePayload.agents} openAgent={(agent) => setModal({ type: 'agent', agent })} />
+            <div className="grid gap-4">
+              <div className="grid gap-4 xl:grid-cols-2 items-start">
+                <DispatchQueue payload={safePayload} log={log} />
+                <AgentAvailability agents={safePayload.agents} openAgent={(agent) => setModal({ type: 'agent', agent })} />
+              </div>
               <SlaAndIncidents incidents={safePayload.incidents} missions={filteredMissions} openIncident={(incident) => setModal({ type: 'incident', incident })} />
             </div>
           </section>
@@ -1497,8 +2422,38 @@ function DispatchBoard({
 }
 
 
-function LiveOperationsMap(props: any = {}) {
-  const payload = props?.payload || {}
+export function LiveOperationsMap(props: any = {}) {
+  const payload = props.payload || {}
+  const missions = Array.isArray(props.missions)
+    ? props.missions
+    : Array.isArray(payload.missions)
+      ? payload.missions
+      : Array.isArray(payload.records)
+        ? payload.records
+        : Array.isArray(payload.queue)
+          ? payload.queue
+          : []
+
+  const agents = Array.isArray(props.agents)
+    ? props.agents
+    : Array.isArray(payload.agents)
+      ? payload.agents
+      : Array.isArray(payload.caregivers)
+        ? payload.caregivers
+        : Array.isArray(payload.fieldAgents)
+          ? payload.fieldAgents
+          : []
+
+  const sectors = Array.isArray(props.sectors)
+    ? props.sectors
+    : Array.isArray(payload.sectors)
+      ? payload.sectors
+      : Array.isArray(payload.zones)
+        ? payload.zones
+        : Array.isArray(payload.cities)
+          ? payload.cities
+          : []
+
   const openMission = typeof props?.openMission === 'function' ? props.openMission : undefined
 
   const mapRef = useRef<HTMLDivElement | null>(null)
@@ -2620,17 +3575,1102 @@ function CommunicationsPanel(props: any = {}) {
   )
 }
 
-function DispatchQueue({ missions, selectedMissionIds, toggleMission, openMission }: { missions: DispatchMission[]; selectedMissionIds: string[]; toggleMission: (id: string) => void; openMission: (mission: DispatchMission) => void }) {
-  return <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"><h2 className="font-black">Dispatch Queue</h2><p className="text-xs font-bold text-slate-500">Bulk operations and workflow control.</p><div className="mt-3 overflow-auto"><table className="w-full text-left text-xs"><thead className="text-slate-400"><tr><th className="py-2">✓</th><th>Mission</th><th>Priority</th><th>Ready</th></tr></thead><tbody>{missions.slice(0, 8).map((m) => <tr key={m.id} className="border-t border-slate-100"><td className="py-2"><input type="checkbox" checked={selectedMissionIds.includes(m.id)} onChange={() => toggleMission(m.id)} /></td><td><button onClick={() => openMission(m)} className="font-black text-blue-700">{m.mission_code}</button><p className="font-semibold text-slate-500">{m.service_type || 'Service'}</p></td><td>{m.priority || '—'}</td><td>{m.readiness_score ?? '—'}%</td></tr>)}</tbody></table>{!missions.length ? <EmptyBlock title="No queue loaded" text="Live missions will populate the dispatch queue." /> : null}</div></section>
+
+function DispatchQueue(props: any = {}) {
+  const payload = props.payload || {}
+  const openMission = typeof props.openMission === 'function' ? props.openMission : undefined
+  const externalLog = typeof props.log === 'function' ? props.log : undefined
+
+  const [query, setQuery] = useState('')
+  const [cityFilter, setCityFilter] = useState('all')
+  const [laneFilter, setLaneFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const [dateFilter, setDateFilter] = useState('all')
+  const [compact, setCompact] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  const read = useCallback((row: any, keys: string[], fallback: any = '') => {
+    for (const key of keys) {
+      const value = row?.[key]
+      if (value !== undefined && value !== null && value !== '') return value
+    }
+    return fallback
+  }, [])
+
+  const slug = useCallback((value: any) => String(value || '').trim().toLowerCase(), [])
+
+  const codeOf = useCallback((mission: any) => {
+    return String(
+      read(
+        mission,
+        ['code', 'mission_code', 'missionCode', 'mission_reference', 'dossier_reference', 'reference'],
+        mission?.id ? `MISSION-${mission.id}` : 'MISSION',
+      ),
+    )
+  }, [read])
+
+  const isVisibleLiveMission = useCallback((mission: any) => {
+    const status = slug(
+      read(
+        mission,
+        [
+          'status',
+          'lifecycle_stage',
+          'lifecycleStage',
+          'dispatch_status',
+          'dispatchStatus',
+          'dossier_status',
+          'dossierStatus',
+          'mission_status',
+          'missionStatus',
+          'state',
+        ],
+        '',
+      ),
+    )
+
+    const deletedAt = mission?.deleted_at || mission?.deletedAt || mission?.archived_at || mission?.archivedAt
+
+    const flagDeleted =
+      mission?.is_archived === true ||
+      mission?.isArchived === true ||
+      mission?.archived === true ||
+      mission?.deleted === true ||
+      mission?.is_deleted === true ||
+      mission?.isDeleted === true ||
+      Boolean(deletedAt)
+
+    const textDeleted =
+      status.includes('deleted') ||
+      status.includes('delete') ||
+      status.includes('archived') ||
+      status.includes('archive') ||
+      status.includes('cancelled') ||
+      status.includes('canceled') ||
+      status.includes('removed') ||
+      status.includes('trash') ||
+      status.includes('void') ||
+      status.includes('closed') ||
+      status.includes('completed')
+
+    return !flagDeleted && !textDeleted
+  }, [read, slug])
+
+  const normalizeLane = useCallback((row: any) => {
+    const raw = slug(
+      read(
+        row,
+        [
+          'laneKey',
+          'dispatchLane',
+          'dispatch_lane',
+          'workflow_lane',
+          'workflowLane',
+          'status',
+          'mission_status',
+          'missionStatus',
+          'lifecycle_stage',
+          'lifecycleStage',
+        ],
+        'new_requests',
+      ),
+    )
+
+    if (raw.includes('validation')) return 'validation'
+    if (raw.includes('report')) return 'report_pending'
+    if (raw.includes('risk') || raw.includes('incident') || raw.includes('escalat')) return 'at_risk'
+    if (raw.includes('progress') || raw.includes('onsite') || raw.includes('on_site')) return 'in_progress'
+    if (raw.includes('route') || raw.includes('en_route')) return 'en_route'
+    if (raw.includes('accept') || raw.includes('confirm')) return 'accepted'
+    if (raw.includes('assign')) return 'assigned'
+    return 'new_requests'
+  }, [read, slug])
+
+  const formatDateLabel = useCallback((value: any) => {
+    if (!value) return 'Not scheduled'
+    const raw = String(value)
+    if (raw.length >= 16) return raw.slice(0, 16).replace('T', ' ')
+    return raw
+  }, [])
+
+  const collectLiveRows = useCallback(() => {
+    const rows: any[] = []
+    const pushRows = (items: any) => {
+      if (Array.isArray(items)) rows.push(...items)
+    }
+
+    pushRows(props.queue)
+    pushRows(props.missions)
+    pushRows(props.records)
+    pushRows(payload.queue)
+    pushRows(payload.missions)
+    pushRows(payload.records)
+    pushRows(payload.dossiers)
+    pushRows(payload.items)
+
+    for (const lanes of [props.lanes, payload.lanes, payload.dispatchLanes]) {
+      if (!Array.isArray(lanes)) continue
+      for (const lane of lanes) {
+        pushRows(lane?.missions)
+        pushRows(lane?.items)
+        pushRows(lane?.records)
+      }
+    }
+
+    const seen = new Set<string>()
+
+    return rows.filter((row: any, index: number) => {
+      if (!row || !isVisibleLiveMission(row)) return false
+
+      const key = String(
+        row?.id ||
+          row?.mission_id ||
+          row?.missionId ||
+          row?.code ||
+          row?.mission_code ||
+          row?.missionCode ||
+          row?.mission_reference ||
+          row?.dossier_reference ||
+          index,
+      )
+
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [payload, props.queue, props.missions, props.records, props.lanes, isVisibleLiveMission])
+
+  const normalizedRows = useMemo(() => {
+    return collectLiveRows().map((row: any) => {
+      const lane = normalizeLane(row)
+      const code = codeOf(row)
+      const serviceType = String(read(row, ['service_type', 'serviceType', 'title', 'mission_title'], 'Mission'))
+      const clientName = String(read(row, ['client_name', 'clientName', 'family_name', 'familyName'], 'Client not specified'))
+      const caregiverName = String(read(row, ['caregiver_name', 'caregiverName', 'agent_name', 'agentName'], ''))
+      const city = String(read(row, ['city', 'mission_city', 'client_city'], 'Unknown city'))
+      const zone = String(read(row, ['zone', 'district', 'sector', 'area'], ''))
+      const schedule = read(row, ['scheduled_start', 'scheduledStart', 'mission_date', 'missionDate', 'start_at', 'created_at'], '')
+      const priorityRaw = slug(read(row, ['priority', 'risk_level', 'riskLevel'], 'normal'))
+
+      const priority =
+        priorityRaw.includes('urgent') || priorityRaw.includes('critical')
+          ? 'urgent'
+          : priorityRaw.includes('high')
+            ? 'high'
+            : priorityRaw.includes('low')
+              ? 'low'
+              : 'normal'
+
+      const hasRoute = Boolean(read(row, ['route_ready', 'routeReady', 'has_route', 'route_id'], false))
+      const hasConfirmation = Boolean(read(row, ['caregiver_confirmed', 'agent_confirmed', 'confirmed'], false))
+      const hasLocation = Boolean(city && city !== 'Unknown city')
+      const hasAssignee = Boolean(caregiverName)
+      const hasSchedule = Boolean(schedule)
+
+      let readiness = 0
+      if (hasSchedule) readiness += 25
+      if (hasLocation) readiness += 25
+      if (hasAssignee) readiness += 25
+      if (hasRoute || hasConfirmation || ['accepted', 'en_route', 'in_progress', 'report_pending', 'validation'].includes(lane)) readiness += 25
+      readiness = Math.min(readiness, 100)
+
+      const blockers: string[] = []
+      if (!hasAssignee) blockers.push('No caregiver assigned')
+      if (!hasLocation) blockers.push('Location incomplete')
+      if (!hasSchedule) blockers.push('Schedule missing')
+      if (hasAssignee && !hasConfirmation && ['assigned', 'accepted'].includes(lane)) blockers.push('Caregiver not confirmed')
+      if (!hasRoute && ['accepted', 'en_route'].includes(lane)) blockers.push('Route not ready')
+      if (lane === 'report_pending') blockers.push('Report pending')
+      if (lane === 'validation') blockers.push('Validation pending')
+      if (lane === 'at_risk') blockers.push('Operational risk open')
+
+      return {
+        id: String(read(row, ['id', 'mission_id', 'missionId'], code)),
+        code,
+        serviceType,
+        clientName,
+        caregiverName: caregiverName || 'Unassigned',
+        city,
+        zone,
+        schedule,
+        priority,
+        lane,
+        readiness,
+        blockers,
+        raw: row,
+      }
+    })
+  }, [collectLiveRows, normalizeLane, codeOf, read, slug])
+
+  const cityOptions = useMemo(() => {
+    return ['all', ...Array.from(new Set(normalizedRows.map((row: any) => row.city).filter(Boolean))).sort()]
+  }, [normalizedRows])
+
+  const filteredRows = useMemo(() => {
+    const now = new Date()
+    const today = now.toISOString().slice(0, 10)
+    const inSeven = new Date(now.getTime() + 7 * 86400000).toISOString().slice(0, 10)
+    const q = query.trim().toLowerCase()
+
+    return normalizedRows.filter((row: any) => {
+      const haystack = [
+        row.code,
+        row.serviceType,
+        row.clientName,
+        row.caregiverName,
+        row.city,
+        row.zone,
+        row.priority,
+        row.lane,
+      ].join(' ').toLowerCase()
+
+      if (q && !haystack.includes(q)) return false
+      if (cityFilter !== 'all' && row.city !== cityFilter) return false
+      if (laneFilter !== 'all' && row.lane !== laneFilter) return false
+      if (priorityFilter !== 'all' && row.priority !== priorityFilter) return false
+
+      if (dateFilter !== 'all') {
+        const dateOnly = String(row.schedule || '').slice(0, 10)
+        if (dateFilter === 'today' && dateOnly !== today) return false
+        if (dateFilter === 'week' && (!dateOnly || dateOnly < today || dateOnly > inSeven)) return false
+        if (dateFilter === 'unscheduled' && dateOnly) return false
+      }
+
+      return true
+    })
+  }, [normalizedRows, query, cityFilter, laneFilter, priorityFilter, dateFilter])
+
+  const laneMeta: Record<string, { label: string; icon: string; accent: string; soft: string; border: string }> = {
+    new_requests: { label: 'New requests', icon: '◇', accent: 'text-blue-700', soft: 'bg-blue-50', border: 'border-blue-200' },
+    assigned: { label: 'Assigned', icon: '👥', accent: 'text-indigo-700', soft: 'bg-indigo-50', border: 'border-indigo-200' },
+    accepted: { label: 'Accepted', icon: '🤝', accent: 'text-emerald-700', soft: 'bg-emerald-50', border: 'border-emerald-200' },
+    en_route: { label: 'En route', icon: '🧭', accent: 'text-cyan-700', soft: 'bg-cyan-50', border: 'border-cyan-200' },
+    in_progress: { label: 'In progress', icon: '🏠', accent: 'text-violet-700', soft: 'bg-violet-50', border: 'border-violet-200' },
+    report_pending: { label: 'Report pending', icon: '📝', accent: 'text-amber-700', soft: 'bg-amber-50', border: 'border-amber-200' },
+    validation: { label: 'Validation', icon: '✅', accent: 'text-green-700', soft: 'bg-green-50', border: 'border-green-200' },
+    at_risk: { label: 'At risk', icon: '🚨', accent: 'text-rose-700', soft: 'bg-rose-50', border: 'border-rose-200' },
+  }
+
+  const grouped = useMemo(() => {
+    return Object.keys(laneMeta).map((lane) => ({
+      key: lane,
+      items: filteredRows.filter((row: any) => row.lane === lane),
+    }))
+  }, [filteredRows])
+
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds])
+
+  const toggleLocal = (id: string) => {
+    setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
+  }
+
+  const kpis = useMemo(() => ({
+    total: filteredRows.length,
+    urgent: filteredRows.filter((row: any) => row.priority === 'urgent' || row.lane === 'at_risk').length,
+    unassigned: filteredRows.filter((row: any) => row.caregiverName === 'Unassigned').length,
+    routeBlocked: filteredRows.filter((row: any) => row.blockers.includes('Route not ready')).length,
+    readyNow: filteredRows.filter((row: any) => row.readiness >= 75).length,
+    pendingReports: filteredRows.filter((row: any) => row.lane === 'report_pending' || row.lane === 'validation').length,
+  }), [filteredRows])
+
+  const priorityTone = (priority: string) => {
+    if (priority === 'urgent') return 'bg-rose-50 text-rose-700 ring-rose-200'
+    if (priority === 'high') return 'bg-amber-50 text-amber-700 ring-amber-200'
+    if (priority === 'low') return 'bg-slate-100 text-slate-600 ring-slate-200'
+    return 'bg-blue-50 text-blue-700 ring-blue-200'
+  }
+
+  const readinessTone = (readiness: number) => {
+    if (readiness >= 75) return 'bg-emerald-500'
+    if (readiness >= 50) return 'bg-amber-500'
+    return 'bg-rose-500'
+  }
+
+  const executeAction = (action: string, row: any) => {
+    externalLog?.(`Dispatch Queue · ${action} · ${row.code}`)
+    openMission?.(row.raw)
+  }
+
+  const executeBulk = (action: string) => {
+    if (!selectedIds.length) return
+    externalLog?.(`Dispatch Queue bulk · ${action} · ${selectedIds.length} mission(s)`)
+  }
+
+  return (
+    <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-slate-600">
+            <ClipboardList size={14} />
+            Dispatch Queue
+          </div>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">Bulk operations and workflow control</h2>
+          <p className="mt-2 max-w-3xl text-sm font-semibold text-slate-500">
+            Live dispatch queue for AngelCare mission intake, assignment readiness, route preparation, escalation, reporting and validation handoff.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:min-w-[460px]">
+          <QueueKpi label="Queue total" value={kpis.total} helper="Active actionable missions" tone="blue" />
+          <QueueKpi label="Urgent" value={kpis.urgent} helper="Priority or risk attention" tone="rose" />
+          <QueueKpi label="Unassigned" value={kpis.unassigned} helper="Needs caregiver allocation" tone="indigo" />
+          <QueueKpi label="Route blockers" value={kpis.routeBlocked} helper="Route not yet ready" tone="cyan" />
+          <QueueKpi label="Ready now" value={kpis.readyNow} helper="75%+ readiness" tone="emerald" />
+          <QueueKpi label="Reports / validation" value={kpis.pendingReports} helper="Post-mission follow-through" tone="amber" />
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4">
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,2.1fr)_repeat(5,minmax(0,0.8fr))_auto]">
+          <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <Search size={16} className="text-slate-400" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search code, client, caregiver, city, zone, service, status..."
+              className="w-full bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+            />
+          </label>
+
+          <select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            {cityOptions.map((option) => <option key={option} value={option}>{option === 'all' ? 'All cities' : option}</option>)}
+          </select>
+
+          <select value={laneFilter} onChange={(event) => setLaneFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All lanes</option>
+            {Object.entries(laneMeta).map(([key, meta]) => <option key={key} value={key}>{meta.label}</option>)}
+          </select>
+
+          <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All priority</option>
+            <option value="urgent">Urgent</option>
+            <option value="high">High</option>
+            <option value="normal">Normal</option>
+            <option value="low">Low</option>
+          </select>
+
+          <select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All dates</option>
+            <option value="today">Today</option>
+            <option value="week">Next 7 days</option>
+            <option value="unscheduled">Unscheduled</option>
+          </select>
+
+          <div className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-600">
+            <Filter size={15} className="mr-2" />
+            {filteredRows.length} live rows
+          </div>
+
+          <button onClick={() => setCompact((value) => !value)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-lg shadow-slate-950/15">
+            {compact ? 'Expanded' : 'Compact'}
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap gap-2">
+          <QueueBulkButton disabled={!selectedIds.length} onClick={() => executeBulk('assign')} tone="blue">Assign selected</QueueBulkButton>
+          <QueueBulkButton disabled={!selectedIds.length} onClick={() => executeBulk('route')} tone="cyan">Optimize route</QueueBulkButton>
+          <QueueBulkButton disabled={!selectedIds.length} onClick={() => executeBulk('report')} tone="amber">Request report</QueueBulkButton>
+          <QueueBulkButton disabled={!selectedIds.length} onClick={() => executeBulk('escalate')} tone="rose">Escalate</QueueBulkButton>
+        </div>
+
+        <div className="rounded-full bg-slate-100 px-3 py-2 text-xs font-black text-slate-600">
+          {selectedIds.length} selected
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2 2xl:grid-cols-4">
+        {grouped.map((group) => {
+          const meta = laneMeta[group.key]
+          return (
+            <div key={group.key} className={`rounded-[1.75rem] border ${meta.border} bg-white p-4 shadow-sm`}>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`grid h-10 w-10 place-items-center rounded-2xl ${meta.soft} text-lg`}>{meta.icon}</div>
+                  <div>
+                    <div className={`text-[11px] font-black uppercase tracking-[0.26em] ${meta.accent}`}>{meta.label}</div>
+                    <div className="text-xs font-semibold text-slate-500">{group.items.length} live ticket(s)</div>
+                  </div>
+                </div>
+                <div className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-600">{group.items.length}</div>
+              </div>
+
+              <div className={`${compact ? 'max-h-[320px]' : 'max-h-[560px]'} overflow-y-auto pr-1`}>
+                {group.items.length ? (
+                  <div className="space-y-3">
+                    {group.items.map((row: any) => (
+                      <article key={row.id} className="rounded-[1.5rem] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Ticket</div>
+                            <button onClick={() => openMission?.(row.raw)} className="mt-1 text-left text-xl font-black text-slate-950 hover:text-blue-700">
+                              {row.code}
+                            </button>
+                            <div className="mt-1 text-sm font-bold text-slate-600">{row.serviceType}</div>
+                          </div>
+
+                          <input type="checkbox" checked={selectedSet.has(row.id)} onChange={() => toggleLocal(row.id)} className="mt-1 h-5 w-5 rounded border-slate-300 text-blue-600" />
+                        </div>
+
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <span className={`rounded-full px-2.5 py-1 text-[11px] font-black ring-1 ${priorityTone(row.priority)}`}>{row.priority}</span>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600 ring-1 ring-slate-200">{row.city}</span>
+                          {row.zone ? <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600 ring-1 ring-slate-200">{row.zone}</span> : null}
+                        </div>
+
+                        <div className="mt-4 grid grid-cols-2 gap-2">
+                          <QueueInfo label="Client" value={row.clientName} />
+                          <QueueInfo label="Caregiver" value={row.caregiverName} />
+                          <QueueInfo label="Schedule" value={formatDateLabel(row.schedule)} />
+                          <QueueInfo label="Readiness" value={`${row.readiness}%`} />
+                        </div>
+
+                        <div className="mt-4">
+                          <div className="mb-2 flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Operational readiness</span>
+                            <span className="text-xs font-black text-slate-600">{row.readiness}%</span>
+                          </div>
+                          <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div className={`h-full rounded-full ${readinessTone(row.readiness)}`} style={{ width: `${row.readiness}%` }} />
+                          </div>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {row.blockers.length ? (
+                            row.blockers.slice(0, 3).map((blocker: string, index: number) => (
+                              <span key={index} className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-black text-rose-700 ring-1 ring-rose-200">
+                                {blocker}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-black text-emerald-700 ring-1 ring-emerald-200">No blockers</span>
+                          )}
+                        </div>
+
+                        <div className="mt-4 grid grid-cols-2 gap-2">
+                          <QueueActionButton onClick={() => executeAction('assign', row)} tone="blue">Assign</QueueActionButton>
+                          <QueueActionButton onClick={() => executeAction('route', row)} tone="cyan">Route</QueueActionButton>
+                          <QueueActionButton onClick={() => executeAction('escalate', row)} tone="rose">Escalate</QueueActionButton>
+                          <QueueActionButton onClick={() => executeAction('validate', row)} tone="amber">Validate</QueueActionButton>
+                        </div>
+
+                        <button onClick={() => openMission?.(row.raw)} className="mt-4 inline-flex items-center gap-2 text-sm font-black text-slate-700 hover:text-blue-700">
+                          Open mission dossier
+                          <ChevronRight size={16} />
+                        </button>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+                    <div className="text-lg font-black text-slate-700">No live tickets</div>
+                    <div className="mt-2 text-sm font-semibold text-slate-500">No mission matches current filters.</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
 }
 
-function AgentAvailability({ agents, openAgent }: { agents: DispatchAgent[]; openAgent: (agent: DispatchAgent) => void }) {
-  return <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"><h2 className="font-black">Agent Availability</h2><p className="text-xs font-bold text-slate-500">Live field capacity and status.</p><div className="mt-3 space-y-2">{agents.slice(0, 7).map((a) => <button key={a.id} onClick={() => openAgent(a)} className="flex w-full items-center justify-between rounded-2xl border border-slate-100 p-3 text-left hover:bg-slate-50"><div className="flex items-center gap-3"><div className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-xs font-black">{initials(a.full_name)}</div><div><p className="text-sm font-black">{a.full_name}</p><p className="text-xs font-bold text-slate-500">{[a.city, a.zone].filter(Boolean).join(' · ') || 'Location pending'}</p></div></div><span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-black text-emerald-700">{a.status || 'unknown'}</span></button>)}{!agents.length ? <EmptyBlock title="No agents loaded" text="Connected field agents will appear here from live records." /> : null}</div></section>
+function QueueKpi({ label, value, helper, tone }: { label: string; value: number; helper: string; tone: string }) {
+  const tones: Record<string, string> = {
+    blue: 'border-blue-200 from-blue-50 text-blue-700',
+    rose: 'border-rose-200 from-rose-50 text-rose-700',
+    indigo: 'border-indigo-200 from-indigo-50 text-indigo-700',
+    cyan: 'border-cyan-200 from-cyan-50 text-cyan-700',
+    emerald: 'border-emerald-200 from-emerald-50 text-emerald-700',
+    amber: 'border-amber-200 from-amber-50 text-amber-700',
+  }
+
+  return (
+    <div className={`rounded-2xl border bg-gradient-to-br to-white p-4 ${tones[tone] || tones.blue}`}>
+      <div className="text-[11px] font-black uppercase tracking-[0.24em]">{label}</div>
+      <div className="mt-2 text-2xl font-black text-slate-950">{value}</div>
+      <div className="mt-1 text-xs font-semibold text-slate-500">{helper}</div>
+    </div>
+  )
+}
+
+function QueueInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-slate-50 p-3">
+      <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{label}</div>
+      <div className="mt-1 text-sm font-black text-slate-800">{value}</div>
+    </div>
+  )
+}
+
+function QueueActionButton({ children, onClick, tone }: { children: any; onClick: () => void; tone: string }) {
+  const tones: Record<string, string> = {
+    blue: 'border-blue-200 bg-blue-50 text-blue-700',
+    cyan: 'border-cyan-200 bg-cyan-50 text-cyan-700',
+    rose: 'border-rose-200 bg-rose-50 text-rose-700',
+    amber: 'border-amber-200 bg-amber-50 text-amber-700',
+  }
+
+  return (
+    <button onClick={onClick} className={`rounded-2xl border px-3 py-2 text-xs font-black ${tones[tone] || tones.blue}`}>
+      {children}
+    </button>
+  )
+}
+
+function QueueBulkButton({ children, disabled, onClick, tone }: { children: any; disabled: boolean; onClick: () => void; tone: string }) {
+  const tones: Record<string, string> = {
+    blue: 'border-blue-200 bg-blue-50 text-blue-700',
+    cyan: 'border-cyan-200 bg-cyan-50 text-cyan-700',
+    rose: 'border-rose-200 bg-rose-50 text-rose-700',
+    amber: 'border-amber-200 bg-amber-50 text-amber-700',
+  }
+
+  return (
+    <button disabled={disabled} onClick={onClick} className={`rounded-xl border px-3 py-2 text-xs font-black disabled:cursor-not-allowed disabled:opacity-50 ${tones[tone] || tones.blue}`}>
+      {children}
+    </button>
+  )
+}
+
+
+function AgentAvailability(props: any = {}) {
+  const payload = props.payload || {}
+  const [query, setQuery] = useState('')
+  const [cityFilter, setCityFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [skillFilter, setSkillFilter] = useState('all')
+  const [compact, setCompact] = useState(false)
+
+  const read = useCallback((row: any, keys: string[], fallback: any = '') => {
+    for (const key of keys) {
+      const value = row?.[key]
+      if (value !== undefined && value !== null && value !== '') return value
+    }
+    return fallback
+  }, [])
+
+  const slug = useCallback((value: any) => String(value || '').trim().toLowerCase(), [])
+
+  const isVisibleMission = useCallback((mission: any) => {
+    const status = slug(
+      read(
+        mission,
+        [
+          'status',
+          'lifecycle_stage',
+          'lifecycleStage',
+          'dispatch_status',
+          'dispatchStatus',
+          'dossier_status',
+          'dossierStatus',
+          'mission_status',
+          'missionStatus',
+          'state',
+        ],
+        '',
+      ),
+    )
+
+    const deletedAt = mission?.deleted_at || mission?.deletedAt || mission?.archived_at || mission?.archivedAt
+
+    const isDeleted =
+      mission?.is_archived === true ||
+      mission?.isArchived === true ||
+      mission?.archived === true ||
+      mission?.deleted === true ||
+      mission?.is_deleted === true ||
+      mission?.isDeleted === true ||
+      Boolean(deletedAt) ||
+      status.includes('deleted') ||
+      status.includes('archived') ||
+      status.includes('cancelled') ||
+      status.includes('canceled') ||
+      status.includes('removed') ||
+      status.includes('trash') ||
+      status.includes('closed')
+
+    return !isDeleted
+  }, [read, slug])
+
+  const collectMissions = useCallback(() => {
+    const rows: any[] = []
+    const pushRows = (items: any) => {
+      if (Array.isArray(items)) rows.push(...items)
+    }
+
+    pushRows(props.missions)
+    pushRows(props.records)
+    pushRows(payload.missions)
+    pushRows(payload.records)
+    pushRows(payload.dossiers)
+    pushRows(payload.items)
+    pushRows(payload.queue)
+
+    for (const lanes of [props.lanes, payload.lanes, payload.dispatchLanes]) {
+      if (!Array.isArray(lanes)) continue
+      for (const lane of lanes) {
+        pushRows(lane?.missions)
+        pushRows(lane?.items)
+        pushRows(lane?.records)
+      }
+    }
+
+    return rows.filter((row: any) => row && isVisibleMission(row))
+  }, [payload, props.missions, props.records, props.lanes, isVisibleMission])
+
+  const liveMissions = useMemo(() => collectMissions(), [collectMissions])
+
+  const explicitAgents = useMemo(() => {
+    const rows: any[] = []
+    const pushRows = (items: any) => {
+      if (Array.isArray(items)) rows.push(...items)
+    }
+
+    pushRows(props.agents)
+    pushRows(props.caregivers)
+    pushRows(props.fieldAgents)
+    pushRows(payload.agents)
+    pushRows(payload.caregivers)
+    pushRows(payload.fieldAgents)
+    pushRows(payload.workforce)
+    pushRows(payload.resources)
+
+    return rows
+  }, [payload, props.agents, props.caregivers, props.fieldAgents])
+
+  const synthesizedAgents = useMemo(() => {
+    const map = new Map<string, any>()
+
+    for (const mission of liveMissions) {
+      const name = String(
+        read(
+          mission,
+          ['caregiver_name', 'caregiverName', 'agent_name', 'agentName', 'assignee_name', 'assigneeName'],
+          '',
+        ),
+      ).trim()
+
+      if (!name) continue
+
+      const id = String(
+        read(
+          mission,
+          ['caregiver_id', 'caregiverId', 'agent_id', 'agentId', 'assignee_id', 'assigneeId'],
+          name,
+        ),
+      )
+
+      const existing = map.get(id) || {
+        id,
+        name,
+        source: 'mission-linked',
+        missions: [],
+      }
+
+      existing.missions.push(mission)
+      map.set(id, existing)
+    }
+
+    return Array.from(map.values())
+  }, [liveMissions, read])
+
+  const normalizedAgents = useMemo(() => {
+    const base = explicitAgents.length ? explicitAgents : synthesizedAgents
+    const seen = new Set<string>()
+
+    return base
+      .map((agent: any, index: number) => {
+        const id = String(
+          read(agent, ['id', 'caregiver_id', 'caregiverId', 'agent_id', 'agentId', 'email', 'phone'], `agent-${index}`),
+        )
+
+        const linkedMissions = Array.isArray(agent.missions)
+          ? agent.missions
+          : liveMissions.filter((mission: any) => {
+              const missionAgentId = String(
+                read(
+                  mission,
+                  ['caregiver_id', 'caregiverId', 'agent_id', 'agentId', 'assignee_id', 'assigneeId'],
+                  '',
+                ),
+              )
+
+              const missionAgentName = slug(
+                read(
+                  mission,
+                  ['caregiver_name', 'caregiverName', 'agent_name', 'agentName', 'assignee_name', 'assigneeName'],
+                  '',
+                ),
+              )
+
+              const agentName = slug(read(agent, ['name', 'full_name', 'fullName', 'caregiver_name', 'agent_name'], ''))
+
+              return Boolean(missionAgentId && missionAgentId === id) || Boolean(agentName && missionAgentName === agentName)
+            })
+
+        const name = String(
+          read(
+            agent,
+            ['name', 'full_name', 'fullName', 'caregiver_name', 'caregiverName', 'agent_name', 'agentName'],
+            `Agent ${index + 1}`,
+          ),
+        )
+
+        const city = String(read(agent, ['city', 'base_city', 'baseCity', 'mission_city'], read(linkedMissions[0], ['city'], 'Unknown city')))
+        const zone = String(read(agent, ['zone', 'sector', 'area'], read(linkedMissions[0], ['zone', 'sector'], '')))
+        const phone = String(read(agent, ['phone', 'mobile', 'phone_number', 'phoneNumber'], ''))
+        const email = String(read(agent, ['email', 'mail'], ''))
+        const statusRaw = slug(read(agent, ['status', 'availability', 'availability_status', 'availabilityStatus'], ''))
+        const skillsRaw = read(agent, ['skills', 'requiredSkills', 'services', 'service_types', 'serviceTypes'], [])
+
+        const skills = Array.isArray(skillsRaw)
+          ? skillsRaw.map((item: any) => String(item)).filter(Boolean)
+          : String(skillsRaw || '')
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean)
+
+        const openMissions = linkedMissions.filter((mission: any) => isVisibleMission(mission))
+        const activeCount = openMissions.length
+
+        const hasPhone = Boolean(phone)
+        const hasCoverage = Boolean(city && city !== 'Unknown city')
+        const hasSkills = skills.length > 0
+        const overloaded = activeCount >= 3
+
+        const status =
+          statusRaw.includes('offline') || statusRaw.includes('unavailable') || statusRaw.includes('absent')
+            ? 'offline'
+            : overloaded
+              ? 'busy'
+              : statusRaw.includes('busy')
+                ? 'busy'
+                : statusRaw.includes('ready') || statusRaw.includes('available') || activeCount > 0
+                  ? 'ready'
+                  : 'pending'
+
+        let readiness = 20
+        if (hasPhone || email) readiness += 20
+        if (hasCoverage) readiness += 20
+        if (hasSkills) readiness += 20
+        if (status === 'ready') readiness += 20
+        if (status === 'busy') readiness += 10
+        if (status === 'offline') readiness = Math.min(readiness, 35)
+        readiness = Math.min(readiness, 100)
+
+        const blockers: string[] = []
+        if (!hasPhone && !email) blockers.push('No contact channel')
+        if (!hasCoverage) blockers.push('Coverage missing')
+        if (!hasSkills) blockers.push('Skills not loaded')
+        if (status === 'offline') blockers.push('Unavailable')
+        if (overloaded) blockers.push('High mission load')
+
+        const nextAction =
+          status === 'offline'
+            ? 'Confirm availability'
+            : !hasPhone && !email
+              ? 'Complete contact'
+              : !hasCoverage
+                ? 'Assign coverage zone'
+                : overloaded
+                  ? 'Review workload'
+                  : activeCount
+                    ? 'Monitor active mission'
+                    : 'Ready for dispatch'
+
+        return {
+          id,
+          name,
+          city,
+          zone,
+          phone,
+          email,
+          skills,
+          status,
+          readiness,
+          activeCount,
+          blockers,
+          nextAction,
+          missions: openMissions,
+          raw: agent,
+        }
+      })
+      .filter((agent: any) => {
+        if (seen.has(agent.id)) return false
+        seen.add(agent.id)
+        return true
+      })
+  }, [explicitAgents, synthesizedAgents, liveMissions, read, slug, isVisibleMission])
+
+  const cityOptions = useMemo(() => {
+    return ['all', ...Array.from(new Set(normalizedAgents.map((agent: any) => agent.city).filter(Boolean))).sort()]
+  }, [normalizedAgents])
+
+  const skillOptions = useMemo(() => {
+    return [
+      'all',
+      ...Array.from(new Set(normalizedAgents.flatMap((agent: any) => agent.skills).filter(Boolean))).sort(),
+    ]
+  }, [normalizedAgents])
+
+  const filteredAgents = useMemo(() => {
+    const q = query.trim().toLowerCase()
+
+    return normalizedAgents.filter((agent: any) => {
+      const haystack = [
+        agent.name,
+        agent.city,
+        agent.zone,
+        agent.phone,
+        agent.email,
+        agent.status,
+        agent.nextAction,
+        ...agent.skills,
+      ]
+        .join(' ')
+        .toLowerCase()
+
+      if (q && !haystack.includes(q)) return false
+      if (cityFilter !== 'all' && agent.city !== cityFilter) return false
+      if (statusFilter !== 'all' && agent.status !== statusFilter) return false
+      if (skillFilter !== 'all' && !agent.skills.includes(skillFilter)) return false
+      return true
+    })
+  }, [normalizedAgents, query, cityFilter, statusFilter, skillFilter])
+
+  const kpis = useMemo(() => {
+    return {
+      total: filteredAgents.length,
+      ready: filteredAgents.filter((agent: any) => agent.status === 'ready').length,
+      busy: filteredAgents.filter((agent: any) => agent.status === 'busy').length,
+      offline: filteredAgents.filter((agent: any) => agent.status === 'offline').length,
+      overloaded: filteredAgents.filter((agent: any) => agent.activeCount >= 3).length,
+      averageReadiness: filteredAgents.length
+        ? Math.round(filteredAgents.reduce((sum: number, agent: any) => sum + agent.readiness, 0) / filteredAgents.length)
+        : 0,
+    }
+  }, [filteredAgents])
+
+  const statusTone = (status: string) => {
+    if (status === 'ready') return 'border-emerald-200 bg-emerald-50 text-emerald-700'
+    if (status === 'busy') return 'border-amber-200 bg-amber-50 text-amber-700'
+    if (status === 'offline') return 'border-rose-200 bg-rose-50 text-rose-700'
+    return 'border-slate-200 bg-slate-100 text-slate-600'
+  }
+
+  const readinessTone = (readiness: number) => {
+    if (readiness >= 75) return 'bg-emerald-500'
+    if (readiness >= 50) return 'bg-amber-500'
+    return 'bg-rose-500'
+  }
+
+  const logAction = (action: string, agent: any) => {
+    if (typeof props.log === 'function') {
+      props.log(`Agent Availability · ${action} · ${agent.name}`)
+    }
+  }
+
+  return (
+    <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-emerald-700 ring-1 ring-emerald-100">
+            <span>👥</span>
+            Live workforce
+          </div>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">Agent Availability</h2>
+          <p className="mt-2 max-w-3xl text-sm font-semibold text-slate-500">
+            Live field capacity, caregiver readiness, coverage zones, workload pressure and dispatch suitability.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:min-w-[520px]">
+          <AgentKpi label="Agents" value={kpis.total} helper="Visible workforce" tone="blue" />
+          <AgentKpi label="Ready" value={kpis.ready} helper="Available for dispatch" tone="emerald" />
+          <AgentKpi label="Busy" value={kpis.busy} helper="Currently loaded" tone="amber" />
+          <AgentKpi label="Offline" value={kpis.offline} helper="Unavailable" tone="rose" />
+          <AgentKpi label="Overloaded" value={kpis.overloaded} helper="3+ live missions" tone="violet" />
+          <AgentKpi label="Readiness" value={`${kpis.averageReadiness}%`} helper="Average capacity score" tone="cyan" />
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4">
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,0.8fr))_auto]">
+          <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <span className="text-slate-400">⌕</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search caregiver, city, zone, skill, phone, readiness..."
+              className="w-full bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+            />
+          </label>
+
+          <select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            {cityOptions.map((option) => <option key={option} value={option}>{option === 'all' ? 'All cities' : option}</option>)}
+          </select>
+
+          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            <option value="all">All statuses</option>
+            <option value="ready">Ready</option>
+            <option value="busy">Busy</option>
+            <option value="offline">Offline</option>
+            <option value="pending">Pending</option>
+          </select>
+
+          <select value={skillFilter} onChange={(event) => setSkillFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 outline-none">
+            {skillOptions.map((option) => <option key={option} value={option}>{option === 'all' ? 'All skills' : option}</option>)}
+          </select>
+
+          <div className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-center text-sm font-black text-slate-600">
+            {filteredAgents.length} live agent(s)
+          </div>
+
+          <button onClick={() => setCompact((value) => !value)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-lg shadow-slate-950/15">
+            {compact ? 'Expanded' : 'Compact'}
+          </button>
+        </div>
+      </div>
+
+      {filteredAgents.length ? (
+        <div className={`mt-5 grid gap-4 ${compact ? 'lg:grid-cols-3 2xl:grid-cols-4' : 'lg:grid-cols-2 2xl:grid-cols-3'}`}>
+          {filteredAgents.map((agent: any) => (
+            <article key={agent.id} className="rounded-[1.75rem] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Field agent</div>
+                  <h3 className="mt-1 truncate text-xl font-black text-slate-950">{agent.name}</h3>
+                  <p className="mt-1 text-sm font-bold text-slate-500">{agent.city}{agent.zone ? ` · ${agent.zone}` : ''}</p>
+                </div>
+
+                <span className={`rounded-full border px-3 py-1 text-xs font-black capitalize ${statusTone(agent.status)}`}>
+                  {agent.status}
+                </span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <AgentInfo label="Live missions" value={String(agent.activeCount)} />
+                <AgentInfo label="Readiness" value={`${agent.readiness}%`} />
+                <AgentInfo label="Phone" value={agent.phone || 'Missing'} />
+                <AgentInfo label="Next action" value={agent.nextAction} />
+              </div>
+
+              <div className="mt-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Dispatch readiness</span>
+                  <span className="text-xs font-black text-slate-600">{agent.readiness}%</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div className={`h-full rounded-full ${readinessTone(agent.readiness)}`} style={{ width: `${agent.readiness}%` }} />
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {agent.skills.length ? (
+                  agent.skills.slice(0, 4).map((skill: string, index: number) => (
+                    <span key={index} className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-black text-blue-700 ring-1 ring-blue-100">
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600 ring-1 ring-slate-200">
+                    No skills loaded
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {agent.blockers.length ? (
+                  agent.blockers.slice(0, 3).map((blocker: string, index: number) => (
+                    <span key={index} className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-black text-rose-700 ring-1 ring-rose-200">
+                      {blocker}
+                    </span>
+                  ))
+                ) : (
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-black text-emerald-700 ring-1 ring-emerald-200">
+                    Dispatch ready
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-2">
+                <button onClick={() => logAction('contact', agent)} className="rounded-2xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-black text-blue-700">
+                  Contact
+                </button>
+                <button onClick={() => logAction('assign-review', agent)} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
+                  Assign review
+                </button>
+                <button onClick={() => logAction('coverage', agent)} className="rounded-2xl border border-cyan-200 bg-cyan-50 px-3 py-2 text-xs font-black text-cyan-700">
+                  Coverage
+                </button>
+                <button onClick={() => logAction('workload', agent)} className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-black text-amber-700">
+                  Workload
+                </button>
+              </div>
+
+              {agent.missions.length ? (
+                <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Linked live missions</div>
+                  <div className="mt-2 space-y-2">
+                    {agent.missions.slice(0, 3).map((mission: any, index: number) => (
+                      <div key={mission?.id || index} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2">
+                        <span className="truncate text-xs font-black text-slate-700">{String(read(mission, ['code', 'mission_code', 'missionCode', 'mission_reference'], `Mission ${index + 1}`))}</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{String(read(mission, ['city', 'zone'], 'Live'))}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-5 rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50 p-10 text-center">
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-2xl shadow-sm">👥</div>
+          <h3 className="mt-4 text-xl font-black text-slate-800">No agents loaded</h3>
+          <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold text-slate-500">
+            Connected field agents will appear here from live workforce records, or automatically from caregiver-linked live missions.
+          </p>
+        </div>
+      )}
+    </section>
+  )
+}
+
+function AgentKpi({ label, value, helper, tone }: { label: string; value: string | number; helper: string; tone: string }) {
+  const tones: Record<string, string> = {
+    blue: 'border-blue-200 from-blue-50 text-blue-700',
+    emerald: 'border-emerald-200 from-emerald-50 text-emerald-700',
+    amber: 'border-amber-200 from-amber-50 text-amber-700',
+    rose: 'border-rose-200 from-rose-50 text-rose-700',
+    violet: 'border-violet-200 from-violet-50 text-violet-700',
+    cyan: 'border-cyan-200 from-cyan-50 text-cyan-700',
+  }
+
+  return (
+    <div className={`rounded-2xl border bg-gradient-to-br to-white p-4 ${tones[tone] || tones.blue}`}>
+      <div className="text-[11px] font-black uppercase tracking-[0.24em]">{label}</div>
+      <div className="mt-2 text-2xl font-black text-slate-950">{value}</div>
+      <div className="mt-1 text-xs font-semibold text-slate-500">{helper}</div>
+    </div>
+  )
+}
+
+function AgentInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+      <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{label}</div>
+      <div className="mt-1 truncate text-sm font-black text-slate-800">{value}</div>
+    </div>
+  )
 }
 
 function SlaAndIncidents({ incidents, missions, openIncident }: { incidents: DispatchIncident[]; missions: DispatchMission[]; openIncident: (incident: DispatchIncident) => void }) {
   const risk = missions.filter((m) => (m.sla_minutes_remaining ?? 9999) <= 30 || m.status === 'at_risk' || m.status === 'escalation')
-  return <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"><h2 className="font-black">SLA & Escalations</h2><p className="text-xs font-bold text-slate-500">SLA risk, incidents, escalation center.</p><div className="mt-3 grid grid-cols-2 gap-2"><MiniStat label="Risk missions" value={risk.length} /><MiniStat label="Incidents" value={incidents.length} /></div><div className="mt-3 space-y-2">{incidents.slice(0, 5).map((i) => <button key={i.id} onClick={() => openIncident(i)} className="w-full rounded-2xl border border-rose-100 bg-rose-50 p-3 text-left"><p className="text-sm font-black text-rose-800">{i.incident_type}</p><p className="text-xs font-bold text-rose-600">{i.summary || 'No summary'} · {i.status || 'open'}</p></button>)}{!incidents.length ? <EmptyBlock title="No incidents" text="Incident alerts and SLA escalations will appear from live incident tables." /> : null}</div></section>
+  return <SlaEscalations payload={{ incidents, risks: risk, risk, missions: risk }} />
 }
 
 function MiniStat({ label, value }: { label: string; value: number }) { return <div className="rounded-2xl bg-slate-50 p-3"><p className="text-xs font-black text-slate-500">{label}</p><p className="text-2xl font-black">{value}</p></div> }
@@ -2640,8 +4680,6 @@ function MissionDetailsPanel({ mission, agents, incidents, runAction, openModal,
   const relatedIncidents = mission ? incidents.filter((i) => i.mission_id === mission.id || i.mission_code === mission.mission_code) : []
   return (
     <aside className="sticky top-0 h-screen overflow-y-auto bg-white p-5">
-      <div className="mb-4 flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Mission Details</p><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Live</span></div>
-      {!mission ? <EmptyBlock title="No mission selected" text="Select a live mission from the dispatch board to view its operational control panel." /> : <div className="space-y-5"><div className="rounded-3xl border border-slate-200 p-4"><div className="flex items-start justify-between"><div><h2 className="text-2xl font-black">{mission.mission_code}</h2><p className="font-bold text-slate-500">{mission.service_type || 'Service not set'}</p></div><span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${toneClass(mission.status === 'at_risk' || mission.status === 'escalation' ? 'red' : 'blue')}`}>{statusLabel(mission.status)}</span></div><div className="mt-4 grid grid-cols-2 gap-3 text-sm"><Info label="Client" value={mission.client_name || mission.beneficiary_name || '—'} /><Info label="Location" value={[mission.city, mission.zone].filter(Boolean).join(' · ') || '—'} /><Info label="Schedule" value={`${fmtTime(mission.scheduled_start)} → ${fmtTime(mission.scheduled_end)}`} /><Info label="Priority" value={mission.priority || '—'} /></div></div><div className="rounded-3xl border border-slate-200 p-4"><h3 className="font-black">Assignment</h3><p className="mt-2 text-sm font-bold text-slate-500">Assigned agent: {mission.assigned_agent_name || 'Not assigned'}</p><div className="mt-3 grid grid-cols-2 gap-2"><button disabled={actionBusy || !agents[0]} onClick={() => agents[0] && runAction({ action: 'assign_mission', missionId: mission.id, agentId: agents[0].id })} className="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">Assign best available</button><button onClick={() => openModal({ type: 'mission', mission })} className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-black">Edit workflow</button></div></div><div className="rounded-3xl border border-slate-200 p-4"><h3 className="font-black">Recommended Agents</h3><div className="mt-3 space-y-2">{agents.slice(0, 5).map((a) => <div key={a.id} className="flex items-center justify-between rounded-2xl bg-slate-50 p-3"><div><p className="text-sm font-black">{a.full_name}</p><p className="text-xs font-bold text-slate-500">{[a.city, a.zone].filter(Boolean).join(' · ') || 'No location'} · {a.status || 'unknown'}</p></div><button onClick={() => runAction({ action: 'assign_mission', missionId: mission.id, agentId: a.id })} className="rounded-xl bg-white px-3 py-1.5 text-xs font-black text-blue-700 shadow-sm">Assign</button></div>)}{!agents.length ? <EmptyBlock title="No agent pool" text="Create/live-sync agent records to activate assignment recommendations." /> : null}</div></div><div className="rounded-3xl border border-slate-200 p-4"><h3 className="font-black">Escalation Controls</h3><div className="mt-3 grid grid-cols-2 gap-2"><button onClick={() => runAction({ action: 'escalate_mission', missionId: mission.id, payload: { blockers: mission.blockers } })} className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-black text-rose-700">Escalate</button><button onClick={() => runAction({ action: 'set_status', missionId: mission.id, payload: { status: 'at_risk' } })} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-black text-amber-700">Mark At Risk</button></div></div><div className="rounded-3xl border border-slate-200 p-4"><h3 className="font-black">Related Incidents</h3>{relatedIncidents.length ? relatedIncidents.map((i) => <p key={i.id} className="mt-2 text-sm font-bold text-rose-700">{i.incident_type}: {i.summary}</p>) : <p className="mt-2 text-sm font-semibold text-slate-500">No linked incidents.</p>}</div><button onClick={() => runAction({ action: 'delete_mission', missionId: mission.id })} className="w-full rounded-2xl border border-rose-200 bg-white px-4 py-3 text-sm font-black text-rose-700">Delete Mission Permanently</button></div>}
     </aside>
   )
 }

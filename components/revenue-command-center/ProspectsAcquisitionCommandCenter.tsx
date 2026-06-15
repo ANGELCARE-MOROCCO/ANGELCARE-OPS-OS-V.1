@@ -1,6 +1,7 @@
 // @ts-nocheck
 "use client"
 
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { useLiveAppointments, useLiveProspects, useLiveTasks } from "@/lib/revenue-command-center/live-sync"
@@ -610,7 +611,8 @@ async function refreshAllLiveRevenueData() {
 
   useEffect(() => {
     refresh()
-    const interval = window.setInterval(refresh, 6000)
+    if (!shouldStartAutoRefresh()) return
+    const interval = window.setInterval(refresh, safeRefreshInterval(6000))
     const onStorage = (event: StorageEvent) => {
       if (!event.key || event.key.includes("revenue") || event.key.includes("prospects")) refresh()
     }

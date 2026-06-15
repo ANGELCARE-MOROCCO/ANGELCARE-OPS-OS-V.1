@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
@@ -228,7 +229,7 @@ export function CareLinkOpsEnterpriseWorkspace({ view, title, subtitle, apiPath,
       }
     }
     refresh()
-    timer = setInterval(refresh, 30_000)
+    timer = setInterval(refresh, safeRefreshInterval(30000))
     return () => {
       alive = false
       if (timer) clearInterval(timer)

@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -76,7 +77,8 @@ export default function CSAExecutiveCommandCenterV5Live() {
     }
 
     load()
-    const timer = setInterval(load, 45000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = setInterval(load, safeRefreshInterval(45000))
 
     return () => {
       alive = false

@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { Activity, ArrowRight, BarChart3, Bot, BriefcaseBusiness, Building2, CalendarDays, CircleDot, FileSignature, Handshake, HeartHandshake, MapPin, Megaphone, Network, Plus, RefreshCcw, Search, ShieldCheck, Sparkles, Stethoscope, Target, UsersRound, X } from "lucide-react"
@@ -60,7 +61,8 @@ export default function RevenuePartnershipsEnterprisePage() {
     }
   }
 
-  useEffect(() => { load(); const t = setInterval(load, 15000); return () => clearInterval(t) }, [])
+  if (!shouldStartAutoRefresh()) return
+  useEffect(() => { load(); const t = setInterval(load, safeRefreshInterval(15000)); return () => clearInterval(t) }, [])
 
   const stats = useMemo(() => {
     const pipeline = partners.reduce((sum, p) => sum + Number(p.pipeline_value || 0), 0)

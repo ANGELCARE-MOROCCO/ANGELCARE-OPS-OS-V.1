@@ -235,6 +235,13 @@ export default function PerformanceExecutiveKpiDeck({
 
   return (
     <section className="rounded-[38px] border border-white/80 bg-gradient-to-br from-white via-slate-50 to-violet-50/40 p-5 shadow-2xl shadow-slate-200/70 ring-1 ring-slate-100">
+        <PerformanceExecutiveKpiDeck
+          employees={employees}
+          reviews={reviews}
+          goals={goals}
+          feedback={feedback}
+        />
+
       <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <div className="flex flex-wrap gap-2">

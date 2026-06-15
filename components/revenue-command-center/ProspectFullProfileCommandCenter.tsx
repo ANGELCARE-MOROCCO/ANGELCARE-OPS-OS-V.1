@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
@@ -68,7 +69,8 @@ async function loadProspectControlData(prospectId: string) {
 
 function subscribeProspectControls(prospectId: string, onChange: () => void) {
   if (typeof window === "undefined") return () => undefined
-  const timer = window.setInterval(onChange, 15000)
+  if (!shouldStartAutoRefresh()) return
+  const timer = window.setInterval(onChange, safeRefreshInterval(15000))
   return () => window.clearInterval(timer)
 }
 
@@ -645,7 +647,8 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
 
   useEffect(() => {
     void refresh()
-    const timer = window.setInterval(() => void refresh(), 6000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(() => void refresh(), safeRefreshInterval(6000))
     return () => window.clearInterval(timer)
   }, [])
 

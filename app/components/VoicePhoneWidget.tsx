@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useRef, useState } from "react"
 import { TelnyxRTC } from "@telnyx/webrtc"
@@ -199,6 +200,7 @@ export default function VoicePhoneWidget() {
   }, [status])
 
   useEffect(() => {
+    if (!shouldStartAutoRefresh()) return
     const poll = setInterval(async () => {
       if (incomingNumber || status !== "idle") return
 
