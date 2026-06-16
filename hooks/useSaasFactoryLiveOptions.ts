@@ -1,4 +1,5 @@
 "use client";
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getSaasFactoryOptions, saveLiveOption } from "@/lib/saas-factory/client";
@@ -33,9 +34,10 @@ export function useSaasFactoryLiveOptions(group: string, pollMs = 30000) {
   useEffect(() => {
     let active = true;
     refresh();
+    if (!shouldStartAutoRefresh()) return
     const id = window.setInterval(() => {
       if (active) refresh();
-    }, pollMs);
+    }, safeRefreshInterval(pollMs));
     return () => {
       active = false;
       window.clearInterval(id);

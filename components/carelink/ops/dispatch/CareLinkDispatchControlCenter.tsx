@@ -1353,6 +1353,9 @@ function statusLabel(status?: string | null) {
   return String(status || 'new_request').replaceAll('_', ' ')
 }
 
+function toStringList(values: Array<unknown>) {
+  return values.map(String).filter(Boolean)
+}
 
 function missionNumericId(mission?: DispatchMission | null) {
   const raw = mission?.id
@@ -1386,7 +1389,7 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
 
   const filteredMissions = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return safePayload.missions.filter((mission) => {
+    return safePayload.missions.filter((mission: DispatchMission) => {
       const text = [mission.mission_code, mission.service_type, mission.client_name, mission.beneficiary_name, mission.city, mission.zone, mission.assigned_agent_name]
         .filter(Boolean)
         .join(' ')
@@ -1403,20 +1406,39 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
   }, [safePayload.missions, query, cityFilter, serviceFilter, priorityFilter, readinessFilter])
 
   const lanes = useMemo<DispatchLane[]>(() => {
-    return safePayload.lanes.map((lane) => ({
+    return safePayload.lanes.map((lane: DispatchLane) => ({
       ...lane,
-      missions: filteredMissions.filter((mission) => mission.status === lane.key),
-      count: filteredMissions.filter((mission) => mission.status === lane.key).length,
+      missions: filteredMissions.filter((mission: DispatchMission) => mission.status === lane.key),
+      count: filteredMissions.filter((mission: DispatchMission) => mission.status === lane.key).length,
     }))
   }, [filteredMissions, safePayload.lanes])
 
-  const cities = useMemo(() => Array.from(new Set(safePayload.sectors.map((s) => s.city_name).concat(safePayload.missions.map((m) => m.city || '')).filter(Boolean))).sort(), [safePayload.sectors, safePayload.missions])
-  const services = useMemo(() => Array.from(new Set(safePayload.missions.map((m) => m.service_type || '').filter(Boolean))).sort(), [safePayload.missions])
-  const priorities = useMemo(() => Array.from(new Set(safePayload.missions.map((m) => m.priority || '').filter(Boolean))).sort(), [safePayload.missions])
+  const cities = useMemo<string[]>(
+    () =>
+      toStringList(
+        Array.from(
+          new Set(
+            safePayload.sectors
+              .map((s: DispatchSector) => s.city_name)
+              .concat(safePayload.missions.map((m: DispatchMission) => m.city || ''))
+              .filter(Boolean),
+          ),
+        ),
+      ).sort(),
+    [safePayload.sectors, safePayload.missions],
+  )
+  const services = useMemo<string[]>(
+    () => toStringList(Array.from(new Set(safePayload.missions.map((m: DispatchMission) => m.service_type || '').filter(Boolean)))).sort(),
+    [safePayload.missions],
+  )
+  const priorities = useMemo<string[]>(
+    () => toStringList(Array.from(new Set(safePayload.missions.map((m: DispatchMission) => m.priority || '').filter(Boolean)))).sort(),
+    [safePayload.missions],
+  )
 
   const selectedMissionLive = useMemo(() => {
     if (!selectedMission) return safePayload.missions[0] || null
-    return safePayload.missions.find((mission) => mission.id === selectedMission.id) || selectedMission
+    return safePayload.missions.find((mission: DispatchMission) => mission.id === selectedMission.id) || selectedMission
   }, [safePayload.missions, selectedMission])
 
   const refresh = useCallback(async () => {
@@ -1430,7 +1452,7 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
       }
       const json = normalizePayload(await res.json())
       setPayload(json)
-      setSelectedMission((current) => (current ? json.missions.find((mission) => mission.id === current.id) || current : json.missions[0] || null))
+      setSelectedMission((current: DispatchMission | null) => (current ? json.missions.find((mission: DispatchMission) => mission.id === current.id) || current : json.missions[0] || null))
       setLog((current) => [`Dispatch board refreshed from live API.`, ...current].slice(0, 8))
     } catch (error) {
       setLog((current) => [`Refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}`, ...current].slice(0, 8))
@@ -1558,7 +1580,7 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
             <div className="grid gap-4">
               <div className="grid gap-4 xl:grid-cols-2 items-start">
                 <DispatchQueue payload={safePayload} log={log} />
-                <AgentAvailability agents={safePayload.agents} openAgent={(agent) => setModal({ type: 'agent', agent })} />
+                <AgentAvailability agents={safePayload.agents} openAgent={(agent: DispatchAgent) => setModal({ type: 'agent', agent })} />
               </div>
               <SlaAndIncidents incidents={safePayload.incidents} missions={filteredMissions} openIncident={(incident) => setModal({ type: 'incident', incident })} />
             </div>

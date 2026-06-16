@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from 'next/link'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
@@ -169,7 +170,8 @@ function useInterventionState() {
       }
     }
     load()
-    const timer = window.setInterval(load, 45000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(load, safeRefreshInterval(45000))
     return () => { mounted = false; window.clearInterval(timer) }
   }, [])
 

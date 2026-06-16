@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -136,9 +137,10 @@ export default function B2BPartnershipsCommandCenter() {
 
   useEffect(() => {
     void refreshData()
+    if (!shouldStartAutoRefresh()) return
     const sync = window.setInterval(() => {
       void refreshData()
-    }, 30000)
+    }, safeRefreshInterval(30000))
 
     return () => window.clearInterval(sync)
   }, [])

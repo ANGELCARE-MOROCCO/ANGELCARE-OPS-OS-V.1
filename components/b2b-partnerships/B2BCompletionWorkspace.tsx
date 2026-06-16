@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
@@ -146,7 +147,8 @@ export default function B2BCompletionWorkspace({ defaultMode = 'proposals' }: Pr
 
   useEffect(() => {
     loadAll()
-    const interval = window.setInterval(() => loadAll(true), 30000)
+    if (!shouldStartAutoRefresh()) return
+    const interval = window.setInterval(() => loadAll(true), safeRefreshInterval(30000))
     return () => window.clearInterval(interval)
   }, [])
 

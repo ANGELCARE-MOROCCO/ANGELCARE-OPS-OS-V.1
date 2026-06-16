@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
@@ -606,7 +607,8 @@ function EmployeesLiveMapPanel({ command }: { command: any }) {
 
   useEffect(() => {
     loadMapData()
-    const timer = window.setInterval(loadMapData, 45000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(loadMapData, safeRefreshInterval(45000))
     return () => window.clearInterval(timer)
   }, [])
 

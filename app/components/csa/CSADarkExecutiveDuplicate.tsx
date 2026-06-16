@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -426,7 +427,8 @@ export default function CSADarkExecutiveDuplicate() {
     }
 
     loadDeepSync()
-    const timer = setInterval(loadDeepSync, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = setInterval(loadDeepSync, safeRefreshInterval(30000))
 
     return () => {
       active = false
@@ -531,8 +533,9 @@ export default function CSADarkExecutiveDuplicate() {
     }
 
     loadActivity()
-    const syncTimer = setInterval(loadActivity, 30000)
-    const clockTimer = setInterval(() => setClockTick((value) => value + 1), 15000)
+    if (!shouldStartAutoRefresh()) return
+    const syncTimer = setInterval(loadActivity, safeRefreshInterval(30000))
+    const clockTimer = setInterval(() => setClockTick((value) => value + 1), safeUiInterval(15000))
 
     return () => {
       active = false

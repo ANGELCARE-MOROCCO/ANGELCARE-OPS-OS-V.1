@@ -46,6 +46,53 @@ import { createClient } from "@/lib/supabase/server";
 export const dynamic = "force-dynamic";
 
 type Row = Record<string, any>;
+type EnrichedEmployeeRow = Row & {
+  _score: number;
+  _band: string;
+  _risk: string;
+  _potential: string;
+  _promotion: string;
+};
+type ReviewCycleRow = Row & {
+  id?: string | number;
+  cycle_name?: string;
+  name?: string;
+  title?: string;
+  period?: string;
+  date_range?: string;
+  status?: string;
+  completion?: number;
+  completion_percentage?: number;
+  deadline?: string;
+  due_at?: string;
+  pending_reviewers?: number;
+};
+type GoalRow = Row & {
+  id?: string | number;
+  title?: string;
+  goal_title?: string;
+  name?: string;
+  owner?: string;
+  employee_name?: string;
+  department?: string;
+  weight?: number;
+  progress?: number;
+  current_progress?: number;
+  completion?: number;
+  status?: string;
+  deadline?: string;
+  due_at?: string;
+};
+type PipRow = Row & {
+  id?: string | number;
+  employee_name?: string;
+  name?: string;
+  reason?: string;
+  required_improvement?: string;
+  status?: string;
+  check_in_frequency?: string;
+  success_criteria?: string;
+};
 
 const DEPARTMENTS = [
   "Operations",
@@ -874,7 +921,7 @@ export default async function Page({ searchParams }: any) {
   const pips = pipsResult.rows;
   const feedback = feedbackResult.rows;
 
-  const enrichedEmployees = employees.map((row) => {
+  const enrichedEmployees: EnrichedEmployeeRow[] = employees.map((row): EnrichedEmployeeRow => {
     const score = score100(row);
     return {
       ...row,
@@ -1236,14 +1283,14 @@ export default async function Page({ searchParams }: any) {
 
             <div className="rounded-[24px] border border-slate-200 bg-white p-5">
               <div className="grid gap-4 lg:grid-cols-2">
-                {(cycles.length ? cycles : REVIEW_CYCLES.map((cycle, index) => ({
+                {((cycles.length ? cycles : REVIEW_CYCLES.map((cycle, index) => ({
                   cycle_name: cycle,
                   period: "Current period",
                   status: REVIEW_WORKFLOW[Math.min(index, REVIEW_WORKFLOW.length - 1)],
                   completion: index === 0 ? reviewCompletionRate : Math.max(20, reviewCompletionRate - index * 6),
                   deadline: "To schedule",
                   pending_reviewers: managerPending,
-                }))).slice(0, 8).map((cycle, index) => (
+                }))) as ReviewCycleRow[]).slice(0, 8).map((cycle, index) => (
                   <article key={String(cycle.id || index)} className="rounded-[20px] border border-slate-200 bg-slate-50 p-5">
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-600">Review cycle</p>
                     <h3 className="mt-2 text-lg font-black">{s(cycle, ["cycle_name", "name", "title"], REVIEW_CYCLES[index] || "Review cycle")}</h3>
@@ -1283,15 +1330,15 @@ export default async function Page({ searchParams }: any) {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              {(goals.length ? goals : GOAL_TYPES.map((goal, index) => ({
-                title: goal,
-                owner: "Performance owner",
-                department: DEPARTMENTS[index % DEPARTMENTS.length],
-                weight: index < 3 ? 35 : 15,
-                progress: index < 4 ? 76 : 42,
-                status: index < 4 ? "On track" : "At risk",
-                deadline: "To define",
-              }))).slice(0, 10).map((goal, index) => {
+                {((goals.length ? goals : GOAL_TYPES.map((goal, index) => ({
+                  title: goal,
+                  owner: "Performance owner",
+                  department: DEPARTMENTS[index % DEPARTMENTS.length],
+                  weight: index < 3 ? 35 : 15,
+                  progress: index < 4 ? 76 : 42,
+                  status: index < 4 ? "On track" : "At risk",
+                  deadline: "To define",
+                }))) as GoalRow[]).slice(0, 10).map((goal, index) => {
                 const progress = clamp(n(goal.progress ?? goal.current_progress ?? goal.completion, 0));
                 return (
                   <article key={String(goal.id || index)} className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
@@ -1398,14 +1445,14 @@ export default async function Page({ searchParams }: any) {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              {(pips.length ? pips : PIP_STATUSES.map((pipStatus, index) => ({
-                employee_name: enrichedEmployees[index]?.employee_name || employeeName(enrichedEmployees[index] || {}),
-                reason: index % 2 ? "Performance gap" : "Manager support required",
-                required_improvement: "Improve KPI consistency and reporting discipline",
-                status: pipStatus,
-                check_in_frequency: "Weekly",
-                success_criteria: "Score above 75% for two consecutive checkpoints",
-              }))).slice(0, 7).map((pip, index) => (
+                {((pips.length ? pips : PIP_STATUSES.map((pipStatus, index) => ({
+                  employee_name: enrichedEmployees[index]?.employee_name || employeeName(enrichedEmployees[index] || {}),
+                  reason: index % 2 ? "Performance gap" : "Manager support required",
+                  required_improvement: "Improve KPI consistency and reporting discipline",
+                  status: pipStatus,
+                  check_in_frequency: "Weekly",
+                  success_criteria: "Score above 75% for two consecutive checkpoints",
+                }))) as PipRow[]).slice(0, 7).map((pip, index) => (
                 <article key={String(pip.id || index)} className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
                   <p className="text-[10px] font-black uppercase tracking-[0.18em] text-rose-600">Improvement plan</p>
                   <h3 className="mt-2 text-lg font-black">{s(pip, ["employee_name", "name"], "Employee")}</h3>

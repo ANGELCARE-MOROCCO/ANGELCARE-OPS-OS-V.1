@@ -1,4 +1,5 @@
 "use client";
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -52,9 +53,10 @@ export function useLiveFactoryOptions(group: string, moduleKey?: string, pollMs 
     let active = true;
     refresh();
 
+    if (!shouldStartAutoRefresh()) return
     const id = window.setInterval(() => {
       if (active) refresh();
-    }, pollMs);
+    }, safeRefreshInterval(pollMs));
 
     return () => {
       active = false;

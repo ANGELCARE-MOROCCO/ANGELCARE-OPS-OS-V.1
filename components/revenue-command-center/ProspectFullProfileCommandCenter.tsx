@@ -682,9 +682,9 @@ export default function ProspectFullProfileCommandCenter({ prospectId }: { prosp
     const unsubscribeAppointments = subscribeProspectProfileAppointments(prospect.id, () => refreshRealControls(prospect.id, prospect))
 
     return () => {
-      unsubscribeControls()
-      unsubscribeTasks()
-      unsubscribeAppointments()
+      unsubscribeControls?.()
+      unsubscribeTasks?.()
+      unsubscribeAppointments?.()
     }
   }, [prospect?.id])
 

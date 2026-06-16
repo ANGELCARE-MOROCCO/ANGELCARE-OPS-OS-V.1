@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import styles from './B2BEnterpriseProspectCRM.module.css'
@@ -284,7 +285,8 @@ export default function B2BEnterpriseProspectCRM() {
 
   useEffect(() => {
     loadProspects()
-    const timer = window.setInterval(loadProspects, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(loadProspects, safeRefreshInterval(30000))
     return () => window.clearInterval(timer)
   }, [])
 

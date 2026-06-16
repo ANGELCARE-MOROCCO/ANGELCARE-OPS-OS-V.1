@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -141,8 +142,9 @@ export default function MarketingCommandCenter() {
       }
     }
     load()
-    const sync = setInterval(load, 30000)
-    const clock = setInterval(() => setTick((x) => x + 1), 15000)
+    if (!shouldStartAutoRefresh()) return
+    const sync = setInterval(load, safeRefreshInterval(30000))
+    const clock = setInterval(() => setTick((x) => x + 1), safeUiInterval(15000))
     return () => {
       active = false
       clearInterval(sync)

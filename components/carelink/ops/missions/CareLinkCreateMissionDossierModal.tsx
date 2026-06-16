@@ -1,4 +1,5 @@
 'use client'
+import { safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
 import { resolvedSessionCode, stripMissionCodeSuffix } from '@/lib/missions/mission-codes'
@@ -688,7 +689,7 @@ export function CareLinkCreateMissionDossierModal({ close, refresh, initialMissi
           if (value >= 92) return value
           return Math.min(92, value + Math.max(3, Math.round((92 - value) / 6)))
         })
-      }, 220)
+      }, safeUiInterval(220))
 
       const res = await fetch(`/api/missions/dossiers/${existingMissionId}`, {
         method: 'DELETE',
@@ -743,7 +744,7 @@ export function CareLinkCreateMissionDossierModal({ close, refresh, initialMissi
           if (value >= 92) return value
           return Math.min(92, value + Math.max(2, Math.round((92 - value) / 7)))
         })
-      }, 260)
+      }, safeUiInterval(260))
 
       const endpoint = isExistingDossier
         ? `/api/missions/dossiers/${existingMissionId}`

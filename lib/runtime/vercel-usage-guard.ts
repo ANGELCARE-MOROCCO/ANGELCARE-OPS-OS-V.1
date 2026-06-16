@@ -1,12 +1,17 @@
 export const isProductionRuntime =
   process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production'
 
+/**
+ * Server policy:
+ * - do not disable heavy sync by default
+ * - only disable when explicit env brake is enabled
+ * - use cache headers to reduce repeated Vercel work
+ */
 export const disableHeavySync =
   process.env.DISABLE_HEAVY_SYNC === '1' ||
   process.env.DISABLE_LIVE_POLLING === '1' ||
   process.env.CARELINK_SYNC_DISABLED === '1' ||
-  process.env.EMAIL_OS_AUTO_SYNC_DISABLED === '1' ||
-  (isProductionRuntime && process.env.ALLOW_HEAVY_AUTO_SYNC !== '1')
+  process.env.EMAIL_OS_AUTO_SYNC_DISABLED === '1'
 
 export function guardedJson(data: unknown, init: ResponseInit = {}) {
   const headers = new Headers(init.headers)

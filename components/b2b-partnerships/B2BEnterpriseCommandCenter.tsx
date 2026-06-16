@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import styles from './B2BEnterpriseCommandCenter.module.css'
@@ -142,7 +143,8 @@ export default function B2BEnterpriseCommandCenter() {
 
   useEffect(() => {
     loadAll()
-    const id = window.setInterval(loadAll, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const id = window.setInterval(loadAll, safeRefreshInterval(30000))
     return () => window.clearInterval(id)
   }, [])
 

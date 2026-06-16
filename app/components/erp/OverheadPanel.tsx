@@ -1,4 +1,5 @@
 "use client"
+import { safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -252,7 +253,7 @@ export default function OverheadPanel() {
     setNow(new Date())
     setOnline(typeof navigator === "undefined" ? true : navigator.onLine)
 
-    const clock = window.setInterval(() => setNow(new Date()), 1000)
+    const clock = window.setInterval(() => setNow(new Date()), safeUiInterval(1000))
 
     const onOnline = () => {
       setOnline(true)

@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useState } from "react"
 
@@ -20,7 +21,9 @@ export function useEmailOSLiveRefresh(intervalMs = 5000) {
 
   useEffect(() => {
     poll()
-    const id = setInterval(poll, intervalMs)
+    if (!shouldStartAutoRefresh()) return
+    if (!shouldStartAutoRefresh()) return
+    const id = setInterval(poll, safeRefreshInterval(intervalMs))
     return () => clearInterval(id)
   }, [intervalMs])
 

@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createClient as createBrowserSupabaseClient } from '@/lib/supabase/client'
@@ -72,9 +73,10 @@ export function useCareLinkRealtime(initialWorkspace: CareLinkMobileWorkspace | 
 
     const fallbackPoll = () => {
       if (intervalId) clearInterval(intervalId)
+      if (!shouldStartAutoRefresh()) return
       intervalId = setInterval(() => {
         scheduleRefresh('polling')
-      }, pollIntervalMs)
+      }, safeRefreshInterval(pollIntervalMs))
       setSource((current) => (current === 'initial' ? 'polling' : current))
     }
 

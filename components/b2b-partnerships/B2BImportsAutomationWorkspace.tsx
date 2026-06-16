@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useState } from 'react'
 import styles from './B2BImportsAutomationWorkspace.module.css'
@@ -12,7 +13,8 @@ export default function B2BImportsAutomationWorkspace(){
  const [importForm,setImportForm]=useState({name:'',segment:'hospitality',rows:'name,sector,city,email,phone\nHotel Example,Hotel,Rabat,contact@example.com,0600000000'})
  const [ruleForm,setRuleForm]=useState({name:'',trigger_key:'outreach.no_response_5_days',conditions:'{"outcome":"No response"}',actions:'[{"type":"create_task","title":"Relancer prospect","priority":"High"}]'})
  async function load(){try{setError(null);const [i,a]=await Promise.all([read<ImportBatch>('/api/b2b-partnerships/imports'),read<Rule>('/api/b2b-partnerships/automation-rules')]);setImports(i);setAutomation(a)}catch(e){setError(e instanceof Error?e.message:'Unable to load')}}
- useEffect(()=>{load();const id=setInterval(load,30000);return()=>clearInterval(id)},[])
+ if (!shouldStartAutoRefresh()) return
+ useEffect(()=>{load(); if (!shouldStartAutoRefresh()) return; const id=setInterval(load,safeRefreshInterval(30000)); return()=>clearInterval(id)},[])
  function csvToRows(text:string){const lines=text.split('\n').filter(Boolean); const headers=(lines.shift()||'').split(',').map(h=>h.trim()); return lines.map(line=>Object.fromEntries(line.split(',').map((v,i)=>[headers[i]||`field_${i}`,v.trim()]))) }
  async function createImport(){setBusy(true);try{const rows=csvToRows(importForm.rows);const r=await fetch('/api/b2b-partnerships/imports',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...importForm,rows,source:'manual_csv'})});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error||'Unable to create import');setModal(null);await load()}catch(e){setError(e instanceof Error?e.message:'Unable to create import')}finally{setBusy(false)}}
  async function createRule(){setBusy(true);try{const r=await fetch('/api/b2b-partnerships/automation-rules',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...ruleForm,conditions:JSON.parse(ruleForm.conditions||'{}'),actions:JSON.parse(ruleForm.actions||'[]')})});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error||'Unable to create rule');setModal(null);await load()}catch(e){setError(e instanceof Error?e.message:'Unable to create rule')}finally{setBusy(false)}}

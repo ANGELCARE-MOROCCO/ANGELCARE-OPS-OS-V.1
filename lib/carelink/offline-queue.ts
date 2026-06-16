@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -147,11 +148,12 @@ export function useCareLinkOfflineQueue() {
       void syncQueue()
     }
     window.addEventListener('online', handleOnline)
+    if (!shouldStartAutoRefresh()) return
     const interval = window.setInterval(() => {
       if (queueRef.current.some((item) => item.status === 'pending' || item.status === 'failed')) {
         void syncQueue()
       }
-    }, 15_000)
+    }, safeRefreshInterval(15_000))
     void syncQueue()
     return () => {
       window.removeEventListener('online', handleOnline)

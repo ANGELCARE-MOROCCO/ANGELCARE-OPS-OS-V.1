@@ -1,5 +1,5 @@
 'use client'
-import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import type React from 'react'
@@ -148,8 +148,9 @@ export default function MarketingExecutiveUI() {
     }
 
     load()
+    if (!shouldStartAutoRefresh()) return
     const syncTimer = setInterval(load, safeRefreshInterval(30000))
-    const clockTimer = setInterval(() => setTick((v) => v + 1), safeRefreshInterval(15000))
+    const clockTimer = setInterval(() => setTick((v) => v + 1), safeUiInterval(15000))
 
     return () => {
       active = false

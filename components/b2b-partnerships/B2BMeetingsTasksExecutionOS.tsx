@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import styles from './B2BMeetingsTasksExecutionOS.module.css'
@@ -235,7 +236,8 @@ export default function B2BMeetingsTasksExecutionOS({ initialWorkspace = 'meetin
 
   useEffect(() => {
     load()
-    const timer = window.setInterval(load, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(load, safeRefreshInterval(30000))
     return () => window.clearInterval(timer)
   }, [])
 

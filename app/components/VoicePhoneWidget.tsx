@@ -1,5 +1,5 @@
 "use client"
-import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useRef, useState } from "react"
 import { TelnyxRTC } from "@telnyx/webrtc"
@@ -110,7 +110,7 @@ export default function VoicePhoneWidget() {
 
         setTimeout(() => ctx.close(), 300)
       } catch {}
-    }, 850)
+    }, safeUiInterval(850))
   }
 
   const requestMicPermission = async () => {
@@ -192,9 +192,10 @@ export default function VoicePhoneWidget() {
   useEffect(() => {
     if (status !== "active" && status !== "hold") return
 
+    if (!shouldStartAutoRefresh()) return
     const timer = setInterval(() => {
       setSeconds((s) => s + 1)
-    }, 1000)
+    }, safeUiInterval(1000))
 
     return () => clearInterval(timer)
   }, [status])
@@ -205,7 +206,7 @@ export default function VoicePhoneWidget() {
       if (incomingNumber || status !== "idle") return
 
       try {
-        const res = await fetch('/api/voice/incoming/latest', { cache: 'no-store' }).catch(() => null)
+        const res = await (shouldStartAutoRefresh() ? fetch('/api/voice/incoming/latest', { cache: 'no-store' }).catch(() => null) : Promise.resolve(null))
         if (!res || !res.ok) return
       const json = await res.json().catch(() => ({ call: null }))
         const call = json.call

@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
@@ -103,7 +104,8 @@ export default function RevenuePartnershipsEnterpriseWorkspace({ initialTab = "o
     setSelected(current => current ? (data.partners.find(p => p.id === current.id) || data.partners[0] || null) : data.partners[0] || null)
   }
 
-  useEffect(() => { void load(); const timer = window.setInterval(() => { void load() }, 15000); return () => window.clearInterval(timer) }, [])
+  if (!shouldStartAutoRefresh()) return
+  useEffect(() => { void load(); const timer = window.setInterval(() => { void load() }, safeRefreshInterval(15000)); return () => window.clearInterval(timer) }, [])
 
   const filtered = useMemo(() => payload.partners.filter(p => {
     const hay = `${p.name} ${p.organization} ${p.city} ${p.owner} ${p.contact_name} ${p.context} ${p.next_action}`.toLowerCase()

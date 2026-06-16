@@ -229,6 +229,7 @@ export function CareLinkOpsEnterpriseWorkspace({ view, title, subtitle, apiPath,
       }
     }
     refresh()
+    if (!shouldStartAutoRefresh()) return
     timer = setInterval(refresh, safeRefreshInterval(30000))
     return () => {
       alive = false

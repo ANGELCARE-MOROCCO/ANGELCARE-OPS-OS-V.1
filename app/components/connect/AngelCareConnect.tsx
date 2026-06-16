@@ -1,4 +1,5 @@
 "use client"
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import type React from "react"
@@ -412,11 +413,13 @@ export default function AngelCareConnect({
 
   useEffect(() => {
     void loadConnectShell()
+    if (!shouldStartAutoRefresh()) return
+    if (!shouldStartAutoRefresh()) return
     const interval = window.setInterval(() => {
       void loadConnectShell(false)
       const activeSelectedId = selectedIdRef.current
       if (activeSelectedId) void loadMessages(activeSelectedId, false)
-    }, 6000)
+    }, safeRefreshInterval(6000))
     return () => window.clearInterval(interval)
   }, [])
 
@@ -425,7 +428,8 @@ export default function AngelCareConnect({
   }, [selectedId])
 
   useEffect(() => {
-    const interval = window.setInterval(() => setNowMs(Date.now()), 1000)
+    if (!shouldStartAutoRefresh()) return
+    const interval = window.setInterval(() => setNowMs(Date.now()), safeUiInterval(1000))
     return () => window.clearInterval(interval)
   }, [])
 

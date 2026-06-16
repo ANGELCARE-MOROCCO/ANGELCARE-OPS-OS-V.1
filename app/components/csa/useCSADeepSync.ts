@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useState } from 'react'
 
@@ -27,7 +28,8 @@ export function useCSADeepSync() {
     }
 
     load()
-    const timer = setInterval(load, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = setInterval(load, safeRefreshInterval(30000))
 
     return () => {
       active = false

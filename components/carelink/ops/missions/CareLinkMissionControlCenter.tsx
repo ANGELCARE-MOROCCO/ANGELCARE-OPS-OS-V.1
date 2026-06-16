@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
@@ -550,7 +551,7 @@ export function CareLinkMissionControlCenter({ activeView, initialRecords }: Mis
           if (value >= 92) return value
           return Math.min(92, value + Math.max(3, Math.round((92 - value) / 6)))
         })
-      }, 220)
+      }, safeUiInterval(220))
 
       const res = await fetch('/api/missions/bulk-delete', {
         method: 'POST',

@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import styles from './B2BMegaIWorkspace.module.css'
@@ -189,7 +190,8 @@ export default function B2BMegaIWorkspace({ mode }: { mode: Mode }) {
 
   useEffect(() => {
     load()
-    const timer = window.setInterval(load, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(load, safeRefreshInterval(30000))
 function legacyOpenSequenceEditor_UNUSED(sequence: AnyRow) {
     setSelectedSequence(sequence)
     setSequenceEditForm({

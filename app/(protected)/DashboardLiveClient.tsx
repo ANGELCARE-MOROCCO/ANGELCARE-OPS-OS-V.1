@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 
@@ -31,9 +32,10 @@ export default function DashboardLiveClient({
     setMounted(true)
     setNow(new Date())
 
+    if (!shouldStartAutoRefresh()) return
     const timer = setInterval(() => {
       setNow(new Date())
-    }, 1000)
+    }, safeUiInterval(1000))
 
     return () => clearInterval(timer)
   }, [])

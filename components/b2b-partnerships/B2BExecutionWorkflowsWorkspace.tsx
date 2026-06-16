@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import type { FormEvent, ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
@@ -249,7 +250,8 @@ export default function B2BExecutionWorkflowsWorkspace({ defaultMode = 'outreach
 
   useEffect(() => {
     void refresh()
-    const interval = window.setInterval(() => void refresh(), 30000)
+    if (!shouldStartAutoRefresh()) return
+    const interval = window.setInterval(() => void refresh(), safeRefreshInterval(30000))
     return () => window.clearInterval(interval)
   }, [])
 

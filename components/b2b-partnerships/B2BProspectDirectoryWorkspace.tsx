@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import type {
@@ -194,10 +195,11 @@ export default function B2BProspectDirectoryWorkspace({ defaultMode = 'directory
 
   useEffect(() => {
     void refreshProspects()
+    if (!shouldStartAutoRefresh()) return
     const sync = window.setInterval(() => {
       void refreshProspects()
       if (selectedId) void openDetail(selectedId, drawerTab)
-    }, 30000)
+    }, safeRefreshInterval(30000))
 
     return () => window.clearInterval(sync)
     // eslint-disable-next-line react-hooks/exhaustive-deps

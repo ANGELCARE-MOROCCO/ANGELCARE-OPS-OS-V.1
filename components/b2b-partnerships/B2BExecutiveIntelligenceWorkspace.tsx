@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import styles from './B2BExecutiveIntelligenceWorkspace.module.css'
@@ -70,7 +71,8 @@ export default function B2BExecutiveIntelligenceWorkspace() {
 
   useEffect(() => {
     load()
-    const id = window.setInterval(load, 30000)
+    if (!shouldStartAutoRefresh()) return
+    const id = window.setInterval(load, safeRefreshInterval(30000))
     return () => window.clearInterval(id)
   }, [])
 

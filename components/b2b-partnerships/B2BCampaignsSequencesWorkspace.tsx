@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import styles from './B2BCampaignsSequencesWorkspace.module.css'
@@ -17,7 +18,8 @@ export default function B2BCampaignsSequencesWorkspace(){
   const [campaignForm,setCampaignForm]=useState({name:'',segment:'hospitality',objective:'',status:'Draft',target_count:'80',start_at:'',end_at:'',notes:''})
   const [sequenceForm,setSequenceForm]=useState({name:'',segment:'hospitality',objective:'',steps:'Email J0\nCall J+1\nWhatsApp J+3\nFollow-up email J+5'})
   async function load(){ try{ setError(null); const [c,s]=await Promise.all([readJson<Campaign>('/api/b2b-partnerships/campaigns'),readJson<Sequence>('/api/b2b-partnerships/sequences')]); setCampaigns(c); setSequences(s)} catch(e){setError(e instanceof Error?e.message:'Unable to load campaigns')} }
-  useEffect(()=>{load(); const id=setInterval(load,30000); return()=>clearInterval(id)},[])
+  if (!shouldStartAutoRefresh()) return
+  useEffect(()=>{load(); if (!shouldStartAutoRefresh()) return; const id=setInterval(load,safeRefreshInterval(30000)); return()=>clearInterval(id)},[])
   const metrics=useMemo(()=>({total:campaigns.length,running:campaigns.filter(c=>c.status==='Running').length,target:campaigns.reduce((a,c)=>a+Number(c.target_count||0),0),meetings:campaigns.reduce((a,c)=>a+Number(c.meeting_booked_count||0),0)}),[campaigns])
   async function createCampaign(){ setBusy(true); try{ const r=await fetch('/api/b2b-partnerships/campaigns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(campaignForm)}); const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||'Unable to create campaign'); setModal(null); setCampaignForm({name:'',segment:'hospitality',objective:'',status:'Draft',target_count:'80',start_at:'',end_at:'',notes:''}); await load()}catch(e){setError(e instanceof Error?e.message:'Unable to create campaign')}finally{setBusy(false)} }
   async function createSequence(){ setBusy(true); try{ const steps=sequenceForm.steps.split('\n').filter(Boolean).map((line,index)=>({step_order:index+1,channel:line.toLowerCase().includes('call')?'Phone':line.toLowerCase().includes('whatsapp')?'WhatsApp':'Email',delay_days:index*2,task_title:line,instructions:line})); const r=await fetch('/api/b2b-partnerships/sequences',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sequenceForm,steps})}); const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||'Unable to create sequence'); setModal(null); await load()}catch(e){setError(e instanceof Error?e.message:'Unable to create sequence')}finally{setBusy(false)} }

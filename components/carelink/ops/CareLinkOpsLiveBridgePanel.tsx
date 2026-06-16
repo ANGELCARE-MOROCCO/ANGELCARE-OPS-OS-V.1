@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
 import { RefreshCw, Layers3, UserCheck, AlertTriangle, ClipboardCheck, Radio, ArrowRight } from 'lucide-react'
@@ -73,7 +74,8 @@ export function CareLinkOpsLiveBridgePanel({ mode = 'overview' }: { mode?: 'over
 
   useEffect(() => {
     load()
-    const timer = setInterval(load, 15000)
+    if (!shouldStartAutoRefresh()) return
+    const timer = setInterval(load, safeRefreshInterval(15000))
     return () => clearInterval(timer)
   }, [])
 

@@ -1,4 +1,5 @@
 'use client'
+import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 import { useEffect, useMemo, useState } from 'react'
 import styles from './B2BCommercialSuite.module.css'
 import { b2bJson, mad, niceDate } from '@/lib/b2b-partnerships/client'
@@ -13,7 +14,8 @@ export default function B2BCommercialDealDesk(){
  const [proposals,setProposals]=useState<Proposal[]>([]); const [prospects,setProspects]=useState<Prospect[]>([]); const [error,setError]=useState<string|null>(null); const [loading,setLoading]=useState(true); const [modal,setModal]=useState<'create'|'edit'|null>(null); const [selected,setSelected]=useState<Proposal|null>(null)
  const [form,setForm]=useState({prospect_id:'',proposal_title:'',proposal_type:proposalTypes[0],pricing_model:pricingModels[0],estimated_monthly_value:'',estimated_annual_value:'',pilot_duration:'30 jours',services_included:'',follow_up_at:'',internal_notes:''})
  async function load(){setLoading(true);setError(null);try{const [p,pr]=await Promise.all([b2bJson<Proposal[]>('/api/b2b-partnerships/proposals'),b2bJson<Prospect[]>('/api/b2b-partnerships/prospects?limit=120')]);setProposals(p||[]);setProspects(pr||[])}catch(e){setError(e instanceof Error?e.message:'Unable to load deal desk')}finally{setLoading(false)}}
- useEffect(()=>{load(); const t=setInterval(load,30000); return()=>clearInterval(t)},[])
+ if (!shouldStartAutoRefresh()) return
+ useEffect(()=>{load(); if (!shouldStartAutoRefresh()) return; const t=setInterval(load,safeRefreshInterval(30000)); return()=>clearInterval(t)},[])
  const totals=useMemo(()=>({all:proposals.length,sent:proposals.filter(p=>['Sent','Viewed','Follow-up Needed','Negotiation'].includes(p.status)).length,accepted:proposals.filter(p=>p.status==='Accepted').length,value:proposals.reduce((s,p)=>s+Number(p.estimated_annual_value||0),0)}),[proposals])
  function openCreate(){setSelected(null);setForm({prospect_id:prospects[0]?.id||'',proposal_title:'',proposal_type:proposalTypes[0],pricing_model:pricingModels[0],estimated_monthly_value:'',estimated_annual_value:'',pilot_duration:'30 jours',services_included:'',follow_up_at:'',internal_notes:''});setModal('create')}
  function openEdit(p:Proposal){setSelected(p);setForm({prospect_id:p.prospect_id,proposal_title:p.proposal_title,proposal_type:p.proposal_type||proposalTypes[0],pricing_model:p.pricing_model||pricingModels[0],estimated_monthly_value:String(p.estimated_monthly_value||''),estimated_annual_value:String(p.estimated_annual_value||''),pilot_duration:p.pilot_duration||'',services_included:'',follow_up_at:p.follow_up_at||'',internal_notes:''});setModal('edit')}
