@@ -953,7 +953,7 @@
 }
 
 @media print {
-  body * {
+  .workspace * {
     visibility: hidden !important;
   }
 
@@ -994,4 +994,3 @@
     margin: 0;
   }
 }
-

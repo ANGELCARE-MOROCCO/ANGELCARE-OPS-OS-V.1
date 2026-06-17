@@ -859,7 +859,7 @@
 }
 
 @media print {
-  body * {
+  .workspace * {
     visibility: hidden !important;
   }
 
@@ -1242,8 +1242,7 @@
    ============================================================ */
 
 @media print {
-  html,
-  body {
+  .workspace {
     background: #ffffff !important;
   }
 
@@ -1284,4 +1283,3 @@
     font-family: Calibri, Arial, Helvetica, sans-serif !important;
   }
 }
-

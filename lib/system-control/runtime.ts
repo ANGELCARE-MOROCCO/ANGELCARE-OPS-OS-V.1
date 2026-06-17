@@ -144,6 +144,14 @@ export type SafeDisabledResponseInput = {
   mode?: string | null
 }
 
+export function isMissingRelationError(error: unknown) {
+  const message = error instanceof Error ? error.message : ''
+  const code = typeof error === 'object' && error && 'code' in error ? String((error as { code?: unknown }).code || '') : ''
+  return code === '42P01'
+    || code === 'PGRST205'
+    || /does not exist|relation .* does not exist|table .* does not exist|schema cache/i.test(message)
+}
+
 export function getSupabaseRuntimeClientFromRequest(request: NextRequest) {
   const env = getSupabaseEnv()
 
@@ -331,8 +339,15 @@ export async function ensureRuntimeControlRow(supabase: SupabaseClient) {
 }
 
 export async function loadRuntimeState(supabase: SupabaseClient) {
-  const row = await ensureRuntimeControlRow(supabase)
-  return normalizeRuntimeRow(row)
+  try {
+    const row = await ensureRuntimeControlRow(supabase)
+    return normalizeRuntimeRow(row)
+  } catch (error) {
+    if (isMissingRelationError(error)) {
+      return normalizeRuntimeRow(getDefaultRuntimeRow())
+    }
+    throw error
+  }
 }
 
 export async function updateRuntimeState(
@@ -380,7 +395,10 @@ export async function recordRuntimeEvent(
     .select('*')
     .single()
 
-  if (error) throw error
+  if (error) {
+    if (isMissingRelationError(error)) return null
+    throw error
+  }
   return data
 }
 
@@ -413,30 +431,49 @@ export async function recordUsageSnapshot(
     .select('*')
     .single()
 
-  if (error) throw error
+  if (error) {
+    if (isMissingRelationError(error)) return null
+    throw error
+  }
   return data
 }
 
 export async function listRuntimeEvents(supabase: SupabaseClient, limit = 100) {
-  const { data, error } = await supabase
-    .from(SYSTEM_CONTROL_EVENT_TABLE)
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(limit)
+  try {
+    const { data, error } = await supabase
+      .from(SYSTEM_CONTROL_EVENT_TABLE)
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit)
 
-  if (error) throw error
-  return data || []
+    if (error) {
+      if (isMissingRelationError(error)) return []
+      throw error
+    }
+    return data || []
+  } catch (error) {
+    if (isMissingRelationError(error)) return []
+    throw error
+  }
 }
 
 export async function listUsageSnapshots(supabase: SupabaseClient, limit = 200) {
-  const { data, error } = await supabase
-    .from(SYSTEM_CONTROL_USAGE_TABLE)
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(limit)
+  try {
+    const { data, error } = await supabase
+      .from(SYSTEM_CONTROL_USAGE_TABLE)
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit)
 
-  if (error) throw error
-  return data || []
+    if (error) {
+      if (isMissingRelationError(error)) return []
+      throw error
+    }
+    return data || []
+  } catch (error) {
+    if (isMissingRelationError(error)) return []
+    throw error
+  }
 }
 
 export function buildShutdownProgressPlan(input: {
@@ -597,46 +634,56 @@ export async function refreshRuntimeStateFromSchedule(supabase: SupabaseClient, 
   const resumeAt = typeof schedule.resumeAt === 'string' ? Date.parse(schedule.resumeAt) : NaN
 
   if (state.mode === 'normal' && Number.isFinite(shutdownAt) && shutdownAt <= now) {
-    const next = await updateRuntimeState(supabase, {
-      mode: 'standby',
-      is_system_online: false,
-      shutdown_started_at: new Date(shutdownAt).toISOString(),
-      shutdown_ends_at: new Date(shutdownAt).toISOString(),
-      resume_at: typeof schedule.resumeAt === 'string' ? schedule.resumeAt : state.resumeAt,
-      timezone: typeof schedule.timezone === 'string' ? schedule.timezone : state.timezone,
-      reason: typeof schedule.reason === 'string' ? schedule.reason : state.reason,
-      last_action_by: 'system-scheduler',
-      last_action_at: new Date().toISOString(),
-    })
-    await recordRuntimeEvent(supabase, {
-      eventType: 'scheduled_shutdown_activated',
-      fromMode: 'normal',
-      toMode: next.mode,
-      actorEmail: 'system-scheduler',
-      actorRole: 'system',
-      payload: { schedule },
-    })
-    return next
+    try {
+      const next = await updateRuntimeState(supabase, {
+        mode: 'standby',
+        is_system_online: false,
+        shutdown_started_at: new Date(shutdownAt).toISOString(),
+        shutdown_ends_at: new Date(shutdownAt).toISOString(),
+        resume_at: typeof schedule.resumeAt === 'string' ? schedule.resumeAt : state.resumeAt,
+        timezone: typeof schedule.timezone === 'string' ? schedule.timezone : state.timezone,
+        reason: typeof schedule.reason === 'string' ? schedule.reason : state.reason,
+        last_action_by: 'system-scheduler',
+        last_action_at: new Date().toISOString(),
+      })
+      await recordRuntimeEvent(supabase, {
+        eventType: 'scheduled_shutdown_activated',
+        fromMode: 'normal',
+        toMode: next.mode,
+        actorEmail: 'system-scheduler',
+        actorRole: 'system',
+        payload: { schedule },
+      })
+      return next
+    } catch (error) {
+      if (isMissingRelationError(error)) return state
+      throw error
+    }
   }
 
   if (state.mode !== 'normal' && Number.isFinite(resumeAt) && resumeAt <= now) {
-    const next = await updateRuntimeState(supabase, {
-      mode: 'normal',
-      is_system_online: true,
-      resume_at: new Date(resumeAt).toISOString(),
-      disabled_modules: {},
-      last_action_by: 'system-scheduler',
-      last_action_at: new Date().toISOString(),
-    })
-    await recordRuntimeEvent(supabase, {
-      eventType: 'scheduled_restore_activated',
-      fromMode: state.mode,
-      toMode: next.mode,
-      actorEmail: 'system-scheduler',
-      actorRole: 'system',
-      payload: { schedule },
-    })
-    return next
+    try {
+      const next = await updateRuntimeState(supabase, {
+        mode: 'normal',
+        is_system_online: true,
+        resume_at: new Date(resumeAt).toISOString(),
+        disabled_modules: {},
+        last_action_by: 'system-scheduler',
+        last_action_at: new Date().toISOString(),
+      })
+      await recordRuntimeEvent(supabase, {
+        eventType: 'scheduled_restore_activated',
+        fromMode: state.mode,
+        toMode: next.mode,
+        actorEmail: 'system-scheduler',
+        actorRole: 'system',
+        payload: { schedule },
+      })
+      return next
+    } catch (error) {
+      if (isMissingRelationError(error)) return state
+      throw error
+    }
   }
 
   return state

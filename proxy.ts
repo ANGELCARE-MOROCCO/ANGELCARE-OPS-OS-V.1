@@ -48,6 +48,16 @@ async function getRuntimeActorFromRequest(request: NextRequest) {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+
+  const isSystemControlPlane =
+    pathname === '/ceo/system-control' ||
+    pathname.startsWith('/ceo/system-control/') ||
+    pathname.startsWith('/api/system-control')
+
+  if (isSystemControlPlane) {
+    return NextResponse.next()
+  }
+
   if (isStaticAssetPath(pathname) || isPublicSystemPath(pathname)) {
     return NextResponse.next()
   }

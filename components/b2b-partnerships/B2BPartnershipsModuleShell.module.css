@@ -377,9 +377,9 @@
   color: #be123c !important;
 }
 
-:global(input),
-:global(select),
-:global(textarea) {
+.shell :global(input),
+.shell :global(select),
+.shell :global(textarea) {
   border-radius: 18px !important;
   border: 1px solid #e2e8f0 !important;
   background: linear-gradient(180deg, #ffffff, #fbfdff) !important;
@@ -387,19 +387,19 @@
   font-weight: 750;
 }
 
-:global(input:focus),
-:global(select:focus),
-:global(textarea:focus) {
+.shell :global(input:focus),
+.shell :global(select:focus),
+.shell :global(textarea:focus) {
   outline: none !important;
   border-color: #93c5fd !important;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, .10) !important;
 }
 
-:global(button) {
+.shell :global(button) {
   transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
 }
 
-:global(button:hover) {
+.shell :global(button:hover) {
   transform: translateY(-2px);
 }
 
@@ -462,4 +462,3 @@
     display: none;
   }
 }
-
