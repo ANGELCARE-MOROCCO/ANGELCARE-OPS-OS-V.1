@@ -45,8 +45,8 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getHREmployeesCommandData } from "@/lib/hr-production/employees-command";
-
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Row = Record<string, any>;
 type EnrichedEmployeeRow = Row & {

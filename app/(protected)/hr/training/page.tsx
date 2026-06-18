@@ -46,9 +46,6 @@ import { createClient } from '@/lib/supabase/server'
 import { getHRDashboardData } from '@/lib/hr-production/repository'
 import AssignTrainingEnterpriseModal from '@/components/hr-training/AssignTrainingEnterpriseModal'
 import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
-
-export const dynamic = 'force-dynamic'
-
 type Row = Record<string, any>
 type Tone = 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 'cyan' | 'indigo' | 'slate'
 
@@ -426,6 +423,9 @@ function SideBar() {
     <div className="mb-5 flex items-center gap-3 px-2"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-500 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div><div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div></div>
     <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
       {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item, index) => { const Icon = item.icon; return <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.active ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><Icon className="h-4 w-4" />{item.label}</Link> })}</div></div>)}
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
     </nav>
     <Link href="/ai-command-center/hr-copilot" className="mt-4 flex items-center justify-between rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-black text-violet-700 shadow-sm"><span>Ask Angel AI</span><Sparkles className="h-4 w-4" /></Link>
   </aside>
@@ -501,7 +501,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
     safeRead('hr_position_training_requirements', '*', 1500),
     safeRead('hr_training_resources', '*', 1500),
     safeRead('hr_training_assignments', '*', 2000),
-    safeRead('hr_activity_events', '*', 500),
+    safeRead('hr_activity_events', 'id, action, entity_id, metadata, created_at', 300),
   ])
 
   const dismissedSuggestionKeys = new Set(
@@ -663,7 +663,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
     {positions.map((position, positionIndex) => <Modal key={`modal-position-${positionIndex}-${position.id}`} id={`modal-position-bank-${position.id}`} title={`${position.name} — Training Resource Bank`} subtitle="Browse, preview, add, edit, remove and sync every training resource attached to this position. This workspace is connected to Users management positions, HR staff, training programs, requirements and resource links." ultra>
       <div className="grid gap-7 xl:grid-cols-[1.5fr_0.75fr]">
         <section className="space-y-6">
-          <div className="rounded-[30px] bg-slate-950 p-6 text-white shadow-2xl"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Synced position file</p><h4 className="mt-2 text-3xl font-black">{position.name}</h4><p className="mt-2 text-sm font-bold text-white/60">{position.department} • {position.users.length} mapped user(s) • {position.items.length} training resource(s)</p></div><div className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10"><Library className="h-7 w-7" /></div></div><div className="mt-6 grid gap-3 md:grid-cols-4">{[['Users', position.users.length], ['Live programs', position.programs.length], ['Requirements', position.requirements.length], ['Resources', position.items.length.length]].map(([label, val]) => <div key={`position-stat-${positionIndex}-${position.id}-${label}`} className="rounded-2xl bg-white/10 p-4"><p className="text-2xl font-black">{val}</p><p className="text-[10px] font-black uppercase text-white/50">{label}</p></div>)}</div></div>
+          <div className="rounded-[30px] bg-slate-950 p-6 text-white shadow-2xl"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Synced position file</p><h4 className="mt-2 text-3xl font-black">{position.name}</h4><p className="mt-2 text-sm font-bold text-white/60">{position.department} • {position.users.length} mapped user(s) • {position.items.length} training resource(s)</p></div><div className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10"><Library className="h-7 w-7" /></div></div><div className="mt-6 grid gap-3 md:grid-cols-4">{[['Users', position.users.length], ['Live programs', position.programs.length], ['Requirements', position.requirements.length], ['Resources', position.items.length]].map(([label, val]) => <div key={`position-stat-${positionIndex}-${position.id}-${label}`} className="rounded-2xl bg-white/10 p-4"><p className="text-2xl font-black">{val}</p><p className="text-[10px] font-black uppercase text-white/50">{label}</p></div>)}</div></div>
 
           <Panel title="Modern training resource cards" subtitle="Click any resource to open technical details, preview links, edit metadata or remove it from this position.">
             <div className="grid gap-4 lg:grid-cols-2">
@@ -815,7 +815,6 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
         return [`${uiTrainingId}-${n(item.title)}-${n(item.source)}`, { ...item, id: uiTrainingId, sourceTrainingId: item.id, position: p.name, positionId: p.id, department: p.department }]
       }))).values())}
     />
-
     {['training-search','position-library','add-global-training','upload-resource','compliance-overview'].map((id) => <Modal key={`generic-modal-${id}`} id={`modal-${id}`} title={id.split('-').map((p, pIndex) => p[0].toUpperCase() + p.slice(1)).join(' ')} subtitle="Large in-page management workspace connected to HR training context, positions, users and resources.">
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]"><Panel title="Management workspace" subtitle="Use this area to browse, filter, assign, upload, review or export training resources."><div className="grid gap-4 md:grid-cols-2"><Field label="Search / title" name="q" /><SelectField label="Position" name="position" options={positionNames} /><SelectField label="Department" name="department" options={departments.length ? departments : ['All departments']} /><SelectField label="Resource type" name="resource_type" options={['all','pdf','video','link','checklist','workshop']} /></div><div className="mt-5 flex flex-wrap gap-3"><a href="#" className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white">Save action</a><a href="#" className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">Close</a></div></Panel><Panel title="Live context"><div className="grid grid-cols-2 gap-3 text-sm font-black text-slate-600"><span>Staff: {totalStaff}</span><span>Positions: {positions.length}</span><span>Programs: {totalPrograms}</span><span>Resources: {totalResources}</span></div></Panel></div>
     </Modal>)}

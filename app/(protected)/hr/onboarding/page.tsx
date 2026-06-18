@@ -2,9 +2,6 @@ import OnboardingCommandCenter, { type OnboardingSeedData } from './_components/
 import { createClient } from '@/lib/supabase/server'
 import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
 import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
-
-export const dynamic = 'force-dynamic'
-
 async function readTable(table: string, limit = 80) {
   try {
     const supabase = await createClient()
@@ -58,8 +55,10 @@ export default async function Page() {
     documents: docRows,
     activity: activityRows,
   }
-
   return <>
 <OnboardingCommandCenter initialData={seed} />
   </>
 }
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+

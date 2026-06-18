@@ -5,8 +5,8 @@ import { requireAccess } from "@/lib/auth/requireAccess";
 import { createEnrollment } from "../_actions";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type AnyRow = Record<string, any>;
 type Tone =

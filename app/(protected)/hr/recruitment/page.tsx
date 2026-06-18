@@ -48,8 +48,8 @@ import LiveScheduledInterviewsPanel from "./_components/LiveScheduledInterviewsP
 import RecruitmentLiveGeoMapPanel from "./_components/RecruitmentLiveGeoMapPanel";
 import RequisitionCommandCenter from "./_components/RequisitionCommandCenter";
 import RecruitmentCandidateCommandCenter from "./_components/RecruitmentCandidateCommandCenter";
-
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Row = Record<string, any>;
 const stages = [

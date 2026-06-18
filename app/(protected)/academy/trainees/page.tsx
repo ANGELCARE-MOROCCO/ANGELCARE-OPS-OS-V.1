@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { requireAccess } from "@/lib/auth/requireAccess";
-
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
