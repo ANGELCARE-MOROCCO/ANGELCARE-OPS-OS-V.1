@@ -48,6 +48,15 @@ async function getRuntimeActorFromRequest(request: NextRequest) {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.SYSTEM_CONTROL_BYPASS_LOCAL === '1' &&
+    !pathname.startsWith('/api/system-control') &&
+    !pathname.startsWith('/ceo/system-control')
+  ) {
+    return NextResponse.next()
+  }
+
 
   const isSystemControlPlane =
     pathname === '/ceo/system-control' ||

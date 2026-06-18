@@ -46,7 +46,6 @@ import { createClient } from '@/lib/supabase/server'
 import { getHRDashboardData } from '@/lib/hr-production/repository'
 import AssignTrainingEnterpriseModal from '@/components/hr-training/AssignTrainingEnterpriseModal'
 import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
-import HRRealtimeSyncPanel from '@/components/hr-production/HRRealtimeSyncPanel'
 
 export const dynamic = 'force-dynamic'
 
@@ -101,6 +100,28 @@ const sidebarGroups = [
 function s(v: unknown) { return String(v ?? '').trim() }
 function n(v: unknown) { return s(v).toLowerCase() }
 function slug(input: unknown) { return s(input).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'item' }
+
+function trainingSuggestionKeys(position: string, title: string, resourceType = "suggested") {
+  const positionKey = slug(position)
+  const titleKey = slug(title)
+  const typeKey = slug(resourceType || "suggested")
+
+  return [
+    `${positionKey}::${titleKey}::${typeKey}`,
+    `${positionKey}::${titleKey}`,
+    titleKey,
+  ]
+}
+
+function trainingSuggestionDismissed(
+  dismissedKeys: Set<string>,
+  position: string,
+  title: string,
+  resourceType = "suggested",
+) {
+  return trainingSuggestionKeys(position, title, resourceType).some((key) => dismissedKeys.has(key))
+}
+
 function pct(v: number) { return `${Math.max(0, Math.min(100, Math.round(v)))}%` }
 function initials(name: string) { return name.split(/\s+/).filter(Boolean).slice(0, 2).map((p, pIndex) => p[0]?.toUpperCase()).join('') || 'HR' }
 function money(v: number) { return new Intl.NumberFormat('fr-MA').format(v) }
@@ -199,28 +220,98 @@ async function saveTrainingResourceAction(formData: FormData) {
   redirect(`/hr/training#modal-position-bank-${slug(position)}`)
 }
 
+
+async function dismissSuggestedTrainingResourceAction(formData: FormData) {
+  'use server'
+
+  const supabase = await createClient()
+  const position = s(formData.get('position_title'))
+  const title = s(formData.get('title'))
+  const resourceType = s(formData.get('resource_type'))
+  const suggestionKeys = trainingSuggestionKeys(position, title, resourceType)
+  const suggestionKey = suggestionKeys[0]
+
+  if (!position || !title) {
+    redirect('/hr/training?dismissed=missing_context')
+  }
+
+  try {
+    await supabase.from('hr_activity_events').insert({
+      action: 'training_suggestion_dismissed',
+      entity_type: 'position_training_suggestion',
+      entity_id: suggestionKey,
+      title: 'Training suggestion dismissed permanently',
+      description: `${position} · ${title}`,
+      created_at: new Date().toISOString(),
+      metadata: {
+        position_title: position,
+        title,
+        resource_type: resourceType,
+        suggestion_key: suggestionKey,
+        suggestion_keys: suggestionKeys,
+      },
+    })
+  } catch {}
+
+  revalidatePath('/hr/training')
+  redirect(`/hr/training?dismissed=${encodeURIComponent(title)}#modal-position-bank-${slug(position)}`)
+}
+
+
 async function deleteTrainingResourceAction(formData: FormData) {
   'use server'
+
   const supabase = await createClient()
   const id = s(formData.get('id'))
   const position = s(formData.get('position_title'))
-  if (!id) return
-  try { await supabase.from('hr_training_resources').delete().eq('training_id', id) } catch {}
-  try { await supabase.from('hr_position_training_requirements').delete().eq('training_id', id) } catch {}
-  try { await supabase.from('hr_training_programs').delete().eq('id', id) } catch {}
+
+  if (!id) {
+    redirect('/hr/training?deleted=missing_id')
+  }
+
+  const now = new Date().toISOString()
+
+  // Hard delete across the live resource/program/requirement surfaces.
+  // We delete by both id and training_id because the resource cards may come
+  // from hr_training_programs, hr_training_requirements or hr_training_resources.
+  const operations = [
+    supabase.from('hr_training_resources').delete().eq('id', id),
+    supabase.from('hr_training_resources').delete().eq('training_id', id),
+    supabase.from('hr_training_requirements').delete().eq('id', id),
+    supabase.from('hr_training_requirements').delete().eq('training_id', id),
+    supabase.from('hr_training_programs').delete().eq('id', id),
+  ]
+
+  const results = await Promise.allSettled(operations)
+
+  const deletedSomewhere = results.some((result) => result.status === 'fulfilled' && !result.value.error)
+  const firstError = results.find((result) => result.status === 'fulfilled' && result.value.error)
+
   try {
-    await supabase.from('hr_training_audit_logs').insert({
-      action: 'training_resource_deleted',
+    await supabase.from('hr_activity_events').insert({
+      action: deletedSomewhere ? 'training_resource_deleted_permanently' : 'training_resource_delete_attempted',
       entity_type: 'position_training_resource',
       entity_id: id,
-      title: `Training resource removed for ${position}`,
-      created_at: new Date().toISOString(),
+      title: deletedSomewhere ? 'Training resource permanently deleted' : 'Training resource delete attempted',
+      description: `${position || 'Unknown position'} · ${deletedSomewhere ? 'hard delete completed' : 'no matching record deleted'}`,
+      created_at: now,
+      metadata: {
+        id,
+        position_title: position,
+        deletedSomewhere,
+        firstError: firstError && firstError.status === 'fulfilled' ? firstError.value.error?.message : null,
+      },
     })
   } catch {}
-  revalidatePath('/hr/training')
-  redirect(`/hr/training#modal-position-bank-${slug(position)}`)
-}
 
+  revalidatePath('/hr/training')
+
+  redirect(
+    position
+      ? `/hr/training?deleted=${encodeURIComponent(id)}#modal-position-bank-${slug(position)}`
+      : `/hr/training?deleted=${encodeURIComponent(id)}`
+  )
+}
 
 async function assignTrainingAction(formData: FormData) {
   'use server'
@@ -332,8 +423,6 @@ function positionRecommendations(position: string) {
 
 function SideBar() {
   return <aside className="sticky top-0 flex h-screen min-h-0 w-[290px] shrink-0 flex-col border-r border-slate-200/80 bg-white/95 px-3 py-4 shadow-[24px_0_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-    <HRModuleCommandBridge context="Training Management" compact />
-      <HRRealtimeSyncPanel domain="training" title="Training realtime sync" compact />
     <div className="mb-5 flex items-center gap-3 px-2"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-500 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div><div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div></div>
     <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
       {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item, index) => { const Icon = item.icon; return <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.active ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><Icon className="h-4 w-4" />{item.label}</Link> })}</div></div>)}
@@ -405,14 +494,32 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
   const filterResourceType = sp('resource_type') || 'all'
   const filterOnlyMapped = sp('mapped') === 'yes'
 
-  const [hr, appUsers, trainingPrograms, requirements, resources, assignments] = await Promise.all([
+  const [hr, appUsers, trainingPrograms, requirements, resources, assignments, dismissedSuggestionEvents] = await Promise.all([
     getHRDashboardData(),
     safeRead('app_users', 'id, full_name, name, email, role, department, position, status', 1500),
     safeRead('hr_training_programs', '*', 1500),
     safeRead('hr_position_training_requirements', '*', 1500),
     safeRead('hr_training_resources', '*', 1500),
     safeRead('hr_training_assignments', '*', 2000),
+    safeRead('hr_activity_events', '*', 500),
   ])
+
+  const dismissedSuggestionKeys = new Set(
+    (dismissedSuggestionEvents || [])
+      .filter((event) => first(event, ['action'], '') === 'training_suggestion_dismissed')
+      .flatMap((event) => {
+        const metadata = (event as any).metadata || {}
+        const keys = Array.isArray(metadata.suggestion_keys) ? metadata.suggestion_keys : []
+        return [
+          metadata.suggestion_key,
+          first(event, ['entity_id'], ''),
+          ...keys,
+        ]
+      })
+      .map((key) => String(key || ''))
+      .filter(Boolean)
+  )
+
 
   const staff = ([...(hr.staff || []), ...appUsers] as Row[])
   const rawPositions = ([...(hr.positions || []), ...appUsers.map((u) => ({ title: first(u, ['position', 'role'], ''), department: first(u, ['department'], ''), source: 'users' }))] as Row[])
@@ -424,7 +531,14 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
     const programs = trainingPrograms.filter((p) => n(first(p, ['position_title','category'], '')) === n(name) || n(first(p, ['title'], '')).includes(n(name)))
     const reqs = requirements.filter((r) => n(first(r, ['position_title'], '')) === n(name))
     const res = resources.filter((r) => n(first(r, ['position_title'], '')) === n(name))
-    const rec = positionRecommendations(name)
+    const rec = positionRecommendations(name).filter(([title, priority, type]) => {
+      return !trainingSuggestionDismissed(
+        dismissedSuggestionKeys,
+        name,
+        String(title),
+        String(type || 'suggested'),
+      )
+    })
     const items = [
       ...programs.map((p, pIndex) => ({ id: first(p, ['id'], ''), title: first(p, ['title','training_title'], 'Untitled training'), description: first(p, ['description'], 'Live training program.'), priority: first(p, ['priority','requirement_level','training_type'], 'active'), type: first(p, ['training_type','resource_type'], 'training'), duration: String(p.duration_minutes || 60), pdf: first(p, ['pdf_url','resource_url'], ''), video: first(p, ['video_url'], ''), source: 'program', live: true })),
       ...reqs.map((r, rIndex) => ({ id: first(r, ['training_id','id'], ''), title: first(r, ['training_title','title'], 'Position requirement'), description: first(r, ['description'], 'Position training requirement.'), priority: first(r, ['requirement_level'], 'mandatory'), type: 'requirement', duration: String(r.duration_minutes || 60), pdf: '', video: '', source: 'requirement', live: true })),
@@ -483,7 +597,31 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
 
         <section className="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
           <Panel title="Position-based training bank" subtitle="Browse positions through a controlled filter panel instead of loading every position as one huge open section." action={<span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-black text-violet-700">{pct(filteredCoverage)} filtered coverage</span>}>
-            <form className="mb-5 rounded-[26px] border border-slate-200 bg-gradient-to-br from-white via-violet-50/60 to-blue-50/60 p-4 shadow-sm" action="/hr/training" method="get">
+            {(sp('dismissed') || sp('deleted') || sp('saved') || sp('dismissed_error')) ? (
+            <div id="training-live-action-feedback-banner" className="mb-5 rounded-[26px] border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">
+                    Live sync update
+                  </p>
+                  <p className="mt-1 text-sm font-black text-slate-950">
+                    {sp('dismissed_error')
+                      ? `Delete failed: ${sp('dismissed_error')}`
+                      : sp('dismissed')
+                        ? `Suggestion removed from this position bank: ${sp('dismissed')}`
+                        : sp('deleted')
+                          ? `Training resource deleted permanently: ${sp('deleted')}`
+                          : `Training resource saved live: ${sp('saved')}`}
+                  </p>
+                </div>
+                <Link href="/hr/training" className="rounded-2xl bg-white px-4 py-3 text-xs font-black text-emerald-700 shadow-sm">
+                  Clear notice
+                </Link>
+              </div>
+            </div>
+          ) : null}
+
+          <form className="mb-5 rounded-[26px] border border-slate-200 bg-gradient-to-br from-white via-violet-50/60 to-blue-50/60 p-4 shadow-sm" action="/hr/training" method="get">
               <div className="grid gap-3 lg:grid-cols-[1.2fr_0.9fr_0.8fr_0.8fr_auto]">
                 <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Search positions / trainings</span><div className="mt-2 flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4"><Search className="h-4 w-4 text-slate-400" /><input name="q" defaultValue={sp('q')} placeholder="Caregiver, field staff, PDF, compliance..." className="w-full bg-transparent text-sm font-bold text-slate-800 outline-none" /></div></label>
                 <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Department</span><select name="department" defaultValue={filterDepartment} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800"><option value="all">All departments</option>{departments.map((department, index) => <option key={`filter-dept-${index}-${department}`} value={department}>{department}</option>)}</select></label>
@@ -525,17 +663,95 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
     {positions.map((position, positionIndex) => <Modal key={`modal-position-${positionIndex}-${position.id}`} id={`modal-position-bank-${position.id}`} title={`${position.name} — Training Resource Bank`} subtitle="Browse, preview, add, edit, remove and sync every training resource attached to this position. This workspace is connected to Users management positions, HR staff, training programs, requirements and resource links." ultra>
       <div className="grid gap-7 xl:grid-cols-[1.5fr_0.75fr]">
         <section className="space-y-6">
-          <div className="rounded-[30px] bg-slate-950 p-6 text-white shadow-2xl"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Synced position file</p><h4 className="mt-2 text-3xl font-black">{position.name}</h4><p className="mt-2 text-sm font-bold text-white/60">{position.department} • {position.users.length} mapped user(s) • {position.items.length} training resource(s)</p></div><div className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10"><Library className="h-7 w-7" /></div></div><div className="mt-6 grid gap-3 md:grid-cols-4">{[['Users', position.users.length], ['Live programs', position.programs.length], ['Requirements', position.requirements.length], ['Resources', position.resources.length]].map(([label, val]) => <div key={`position-stat-${positionIndex}-${position.id}-${label}`} className="rounded-2xl bg-white/10 p-4"><p className="text-2xl font-black">{val}</p><p className="text-[10px] font-black uppercase text-white/50">{label}</p></div>)}</div></div>
+          <div className="rounded-[30px] bg-slate-950 p-6 text-white shadow-2xl"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Synced position file</p><h4 className="mt-2 text-3xl font-black">{position.name}</h4><p className="mt-2 text-sm font-bold text-white/60">{position.department} • {position.users.length} mapped user(s) • {position.items.length} training resource(s)</p></div><div className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10"><Library className="h-7 w-7" /></div></div><div className="mt-6 grid gap-3 md:grid-cols-4">{[['Users', position.users.length], ['Live programs', position.programs.length], ['Requirements', position.requirements.length], ['Resources', position.items.length.length]].map(([label, val]) => <div key={`position-stat-${positionIndex}-${position.id}-${label}`} className="rounded-2xl bg-white/10 p-4"><p className="text-2xl font-black">{val}</p><p className="text-[10px] font-black uppercase text-white/50">{label}</p></div>)}</div></div>
 
           <Panel title="Modern training resource cards" subtitle="Click any resource to open technical details, preview links, edit metadata or remove it from this position.">
             <div className="grid gap-4 lg:grid-cols-2">
               {position.items.map((item, index) => {
                 const id = `${position.id}-${positionIndex}-${index}-${slug(item.title)}`
                 const tone = resourceTone(item.priority)
-                return <a key={`resource-card-${id}`} href={`#modal-training-resource-${id}`} className="group overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                return <div key={`resource-card-${id}`} className="group overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                   <div className={`h-1.5 bg-gradient-to-r ${toneClasses(tone)}`} />
-                  <div className="p-5"><div className="flex items-start gap-4"><div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${toneClasses(tone)} text-white`}><ResourceIcon type={item.type} /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase text-slate-600">{item.priority}</span><span className="rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-black uppercase text-violet-600">{item.type}</span>{item.live ? <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-600">Live</span> : <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase text-amber-600">Suggested</span>}</div><h5 className="mt-3 line-clamp-2 text-lg font-black text-slate-950">{item.title}</h5><p className="mt-2 line-clamp-2 text-xs font-bold leading-5 text-slate-500">{item.description}</p></div></div><div className="mt-5 flex flex-wrap items-center justify-between gap-3"><span className="text-xs font-black text-slate-500">Duration: {item.duration} min</span><span className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">Open details <Eye className="h-3.5 w-3.5" /></span></div></div>
-                </a>
+
+                  <div className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${toneClasses(tone)} text-white`}>
+                        <ResourceIcon type={item.type} />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase text-slate-600">{item.priority}</span>
+                          <span className="rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-black uppercase text-violet-600">{item.type}</span>
+                          {item.live ? (
+                            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-600">Live saved</span>
+                          ) : (
+                            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase text-amber-600">Suggested only</span>
+                          )}
+                        </div>
+
+                        <h5 className="mt-3 line-clamp-2 text-lg font-black text-slate-950">{item.title}</h5>
+                        <p className="mt-2 line-clamp-2 text-xs font-bold leading-5 text-slate-500">{item.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-xs font-black text-slate-500">Duration: {item.duration} min</span>
+
+                      <div className="flex flex-wrap gap-2">
+                        <a
+                          href={`#modal-training-resource-${id}`}
+                          className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white"
+                        >
+                          Edit details <Eye className="h-3.5 w-3.5" />
+                        </a>
+
+                        {item.id ? (
+                          <form action={deleteTrainingResourceAction}>
+                            <input type="hidden" name="id" value={item.id} />
+                            <input type="hidden" name="position_title" value={position.name} />
+                            <button className="inline-flex items-center gap-2 rounded-full border border-rose-300 bg-rose-600 px-4 py-2 text-xs font-black text-white shadow-lg shadow-rose-100">
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Delete permanently
+                            </button>
+                          </form>
+                        ) : (
+                          <>
+                            <form action={saveTrainingResourceAction}>
+                              <input type="hidden" name="position_title" value={position.name} />
+                              <input type="hidden" name="title" value={item.title} />
+                              <input type="hidden" name="department" value={position.department} />
+                              <input type="hidden" name="resource_type" value={item.type} />
+                              <input type="hidden" name="training_type" value="position_resource" />
+                              <input type="hidden" name="requirement_level" value={item.priority} />
+                              <input type="hidden" name="duration_minutes" value={item.duration} />
+                              <input type="hidden" name="due_days" value="14" />
+                              <input type="hidden" name="priority" value={item.priority} />
+                              <input type="hidden" name="pdf_url" value={item.pdf} />
+                              <input type="hidden" name="video_url" value={item.video} />
+                              <input type="hidden" name="resource_url" value={item.pdf || item.video || ""} />
+                              <input type="hidden" name="description" value={item.description} />
+                              <button className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700">
+                                <Save className="h-3.5 w-3.5" />
+                                Save as live
+                              </button>
+                            </form>
+
+                            <form action={dismissSuggestedTrainingResourceAction}>
+                              <input type="hidden" name="position_title" value={position.name} />
+                              <input type="hidden" name="title" value={item.title} />
+                              <input type="hidden" name="resource_type" value={item.type} />
+                              <button className="inline-flex items-center gap-2 rounded-full border border-rose-300 bg-rose-600 px-4 py-2 text-xs font-black text-white shadow-lg shadow-rose-100 hover:bg-rose-700">
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Delete permanently
+                              </button>
+                            </form>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               })}
             </div>
           </Panel>
@@ -559,7 +775,7 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
       return <Modal key={`modal-resource-${id}`} id={`modal-training-resource-${id}`} title={item.title} subtitle={`Technical training resource details for ${position.name}. Preview, edit, save or remove the live resource.`}>
         <div className="grid gap-7 lg:grid-cols-[0.9fr_1.1fr]">
           <section className="space-y-5"><div className="rounded-[30px] bg-slate-950 p-6 text-white"><p className="text-xs font-black uppercase tracking-[0.18em] text-white/40">Resource technical preview</p><h4 className="mt-2 text-2xl font-black">{item.title}</h4><p className="mt-3 text-sm font-semibold leading-6 text-white/65">{item.description}</p><div className="mt-5 grid grid-cols-2 gap-3">{[['Type', item.type], ['Priority', item.priority], ['Duration', `${item.duration} min`], ['Status', item.live ? 'Live synced' : 'Suggested']].map(([label, val]) => <div key={`detail-stat-${id}-${label}`} className="rounded-2xl bg-white/10 p-3"><p className="text-[10px] font-black uppercase text-white/40">{label}</p><p className="mt-1 text-sm font-black">{val}</p></div>)}</div></div><div className="rounded-[24px] border border-slate-200 bg-white p-5"><h5 className="font-black text-slate-950">Resource links</h5><div className="mt-4 grid gap-3"><a href={item.pdf || '#'} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-700"><FileText className="h-4 w-4" />Open PDF / resource link</a><a href={item.video || item.pdf || '#'} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-700"><PlayCircle className="h-4 w-4" />Open training video link</a></div></div></section>
-          <section><Panel title="Edit and save resource" subtitle="Every save writes to live training tables and reopens the selected position bank."><form action={saveTrainingResourceAction} className="grid gap-4 md:grid-cols-2"><input type="hidden" name="id" value={item.id} /><input type="hidden" name="position_title" value={position.name} /><Field label="Training title" name="title" value={item.title} required /><Field label="Duration minutes" name="duration_minutes" type="number" value={item.duration} /><SelectField label="Resource type" name="resource_type" value={item.type} options={['pdf','video','link','checklist','workshop','sop']} /><SelectField label="Priority" name="priority" value={item.priority} options={['normal','recommended','mandatory','high','urgent','critical']} /><Field label="PDF URL" name="pdf_url" value={item.pdf} /><Field label="Video URL" name="video_url" value={item.video} /><SelectField label="Status" name="status" options={['active','draft','paused','archived']} /><SelectField label="Requirement level" name="requirement_level" value={item.priority} options={['mandatory','recommended','compliance','critical','optional']} /><textarea name="description" defaultValue={item.description} className="min-h-[150px] rounded-2xl border border-slate-200 p-4 text-sm font-semibold md:col-span-2" /><div className="flex flex-wrap gap-3 md:col-span-2"><button className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white"><Save className="h-4 w-4" />Save changes</button><a href={`#modal-position-bank-${position.id}`} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"><Eye className="h-4 w-4" />Back to position</a></div></form>{item.id ? <form action={deleteTrainingResourceAction} className="mt-4"><input type="hidden" name="id" value={item.id} /><input type="hidden" name="position_title" value={position.name} /><button className="inline-flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-black text-rose-700"><Trash2 className="h-4 w-4" />Remove training resource</button></form> : null}</Panel></section>
+          <section><Panel title="Edit and save resource" subtitle="Every save writes to live training tables and reopens the selected position bank."><form action={saveTrainingResourceAction} className="grid gap-4 md:grid-cols-2"><input type="hidden" name="id" value={item.id} /><input type="hidden" name="position_title" value={position.name} /><Field label="Training title" name="title" value={item.title} required /><Field label="Duration minutes" name="duration_minutes" type="number" value={item.duration} /><SelectField label="Resource type" name="resource_type" value={item.type} options={['pdf','video','link','checklist','workshop','sop']} /><SelectField label="Priority" name="priority" value={item.priority} options={['normal','recommended','mandatory','high','urgent','critical']} /><Field label="PDF URL" name="pdf_url" value={item.pdf} /><Field label="Video URL" name="video_url" value={item.video} /><SelectField label="Status" name="status" options={['active','draft','paused','archived']} /><SelectField label="Requirement level" name="requirement_level" value={item.priority} options={['mandatory','recommended','compliance','critical','optional']} /><textarea name="description" defaultValue={item.description} className="min-h-[150px] rounded-2xl border border-slate-200 p-4 text-sm font-semibold md:col-span-2" /><div className="flex flex-wrap gap-3 md:col-span-2"><button className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white"><Save className="h-4 w-4" />Save changes</button><a href={`#modal-position-bank-${position.id}`} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"><Eye className="h-4 w-4" />Back to position</a></div></form>{item.id ? <form action={deleteTrainingResourceAction} className="mt-4"><input type="hidden" name="id" value={item.id} /><input type="hidden" name="position_title" value={position.name} /><button className="inline-flex items-center gap-2 rounded-2xl border border-rose-300 bg-rose-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-rose-200"><Trash2 className="h-4 w-4" />Delete permanently</button></form> : null}</Panel></section>
         </div>
       </Modal>
     }))}

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {
   Activity,
+  Zap,
+  ArrowDownRight,
   AlertTriangle,
   Award,
   BarChart3,
@@ -42,6 +44,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getHREmployeesCommandData } from "@/lib/hr-production/employees-command";
 
 export const dynamic = "force-dynamic";
 
@@ -335,6 +338,12 @@ function employeeRole(row: Row) {
   return s(row, ["role", "job_title", "position", "title"], "Role not assigned");
 }
 
+
+function savedEmployeeDepartment(row: Row) {
+  // Source of truth: exact department field saved by the Employee creation/edit modal.
+  return s(row, ["department"], "Unassigned");
+}
+
 function employeeManager(row: Row) {
   return s(row, ["manager", "manager_name", "owner", "reviewer"], "Manager not assigned");
 }
@@ -372,21 +381,41 @@ function promotionReadiness(row: Row) {
   return "Needs training first";
 }
 
-async function safeRows(tableNames: string[], limit = 500) {
+async function safeRows(tableNames: string[], limit = 1000) {
   const supabase = await createClient();
+  const allRows: Row[] = [];
+  const sources: string[] = [];
+  const seen = new Set<string>();
 
   for (const table of tableNames) {
     try {
       const { data, error } = await supabase.from(table).select("*").limit(limit);
+
       if (!error && Array.isArray(data)) {
-        return { rows: data as Row[], table };
+        sources.push(table);
+
+        for (const row of data as Row[]) {
+          const key =
+            String(row.id || row.employee_id || row.user_id || row.email || row.phone || row.full_name || row.name || JSON.stringify(row));
+
+          if (!seen.has(`${table}:${key}`)) {
+            seen.add(`${table}:${key}`);
+            allRows.push({
+              ...row,
+              _source_table: table,
+            });
+          }
+        }
       }
     } catch {
       // continue to next table
     }
   }
 
-  return { rows: [] as Row[], table: "none" };
+  return {
+    rows: allRows,
+    table: sources.length ? sources.join(" + ") : "none",
+  };
 }
 
 function Sparkline({ value = 70 }: { value?: number }) {
@@ -666,75 +695,669 @@ function EnterpriseImpactPanel({
   );
 }
 
+
+function canonicalDepartmentName(value: string) {
+  const raw = String(value || "").trim();
+  const lower = raw.toLowerCase();
+
+  if (!lower || lower === "unassigned") return "Administration";
+
+  if (
+    lower.includes("human resources") ||
+    lower === "hr" ||
+    lower.includes("rh") ||
+    lower.includes("recruit") ||
+    lower.includes("talent")
+  ) {
+    return "HR";
+  }
+
+  if (
+    lower.includes("finance") ||
+    lower.includes("account") ||
+    lower.includes("payroll") ||
+    lower.includes("invoice") ||
+    lower.includes("payment")
+  ) {
+    return "Finance";
+  }
+
+  if (
+    lower.includes("sales") ||
+    lower.includes("commercial") ||
+    lower.includes("business developer") ||
+    lower.includes("b2b") ||
+    lower.includes("partnership")
+  ) {
+    return lower.includes("b2b") || lower.includes("partnership") ? "B2B Partnerships" : "Sales";
+  }
+
+  if (
+    lower.includes("support") ||
+    lower.includes("customer") ||
+    lower.includes("client") ||
+    lower.includes("csa")
+  ) {
+    return "Customer Support";
+  }
+
+  if (
+    lower.includes("carelink") ||
+    lower.includes("dispatch") ||
+    lower.includes("mission") ||
+    lower.includes("ops")
+  ) {
+    return "CareLink / Dispatch";
+  }
+
+  if (
+    lower.includes("academy") ||
+    lower.includes("training") ||
+    lower.includes("trainer") ||
+    lower.includes("learning")
+  ) {
+    return "Academy";
+  }
+
+  if (
+    lower.includes("marketing") ||
+    lower.includes("communication") ||
+    lower.includes("brand") ||
+    lower.includes("content")
+  ) {
+    return "Marketing";
+  }
+
+  if (
+    lower.includes("agent") ||
+    lower.includes("caregiver") ||
+    lower.includes("field") ||
+    lower.includes("accompagnatrice") ||
+    lower.includes("nanny")
+  ) {
+    return "Field Agents";
+  }
+
+  if (
+    lower.includes("operation") ||
+    lower.includes("coordination") ||
+    lower.includes("quality") ||
+    lower.includes("supervisor")
+  ) {
+    return "Operations";
+  }
+
+  if (
+    lower.includes("manager") ||
+    lower.includes("management") ||
+    lower.includes("director") ||
+    lower.includes("leadership") ||
+    lower.includes("ceo")
+  ) {
+    return "Management";
+  }
+
+  if (
+    lower.includes("admin") ||
+    lower.includes("office") ||
+    lower.includes("assistant")
+  ) {
+    return "Administration";
+  }
+
+  return raw;
+}
+
+function resolvedDepartment(row: Row) {
+  const direct = employeeDepartment(row);
+  const role = employeeRole(row);
+  const title = s(row, ["title", "position", "job_title", "candidate_position"], "");
+  const position = s(row, ["position", "job_position", "desired_position"], "");
+  const team = s(row, ["team", "business_unit", "department_name"], "");
+  const source = s(row, ["_source_table"], "");
+
+  // IMPORTANT:
+  // The source of truth is the final /hr/employees command list.
+  // So we resolve from the exact employee row fields first, then role/title fallbacks.
+  return canonicalDepartmentName(`${direct} ${team} ${role} ${position} ${title} ${source}`);
+}
+
+
+function departmentSearchText(row: Row) {
+  return [
+    employeeDepartment(row),
+    resolvedDepartment(row),
+    employeeRole(row),
+    employeeName(row),
+    s(row, ["department", "department_name", "team", "business_unit"], ""),
+    s(row, ["role", "job_title", "position", "title", "candidate_position"], ""),
+    s(row, ["source", "origin", "category", "employee_type", "contract_type"], ""),
+    s(row, ["manager", "manager_name", "owner", "reviewer"], ""),
+    s(row, ["_source_table"], ""),
+    Object.values(row || {})
+      .filter((value) => typeof value === "string" || typeof value === "number")
+      .slice(0, 80)
+      .join(" "),
+  ]
+    .join(" ")
+    .toLowerCase()
+    .replace(/[_-]+/g, " ");
+}
+
+function departmentKeywords(department: string) {
+  const key = department.toLowerCase();
+
+  if (key === "operations") {
+    return ["operations", "operation", "ops", "coordination", "coordinator", "quality", "supervisor", "mission control"];
+  }
+
+  if (key === "hr") {
+    return ["hr", "rh", "human resources", "recruitment", "recruiter", "talent", "people", "employee support"];
+  }
+
+  if (key === "finance") {
+    return ["finance", "financial", "accounting", "accountant", "payroll", "invoice", "payment", "treasury", "budget"];
+  }
+
+  if (key === "sales") {
+    return ["sales", "commercial", "business developer", "prospecting", "conversion", "revenue", "crm"];
+  }
+
+  if (key === "customer support") {
+    return ["customer support", "customer", "client support", "client", "csa", "support", "care agent", "success"];
+  }
+
+  if (key === "carelink / dispatch") {
+    return ["carelink", "dispatch", "dispatcher", "mission", "routing", "allocation", "ops live", "field dispatch"];
+  }
+
+  if (key === "academy") {
+    return ["academy", "training", "trainer", "learning", "formation", "teacher", "educator", "course"];
+  }
+
+  if (key === "marketing") {
+    return ["marketing", "brand", "content", "communication", "social media", "campaign", "creative"];
+  }
+
+  if (key === "b2b partnerships") {
+    return ["b2b", "partnership", "partner", "strategic accounts", "business partner", "alliances"];
+  }
+
+  if (key === "field agents") {
+    return ["field agent", "agent", "caregiver", "nanny", "accompagnatrice", "mission agent", "home service", "field"];
+  }
+
+  if (key === "administration") {
+    return ["administration", "admin", "office", "assistant", "back office", "secretary"];
+  }
+
+  if (key === "management") {
+    return ["management", "manager", "director", "leadership", "ceo", "chief", "head of", "lead"];
+  }
+
+  return [key];
+}
+
+function departmentMatches(row: Row, department: string) {
+  const canonical = resolvedDepartment(row);
+  if (canonical === department) return true;
+
+  const haystack = departmentSearchText(row);
+  const keywords = departmentKeywords(department);
+
+  return keywords.some((keyword) => {
+    const normalized = keyword.toLowerCase().replace(/[_-]+/g, " ");
+    return haystack.includes(normalized);
+  });
+}
+
+function departmentIcon(department: string) {
+  const lower = department.toLowerCase();
+  if (lower.includes("finance")) return Target;
+  if (lower.includes("sales") || lower.includes("b2b")) return Rocket;
+  if (lower.includes("customer")) return Users;
+  if (lower.includes("carelink") || lower.includes("dispatch")) return Zap;
+  if (lower.includes("academy")) return GraduationCap;
+  if (lower.includes("field")) return Users;
+  if (lower.includes("hr")) return ClipboardCheck;
+  if (lower.includes("management")) return Trophy;
+  return Building2;
+}
+
+function scoreToneClasses(score: number) {
+  if (score >= 85) {
+    return {
+      chip: "bg-emerald-50 text-emerald-700 border-emerald-100",
+      bar: "from-emerald-500 to-cyan-400",
+      glow: "bg-emerald-200/30",
+      label: "Above target",
+    };
+  }
+
+  if (score >= 70) {
+    return {
+      chip: "bg-blue-50 text-blue-700 border-blue-100",
+      bar: "from-blue-500 to-violet-500",
+      glow: "bg-blue-200/30",
+      label: "Stable",
+    };
+  }
+
+  if (score >= 60) {
+    return {
+      chip: "bg-amber-50 text-amber-700 border-amber-100",
+      bar: "from-amber-400 to-orange-500",
+      glow: "bg-amber-200/30",
+      label: "Needs coaching",
+    };
+  }
+
+  return {
+    chip: "bg-rose-50 text-rose-700 border-rose-100",
+    bar: "from-rose-500 to-red-500",
+    glow: "bg-rose-200/30",
+    label: "At risk",
+  };
+}
+
+function DepartmentMetric({
+  label,
+  value,
+  icon: Icon,
+  tone,
+  progress,
+}: {
+  label: string;
+  value: string | number;
+  icon: any;
+  tone: string;
+  progress: number;
+}) {
+  return (
+    <div className="rounded-[22px] border border-slate-100 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+            {label}
+          </p>
+          <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">
+            {value}
+          </p>
+        </div>
+        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-50">
+          <Icon className="h-5 w-5 text-slate-700" />
+        </span>
+      </div>
+
+      <div className="mt-4 h-2 rounded-full bg-slate-100">
+        <div
+          className={`h-2 rounded-full bg-gradient-to-r ${tone}`}
+          style={{ width: `${Math.max(4, Math.min(100, progress || 0))}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function DepartmentCard({ department, employees }: { department: string; employees: Row[] }) {
-  const scoped = employees.filter((row) => employeeDepartment(row).toLowerCase() === department.toLowerCase());
+  const scoped = employees.filter((row) => savedEmployeeDepartment(row) === department);
   const score = Math.round(avg(scoped.map(score100)));
+  const safeScore = scoped.length ? score : 0;
+  const tone = scoreToneClasses(safeScore);
+  const DeptIcon = departmentIcon(department);
+
   const reviewed = scoped.filter((row) =>
     ["completed", "reviewed", "approved", "closed"].includes(status(row).toLowerCase()),
   ).length;
+
   const kpi = Math.round(avg(scoped.map((row) => n(row.kpi_completion ?? row.goal_completion ?? score100(row), 0))));
+  const attendance = Math.round(avg(scoped.map((row) => n(row.attendance_score ?? row.reliability_score ?? 80, 80))));
+  const managerFeedback = Math.round(avg(scoped.map((row) => n(row.manager_feedback_completion ?? row.manager_score ?? row.review_score ?? 0, 0))));
   const training = Math.round(avg(scoped.map((row) => n(row.training_completion ?? row.training_score ?? 0, 0))));
   const riskCases = scoped.filter((row) => ["high", "medium", "at risk"].includes(riskLevel(row).toLowerCase())).length;
+
   const sorted = [...scoped].sort((a, b) => score100(b) - score100(a));
   const top = sorted[0];
   const low = sorted[sorted.length - 1];
 
   const action =
-    score < 65
-      ? `Launch performance improvement plan for ${Math.max(1, riskCases)} employee(s)`
-      : riskCases
-        ? `Schedule coaching for ${riskCases} employee(s)`
-        : "Maintain rhythm and prepare next calibration";
+    !scoped.length
+      ? "Connect employees or map department values to activate live scoring"
+      : safeScore < 60
+        ? `Open urgent PIP review for ${Math.max(1, riskCases)} employee(s)`
+        : safeScore < 70
+          ? `Schedule coaching sprint for ${Math.max(1, riskCases || 1)} employee(s)`
+          : riskCases
+            ? `Review ${riskCases} risk case(s) with department manager`
+            : safeScore >= 85
+              ? "Prepare recognition, promotion review and best-practice capture"
+              : "Maintain rhythm and monitor next review checkpoint";
+
+  const impactLabel =
+    !scoped.length
+      ? "No mapped live records"
+      : safeScore >= 85
+        ? "High impact department"
+        : safeScore >= 70
+          ? "Healthy performance"
+          : safeScore >= 60
+            ? "Coaching recommended"
+            : "Intervention required";
 
   return (
-    <article className="rounded-[24px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-lg font-black tracking-[-0.03em] text-slate-950">{department}</h3>
-          <p className="mt-1 text-xs font-bold text-slate-500">{scoped.length} employee(s) in scope</p>
-        </div>
-        <span className={`rounded-2xl px-4 py-2 text-lg font-black ${
-          toneForScore(score) === "emerald"
-            ? "bg-emerald-50 text-emerald-700"
-            : toneForScore(score) === "blue"
-              ? "bg-blue-50 text-blue-700"
-              : toneForScore(score) === "amber"
-                ? "bg-amber-50 text-amber-700"
-                : "bg-rose-50 text-rose-700"
-        }`}>
-          {score || 0}%
-        </span>
-      </div>
+    <article className="group relative overflow-hidden rounded-[30px] border border-white/80 bg-white shadow-[0_22px_80px_rgba(15,23,42,0.09)] ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_100px_rgba(124,58,237,0.16)]">
+      <div className={`absolute -right-16 -top-16 h-48 w-48 rounded-full ${tone.glow} blur-3xl transition group-hover:scale-125`} />
+      <div className={`h-1.5 bg-gradient-to-r ${tone.bar}`} />
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-white p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Reviewed</p>
-          <p className="mt-1 text-lg font-black">{reviewed}/{scoped.length}</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">KPI completion</p>
-          <p className="mt-1 text-lg font-black">{kpi || 0}%</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Training</p>
-          <p className="mt-1 text-lg font-black">{training || 0}%</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Risk cases</p>
-          <p className="mt-1 text-lg font-black">{riskCases}</p>
-        </div>
-      </div>
+      <div className="relative p-5">
+        <div className="flex items-start justify-between gap-5">
+          <div className="flex items-start gap-4">
+            <div className={`grid h-14 w-14 place-items-center rounded-[22px] bg-gradient-to-br ${tone.bar} text-white shadow-xl shadow-slate-200`}>
+              <DeptIcon className="h-6 w-6" />
+            </div>
 
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-        <p className="text-xs font-black text-slate-500">
-          Top performer: <span className="text-slate-950">{top ? employeeName(top) : "No data"}</span>
-        </p>
-        <p className="mt-2 text-xs font-black text-slate-500">
-          Lowest performer: <span className="text-slate-950">{low ? employeeName(low) : "No data"}</span>
-        </p>
-        <p className="mt-3 text-sm font-black text-violet-700">{action}</p>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-xl font-black tracking-[-0.04em] text-slate-950">
+                  {department}
+                </h3>
+                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ${tone.chip}`}>
+                  {tone.label}
+                </span>
+              </div>
+
+              <p className="mt-1 text-xs font-bold text-slate-500">
+                {scoped.length} employee(s) mapped · {impactLabel}
+              </p>
+            </div>
+          </div>
+
+          <div className={`rounded-[22px] border px-5 py-4 text-center ${tone.chip}`}>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-70">
+              Score
+            </p>
+            <p className="mt-1 text-3xl font-black tracking-[-0.06em]">
+              {safeScore}%
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-[24px] border border-slate-100 bg-slate-50 p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                Department performance pulse
+              </p>
+              <p className="mt-1 text-sm font-black text-slate-700">
+                KPI, attendance, training and review signals combined
+              </p>
+            </div>
+
+            <div className="hidden text-right md:block">
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                completion
+              </p>
+              <p className="mt-1 text-lg font-black text-slate-950">
+                {Math.round(avg([kpi || 0, attendance || 0, training || 0, managerFeedback || 0]))}%
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 h-3 rounded-full bg-white shadow-inner">
+            <div
+              className={`h-3 rounded-full bg-gradient-to-r ${tone.bar}`}
+              style={{ width: `${Math.max(3, safeScore)}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <DepartmentMetric
+            label="Reviewed"
+            value={`${reviewed}/${scoped.length}`}
+            icon={ClipboardCheck}
+            tone={tone.bar}
+            progress={pct(reviewed, Math.max(1, scoped.length))}
+          />
+          <DepartmentMetric
+            label="KPI completion"
+            value={`${kpi || 0}%`}
+            icon={Target}
+            tone={tone.bar}
+            progress={kpi || 0}
+          />
+          <DepartmentMetric
+            label="Attendance impact"
+            value={scoped.length ? `${attendance || 0}%` : "0%"}
+            icon={CalendarClock}
+            tone={tone.bar}
+            progress={attendance || 0}
+          />
+          <DepartmentMetric
+            label="Training"
+            value={`${training || 0}%`}
+            icon={GraduationCap}
+            tone={tone.bar}
+            progress={training || 0}
+          />
+        </div>
+
+        <div className="mt-4 grid gap-3 lg:grid-cols-[0.8fr_0.8fr_1.1fr]">
+          <div className="rounded-[24px] border border-emerald-100 bg-emerald-50/60 p-4">
+            <div className="flex items-start gap-3">
+              <Trophy className="mt-1 h-5 w-5 text-emerald-700" />
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">
+                  Top performer
+                </p>
+                <p className="mt-2 text-sm font-black text-slate-950">
+                  {top ? employeeName(top) : "No data"}
+                </p>
+                <p className="mt-1 text-xs font-bold text-slate-500">
+                  {top ? `${score100(top)}% · ${employeeRole(top)}` : "No mapped employee yet"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-rose-100 bg-rose-50/60 p-4">
+            <div className="flex items-start gap-3">
+              <ArrowDownRight className="mt-1 h-5 w-5 text-rose-700" />
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-rose-700">
+                  Lowest performer
+                </p>
+                <p className="mt-2 text-sm font-black text-slate-950">
+                  {low ? employeeName(low) : "No data"}
+                </p>
+                <p className="mt-1 text-xs font-bold text-slate-500">
+                  {low ? `${score100(low)}% · ${employeeRole(low)}` : "No mapped employee yet"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-4">
+            <div className="flex items-start gap-3">
+              {riskCases ? (
+                <AlertTriangle className="mt-1 h-5 w-5 text-amber-600" />
+              ) : (
+                <CheckCircle2 className="mt-1 h-5 w-5 text-emerald-600" />
+              )}
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-700">
+                  Recommended action
+                </p>
+                <p className="mt-2 text-sm font-black leading-5 text-slate-950">
+                  {action}
+                </p>
+                <p className="mt-2 text-xs font-bold text-slate-500">
+                  Risk cases: {riskCases} · Manager feedback: {managerFeedback || 0}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href={`/hr/departments?department=${encodeURIComponent(department)}`}
+            className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white shadow-lg shadow-slate-200"
+          >
+            Open department dossier
+          </Link>
+
+          <Link
+            href={`/hr/performance-matrix?department=${encodeURIComponent(department)}&panel=calibration#department-workspace`}
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-700"
+          >
+            Start calibration
+          </Link>
+
+          <Link
+            href={`/hr/performance-matrix?department=${encodeURIComponent(department)}&panel=coaching#department-workspace`}
+            className="rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-xs font-black text-violet-700"
+          >
+            Assign coaching plan
+          </Link>
+        </div>
       </div>
     </article>
+  );
+}
+
+
+function DepartmentPerformanceWorkspace({
+  department,
+  panel,
+  employees,
+}: {
+  department: string;
+  panel: string;
+  employees: Row[];
+}) {
+  if (!department || department === "all") return null;
+
+  const scoped = employees.filter((row) => savedEmployeeDepartment(row) === department);
+  const averageScore = scoped.length ? Math.round(avg(scoped.map(score100))) : 0;
+  const reviewed = scoped.filter((row) =>
+    ["completed", "reviewed", "approved", "closed"].includes(status(row).toLowerCase()),
+  );
+  const atRisk = scoped.filter((row) => score100(row) < 60 || riskLevel(row).toLowerCase() === "high");
+  const coaching = scoped.filter((row) => score100(row) >= 60 && score100(row) < 75);
+  const top = [...scoped].sort((a, b) => score100(b) - score100(a)).slice(0, 5);
+
+  const title =
+    panel === "coaching"
+      ? "Department coaching command"
+      : "Department calibration command";
+
+  const subtitle =
+    panel === "coaching"
+      ? "Create a concrete coaching plan from the real employees saved under this department."
+      : "Review performance scores, risk cases, review coverage and calibration decisions for this department.";
+
+  return (
+    <section
+      id="department-workspace"
+      className="scroll-mt-28 overflow-hidden rounded-[32px] border border-violet-100 bg-white shadow-[0_28px_100px_rgba(124,58,237,0.12)] ring-1 ring-violet-100"
+    >
+      <div className="relative border-b border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-5">
+        <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-violet-200/30 blur-3xl" />
+        <div className="relative flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-full border border-violet-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-violet-700">
+                {department}
+              </span>
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700">
+                Source: employee final list
+              </span>
+            </div>
+
+            <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] text-slate-950 xl:text-4xl">
+              {title}
+            </h2>
+            <p className="mt-2 max-w-5xl text-xs font-bold leading-6 text-slate-500">
+              {subtitle}
+            </p>
+          </div>
+
+          <Link
+            href="/hr/performance-matrix#departments"
+            className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm"
+          >
+            Close workspace
+          </Link>
+        </div>
+      </div>
+
+      <div className="grid gap-4 p-5 xl:grid-cols-[0.8fr_1.2fr]">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            ["Headcount", scoped.length, Users],
+            ["Average score", `${averageScore}%`, Gauge],
+            ["Reviewed", `${reviewed.length}/${scoped.length}`, ClipboardCheck],
+            ["At risk", atRisk.length, ShieldAlert],
+            ["Coaching queue", coaching.length, Target],
+            ["Top performers", top.length, Trophy],
+          ].map(([label, value, Icon]: any) => (
+            <div key={label} className="rounded-[22px] border border-slate-100 bg-slate-50 p-4">
+              <Icon className="h-5 w-5 text-violet-600" />
+              <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                {label}
+              </p>
+              <p className="mt-1 text-2xl font-black text-slate-950">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-[26px] border border-slate-200 bg-white p-5">
+          <h3 className="text-xl font-black tracking-[-0.04em] text-slate-950">
+            {panel === "coaching" ? "Coaching plan generated" : "Calibration board generated"}
+          </h3>
+
+          <div className="mt-4 grid gap-3">
+            {(panel === "coaching" ? [...atRisk, ...coaching] : scoped).slice(0, 12).map((employee, index) => (
+              <div key={String(employee.id || index)} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <div>
+                  <p className="text-sm font-black text-slate-950">{employeeName(employee)}</p>
+                  <p className="mt-1 text-xs font-bold text-slate-500">
+                    {employeeRole(employee)} · {employeeManager(employee)}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-lg font-black text-slate-950">{score100(employee)}%</p>
+                  <p className="text-xs font-black text-violet-700">{band(score100(employee))}</p>
+                </div>
+              </div>
+            ))}
+
+            {!scoped.length ? (
+              <p className="rounded-2xl bg-slate-50 p-5 text-sm font-black text-slate-400">
+                No employees found for this exact department in the employee final list.
+              </p>
+            ) : null}
+          </div>
+
+          <div className="mt-5 rounded-[22px] border border-violet-100 bg-violet-50 p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-700">
+              Recommended decision
+            </p>
+            <p className="mt-2 text-sm font-black leading-6 text-slate-950">
+              {atRisk.length
+                ? `Start manager review and coaching/PIP decision for ${atRisk.length} employee(s).`
+                : coaching.length
+                  ? `Assign coaching checkpoints for ${coaching.length} employee(s).`
+                  : scoped.length
+                    ? "Department is stable. Continue normal review rhythm and capture top-performer practices."
+                    : "No decision available until employees are mapped to this exact department."}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -763,13 +1386,13 @@ function ScoreModel({ title, rows }: { title: string; rows: (string | number)[][
 function PerformanceMatrixSidebar() {
   const groups = [
     {
-      title: "OVERVIEW",
+      title: "Overview",
       items: [
         ["Dashboard", "/hr", LayoutDashboard],
       ],
     },
     {
-      title: "PEOPLE",
+      title: "People",
       items: [
         ["Employees", "/hr/employees", Users],
         ["Teams & Departments", "/hr/departments", Building2],
@@ -780,7 +1403,7 @@ function PerformanceMatrixSidebar() {
       ],
     },
     {
-      title: "OPERATIONS",
+      title: "Operations",
       items: [
         ["Attendance", "/hr/attendance", CalendarCheck],
         ["Leave Management", "/hr/leave-management", Clock],
@@ -789,7 +1412,7 @@ function PerformanceMatrixSidebar() {
       ],
     },
     {
-      title: "COMPLIANCE & DOCUMENTS",
+      title: "Compliance & Documents",
       items: [
         ["Documents", "/hr/documents", FileBadge],
         ["Templates", "/hr/templates", FileText],
@@ -798,7 +1421,7 @@ function PerformanceMatrixSidebar() {
       ],
     },
     {
-      title: "SYSTEM",
+      title: "System",
       items: [
         ["Integrations", "/hr/integrations", Sparkles],
         ["Settings", "/hr/settings", Settings],
@@ -807,88 +1430,64 @@ function PerformanceMatrixSidebar() {
   ];
 
   return (
-    <aside className="h-full min-h-screen w-[340px] shrink-0 overflow-hidden border-r border-slate-100 bg-white shadow-[18px_0_80px_rgba(15,23,42,0.07)]">
-      <div className="flex h-full min-h-screen flex-col">
-        <div className="px-3 pb-7 pt-6">
-          <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-br from-violet-600 via-indigo-600 to-slate-950 px-6 py-5 text-white shadow-2xl shadow-violet-200">
-            <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-cyan-300/25 blur-3xl" />
-            <div className="absolute -bottom-12 right-10 h-36 w-36 rounded-full bg-violet-300/20 blur-3xl" />
-
-            <div className="relative flex items-center gap-5">
-              <div className="grid h-14 w-14 place-items-center rounded-[20px] bg-white/15 shadow-inner">
-                <Sparkles className="h-7 w-7 text-slate-950/80 invert" />
-              </div>
-
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.32em] text-white/75">
-                  AngelCare
-                </p>
-                <h2 className="mt-1 text-2xl font-black leading-tight tracking-[-0.045em] text-white">
-                  HR Command OS
-                </h2>
-              </div>
-            </div>
+    <aside className="sticky top-0 h-screen w-[286px] shrink-0 overflow-y-auto border-r border-white/70 bg-white/95 p-4 shadow-2xl shadow-slate-200/60 backdrop-blur-2xl">
+      <Link
+        href="/hr"
+        className="mb-6 flex items-center gap-3 rounded-[26px] bg-gradient-to-br from-violet-600 via-indigo-600 to-slate-950 p-4 text-white shadow-2xl shadow-violet-200"
+      >
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20">
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-100">
+            AngelCare
+          </div>
+          <div className="text-lg font-black tracking-tight">
+            HR Command OS
           </div>
         </div>
+      </Link>
 
-        <div className="flex-1 overflow-y-auto px-2 pb-7">
-          {groups.map((group) => (
-            <div key={group.title} className="mb-8">
-              <p className="mb-4 px-5 text-[11px] font-black uppercase tracking-[0.28em] text-slate-400">
-                {group.title}
-              </p>
+      <div className="space-y-6">
+        {groups.map((group) => (
+          <div key={group.title}>
+            <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
+              {group.title}
+            </p>
 
-              <nav className="grid gap-2">
-                {group.items.map(([label, href, Icon]: any) => {
-                  const active = href === "/hr/performance-matrix";
+            <nav className="grid gap-1.5">
+              {group.items.map(([label, href, Icon]: any) => {
+                const active = href === "/hr/performance-matrix";
 
-                  return (
-                    <Link
-                      key={label}
-                      href={href}
-                      className={`group flex h-[50px] items-center gap-3 rounded-[18px] px-4 text-[15px] font-black tracking-[-0.03em] transition ${
+                return (
+                  <Link
+                    key={label}
+                    href={href}
+                    className={`group flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-black transition ${
+                      active
+                        ? "bg-violet-50 text-violet-700 shadow-lg shadow-violet-100 ring-1 ring-violet-100"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-950"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-5 w-5 shrink-0 ${
                         active
-                          ? "bg-violet-50 text-violet-700 shadow-[0_12px_35px_rgba(124,58,237,0.12)] ring-1 ring-violet-100"
-                          : "text-slate-800 hover:bg-slate-50 hover:text-violet-700"
+                          ? "text-violet-600"
+                          : "text-slate-500 group-hover:text-violet-600"
                       }`}
-                    >
-                      <Icon
-                        className={`h-5 w-5 shrink-0 stroke-[2.2] ${
-                          active ? "text-violet-600" : "text-slate-800 group-hover:text-violet-600"
-                        }`}
-                      />
+                    />
 
-                      <span className="min-w-0 flex-1 truncate">{label}</span>
+                    <span className="min-w-0 flex-1 truncate">{label}</span>
 
-                      {active ? (
-                        <span className="h-2.5 w-2.5 rounded-full bg-violet-500 shadow-[0_0_0_5px_rgba(139,92,246,0.12)]" />
-                      ) : null}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-          ))}
-
-          <div className="mx-1 mt-4 rounded-[20px] border border-violet-100 bg-gradient-to-br from-white via-violet-50/40 to-cyan-50 p-4 shadow-lg shadow-slate-100">
-            <div className="flex items-start gap-4">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white shadow-sm">
-                <Database className="h-5 w-5 text-slate-900" />
-              </div>
-
-              <div>
-                <h3 className="text-base font-black leading-tight tracking-[-0.04em] text-slate-950">
-                  Employee sync layer
-                </h3>
-                <p className="mt-2 text-xs font-bold leading-5 text-slate-600">
-                  Performance records remain connected to employees, departments, goals and governance.
-                </p>
-              </div>
-            </div>
+                    {active ? (
+                      <span className="h-2.5 w-2.5 rounded-full bg-violet-500 shadow-[0_0_0_5px_rgba(139,92,246,0.12)]" />
+                    ) : null}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-
-          <div className="h-24" />
-        </div>
+        ))}
       </div>
     </aside>
   );
@@ -899,21 +1498,37 @@ export default async function Page({ searchParams }: any) {
   const params = searchParams && typeof searchParams.then === "function" ? await searchParams : searchParams || {};
   const query = String(params.q || "").toLowerCase();
   const departmentFilter = String(params.department || "all");
+  const departmentPanel = String(params.panel || "");
   const riskFilter = String(params.risk || "all");
   const bandFilter = String(params.band || "all");
 
-  const [employeesResult, reviewsResult, goalsResult, cyclesResult, trainingResult, pipsResult, feedbackResult] =
+  const [employeeCommand, reviewsResult, goalsResult, cyclesResult, trainingResult, pipsResult, feedbackResult] =
     await Promise.all([
-      safeRows(["hr_employees", "employees", "hr_staff", "profiles"]),
-      safeRows(["hr_performance_reviews", "performance_reviews", "hr_reviews"]),
-      safeRows(["hr_performance_goals", "performance_goals", "hr_goals"]),
-      safeRows(["hr_performance_cycles", "performance_cycles", "hr_review_cycles"]),
-      safeRows(["hr_training_records", "training_records", "hr_trainings"]),
+      getHREmployeesCommandData(),
+      safeRows(["hr_performance_reviews", "performance_reviews", "hr_reviews", "hr_review_records", "hr_employee_reviews"]),
+      safeRows(["hr_performance_goals", "performance_goals", "hr_goals", "hr_employee_goals", "hr_kpis"]),
+      safeRows(["hr_performance_cycles", "performance_cycles", "hr_review_cycles", "hr_review_campaigns"]),
+      safeRows(["hr_training_records", "training_records", "hr_trainings", "hr_training_enrollments", "academy_training_records"]),
       safeRows(["hr_performance_improvement_plans", "performance_improvement_plans", "hr_pips"]),
-      safeRows(["hr_feedback", "performance_feedback", "employee_feedback"]),
+      safeRows(["hr_feedback", "performance_feedback", "employee_feedback", "hr_manager_feedback", "hr_candidate_comments"]),
     ]);
 
-  const employees = employeesResult.rows;
+  const employees = Array.isArray(employeeCommand.employees)
+    ? employeeCommand.employees.map((employee: Row) => ({
+        ...employee,
+        _source_table: "employees_command_final_list",
+      }))
+    : [];
+
+  const realDepartments = Array.isArray(employeeCommand.departmentBreakdown)
+    ? employeeCommand.departmentBreakdown
+        .map((department: Row) => String(department.name || "").trim())
+        .filter(Boolean)
+    : [];
+
+  const performanceDepartments = realDepartments.length
+    ? realDepartments
+    : Array.from(new Set(employees.map((employee: Row) => savedEmployeeDepartment(employee)).filter(Boolean)));
   const reviews = reviewsResult.rows;
   const goals = goalsResult.rows;
   const cycles = cyclesResult.rows;
@@ -948,7 +1563,7 @@ export default async function Page({ searchParams }: any) {
       .toLowerCase();
 
     const matchesQuery = !query || searchable.includes(query);
-    const matchesDepartment = departmentFilter === "all" || employeeDepartment(row) === departmentFilter;
+    const matchesDepartment = departmentFilter === "all" || savedEmployeeDepartment(row) === departmentFilter;
     const matchesRisk = riskFilter === "all" || String(row._risk).toLowerCase() === riskFilter.toLowerCase();
     const matchesBand = bandFilter === "all" || String(row._band).toLowerCase() === bandFilter.toLowerCase();
 
@@ -964,12 +1579,12 @@ export default async function Page({ searchParams }: any) {
   const pendingReview = Math.max(0, totalEmployees - reviewedEmployees);
   const topPerformers = enrichedEmployees.filter((row) => row._score >= 85).length;
   const atRiskEmployees = enrichedEmployees.filter((row) => row._score < 60 || String(row._risk).toLowerCase() === "high").length;
-  const aboveTargetDepartments = DEPARTMENTS.filter((department) => {
-    const scoped = enrichedEmployees.filter((row) => employeeDepartment(row) === department);
+  const aboveTargetDepartments = performanceDepartments.filter((department) => {
+    const scoped = enrichedEmployees.filter((row) => savedEmployeeDepartment(row) === department);
     return scoped.length && avg(scoped.map((row) => row._score)) >= 75;
   }).length;
-  const belowTargetDepartments = DEPARTMENTS.filter((department) => {
-    const scoped = enrichedEmployees.filter((row) => employeeDepartment(row) === department);
+  const belowTargetDepartments = performanceDepartments.filter((department) => {
+    const scoped = enrichedEmployees.filter((row) => savedEmployeeDepartment(row) === department);
     return scoped.length && avg(scoped.map((row) => row._score)) < 70;
   }).length;
   const completedGoals = goals.filter((row) =>
@@ -1003,11 +1618,11 @@ export default async function Page({ searchParams }: any) {
   ];
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#eef2ff_0,#f8fafc_32%,#f1f5f9_100%)] text-slate-950">
-      <div className="flex min-h-screen w-full">
+    <main className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,#eef2ff_0,#f8fafc_32%,#f1f5f9_100%)] text-slate-950">
+      <div className="flex min-h-screen w-full items-stretch">
         <PerformanceMatrixSidebar />
 
-        <div className="min-w-0 flex-1 px-3 py-4 lg:px-4">
+        <div className="min-w-0 flex-1 px-4 py-4 lg:px-5">
         <header className="relative overflow-hidden rounded-[26px] border border-white/80 bg-white p-4 shadow-[0_20px_70px_rgba(15,23,42,0.10)] ring-1 ring-slate-100">
           <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-violet-200/30 blur-3xl" />
           <div className="absolute right-40 top-16 h-64 w-64 rounded-full bg-cyan-200/30 blur-3xl" />
@@ -1033,7 +1648,7 @@ export default async function Page({ searchParams }: any) {
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Employee source</p>
-                <p className="mt-2 text-sm font-black">{employeesResult.table}</p>
+                <p className="mt-2 text-sm font-black">"employees_command_final_list"</p>
               </div>
               <div className="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Review source</p>
@@ -1056,8 +1671,12 @@ export default async function Page({ searchParams }: any) {
           subtitle="Leadership-level live signal from employee scores, review cycle status, goals, training, risk, feedback and promotion readiness."
           action={
             <div className="flex flex-wrap gap-2">
-              <PrimaryButton>Generate executive report</PrimaryButton>
-              <GhostButton>Launch calibration</GhostButton>
+              <Link href="/api/hr/performance-matrix/report" target="_blank">
+                <PrimaryButton>Generate executive report</PrimaryButton>
+              </Link>
+              <Link href="/api/hr/performance-matrix/calibration" target="_blank">
+                <GhostButton>Launch calibration</GhostButton>
+              </Link>
             </div>
           }
         >
@@ -1137,11 +1756,17 @@ export default async function Page({ searchParams }: any) {
           action={<PrimaryButton>Open department calibration</PrimaryButton>}
         >
           <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-            {DEPARTMENTS.map((department) => (
+            {performanceDepartments.map((department) => (
               <DepartmentCard key={department} department={department} employees={enrichedEmployees} />
             ))}
           </div>
         </SectionShell>
+
+        <DepartmentPerformanceWorkspace
+          department={departmentFilter}
+          panel={departmentPanel}
+          employees={enrichedEmployees}
+        />
 
         <SectionShell
           id="employees"
@@ -1162,7 +1787,7 @@ export default async function Page({ searchParams }: any) {
               <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Department</span>
               <select name="department" defaultValue={departmentFilter} className="mt-2 w-full bg-transparent text-sm font-bold outline-none">
                 <option value="all">All departments</option>
-                {DEPARTMENTS.map((department) => <option key={department}>{department}</option>)}
+                {performanceDepartments.map((department) => <option key={department}>{department}</option>)}
               </select>
             </label>
 
