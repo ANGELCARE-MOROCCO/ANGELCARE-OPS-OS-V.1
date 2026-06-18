@@ -94,7 +94,15 @@ type UsageHistory = {
 type SystemUsageResponse = {
   ok: boolean
   connected: { vercel: boolean; internal: boolean }
-  vercel: { connected: boolean; source: string; message: string; data: unknown }
+  vercel: {
+    connected: boolean
+    configured: boolean
+    missingEnv: string[]
+    status: 'connected' | 'missing_env' | 'permission_denied' | 'provider_unavailable' | 'unsupported' | 'no_data'
+    message: string
+    data: unknown
+    source?: string
+  }
   state?: RuntimeState
   summary: {
     activeCpu: number | null
@@ -187,19 +195,19 @@ function asNumber(value: unknown): number | null {
 }
 
 function formatCompact(value: number | null, digits = 1) {
-  if (value == null) return 'Not connected yet'
+  if (value == null) return '0'
   return new Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: digits }).format(value)
 }
 
 function formatPercent(value: number | null, digits = 2) {
-  if (value == null) return 'Not connected yet'
+  if (value == null) return '0%'
   return `${new Intl.NumberFormat('en-GB', { maximumFractionDigits: digits }).format(value)}%`
 }
 
 function formatDateTime(value: string | null, timeZone?: string | null) {
-  if (!value) return 'Not connected yet'
+  if (!value) return 'No timestamp'
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'Not connected yet'
+  if (Number.isNaN(date.getTime())) return 'No timestamp'
   try {
     return new Intl.DateTimeFormat('en-GB', {
       dateStyle: 'medium',
@@ -230,7 +238,7 @@ function formatClock(value: Date, timeZone?: string | null) {
 }
 
 function formatBandwidth(value: number | null) {
-  if (value == null) return 'Not connected yet'
+  if (value == null) return '0 B/hr'
   const abs = Math.abs(value)
   if (abs >= 1e12) return `${new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(value / 1e12)} TB/hr`
   if (abs >= 1e9) return `${new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(value / 1e9)} GB/hr`
@@ -259,6 +267,32 @@ function getEventTone(eventType: string) {
   if (normalized.includes('emergency') || normalized.includes('shutdown')) return { label: 'Critical', className: 'border-rose-200 bg-rose-50 text-rose-700' }
   if (normalized.includes('schedule')) return { label: 'Scheduled', className: 'border-sky-200 bg-sky-50 text-sky-700' }
   return { label: 'Info', className: 'border-slate-200 bg-slate-50 text-slate-700' }
+}
+
+function getTelemetrySourceBadge(usage: SystemUsageResponse | null) {
+  if (usage?.vercel.connected) return { label: 'Vercel connected', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
+  if (usage?.connected.internal) return { label: 'Internal', className: 'border-blue-200 bg-blue-50 text-blue-700' }
+  return { label: 'Vercel disconnected', className: 'border-slate-200 bg-slate-50 text-slate-600' }
+}
+
+function getTelemetryStatusLabel(usage: SystemUsageResponse | null) {
+  if (!usage) return 'Vercel disconnected'
+  if (usage.vercel.status === 'missing_env') return 'Vercel env missing'
+  if (usage.vercel.status === 'permission_denied') return 'Vercel permission denied'
+  if (usage.vercel.status === 'provider_unavailable') return 'Vercel API unavailable'
+  if (usage.vercel.status === 'unsupported') return 'Vercel usage unsupported'
+  if (usage.connected.internal && !usage.vercel.connected) return 'Internal snapshots only'
+  if (usage.vercel.status === 'no_data') return 'Vercel connected but no data yet'
+  if (usage.vercel.connected) return 'Vercel connected'
+  return 'Vercel disconnected'
+}
+
+function getTelemetryEmptyCopy(usage: SystemUsageResponse | null, kind: 'route' | 'module' | 'metrics' | 'snapshot') {
+  const source = getTelemetryStatusLabel(usage)
+  if (kind === 'route') return usage?.connected.internal ? 'No route telemetry yet. Internal snapshots available.' : `${source}. Route telemetry not instrumented yet.`
+  if (kind === 'module') return usage?.connected.internal ? 'No module pressure records yet. Module pressure requires module-level adoption.' : `${source}. Module pressure requires module-level adoption.`
+  if (kind === 'metrics') return usage?.connected.internal ? 'Internal snapshot' : source
+  return usage?.connected.internal ? 'Internal snapshot available.' : source
 }
 
 function formatEventMessage(event: RuntimeEvent) {
@@ -308,9 +342,14 @@ function normalizeUsage(input: unknown): SystemUsageResponse | null {
     },
     vercel: {
       connected: Boolean(vercel.connected),
-      source: String(vercel.source || 'vercel'),
-      message: String(vercel.message || 'Vercel usage API not connected yet'),
+      configured: Boolean(vercel.configured),
+      missingEnv: Array.isArray(vercel.missingEnv) ? vercel.missingEnv.map(String) : [],
+      status: (['connected', 'missing_env', 'permission_denied', 'provider_unavailable', 'unsupported', 'no_data'].includes(String(vercel.status))
+        ? String(vercel.status)
+        : 'provider_unavailable') as SystemUsageResponse['vercel']['status'],
+      message: String(vercel.message || 'Vercel API unavailable'),
       data: vercel.data,
+      source: typeof vercel.source === 'string' ? String(vercel.source) : 'vercel',
     },
     state: data.state && typeof data.state === 'object' ? data.state as RuntimeState : undefined,
     summary: {
@@ -319,7 +358,7 @@ function normalizeUsage(input: unknown): SystemUsageResponse | null {
       edgeRequests: asNumber(summary.edgeRequests),
       bandwidth: asNumber(summary.bandwidth),
       errorRate: asNumber(summary.errorRate),
-      topRoutePressure: typeof summary.topRoutePressure === 'string' ? summary.topRoutePressure : 'Not connected yet',
+      topRoutePressure: typeof summary.topRoutePressure === 'string' ? summary.topRoutePressure : 'No route telemetry yet',
       estimatedCostPressure: asNumber(summary.estimatedCostPressure),
     },
     charts: {
@@ -382,17 +421,43 @@ function normalizeEvents(input: unknown): RuntimeEvent[] {
     .filter((item): item is RuntimeEvent => Boolean(item))
 }
 
+function groupRuntimeEvents(events: RuntimeEvent[]) {
+  const groups: Array<RuntimeEvent & { count: number }> = []
+
+  for (const event of events) {
+    const createdAt = Date.parse(event.created_at)
+    const lastGroup = groups[groups.length - 1]
+    const lastGroupTime = lastGroup ? Date.parse(lastGroup.created_at) : NaN
+    const sameKey = Boolean(lastGroup)
+      && lastGroup.event_type === event.event_type
+      && lastGroup.from_mode === event.from_mode
+      && lastGroup.to_mode === event.to_mode
+    const withinWindow = Number.isFinite(createdAt) && Number.isFinite(lastGroupTime)
+      ? Math.abs(lastGroupTime - createdAt) <= 10_000
+      : false
+
+    if (sameKey && withinWindow) {
+      lastGroup.count += 1
+      continue
+    }
+
+    groups.push({ ...event, count: 1 })
+  }
+
+  return groups
+}
+
 function seriesValues(points: UsagePoint[], key: 'value' | 'cost' | 'count' = 'value') {
   return points.map((point) => asNumber(point[key]) ?? 0)
 }
 
 function pointTrend(points: number[]) {
-  if (points.length < 2) return 'Not connected yet'
+  if (points.length < 2) return 'No data yet'
   const first = points[0] || 0
   const last = points[points.length - 1] || 0
   const base = Math.max(Math.abs(first), 1)
   const diff = ((last - first) / base) * 100
-  if (!Number.isFinite(diff)) return 'Not connected yet'
+  if (!Number.isFinite(diff)) return 'No data yet'
   const label = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}% vs prior point`
   return label
 }
@@ -463,7 +528,7 @@ function MiniChart({ points, title, subtitle, emptyLabel, color = 'blue' }: {
           <div className="mt-1 text-xs text-slate-500">{subtitle}</div>
         </div>
         <div className="rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-          {points.length ? 'Live' : 'Not connected'}
+          {points.length ? 'Live' : 'No data'}
         </div>
       </div>
       <div className="mt-4">
@@ -680,8 +745,9 @@ function Panel({
   )
 }
 
-function TimelineItem({ event }: { event: RuntimeEvent }) {
+function TimelineItem({ event }: { event: RuntimeEvent & { count?: number } }) {
   const tone = getEventTone(event.event_type)
+  const count = Math.max(1, event.count || 1)
   return (
     <div className="relative pl-5">
       <div className="absolute left-0 top-2 h-2.5 w-2.5 rounded-full bg-blue-500 ring-4 ring-blue-50" />
@@ -690,7 +756,7 @@ function TimelineItem({ event }: { event: RuntimeEvent }) {
           <div className="text-sm font-semibold text-slate-950">{formatDateTime(event.created_at, 'Africa/Casablanca')}</div>
           <Pill className={tone.className}>{tone.label}</Pill>
         </div>
-        <div className="mt-2 text-sm font-semibold text-slate-800">{event.event_type.replace(/_/g, ' ')}</div>
+        <div className="mt-2 text-sm font-semibold text-slate-800">{event.event_type.replace(/_/g, ' ')}{count > 1 ? ` × ${count}` : ''}</div>
         <div className="mt-1 text-sm leading-6 text-slate-600">{formatEventMessage(event)}</div>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
           <span className="rounded-full bg-white px-2.5 py-1">Actor: {event.actor_email || 'system'}</span>
@@ -728,12 +794,14 @@ function ModuleCard({
   pressure,
   autoRefreshOn,
   onUnavailable,
+  telemetryStatus,
 }: {
   module: { key: string; label: string; icon: typeof Cloud; runtimeKeys: readonly string[] }
   details: RuntimeState['disabledModules'][string] | undefined
   pressure: number
   autoRefreshOn: boolean
   onUnavailable: () => void
+  telemetryStatus: string
 }) {
   const status = details?.disabled ? 'SAFE MODE' : 'LIVE'
   const tone =
@@ -756,7 +824,7 @@ function ModuleCard({
       <div className="mt-4 space-y-3">
         <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
           <span>Pressure</span>
-          <span className="font-semibold text-slate-900">{pressure ? `${Math.round(pressure)}%` : 'Not connected yet'}</span>
+          <span className="font-semibold text-slate-900">{`${Math.round(pressure)}%`}</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all" style={{ width: `${Math.min(pressure || 0, 100)}%` }} />
@@ -768,7 +836,7 @@ function ModuleCard({
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
             <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Last activity</div>
-            <div className="mt-1 font-semibold text-slate-950">{details?.lastActivityAt ? formatDateTime(details.lastActivityAt, 'Africa/Casablanca') : 'Not connected yet'}</div>
+            <div className="mt-1 font-semibold text-slate-950">{details?.lastActivityAt ? formatDateTime(details.lastActivityAt, 'Africa/Casablanca') : telemetryStatus}</div>
           </div>
         </div>
         <div className="flex gap-2 pt-1">
@@ -783,14 +851,14 @@ function ModuleCard({
           <ShieldCheck className="h-4 w-4" /> Safe Mode module
         </button>
       </div>
-      <div className="mt-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">Module control not connected yet.</div>
+      <div className="mt-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">{telemetryStatus === 'Internal snapshots only' ? 'Internal snapshot available.' : 'Module telemetry not instrumented yet.'}</div>
     </article>
   )
 }
 
-function PressureTable({ rows }: { rows: UsageUsage[] }) {
+function PressureTable({ rows, emptyLabel }: { rows: UsageUsage[]; emptyLabel: string }) {
   if (!rows.length) {
-    return <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">Route pressure data not connected yet.</div>
+    return <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">{emptyLabel}</div>
   }
 
   const rowsSorted = [...rows].sort((a, b) => b.value - a.value).slice(0, 8)
@@ -813,8 +881,8 @@ function PressureTable({ rows }: { rows: UsageUsage[] }) {
               <tr key={`${row.route}-${index}`}>
                 <td className="px-4 py-3 font-semibold text-slate-900">{row.route}</td>
                 <td className="px-4 py-3 text-slate-700">{formatCompact(row.value)}</td>
-                <td className="px-4 py-3 text-slate-500">Not connected yet</td>
-                <td className="px-4 py-3 text-slate-500">Not connected yet</td>
+                <td className="px-4 py-3 text-slate-500">No route telemetry yet</td>
+                <td className="px-4 py-3 text-slate-500">No route telemetry yet</td>
                 <td className="px-4 py-3"><Pill className={state.className}>{state.label}</Pill></td>
               </tr>
             )
@@ -867,7 +935,9 @@ export default function CEOSystemControlTower({
   const [scheduleReason, setScheduleReason] = useState(initialState.reason || '')
 
   const modeTone = getModeTone(state.mode)
-  const usageAvailable = Boolean(usage && (usage.connected.vercel || usage.metrics.internalSnapshots > 0))
+  const telemetrySourceBadge = getTelemetrySourceBadge(usage)
+  const telemetryStatusLabel = getTelemetryStatusLabel(usage)
+  const usageAvailable = Boolean(usage && (usage.connected.vercel || usage.connected.internal))
   const activeCpu = usageAvailable ? usage?.summary.activeCpu ?? null : null
   const invocations = usageAvailable ? usage?.summary.functionInvocations ?? null : null
   const edgeRequests = usageAvailable ? usage?.summary.edgeRequests ?? null : null
@@ -879,7 +949,7 @@ export default function CEOSystemControlTower({
   const routePoints = usageAvailable ? (usage?.charts.routePressure || []).map((row) => row.value) : []
   const modulePressureRows = usageAvailable ? usage?.charts.modulePressure || [] : []
   const topRouteRows = usageAvailable ? usage?.charts.routePressure || [] : []
-  const shutdownHistory = usageAvailable ? usage?.charts.shutdownHistory || [] : []
+  const groupedEvents = useMemo(() => groupRuntimeEvents(events), [events])
   const activeData = useMemo(() => {
     return {
       cpu: hourlyPoints.length ? hourlyPoints : [],
@@ -1085,7 +1155,7 @@ export default function CEOSystemControlTower({
   }
 
   function handleModuleUnavailable() {
-    setNotice('Module control not connected yet.')
+    setNotice('Module telemetry requires module-level adoption.')
   }
 
   const clockText = isMounted && now ? formatClock(now, state.timezone || 'Africa/Casablanca') : 'Clock initializing...'
@@ -1099,7 +1169,7 @@ export default function CEOSystemControlTower({
 
   const systemHealthLabel = state.isSystemOnline ? 'System Online' : 'Protected Standby'
   const snapshotState = state.mode.toUpperCase()
-  const uptimeLabel = state.createdAt ? formatDateTime(state.createdAt, state.timezone) : 'Internal snapshot unavailable'
+  const uptimeLabel = state.createdAt ? formatDateTime(state.createdAt, state.timezone) : 'No snapshot available'
   const lastCheck = formatDateTime(state.updatedAt || state.lastActionAt, state.timezone)
   const scheduleStatus = scheduleEnabled ? (scheduleShutdownAt || scheduleResumeAt ? 'Scheduled' : 'Manual') : 'Disabled'
 
@@ -1199,8 +1269,9 @@ export default function CEOSystemControlTower({
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
                     <CheckCircle2 className="h-4 w-4 text-cyan-600" />
-                    {usageAvailable ? (usage?.vercel.connected ? 'Vercel telemetry connected' : 'Internal snapshots only') : 'Usage source not connected yet'}
+                    {telemetryStatusLabel}
                   </span>
+                  <Pill className={telemetrySourceBadge.className}>{telemetrySourceBadge.label}</Pill>
                 </div>
               </div>
 
@@ -1274,8 +1345,8 @@ export default function CEOSystemControlTower({
               icon={<Cpu className="h-5 w-5" />}
               label="Active CPU"
               value={formatPercent(activeCpu)}
-              trend={hourlyPoints.length ? hourlyTrend : 'Not connected yet'}
-              helper={usageAvailable ? 'Hourly runtime telemetry' : 'Usage source not connected yet'}
+              trend={hourlyPoints.length ? hourlyTrend : telemetryStatusLabel}
+              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
               tone="blue"
               sparkline={activeData.cpu}
             />
@@ -1283,8 +1354,8 @@ export default function CEOSystemControlTower({
               icon={<Zap className="h-5 w-5" />}
               label="Function Invocations"
               value={formatCompact(invocations)}
-              trend={dailyPoints.length ? invTrend : 'Not connected yet'}
-              helper={usageAvailable ? 'Snapshot roll-up' : 'Internal snapshot unavailable'}
+              trend={dailyPoints.length ? invTrend : telemetryStatusLabel}
+              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
               tone="green"
               sparkline={activeData.invocations}
             />
@@ -1292,8 +1363,8 @@ export default function CEOSystemControlTower({
               icon={<SignalHigh className="h-5 w-5" />}
               label="Edge Requests"
               value={formatCompact(edgeRequests)}
-              trend={routePoints.length ? edgeTrend : 'Not connected yet'}
-              helper={usageAvailable ? 'Route pressure feed' : 'Usage source not connected yet'}
+              trend={routePoints.length ? edgeTrend : telemetryStatusLabel}
+              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
               tone="orange"
               sparkline={activeData.edge}
             />
@@ -1301,8 +1372,8 @@ export default function CEOSystemControlTower({
               icon={<Cloud className="h-5 w-5" />}
               label="Data Transfer"
               value={formatBandwidth(bandwidth)}
-              trend={activeData.bandwidth.length ? bandwidthTrend : 'Not connected yet'}
-              helper={usageAvailable ? 'Derived bandwidth snapshot' : 'Internal snapshot unavailable'}
+              trend={activeData.bandwidth.length ? bandwidthTrend : telemetryStatusLabel}
+              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
               tone="blue"
               sparkline={activeData.bandwidth}
             />
@@ -1310,8 +1381,8 @@ export default function CEOSystemControlTower({
               icon={<AlertCircle className="h-5 w-5" />}
               label="Error Rate"
               value={formatPercent(errorRate)}
-              trend={activeData.error.length ? errorTrend : 'Not connected yet'}
-              helper={usageAvailable ? 'Stored anomaly rate' : 'Usage source not connected yet'}
+              trend={activeData.error.length ? errorTrend : telemetryStatusLabel}
+              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
               tone="rose"
               sparkline={activeData.error}
             />
@@ -1319,8 +1390,8 @@ export default function CEOSystemControlTower({
               icon={<Wallet className="h-5 w-5" />}
               label="Cost Pressure"
               value={formatCompact(costPressure)}
-              trend={activeData.cost.length ? costTrend : 'Not connected yet'}
-              helper={usageAvailable ? 'Derived from cost_estimate snapshots' : 'Internal snapshot unavailable'}
+              trend={activeData.cost.length ? costTrend : telemetryStatusLabel}
+              helper={usage?.vercel.status === 'connected' ? 'Vercel billing source available' : 'Estimated cost is 0 MAD without an external billing source'}
               tone="orange"
               sparkline={activeData.cost}
             />
@@ -1336,7 +1407,7 @@ export default function CEOSystemControlTower({
                 points={usageAvailable ? seriesValues(usage?.charts.hourly || []) : []}
                 title="Requests + Cost"
                 subtitle="Last 24 internal points"
-                emptyLabel={usageAvailable ? 'Hourly telemetry has no records yet.' : 'Usage source not connected yet.'}
+                emptyLabel={getTelemetryEmptyCopy(usage, 'snapshot')}
                 color="blue"
               />
             </Panel>
@@ -1347,7 +1418,7 @@ export default function CEOSystemControlTower({
             >
               <StackedBars
                 points={usageAvailable ? usage?.charts.daily || [] : []}
-                emptyLabel={usageAvailable ? 'Daily telemetry has no records yet.' : 'Usage source not connected yet.'}
+                emptyLabel={usageAvailable ? 'Daily telemetry has no records yet.' : getTelemetryEmptyCopy(usage, 'snapshot')}
               />
             </Panel>
             <Panel
@@ -1357,7 +1428,7 @@ export default function CEOSystemControlTower({
             >
               <HorizontalPressureBars
                 rows={usageAvailable ? usage?.charts.modulePressure || [] : []}
-                emptyLabel={usageAvailable ? 'Module pressure has no records yet.' : 'Usage source not connected yet.'}
+                emptyLabel={getTelemetryEmptyCopy(usage, 'module')}
               />
             </Panel>
             <Panel
@@ -1369,7 +1440,7 @@ export default function CEOSystemControlTower({
                 <MiniLineChart points={routePoints} color="green" />
               ) : (
                 <div className="flex min-h-[240px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">
-                  Usage source not connected yet.
+                  {getTelemetryEmptyCopy(usage, 'route')}
                 </div>
               )}
             </Panel>
@@ -1401,6 +1472,7 @@ export default function CEOSystemControlTower({
                     pressure={makeModulePressure(module.key)}
                     autoRefreshOn={shouldStartAutoRefresh()}
                     onUnavailable={handleModuleUnavailable}
+                    telemetryStatus={telemetryStatusLabel}
                   />
                 )
               })}
@@ -1462,9 +1534,9 @@ export default function CEOSystemControlTower({
                       { label: 'Edge Services', value: usageAvailable ? Math.max(0, Math.min(100, edgeRequests ? Math.round((edgeRequests ?? 0) / 3000) : 0)) : 0 },
                     ].map((item) => (
                       <div key={item.label} className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex items-center justify-between gap-3 text-sm">
+                      <div className="flex items-center justify-between gap-3 text-sm">
                           <span className="font-semibold text-slate-800">{item.label}</span>
-                          <span className="font-bold text-slate-950">{item.value ? `${item.value}%` : 'Not connected yet'}</span>
+                          <span className="font-bold text-slate-950">{item.value ? `${item.value}%` : telemetryStatusLabel}</span>
                         </div>
                         <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
                           <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${item.value}%` }} />
@@ -1628,7 +1700,7 @@ export default function CEOSystemControlTower({
               subtitle="Pressure is pulled from the usage API when available; latency and error rate remain hidden until telemetry is connected."
               badge={<SectionBadge><Route className="h-3.5 w-3.5" /> Route Pressure</SectionBadge>}
             >
-              <PressureTable rows={routeTableRows} />
+              <PressureTable rows={routeTableRows} emptyLabel={getTelemetryEmptyCopy(usage, 'route')} />
             </Panel>
 
             <Panel
@@ -1638,7 +1710,7 @@ export default function CEOSystemControlTower({
               id="events"
             >
               <div className="space-y-4">
-                {events.length ? events.slice(0, 8).map((event) => <TimelineItem key={event.id} event={event} />) : (
+                {groupedEvents.length ? groupedEvents.slice(0, 8).map((event) => <TimelineItem key={event.id} event={event} />) : (
                   <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">No runtime events yet.</div>
                 )}
               </div>

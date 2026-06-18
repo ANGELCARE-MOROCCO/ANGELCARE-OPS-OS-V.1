@@ -60,13 +60,14 @@ function weekKey(value: string) {
   return monday.toISOString().slice(0, 10)
 }
 
-function buildMetricSummary(state: SystemRuntimeState, snapshots: SnapshotRow[]) {
+function buildMetricSummary(state: SystemRuntimeState, snapshots: SnapshotRow[], routePressure: Array<{ route: string; value: number }>, vercelConnected: boolean) {
   const derived = new Map<string, number>()
   for (const row of snapshots) {
     derived.set(row.metric_key, (derived.get(row.metric_key) || 0) + Number(row.metric_value || 0))
   }
 
   const estimatedCost = snapshots.reduce((sum, row) => sum + Number(row.cost_estimate || 0), 0)
+  const topRoute = routePressure[0]?.route || (snapshots.length ? 'Internal snapshot' : 'No route telemetry yet')
 
   return {
     activeCpu: Number(derived.get('cpu_active') || derived.get('active_cpu') || 0),
@@ -74,8 +75,8 @@ function buildMetricSummary(state: SystemRuntimeState, snapshots: SnapshotRow[])
     edgeRequests: Number(derived.get('edge_requests') || derived.get('requests') || 0),
     bandwidth: Number(derived.get('bandwidth') || derived.get('data_transfer') || 0),
     errorRate: Number(derived.get('error_rate') || derived.get('errors') || 0),
-    topRoutePressure: snapshots.find((row) => String(row.metric_key).includes('route:') || typeof row.payload.route === 'string')?.payload?.route || 'Not connected yet',
-    estimatedCostPressure: estimatedCost,
+    topRoutePressure: topRoute,
+    estimatedCostPressure: vercelConnected ? estimatedCost : 0,
   }
 }
 
@@ -159,14 +160,14 @@ export async function GET() {
     const modulePressure = buildModulePressure(snapshots, context.state)
     const shutdownHistory = buildShutdownHistory(events as Array<{ event_type: string; created_at: string; from_mode: string | null; to_mode: string | null }>)
 
-    const summary = buildMetricSummary(context.state, snapshots)
+    const summary = buildMetricSummary(context.state, snapshots, routePressure, Boolean(vercel.connected && vercel.status === 'connected'))
 
     return NextResponse.json(
       {
         ok: true,
         connected: {
           vercel: vercel.connected,
-          internal: true,
+          internal: snapshots.length > 0,
         },
         vercel,
         state: context.state,

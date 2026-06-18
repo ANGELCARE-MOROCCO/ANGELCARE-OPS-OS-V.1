@@ -67,6 +67,9 @@ export async function POST(request: Request) {
         timezone: body.timezone || context.state.timezone,
         reason: body.reason || context.state.reason || null,
         command: plan.command,
+        shutdownExecutedAt: new Date().toISOString(),
+        restoreExecutedAt: null,
+        completedAt: body.resumeAt ? null : new Date().toISOString(),
       },
     })
 

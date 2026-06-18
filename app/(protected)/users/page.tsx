@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
-import UsersEmployeeCommandClient, { type UserStaffRecord } from './_components/UsersEmployeeCommandClient'
+import { canManageAccessGovernance, canViewAccessGovernance, loadAccessGovernanceEvents, loadAccessGovernanceRegistry } from '@/lib/users/access-governance/registry'
+import type { GovernanceUserRow } from '@/lib/users/access-governance/types'
+import UserAccessGovernanceCenter from './_components/UserAccessGovernanceCenter'
+import { type UserStaffRecord } from './_components/UsersEmployeeCommandClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -94,7 +97,7 @@ function readiness(record: UserStaffRecord) {
 }
 
 export default async function UsersPage() {
-  const actor = await requireRole(['ceo', 'manager', 'hr_admin', 'hr_manager', 'operations_manager'])
+  const actor = await requireRole(['ceo', 'manager', 'admin', 'hr_admin', 'hr_manager', 'operations_manager'])
 
   const [usersRaw, staffRaw, attendance, documents, contracts, training, rosters, payroll, leave] = await Promise.all([
     readTable('app_users'),
@@ -166,5 +169,46 @@ export default async function UsersPage() {
     return record
   })
 
-  return <UsersEmployeeCommandClient initialUsers={users} loadedAt={new Date().toISOString()} currentUserId={String(actor.id)} canPermanentlyDeleteUsers={canPermanentlyDeleteUsers(actor as Row)} />
+  const governanceClient = await createClient()
+  const [registryResult, eventsResult] = await Promise.all([
+    loadAccessGovernanceRegistry(governanceClient),
+    loadAccessGovernanceEvents(governanceClient),
+  ])
+
+  const emptyRegistry = {
+    modules: [],
+    routes: [],
+    templates: [],
+    latestScan: null,
+    stats: {
+      totalModules: 0,
+      totalRoutes: 0,
+      activeRoutes: 0,
+      staleRoutes: 0,
+      newRoutesSinceLastScan: 0,
+      latestScanAt: null,
+    },
+  }
+
+  const registry = registryResult.ok ? registryResult.snapshot : emptyRegistry
+  const registryError = registryResult.ok ? null : registryResult.error
+
+  return (
+    <UserAccessGovernanceCenter
+      initialUsers={users}
+      currentUserId={String(actor.id)}
+      currentUserRole={String(actor.role || '')}
+      canCreateUser={['ceo', 'manager', 'admin'].includes(normalizeRole(actor.role))}
+      canEditUser={['ceo', 'manager'].includes(normalizeRole(actor.role))}
+      canOpenProfile={['ceo', 'manager'].includes(normalizeRole(actor.role))}
+      canDeleteUsers={canPermanentlyDeleteUsers(actor as Row)}
+      canManageGovernance={canManageAccessGovernance(actor as GovernanceUserRow)}
+      canPreviewGovernance={canViewAccessGovernance(actor as GovernanceUserRow)}
+      registry={registry}
+      registryError={registryError}
+      events={eventsResult.ok ? eventsResult.events : []}
+      scans={eventsResult.ok ? eventsResult.scans : []}
+      loadedAt={new Date().toISOString()}
+    />
+  )
 }

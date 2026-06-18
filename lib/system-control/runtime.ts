@@ -136,6 +136,24 @@ export type RuntimeProgressPlan = {
   finalState: Partial<SystemRuntimeStateRow>
 }
 
+export type VercelUsageStatus =
+  | 'connected'
+  | 'missing_env'
+  | 'permission_denied'
+  | 'provider_unavailable'
+  | 'unsupported'
+  | 'no_data'
+
+export type VercelUsageSnapshot = {
+  connected: boolean
+  configured: boolean
+  missingEnv: string[]
+  status: VercelUsageStatus
+  message: string
+  data: unknown
+  source: 'vercel'
+}
+
 export type SafeDisabledResponseInput = {
   pathname: string
   method: string
@@ -632,19 +650,33 @@ export async function refreshRuntimeStateFromSchedule(supabase: SupabaseClient, 
   const now = Date.now()
   const shutdownAt = typeof schedule.shutdownAt === 'string' ? Date.parse(schedule.shutdownAt) : NaN
   const resumeAt = typeof schedule.resumeAt === 'string' ? Date.parse(schedule.resumeAt) : NaN
+  const shutdownExecutedAt = typeof schedule.shutdownExecutedAt === 'string' ? Date.parse(schedule.shutdownExecutedAt) : NaN
+  const restoreExecutedAt = typeof schedule.restoreExecutedAt === 'string' ? Date.parse(schedule.restoreExecutedAt) : NaN
+  const completedAt = typeof schedule.completedAt === 'string' ? Date.parse(schedule.completedAt) : NaN
+  const hasShutdownExecuted = Number.isFinite(shutdownExecutedAt)
+  const hasRestoreExecuted = Number.isFinite(restoreExecutedAt)
+  const isCompleted = Number.isFinite(completedAt)
 
-  if (state.mode === 'normal' && Number.isFinite(shutdownAt) && shutdownAt <= now) {
+  if (state.mode === 'normal' && Number.isFinite(shutdownAt) && shutdownAt <= now && !hasShutdownExecuted && !isCompleted) {
     try {
+      const executedAt = new Date(shutdownAt).toISOString()
+      const nextSchedule = {
+        ...schedule,
+        shutdownExecutedAt: executedAt,
+        restoreExecutedAt: schedule.resumeAt ? schedule.restoreExecutedAt || null : executedAt,
+        completedAt: schedule.resumeAt ? schedule.completedAt || null : executedAt,
+      }
       const next = await updateRuntimeState(supabase, {
         mode: 'standby',
         is_system_online: false,
-        shutdown_started_at: new Date(shutdownAt).toISOString(),
-        shutdown_ends_at: new Date(shutdownAt).toISOString(),
+        shutdown_started_at: executedAt,
+        shutdown_ends_at: executedAt,
         resume_at: typeof schedule.resumeAt === 'string' ? schedule.resumeAt : state.resumeAt,
         timezone: typeof schedule.timezone === 'string' ? schedule.timezone : state.timezone,
         reason: typeof schedule.reason === 'string' ? schedule.reason : state.reason,
         last_action_by: 'system-scheduler',
         last_action_at: new Date().toISOString(),
+        schedule: nextSchedule,
       })
       await recordRuntimeEvent(supabase, {
         eventType: 'scheduled_shutdown_activated',
@@ -652,7 +684,7 @@ export async function refreshRuntimeStateFromSchedule(supabase: SupabaseClient, 
         toMode: next.mode,
         actorEmail: 'system-scheduler',
         actorRole: 'system',
-        payload: { schedule },
+        payload: { schedule: nextSchedule },
       })
       return next
     } catch (error) {
@@ -661,15 +693,22 @@ export async function refreshRuntimeStateFromSchedule(supabase: SupabaseClient, 
     }
   }
 
-  if (state.mode !== 'normal' && Number.isFinite(resumeAt) && resumeAt <= now) {
+  if (state.mode !== 'normal' && Number.isFinite(resumeAt) && resumeAt <= now && !hasRestoreExecuted && !isCompleted) {
     try {
+      const executedAt = new Date(resumeAt).toISOString()
+      const nextSchedule = {
+        ...schedule,
+        restoreExecutedAt: executedAt,
+        completedAt: executedAt,
+      }
       const next = await updateRuntimeState(supabase, {
         mode: 'normal',
         is_system_online: true,
-        resume_at: new Date(resumeAt).toISOString(),
+        resume_at: executedAt,
         disabled_modules: {},
         last_action_by: 'system-scheduler',
         last_action_at: new Date().toISOString(),
+        schedule: nextSchedule,
       })
       await recordRuntimeEvent(supabase, {
         eventType: 'scheduled_restore_activated',
@@ -677,7 +716,7 @@ export async function refreshRuntimeStateFromSchedule(supabase: SupabaseClient, 
         toMode: next.mode,
         actorEmail: 'system-scheduler',
         actorRole: 'system',
-        payload: { schedule },
+        payload: { schedule: nextSchedule },
       })
       return next
     } catch (error) {
@@ -691,19 +730,29 @@ export async function refreshRuntimeStateFromSchedule(supabase: SupabaseClient, 
 
 export async function fetchVercelUsageSnapshot() {
   const token = process.env.VERCEL_TOKEN
-  const teamId = process.env.VERCEL_TEAM_ID
   const projectId = process.env.VERCEL_PROJECT_ID || process.env.VERCEL_PROJECT_SLUG
+  const teamId = process.env.VERCEL_TEAM_ID
+  const missingEnv = [
+    token ? '' : 'VERCEL_TOKEN',
+    projectId ? '' : 'VERCEL_PROJECT_ID',
+    teamId ? '' : 'VERCEL_TEAM_ID',
+  ].filter((value): value is string => Boolean(value))
 
-  if (!token || !teamId || !projectId) {
+  if (missingEnv.length) {
     return {
       connected: false,
+      configured: false,
+      missingEnv,
+      status: 'missing_env' as const,
+      message: `Missing ${missingEnv.join(', ')}`,
+      data: null as unknown,
       source: 'vercel',
-      message: 'Vercel usage API not connected yet',
-      data: null as any,
     }
   }
 
-  const endpoint = `https://api.vercel.com/v1/projects/${encodeURIComponent(projectId)}/usage?teamId=${encodeURIComponent(teamId)}`
+  const resolvedProjectId = projectId as string
+  const resolvedTeamId = teamId as string
+  const endpoint = `https://api.vercel.com/v1/projects/${encodeURIComponent(resolvedProjectId)}/usage?teamId=${encodeURIComponent(resolvedTeamId)}`
 
   try {
     const response = await fetch(endpoint, {
@@ -715,30 +764,82 @@ export async function fetchVercelUsageSnapshot() {
       cache: 'no-store',
     })
 
+    if (response.status === 401 || response.status === 403) {
+      return {
+        connected: false,
+        configured: true,
+        missingEnv: [],
+        status: 'permission_denied' as const,
+        message: 'Vercel API permission denied',
+        data: null as unknown,
+        source: 'vercel',
+      }
+    }
+
+    if (response.status === 404 || response.status === 405 || response.status === 410 || response.status === 501) {
+      return {
+        connected: false,
+        configured: true,
+        missingEnv: [],
+        status: 'unsupported' as const,
+        message: 'Vercel usage endpoint not supported',
+        data: null as unknown,
+        source: 'vercel',
+      }
+    }
+
     if (!response.ok) {
       return {
         connected: false,
+        configured: true,
+        missingEnv: [],
+        status: 'provider_unavailable' as const,
+        message: `Vercel API unavailable (${response.status})`,
+        data: null as unknown,
         source: 'vercel',
-        message: `Vercel usage API not connected yet (${response.status})`,
-        data: null as any,
       }
     }
 
     const data = await response.json().catch(() => null)
+    if (!hasVercelUsageData(data)) {
+      return {
+        connected: true,
+        configured: true,
+        missingEnv: [],
+        status: 'no_data' as const,
+        message: 'Vercel usage endpoint connected but no data yet',
+        data,
+        source: 'vercel',
+      }
+    }
+
     return {
       connected: true,
-      source: 'vercel',
+      configured: true,
+      missingEnv: [],
+      status: 'connected' as const,
       message: 'Vercel usage API connected',
       data,
+      source: 'vercel',
     }
-  } catch {
+  } catch (error) {
     return {
       connected: false,
+      configured: true,
+      missingEnv: [],
+      status: 'provider_unavailable' as const,
+      message: error instanceof Error ? `Vercel API unavailable: ${error.message}` : 'Vercel API unavailable',
+      data: null as unknown,
       source: 'vercel',
-      message: 'Vercel usage API not connected yet',
-      data: null as any,
     }
   }
+}
+
+function hasVercelUsageData(value: unknown): boolean {
+  if (value == null) return false
+  if (Array.isArray(value)) return value.some((item) => hasVercelUsageData(item))
+  if (typeof value === 'object') return Object.values(value as Record<string, unknown>).some((item) => hasVercelUsageData(item))
+  return true
 }
 
 export function buildSystemDisabledPayload(input: SafeDisabledResponseInput) {

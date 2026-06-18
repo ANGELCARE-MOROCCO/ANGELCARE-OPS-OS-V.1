@@ -33,6 +33,9 @@ export async function POST(request: Request) {
       reason: body.reason || context.state.reason || null,
       enabledCoreRoutes: body.enabledCoreRoutes || context.state.enabledCoreRoutes,
       disabledModules: body.disabledModules || context.state.disabledModules,
+      shutdownExecutedAt: null,
+      restoreExecutedAt: null,
+      completedAt: null,
       createdBy: context.actor.email,
       updatedAt: new Date().toISOString(),
     }
