@@ -20,6 +20,8 @@ import type {
   PacojacoPrintableDocument,
 } from '@/lib/pacojaco-ops/types'
 import { PACOJACO_DEFAULT_LEGAL_FOOTER } from '@/lib/pacojaco-ops/types'
+import ActionProgressPanel from '@/components/shared/ActionProgressPanel'
+import { useActionProgress } from '@/hooks/useActionProgress'
 
 type Props = {
   initialDocuments: PacojacoDocumentRow[]
@@ -240,6 +242,7 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
   const [clientEditor, setClientEditor] = useState<ClientEditorState | null>(null)
   const [appliedClient, setAppliedClient] = useState<PacojacoClient | null>(null)
   const [appliedClientRevision, setAppliedClientRevision] = useState(0)
+  const actionProgress = useActionProgress()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -260,24 +263,56 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
     return () => clearTimeout(timer)
   }, [banner])
 
-  async function refreshDocuments() {
+  async function refreshDocuments(showProgress = false) {
     try {
       setLoading(true)
+      if (showProgress) {
+        actionProgress.startAction({
+          title: 'Refresh PACOJACO Dashboard',
+          subtitle: 'Reloading documents, totals and dashboard indicators.',
+          steps: [
+            { id: 'load', label: 'Load saved documents', percent: 45 },
+            { id: 'stats', label: 'Update dashboard stats', percent: 80 },
+            { id: 'complete', label: 'Refresh complete', percent: 100 },
+          ],
+        })
+        actionProgress.setStep('load', 'running', 'Loading documents from database…', 45)
+      }
       const payload = await fetchJson(`/api/pacojaco-ops/documents?${buildQuery(filters)}`)
       setDocuments(payload.documents || [])
       if (payload.stats) setStats(payload.stats)
+      if (showProgress) {
+        actionProgress.setStep('stats', 'done', 'Dashboard stats updated.', 85)
+        actionProgress.completeAction('PACOJACO dashboard refreshed successfully.', {
+          documents: payload.documents?.length || 0,
+        })
+      }
     } catch (error) {
-      setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to load PACOJACO documents.' })
+      const message = error instanceof Error ? error.message : 'Unable to load PACOJACO documents.'
+      setBanner({ kind: 'error', message })
+      if (showProgress) actionProgress.failAction(message)
     } finally {
       setLoading(false)
     }
   }
 
-  async function refreshClients() {
+  async function refreshClients(showProgress = false) {
     try {
       setClientsLoading(true)
+      if (showProgress) {
+        actionProgress.startAction({
+          title: 'Refresh PACOJACO Clients',
+          subtitle: 'Reloading saved client records.',
+          steps: [
+            { id: 'load', label: 'Load clients', percent: 70 },
+            { id: 'complete', label: 'Clients ready', percent: 100 },
+          ],
+        })
+        actionProgress.setStep('load', 'running', 'Loading clients from database…', 70)
+      }
       const payload = await fetchJson('/api/pacojaco-ops/clients?limit=500')
       setClients(payload.clients || [])
+      if (showProgress) actionProgress.completeAction('PACOJACO clients refreshed successfully.', { clients: payload.clients?.length || 0 })
     } catch (error) {
       setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to load PACOJACO clients.' })
     } finally {
@@ -344,6 +379,19 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
   async function saveDocument(draft: PacojacoDocumentFormState, action: 'draft' | 'changes') {
     try {
       setSaving(true)
+      actionProgress.startAction({
+        title: draft.document_type === 'quote' ? 'Save Quotation' : 'Save Invoice',
+        subtitle: 'Validating document, saving rows and refreshing the dashboard.',
+        steps: [
+          { id: 'validate', label: 'Validate document', percent: 15 },
+          { id: 'calculate', label: 'Calculate totals', percent: 30 },
+          { id: 'save', label: 'Save document', percent: 60 },
+          { id: 'relations', label: 'Save items and interventions', percent: 80 },
+          { id: 'refresh', label: 'Refresh dashboard', percent: 95 },
+          { id: 'complete', label: 'Document saved', percent: 100 },
+        ],
+      })
+      actionProgress.setStep('validate', 'running', 'Checking client, items and required document fields…', 15)
       const payload = {
         ...draft,
         status: action === 'draft' ? 'draft' : draft.status,
@@ -357,33 +405,47 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
         })),
       }
 
+      actionProgress.setStep('calculate', 'done', 'Totals calculated and payload prepared.', 35)
+
       if (!editor || editor.mode === 'create') {
+        actionProgress.setStep('save', 'running', 'Creating saved document…', 60)
         const response = await fetchJson('/api/pacojaco-ops/documents', {
           method: 'POST',
           body: JSON.stringify(payload),
         })
-        setBanner({ kind: 'success', message: `Created ${response.document?.document_number || 'document'}.` })
+      await refreshDocuments();
         if (response.document) {
           setSavedPreviewDocument(response.document as PacojacoDocumentRow)
           setSavedPreviewOpen(true)
         }
       } else if (editor.document?.id) {
+        actionProgress.setStep('save', 'running', 'Updating saved document…', 60)
         const response = await fetchJson(`/api/pacojaco-ops/documents/${editor.document.id}`, {
           method: 'PATCH',
           body: JSON.stringify(payload),
         })
-        setBanner({ kind: 'success', message: `Saved ${response.document?.document_number || 'document'}.` })
+      await refreshDocuments();
         if (response.document) {
           setSavedPreviewDocument(response.document as PacojacoDocumentRow)
           setSavedPreviewOpen(true)
         }
       }
 
+      actionProgress.setStep('relations', 'done', 'Items and interventions saved.', 82)
       closeEditor()
       setPreviewOpen(false)
-      await refreshDocuments()
+      actionProgress.setStep('refresh', 'running', 'Refreshing dashboard list…', 95)
+      actionProgress.setStep('refresh', 'running', 'Refreshing dashboard list…', 95)
+      await refreshDocuments();
+      actionProgress.completeAction('Document saved successfully.', {
+        type: draft.document_type,
+        items: draft.items.length,
+        interventions: draft.interventions.length,
+      })
     } catch (error) {
-      setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to save document.' })
+      const message = error instanceof Error ? error.message : 'Unable to save document.'
+      setBanner({ kind: 'error', message })
+      actionProgress.failAction(message)
     } finally {
       setSaving(false)
     }
@@ -393,6 +455,18 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
     try {
       setSaving(true)
       const isEditing = clientEditor?.mode === 'edit' && clientEditor.client?.id
+      actionProgress.startAction({
+        title: isEditing ? 'Update Client' : 'Create Client',
+        subtitle: 'Saving PACOJACO client information.',
+        steps: [
+          { id: 'validate', label: 'Validate client', percent: 20 },
+          { id: 'save', label: 'Save client', percent: 65 },
+          { id: 'refresh', label: 'Refresh clients', percent: 90 },
+          { id: 'complete', label: 'Client saved', percent: 100 },
+        ],
+      })
+      actionProgress.setStep('validate', 'running', 'Checking client fields…', 20)
+      actionProgress.setStep('save', 'running', 'Saving client record…', 65)
       const response = await fetchJson(isEditing ? `/api/pacojaco-ops/clients/${clientEditor?.client?.id}` : '/api/pacojaco-ops/clients', {
         method: isEditing ? 'PATCH' : 'POST',
         body: JSON.stringify(draft),
@@ -403,12 +477,16 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
       setClientEditor(null)
       setAppliedClient(client)
       setAppliedClientRevision((value) => value + 1)
+      actionProgress.setStep('refresh', 'running', 'Refreshing client list…', 90)
       await refreshClients()
+      actionProgress.completeAction(`${isEditing ? 'Updated' : 'Created'} client ${client.client_name}.`, { client: client.client_name })
       if (editor) {
         setEditor((current) => (current ? { ...current } : current))
       }
     } catch (error) {
-      setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to save client.' })
+      const message = error instanceof Error ? error.message : 'Unable to save client.'
+      setBanner({ kind: 'error', message })
+      actionProgress.failAction(message)
     } finally {
       setSaving(false)
     }
@@ -433,11 +511,22 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
   async function duplicateDocument(document: PacojacoDocumentRow) {
     try {
       setSaving(true)
+      actionProgress.startAction({
+        title: 'Duplicate Document',
+        subtitle: `Duplicating ${document.document_number}.`,
+        steps: [
+          { id: 'load', label: 'Load original document', percent: 25 },
+          { id: 'duplicate', label: 'Create duplicate draft', percent: 70 },
+          { id: 'refresh', label: 'Refresh dashboard', percent: 95 },
+          { id: 'complete', label: 'Duplicate ready', percent: 100 },
+        ],
+      })
+      actionProgress.setStep('load', 'running', 'Preparing source document…', 25)
+      actionProgress.setStep('duplicate', 'running', 'Creating duplicated document…', 70)
       const response = await fetchJson(`/api/pacojaco-ops/documents/${document.id}/duplicate`, {
         method: 'POST',
       })
-      setBanner({ kind: 'success', message: `Duplicated as ${response.document?.document_number || 'new draft'}.` })
-      await refreshDocuments()
+      await refreshDocuments();
       if (response.document) {
         setEditor({ mode: 'edit', document: response.document, loading: false, initialType: response.document.document_type })
       }
@@ -464,7 +553,7 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
         body: JSON.stringify({ status: requested }),
       })
       setBanner({ kind: 'success', message: `Status updated to ${requested.replace(/_/g, ' ')}.` })
-      await refreshDocuments()
+      await refreshDocuments();
     } catch (error) {
       setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to change status.' })
     } finally {
@@ -484,13 +573,27 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
 
     try {
       setSaving(true)
+      actionProgress.startAction({
+        title: 'Delete Document',
+        subtitle: `Deleting ${document.document_number}.`,
+        steps: [
+          { id: 'delete', label: 'Delete saved document', percent: 65 },
+          { id: 'refresh', label: 'Refresh dashboard', percent: 95 },
+          { id: 'complete', label: 'Deletion complete', percent: 100 },
+        ],
+      })
+      actionProgress.setStep('delete', 'running', 'Deleting saved document…', 65)
       await fetchJson(`/api/pacojaco-ops/documents/${document.id}`, {
         method: 'DELETE',
       })
       setBanner({ kind: 'success', message: `Deleted ${document.document_number}.` })
-      await refreshDocuments()
+      actionProgress.setStep('refresh', 'running', 'Refreshing dashboard…', 95)
+      await refreshDocuments();
+      actionProgress.completeAction(`Deleted ${document.document_number}.`, { document: document.document_number })
     } catch (error) {
-      setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to delete document.' })
+      const message = error instanceof Error ? error.message : 'Unable to delete document.'
+      setBanner({ kind: 'error', message })
+      actionProgress.failAction(message)
     } finally {
       setSaving(false)
     }
@@ -498,12 +601,26 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
 
   async function openPreviewFromDocument(document: PacojacoDocumentRow) {
     try {
+      actionProgress.startAction({
+        title: 'Open Document Preview',
+        subtitle: `Loading ${document.document_number}.`,
+        steps: [
+          { id: 'load', label: 'Load saved document', percent: 55 },
+          { id: 'render', label: 'Prepare A4 preview', percent: 90 },
+          { id: 'complete', label: 'Preview ready', percent: 100 },
+        ],
+      })
+      actionProgress.setStep('load', 'running', 'Loading full document details…', 55)
       const full = await loadDocument(document.id)
       setPreviewOpen(false)
       setSavedPreviewDocument(full)
       setSavedPreviewOpen(true)
+      actionProgress.setStep('render', 'done', 'Preview data prepared.', 90)
+      actionProgress.completeAction('Document preview is ready.', { document: full.document_number })
     } catch (error) {
-      setBanner({ kind: 'error', message: error instanceof Error ? error.message : 'Unable to open preview.' })
+      const message = error instanceof Error ? error.message : 'Unable to open preview.'
+      setBanner({ kind: 'error', message })
+      actionProgress.failAction(message)
     }
   }
 
@@ -598,16 +715,30 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
   }
 
   async function printPreviewFromDraft(draft: PacojacoDocumentFormState) {
+    actionProgress.startAction({
+      title: 'Prepare Print Preview',
+      subtitle: 'Generating A4 printable preview.',
+      steps: [
+        { id: 'build', label: 'Build printable document', percent: 45 },
+        { id: 'render', label: 'Render preview', percent: 75 },
+        { id: 'print', label: 'Open print dialog', percent: 100 },
+      ],
+    })
+    actionProgress.setStep('build', 'running', 'Building printable A4 document…', 45)
     setPreview(buildPrintableFromDraft(draft))
     setPreviewOpen(true)
+    actionProgress.setStep('render', 'running', 'Waiting for preview rendering…', 75)
     await new Promise((resolve) => window.setTimeout(resolve, 250))
+    actionProgress.setStep('print', 'done', 'Opening browser print dialog…', 100)
     window.print()
+    actionProgress.completeAction('Print preview prepared. Complete printing from the browser dialog.')
   }
 
   const activeCount = useMemo(() => documents.length, [documents.length])
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#f5f7fb_100%)] px-3 py-4 text-slate-900 sm:px-4 lg:px-6">
+      <ActionProgressPanel progress={actionProgress.progress} onClose={actionProgress.closeProgress} />
       <div className="mx-auto flex max-w-[1600px] flex-col gap-4">
         <header className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
           <div className="bg-[linear-gradient(135deg,#f8fbff_0%,#eef6ff_50%,#ffffff_100%)] px-5 py-5 sm:px-6">
@@ -650,7 +781,7 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
                 </button>
                 <button
                   type="button"
-                  onClick={() => void refreshDocuments()}
+                  onClick={() => void refreshDocuments(true)}
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
@@ -722,7 +853,7 @@ export default function PacoJacoOpsWorkspace({ initialDocuments, initialStats, h
                 </div>
                 <button
                   type="button"
-                  onClick={() => void refreshClients()}
+                  onClick={() => void refreshClients(true)}
                   className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                 >
                   {clientsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}

@@ -3,26 +3,14 @@ import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
-import { APP_ROUTE_PERMISSIONS } from '@/lib/generated/app-routes'
 import SmartPermissionsPanel from '@/app/(protected)/users/_components/SmartPermissionsPanel'
 import {
-  MODULE_PERMISSIONS,
   ROLE_PERMISSION_TEMPLATES,
   USER_ROLE_OPTIONS,
-  buildUserPermissionsForRole,
   getRoleOption,
 } from '@/lib/auth/permissions'
 
 type AnyRow = Record<string, any>
-
-const CORE_PERMISSIONS = Object.entries(MODULE_PERMISSIONS).flatMap(([moduleKey, permissions]) =>
-  permissions.map((permission) => ({
-    value: permission,
-    label: permission.replaceAll('.', ' / ').replaceAll('_', ' '),
-    module: moduleKey,
-    moduleLabel: moduleKey.replaceAll('_', ' ').replaceAll('-', ' '),
-  }))
-)
 
 const ROLE_OPTIONS = USER_ROLE_OPTIONS.map((role) => ({
   value: role.value,
@@ -80,8 +68,12 @@ export default async function NewUserPage() {
     if (password.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.')
 
     const role = String(formData.get('role') || 'staff').trim().toLowerCase()
-    const selectedPermissions = Array.from(new Set(formData.getAll('permissions').map(String)))
-    const permissions = buildUserPermissionsForRole(role, selectedPermissions)
+    const catalogState = String(formData.get('permissions_catalog_state') || '')
+    if (catalogState !== 'ready') {
+      throw new Error('Permission catalog is not ready. Refresh Permission Control or run App Access Scan.')
+    }
+
+    const permissions = Array.from(new Set(formData.getAll('permissions').map(String).filter(Boolean)))
     const roleOption = getRoleOption(role)
 
     const { data: passwordHash, error: hashError } = await supabase.rpc('hash_app_password', { input_password: password })
@@ -169,15 +161,14 @@ export default async function NewUserPage() {
             <Card icon="🛡️" title="Role & Permission Template">
               <div style={roleGridStyle}>
                 <Select name="role" label="Assign Role" options={ROLE_OPTIONS} required defaultValue="staff" />
-                <Select name="permission_template" label="Permission Template" options={Object.keys(ROLE_PERMISSION_TEMPLATES).map((key) => [key, key.replaceAll('_', ' ')])} />
-                <Toggle name="custom_permissions" label="Customize permissions below" defaultChecked />
               </div>
+              <div style={infoStyle}>Role templates are displayed below for reference only. Permissions are selected directly from the live catalog and saved exactly as chosen.</div>
               <div style={previewGridStyle}>
                 {['Dashboard', 'People', 'Operations', 'Finance', 'Reports', 'Settings', 'Admin', 'Market OS', 'Revenue', 'Academy', 'HR', 'Voice'].map((x, i) => <div key={x} style={previewCardStyle}><span>{['📊','👥','⚙️','💳','📈','🔧','🛡️','📣','💎','🎓','🏢','☎️'][i]}</span><strong>{x}</strong><small>covered</small></div>)}
               </div>
             </Card>
 
-            <SmartPermissionsPanel corePermissions={CORE_PERMISSIONS} pagePermissions={[...APP_ROUTE_PERMISSIONS]} defaultPermissions={['profile.view', 'staff_portal.view', 'page:/profile']} roleTemplates={ROLE_PERMISSION_TEMPLATES} />
+            <SmartPermissionsPanel defaultPermissions={[]} roleTemplates={ROLE_PERMISSION_TEMPLATES} />
           </main>
 
           <aside style={asideStyle}>

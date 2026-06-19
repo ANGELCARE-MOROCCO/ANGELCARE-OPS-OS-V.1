@@ -4,7 +4,6 @@ import {
   AlertCircle,
   ArrowRight,
   CheckCircle2,
-  ChevronDown,
   Clock3,
   Download,
   Gauge,
@@ -20,7 +19,7 @@ import {
   SlidersHorizontal,
   Zap,
 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 const SYSTEM_CONTROL_REFRESH_EVENT = 'system-control-refresh'
@@ -120,8 +119,33 @@ type RoutesResponse = {
   routes: RouteEntry[]
 }
 
-const depthOptions = ['Quick', 'Standard', 'Deep', 'Full Infrastructure'] as const
-const scopeChips = ['Frontend', 'APIs', 'Workers', 'Polling', 'Realtime', 'Database', 'Edge', 'Storage', 'Mobile'] as const
+type UsagePoint = {
+  label: string
+  value: number
+  cost?: number | null
+  count?: number | null
+}
+
+function asNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
+const scanTypes = [
+  { value: 'quick', label: 'Quick' },
+  { value: 'full', label: 'Full' },
+  { value: 'deep', label: 'Deep' },
+] as const
+
+const tabs = [
+  { key: 'modules', label: 'Modules' },
+  { key: 'routes', label: 'Routes' },
+  { key: 'polling-sources', label: 'Polling Sources' },
+  { key: 'risk-indicators', label: 'Risk Indicators' },
+  { key: 'registry-drift', label: 'Registry Drift' },
+  { key: 'timeline', label: 'Timeline' },
+] as const
+
+type TabKey = typeof tabs[number]['key']
 
 function riskChip(risk?: string | null) {
   const normalized = String(risk || 'normal').toLowerCase()
@@ -130,12 +154,6 @@ function riskChip(risk?: string | null) {
   if (normalized === 'medium') return 'border-amber-200 bg-amber-50 text-amber-700'
   if (normalized === 'low') return 'border-emerald-200 bg-emerald-50 text-emerald-700'
   return 'border-slate-200 bg-slate-50 text-slate-600'
-}
-
-function liveStatusChip(active: boolean) {
-  return active
-    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-    : 'border-slate-200 bg-slate-50 text-slate-500'
 }
 
 function formatInterval(value: number | null | undefined) {
@@ -155,14 +173,8 @@ function recommendedInterval(module: ModuleEntry) {
   return 900_000
 }
 
-function findModuleCostPressure(module: ModuleEntry, scan?: ScanResponse['scan']) {
-  if (!scan?.payload?.candidates?.length) return 0
-  return scan.payload.candidates.filter((candidate) => candidate.moduleKey === module.module_key).length
-}
-
 function scanScore(scan?: ScanResponse['scan'], routes?: RouteEntry[]) {
   if (!scan) return null
-  const modules = Math.max(scan.modules_detected, 1)
   const risk = scan.high_risk_items
   const routeLoad = routes?.length || scan.routes_detected
   const base = 100 - (risk * 3) - Math.min(routeLoad / 8, 18)
@@ -176,18 +188,118 @@ function timelineLabel(value?: string | null) {
   return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 }
 
+function scanReason(kind: 'route' | 'module' | 'polling' | 'risk' | 'registry', limited: boolean, connected: boolean) {
+  const source = limited ? 'Runtime scan limited in production' : connected ? 'Live scan connected' : 'Local scan available'
+  if (kind === 'route') return connected ? 'No route telemetry records in the current scan payload.' : `${source}. Route telemetry not instrumented yet.`
+  if (kind === 'module') return connected ? 'No module pressure records were captured in this scan.' : `${source}. Module pressure requires scan data.`
+  if (kind === 'polling') return connected ? 'No polling sources were detected in this scan payload.' : `${source}. Polling sources require scan data.`
+  if (kind === 'risk') return connected ? 'No risk indicators were captured in the latest scan.' : `${source}. Risk indicators require scan data.`
+  return connected ? 'Registry drift is not yet visible from the current scan.' : `${source}. Registry drift requires scan data.`
+}
+
+function Sparkline({ values, tone = 'blue' }: { values: number[]; tone?: 'blue' | 'green' | 'orange' | 'rose' | 'slate' }) {
+  const id = useRef(`spark-${tone}-${Math.random().toString(36).slice(2)}`).current
+  if (!values.length) {
+    return (
+      <svg viewBox="0 0 160 48" className="h-12 w-full">
+        <line x1="4" y1="24" x2="156" y2="24" stroke="#dbe4f0" strokeDasharray="4 4" />
+      </svg>
+    )
+  }
+
+  const safeValues = values.length === 1 ? [values[0], values[0]] : values
+  const min = Math.min(...safeValues)
+  const max = Math.max(...safeValues)
+  const span = Math.max(max - min, 1)
+  const width = 160
+  const height = 48
+  const padding = 4
+  const usableWidth = width - padding * 2
+  const usableHeight = height - padding * 2
+  const linePath = safeValues.map((value, index) => {
+    const x = padding + (usableWidth * (index / Math.max(safeValues.length - 1, 1)))
+    const y = height - padding - (((value - min) / span) * usableHeight)
+    return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`
+  }).join(' ')
+
+  const stroke = {
+    blue: '#2563eb',
+    green: '#16a34a',
+    orange: '#f97316',
+    rose: '#e11d48',
+    slate: '#64748b',
+  }[tone]
+
+  return (
+    <svg viewBox="0 0 160 48" className="h-12 w-full">
+      <defs>
+        <linearGradient id={id} x1="0%" x2="0%" y1="0%" y2="100%">
+          <stop offset="0%" stopColor={stroke} stopOpacity="0.22" />
+          <stop offset="100%" stopColor={stroke} stopOpacity="0.04" />
+        </linearGradient>
+      </defs>
+      <path d={`${linePath} L 156 44 L 4 44 Z`} fill={`url(#${id})`} />
+      <path d={linePath} fill="none" stroke={stroke} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function MiniChart({ points, color = 'blue', emptyLabel = 'No data yet' }: { points: number[]; color?: 'blue' | 'green' | 'orange' | 'rose'; emptyLabel?: string }) {
+  const tone = color === 'green' ? 'green' : color === 'orange' ? 'orange' : color === 'rose' ? 'rose' : 'blue'
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      {points.length ? <Sparkline values={points} tone={tone} /> : <div className="flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">{emptyLabel}</div>}
+    </div>
+  )
+}
+
+function StackedBars({ points, emptyLabel }: { points: UsagePoint[]; emptyLabel: string }) {
+  if (!points.length) {
+    return <div className="flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">{emptyLabel}</div>
+  }
+
+  const safePoints = points.slice(0, 8)
+  const max = Math.max(...safePoints.map((point) => Math.max(asNumber(point.value) ?? 0, asNumber(point.cost) ?? 0, asNumber(point.count) ?? 0)), 1)
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-end gap-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-5">
+        {safePoints.map((point) => {
+          const value = asNumber(point.value) ?? 0
+          const cost = asNumber(point.cost) ?? 0
+          const count = asNumber(point.count) ?? 0
+          const valueHeight = Math.max((value / max) * 140, value > 0 ? 10 : 2)
+          const costHeight = Math.max((cost / max) * 140, cost > 0 ? 8 : 0)
+          const countHeight = Math.max((count / max) * 140, count > 0 ? 6 : 0)
+          return (
+            <div key={point.label} className="flex-1">
+              <div className="flex h-[170px] items-end gap-1">
+                <div className="w-full rounded-t-xl bg-sky-100">
+                  <div className="w-full rounded-t-xl bg-gradient-to-t from-blue-600 to-blue-400" style={{ height: `${valueHeight}px` }} />
+                  {cost > 0 && <div className="w-full bg-gradient-to-t from-emerald-500 to-emerald-300" style={{ height: `${costHeight}px` }} />}
+                  {count > 0 && <div className="w-full rounded-b-xl bg-gradient-to-t from-violet-500 to-violet-300" style={{ height: `${countHeight}px` }} />}
+                </div>
+              </div>
+              <div className="mt-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{point.label}</div>
+            </div>
+          )
+        })}
+      </div>
+      <div className="flex items-center gap-4 text-xs text-slate-500">
+        <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-blue-500" />Requests</span>
+        <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />Cost</span>
+        <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-violet-500" />Count</span>
+      </div>
+    </div>
+  )
+}
+
 export default function AppScanCenterWorkspace() {
   const [connected, setConnected] = useState(false)
   const [loading, setLoading] = useState(true)
   const [scanning, setScanning] = useState(false)
   const [scanProgress, setScanProgress] = useState(0)
-  const [scanStepIndex, setScanStepIndex] = useState(0)
-  const [scanDepth, setScanDepth] = useState<typeof depthOptions[number]>('Deep')
-  const [includeDormantModules, setIncludeDormantModules] = useState(true)
-  const [detectOrphanRoutes, setDetectOrphanRoutes] = useState(true)
-  const [classifyCostHeavyPaths, setClassifyCostHeavyPaths] = useState(true)
-  const [checkPollingFrequency, setCheckPollingFrequency] = useState(true)
-  const [detectDuplicateSyncFlows, setDetectDuplicateSyncFlows] = useState(true)
+  const [scanDepth, setScanDepth] = useState<'quick' | 'full' | 'deep'>('deep')
   const [modules, setModules] = useState<ModuleEntry[]>([])
   const [routes, setRoutes] = useState<RouteEntry[]>([])
   const [scan, setScan] = useState<ScanResponse['scan'] | null>(null)
@@ -195,8 +307,9 @@ export default function AppScanCenterWorkspace() {
   const [message, setMessage] = useState<string | null>(null)
   const [scanLimited, setScanLimited] = useState(false)
   const [selectedModuleKey, setSelectedModuleKey] = useState<string>('')
-  const [liveRateDrafts, setLiveRateDrafts] = useState<Record<string, number>>({})
+  const [activeTab, setActiveTab] = useState<TabKey>('modules')
   const [loadingAction, setLoadingAction] = useState<string | null>(null)
+  const [registrySearch, setRegistrySearch] = useState('')
   const loadDataRef = useRef<() => Promise<void>>(async () => {})
 
   async function loadData() {
@@ -214,22 +327,16 @@ export default function AppScanCenterWorkspace() {
       const nextModules = Array.isArray(modulesPayload?.modules) ? modulesPayload.modules : []
       const nextRoutes = Array.isArray(routesPayload?.routes) ? routesPayload.routes : []
       const nextScan = scanPayload?.scan || null
+
       setConnected(Boolean(scanPayload?.connected || routesPayload?.connected || modulesPayload?.connected))
       setScanLimited(Boolean(scanPayload?.limited))
       setModules(nextModules)
       setRoutes(nextRoutes)
       setScan(nextScan)
       setPolicyEvents(Array.isArray(scanPayload?.policyEvents) ? scanPayload.policyEvents : [])
-      const nextSelected = selectedModuleKey && nextModules.some((item) => item.module_key === selectedModuleKey)
-        ? selectedModuleKey
-        : nextModules[0]?.module_key || ''
-      setSelectedModuleKey(nextSelected)
-      setLiveRateDrafts((current) => {
-        const next = { ...current }
-        for (const module of nextModules) {
-          if (next[module.module_key] == null) next[module.module_key] = module.policy.min_refresh_interval_ms
-        }
-        return next
+      setSelectedModuleKey((current) => {
+        if (current && nextModules.some((item) => item.module_key === current)) return current
+        return nextModules[0]?.module_key || ''
       })
       if (scanPayload?.message) setMessage(scanPayload.message)
       if (scanPayload?.limited) setMessage(scanPayload.message || 'Runtime scan limited in production. Use build-time registry or manual module registration.')
@@ -251,7 +358,6 @@ export default function AppScanCenterWorkspace() {
 
   useEffect(() => {
     void loadData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -273,13 +379,8 @@ export default function AppScanCenterWorkspace() {
   function beginAnimation() {
     setScanning(true)
     setScanProgress(8)
-    setScanStepIndex(0)
-    let index = 0
     const timer = window.setInterval(() => {
-      index += 1
-      setScanStepIndex(Math.min(index, 6))
       setScanProgress((current) => Math.min(92, current + 13))
-      if (index >= 6) window.clearInterval(timer)
     }, safeUiInterval(850))
     return () => window.clearInterval(timer)
   }
@@ -309,7 +410,6 @@ export default function AppScanCenterWorkspace() {
       await loadData()
       dispatchRefresh('scan')
       setScanProgress(100)
-      setScanStepIndex(6)
       window.setTimeout(() => {
         setScanning(false)
         setScanProgress(0)
@@ -345,7 +445,7 @@ export default function AppScanCenterWorkspace() {
           manual_override_enabled: module.policy.manual_override_enabled,
         }),
       })
-      const payload = await response.json().catch(() => null)
+      const payload = await response.json().catch(() => null) as { ok?: boolean; error?: string } | null
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || 'Unable to save runtime policy.')
       }
@@ -356,6 +456,21 @@ export default function AppScanCenterWorkspace() {
       setMessage(error instanceof Error ? error.message : 'Runtime policy APIs not connected yet.')
     }
   }
+
+  const filteredModules = useMemo(() => {
+    const query = registrySearch.trim().toLowerCase()
+    if (!query) return modules
+    return modules.filter((module) => {
+      return [module.module_name, module.module_key, module.module_group, module.risk_level, module.status]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(query))
+    })
+  }, [modules, registrySearch])
+
+  const selectedModule = useMemo(
+    () => modules.find((item) => item.module_key === selectedModuleKey) || null,
+    [modules, selectedModuleKey],
+  )
 
   const topCostModules = useMemo(() => {
     const counts = new Map<string, number>()
@@ -391,6 +506,7 @@ export default function AppScanCenterWorkspace() {
           detected,
           action: candidate.routePath ? `Review ${candidate.routePath}` : 'Inspect',
           status: candidate.riskLevel === 'critical' || candidate.riskLevel === 'high' ? 'Open' : 'Investigating',
+          routePath: candidate.routePath,
         }
       })
       .slice(0, 10)
@@ -405,10 +521,8 @@ export default function AppScanCenterWorkspace() {
     { label: 'Protect CEO-only overrides', complete: true },
   ]
 
-  const efficiencyScore = score != null ? `${score}/100` : 'Not connected'
-
   const moduleRegistryRows = useMemo(() => {
-    return modules.map((module) => {
+    return filteredModules.map((module) => {
       const route = routes.find((item) => item.module_key === module.module_key)
       return {
         module,
@@ -416,17 +530,256 @@ export default function AppScanCenterWorkspace() {
         currentRate: module.policy.min_refresh_interval_ms,
         recommendedRate: recommendedInterval(module),
         refreshMode: module.policy.allowed_during_standby ? 'Guarded' : module.policy.auto_refresh_enabled ? 'Auto' : 'Manual',
-        costPressure: findModuleCostPressure(module, scan),
+        costPressure: scanCandidates.filter((candidate) => candidate.moduleKey === module.module_key).length,
       }
     })
-  }, [modules, routes, scan])
+  }, [filteredModules, routes, scanCandidates])
+
+  const moduleTab = (
+    <div className="grid gap-4 xl:grid-cols-3">
+      {moduleRegistryRows.map(({ module, route, currentRate, recommendedRate, refreshMode, costPressure }) => {
+        const isSelected = module.module_key === selectedModuleKey
+        return (
+          <article key={module.module_key} className={`rounded-[1.35rem] border p-4 shadow-[0_10px_24px_rgba(15,23,42,.04)] ${isSelected ? 'border-blue-200 bg-blue-50/40' : 'border-slate-200 bg-white'}`}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-sm font-bold text-slate-950">{module.module_name}</div>
+                <div className="mt-1 text-xs text-slate-500">{module.module_key}</div>
+              </div>
+              <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${riskChip(module.risk_level)}`}>
+                {module.risk_level || 'normal'}
+              </span>
+            </div>
+            <div className="mt-3 grid gap-2 text-xs text-slate-600 sm:grid-cols-2">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Refresh mode: <span className="font-semibold text-slate-900">{refreshMode}</span></div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Cost pressure: <span className="font-semibold text-slate-900">{costPressure}</span></div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Interval: <span className="font-semibold text-slate-900">{formatInterval(currentRate)}</span></div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Recommended: <span className="font-semibold text-slate-900">{formatInterval(recommendedRate)}</span></div>
+            </div>
+            <div className="mt-3 text-xs text-slate-500">
+              Route: {route?.route_path || 'No route telemetry yet'}
+            </div>
+            <button type="button" onClick={() => {
+              setSelectedModuleKey(module.module_key)
+              setRegistrySearch(module.module_name)
+            }} className="mt-3 inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
+              <ArrowRight className="h-3.5 w-3.5" />
+              Focus module
+            </button>
+            <button type="button" disabled onClick={() => void saveModulePolicy(module, recommendedRate)} className="ml-2 mt-3 inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500" title="No active auto-optimization action is available yet">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Apply optimization
+            </button>
+          </article>
+        )
+      })}
+      {!moduleRegistryRows.length && (
+        <div className="rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500 xl:col-span-3">
+          No modules match the current registry search.
+        </div>
+      )}
+    </div>
+  )
+
+  const routesTab = (
+    <div className="overflow-hidden rounded-[1.5rem] border border-slate-200">
+      <table className="w-full border-collapse text-left text-sm">
+        <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
+          <tr>
+            <th className="px-4 py-3">Route</th>
+            <th className="px-4 py-3">Module</th>
+            <th className="px-4 py-3">Type</th>
+            <th className="px-4 py-3">Risk</th>
+            <th className="px-4 py-3">Standby</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100 bg-white">
+          {routes.length ? routes.slice(0, 20).map((route) => {
+            const module = modules.find((item) => item.module_key === route.module_key)
+            return (
+              <tr key={route.id}>
+                <td className="px-4 py-3 font-semibold text-slate-900">{route.route_path}</td>
+                <td className="px-4 py-3 text-slate-700">{module?.module_name || route.module_key || 'Unknown'}</td>
+                <td className="px-4 py-3 text-slate-600">{route.route_type}</td>
+                <td className="px-4 py-3"><span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${riskChip(route.risk_level)}`}>{route.risk_level}</span></td>
+                <td className="px-4 py-3 text-slate-600">{route.is_allowed_in_standby ? 'Allowed' : 'Guarded'}</td>
+              </tr>
+            )
+          }) : (
+            <tr>
+              <td colSpan={5} className="px-4 py-8 text-sm text-slate-500">{scanReason('route', scanLimited, connected)}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+      <div className="border-t border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+        Route telemetry stays honest: no synthetic latency or error numbers are shown here.
+      </div>
+    </div>
+  )
+
+  const pollingTab = (
+    <div className="grid gap-3">
+      {scanCandidates.filter((candidate) => candidate.signals.some((signal) => ['setInterval', 'safeRefreshInterval', 'shouldStartAutoRefresh'].includes(signal))).length ? (
+        scanCandidates
+          .filter((candidate) => candidate.signals.some((signal) => ['setInterval', 'safeRefreshInterval', 'shouldStartAutoRefresh'].includes(signal)))
+          .slice(0, 12)
+          .map((candidate) => {
+            const module = modules.find((item) => item.module_key === candidate.moduleKey)
+            return (
+              <div key={`${candidate.filePath}-${candidate.routePath || 'poll'}`} className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-slate-950">{module?.module_name || candidate.moduleKey || candidate.filePath}</div>
+                    <div className="mt-1 text-xs text-slate-500">{candidate.routePath || candidate.filePath}</div>
+                  </div>
+                  <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${riskChip(candidate.riskLevel)}`}>{candidate.riskLevel}</span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {candidate.signals.map((signal) => (
+                    <span key={signal} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                      {signal}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )
+          })
+      ) : (
+        <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+          {scanReason('polling', scanLimited, connected)}
+        </div>
+      )}
+    </div>
+  )
+
+  const riskTab = (
+    <div className="grid gap-3">
+      {findings.length ? findings.map((finding, index) => (
+        <div key={`${finding.module}-${index}`} className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-sm font-semibold text-slate-950">{finding.module}</div>
+              <div className="mt-1 text-xs text-slate-500">{finding.routePath || finding.action}</div>
+            </div>
+            <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${finding.severity === 'CRITICAL' || finding.severity === 'HIGH' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
+              {finding.severity}
+            </span>
+          </div>
+          <div className="mt-2 text-sm text-slate-600">{finding.finding}</div>
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <span className="rounded-full bg-slate-50 px-2.5 py-1">Impact: {finding.impact}</span>
+            <span className="rounded-full bg-slate-50 px-2.5 py-1">Status: {finding.status}</span>
+            <span className="rounded-full bg-slate-50 px-2.5 py-1">Detected: {finding.detected}</span>
+          </div>
+        </div>
+      )) : (
+        <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+          {scanReason('risk', scanLimited, connected)}
+        </div>
+      )}
+    </div>
+  )
+
+  const registryDriftTab = (
+    <div className="grid gap-4 xl:grid-cols-[.95fr_1.05fr]">
+      <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
+        <div className="text-base font-bold text-slate-950">Drift Checklist</div>
+        <div className="mt-4 space-y-3">
+          {optimizationChecklist.map((item) => (
+            <div key={item.label} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              <div className={`mt-0.5 flex h-6 w-6 items-center justify-center rounded-full ${item.complete ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}`}>
+                {item.complete ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-slate-950">{item.label}</div>
+                <div className="text-xs text-slate-500">{item.complete ? 'Aligned with current registry state.' : 'Requires runtime adoption or more scan data.'}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3">
+        {topCostModules.length ? topCostModules.map((module) => (
+          <div key={module.moduleKey} className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-slate-950">{module.name}</div>
+                <div className="mt-1 text-xs text-slate-500">{module.moduleKey}</div>
+              </div>
+              <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${riskChip(module.risk)}`}>{module.risk}</span>
+            </div>
+            <div className="mt-3 text-sm text-slate-600">Detected in {module.count} scan candidates.</div>
+          </div>
+        )) : (
+          <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+            {scanReason('registry', scanLimited, connected)}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  const timelineTab = (
+    <div className="grid gap-4 xl:grid-cols-[1fr_.9fr]">
+      <div className="space-y-3">
+        {policyEvents.length ? policyEvents.slice(0, 12).map((event) => (
+          <div key={event.id} className="relative rounded-[1.35rem] border border-slate-200 bg-white p-4 pl-5">
+            <div className="absolute left-0 top-4 h-3 w-3 rounded-full bg-blue-500 ring-4 ring-blue-50" />
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-semibold text-slate-950">{event.event_type?.replace(/_/g, ' ') || 'runtime event'}</div>
+              <div className="text-xs text-slate-500">{timelineLabel(event.created_at)}</div>
+            </div>
+            <div className="mt-2 text-sm text-slate-600">{event.message || 'Event recorded in runtime scan timeline.'}</div>
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <span className="rounded-full bg-slate-50 px-2.5 py-1">Actor: {event.actor_email || 'system'}</span>
+              <span className="rounded-full bg-slate-50 px-2.5 py-1">Module: {event.module_key || '—'}</span>
+              <span className="rounded-full bg-slate-50 px-2.5 py-1">Route: {event.route_path || '—'}</span>
+            </div>
+          </div>
+        )) : (
+          <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+            No runtime events yet.
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
+        <div className="text-base font-bold text-slate-950">Latest Scan Summary</div>
+        <div className="mt-4 grid gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Latest scan</div>
+            <div className="mt-1 text-sm font-semibold text-slate-950">{scan?.scan_type || 'Not connected'}</div>
+            <div className="text-xs text-slate-500">{timelineLabel(scan?.created_at || null)}</div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Risk score</div>
+            <div className="mt-1 text-2xl font-black text-slate-950">{score != null ? `${score}/100` : 'Not connected'}</div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Production message</div>
+            <div className="mt-1 text-sm text-slate-600">{scanLimited ? 'Runtime scan limited in production. Use build-time registry or manual module registration.' : 'Rule-based findings are derived from the registry and latest scan payload.'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const activeTabContent: Record<TabKey, ReactNode> = {
+    modules: moduleTab,
+    routes: routesTab,
+    'polling-sources': pollingTab,
+    'risk-indicators': riskTab,
+    'registry-drift': registryDriftTab,
+    timeline: timelineTab,
+  }
 
   return (
     <section id="app-scan-center" className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,.06)]">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+      <div className="flex flex-col gap-4 border-b border-slate-200 pb-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] ${liveStatusChip(Boolean(connected))}`}>
+            <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] ${scanLimited ? 'border-amber-200 bg-amber-50 text-amber-800' : connected ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
               <ShieldCheck className="h-3.5 w-3.5" />
               {scanLimited ? 'Runtime scan limited in production' : connected ? 'Live Scan: Active' : 'Local scan available'}
             </span>
@@ -437,33 +790,32 @@ export default function AppScanCenterWorkspace() {
           </div>
           <h2 className="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-950">App Scan Center</h2>
           <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-600">
-            Local filesystem scan, module discovery, configuration control, and rule-based risk indicators.
+            Compact scan control center for module discovery, route pressure, polling sources, and registry drift.
           </p>
-          {scanLimited || !connected ? (
+          {(scanLimited || !connected) && (
             <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-7 text-amber-900">
               {scanLimited
                 ? 'Runtime scan limited in production. Use build-time registry or manual module registration when filesystem access is unavailable.'
                 : 'Local scan available. This workspace reads the filesystem and local registry snapshots.'}
             </div>
-          ) : (
-            <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm leading-7 text-sky-900">
-              Rule-based findings are derived from the registry and latest scan payload.
-            </div>
           )}
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <button type="button" disabled={scanning || loadingAction !== null} onClick={() => void runScan('quick')} className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60" title="Runs a real backend scan">
+          <select value={scanDepth} onChange={(event) => setScanDepth(event.target.value as 'quick' | 'full' | 'deep')} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none">
+            {scanTypes.map((item) => <option key={item.value} value={item.value}>{item.label} scan</option>)}
+          </select>
+          <button type="button" disabled={scanning || loadingAction !== null} onClick={() => void runScan('quick')} className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60">
             <Zap className="h-4 w-4" />
-            {loadingAction === 'quick' ? 'Running...' : 'Run Quick Scan'}
+            Run Quick Scan
           </button>
-          <button type="button" disabled={scanning || loadingAction !== null} onClick={() => void runScan('full')} className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60" title="Runs a real backend scan">
+          <button type="button" disabled={scanning || loadingAction !== null} onClick={() => void runScan('full')} className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
             <MonitorUp className="h-4 w-4" />
-            {loadingAction === 'full' ? 'Running...' : 'Run Full Scan'}
+            Run Full Scan
           </button>
-          <button type="button" disabled={scanning || loadingAction !== null} onClick={() => void runScan('deep')} className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-60" title="Runs a real backend scan">
+          <button type="button" disabled={scanning || loadingAction !== null} onClick={() => void runScan('deep')} className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-60">
             <Sparkles className="h-4 w-4" />
-            {loadingAction === 'deep' ? 'Running...' : 'Deep Scan'}
+            Deep Scan
           </button>
           <button type="button" disabled className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition disabled:cursor-not-allowed disabled:opacity-50" title="No real backend action available yet">
             <Download className="h-4 w-4" />
@@ -476,14 +828,20 @@ export default function AppScanCenterWorkspace() {
         </div>
       </div>
 
+      {message && (
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+          {message}
+        </div>
+      )}
+
       <div className="mt-4 grid gap-4 xl:grid-cols-6">
         {[
           { label: 'Modules Discovered', value: scan?.modules_detected ?? activeModules, icon: Layers3, helper: 'Local scan available' },
           { label: 'Endpoints Monitored', value: scan?.routes_detected ?? activeRoutes, icon: Route, helper: 'Rule-based routing view' },
-          { label: 'Rule-based Risk Indicators', value: scan?.high_risk_items ?? scanCandidates.length, icon: AlertCircle, helper: 'Not Vercel billing truth' },
-          { label: 'Auto-Refresh Rules', value: modules.filter((item) => item.policy.auto_refresh_enabled).length || 'Not connected', icon: RefreshCw, helper: 'Registry-backed' },
+          { label: 'Rule-based Risk Indicators', value: scan?.high_risk_items ?? scanCandidates.length, icon: AlertCircle, helper: 'No synthetic metrics' },
+          { label: 'Polling Sources', value: scan?.polling_sources_detected ?? scanCandidates.filter((candidate) => candidate.signals.some((signal) => ['setInterval', 'safeRefreshInterval', 'shouldStartAutoRefresh'].includes(signal))).length, icon: RadioTower, helper: 'Derived from scan signals' },
           { label: 'Config Drift Signals', value: scanCandidates.length || 'Not connected', icon: ShieldCheck, helper: 'Rule-based findings' },
-          { label: 'Estimated Risk Score', value: efficiencyScore, icon: Gauge, helper: 'Derived from scan signals' },
+          { label: 'Estimated Risk Score', value: score != null ? `${score}/100` : 'Not connected', icon: Gauge, helper: 'Derived from scan signals' },
         ].map((card) => {
           const Icon = card.icon
           return (
@@ -502,376 +860,96 @@ export default function AppScanCenterWorkspace() {
         })}
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
-        <section className="rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8fbff_100%)] p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <div className="text-base font-bold text-slate-950">Scan Orchestration Center</div>
-              <div className="mt-1 text-sm text-slate-500">Depth, scope, and risk classification controls.</div>
-            </div>
-            <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-              {scanDepth}
-            </div>
-          </div>
+      {scanning && (
+        <div className="mt-4 rounded-[1.35rem] border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          Scan in progress: {Math.round(scanProgress)}%
+        </div>
+      )}
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            {depthOptions.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setScanDepth(option)}
-                className={`rounded-2xl border px-3 py-2 text-sm font-semibold transition ${scanDepth === option ? 'border-blue-200 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`}
-                title="Preview only - not saved."
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-          <div className="mt-2 text-xs text-slate-500">Depth selection is preview only and does not persist.</div>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {scopeChips.map((chip) => (
-              <span
-                key={chip}
-                className="rounded-full border border-slate-200 bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600"
-              >
-                {chip}
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
-            {[
-              { label: 'Include dormant modules', value: includeDormantModules, onChange: setIncludeDormantModules },
-              { label: 'Detect orphan routes', value: detectOrphanRoutes, onChange: setDetectOrphanRoutes },
-              { label: 'Classify cost-heavy paths', value: classifyCostHeavyPaths, onChange: setClassifyCostHeavyPaths },
-              { label: 'Check polling frequency', value: checkPollingFrequency, onChange: setCheckPollingFrequency },
-              { label: 'Detect duplicate sync flows', value: detectDuplicateSyncFlows, onChange: setDetectDuplicateSyncFlows },
-            ].map((item) => (
-              <label key={item.label} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                <span className="text-sm font-medium text-slate-800">{item.label}</span>
-                <input
-                  type="checkbox"
-                  checked={item.value}
-                  onChange={(event) => item.onChange(event.target.checked)}
-                  className="h-5 w-5 rounded border-slate-300 text-blue-600"
-                />
-              </label>
-            ))}
-          </div>
-          <div className="mt-2 text-xs text-slate-500">Scan orchestration settings are preview only and do not persist.</div>
-
-          <div className="mt-5 rounded-[1.35rem] border border-slate-200 bg-white p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="text-sm font-semibold text-slate-950">Scan Progress</div>
-                <div className="text-xs text-slate-500">{scanning ? 'Discovery pipeline running' : 'Ready'}</div>
-              </div>
-              <div className="text-sm font-bold text-slate-950">{Math.round(scanProgress)}%</div>
-            </div>
-            <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all" style={{ width: `${scanProgress}%` }} />
-            </div>
-            <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-              {['Discovery', 'Classification', 'Cost Analysis', 'Drift Analysis', 'Risk Scoring', 'Optimization Draft', 'Approval Ready'].map((step, index) => {
-                const active = index <= scanStepIndex
-                return (
-                  <div key={step} className={`rounded-2xl border px-3 py-3 text-sm ${active ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-500'}`}>
-                    <div className="font-semibold">{step}</div>
-                    <div className="mt-1 text-xs">{active ? 'In progress or complete' : 'Pending'}</div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="text-base font-bold text-slate-950">Discovered Module Registry</div>
-              <div className="mt-1 text-sm text-slate-500">Runtime-discovered modules and health signals.</div>
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-              <Search className="h-3.5 w-3.5" />
-              {modules.length || 0} modules
-            </div>
-          </div>
-
-          <div className="mt-4 overflow-hidden rounded-[1.35rem] border border-slate-200">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
-                <tr>
-                  <th className="px-4 py-3">Module</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Live Status</th>
-                  <th className="px-4 py-3">Scan Health</th>
-                  <th className="px-4 py-3">Last Scan</th>
-                  <th className="px-4 py-3">Refresh Profile</th>
-                  <th className="px-4 py-3">Risk Signals</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {(moduleRegistryRows.length ? moduleRegistryRows : []).map(({ module, route, currentRate, recommendedRate, refreshMode, costPressure }) => (
-                  <tr key={module.module_key}>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-950">{module.module_name}</div>
-                      <div className="mt-1 text-xs text-slate-500">{module.module_key}</div>
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">{module.module_group || 'Module'}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${module.status === 'active' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
-                        {module.status || 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${riskChip(module.risk_level)}`}>
-                        {module.risk_level || 'normal'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">{timelineLabel(module.last_seen_at)}</td>
-                    <td className="px-4 py-3 text-slate-700">
-                      <div className="space-y-2">
-                        <div>{refreshMode}</div>
-                        <div className="text-xs text-slate-500">{formatInterval(currentRate)} current, {formatInterval(recommendedRate)} recommended</div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">{costPressure ? `${costPressure} rule-based signals` : 'Low'}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button type="button" disabled title="Requires module-level API" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50">
-                          <Search className="h-3.5 w-3.5" />
-                          Inspect
-                        </button>
-                        <button type="button" disabled title="Requires module-level API" className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
-                          <SlidersHorizontal className="h-3.5 w-3.5" />
-                          Tune
-                        </button>
-                        <button type="button" disabled title="Requires module-level API" className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 disabled:cursor-not-allowed disabled:opacity-50">
-                          <ShieldCheck className="h-3.5 w-3.5" />
-                          Policies
-                        </button>
-                        <button type="button" disabled title="Requires module-level API" className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">
-                          <Clock3 className="h-3.5 w-3.5" />
-                          Logs
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <section className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
-              <div className="text-sm font-semibold text-slate-950">Rule-based Risk Detection</div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {[
-                  { label: 'Top Risk Modules', value: topCostModules.slice(0, 3).map((item) => item.name).join(', ') || 'Not connected yet' },
-                  { label: 'Polling Signals', value: scan?.polling_sources_detected || 'Not connected yet' },
-                  { label: 'API Route Signals', value: scan?.api_routes_detected || routes.filter((item) => item.is_api).length || 'Not connected yet' },
-                  { label: 'Edge / Function Signals', value: scanCandidates.length || 'Not connected yet' },
-                  { label: 'Traffic Risk Signals', value: scan?.high_risk_items || 'Not connected yet' },
-                  { label: 'Estimated Vercel Risk Only', value: 'Not connected yet' },
-                  { label: 'Invocation Signals', value: scan?.routes_detected || 'Not connected yet' },
-                  { label: 'Transfer Signals', value: 'Not connected yet' },
-                ].map((card) => (
-                  <article key={card.label} className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{card.label}</div>
-                    <div className="mt-2 text-sm font-bold text-slate-950">{String(card.value)}</div>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <section className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="text-sm font-semibold text-slate-950">Refresh Rate & Sync Governance</div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Guarded</span>
-              </div>
-              <div className="mt-4 space-y-4">
-                {moduleRegistryRows.slice(0, 6).map(({ module, currentRate, recommendedRate, refreshMode }) => (
-                  <div key={module.module_key} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="font-semibold text-slate-950">{module.module_name}</div>
-                        <div className="text-xs text-slate-500">{refreshMode}</div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => void saveModulePolicy(module, liveRateDrafts[module.module_key] || currentRate)}
-                        className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-3 py-2 text-xs font-bold text-white"
-                      >
-                        Save Policy
-                      </button>
-                    </div>
-                    <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto]">
-                      <input
-                        type="range"
-                        min={60_000}
-                        max={900_000}
-                        step={30_000}
-                        value={liveRateDrafts[module.module_key] || currentRate}
-                        onChange={(event) => setLiveRateDrafts((current) => ({ ...current, [module.module_key]: Number(event.target.value) }))}
-                        className="w-full"
-                      />
-                      <div className="text-right text-xs text-slate-500">
-                        <div>{formatInterval(liveRateDrafts[module.module_key] || currentRate)} live</div>
-                        <div>{formatInterval(recommendedRate)} recommended</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
-        </section>
+      <div className="mt-5 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-50 p-2">
+        <div className="flex gap-2 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button key={tab.key} type="button" onClick={() => setActiveTab(tab.key)} className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-semibold transition ${activeTab === tab.key ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-600 hover:bg-white/70'}`}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-[1.2fr_.9fr]">
-        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-          <div className="flex items-start justify-between gap-3">
+      <div className="mt-5 grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
+        <section className="rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8fbff_100%)] p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="text-base font-bold text-slate-950">Rule-based Findings / Priority Queue</div>
-              <div className="mt-1 text-sm text-slate-500">Actionable candidates from the latest rule-based scan payload.</div>
+              <div className="text-base font-bold text-slate-950">Scan Orchestration Center</div>
+              <div className="mt-1 text-sm text-slate-500">Latest scan summary and focused tabbed findings.</div>
             </div>
-            <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-              {findings.length} findings
+            <div className="relative w-full max-w-sm">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input value={registrySearch} onChange={(event) => setRegistrySearch(event.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-blue-300 focus:bg-white" placeholder="Search modules in registry..." />
             </div>
           </div>
-          <div className="mt-4 overflow-hidden rounded-[1.35rem] border border-slate-200">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
-                <tr>
-                  <th className="px-4 py-3">Severity</th>
-                  <th className="px-4 py-3">Finding</th>
-                  <th className="px-4 py-3">Module</th>
-                  <th className="px-4 py-3">Impact</th>
-                  <th className="px-4 py-3">Detected</th>
-                  <th className="px-4 py-3">Recommended Action</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {findings.length ? findings.map((finding, index) => (
-                  <tr key={`${finding.module}-${index}`}>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${riskChip(finding.severity.toLowerCase())}`}>
-                        {finding.severity}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">{finding.finding}</td>
-                    <td className="px-4 py-3 font-semibold text-slate-950">{finding.module}</td>
-                    <td className="px-4 py-3 text-slate-700">{finding.impact}</td>
-                    <td className="px-4 py-3 text-slate-500">{finding.detected}</td>
-                    <td className="px-4 py-3 text-slate-700">{finding.action}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${finding.status === 'Open' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
-                        {finding.status}
-                      </span>
-                    </td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td className="px-4 py-6 text-sm text-slate-500" colSpan={7}>
-                      No findings yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+
+          <div className="mt-5">
+            {activeTabContent[activeTab]}
           </div>
         </section>
 
         <aside className="space-y-4">
-          <section className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-            <div className="text-base font-bold text-slate-950">Safe Optimization Plan</div>
-            <div className="mt-4 space-y-3">
-              {optimizationChecklist.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-slate-800">{item.label}</span>
-                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${item.complete ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-white text-slate-500'}`}>
-                      {item.complete ? 'Ready' : 'Pending'}
-                    </span>
-                  </div>
-                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-                    <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-green-500" style={{ width: `${item.complete ? 100 : 40}%` }} />
-                  </div>
-                </div>
-              ))}
+          <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-base font-bold text-slate-950">Latest Scan Summary</div>
+                <div className="mt-1 text-sm text-slate-500">Summary of the most recent scan payload.</div>
+              </div>
+              <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">
+                {scan?.scan_type || 'No scan'}
+              </div>
             </div>
-          </section>
-
-          <section className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <div className="text-base font-bold text-slate-950">Audit / Scan Timeline</div>
-                  <div className="mt-1 text-sm text-slate-500">Latest scan plus policy events.</div>
+            <div className="mt-4 grid gap-3">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Latest scan</div>
+                <div className="mt-1 text-sm font-semibold text-slate-950">{timelineLabel(scan?.created_at || null)}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Module / route density</div>
+                <div className="mt-1 text-sm text-slate-600">
+                  {scan?.modules_detected || 0} modules, {scan?.routes_detected || 0} routes, {scan?.high_risk_items || 0} high-risk items
                 </div>
-                <button type="button" onClick={() => void loadData()} className="text-sm font-semibold text-blue-700" title="Refresh the latest timeline data">
-                  Refresh Timeline
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Production note</div>
+                <div className="mt-1 text-sm text-slate-600">{scanLimited ? 'Runtime scan limited in production. Use build-time registry or manual module registration.' : 'Rule-based findings are derived from the registry and latest scan payload.'}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
+            <div className="text-base font-bold text-slate-950">Selected Module</div>
+            {selectedModule ? (
+              <div className="mt-4 space-y-3">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                  <div className="text-sm font-semibold text-slate-950">{selectedModule.module_name}</div>
+                  <div className="mt-1 text-xs text-slate-500">{selectedModule.module_key}</div>
+                </div>
+                <div className="grid gap-2 text-xs text-slate-600">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Auto refresh: <span className="font-semibold text-slate-900">{selectedModule.policy.auto_refresh_enabled ? 'ON' : 'OFF'}</span></div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Live polling: <span className="font-semibold text-slate-900">{selectedModule.policy.live_polling_enabled ? 'ON' : 'OFF'}</span></div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Heavy sync: <span className="font-semibold text-slate-900">{selectedModule.policy.heavy_sync_enabled ? 'ON' : 'OFF'}</span></div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">Interval: <span className="font-semibold text-slate-900">{formatInterval(selectedModule.policy.min_refresh_interval_ms)} - {formatInterval(selectedModule.policy.max_refresh_interval_ms)}</span></div>
+                </div>
+                <button type="button" onClick={() => void saveModulePolicy(selectedModule, recommendedInterval(selectedModule))} className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100">
+                  <Sparkles className="h-4 w-4" />
+                  Save recommended interval
                 </button>
               </div>
-            <div className="mt-4 space-y-3">
-              {[...(policyEvents.slice(0, 4) || [])].map((event) => (
-                <div key={event.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold text-slate-950">{event.event_type || 'policy event'}</div>
-                      <div className="mt-1 text-xs text-slate-500">{event.message || 'Policy event recorded.'}</div>
-                    </div>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{timelineLabel(event.created_at || null)}</span>
-                  </div>
-                </div>
-              ))}
-              {scan && (
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="text-sm font-semibold text-slate-950">{scan.scan_type}</div>
-                  <div className="mt-1 text-xs text-slate-500">
-                    {scan.modules_detected} modules scanned, {scan.routes_detected} routes scanned.
-                  </div>
-                </div>
-              )}
-              {!policyEvents.length && !scan && (
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">
-                  No timeline data yet.
-                </div>
-              )}
-            </div>
-          </section>
-
-          <section className="rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8fbff_100%)] p-4">
-            <div className="text-base font-bold text-slate-950">Configuration Blueprint</div>
-            <div className="mt-4 flex flex-col gap-3">
-              {[
-                { label: 'Discover', detail: 'Auto discovery of modules & services' },
-                { label: 'Classify', detail: 'Type, risk, and cost segmentation' },
-                { label: 'Govern', detail: 'Apply runtime policies and guards' },
-                { label: 'Optimize', detail: 'Draft safe changes and throttles' },
-                { label: 'Monitor', detail: 'Continuous oversight and audit' },
-              ].map((step, index) => (
-                <div key={step.label} className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-sm font-black text-blue-700">{index + 1}</div>
-                  <div className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                    <div className="text-sm font-semibold text-slate-950">{step.label}</div>
-                    <div className="text-xs text-slate-500">{step.detail}</div>
-                  </div>
-                  {index < 4 && <ArrowRight className="h-4 w-4 text-slate-400" />}
-                </div>
-              ))}
-            </div>
-          </section>
+            ) : (
+              <div className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                No module selected yet.
+              </div>
+            )}
+          </div>
         </aside>
       </div>
-
-      {message && (
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          {message}
-        </div>
-      )}
     </section>
   )
 }

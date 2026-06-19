@@ -548,7 +548,7 @@ export default function OverheadPanel() {
       </div>
 
       <div style={userZoneStyle}>
-        <div ref={appPagesRef} style={appPagesDropdownStyle}>
+        <div ref={appPagesRef} style={{ ...appPagesDropdownStyle, display: "none" }}>
           <button
             type="button"
             onClick={() => setPagesOpen((value) => !value)}
@@ -606,8 +606,8 @@ export default function OverheadPanel() {
           )}
         </div>
 
-        <Link href="/profile" style={userButtonStyle}>👤 Profile</Link>
-        <Link href="/revenue-command-center/tasks" style={iconActionStyle}>✅</Link>
+        <Link href="/dashboard" style={userButtonStyle}>👤 My Space</Link>
+        
 
         <div ref={alertsRef} style={alertsDropdownStyle}>
           <button
@@ -667,8 +667,6 @@ export default function OverheadPanel() {
             </div>
           ) : null}
         </div>
-
-        <Link href="/reports" style={iconActionStyle}>📊</Link>
       </div>
     </div>
     </>

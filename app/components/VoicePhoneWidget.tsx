@@ -1,4 +1,5 @@
 "use client"
+
 import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useRef, useState } from "react"
@@ -15,6 +16,9 @@ import {
   Minus,
   Maximize2,
 } from "lucide-react"
+import { useRuntimeModuleFlag } from '@/hooks/useRuntimeModuleFlag'
+
+const VOICE_TERMINAL_ENV_ENABLED = process.env.NEXT_PUBLIC_VOICE_TERMINAL_ENABLED !== 'false'
 
 type CallStatus = "idle" | "calling" | "active" | "hold"
 
@@ -29,6 +33,10 @@ function readStoredMinimizedState() {
 }
 
 export default function VoicePhoneWidget() {
+  const voiceRuntimeFlag = useRuntimeModuleFlag('voice_terminal', true)
+
+  if (!VOICE_TERMINAL_ENV_ENABLED || voiceRuntimeFlag.enabled === false) return null
+
   const [number, setNumber] = useState("")
   const [transferTo, setTransferTo] = useState("")
   const [status, setStatus] = useState<CallStatus>("idle")

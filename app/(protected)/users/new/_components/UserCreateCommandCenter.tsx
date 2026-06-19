@@ -2,6 +2,8 @@
 
 import type { CSSProperties, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
+import SmartPermissionsPanel from '@/app/(protected)/users/_components/SmartPermissionsPanel'
+import { ROLE_PERMISSION_TEMPLATES } from '@/lib/auth/permissions'
 
 type RoleOption = { value: string; label: string; department: string; defaultHome?: string }
 type ManagerOption = { id: string; name: string; role?: string | null; department?: string | null }
@@ -55,7 +57,6 @@ export default function UserCreateCommandCenter({ action, roles, departments, po
   const [mustChange, setMustChange] = useState(true)
   const [twoFactor, setTwoFactor] = useState(false)
   const [onboarding, setOnboarding] = useState(true)
-  const [custom, setCustom] = useState(false)
 
   const selectedRole = useMemo(() => roles.find((item) => item.value === role), [roles, role])
   const roleLabel = selectedRole?.label || titleCase(role)
@@ -147,19 +148,17 @@ export default function UserCreateCommandCenter({ action, roles, departments, po
                 const roleNext = roles.find((item) => item.value === next)
                 if (roleNext?.department) setDepartment(roleNext.department)
               }} options={roles.map((item) => ({ value: item.value, label: `${item.label} · ${item.department}` }))} />
-              <SelectLike label="Permission Template" name="permission_template" options={[`${roleLabel} default`, 'Read-only operations', 'Manager + reports', 'HR full access', 'Custom template']} />
-              <Toggle label="Custom Permissions" checked={custom} setChecked={setCustom} caption="Customize permissions" muted />
             </div>
             <div style={permissionPreviewStyle}>
               {permissionStats.map((item) => (
-                <label key={item.key} style={permissionCardStyle}>
-                  <input type="checkbox" name="permissions" value={`${item.key}.view`} defaultChecked={custom && item.key === 'reports'} style={{ display: 'none' }} />
+                <div key={item.key} style={permissionCardStyle}>
                   <span style={permissionIconStyle}>{item.icon}</span>
                   <strong>{item.label}</strong>
-                  <small>{item.count} Permissions</small>
-                </label>
+                  <small>{item.count} permissions available</small>
+                </div>
               ))}
             </div>
+            <SmartPermissionsPanel defaultPermissions={[]} roleTemplates={ROLE_PERMISSION_TEMPLATES} />
           </Section>
         </main>
 

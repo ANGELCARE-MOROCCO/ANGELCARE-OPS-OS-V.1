@@ -7,14 +7,14 @@ export const dynamic = 'force-dynamic'
 type SystemControlState = Awaited<ReturnType<typeof getSystemControlContext>>['state']
 type WorkspaceKey =
   | 'overview'
-  | 'consumption'
-  | 'routes'
-  | 'modules'
-  | 'command-center'
+  | 'telemetry'
+  | 'route-pressure'
+  | 'module-control'
+  | 'shutdown-center'
   | 'runtime-policy-studio'
   | 'app-scan-center'
   | 'schedules'
-  | 'events'
+  | 'audit-events'
   | 'settings'
 
 type SnapshotRow = {
@@ -145,22 +145,23 @@ function normalizeWorkspace(value: unknown): WorkspaceKey {
   const next = String(value || '').trim().toLowerCase()
   if ([
     'overview',
-    'consumption',
-    'routes',
-    'modules',
-    'command-center',
+    'telemetry',
+    'route-pressure',
+    'module-control',
+    'shutdown-center',
     'runtime-policy-studio',
     'app-scan-center',
     'schedules',
-    'events',
+    'audit-events',
     'settings',
   ].includes(next)) {
     return next as WorkspaceKey
   }
-  if (next === 'route-pressure') return 'routes'
-  if (next === 'live-consumption') return 'consumption'
-  if (next === 'shutdown-center') return 'command-center'
-  if (next === 'audit-events') return 'events'
+  if (next === 'consumption' || next === 'live-consumption') return 'telemetry'
+  if (next === 'routes') return 'route-pressure'
+  if (next === 'modules') return 'module-control'
+  if (next === 'command-center') return 'shutdown-center'
+  if (next === 'events') return 'audit-events'
   return 'overview'
 }
 

@@ -3,21 +3,11 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
 import {
-  MODULE_PERMISSIONS,
+  ROLE_PERMISSION_TEMPLATES,
   USER_ROLE_OPTIONS,
-  buildUserPermissionsForRole,
   getRoleOption,
 } from '@/lib/auth/permissions'
-import { APP_ROUTE_PERMISSIONS } from '@/lib/generated/app-routes'
 import SmartPermissionsPanel from '@/app/(protected)/users/_components/SmartPermissionsPanel'
-
-const CORE_PERMISSIONS = Object.entries(MODULE_PERMISSIONS).flatMap(([moduleKey, permissions]) =>
-  permissions.map((permission) => ({
-    value: permission,
-    label: permission,
-    module: moduleKey,
-  }))
-)
 
 const ROLE_OPTIONS = USER_ROLE_OPTIONS.map((role) => ({
   value: role.value,
@@ -37,6 +27,10 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
     .maybeSingle()
 
   if (error || !user) notFound()
+  const permissions: string[] = Array.isArray(user.permissions) ? user.permissions : []
+  const userRole = String(user.role || 'staff').trim().toLowerCase()
+  const defaultPermissions = permissions
+  const existingPermissions = [...permissions]
 
   async function updateUser(formData: FormData) {
     'use server'
@@ -45,8 +39,12 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
     const supabase = await createClient()
 
     const role = String(formData.get('role') || 'staff').trim().toLowerCase()
-    const selectedPermissions = Array.from(new Set(formData.getAll('permissions').map(String)))
-    const permissions = buildUserPermissionsForRole(role, selectedPermissions)
+    const catalogState = String(formData.get('permissions_catalog_state') || '')
+    if (catalogState !== 'ready') {
+      throw new Error('Permission catalog is not ready. Refresh Permission Control or run App Access Scan.')
+    }
+
+    const permissions = Array.from(new Set(formData.getAll('permissions').map(String).filter(Boolean)))
     const roleOption = getRoleOption(role)
 
     const payload = {
@@ -80,17 +78,14 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
           username: payload.username,
           role: payload.role,
           department: payload.department,
-          permissions_count: permissions.length,
+          permissions_before_count: existingPermissions.length,
+          permissions_after_count: permissions.length,
         },
       },
     ])
 
     redirect(`/users/${id}`)
   }
-
-  const permissions: string[] = Array.isArray(user.permissions) ? user.permissions : []
-  const userRole = String(user.role || 'staff').trim().toLowerCase()
-  const defaultPermissions = buildUserPermissionsForRole(userRole, permissions)
 
   return (
     <AppShell
@@ -126,14 +121,13 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
             </div>
 
             <p style={hintStyle}>
-              Les permissions de base du rôle sélectionné sont fusionnées automatiquement avec les permissions cochées.
+              Les permissions affichées proviennent du catalogue d'accès live. Les permissions héritées ou inconnues restent visibles dans leur section dédiée jusqu'à ce que vous les décochiez.
             </p>
           </section>
 
           <SmartPermissionsPanel
-            corePermissions={CORE_PERMISSIONS}
-            pagePermissions={[...APP_ROUTE_PERMISSIONS]}
             defaultPermissions={defaultPermissions}
+            roleTemplates={ROLE_PERMISSION_TEMPLATES}
           />
         </main>
 

@@ -12,6 +12,10 @@ import type {
   AccessModuleRegistryRow,
 } from '@/lib/users/access-governance/types'
 import { routePermissionMatches } from '@/lib/users/access-governance/registry'
+import ActionProgressPanel from '@/components/shared/ActionProgressPanel'
+import BroadcastControlTower from './BroadcastControlTower'
+import { useActionProgress } from '@/hooks/useActionProgress'
+import type { PermissionCatalogResponse } from '@/lib/users/access-governance/permission-catalog'
 
 type Props = {
   initialUsers: UserStaffRecord[]
@@ -135,6 +139,22 @@ export default function UserAccessGovernanceCenter({
   const [refreshBusy, setRefreshBusy] = useState(false)
   const [previewBusy, setPreviewBusy] = useState(false)
   const [scanSummary, setScanSummary] = useState<AccessGovernanceScanSummary | null>(null)
+  const actionProgress = useActionProgress()
+  const [permissionCatalog, setPermissionCatalog] = useState<{
+    modules: number
+    routes: number
+    permissions: number
+    loadedAt: string | null
+    message: string | null
+    error: string | null
+  }>({
+    modules: 0,
+    routes: 0,
+    permissions: 0,
+    loadedAt: null,
+    message: null,
+    error: null,
+  })
 
   useEffect(() => {
     setRegistry(initialRegistry)
@@ -142,6 +162,10 @@ export default function UserAccessGovernanceCenter({
     setEvents(initialEvents)
     setScans(initialScans)
   }, [initialRegistry, registryError, initialEvents, initialScans])
+
+  useEffect(() => {
+    void refreshPermissionCatalog()
+  }, [])
 
   const activeUsers = useMemo(() => users.filter((user) => String(user.status || user.rawUser?.status || '').toLowerCase() === 'active').length, [users])
   const inactiveUsers = useMemo(() => users.filter((user) => String(user.status || user.rawUser?.status || '').toLowerCase() !== 'active').length, [users])
@@ -210,12 +234,24 @@ export default function UserAccessGovernanceCenter({
   async function refreshRegistry(message?: string) {
     setRefreshBusy(true)
     setRegistryMessage(message || null)
+    actionProgress.startAction({
+      title: 'Refresh Permission Control',
+      subtitle: 'Reloading access registry, permission catalog and governance events.',
+      steps: [
+        { id: 'registry', label: 'Load module and route registry', percent: 30 },
+        { id: 'events', label: 'Load governance events', percent: 65 },
+        { id: 'catalog', label: 'Refresh permission control', percent: 90 },
+        { id: 'complete', label: 'Refresh complete', percent: 100 },
+      ],
+    })
+    actionProgress.setStep('registry', 'running', 'Loading module and route registry…', 30)
     const [registryResult, eventsResult] = await Promise.all([
       fetchJson<{ ok: boolean; modules: AccessModuleRegistryRow[]; routes: AccessRouteRegistryRow[]; templates: AccessGovernanceRegistrySnapshot['templates']; latestScan: AccessGovernanceRegistrySnapshot['latestScan']; stats: AccessGovernanceRegistrySnapshot['stats'] }>('/api/users/access-governance/registry'),
       fetchJson<{ ok: boolean; events: AccessRegistryEventRow[]; scans: Array<Record<string, unknown>> }>('/api/users/access-governance/events'),
     ])
 
     if (registryResult.ok) {
+      actionProgress.setStep('registry', 'done', 'Registry loaded.', 50)
       setRegistry({
         modules: registryResult.data.modules,
         routes: registryResult.data.routes,
@@ -229,21 +265,68 @@ export default function UserAccessGovernanceCenter({
     }
 
     if (eventsResult.ok) {
+      actionProgress.setStep('events', 'done', 'Governance events loaded.', 75)
       setEvents(eventsResult.data.events)
       setScans(eventsResult.data.scans)
     }
 
+    if (registryResult.ok) {
+      actionProgress.setStep('catalog', 'done', 'Permission control refreshed from latest registry.', 95)
+      actionProgress.completeAction('Permission control is ready.', {
+        modules: registryResult.data.modules?.length || 0,
+        routes: registryResult.data.routes?.length || 0,
+      })
+    } else {
+      actionProgress.failAction(registryResult.error)
+    }
+
     setRefreshBusy(false)
+  }
+
+  async function refreshPermissionCatalog(message?: string) {
+    const result = await fetchJson<PermissionCatalogResponse>('/api/users/access-governance/permission-catalog')
+    if (result.ok) {
+      setPermissionCatalog({
+        modules: result.data.modules.length,
+        routes: result.data.flatPermissions.filter((permission) => permission.type === 'route').length,
+        permissions: result.data.flatPermissions.length,
+        loadedAt: new Date().toISOString(),
+        message: message || result.data.message || null,
+        error: null,
+      })
+      return
+    }
+
+    setPermissionCatalog((current) => ({
+      ...current,
+      loading: false,
+      error: result.error,
+      message: message || null,
+    }))
   }
 
   async function runScan() {
     if (!canManageGovernance || scanBusy) return
     setScanBusy(true)
     setRegistryMessage(null)
+    actionProgress.startAction({
+      title: 'Run App Access Scan',
+      subtitle: 'Scanning app surfaces and updating the access governance registry.',
+      steps: [
+        { id: 'auth', label: 'Validate admin authorization', percent: 10 },
+        { id: 'scan', label: 'Scan modules and routes', percent: 40 },
+        { id: 'registry', label: 'Update access registry', percent: 70 },
+        { id: 'catalog', label: 'Refresh permission control', percent: 90 },
+        { id: 'complete', label: 'Scan complete', percent: 100 },
+      ],
+    })
+    actionProgress.setStep('auth', 'running', 'Preparing access scan…', 10)
+    actionProgress.setStep('scan', 'running', 'Calling scan API…', 35)
     const result = await fetchJson<AccessGovernanceScanSummary>('/api/users/access-governance/scan', { method: 'POST' })
     if (result.ok) {
       setScanSummary(result.data)
       await refreshRegistry('Scan completed. Registry refreshed from APP_ROUTES.')
+      await refreshPermissionCatalog('Permission control refreshed from the latest registry scan.')
     } else {
       setRegistryMessage(result.error)
     }
@@ -258,11 +341,27 @@ export default function UserAccessGovernanceCenter({
 
     setPreviewBusy(true)
     setPreviewError(null)
+    actionProgress.startAction({
+      title: 'Open Access Preview',
+      subtitle: `Building access preview for ${user.fullName || user.username || 'selected user'}.`,
+      steps: [
+        { id: 'load', label: 'Load user permissions', percent: 35 },
+        { id: 'compare', label: 'Compare with route registry', percent: 70 },
+        { id: 'complete', label: 'Preview ready', percent: 100 },
+      ],
+    })
+    actionProgress.setStep('load', 'running', 'Loading assigned permissions and registry state…', 35)
     const result = await fetchJson<AccessGovernancePreview>(`/api/users/access-governance/users/${user.id}/preview`)
     if (result.ok) {
+      actionProgress.setStep('compare', 'done', 'Access preview calculated.', 80)
       setSelectedPreview(result.data)
+      actionProgress.completeAction('Access preview opened successfully.', {
+        assignedRoutes: result.data.assignedRoutes?.length || 0,
+        deniedRoutes: result.data.deniedRoutes?.length || 0,
+      })
     } else {
       setPreviewError(result.error)
+      actionProgress.failAction(result.error)
     }
     setPreviewBusy(false)
   }
@@ -273,6 +372,8 @@ export default function UserAccessGovernanceCenter({
 
   return (
     <div style={rootStyle}>
+      <ActionProgressPanel progress={actionProgress.progress} onClose={actionProgress.closeProgress} />
+      <BroadcastControlTower />
       {registryMessage ? <div style={errorBannerStyle}>{registryMessage}</div> : null}
 
       <section style={heroStyle} className="uag-hero">
@@ -293,6 +394,9 @@ export default function UserAccessGovernanceCenter({
           </ActionButton>
           <ActionButton onClick={() => refreshRegistry()} disabled={refreshBusy} tone="secondary">
             {refreshBusy ? 'Refreshing...' : 'Refresh Registry'}
+          </ActionButton>
+          <ActionButton onClick={() => void refreshPermissionCatalog('Permission control refreshed.')} disabled={refreshBusy} tone="ghost">
+            Refresh Permission Control
           </ActionButton>
           {canCreateUser ? (
             <Link href="/users/new" style={linkButtonStyle}>New User</Link>
@@ -316,6 +420,20 @@ export default function UserAccessGovernanceCenter({
           <MetricCard label="Stale routes" value={String(registry.stats.staleRoutes)} tone={registry.stats.staleRoutes ? 'amber' : 'green'} />
           <MetricCard label="Latest scan" value={scanHeadline ? formatDate(scanHeadline) : 'No scan yet'} tone={scanHeadline ? 'green' : 'slate'} />
           <MetricCard label="Permission registry health" value={healthLabel} tone={healthTone} />
+        </div>
+        <div style={permissionControlStyle}>
+          <div>
+            <div style={subTitleStyle}>Permission control</div>
+            <div style={subDetailStyle}>Live catalog used by create and edit user forms after the latest scan.</div>
+          </div>
+          <div style={permissionControlStatsStyle}>
+            <SmallStat label="Modules available" value={String(permissionCatalog.modules)} tone="blue" />
+            <SmallStat label="Routes available" value={String(permissionCatalog.routes)} tone="green" />
+            <SmallStat label="Permissions available" value={String(permissionCatalog.permissions)} tone="slate" />
+          </div>
+          {permissionCatalog.message ? <div style={permissionControlMessageStyle}>{permissionCatalog.message}</div> : null}
+          {permissionCatalog.error ? <div style={permissionControlErrorStyle}>{permissionCatalog.error}</div> : null}
+          {permissionCatalog.loadedAt ? <div style={permissionControlLoadedStyle}>Last refreshed {formatDate(permissionCatalog.loadedAt)}</div> : null}
         </div>
       </section>
 
@@ -914,6 +1032,19 @@ const sectionHeaderStyle: CSSProperties = { marginBottom: 16 }
 const sectionTitleStyle: CSSProperties = { margin: '6px 0 6px', color: '#0f172a', fontSize: 22, fontWeight: 950 }
 const sectionSubtitleStyle: CSSProperties = { margin: 0, color: '#64748b', lineHeight: 1.65, fontWeight: 650 }
 const kpiGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12 }
+const permissionControlStyle: CSSProperties = {
+  display: 'grid',
+  gap: 12,
+  marginTop: 14,
+  padding: 14,
+  borderRadius: 18,
+  border: '1px solid #dbe5f2',
+  background: '#f8fbff',
+}
+const permissionControlStatsStyle: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8 }
+const permissionControlMessageStyle: CSSProperties = { padding: '10px 12px', borderRadius: 14, background: '#eff6ff', color: '#1d4ed8', fontWeight: 800, fontSize: 12, lineHeight: 1.5 }
+const permissionControlErrorStyle: CSSProperties = { padding: '10px 12px', borderRadius: 14, background: '#fef2f2', color: '#991b1b', fontWeight: 800, fontSize: 12, lineHeight: 1.5 }
+const permissionControlLoadedStyle: CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 700 }
 const metricCardStyle: CSSProperties = { borderRadius: 20, padding: 16, border: '1px solid #dbe5f2', background: '#fff', display: 'grid', gap: 6, minWidth: 0 }
 const metricValueStyle: CSSProperties = { color: '#0f172a', fontSize: 24, fontWeight: 950, lineHeight: 1.1 }
 const metricLabelStyle: CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em' }

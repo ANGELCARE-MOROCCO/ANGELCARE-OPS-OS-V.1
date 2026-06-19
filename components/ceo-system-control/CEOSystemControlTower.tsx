@@ -1,20 +1,20 @@
 'use client'
 
 import Link from 'next/link'
-import AppScanCenterWorkspace from '@/components/ceo-system-control/AppScanCenterWorkspace'
-import RuntimePolicyStudioWorkspace from '@/components/ceo-system-control/RuntimePolicyStudioWorkspace'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Activity,
   AlertCircle,
   ArrowDownToLine,
+  ArrowRight,
   ArrowUpFromLine,
-  Bell,
   Building2,
   CalendarClock,
   CheckCircle2,
   Clock3,
   Cloud,
   Cpu,
+  Bell,
   HelpCircle,
   LayoutDashboard,
   Lock,
@@ -24,6 +24,7 @@ import {
   RadioTower,
   RefreshCw,
   Route,
+  Search,
   Settings2,
   ShieldAlert,
   ShieldCheck,
@@ -35,8 +36,13 @@ import {
   Wifi,
   Zap,
 } from 'lucide-react'
-import { type ReactNode, useEffect, useId, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { safeRefreshInterval, safeUiInterval, shouldStartAutoRefresh } from '@/lib/runtime/client-live-governor'
+import AppScanCenterWorkspace from '@/components/ceo-system-control/AppScanCenterWorkspace'
+import RuntimePolicyStudioWorkspace from '@/components/ceo-system-control/RuntimePolicyStudioWorkspace'
+import VoiceTerminalRuntimeControl from '@/components/ceo-system-control/VoiceTerminalRuntimeControl'
+import ActionProgressPanel from '@/components/shared/ActionProgressPanel'
+import { useActionProgress } from '@/hooks/useActionProgress'
 
 type RuntimeState = {
   id: string
@@ -143,6 +149,29 @@ type ProgressStep = {
 }
 
 type ActionKind = 'shutdown' | 'restore' | 'schedule' | null
+type WorkspaceKey = 'overview' | 'telemetry' | 'route-pressure' | 'module-control' | 'shutdown-center' | 'runtime-policy-studio' | 'app-scan-center' | 'schedules' | 'audit-events' | 'settings'
+
+type WorkspaceItem = {
+  label: string
+  workspace: WorkspaceKey
+  href: string
+  icon: typeof LayoutDashboard
+  keywords: string[]
+  description: string
+}
+
+const WORKSPACES: WorkspaceItem[] = [
+  { label: 'Overview', workspace: 'overview', href: '/ceo/system-control?workspace=overview', icon: LayoutDashboard, keywords: ['overview', 'home', 'summary'], description: 'Executive status and quick actions' },
+  { label: 'Telemetry', workspace: 'telemetry', href: '/ceo/system-control?workspace=telemetry', icon: Activity, keywords: ['telemetry', 'usage', 'metrics', 'consumption'], description: 'Usage and Vercel status' },
+  { label: 'Route Pressure', workspace: 'route-pressure', href: '/ceo/system-control?workspace=route-pressure', icon: Route, keywords: ['route', 'pressure', 'routes'], description: 'Pressure table and route telemetry' },
+  { label: 'Module Control', workspace: 'module-control', href: '/ceo/system-control?workspace=module-control', icon: MonitorUp, keywords: ['module', 'modules', 'control'], description: 'Module grid and disabled controls' },
+  { label: 'Shutdown Center', workspace: 'shutdown-center', href: '/ceo/system-control?workspace=shutdown-center', icon: ShieldAlert, keywords: ['shutdown', 'restore', 'emergency', 'command'], description: 'Standby, restore, and schedule workflow' },
+  { label: 'Runtime Policy Studio', workspace: 'runtime-policy-studio', href: '/ceo/system-control?workspace=runtime-policy-studio', icon: Settings2, keywords: ['policy', 'runtime', 'studio'], description: 'Batch policy operations' },
+  { label: 'App Scan Center', workspace: 'app-scan-center', href: '/ceo/system-control?workspace=app-scan-center', icon: Sparkles, keywords: ['scan', 'app scan', 'registry'], description: 'Scan and drift analysis' },
+  { label: 'Schedules', workspace: 'schedules', href: '/ceo/system-control?workspace=schedules', icon: CalendarClock, keywords: ['schedule', 'schedules'], description: 'Schedule editor' },
+  { label: 'Audit Events', workspace: 'audit-events', href: '/ceo/system-control?workspace=audit-events', icon: ShieldCheck, keywords: ['audit', 'events', 'timeline'], description: 'Searchable event timeline' },
+  { label: 'Settings', workspace: 'settings', href: '/ceo/system-control?workspace=settings', icon: Settings2, keywords: ['settings', 'security'], description: 'Security and telemetry notes' },
+]
 
 const MODULES = [
   { key: 'carelink_ops', label: 'CareLink Ops', icon: Cloud, runtimeKeys: ['carelink_ops'] },
@@ -177,18 +206,17 @@ const RESTORE_WORKFLOW = [
   { percent: 100, label: 'Normal mode restored' },
 ] as const
 
-const SIDEBAR_ITEMS = [
-  { label: 'Overview', workspace: 'overview', href: '/ceo/system-control?workspace=overview', icon: LayoutDashboard, sectionId: 'overview' },
-  { label: 'Live Consumption', workspace: 'consumption', href: '/ceo/system-control?workspace=consumption', icon: Activity, sectionId: 'consumption' },
-  { label: 'Route Pressure', workspace: 'routes', href: '/ceo/system-control?workspace=routes', icon: Route, sectionId: 'routes' },
-  { label: 'Module Control', workspace: 'modules', href: '/ceo/system-control?workspace=modules', icon: MonitorUp, sectionId: 'modules' },
-  { label: 'Shutdown Center', workspace: 'command-center', href: '/ceo/system-control?workspace=command-center', icon: ShieldAlert, sectionId: 'command-center' },
-  { label: 'Runtime Policy Studio', workspace: 'runtime-policy-studio', href: '/ceo/system-control?workspace=runtime-policy-studio', icon: Settings2, sectionId: 'runtime-policy-studio' },
-  { label: 'App Scan Center', workspace: 'app-scan-center', href: '/ceo/system-control?workspace=app-scan-center', icon: Sparkles, sectionId: 'app-scan-center' },
-  { label: 'Schedules', workspace: 'schedules', href: '/ceo/system-control?workspace=schedules', icon: CalendarClock, sectionId: 'schedules' },
-  { label: 'Audit Events', workspace: 'events', href: '/ceo/system-control?workspace=events', icon: ShieldCheck, sectionId: 'events' },
-  { label: 'Settings', workspace: 'settings', href: '/ceo/system-control?workspace=settings', icon: Settings2, sectionId: 'settings' },
-] as const
+function normalizeWorkspace(value: unknown): WorkspaceKey {
+  const next = String(value || '').trim().toLowerCase()
+  const direct = WORKSPACES.find((workspace) => workspace.workspace === next)
+  if (direct) return direct.workspace
+  if (next === 'consumption' || next === 'live-consumption') return 'telemetry'
+  if (next === 'routes') return 'route-pressure'
+  if (next === 'modules') return 'module-control'
+  if (next === 'command-center') return 'shutdown-center'
+  if (next === 'events') return 'audit-events'
+  return 'overview'
+}
 
 function asNumber(value: unknown): number | null {
   return typeof value === 'number' && Number.isFinite(value) ? value : null
@@ -254,21 +282,6 @@ function getModeTone(mode: string) {
   return { label: 'STANDBY', className: 'border-amber-200 bg-amber-50 text-amber-700' }
 }
 
-function getRouteState(value: number) {
-  if (value >= 16_000) return { label: 'Blocked', className: 'border-rose-200 bg-rose-50 text-rose-700' }
-  if (value >= 9_000) return { label: 'Aggressive', className: 'border-orange-200 bg-orange-50 text-orange-700' }
-  if (value >= 3_000) return { label: 'Watch', className: 'border-amber-200 bg-amber-50 text-amber-700' }
-  return { label: 'Normal', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
-}
-
-function getEventTone(eventType: string) {
-  const normalized = eventType.toLowerCase()
-  if (normalized.includes('restore')) return { label: 'Restore', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
-  if (normalized.includes('emergency') || normalized.includes('shutdown')) return { label: 'Critical', className: 'border-rose-200 bg-rose-50 text-rose-700' }
-  if (normalized.includes('schedule')) return { label: 'Scheduled', className: 'border-sky-200 bg-sky-50 text-sky-700' }
-  return { label: 'Info', className: 'border-slate-200 bg-slate-50 text-slate-700' }
-}
-
 function getTelemetrySourceBadge(usage: SystemUsageResponse | null) {
   if (usage?.vercel.connected) return { label: 'Vercel connected', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
   if (usage?.connected.internal) return { label: 'Internal', className: 'border-blue-200 bg-blue-50 text-blue-700' }
@@ -310,19 +323,18 @@ function formatEventMessage(event: RuntimeEvent) {
 
 function normalizeChartSeries(input: unknown): UsagePoint[] {
   if (!Array.isArray(input)) return []
-  return input
+  const mapped: Array<UsagePoint | null> = input
     .map((item) => {
       if (!item || typeof item !== 'object') return null
       const entry = item as Record<string, unknown>
-      const normalized: UsagePoint = {
+      return {
         label: String(entry.label || entry.at || entry.day || entry.hour || ''),
         value: asNumber(entry.value) ?? 0,
         cost: asNumber(entry.cost) ?? null,
         count: asNumber(entry.count) ?? null,
-      }
-      return normalized
+      } satisfies UsagePoint
     })
-    .filter((item): item is UsagePoint => Boolean(item && item.label))
+  return mapped.filter((item): item is UsagePoint => Boolean(item && item.label))
 }
 
 function normalizeUsage(input: unknown): SystemUsageResponse | null {
@@ -458,8 +470,7 @@ function pointTrend(points: number[]) {
   const base = Math.max(Math.abs(first), 1)
   const diff = ((last - first) / base) * 100
   if (!Number.isFinite(diff)) return 'No data yet'
-  const label = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}% vs prior point`
-  return label
+  return `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}% vs prior point`
 }
 
 function buildSparklinePath(values: number[], width = 160, height = 48, padding = 4) {
@@ -480,7 +491,6 @@ function buildSparklinePath(values: number[], width = 160, height = 48, padding 
 }
 
 function Sparkline({ values, tone = 'blue' }: { values: number[]; tone?: 'blue' | 'green' | 'orange' | 'rose' | 'slate' }) {
-  const path = buildSparklinePath(values)
   const gradientId = `spark-${tone}-${useId().replace(/:/g, '')}`
   const stroke = {
     blue: '#2563eb',
@@ -498,6 +508,7 @@ function Sparkline({ values, tone = 'blue' }: { values: number[]; tone?: 'blue' 
     )
   }
 
+  const path = buildSparklinePath(values)
   return (
     <svg viewBox="0 0 160 48" className="h-12 w-full">
       <defs>
@@ -512,87 +523,12 @@ function Sparkline({ values, tone = 'blue' }: { values: number[]; tone?: 'blue' 
   )
 }
 
-function MiniChart({ points, title, subtitle, emptyLabel, color = 'blue' }: {
-  points: number[]
-  title: string
-  subtitle: string
-  emptyLabel: string
-  color?: 'blue' | 'green' | 'orange' | 'rose'
-}) {
+function MiniChart({ points, color = 'blue', emptyLabel = 'No data yet' }: { points: number[]; color?: 'blue' | 'green' | 'orange' | 'rose'; emptyLabel?: string }) {
   const tone = color === 'green' ? 'green' : color === 'orange' ? 'orange' : color === 'rose' ? 'rose' : 'blue'
   return (
-    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,.06)]">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <div className="text-sm font-semibold text-slate-900">{title}</div>
-          <div className="mt-1 text-xs text-slate-500">{subtitle}</div>
-        </div>
-        <div className="rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-          {points.length ? 'Live' : 'No data'}
-        </div>
-      </div>
-      <div className="mt-4">
-        {points.length ? (
-          <MiniLineChart points={points} color={tone} />
-        ) : (
-          <div className="flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">
-            {emptyLabel}
-          </div>
-        )}
-      </div>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      {points.length ? <Sparkline values={points} tone={tone} /> : <div className="flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">{emptyLabel}</div>}
     </div>
-  )
-}
-
-function MiniLineChart({ points, color }: { points: number[]; color: 'blue' | 'green' | 'orange' | 'rose' }) {
-  const gradientSuffix = useId().replace(/:/g, '')
-  const width = 600
-  const height = 240
-  const paddingX = 18
-  const paddingY = 18
-  const safePoints = points.length === 1 ? [points[0], points[0]] : points
-  const min = Math.min(...safePoints)
-  const max = Math.max(...safePoints)
-  const span = Math.max(max - min, 1)
-  const usableWidth = width - paddingX * 2
-  const usableHeight = height - paddingY * 2
-  const stroke = {
-    blue: '#2563eb',
-    green: '#16a34a',
-    orange: '#f97316',
-    rose: '#e11d48',
-  }[color]
-
-  const linePath = safePoints
-    .map((point, index) => {
-      const x = paddingX + (usableWidth * (index / Math.max(safePoints.length - 1, 1)))
-      const y = height - paddingY - (((point - min) / span) * usableHeight)
-      return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`
-    })
-    .join(' ')
-
-  const areaPath = `${linePath} L ${width - paddingX} ${height - paddingY} L ${paddingX} ${height - paddingY} Z`
-
-  return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="h-[240px] w-full">
-      <defs>
-        <linearGradient id={`chart-${color}-${gradientSuffix}`} x1="0%" x2="0%" y1="0%" y2="100%">
-          <stop offset="0%" stopColor={stroke} stopOpacity="0.22" />
-          <stop offset="100%" stopColor={stroke} stopOpacity="0.02" />
-        </linearGradient>
-      </defs>
-      {[0, 1, 2, 3].map((grid) => {
-        const y = paddingY + (usableHeight * (grid / 3))
-        return <line key={grid} x1={paddingX} x2={width - paddingX} y1={y} y2={y} stroke="#e2e8f0" strokeDasharray="4 4" />
-      })}
-      <path d={areaPath} fill={`url(#chart-${color}-${gradientSuffix})`} />
-      <path d={linePath} fill="none" stroke={stroke} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      {safePoints.map((point, index) => {
-        const x = paddingX + (usableWidth * (index / Math.max(safePoints.length - 1, 1)))
-        const y = height - paddingY - (((point - min) / span) * usableHeight)
-        return <circle key={`${index}-${point}`} cx={x} cy={y} r="3.8" fill={stroke} stroke="white" strokeWidth="2" />
-      })}
-    </svg>
   )
 }
 
@@ -633,38 +569,6 @@ function StackedBars({ points, emptyLabel }: { points: UsagePoint[]; emptyLabel:
         <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />Cost</span>
         <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-violet-500" />Count</span>
       </div>
-    </div>
-  )
-}
-
-function HorizontalPressureBars({ rows, emptyLabel }: { rows: UsageModule[]; emptyLabel: string }) {
-  if (!rows.length) {
-    return <div className="flex min-h-[250px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">{emptyLabel}</div>
-  }
-
-  const safeRows = rows.slice(0, 8)
-  const max = Math.max(...safeRows.map((row) => row.value), 1)
-
-  return (
-    <div className="space-y-4">
-      {safeRows.map((row) => {
-        const state = getRouteState(row.value)
-        return (
-          <div key={row.module} className="space-y-2">
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <span className="font-medium text-slate-700">{row.module}</span>
-              <span className="font-semibold text-slate-900">{formatCompact(row.value)}</span>
-            </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500" style={{ width: `${(row.value / max) * 100}%` }} />
-            </div>
-            <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-slate-500">
-              <span>Auto-derived pressure</span>
-              <span className={`rounded-full border px-2.5 py-1 font-semibold ${state.className}`}>{state.label}</span>
-            </div>
-          </div>
-        )
-      })}
     </div>
   )
 }
@@ -718,21 +622,19 @@ function StatCard({
   )
 }
 
-function Panel({
+function SectionCard({
   title,
   subtitle,
   badge,
   children,
-  id,
 }: {
   title: string
   subtitle?: string
   badge?: ReactNode
   children: ReactNode
-  id?: string
 }) {
   return (
-    <section id={id} className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_14px_34px_rgba(15,23,42,.06)]">
+    <section className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_14px_34px_rgba(15,23,42,.06)]">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">{title}</div>
@@ -746,8 +648,15 @@ function Panel({
 }
 
 function TimelineItem({ event }: { event: RuntimeEvent & { count?: number } }) {
-  const tone = getEventTone(event.event_type)
   const count = Math.max(1, event.count || 1)
+  const tone = (() => {
+    const normalized = event.event_type.toLowerCase()
+    if (normalized.includes('restore')) return { label: 'Restore', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
+    if (normalized.includes('emergency') || normalized.includes('shutdown')) return { label: 'Critical', className: 'border-rose-200 bg-rose-50 text-rose-700' }
+    if (normalized.includes('schedule')) return { label: 'Scheduled', className: 'border-sky-200 bg-sky-50 text-sky-700' }
+    return { label: 'Info', className: 'border-slate-200 bg-slate-50 text-slate-700' }
+  })()
+
   return (
     <div className="relative pl-5">
       <div className="absolute left-0 top-2 h-2.5 w-2.5 rounded-full bg-blue-500 ring-4 ring-blue-50" />
@@ -788,7 +697,7 @@ function WorkflowList({ steps, activePercent }: { steps: readonly { percent: num
   )
 }
 
-function ModuleCard({
+function ModuleTile({
   module,
   details,
   pressure,
@@ -851,7 +760,9 @@ function ModuleCard({
           <ShieldCheck className="h-4 w-4" /> Safe Mode module
         </button>
       </div>
-      <div className="mt-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">{telemetryStatus === 'Internal snapshots only' ? 'Internal snapshot available.' : 'Module telemetry not instrumented yet.'}</div>
+      <div className="mt-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+        {telemetryStatus === 'Internal snapshots only' ? 'Internal snapshot available.' : 'Module telemetry not instrumented yet.'}
+      </div>
     </article>
   )
 }
@@ -861,7 +772,7 @@ function PressureTable({ rows, emptyLabel }: { rows: UsageUsage[]; emptyLabel: s
     return <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">{emptyLabel}</div>
   }
 
-  const rowsSorted = [...rows].sort((a, b) => b.value - a.value).slice(0, 8)
+  const rowsSorted = [...rows].sort((a, b) => b.value - a.value).slice(0, 12)
   return (
     <div className="overflow-hidden rounded-[1.5rem] border border-slate-200">
       <table className="w-full border-collapse text-left text-sm">
@@ -869,35 +780,28 @@ function PressureTable({ rows, emptyLabel }: { rows: UsageUsage[]; emptyLabel: s
           <tr>
             <th className="px-4 py-3">Route</th>
             <th className="px-4 py-3">Requests / hour</th>
-            <th className="px-4 py-3">Avg latency</th>
-            <th className="px-4 py-3">Error rate</th>
             <th className="px-4 py-3">State</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
-          {rowsSorted.map((row, index) => {
-            const state = getRouteState(row.value)
-            return (
-              <tr key={`${row.route}-${index}`}>
-                <td className="px-4 py-3 font-semibold text-slate-900">{row.route}</td>
-                <td className="px-4 py-3 text-slate-700">{formatCompact(row.value)}</td>
-                <td className="px-4 py-3 text-slate-500">No route telemetry yet</td>
-                <td className="px-4 py-3 text-slate-500">No route telemetry yet</td>
-                <td className="px-4 py-3"><Pill className={state.className}>{state.label}</Pill></td>
-              </tr>
-            )
-          })}
+          {rowsSorted.map((row, index) => (
+            <tr key={`${row.route}-${index}`}>
+              <td className="px-4 py-3 font-semibold text-slate-900">{row.route}</td>
+              <td className="px-4 py-3 text-slate-700">{formatCompact(row.value)}</td>
+              <td className="px-4 py-3">
+                <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${row.value >= 16_000 ? 'border-rose-200 bg-rose-50 text-rose-700' : row.value >= 9_000 ? 'border-orange-200 bg-orange-50 text-orange-700' : row.value >= 3_000 ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                  {row.value >= 16_000 ? 'Blocked' : row.value >= 9_000 ? 'Aggressive' : row.value >= 3_000 ? 'Watch' : 'Normal'}
+                </span>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <div className="border-t border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-        Table state is derived from route pressure only when deeper latency telemetry is unavailable.
+        Route telemetry stays honest: no synthetic latency or error numbers are shown here.
       </div>
     </div>
   )
-}
-
-function SectionBadge({ children }: { children: ReactNode }) {
-  return <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">{children}</div>
 }
 
 export default function CEOSystemControlTower({
@@ -911,12 +815,16 @@ export default function CEOSystemControlTower({
   initialUsage: unknown
   initialEvents: unknown
   operatorName: string | null
-  initialWorkspace: 'overview' | 'consumption' | 'routes' | 'modules' | 'command-center' | 'runtime-policy-studio' | 'app-scan-center' | 'schedules' | 'events' | 'settings'
+  initialWorkspace: WorkspaceKey
 }) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [state, setState] = useState<RuntimeState>(initialState)
   const [usage, setUsage] = useState<SystemUsageResponse | null>(() => normalizeUsage(initialUsage))
   const [events, setEvents] = useState<RuntimeEvent[]>(() => normalizeEvents(initialEvents))
-  const [activeWorkspace, setActiveWorkspace] = useState(initialWorkspace)
+  const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceKey>(initialWorkspace)
   const [isMounted, setIsMounted] = useState(false)
   const [now, setNow] = useState<Date | null>(null)
   const [refreshing, setRefreshing] = useState(false)
@@ -924,7 +832,6 @@ export default function CEOSystemControlTower({
   const [workflowPercent, setWorkflowPercent] = useState(0)
   const [workflowLabel, setWorkflowLabel] = useState('Idle')
   const [workflowSteps, setWorkflowSteps] = useState<ProgressStep[]>([])
-  const [sectionMode, setSectionMode] = useState<'manual' | 'scheduled'>('manual')
   const [notice, setNotice] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [scheduleTouched, setScheduleTouched] = useState(false)
@@ -933,7 +840,14 @@ export default function CEOSystemControlTower({
   const [scheduleResumeAt, setScheduleResumeAt] = useState('')
   const [scheduleTimezone, setScheduleTimezone] = useState(initialState.timezone || 'Africa/Casablanca')
   const [scheduleReason, setScheduleReason] = useState(initialState.reason || '')
+  const actionProgress = useActionProgress()
+  const [eventSearch, setEventSearch] = useState('')
+  const [eventTypeFilter, setEventTypeFilter] = useState<'all' | 'shutdown' | 'restore' | 'schedule' | 'other'>('all')
+  const [commandQuery, setCommandQuery] = useState('')
+  const [commandOpen, setCommandOpen] = useState(false)
+  const loadRef = useRef<() => Promise<void>>(async () => {})
 
+  const workspaceMeta = useMemo(() => WORKSPACES.find((item) => item.workspace === activeWorkspace) || WORKSPACES[0], [activeWorkspace])
   const modeTone = getModeTone(state.mode)
   const telemetrySourceBadge = getTelemetrySourceBadge(usage)
   const telemetryStatusLabel = getTelemetryStatusLabel(usage)
@@ -950,16 +864,15 @@ export default function CEOSystemControlTower({
   const modulePressureRows = usageAvailable ? usage?.charts.modulePressure || [] : []
   const topRouteRows = usageAvailable ? usage?.charts.routePressure || [] : []
   const groupedEvents = useMemo(() => groupRuntimeEvents(events), [events])
-  const activeData = useMemo(() => {
-    return {
-      cpu: hourlyPoints.length ? hourlyPoints : [],
-      invocations: dailyPoints.length ? dailyPoints : [],
-      edge: routePoints.length ? routePoints : [],
-      bandwidth: usageAvailable && usage?.charts.hourly.length ? seriesValues(usage.charts.hourly, 'cost') : [],
-      error: usageAvailable && usage?.charts.daily.length ? seriesValues(usage.charts.daily) : [],
-      cost: usageAvailable && usage?.charts.weekly.length ? seriesValues(usage.charts.weekly, 'cost') : [],
-    }
-  }, [dailyPoints, hourlyPoints, routePoints, usage, usageAvailable])
+
+  const activeData = useMemo(() => ({
+    cpu: hourlyPoints.length ? hourlyPoints : [],
+    invocations: dailyPoints.length ? dailyPoints : [],
+    edge: routePoints.length ? routePoints : [],
+    bandwidth: usageAvailable && usage?.charts.hourly.length ? seriesValues(usage.charts.hourly, 'cost') : [],
+    error: usageAvailable && usage?.charts.daily.length ? seriesValues(usage.charts.daily) : [],
+    cost: usageAvailable && usage?.charts.weekly.length ? seriesValues(usage.charts.weekly, 'cost') : [],
+  }), [dailyPoints, hourlyPoints, routePoints, usage, usageAvailable])
 
   const modulePressureMap = useMemo(() => {
     const map = new Map<string, number>()
@@ -969,6 +882,59 @@ export default function CEOSystemControlTower({
     }
     return map
   }, [modulePressureRows, state.disabledModules])
+
+  const commandResults = useMemo(() => {
+    const query = commandQuery.trim().toLowerCase()
+    if (!query) return []
+    return WORKSPACES
+      .filter((item) => item.label.toLowerCase().includes(query) || item.description.toLowerCase().includes(query) || item.keywords.some((keyword) => keyword.includes(query)))
+      .slice(0, 6)
+      .map((item) => ({ label: item.label, workspace: item.workspace, description: item.description }))
+  }, [commandQuery])
+
+  const clockText = isMounted && now ? formatClock(now, state.timezone || 'Africa/Casablanca') : 'Clock initializing...'
+  const groupedEventsFiltered = useMemo(() => {
+    const query = eventSearch.trim().toLowerCase()
+    return groupedEvents.filter((event) => {
+      const type = event.event_type.toLowerCase()
+      const matchesType = eventTypeFilter === 'all'
+        || (eventTypeFilter === 'shutdown' && type.includes('shutdown'))
+        || (eventTypeFilter === 'restore' && type.includes('restore'))
+        || (eventTypeFilter === 'schedule' && type.includes('schedule'))
+        || (eventTypeFilter === 'other' && !type.includes('shutdown') && !type.includes('restore') && !type.includes('schedule'))
+      const matchesQuery = !query
+        || [event.event_type, event.actor_email, event.actor_role, event.from_mode, event.to_mode, formatEventMessage(event)]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(query))
+      return matchesType && matchesQuery
+    })
+  }, [eventSearch, eventTypeFilter, groupedEvents])
+
+  useEffect(() => {
+    const workspace = normalizeWorkspace(searchParams?.get('workspace') || initialWorkspace)
+    setActiveWorkspace(workspace)
+  }, [initialWorkspace, searchParams])
+
+  useEffect(() => {
+    setIsMounted(true)
+    return () => setIsMounted(false)
+  }, [])
+
+  useEffect(() => {
+    if (!isMounted) return
+    setNow(new Date())
+    const timer = window.setInterval(() => setNow(new Date()), safeUiInterval(1000))
+    return () => window.clearInterval(timer)
+  }, [isMounted])
+
+  useEffect(() => {
+    if (!isMounted || busyAction) return
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(() => {
+      void refreshAll()
+    }, safeRefreshInterval(60_000))
+    return () => window.clearInterval(timer)
+  }, [busyAction, isMounted])
 
   useEffect(() => {
     const schedule = state.schedule || {}
@@ -982,93 +948,12 @@ export default function CEOSystemControlTower({
   }, [scheduleTouched, state.reason, state.schedule, state.timezone])
 
   useEffect(() => {
-    setIsMounted(true)
-    setActiveWorkspace(initialWorkspace)
-    return () => setIsMounted(false)
-  }, [initialWorkspace])
-
-  useEffect(() => {
-    if (!isMounted) return
-    setNow(new Date())
-    const timer = window.setInterval(() => setNow(new Date()), safeUiInterval(1000))
-    return () => window.clearInterval(timer)
-  }, [isMounted])
-
-  useEffect(() => {
-    if (!isMounted || activeWorkspace === 'overview') return
-    const target = document.getElementById(activeWorkspace)
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [activeWorkspace, isMounted])
-
-  useEffect(() => {
-    let mounted = true
-
-    const refresh = async (broadcast = false) => {
-      if (busyAction) return
-      try {
-        setRefreshing(true)
-        const [stateRes, usageRes, eventsRes] = await Promise.all([
-          fetch('/api/system-control/state', { cache: 'no-store' }),
-          fetch('/api/system-control/usage', { cache: 'no-store' }),
-          fetch('/api/system-control/events?limit=40', { cache: 'no-store' }),
-        ])
-
-        if (!mounted) return
-
-        if (stateRes.ok) {
-          const payload = await stateRes.json().catch(() => null)
-          if (payload?.data?.state) setState(payload.data.state)
-        }
-
-        if (usageRes.ok) {
-          const payload = await usageRes.json().catch(() => null)
-          const normalized = normalizeUsage(payload)
-          if (normalized) setUsage(normalized)
-        }
-
-        if (eventsRes.ok) {
-          const payload = await eventsRes.json().catch(() => null)
-          setEvents(normalizeEvents(payload?.data))
-        }
-      } catch {
-        // Keep the last known snapshot. The UI already shows safe empty states.
-      } finally {
-        if (mounted) setRefreshing(false)
-        if (broadcast) {
-          window.dispatchEvent(new CustomEvent('system-control-refresh', { detail: { source: 'tower' } }))
-        }
-      }
-    }
-
-    void refresh()
-
-    if (!shouldStartAutoRefresh()) {
-      return () => {
-        mounted = false
-      }
-    }
-
-    const timer = window.setInterval(() => {
-      void refresh()
-    }, safeRefreshInterval(60_000))
-
-    return () => {
-      mounted = false
-      window.clearInterval(timer)
-    }
-  }, [busyAction])
-
-  async function animateWorkflow(steps: ProgressStep[]) {
-    setWorkflowSteps(steps)
-    for (const step of steps) {
-      setWorkflowLabel(step.label)
-      setWorkflowPercent(step.percent)
-      await new Promise((resolve) => window.setTimeout(resolve, 170))
-    }
-  }
+    loadRef.current = refreshAll
+  })
 
   async function refreshAll(broadcast = false) {
     try {
+      setRefreshing(true)
       const [stateRes, usageRes, eventsRes] = await Promise.all([
         fetch('/api/system-control/state', { cache: 'no-store' }),
         fetch('/api/system-control/usage', { cache: 'no-store' }),
@@ -1090,15 +975,53 @@ export default function CEOSystemControlTower({
         const payload = await eventsRes.json().catch(() => null)
         setEvents(normalizeEvents(payload?.data))
       }
+
       if (broadcast) {
         window.dispatchEvent(new CustomEvent('system-control-refresh', { detail: { source: 'tower' } }))
       }
     } catch {
-      // Intentional no-op.
+      // Keep last known snapshot.
+    } finally {
+      setRefreshing(false)
     }
   }
 
-  async function runAction(endpoint: '/api/system-control/shutdown' | '/api/system-control/restore' | '/api/system-control/schedule', body: Record<string, unknown>, action: ActionKind, steps?: ProgressStep[]) {
+  function progressStepsFor(action: ActionKind, incomingSteps?: ProgressStep[]) {
+    const source = incomingSteps?.length
+      ? incomingSteps
+      : action === 'restore'
+        ? RESTORE_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label }))
+        : SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label }))
+
+    return source.map((step, index) => ({
+      id: step.key || `step-${index + 1}`,
+      label: step.label,
+      detail: step.detail || step.label,
+      percent: step.percent,
+    }))
+  }
+
+  function actionTitle(action: ActionKind) {
+    if (action === 'restore') return 'Restore System'
+    if (action === 'schedule') return 'Schedule Runtime Transition'
+    return 'Protected System Shutdown'
+  }
+
+  async function animateWorkflow(steps: ProgressStep[]) {
+    setWorkflowSteps(steps)
+    for (const step of steps) {
+      setWorkflowLabel(step.label)
+      setWorkflowPercent(step.percent)
+      await new Promise((resolve) => window.setTimeout(resolve, 170))
+    }
+  }
+
+  async function runAction(
+    endpoint: '/api/system-control/shutdown' | '/api/system-control/restore' | '/api/system-control/schedule',
+    body: Record<string, unknown>,
+    action: ActionKind,
+    steps?: ProgressStep[],
+  ) {
     setBusyAction(action)
     setNotice(null)
     setError(null)
@@ -1109,13 +1032,13 @@ export default function CEOSystemControlTower({
         body: JSON.stringify(body),
       })
       const payload = await response.json().catch(() => null)
-
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || 'Action failed')
       }
 
+      actionProgress.updateProgress(45, 'Runtime API accepted command. Applying returned workflow…', 'Runtime accepted')
+
       if (Array.isArray(payload.progress) && payload.progress.length) {
-        setWorkflowSteps(payload.progress)
         await animateWorkflow(payload.progress as ProgressStep[])
       } else if (steps?.length) {
         await animateWorkflow(steps)
@@ -1125,10 +1048,17 @@ export default function CEOSystemControlTower({
       await refreshAll(true)
       setWorkflowLabel(action === 'restore' ? 'Normal mode restored' : action === 'schedule' ? 'Schedule saved' : 'Standby mode active')
       setWorkflowPercent(100)
-      setNotice(action === 'schedule' ? 'Schedule updated successfully.' : action === 'restore' ? 'System restored.' : 'Shutdown command executed.')
+      const finalNotice = action === 'schedule' ? 'Schedule updated successfully.' : action === 'restore' ? 'System restored.' : 'Shutdown command executed.'
+      setNotice(finalNotice)
+      actionProgress.completeAction(finalNotice, {
+        mode: payload.state?.mode || state.mode,
+        online: payload.state?.isSystemOnline ?? state.isSystemOnline,
+      })
       setScheduleTouched(false)
     } catch (actionError) {
-      setError(actionError instanceof Error ? actionError.message : 'Action failed')
+      const message = actionError instanceof Error ? actionError.message : 'Action failed'
+      setError(message)
+      actionProgress.failAction(message)
     } finally {
       setBusyAction(null)
     }
@@ -1158,7 +1088,24 @@ export default function CEOSystemControlTower({
     setNotice('Module telemetry requires module-level adoption.')
   }
 
-  const clockText = isMounted && now ? formatClock(now, state.timezone || 'Africa/Casablanca') : 'Clock initializing...'
+  function navigateWorkspace(workspace: WorkspaceKey) {
+    const nextUrl = `${pathname}?workspace=${workspace}`
+    setActiveWorkspace(workspace)
+    router.push(nextUrl, { scroll: false })
+    setCommandOpen(false)
+    setCommandQuery('')
+  }
+
+  function commandResultsToEntries() {
+    if (!commandResults.length) return []
+    return commandResults.map((item) => ({ label: item.label, workspace: item.workspace, description: item.description }))
+  }
+
+  const systemHealthLabel = state.isSystemOnline ? 'System Online' : 'Protected Standby'
+  const snapshotState = state.mode.toUpperCase()
+  const uptimeLabel = state.createdAt ? formatDateTime(state.createdAt, state.timezone) : 'No snapshot available'
+  const lastCheck = formatDateTime(state.updatedAt || state.lastActionAt, state.timezone)
+  const scheduleStatus = scheduleEnabled ? (scheduleShutdownAt || scheduleResumeAt ? 'Scheduled' : 'Manual') : 'Disabled'
   const routeTableRows = useMemo(() => topRouteRows, [topRouteRows])
   const hourlyTrend = pointTrend(hourlyPoints)
   const invTrend = pointTrend(dailyPoints)
@@ -1167,15 +1114,578 @@ export default function CEOSystemControlTower({
   const errorTrend = pointTrend(activeData.error)
   const costTrend = pointTrend(activeData.cost)
 
-  const systemHealthLabel = state.isSystemOnline ? 'System Online' : 'Protected Standby'
-  const snapshotState = state.mode.toUpperCase()
-  const uptimeLabel = state.createdAt ? formatDateTime(state.createdAt, state.timezone) : 'No snapshot available'
-  const lastCheck = formatDateTime(state.updatedAt || state.lastActionAt, state.timezone)
-  const scheduleStatus = scheduleEnabled ? (scheduleShutdownAt || scheduleResumeAt ? 'Scheduled' : 'Manual') : 'Disabled'
+  function renderScheduleForm(mode: 'compact' | 'full') {
+    return (
+      <div className={`grid gap-4 ${mode === 'full' ? 'md:grid-cols-2' : 'xl:grid-cols-2'}`}>
+        <div className="space-y-3 rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
+          <div className="flex items-center gap-2 rounded-[1.5rem] border border-slate-200 bg-white p-2 text-sm font-semibold">
+            <button type="button" onClick={() => setScheduleEnabled(true)} className={`rounded-xl px-4 py-2 ${scheduleEnabled ? 'bg-blue-600 text-white' : 'text-slate-600'}`}>Enable</button>
+            <button type="button" onClick={() => setScheduleEnabled(false)} className={`rounded-xl px-4 py-2 ${!scheduleEnabled ? 'bg-blue-600 text-white' : 'text-slate-600'}`}>Disable</button>
+          </div>
+          <div className="text-xs text-slate-500">Schedule inputs are draft-only until Save Schedule runs successfully.</div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Shutdown time</span>
+              <input
+                type="time"
+                value={scheduleShutdownAt ? scheduleShutdownAt.slice(11, 16) : '22:00'}
+                onChange={(event) => {
+                  setScheduleShutdownAt(`1970-01-01T${event.target.value}:00`)
+                  setScheduleTouched(true)
+                }}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Restore time</span>
+              <input
+                type="time"
+                value={scheduleResumeAt ? scheduleResumeAt.slice(11, 16) : '08:00'}
+                onChange={(event) => {
+                  setScheduleResumeAt(`1970-01-01T${event.target.value}:00`)
+                  setScheduleTouched(true)
+                }}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Timezone</span>
+              <input
+                value={scheduleTimezone}
+                onChange={(event) => {
+                  setScheduleTimezone(event.target.value)
+                  setScheduleTouched(true)
+                }}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
+                placeholder="Africa/Casablanca"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Reason</span>
+              <input
+                value={scheduleReason}
+                onChange={(event) => {
+                  setScheduleReason(event.target.value)
+                  setScheduleTouched(true)
+                }}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
+                placeholder="Protected standby"
+              />
+            </label>
+          </div>
+          <button
+            type="button"
+            disabled={busyAction === 'schedule'}
+            onClick={() => void runAction('/api/system-control/schedule', {
+              shutdownAt: scheduleEnabled ? (scheduleShutdownAt || '1970-01-01T22:00:00') : null,
+              resumeAt: scheduleEnabled ? (scheduleResumeAt || '1970-01-01T08:00:00') : null,
+              timezone: scheduleTimezone || 'Africa/Casablanca',
+              reason: scheduleReason || null,
+              enabledCoreRoutes: state.enabledCoreRoutes,
+              disabledModules: state.disabledModules,
+            }, 'schedule', [
+              { percent: 0, key: 'validate', label: 'Validate schedule', detail: 'Validate CEO schedule inputs.' },
+              { percent: 40, key: 'persist', label: 'Persist schedule', detail: 'Write schedule settings to runtime control.' },
+              { percent: 70, key: 'audit', label: 'Write audit event', detail: 'Persist the schedule update event.' },
+              { percent: 100, key: 'done', label: 'Schedule saved', detail: 'Schedule updated successfully.' },
+            ])}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:opacity-60"
+          >
+            <CalendarClock className="h-4 w-4" />
+            Save Schedule
+          </button>
+        </div>
+
+        <div className="space-y-3 rounded-[1.35rem] border border-slate-200 bg-white p-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Current schedule status</div>
+          <div className="space-y-3 text-sm text-slate-700">
+            <div className="flex items-center justify-between gap-3"><span>Shutdown at</span><span className="font-semibold text-slate-950">{scheduleShutdownAt ? formatDateTime(scheduleShutdownAt, scheduleTimezone) : '22:00'}</span></div>
+            <div className="flex items-center justify-between gap-3"><span>Restore at</span><span className="font-semibold text-slate-950">{scheduleResumeAt ? formatDateTime(scheduleResumeAt, scheduleTimezone) : '08:00'}</span></div>
+            <div className="flex items-center justify-between gap-3"><span>Timezone</span><span className="font-semibold text-slate-950">{scheduleTimezone}</span></div>
+            <div className="flex items-center justify-between gap-3"><span>Status</span><Pill className={scheduleEnabled ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-slate-100 text-slate-600'}>{scheduleStatus}</Pill></div>
+          </div>
+          <div className="rounded-[1.35rem] border border-blue-200 bg-[linear-gradient(180deg,_#f8fbff_0%,_#eef6ff_100%)] p-4 text-sm text-slate-600">
+            This preview is shown only to the CEO control tower. It mirrors the protected standby message without changing the public route.
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  function renderOverview() {
+    return (
+      <>
+        <section className="rounded-[2rem] border border-slate-200 bg-white px-5 py-5 shadow-[0_18px_42px_rgba(15,23,42,.06)] lg:px-6">
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-3">
+                <Pill className={modeTone.className}>{modeTone.label}</Pill>
+                <Pill className="border-emerald-200 bg-emerald-50 text-emerald-700">PRODUCTION LIVE</Pill>
+                <Pill className="border-slate-200 bg-slate-50 text-slate-700">{state.timezone || 'Africa/Casablanca'}</Pill>
+              </div>
+              <div className="mt-4 flex items-end gap-3">
+                <h1 className="text-3xl font-black tracking-[-0.05em] text-slate-950 sm:text-4xl">CEO System Control Tower</h1>
+              </div>
+              <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-600 sm:text-[15px]">
+                Real-time system control, cost protection and operational command center.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
+                  <Clock3 className="h-4 w-4 text-blue-600" />
+                  {clockText}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                  Authenticated CEO / admin access only
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
+                  <CheckCircle2 className="h-4 w-4 text-cyan-600" />
+                  {telemetryStatusLabel}
+                </span>
+                <Pill className={telemetrySourceBadge.className}>{telemetrySourceBadge.label}</Pill>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => void refreshAll(true)}
+                className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+              <button
+                type="button"
+                disabled={busyAction === 'shutdown'}
+                onClick={() => void runAction('/api/system-control/shutdown', {
+                  command: 'shutdown_now',
+                  reason: scheduleReason || state.reason || 'Protected standby mode enabled.',
+                  resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
+                  timezone: scheduleTimezone,
+                }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
+                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(239,68,68,.22)] transition hover:opacity-95 disabled:opacity-60"
+              >
+                <ArrowDownToLine className="h-4 w-4" />
+                Shutdown Now
+              </button>
+              <button
+                type="button"
+                disabled={busyAction === 'restore'}
+                onClick={() => void runAction('/api/system-control/restore', {
+                  command: 'restore_now',
+                  reason: scheduleReason || null,
+                  timezone: scheduleTimezone,
+                }, 'restore', RESTORE_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
+                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(37,99,235,.18)] transition hover:opacity-95 disabled:opacity-60"
+              >
+                <ArrowUpFromLine className="h-4 w-4" />
+                Restore System
+              </button>
+              <button
+                type="button"
+                disabled={busyAction === 'shutdown'}
+                onClick={() => void runAction('/api/system-control/shutdown', {
+                  command: 'emergency_lock',
+                  reason: scheduleReason || 'Emergency lock',
+                  resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
+                  timezone: scheduleTimezone,
+                }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
+                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-slate-950 to-slate-800 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(15,23,42,.18)] transition hover:opacity-95 disabled:opacity-60"
+              >
+                <Lock className="h-4 w-4" />
+                Emergency Lock
+              </button>
+              <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                <Bell className="h-4 w-4 text-slate-500" />
+                <HelpCircle className="h-4 w-4 text-slate-500" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">{(operatorName || 'CEO').slice(0, 2).toUpperCase()}</div>
+              </div>
+            </div>
+          </div>
+
+          {(notice || error) && (
+            <div className={`mt-5 rounded-2xl border px-4 py-3 text-sm ${error ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+              {error || notice}
+            </div>
+          )}
+        </section>
+
+        <section className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+          <StatCard icon={<Cpu className="h-5 w-5" />} label="Active CPU" value={formatPercent(activeCpu)} trend={hourlyPoints.length ? hourlyTrend : telemetryStatusLabel} helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel} tone="blue" sparkline={activeData.cpu} />
+          <StatCard icon={<Zap className="h-5 w-5" />} label="Function Invocations" value={formatCompact(invocations)} trend={dailyPoints.length ? invTrend : telemetryStatusLabel} helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel} tone="green" sparkline={activeData.invocations} />
+          <StatCard icon={<SignalHigh className="h-5 w-5" />} label="Edge Requests" value={formatCompact(edgeRequests)} trend={routePoints.length ? edgeTrend : telemetryStatusLabel} helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel} tone="orange" sparkline={activeData.edge} />
+          <StatCard icon={<Cloud className="h-5 w-5" />} label="Data Transfer" value={formatBandwidth(bandwidth)} trend={activeData.bandwidth.length ? bandwidthTrend : telemetryStatusLabel} helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel} tone="blue" sparkline={activeData.bandwidth} />
+          <StatCard icon={<AlertCircle className="h-5 w-5" />} label="Error Rate" value={formatPercent(errorRate)} trend={activeData.error.length ? errorTrend : telemetryStatusLabel} helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel} tone="rose" sparkline={activeData.error} />
+          <StatCard icon={<Wallet className="h-5 w-5" />} label="Cost Pressure" value={formatCompact(costPressure)} trend={activeData.cost.length ? costTrend : telemetryStatusLabel} helper={usage?.vercel.status === 'connected' ? 'Vercel billing source available' : 'Estimated cost is 0 MAD without an external billing source'} tone="orange" sparkline={activeData.cost} />
+        </section>
+
+        <section className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
+          <SectionCard title="Recent Events" subtitle="Grouped runtime events from the latest safe refresh." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Timeline</Pill>}>
+            <div className="space-y-4">
+              {groupedEvents.slice(0, 4).length ? groupedEvents.slice(0, 4).map((event) => <TimelineItem key={event.id} event={event} />) : (
+                <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">No runtime events yet.</div>
+              )}
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Quick Actions" subtitle="Jump to focused workspaces without scrolling." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Workspaces</Pill>}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ['telemetry', 'Telemetry'],
+                ['route-pressure', 'Route Pressure'],
+                ['module-control', 'Module Control'],
+                ['shutdown-center', 'Shutdown Center'],
+                ['runtime-policy-studio', 'Runtime Policy Studio'],
+                ['app-scan-center', 'App Scan Center'],
+                ['schedules', 'Schedules'],
+                ['audit-events', 'Audit Events'],
+              ].map(([workspace, label]) => (
+                <button key={workspace} type="button" onClick={() => navigateWorkspace(workspace as WorkspaceKey)} className="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white">
+                  <span>{label}</span>
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </button>
+              ))}
+            </div>
+          </SectionCard>
+        </section>
+      </>
+    )
+  }
+
+  function renderTelemetry() {
+    return (
+      <>
+        <section className="grid gap-4 xl:grid-cols-4">
+          <SectionCard title="Usage Status" subtitle="Exact telemetry source and connection state." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Status</Pill>}>
+            <div className="space-y-3 text-sm text-slate-600">
+              <div className="flex items-center justify-between gap-3"><span>Usage source</span><span className="font-semibold text-slate-900">{telemetryStatusLabel}</span></div>
+              <div className="flex items-center justify-between gap-3"><span>Internal snapshots</span><span className="font-semibold text-slate-900">{usage?.metrics.internalSnapshots || 0}</span></div>
+              <div className="flex items-center justify-between gap-3"><span>Runtime events</span><span className="font-semibold text-slate-900">{usage?.metrics.runtimeEvents || 0}</span></div>
+            </div>
+          </SectionCard>
+          <SectionCard title="Vercel Status" subtitle="Honest provider state only." badge={<Pill className={telemetrySourceBadge.className}>{telemetrySourceBadge.label}</Pill>}>
+            <div className="space-y-3 text-sm text-slate-600">
+              <div className="flex items-center justify-between gap-3"><span>Status</span><span className="font-semibold text-slate-900">{usage?.vercel.status || 'provider_unavailable'}</span></div>
+              <div className="flex items-center justify-between gap-3"><span>Configured</span><span className="font-semibold text-slate-900">{usage?.vercel.configured ? 'Yes' : 'No'}</span></div>
+              <div className="flex items-center justify-between gap-3"><span>Missing env</span><span className="font-semibold text-slate-900">{usage?.vercel.missingEnv.length || 0}</span></div>
+            </div>
+          </SectionCard>
+          <SectionCard title="Hourly Chart" subtitle="Requests and cost curve over the latest internal snapshot window." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Hourly</Pill>}>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              {usageAvailable ? <MiniChart points={seriesValues(usage?.charts.hourly || [])} color="blue" /> : <div className="flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white px-4 text-sm text-slate-500">{getTelemetryEmptyCopy(usage, 'snapshot')}</div>}
+            </div>
+          </SectionCard>
+          <SectionCard title="Daily Chart" subtitle="Stacked snapshot bars for daily request and cost accumulation." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Daily</Pill>}>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              {usageAvailable ? <StackedBars points={usage?.charts.daily || []} emptyLabel={getTelemetryEmptyCopy(usage, 'snapshot')} /> : <div className="flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white px-4 text-sm text-slate-500">{getTelemetryEmptyCopy(usage, 'snapshot')}</div>}
+            </div>
+          </SectionCard>
+        </section>
+        <section className="mt-4 grid gap-4 xl:grid-cols-2">
+          <SectionCard title="Internal Snapshots" subtitle="No synthetic metrics. Only recorded snapshots are shown." badge={<Pill className="border-emerald-200 bg-emerald-50 text-emerald-700">Snapshots</Pill>}>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                <span>Internal snapshot count</span>
+                <span className="font-semibold text-slate-900">{usage?.metrics.internalSnapshots || 0}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                <span>Vercel message</span>
+                <span className="font-semibold text-slate-900">{usage?.vercel.message || 'No provider data'}</span>
+              </div>
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-4 text-sm text-slate-500">
+                {getTelemetryEmptyCopy(usage, 'module')}
+              </div>
+            </div>
+          </SectionCard>
+          <SectionCard title="Route / Module Pressure" subtitle="Derived from the existing runtime usage payload." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Pressure</Pill>}>
+            <div className="grid gap-4">
+              <div>
+                <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Routes</div>
+                {usageAvailable && routePoints.length ? <MiniChart points={routePoints} color="green" /> : <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">{getTelemetryEmptyCopy(usage, 'route')}</div>}
+              </div>
+              <div>
+                <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Modules</div>
+                <div className="max-h-[240px] overflow-auto rounded-2xl border border-slate-200 bg-white p-3">
+                  {usageAvailable && modulePressureRows.length ? modulePressureRows.slice(0, 8).map((row) => (
+                    <div key={row.module} className="mb-3 last:mb-0">
+                      <div className="flex items-center justify-between gap-3 text-sm">
+                        <span className="font-medium text-slate-700">{row.module}</span>
+                        <span className="font-semibold text-slate-900">{formatCompact(row.value)}</span>
+                      </div>
+                      <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-full rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500" style={{ width: `${Math.min(row.value, 100)}%` }} />
+                      </div>
+                    </div>
+                  )) : <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">{getTelemetryEmptyCopy(usage, 'module')}</div>}
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+        </section>
+      </>
+    )
+  }
+
+  function renderRoutePressure() {
+    return (
+      <section className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
+        <SectionCard title="Top Expensive Routes / Route Pressure" subtitle="Pressure is pulled from the usage API when available. Latency remains hidden until telemetry is connected." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Route Pressure</Pill>}>
+          <PressureTable rows={routeTableRows} emptyLabel={getTelemetryEmptyCopy(usage, 'route')} />
+        </SectionCard>
+        <SectionCard title="Route Telemetry Notes" subtitle="No fake metrics or synthetic latency are shown." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Honest state</Pill>}>
+          <div className="space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">Route pressure is derived from the current runtime usage payload.</div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">Latency and error rate remain hidden until actual telemetry is connected.</div>
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-4">{getTelemetryEmptyCopy(usage, 'route')}</div>
+          </div>
+        </SectionCard>
+      </section>
+    )
+  }
+
+  function renderModuleControl() {
+    return (
+      <section className="space-y-4">
+        <SectionCard title="Module Control Grid" subtitle="Live status of all core modules. Buttons stay safely disconnected until a module-level API exists." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Modules</Pill>}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="text-sm text-slate-500">These controls are honest: disabled controls remain disabled until real module APIs exist.</div>
+            <button type="button" onClick={() => navigateWorkspace('runtime-policy-studio')} className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100">
+              Open Runtime Policy Studio
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {MODULES.map((module) => (
+              <ModuleTile
+                key={module.key}
+                module={module}
+                details={getModuleDetails(module.key)}
+                pressure={makeModulePressure(module.key)}
+                autoRefreshOn={shouldStartAutoRefresh()}
+                onUnavailable={handleModuleUnavailable}
+                telemetryStatus={telemetryStatusLabel}
+              />
+            ))}
+          </div>
+        </SectionCard>
+      </section>
+    )
+  }
+
+  function renderShutdownCenter() {
+    return (
+      <section className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
+        <SectionCard title="Shutdown / Restore Command Center" subtitle="Protected workflows, subsystem health bars, and scheduled standby controls." badge={<Pill className="border-rose-200 bg-rose-50 text-rose-700">Control</Pill>}>
+          <div className="min-w-0 space-y-5">
+            <div className="flex items-center justify-between gap-3 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => void runAction('/api/system-control/shutdown', {
+                  command: 'shutdown_now',
+                  reason: scheduleReason || state.reason || 'Protected standby mode enabled.',
+                  resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
+                  timezone: scheduleTimezone,
+                }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))} disabled={busyAction === 'shutdown'} className="rounded-xl px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-white disabled:opacity-50">
+                  Shutdown
+                </button>
+                <button type="button" onClick={() => void runAction('/api/system-control/restore', {
+                  command: 'restore_now',
+                  reason: scheduleReason || null,
+                  timezone: scheduleTimezone,
+                }, 'restore', RESTORE_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))} disabled={busyAction === 'restore'} className="rounded-xl px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-white disabled:opacity-50">
+                  Restore
+                </button>
+                <button type="button" onClick={() => void runAction('/api/system-control/shutdown', {
+                  command: 'emergency_lock',
+                  reason: scheduleReason || 'Emergency lock',
+                  resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
+                  timezone: scheduleTimezone,
+                }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))} disabled={busyAction === 'shutdown'} className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-white disabled:opacity-50">
+                  Emergency
+                </button>
+              </div>
+              <div className="text-right">
+                <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Overall progress</div>
+                <div className="text-2xl font-black text-slate-950">{Math.round(workflowPercent)}%</div>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-sm font-semibold text-slate-950">Workflow progress</div>
+                  <div className="text-xs text-slate-500">{workflowLabel}</div>
+                </div>
+                <Pill className="border-blue-200 bg-blue-50 text-blue-700">{busyAction ? `${busyAction.toUpperCase()} IN PROGRESS` : 'READY'}</Pill>
+              </div>
+              <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-300" style={{ width: `${Math.max(0, Math.min(100, workflowPercent))}%` }} />
+              </div>
+              <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                <div>
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Shutdown workflow</div>
+                  <WorkflowList steps={SHUTDOWN_WORKFLOW} activePercent={workflowPercent} />
+                </div>
+                <div>
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Restore workflow</div>
+                  <WorkflowList steps={RESTORE_WORKFLOW} activePercent={workflowPercent} />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                { label: 'Compute Services', value: usageAvailable ? Math.max(0, Math.min(100, Math.round(activeCpu ?? 0))) : 0 },
+                { label: 'API Gateway', value: usageAvailable ? Math.max(0, Math.min(100, routePoints[0] ? Math.round(routePoints[0] / 200) : 0)) : 0 },
+                { label: 'Database Cluster', value: usageAvailable ? Math.max(0, Math.min(100, invocations ? Math.round((invocations ?? 0) / 2500) : 0)) : 0 },
+                { label: 'Background Jobs', value: usageAvailable ? Math.max(0, Math.min(100, modulePressureMap.get('background_sync') ?? 0)) : 0 },
+                { label: 'Edge Services', value: usageAvailable ? Math.max(0, Math.min(100, edgeRequests ? Math.round((edgeRequests ?? 0) / 3000) : 0)) : 0 },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <span className="font-semibold text-slate-800">{item.label}</span>
+                    <span className="font-bold text-slate-950">{item.value ? `${item.value}%` : telemetryStatusLabel}</span>
+                  </div>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                    <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${item.value}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard title="Schedule Controls" subtitle="Configure protected standby start and restore times." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Schedules</Pill>}>
+          {renderScheduleForm('compact')}
+        </SectionCard>
+      </section>
+    )
+  }
+
+  function renderSchedules() {
+    return (
+      <SectionCard title="Schedule Manager" subtitle="Configure protected standby start and restore times." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Schedules</Pill>}>
+        {renderScheduleForm('full')}
+      </SectionCard>
+    )
+  }
+
+  function renderAuditEvents() {
+    return (
+      <section className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
+        <SectionCard title="Audit & Runtime Events" subtitle="Searchable timeline with grouped repeated events." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Timeline</Pill>}>
+          <div className="grid gap-3 lg:grid-cols-[1fr_.7fr]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input value={eventSearch} onChange={(event) => setEventSearch(event.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-blue-300 focus:bg-white" placeholder="Search events by message, actor, route, or module" />
+            </div>
+            <select value={eventTypeFilter} onChange={(event) => setEventTypeFilter(event.target.value as typeof eventTypeFilter)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none">
+              <option value="all">All event types</option>
+              <option value="shutdown">Shutdown</option>
+              <option value="restore">Restore</option>
+              <option value="schedule">Schedule</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div className="mt-5 space-y-4">
+            {groupedEventsFiltered.length ? groupedEventsFiltered.slice(0, 12).map((event) => <TimelineItem key={event.id} event={event} />) : (
+              <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">No runtime events match the current search.</div>
+            )}
+          </div>
+        </SectionCard>
+        <SectionCard title="Event Summary" subtitle="Grouped repeated events and timeline counts." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Summary</Pill>}>
+          <div className="space-y-3">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Grouped events reduce repeated shutdown and restore spikes into a single executive timeline row.</div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Search filters match event type, actor, route, module, and message text.</div>
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-sm text-slate-500">{groupedEventsFiltered.length ? `${groupedEventsFiltered.length} grouped events visible.` : 'No events match the current filter set.'}</div>
+          </div>
+        </SectionCard>
+      </section>
+    )
+  }
+
+  function renderSettings() {
+    return (
+      <section className="grid gap-4 xl:grid-cols-[1fr_.95fr]">
+        <SectionCard title="Security Configuration" subtitle="Access policy and refresh governance stay server-side protected." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Security</Pill>}>
+          <div className="grid gap-3 text-sm text-slate-600">
+            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <ShieldCheck className="mt-0.5 h-5 w-5 text-emerald-600" />
+              <div>
+                <div className="font-semibold text-slate-950">CEO/admin authorization enforced</div>
+                <div className="mt-1 leading-6">Every system-control page and API keeps server-side authorization checks in place.</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <RefreshCw className="mt-0.5 h-5 w-5 text-blue-600" />
+              <div>
+                <div className="font-semibold text-slate-950">Refresh governance</div>
+                <div className="mt-1 leading-6">Auto refresh respects the existing safe refresh interval and does not use aggressive polling loops.</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <ShieldAlert className="mt-0.5 h-5 w-5 text-rose-600" />
+              <div>
+                <div className="font-semibold text-slate-950">Secrets remain server-side</div>
+                <div className="mt-1 leading-6">No Vercel token, Supabase service role, or other private env values are exposed to the client.</div>
+              </div>
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard title="Telemetry Configuration" subtitle="Local vs production notes." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Telemetry</Pill>}>
+          <div className="space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="font-semibold text-slate-950">Telemetry status</div>
+              <div className="mt-1 leading-6">{telemetryStatusLabel}</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="font-semibold text-slate-950">Local / prod note</div>
+              <div className="mt-1 leading-6">This page preserves honest empty states and does not fabricate usage, route, or risk metrics.</div>
+            </div>
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-sm text-slate-500">Settings are informational only. No hidden toggles or unsafe control changes live here.</div>
+          </div>
+        </SectionCard>
+      </section>
+    )
+  }
+
+  function renderWorkspace() {
+    switch (activeWorkspace) {
+      case 'telemetry':
+        return renderTelemetry()
+      case 'route-pressure':
+        return renderRoutePressure()
+      case 'module-control':
+        return (
+          <div className="space-y-5">
+            <VoiceTerminalRuntimeControl />
+            renderModuleControl()
+          </div>
+        )
+      case 'shutdown-center':
+        return renderShutdownCenter()
+      case 'runtime-policy-studio':
+        return <RuntimePolicyStudioWorkspace />
+      case 'app-scan-center':
+        return <AppScanCenterWorkspace />
+      case 'schedules':
+        return renderSchedules()
+      case 'audit-events':
+        return renderAuditEvents()
+      case 'settings':
+        return renderSettings()
+      case 'overview':
+      default:
+        return renderOverview()
+    }
+  }
+
+  const commandEntries = commandResultsToEntries()
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,.10),_transparent_28%),linear-gradient(180deg,_#f8fbff_0%,_#eef4fb_100%)] text-slate-900">
-      <div className="mx-auto grid min-h-screen w-full max-w-[1800px] gap-6 px-4 py-4 lg:grid-cols-[300px_minmax(0,1fr)] lg:px-6">
+      <div className="grid min-h-screen w-full max-w-none gap-6 px-4 py-4 lg:grid-cols-[300px_minmax(0,1fr)] lg:px-6">
         <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,.06)] lg:flex lg:flex-col">
           <div className="border-b border-slate-200 px-6 py-6">
             <div className="flex items-center gap-3">
@@ -1201,13 +1711,14 @@ export default function CEOSystemControlTower({
 
           <nav className="flex-1 px-4 py-5">
             <div className="space-y-2">
-              {SIDEBAR_ITEMS.map((item) => {
+              {WORKSPACES.map((item) => {
                 const Icon = item.icon
                 const active = activeWorkspace === item.workspace
                 return (
                   <Link
                     key={item.label}
                     href={item.href}
+                    onClick={() => setActiveWorkspace(item.workspace)}
                     className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
                       active
                         ? 'border-blue-200 bg-blue-50 text-blue-700'
@@ -1244,92 +1755,125 @@ export default function CEOSystemControlTower({
         </aside>
 
         <div className="flex min-w-0 flex-col gap-6">
-          <section id="overview" className="rounded-[2rem] border border-slate-200 bg-white px-5 py-5 shadow-[0_18px_42px_rgba(15,23,42,.06)] lg:px-6">
-            <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-              <div className="min-w-0">
+          <section className="rounded-[2rem] border border-slate-200 bg-white px-5 py-5 shadow-[0_18px_42px_rgba(15,23,42,.06)] lg:px-6">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Pill className={modeTone.className}>{modeTone.label}</Pill>
+                    <Pill className="border-slate-200 bg-slate-50 text-slate-700">CEO System Control / {workspaceMeta.label}</Pill>
+                  </div>
+                  <h1 className="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-950 sm:text-4xl">CEO System Control Tower</h1>
+                  <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-600 sm:text-[15px]">
+                    Real-time system control, cost protection, and operational command center.
+                  </p>
+                </div>
+
                 <div className="flex flex-wrap items-center gap-3">
-                  <Pill className={modeTone.className}>{modeTone.label}</Pill>
-                  <Pill className="border-emerald-200 bg-emerald-50 text-emerald-700">PRODUCTION LIVE</Pill>
-                  <Pill className="border-slate-200 bg-slate-50 text-slate-700">{state.timezone || 'Africa/Casablanca'}</Pill>
-                </div>
-                <div className="mt-4 flex items-end gap-3">
-                  <h1 className="text-3xl font-black tracking-[-0.05em] text-slate-950 sm:text-4xl">CEO System Control Tower</h1>
-                </div>
-                <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-600 sm:text-[15px]">
-                  Real-time system control, cost protection & operational command center.
-                </p>
-                <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
-                    <Clock3 className="h-4 w-4 text-blue-600" />
-                    {clockText}
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
-                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                    Authenticated CEO / admin access only
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
-                    <CheckCircle2 className="h-4 w-4 text-cyan-600" />
-                    {telemetryStatusLabel}
-                  </span>
-                  <Pill className={telemetrySourceBadge.className}>{telemetrySourceBadge.label}</Pill>
+                  <button
+                    type="button"
+                    onClick={() => void refreshAll(true)}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyAction === 'shutdown'}
+                    onClick={() => void runAction('/api/system-control/shutdown', {
+                      command: 'shutdown_now',
+                      reason: scheduleReason || state.reason || 'Protected standby mode enabled.',
+                      resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
+                      timezone: scheduleTimezone,
+                    }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(239,68,68,.22)] transition hover:opacity-95 disabled:opacity-60"
+                  >
+                    <ArrowDownToLine className="h-4 w-4" />
+                    Shutdown Now
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyAction === 'restore'}
+                    onClick={() => void runAction('/api/system-control/restore', {
+                      command: 'restore_now',
+                      reason: scheduleReason || null,
+                      timezone: scheduleTimezone,
+                    }, 'restore', RESTORE_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(37,99,235,.18)] transition hover:opacity-95 disabled:opacity-60"
+                  >
+                    <ArrowUpFromLine className="h-4 w-4" />
+                    Restore System
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyAction === 'shutdown'}
+                    onClick={() => void runAction('/api/system-control/shutdown', {
+                      command: 'emergency_lock',
+                      reason: scheduleReason || 'Emergency lock',
+                      resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
+                      timezone: scheduleTimezone,
+                    }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-slate-950 to-slate-800 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(15,23,42,.18)] transition hover:opacity-95 disabled:opacity-60"
+                  >
+                    <Lock className="h-4 w-4" />
+                    Emergency Lock
+                  </button>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => void refreshAll(true)}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-                >
-                  <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                  Refresh
-                </button>
-                <button
-                  type="button"
-                  disabled={busyAction === 'shutdown'}
-                  onClick={() => void runAction('/api/system-control/shutdown', {
-                    command: 'shutdown_now',
-                    reason: scheduleReason || state.reason || 'Protected standby mode enabled.',
-                    resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
-                    timezone: scheduleTimezone,
-                  }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(239,68,68,.22)] transition hover:opacity-95 disabled:opacity-60"
-                >
-                  <ArrowDownToLine className="h-4 w-4" />
-                  Shutdown Now
-                </button>
-                <button
-                  type="button"
-                  disabled={busyAction === 'restore'}
-                  onClick={() => void runAction('/api/system-control/restore', {
-                    command: 'restore_now',
-                    reason: scheduleReason || null,
-                    timezone: scheduleTimezone,
-                  }, 'restore', RESTORE_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(37,99,235,.18)] transition hover:opacity-95 disabled:opacity-60"
-                >
-                  <ArrowUpFromLine className="h-4 w-4" />
-                  Restore System
-                </button>
-                <button
-                  type="button"
-                  disabled={busyAction === 'shutdown'}
-                  onClick={() => void runAction('/api/system-control/shutdown', {
-                    command: 'emergency_lock',
-                    reason: scheduleReason || 'Emergency lock',
-                    resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
-                    timezone: scheduleTimezone,
-                  }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-slate-950 to-slate-800 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_30px_rgba(15,23,42,.18)] transition hover:opacity-95 disabled:opacity-60"
-                >
-                  <Lock className="h-4 w-4" />
-                  Emergency Lock
-                </button>
-                <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
-                  <Bell className="h-4 w-4 text-slate-500" />
-                  <HelpCircle className="h-4 w-4 text-slate-500" />
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">{(operatorName || 'CEO').slice(0, 2).toUpperCase()}</div>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="relative w-full max-w-xl">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input
+                    value={commandQuery}
+                    onFocus={() => setCommandOpen(true)}
+                    onBlur={() => window.setTimeout(() => setCommandOpen(false), 160)}
+                    onChange={(event) => {
+                      setCommandQuery(event.target.value)
+                      setCommandOpen(Boolean(event.target.value.trim()))
+                    }}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-blue-300 focus:bg-white"
+                    placeholder="Jump to workspace or action"
+                  />
+                  {commandOpen && commandEntries.length > 0 && (
+                    <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,.14)]">
+                      {commandEntries.map((entry) => (
+                        <button key={`${entry.workspace}-${entry.label}`} type="button" onClick={() => navigateWorkspace(entry.workspace)} className="flex w-full items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 text-left text-sm last:border-0 hover:bg-slate-50">
+                          <div>
+                            <div className="font-semibold text-slate-950">{entry.label}</div>
+                            <div className="text-xs text-slate-500">{entry.description}</div>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-slate-400" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
+                <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 text-xs font-semibold lg:hidden">
+                  <select
+                    value={activeWorkspace}
+                    onChange={(event) => navigateWorkspace(event.target.value as WorkspaceKey)}
+                    className="w-full rounded-xl border border-transparent bg-white px-3 py-2 text-sm outline-none"
+                  >
+                    {WORKSPACES.map((item) => (
+                      <option key={item.workspace} value={item.workspace}>{item.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
+                  <ShieldCheck className="h-4 w-4 text-cyan-600" />
+                  {telemetryStatusLabel}
+                </span>
+                <Pill className={telemetrySourceBadge.className}>{telemetrySourceBadge.label}</Pill>
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
+                  <HelpCircle className="h-4 w-4 text-slate-500" />
+                  {state.timezone || 'Africa/Casablanca'}
+                </span>
               </div>
             </div>
 
@@ -1340,443 +1884,38 @@ export default function CEOSystemControlTower({
             )}
           </section>
 
-          <section id="consumption" className="grid gap-4 xl:grid-cols-3">
-            <StatCard
-              icon={<Cpu className="h-5 w-5" />}
-              label="Active CPU"
-              value={formatPercent(activeCpu)}
-              trend={hourlyPoints.length ? hourlyTrend : telemetryStatusLabel}
-              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
-              tone="blue"
-              sparkline={activeData.cpu}
-            />
-            <StatCard
-              icon={<Zap className="h-5 w-5" />}
-              label="Function Invocations"
-              value={formatCompact(invocations)}
-              trend={dailyPoints.length ? invTrend : telemetryStatusLabel}
-              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
-              tone="green"
-              sparkline={activeData.invocations}
-            />
-            <StatCard
-              icon={<SignalHigh className="h-5 w-5" />}
-              label="Edge Requests"
-              value={formatCompact(edgeRequests)}
-              trend={routePoints.length ? edgeTrend : telemetryStatusLabel}
-              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
-              tone="orange"
-              sparkline={activeData.edge}
-            />
-            <StatCard
-              icon={<Cloud className="h-5 w-5" />}
-              label="Data Transfer"
-              value={formatBandwidth(bandwidth)}
-              trend={activeData.bandwidth.length ? bandwidthTrend : telemetryStatusLabel}
-              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
-              tone="blue"
-              sparkline={activeData.bandwidth}
-            />
-            <StatCard
-              icon={<AlertCircle className="h-5 w-5" />}
-              label="Error Rate"
-              value={formatPercent(errorRate)}
-              trend={activeData.error.length ? errorTrend : telemetryStatusLabel}
-              helper={usage?.connected.internal ? 'Internal snapshot' : telemetryStatusLabel}
-              tone="rose"
-              sparkline={activeData.error}
-            />
-            <StatCard
-              icon={<Wallet className="h-5 w-5" />}
-              label="Cost Pressure"
-              value={formatCompact(costPressure)}
-              trend={activeData.cost.length ? costTrend : telemetryStatusLabel}
-              helper={usage?.vercel.status === 'connected' ? 'Vercel billing source available' : 'Estimated cost is 0 MAD without an external billing source'}
-              tone="orange"
-              sparkline={activeData.cost}
-            />
-          </section>
-
-          <section id="consumption-analytics" className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
-            <Panel
-              title="Hourly Consumption"
-              subtitle="Requests and cost curve over the latest internal snapshot window."
-              badge={<SectionBadge><Activity className="h-3.5 w-3.5" /> Hourly</SectionBadge>}
-            >
-              <MiniChart
-                points={usageAvailable ? seriesValues(usage?.charts.hourly || []) : []}
-                title="Requests + Cost"
-                subtitle="Last 24 internal points"
-                emptyLabel={getTelemetryEmptyCopy(usage, 'snapshot')}
-                color="blue"
-              />
-            </Panel>
-            <Panel
-              title="Daily Consumption"
-              subtitle="Stacked snapshot bars for daily request and cost accumulation."
-              badge={<SectionBadge><CalendarClock className="h-3.5 w-3.5" /> Daily</SectionBadge>}
-            >
-              <StackedBars
-                points={usageAvailable ? usage?.charts.daily || [] : []}
-                emptyLabel={usageAvailable ? 'Daily telemetry has no records yet.' : getTelemetryEmptyCopy(usage, 'snapshot')}
-              />
-            </Panel>
-            <Panel
-              title="Module Pressure Index"
-              subtitle="Pressure is derived from disabled module state and snapshot telemetry."
-              badge={<SectionBadge><ShieldCheck className="h-3.5 w-3.5" /> Modules</SectionBadge>}
-            >
-              <HorizontalPressureBars
-                rows={usageAvailable ? usage?.charts.modulePressure || [] : []}
-                emptyLabel={getTelemetryEmptyCopy(usage, 'module')}
-              />
-            </Panel>
-            <Panel
-              title="Route Traffic & Latency Trend"
-              subtitle="Traffic is plotted from route pressure; latency remains hidden until telemetry connects."
-              badge={<SectionBadge><Route className="h-3.5 w-3.5" /> Routes</SectionBadge>}
-            >
-              {usageAvailable && routeTableRows.length ? (
-                <MiniLineChart points={routePoints} color="green" />
-              ) : (
-                <div className="flex min-h-[240px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">
-                  {getTelemetryEmptyCopy(usage, 'route')}
-                </div>
-              )}
-            </Panel>
-          </section>
-
-          <section id="modules" className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,.06)]">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <div className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">Module Control Grid</div>
-                <div className="mt-1 text-sm leading-6 text-slate-500">Live status of all core modules. Button controls stay safely disconnected until a module-level API exists.</div>
-              </div>
-                <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 text-xs font-semibold">
-                <button type="button" onClick={() => setSectionMode('manual')} className={`rounded-xl px-3 py-2 ${sectionMode === 'manual' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600'}`}>
-                  Manual
-                </button>
-                <button type="button" onClick={() => setSectionMode('scheduled')} className={`rounded-xl px-3 py-2 ${sectionMode === 'scheduled' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600'}`}>
-                  Scheduled
-                </button>
-              </div>
-              <div className="mt-2 text-xs text-slate-500">View mode only. These tabs only change the draft layout.</div>
-            </div>
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {MODULES.map((module) => {
+          <div className="sticky top-4 z-20 hidden rounded-[1.5rem] border border-slate-200 bg-white/92 p-2 shadow-[0_14px_34px_rgba(15,23,42,.06)] backdrop-blur lg:block">
+            <div className="flex items-center gap-2 overflow-x-auto">
+              {WORKSPACES.map((item) => {
+                const Icon = item.icon
+                const active = activeWorkspace === item.workspace
                 return (
-                  <ModuleCard
-                    key={module.key}
-                    module={module}
-                    details={getModuleDetails(module.key)}
-                    pressure={makeModulePressure(module.key)}
-                    autoRefreshOn={shouldStartAutoRefresh()}
-                    onUnavailable={handleModuleUnavailable}
-                    telemetryStatus={telemetryStatusLabel}
-                  />
+                  <button
+                    key={item.workspace}
+                    type="button"
+                    onClick={() => navigateWorkspace(item.workspace)}
+                    className={`inline-flex shrink-0 items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+                      active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </button>
                 )
               })}
             </div>
-          </section>
+          </div>
 
-          <section id="command-center" className="grid gap-4 xl:grid-cols-[1.2fr_.9fr]">
-            <Panel
-              title="Shutdown / Restore Command Center"
-              subtitle="Protected workflows, subsystem health bars, and scheduled standby controls."
-              badge={<SectionBadge><ShieldAlert className="h-3.5 w-3.5" /> Control</SectionBadge>}
-            >
-              <div className="grid gap-5 xl:grid-cols-[1.3fr_.9fr]">
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between gap-3 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-3">
-                    <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => setSectionMode('manual')} className={`rounded-xl px-4 py-2 text-sm font-semibold ${sectionMode === 'manual' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}>
-                        Manual
-                      </button>
-                      <button type="button" onClick={() => setSectionMode('scheduled')} className={`rounded-xl px-4 py-2 text-sm font-semibold ${sectionMode === 'scheduled' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}>
-                        Scheduled
-                      </button>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Overall progress</div>
-                      <div className="text-2xl font-black text-slate-950">{Math.round(workflowPercent)}%</div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-semibold text-slate-950">Workflow progress</div>
-                        <div className="text-xs text-slate-500">{workflowLabel}</div>
-                      </div>
-                      <Pill className="border-blue-200 bg-blue-50 text-blue-700">{busyAction ? `${busyAction.toUpperCase()} IN PROGRESS` : 'READY'}</Pill>
-                    </div>
-                    <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-300" style={{ width: `${Math.max(0, Math.min(100, workflowPercent))}%` }} />
-                    </div>
-                    <div className="mt-4 grid gap-3 lg:grid-cols-2">
-                      <div>
-                        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Shutdown workflow</div>
-                        <WorkflowList steps={SHUTDOWN_WORKFLOW} activePercent={workflowPercent} />
-                      </div>
-                      <div>
-                        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Restore workflow</div>
-                        <WorkflowList steps={RESTORE_WORKFLOW} activePercent={workflowPercent} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {[
-                      { label: 'Compute Services', value: usageAvailable ? Math.max(0, Math.min(100, Math.round(activeCpu ?? 0))) : 0 },
-                      { label: 'API Gateway', value: usageAvailable ? Math.max(0, Math.min(100, routePoints[0] ? Math.round(routePoints[0] / 200) : 0)) : 0 },
-                      { label: 'Database Cluster', value: usageAvailable ? Math.max(0, Math.min(100, invocations ? Math.round((invocations ?? 0) / 2500) : 0)) : 0 },
-                      { label: 'Background Jobs', value: usageAvailable ? Math.max(0, Math.min(100, modulePressureMap.get('background_sync') ?? 0)) : 0 },
-                      { label: 'Edge Services', value: usageAvailable ? Math.max(0, Math.min(100, edgeRequests ? Math.round((edgeRequests ?? 0) / 3000) : 0)) : 0 },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
-                      <div className="flex items-center justify-between gap-3 text-sm">
-                          <span className="font-semibold text-slate-800">{item.label}</span>
-                          <span className="font-bold text-slate-950">{item.value ? `${item.value}%` : telemetryStatusLabel}</span>
-                        </div>
-                        <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-                          <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${item.value}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">Scheduled Standby</div>
-                    <div className="mt-3 space-y-3 text-sm text-slate-700">
-                      <div className="flex items-center justify-between gap-3"><span>Shutdown at</span><span className="font-semibold text-slate-950">22:00</span></div>
-                      <div className="flex items-center justify-between gap-3"><span>Restore at</span><span className="font-semibold text-slate-950">08:00</span></div>
-                      <div className="flex items-center justify-between gap-3"><span>Timezone</span><span className="font-semibold text-slate-950">Africa/Casablanca</span></div>
-                      <div className="flex items-center justify-between gap-3"><span>Status</span><Pill className={scheduleEnabled ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-slate-100 text-slate-600'}>{scheduleStatus}</Pill></div>
-                    </div>
-                    <button type="button" onClick={() => document.getElementById('schedules')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} title="Jump to the schedule draft section" className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-blue-200 bg-white px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-50">
-                      Manage schedule
-                    </button>
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <button
-                      type="button"
-                      disabled={busyAction === 'shutdown'}
-                      onClick={() => void runAction('/api/system-control/shutdown', {
-                        command: 'shutdown_now',
-                        reason: scheduleReason || state.reason || 'Protected standby mode enabled.',
-                        resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
-                        timezone: scheduleTimezone,
-                      }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
-                      className="inline-flex items-center justify-between rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700 transition hover:bg-rose-100 disabled:opacity-60"
-                    >
-                      <span className="inline-flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Execute Shutdown Now</span>
-                      <span>CEO only</span>
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busyAction === 'restore'}
-                      onClick={() => void runAction('/api/system-control/restore', {
-                        command: 'restore_now',
-                        reason: scheduleReason || null,
-                        timezone: scheduleTimezone,
-                      }, 'restore', RESTORE_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
-                      className="inline-flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-60"
-                    >
-                      <span className="inline-flex items-center gap-2"><PlayCircle className="h-4 w-4" /> Restore System Now</span>
-                      <span>Normal mode</span>
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busyAction === 'shutdown'}
-                      onClick={() => void runAction('/api/system-control/shutdown', {
-                        command: 'emergency_lock',
-                        reason: scheduleReason || 'Emergency lock',
-                        resumeAt: scheduleEnabled ? (scheduleResumeAt || null) : null,
-                        timezone: scheduleTimezone,
-                      }, 'shutdown', SHUTDOWN_WORKFLOW.map((step) => ({ percent: step.percent, key: step.label, label: step.label, detail: step.label })))}
-                      className="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60"
-                    >
-                      <span className="inline-flex items-center gap-2"><Lock className="h-4 w-4" /> Emergency Lock</span>
-                      <span>Freeze access</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Panel>
-
-            <Panel
-              title="Schedule Manager"
-              subtitle="Configure protected standby start and restore times."
-              badge={<SectionBadge><CalendarClock className="h-3.5 w-3.5" /> Schedules</SectionBadge>}
-              id="schedules"
-            >
-              <div className="grid gap-4">
-                <div className="flex items-center gap-2 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-2 text-sm font-semibold">
-                  <button type="button" onClick={() => setScheduleEnabled(true)} className={`rounded-xl px-4 py-2 ${scheduleEnabled ? 'bg-blue-600 text-white' : 'text-slate-600'}`}>Enable</button>
-                  <button type="button" onClick={() => setScheduleEnabled(false)} className={`rounded-xl px-4 py-2 ${!scheduleEnabled ? 'bg-blue-600 text-white' : 'text-slate-600'}`}>Disable</button>
-                </div>
-                <div className="text-xs text-slate-500">Schedule inputs are draft-only until Save Schedule runs successfully.</div>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Shutdown time</span>
-                    <input
-                      type="time"
-                      value={scheduleShutdownAt ? scheduleShutdownAt.slice(11, 16) : '22:00'}
-                      onChange={(event) => {
-                        setScheduleShutdownAt(`1970-01-01T${event.target.value}:00`)
-                        setScheduleTouched(true)
-                      }}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Restore time</span>
-                    <input
-                      type="time"
-                      value={scheduleResumeAt ? scheduleResumeAt.slice(11, 16) : '08:00'}
-                      onChange={(event) => {
-                        setScheduleResumeAt(`1970-01-01T${event.target.value}:00`)
-                        setScheduleTouched(true)
-                      }}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Timezone</span>
-                    <input
-                      value={scheduleTimezone}
-                      onChange={(event) => {
-                        setScheduleTimezone(event.target.value)
-                        setScheduleTouched(true)
-                      }}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                      placeholder="Africa/Casablanca"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Reason</span>
-                    <input
-                      value={scheduleReason}
-                      onChange={(event) => {
-                        setScheduleReason(event.target.value)
-                        setScheduleTouched(true)
-                      }}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                      placeholder="Protected standby"
-                    />
-                  </label>
-                </div>
-                <button
-                  type="button"
-                  disabled={busyAction === 'schedule'}
-                  onClick={() => void runAction('/api/system-control/schedule', {
-                    shutdownAt: scheduleEnabled ? (scheduleShutdownAt || '1970-01-01T22:00:00') : null,
-                    resumeAt: scheduleEnabled ? (scheduleResumeAt || '1970-01-01T08:00:00') : null,
-                    timezone: scheduleTimezone || 'Africa/Casablanca',
-                    reason: scheduleReason || null,
-                    enabledCoreRoutes: state.enabledCoreRoutes,
-                    disabledModules: state.disabledModules,
-                  }, 'schedule', [
-                    { percent: 0, key: 'validate', label: 'Validate schedule', detail: 'Validate CEO schedule inputs.' },
-                    { percent: 40, key: 'persist', label: 'Persist schedule', detail: 'Write schedule settings to runtime control.' },
-                    { percent: 70, key: 'audit', label: 'Write audit event', detail: 'Persist the schedule update event.' },
-                    { percent: 100, key: 'done', label: 'Schedule saved', detail: 'Schedule updated successfully.' },
-                  ])}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:opacity-60"
-                >
-                  <CalendarClock className="h-4 w-4" />
-                  Save Schedule
-                </button>
-              </div>
-            </Panel>
-          </section>
-
-          <section id="routes" className="grid gap-4 xl:grid-cols-[1.3fr_.9fr]">
-            <Panel
-              title="Top Expensive Routes / Route Pressure"
-              subtitle="Pressure is pulled from the usage API when available; latency and error rate remain hidden until telemetry is connected."
-              badge={<SectionBadge><Route className="h-3.5 w-3.5" /> Route Pressure</SectionBadge>}
-            >
-              <PressureTable rows={routeTableRows} emptyLabel={getTelemetryEmptyCopy(usage, 'route')} />
-            </Panel>
-
-            <Panel
-              title="Audit & Runtime Events"
-              subtitle="Events are loaded from the runtime events API and rendered as an executive timeline."
-              badge={<SectionBadge><ShieldCheck className="h-3.5 w-3.5" /> Events</SectionBadge>}
-              id="events"
-            >
-              <div className="space-y-4">
-                {groupedEvents.length ? groupedEvents.slice(0, 8).map((event) => <TimelineItem key={event.id} event={event} />) : (
-                  <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-sm text-slate-500">No runtime events yet.</div>
-                )}
-              </div>
-            </Panel>
-          </section>
-
-          <section className="grid gap-4 xl:grid-cols-[1fr_.95fr]" id="settings">
-            <Panel
-              title="Offline Notice Preview"
-              subtitle="Preview only. This mirrors the public standby notice without exposing the live route."
-              badge={<SectionBadge><AlertCircle className="h-3.5 w-3.5" /> Preview</SectionBadge>}
-            >
-              <div className="rounded-[1.75rem] border border-blue-200 bg-[linear-gradient(180deg,_#f8fbff_0%,_#eef6ff_100%)] p-5">
-                <div className="inline-flex items-center rounded-full border border-blue-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-700">
-                  ANGELCARE System Standby Mode
-                </div>
-                <div className="mt-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Protected standby preview</div>
-                <div className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
-                  System will resume at 08:00 except for authorized users.
-                </div>
-                <div className="mt-5 rounded-[1.35rem] border border-blue-100 bg-white p-4 text-sm text-slate-600">
-                  This preview is shown only to the CEO control tower. It mirrors the protected standby message without changing the public route.
-                </div>
-              </div>
-            </Panel>
-
-            <Panel
-              title="Settings"
-              subtitle="Access policy and refresh governance are server-side protected."
-              badge={<SectionBadge><Settings2 className="h-3.5 w-3.5" /> Security</SectionBadge>}
-            >
-              <div className="grid gap-3 text-sm text-slate-600">
-                <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <ShieldCheck className="mt-0.5 h-5 w-5 text-emerald-600" />
-                  <div>
-                    <div className="font-semibold text-slate-950">CEO/admin authorization enforced</div>
-                    <div className="mt-1 leading-6">Every system-control page and API keeps server-side authorization checks in place.</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <RefreshCw className="mt-0.5 h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="font-semibold text-slate-950">Refresh governance</div>
-                    <div className="mt-1 leading-6">Auto refresh respects the existing safe refresh interval and does not use aggressive polling loops.</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <ShieldAlert className="mt-0.5 h-5 w-5 text-rose-600" />
-                  <div>
-                    <div className="font-semibold text-slate-950">Secrets remain server-side</div>
-                    <div className="mt-1 leading-6">No Vercel token, Supabase service role, or other private env values are exposed to the client.</div>
-                  </div>
-                </div>
-              </div>
-            </Panel>
-          </section>
-
-          <RuntimePolicyStudioWorkspace />
-
-          <AppScanCenterWorkspace />
+          <div className="hidden lg:flex">
+                        <div className="w-full max-w-none min-w-0">{renderWorkspace()}</div>
+          </div>
 
           <footer className="pb-4 text-xs text-slate-500">
             <span className="font-semibold text-slate-700">ANGELCARE CEO System Control Tower</span> • runtime state is refreshed safely, privileged routes remain protected, and module controls stay disconnected until supported APIs exist.
           </footer>
         </div>
       </div>
+      <ActionProgressPanel progress={actionProgress.progress} onClose={actionProgress.closeProgress} />
     </main>
   )
 }
