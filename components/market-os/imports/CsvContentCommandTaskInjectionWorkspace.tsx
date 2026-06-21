@@ -46,9 +46,9 @@ export function CsvContentCommandTaskInjectionWorkspace() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-white shadow-2xl">
+        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-slate-950 shadow-2xl">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
             Market OS / CSV Phase 6
           </p>
@@ -57,7 +57,7 @@ export function CsvContentCommandTaskInjectionWorkspace() {
             Real Content Command Task Injection
           </h1>
 
-          <p className="mt-5 max-w-4xl text-sm font-semibold leading-7 text-slate-300">
+          <p className="mt-5 max-w-4xl text-sm font-semibold leading-7 text-slate-600">
             Upload a validated tasks CSV and inject rows directly into the real Content Command task store.
             Imported tasks are persisted through the same localStorage keys and store logic used by your live dashboard.
           </p>
@@ -71,21 +71,21 @@ export function CsvContentCommandTaskInjectionWorkspace() {
             <button
               onClick={injectTasks}
               disabled={errors.length > 0 || rows.length === 0}
-              className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white disabled:opacity-40"
+              className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-40"
             >
               Inject Into Real Task Store
             </button>
 
             <Link
               href="/market-os/content-command-center/tasks"
-              className="rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-white"
+              className="rounded-2xl border border-slate-200 bg-white/10 px-5 py-3 text-sm font-black text-slate-950"
             >
               Open Task Board
             </Link>
 
             <Link
               href="/market-os/content-command-center"
-              className="rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-white"
+              className="rounded-2xl border border-slate-200 bg-white/10 px-5 py-3 text-sm font-black text-slate-950"
             >
               Open Dashboard
             </Link>
@@ -126,7 +126,7 @@ export function CsvContentCommandTaskInjectionWorkspace() {
           <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-6">
               <h2 className="text-2xl font-black text-slate-950">CSV Preview</h2>
-              <p className="mt-2 text-sm font-semibold text-slate-500">
+              <p className="mt-2 text-sm font-semibold text-slate-9500">
                 {fileName || "No file uploaded."}
               </p>
             </div>
@@ -136,14 +136,14 @@ export function CsvContentCommandTaskInjectionWorkspace() {
                 {previewTasks.map((task, index) => (
                   <article key={`${task.id}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="text-sm font-black text-slate-950">{task.title}</p>
-                    <p className="mt-2 text-xs font-bold text-slate-500">
+                    <p className="mt-2 text-xs font-bold text-slate-9500">
                       {task.id} · {task.status} · {task.owner} · {task.priority} · {task.due_date}
                     </p>
                   </article>
                 ))}
 
                 {previewTasks.length === 0 ? (
-                  <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-500">
+                  <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-9500">
                     Upload a CSV file to preview tasks.
                   </p>
                 ) : null}
@@ -154,7 +154,7 @@ export function CsvContentCommandTaskInjectionWorkspace() {
           <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-6">
               <h2 className="text-2xl font-black text-slate-950">Real Content Command Tasks</h2>
-              <p className="mt-2 text-sm font-semibold text-slate-500">
+              <p className="mt-2 text-sm font-semibold text-slate-9500">
                 Current tasks loaded from the actual Content Command store.
               </p>
             </div>
@@ -165,11 +165,11 @@ export function CsvContentCommandTaskInjectionWorkspace() {
                   <article key={task.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <p className="text-sm font-black text-slate-950">{task.title}</p>
-                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black uppercase text-white">
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-slate-950">
                         {task.status}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs font-bold text-slate-500">
+                    <p className="mt-2 text-xs font-bold text-slate-9500">
                       {task.id} · {task.owner} · {task.priority} · Due: {task.dueDate}
                     </p>
                   </article>
@@ -196,7 +196,7 @@ export function CsvContentCommandTaskInjectionWorkspace() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</p>
       <p className="mt-3 truncate text-2xl font-black text-slate-950">{value}</p>
     </div>
   )

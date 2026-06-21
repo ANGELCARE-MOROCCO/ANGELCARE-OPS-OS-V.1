@@ -73,7 +73,7 @@ export default function ProductionValidationPanel() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-950">Production Validation</h1>
-              <p className="text-sm text-slate-500">{status}</p>
+              <p className="text-sm text-slate-9500">{status}</p>
             </div>
           </div>
           <button onClick={load} className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold hover:bg-slate-50">
@@ -84,24 +84,24 @@ export default function ProductionValidationPanel() {
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <div className="text-4xl font-black text-slate-950">{score?.score ?? 0}%</div>
-            <div className="text-xs font-black uppercase text-slate-400">Readiness score</div>
+            <div className="text-xs font-black uppercase text-slate-500">Readiness score</div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <div className="text-4xl font-black text-slate-950">{sessions.length}</div>
-            <div className="text-xs font-black uppercase text-slate-400">QA sessions</div>
+            <div className="text-xs font-black uppercase text-slate-500">QA sessions</div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <div className="text-4xl font-black text-slate-950">{results.length}</div>
-            <div className="text-xs font-black uppercase text-slate-400">Test results</div>
+            <div className="text-xs font-black uppercase text-slate-500">Test results</div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <div className="text-lg font-black text-slate-950">{score?.status || "checking"}</div>
-            <div className="text-xs font-black uppercase text-slate-400">Status</div>
+            <div className="text-xs font-black uppercase text-slate-500">Status</div>
           </div>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          <button onClick={createSession} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-slate-950 px-4 text-sm font-black text-white">
+          <button onClick={createSession} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-white px-4 text-sm font-black text-slate-950">
             <Play className="h-4 w-4" /> New QA Session
           </button>
           <button onClick={seedManifest} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-slate-200 px-4 text-sm font-black hover:bg-slate-50">
@@ -122,7 +122,7 @@ export default function ProductionValidationPanel() {
                 <div className="font-black text-slate-950">{check.key}</div>
                 <div className={check.ok ? "text-emerald-700" : "text-rose-700"}>{check.ok ? "OK" : "Missing"}</div>
               </div>
-              <div className="mt-1 text-xs font-bold uppercase text-slate-400">Weight {check.weight}</div>
+              <div className="mt-1 text-xs font-bold uppercase text-slate-500">Weight {check.weight}</div>
             </div>
           ))}
         </div>

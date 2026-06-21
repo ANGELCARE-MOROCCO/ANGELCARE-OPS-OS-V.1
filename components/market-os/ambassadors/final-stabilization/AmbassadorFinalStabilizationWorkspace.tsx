@@ -18,9 +18,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -58,7 +58,7 @@ export default function AmbassadorFinalStabilizationWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{check.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{check.area} · {check.priority}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{check.area} · {check.priority}</p>
                   </div>
                   <Badge tone={check.status === 'passed' ? 'success' : check.status === 'failed' ? 'danger' : check.status === 'warning' ? 'warning' : 'info'}>
                     {check.status}
@@ -80,13 +80,13 @@ export default function AmbassadorFinalStabilizationWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{route.label}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{route.group}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{route.group}</p>
                   </div>
                   <Badge tone={route.shouldExposeInSidebar ? 'success' : 'neutral'}>
                     {route.shouldExposeInSidebar ? 'sidebar' : 'hidden'}
                   </Badge>
                 </div>
-                <p className='mt-2 text-xs font-medium text-slate-500'>{route.href}</p>
+                <p className='mt-2 text-xs font-medium text-slate-9500'>{route.href}</p>
               </article>
             ))}
           </div>

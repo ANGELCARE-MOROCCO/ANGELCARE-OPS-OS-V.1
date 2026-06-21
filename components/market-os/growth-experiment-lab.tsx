@@ -18,7 +18,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -50,35 +50,35 @@ export default function GrowthExperimentLab() {
   const highRisk = experiments.filter((e) => e.risk === "high" || e.risk === "critical").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 19
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Growth Experiment & A/B Testing Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer makes marketing scientific: hypotheses, variants, KPI targets,
             confidence, lift, decision rules and scale/stop/iterate actions.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Live Tests</p>
+              <p className="text-xs uppercase text-slate-600">Live Tests</p>
               <p className="mt-2 text-3xl font-black">{liveCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Confidence</p>
+              <p className="text-xs uppercase text-slate-600">Avg Confidence</p>
               <p className="mt-2 text-3xl font-black">{avgConfidence}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Winning Tests</p>
+              <p className="text-xs uppercase text-slate-600">Winning Tests</p>
               <p className="mt-2 text-3xl font-black">{winning}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk</p>
+              <p className="text-xs uppercase text-slate-600">High Risk</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -132,15 +132,15 @@ export default function GrowthExperimentLab() {
                   </div>
 
                   <h2 className="text-xl font-black">{exp.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Campaign: {exp.linkedCampaign} · Owner: {exp.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Current Lift</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Current Lift</p>
                   <p className="mt-1 font-black">{exp.currentLift}%</p>
-                  <p className="text-xs text-slate-500">Target: {exp.targetLift}%</p>
+                  <p className="text-xs text-slate-9500">Target: {exp.targetLift}%</p>
                 </div>
               </div>
 
@@ -153,37 +153,37 @@ export default function GrowthExperimentLab() {
                   <Bar value={exp.confidence} />
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Primary KPI</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Primary KPI</p>
                   <p className="mt-2 text-sm text-slate-700">{exp.primaryKpi}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Decision</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Decision</p>
                   <p className="mt-2 text-sm text-slate-700">{exp.decision}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Hypothesis</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Hypothesis</p>
                   <p className="mt-2 text-sm text-slate-700">{exp.hypothesis}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Variant A</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Variant A</p>
                   <p className="mt-2 text-sm text-slate-700">{exp.variantA}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Variant B</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Variant B</p>
                   <p className="mt-2 text-sm text-slate-700">{exp.variantB}</p>
                 </div>
               </div>
 
               <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                 <p className="mt-2 text-sm text-slate-700">{exp.nextAction}</p>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="experiments" engine="data" actionKey="create_experiment_task" actionLabel="Create Experiment Task" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Create Experiment Task</MarketActionButton>
+                <MarketActionButton moduleKey="experiments" engine="data" actionKey="create_experiment_task" actionLabel="Create Experiment Task" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Create Experiment Task</MarketActionButton>
                 <MarketActionButton moduleKey="experiments" engine="data" actionKey="mark_live" actionLabel="Mark Live" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Mark Live</MarketActionButton>
                 <MarketActionButton moduleKey="experiments" engine="data" actionKey="log_result" actionLabel="Log Result" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Log Result</MarketActionButton>
                 <MarketActionButton moduleKey="experiments" engine="data" actionKey="convert_to_playbook" actionLabel="Convert to Playbook" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Convert to Playbook</MarketActionButton>

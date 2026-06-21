@@ -4961,7 +4961,7 @@ export const APP_ROUTES = [
   {
     "label": "Workspace",
     "shortLabel": "Workspace",
-    "href": "/workspace",
+    "href": "/dashboard",
     "module": "workspace",
     "moduleLabel": "Workspace",
     "permissionKey": "page:/workspace",
@@ -8832,7 +8832,7 @@ export const APP_ROUTE_PERMISSIONS = [
     "label": "Workspace",
     "module": "workspace",
     "moduleLabel": "Workspace",
-    "href": "/workspace"
+    "href": "/dashboard"
   }
 ] as const;
 

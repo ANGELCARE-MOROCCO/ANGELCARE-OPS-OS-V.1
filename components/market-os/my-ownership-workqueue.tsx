@@ -86,34 +86,34 @@ export default function MyOwnershipWorkQueue() {
   const executionItems = enriched.filter(({ owner }) => owner.authority === "execute").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Hardening Pack 15
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Owner Dashboard & Personal Work Queue
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             View every objective assigned by owner, role, authority, responsibility, priority and execution status.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Active Work</p>
+              <p className="text-xs uppercase text-slate-600">Active Work</p>
               <p className="mt-2 text-3xl font-black">{activeItems}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Blocked</p>
+              <p className="text-xs uppercase text-slate-600">Blocked</p>
               <p className="mt-2 text-3xl font-black">{blockedItems}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Approval Authority</p>
+              <p className="text-xs uppercase text-slate-600">Approval Authority</p>
               <p className="mt-2 text-3xl font-black">{approvalItems}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Execution Authority</p>
+              <p className="text-xs uppercase text-slate-600">Execution Authority</p>
               <p className="mt-2 text-3xl font-black">{executionItems}</p>
             </div>
           </div>
@@ -168,30 +168,30 @@ export default function MyOwnershipWorkQueue() {
                   </div>
 
                   <h2 className="text-xl font-black">{objective?.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Owner: {owner.owner_name} · Deadline: {objective?.deadline || "Not set"}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Owner Status</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Owner Status</p>
                   <p className="mt-1 font-black">{owner.status}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Responsibility</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Responsibility</p>
                   <p className="mt-2 text-sm text-slate-700">{owner.responsibility || "No responsibility defined."}</p>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{objective?.next_action || "No next action."}</p>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Authority Meaning</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Authority Meaning</p>
                   <p className="mt-2 text-sm text-slate-700">
                     {owner.authority === "approve" && "Can approve or reject execution."}
                     {owner.authority === "manage" && "Can coordinate execution and owners."}
@@ -205,7 +205,7 @@ export default function MyOwnershipWorkQueue() {
           ))}
 
           {!enriched.length && (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-500">
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-9500">
               No ownership assignments found.
             </div>
           )}

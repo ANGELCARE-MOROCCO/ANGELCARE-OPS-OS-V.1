@@ -62,7 +62,7 @@ export function ContentCommandPhase32GovernanceWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
 
@@ -78,28 +78,28 @@ export function ContentCommandPhase32GovernanceWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">
               Governance Readiness
             </p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{readiness}%</p>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">
               Roles
             </p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{phase32PermissionMatrix.length}</p>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">
               High-risk Actions
             </p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{highRiskActions.length}</p>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">
               Enabled Policies
             </p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{enabledPolicies.length}</p>
@@ -137,7 +137,7 @@ export function ContentCommandPhase32GovernanceWorkspace(): React.ReactElement {
               <article key={row.role} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{row.role}</p>
                 <p className="mt-2 text-sm text-slate-600">{row.description}</p>
-                <p className="mt-3 text-xs text-slate-500">{row.capabilities.length} capabilities</p>
+                <p className="mt-3 text-xs text-slate-9500">{row.capabilities.length} capabilities</p>
               </article>
             ))}
           </div>
@@ -153,7 +153,7 @@ export function ContentCommandPhase32GovernanceWorkspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{item.action}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       Capability: {item.requiredCapability} · Minimum role: {item.minimumRole}
                     </p>
                   </div>
@@ -170,7 +170,7 @@ export function ContentCommandPhase32GovernanceWorkspace(): React.ReactElement {
             {phase32ApprovalAuthorities.map((item) => (
               <article key={item.id} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{item.area}</p>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-slate-9500">
                   Required: {item.requiredRole} · Escalates to: {item.canEscalateTo}
                 </p>
                 <p className="mt-3 text-sm text-slate-600">{item.notes}</p>
@@ -224,7 +224,7 @@ export function ContentCommandPhase32GovernanceWorkspace(): React.ReactElement {
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {phase32GovernanceReadiness.map((item) => (
             <article key={item.label} className="rounded-2xl border border-slate-100 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">
                 {item.label}
               </p>
               <p className="mt-2 text-3xl font-bold text-slate-950">{item.percent}%</p>

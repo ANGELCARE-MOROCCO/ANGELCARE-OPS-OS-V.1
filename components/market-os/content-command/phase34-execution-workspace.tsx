@@ -42,7 +42,7 @@ export function ContentCommandPhase34ExecutionWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
 
@@ -57,23 +57,23 @@ export function ContentCommandPhase34ExecutionWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-5">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Execution Health</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Execution Health</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{health}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Tasks</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Tasks</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{phase34ExecutionTasks.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Blocked</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Blocked</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{blockedTasks.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">SLA Breach</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">SLA Breach</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{slaBreached.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Overloaded</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Overloaded</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{overloadedOperators.length}</p>
           </div>
         </div>
@@ -93,10 +93,10 @@ export function ContentCommandPhase34ExecutionWorkspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{task.title}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       {task.campaign} · Owner: {task.owner} · Due: {task.dueLabel}
                     </p>
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-slate-9500">
                       SLA: {task.elapsedHours}/{task.slaHours} hours · Dependencies: {task.dependencies.length}
                     </p>
                   </div>
@@ -121,7 +121,7 @@ export function ContentCommandPhase34ExecutionWorkspace(): React.ReactElement {
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-bold text-slate-950">{blocker.blocker}</p>
-                        <p className="mt-1 text-xs text-slate-500">Blocking since: {blocker.blockingSince}</p>
+                        <p className="mt-1 text-xs text-slate-9500">Blocking since: {blocker.blockingSince}</p>
                         <p className="mt-3 text-sm text-slate-600">{blocker.recommendedAction}</p>
                       </div>
                       <Badge>{blocker.severity}</Badge>
@@ -144,7 +144,7 @@ export function ContentCommandPhase34ExecutionWorkspace(): React.ReactElement {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{trigger.trigger}</p>
-                      <p className="mt-1 text-xs text-slate-500">{trigger.condition}</p>
+                      <p className="mt-1 text-xs text-slate-9500">{trigger.condition}</p>
                       <p className="mt-3 text-sm text-slate-600">Escalate to: {trigger.escalateTo}</p>
                     </div>
                     <Badge>{trigger.enabled ? 'Enabled' : 'Disabled'}</Badge>
@@ -165,7 +165,7 @@ export function ContentCommandPhase34ExecutionWorkspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{load.operator}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       Active: {load.activeTasks} · Urgent: {load.urgentTasks}
                     </p>
                   </div>

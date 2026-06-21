@@ -37,10 +37,10 @@ const modules = [
 
 export function CsvExecutiveControlCenter() {
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
 
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#312e81)] p-8 text-white shadow-2xl">
+        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#312e81)] p-8 text-slate-950 shadow-2xl">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
             Market OS / CSV Enterprise Finalization
           </p>
@@ -49,7 +49,7 @@ export function CsvExecutiveControlCenter() {
             Executive Import Control Center
           </h1>
 
-          <p className="mt-5 max-w-4xl text-sm font-semibold leading-7 text-slate-300">
+          <p className="mt-5 max-w-4xl text-sm font-semibold leading-7 text-slate-600">
             Unified enterprise CSV operations environment for validation,
             approval workflows, rollback preparation, audit tracking,
             realtime synchronization readiness and production import governance.
@@ -84,7 +84,7 @@ export function CsvExecutiveControlCenter() {
               </p>
 
               <div className="mt-6 rounded-2xl bg-slate-100 p-4">
-                <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+                <p className="text-xs font-black uppercase tracking-wider text-slate-9500">
                   Enterprise Operations
                 </p>
 
@@ -140,8 +140,8 @@ function Stat({
   value: string
 }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-300">
+    <div className="rounded-3xl border border-slate-200 bg-white/10 p-5">
+      <p className="text-xs font-black uppercase tracking-wider text-slate-600">
         {label}
       </p>
 

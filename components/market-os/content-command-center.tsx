@@ -184,7 +184,7 @@ function toneClasses(tone: Tone) {
     emerald: { bg: "bg-emerald-500/15", ring: "from-emerald-400 to-green-500", text: "text-emerald-200", glow: "shadow-emerald-500/20", border: "border-emerald-400/25" },
     rose: { bg: "bg-rose-500/15", ring: "from-rose-400 to-pink-500", text: "text-rose-200", glow: "shadow-rose-500/20", border: "border-rose-400/25" },
     cyan: { bg: "bg-cyan-500/15", ring: "from-cyan-400 to-blue-500", text: "text-cyan-200", glow: "shadow-cyan-500/20", border: "border-cyan-400/25" },
-    slate: { bg: "bg-slate-500/15", ring: "from-slate-300 to-slate-500", text: "text-slate-200", glow: "shadow-slate-500/10", border: "border-white/10" },
+    slate: { bg: "bg-slate-500/15", ring: "from-slate-300 to-slate-500", text: "text-slate-700", glow: "shadow-slate-500/10", border: "border-slate-200" },
   }
   return map[tone]
 }
@@ -273,7 +273,7 @@ export default function ContentCommandCenter() {
   const selectedTab = useMemo(() => categoryTabs.find((tab) => tab.label === activeTab), [activeTab])
 
   return (
-    <main data-content-command-exact="true" className="min-h-screen overflow-x-hidden bg-[#06101d] text-white">
+    <main data-content-command-exact="true" className="min-h-screen overflow-x-hidden bg-[#06101d] text-slate-950">
       <style dangerouslySetInnerHTML={{ __html: `
         [data-content-command-exact] * { box-sizing: border-box; }
         [data-content-command-exact] {
@@ -326,9 +326,9 @@ export default function ContentCommandCenter() {
       ` }} />
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_20%_4%,rgba(124,58,237,.13),transparent_28%),radial-gradient(circle_at_82%_0%,rgba(56,189,248,.10),transparent_30%),linear-gradient(180deg,rgba(2,6,23,.05),rgba(2,6,23,.45))]" />
 
-      <div className="relative flex min-h-screen">
+      <div data-market-os-root className="relative flex min-h-screen">
         <aside className="hidden w-[286px] shrink-0 border-r border-cyan-400/10 bg-[#06101d]/95 p-5 shadow-[18px_0_70px_rgba(0,0,0,.35)] xl:block">
-          <Link href="/market-os/marketing-home" className="mb-6 flex items-center gap-3 rounded-3xl border border-white/10 bg-white/[.03] p-4">
+          <Link href="/market-os/marketing-home" className="mb-6 flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/[.03] p-4">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-400 shadow-lg shadow-violet-500/25">
               <Sparkles className="h-6 w-6" />
             </div>
@@ -338,7 +338,7 @@ export default function ContentCommandCenter() {
             </div>
           </Link>
 
-          <div className="mb-4 text-[11px] font-black uppercase tracking-[.18em] text-white/70">Content workspace</div>
+          <div className="mb-4 text-[11px] font-black uppercase tracking-[.18em] text-slate-950/70">Content workspace</div>
           <nav className="space-y-2">
             {sidebarLinks.map((item, index) => {
               const Icon = item.icon
@@ -350,8 +350,8 @@ export default function ContentCommandCenter() {
                   className={cn(
                     "group flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-black transition",
                     active
-                      ? "border-violet-400/35 bg-violet-600/25 text-white shadow-[0_12px_36px_rgba(124,58,237,.22)]"
-                      : "border-white/5 bg-white/[.025] text-white/72 hover:border-cyan-300/25 hover:bg-cyan-500/10 hover:text-white",
+                      ? "border-violet-400/35 bg-violet-600/25 text-slate-950 shadow-[0_12px_36px_rgba(124,58,237,.22)]"
+                      : "border-white/5 bg-white/[.025] text-slate-950/72 hover:border-cyan-300/25 hover:bg-cyan-500/10 hover:text-slate-950",
                   )}
                 >
                   <span className={cn("grid h-9 w-9 place-items-center rounded-xl", active ? "bg-violet-500" : "bg-white/5 group-hover:bg-cyan-500/20")}>
@@ -366,21 +366,21 @@ export default function ContentCommandCenter() {
           <div className="mt-6 rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-4">
             <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">Live command</div>
             <div className="mt-2 text-2xl font-black">98%</div>
-            <div className="mt-1 text-xs font-bold text-white/80">Approval engine readiness</div>
+            <div className="mt-1 text-xs font-bold text-slate-950/80">Approval engine readiness</div>
           </div>
         </aside>
 
         <section className="min-w-0 flex-1 p-4 lg:p-6">
           <header className="mb-4 flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
             <div>
-              <h1 className="text-[28px] font-black tracking-tight text-white md:text-[34px]">Content & Branding Management</h1>
-              <p className="mt-1 text-sm font-bold text-white/82">Create. Manage. Approve. Distribute. Measure.</p>
+              <h1 className="text-[28px] font-black tracking-tight text-slate-950 md:text-[34px]">Content & Branding Management</h1>
+              <p className="mt-1 text-sm font-bold text-slate-950/82">Create. Manage. Approve. Distribute. Measure.</p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative w-full min-w-[320px] flex-1 2xl:w-[470px] 2xl:flex-none">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/70" />
-                <input className="h-14 w-full rounded-2xl border border-[#1f354d] bg-[#081827] pl-12 pr-14 text-sm font-bold text-white outline-none shadow-[inset_0_1px_0_rgba(255,255,255,.04)] placeholder:text-white/38" placeholder="Search content, assets, tags..." />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs font-black text-white/74">⌘ K</span>
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/70" />
+                <input className="h-14 w-full rounded-2xl border border-[#1f354d] bg-[#081827] pl-12 pr-14 text-sm font-bold text-slate-950 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,.04)] placeholder:text-slate-950/38" placeholder="Search content, assets, tags..." />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white/5 px-2 py-1 text-xs font-black text-slate-950/74">⌘ K</span>
               </div>
               <div className="relative">
                 <button
@@ -395,7 +395,7 @@ export default function ContentCommandCenter() {
                   <div className="absolute right-0 top-16 z-[9999] w-[360px] overflow-hidden rounded-3xl border border-cyan-300/20 bg-[#071426] p-2 shadow-[0_24px_80px_rgba(0,0,0,.65)] backdrop-blur-xl">
                     <div className="px-4 py-3">
                       <div className="text-[11px] font-black uppercase tracking-[.18em] text-cyan-200">Create new content</div>
-                      <div className="mt-1 text-xs font-bold text-white/70">Choose a production family to launch its advanced AngelCare creation modal.</div>
+                      <div className="mt-1 text-xs font-bold text-slate-950/70">Choose a production family to launch its advanced AngelCare creation modal.</div>
                     </div>
                     {CREATE_CONTENT_TYPES.filter((item) =>
                       ["digital-content", "print-offline", "corporate-docs", "templates"].includes(item.id),
@@ -416,27 +416,27 @@ export default function ContentCommandCenter() {
                             <Icon className="h-5 w-5" />
                           </span>
                           <span className="min-w-0 flex-1">
-                            <span className="block text-sm font-black text-white">{item.label}</span>
-                            <span className="block truncate text-xs font-bold text-white/68">{item.short}</span>
+                            <span className="block text-sm font-black text-slate-950">{item.label}</span>
+                            <span className="block truncate text-xs font-bold text-slate-950/68">{item.short}</span>
                           </span>
-                          <ChevronRight className="h-4 w-4 text-white/50 group-hover:text-cyan-200" />
+                          <ChevronRight className="h-4 w-4 text-slate-950/50 group-hover:text-cyan-200" />
                         </button>
                       )
                     })}
                   </div>
                 )}
               </div>
-              <button onClick={() => runCommand("Notifications")} className="relative grid h-12 w-12 place-items-center rounded-2xl border border-white/10 bg-white/[.03] hover:border-cyan-300/30 hover:bg-cyan-500/10">
-                <Bell className="h-5 w-5 text-white/75" />
+              <button onClick={() => runCommand("Notifications")} className="relative grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white/[.03] hover:border-cyan-300/30 hover:bg-cyan-500/10">
+                <Bell className="h-5 w-5 text-slate-950/75" />
                 <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-red-500 text-[10px] font-black">12</span>
               </button>
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[.03] px-3 py-2">
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/[.03] px-3 py-2">
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-amber-200 to-rose-400 text-sm font-black text-slate-950">SE</div>
                 <div className="hidden sm:block">
                   <div className="text-sm font-black">Salma El Alami</div>
-                  <div className="text-xs font-bold text-white/74">Marketing Director</div>
+                  <div className="text-xs font-bold text-slate-950/74">Marketing Director</div>
                 </div>
-                <ChevronDown className="h-4 w-4 text-white/78" />
+                <ChevronDown className="h-4 w-4 text-slate-950/78" />
               </div>
             </div>
           </header>
@@ -454,13 +454,13 @@ export default function ContentCommandCenter() {
                       "group relative flex min-h-[58px] shrink-0 items-center gap-3 rounded-xl px-5 py-3 text-sm font-black transition duration-300",
                       active
                         ? "bg-gradient-to-r from-violet-600/25 via-fuchsia-500/12 to-cyan-500/10 text-violet-100 shadow-[0_0_32px_rgba(168,85,247,.18)] ring-1 ring-violet-400/30"
-                        : "text-white/84 hover:bg-white/[.045] hover:text-white",
+                        : "text-slate-950/84 hover:bg-white/[.045] hover:text-slate-950",
                     )}
                   >
                     {active && <span className="absolute bottom-0 left-4 right-4 h-[3px] rounded-full bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-300 shadow-[0_0_18px_rgba(168,85,247,.75)]" />}
                     <span className={cn(
                       "grid h-8 w-8 place-items-center rounded-lg border transition",
-                      active ? "border-violet-300/35 bg-violet-500/20 text-violet-100" : "border-white/5 bg-white/[.035] text-white/78 group-hover:border-cyan-300/25 group-hover:text-cyan-100",
+                      active ? "border-violet-300/35 bg-violet-500/20 text-violet-100" : "border-white/5 bg-white/[.035] text-slate-950/78 group-hover:border-cyan-300/25 group-hover:text-cyan-100",
                     )}>
                       <Icon className="h-4 w-4" />
                     </span>
@@ -609,22 +609,22 @@ export default function ContentCommandCenter() {
             <div className="space-y-5">
               <div className="grid gap-5 xl:grid-cols-[minmax(360px,.95fr)_minmax(460px,1fr)]">
                 <Panel title="CONTENT EXPLORER" action={<Link href="/market-os/content-command-center/assets">View All</Link>}>
-                  <div className="mb-4 text-xs font-black uppercase tracking-[.14em] text-white/82">Explore by content type</div>
+                  <div className="mb-4 text-xs font-black uppercase tracking-[.14em] text-slate-950/82">Explore by content type</div>
                   <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
                     {contentTypes.map(([label, value, Icon, tone]) => (
                       <Link key={String(label)} href="/market-os/content-command-center/assets" className="group rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-3 transition hover:-translate-y-0.5 hover:border-violet-400/35 hover:bg-[#10223a]">
                         <div className="flex items-center gap-3">
-                          <span className={cn("grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white shadow-lg", toneClasses(tone as Tone).ring, toneClasses(tone as Tone).glow)}>
+                          <span className={cn("grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-slate-950 shadow-lg", toneClasses(tone as Tone).ring, toneClasses(tone as Tone).glow)}>
                             <Icon className="h-5 w-5" />
                           </span>
                           <span>
-                            <span className="block text-xs font-black text-white/75">{label}</span>
+                            <span className="block text-xs font-black text-slate-950/75">{label}</span>
                             <span className="block text-lg font-black">{value}</span>
                           </span>
                         </div>
                       </Link>
                     ))}
-                    <Link href="/market-os/content-command-center/create" className="grid min-h-[72px] place-items-center rounded-2xl border border-dashed border-[#284864] bg-[#0b1a2b] text-center text-xs font-black text-white/78 hover:border-violet-400/40 hover:text-white">
+                    <Link href="/market-os/content-command-center/create" className="grid min-h-[72px] place-items-center rounded-2xl border border-dashed border-[#284864] bg-[#0b1a2b] text-center text-xs font-black text-slate-950/78 hover:border-violet-400/40 hover:text-slate-950">
                       <Plus className="mb-1 h-5 w-5" /> Create Print & Offline Content Type
                     </Link>
                   </div>
@@ -643,16 +643,16 @@ export default function ContentCommandCenter() {
                     {recentContent.map((item, index) => (
                       <div key={item.title} className="grid grid-cols-[24px_86px_1fr_auto_34px] items-center gap-3 rounded-2xl border border-white/5 bg-[#0b1a2b] p-2.5 hover:bg-[#10223a]">
                         <input type="checkbox" className="h-4 w-4 accent-violet-500" defaultChecked={index < 3} />
-                        <div className="h-14 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-slate-200 via-blue-100 to-slate-600">
+                        <div className="h-14 overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-slate-200 via-blue-100 to-slate-600">
                           <div className="grid h-full place-items-center text-[10px] font-black text-slate-800">PREVIEW</div>
                         </div>
                         <div className="min-w-0">
                           <div className="truncate text-sm font-black">{item.title}</div>
-                          <div className="truncate text-xs font-bold text-white/72">{item.type}</div>
-                          <div className="truncate text-xs font-bold text-white/84">{item.date}</div>
+                          <div className="truncate text-xs font-bold text-slate-950/72">{item.type}</div>
+                          <div className="truncate text-xs font-bold text-slate-950/84">{item.date}</div>
                         </div>
                         <span className={cn("rounded-lg px-3 py-2 text-xs font-black", item.tone === "emerald" ? "bg-emerald-500/20 text-emerald-200" : "bg-amber-500/20 text-amber-200")}>{item.status}</span>
-                        <button onClick={() => runCommand(`Asset actions: ${item.title}`)} className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/[.05] hover:border-violet-300/40 hover:bg-violet-500/15"><MoreVertical className="h-4 w-4" /></button>
+                        <button onClick={() => runCommand(`Asset actions: ${item.title}`)} className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/[.05] hover:border-violet-300/40 hover:bg-violet-500/15"><MoreVertical className="h-4 w-4" /></button>
                       </div>
                     ))}
                   </div>
@@ -666,7 +666,7 @@ export default function ContentCommandCenter() {
                       <Link key={step.label} href="/market-os/content-command-center/tasks" className={cn("rounded-2xl border p-4", toneClasses(step.tone).border, toneClasses(step.tone).bg)}>
                         <div className={cn("text-xs font-black", toneClasses(step.tone).text)}>{step.label}</div>
                         <div className="mt-2 text-2xl font-black">{step.value}</div>
-                        <div className="text-xs font-bold text-white/74">{step.sub}</div>
+                        <div className="text-xs font-bold text-slate-950/74">{step.sub}</div>
                       </Link>
                     ))}
                   </div>
@@ -676,10 +676,10 @@ export default function ContentCommandCenter() {
                       <div key={task} className="grid grid-cols-[24px_1fr_90px_90px_110px_90px] items-center gap-3 rounded-xl border border-white/5 bg-[#0b1a2b] px-3 py-3 text-xs">
                         <input type="checkbox" className="accent-violet-500" />
                         <span className="font-bold">{task}</span>
-                        <span className="text-white/78">{type}</span>
-                        <span className="text-white/80">{owner}</span>
-                        <span className="text-white/78">{date}</span>
-                        <button onClick={() => runCommand(`${action}: ${task}`)} className={cn("rounded-lg px-3 py-1.5 font-black ring-1 ring-white/10 hover:ring-cyan-300/35", index === 1 ? "bg-emerald-500/20 text-emerald-50" : index === 2 ? "bg-blue-500/20 text-blue-50" : "bg-violet-500/20 text-violet-50")}>{action}</button>
+                        <span className="text-slate-950/78">{type}</span>
+                        <span className="text-slate-950/80">{owner}</span>
+                        <span className="text-slate-950/78">{date}</span>
+                        <button onClick={() => runCommand(`${action}: ${task}`)} className={cn("rounded-lg px-3 py-1.5 font-black ring-1 ring-slate-200 hover:ring-cyan-300/35", index === 1 ? "bg-emerald-500/20 text-emerald-50" : index === 2 ? "bg-blue-500/20 text-blue-50" : "bg-violet-500/20 text-violet-50")}>{action}</button>
                       </div>
                     ))}
                   </div>
@@ -692,11 +692,11 @@ export default function ContentCommandCenter() {
                       <div className="grid h-28 w-28 place-items-center rounded-full bg-[#102033] text-center">
                         <div>
                           <div className="text-3xl font-black">3,247</div>
-                          <div className="text-xs font-bold text-white/74">Total Assets</div>
+                          <div className="text-xs font-bold text-slate-950/74">Total Assets</div>
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-3 text-sm font-bold text-white/70">
+                    <div className="space-y-3 text-sm font-bold text-slate-950/70">
                       <Legend color="bg-emerald-400" label="Published" value="1,089 (33%)" />
                       <Legend color="bg-blue-400" label="In Review" value="456 (14%)" />
                       <Legend color="bg-amber-400" label="Draft" value="1,012 (31%)" />
@@ -715,7 +715,7 @@ export default function ContentCommandCenter() {
                       <Link key={String(label)} href="/market-os/content-command-center/brand-governance" className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-3 text-center hover:border-violet-400/35">
                         <Icon className={cn("mx-auto h-9 w-9", toneClasses(tone as Tone).text)} />
                         <div className="mt-3 text-xs font-black">{label}</div>
-                        <div className="text-[11px] font-bold text-white/70">{detail}</div>
+                        <div className="text-[11px] font-bold text-slate-950/70">{detail}</div>
                       </Link>
                     ))}
                   </div>
@@ -724,7 +724,7 @@ export default function ContentCommandCenter() {
                 <Panel title="POPULAR TAGS" action={<Link href="/market-os/content-command-center/assets">View All</Link>}>
                   <div className="flex flex-wrap gap-3">
                     {tags.map(([label, value, tone]) => (
-                      <button key={String(label)} onClick={() => runCommand(`Filter tag ${label}`)} className={cn("rounded-full px-4 py-2 text-sm font-black ring-1 ring-white/10 hover:scale-[1.03] hover:ring-cyan-300/35", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>
+                      <button key={String(label)} onClick={() => runCommand(`Filter tag ${label}`)} className={cn("rounded-full px-4 py-2 text-sm font-black ring-1 ring-slate-200 hover:scale-[1.03] hover:ring-cyan-300/35", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>
                         {label} × {value}
                       </button>
                     ))}
@@ -739,7 +739,7 @@ export default function ContentCommandCenter() {
                           <Icon className="h-6 w-6" />
                         </span>
                         <div className="mt-3 text-sm font-black">{label}</div>
-                        <div className="text-xs font-bold text-white/70">{detail}</div>
+                        <div className="text-xs font-bold text-slate-950/70">{detail}</div>
                       </Link>
                     ))}
                   </div>
@@ -762,7 +762,7 @@ export default function ContentCommandCenter() {
                     </span>
                     <span className="min-w-0">
                       <span className="block text-sm font-black">{title}</span>
-                      <span className="block text-xs font-bold text-white/72">{detail}</span>
+                      <span className="block text-xs font-bold text-slate-950/72">{detail}</span>
                     </span>
                     <span className={cn("rounded-xl px-3 py-2 text-xs font-black", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>{stat}</span>
                   </Link>
@@ -781,18 +781,18 @@ export default function ContentCommandCenter() {
                   <Link key={String(label)} href="/market-os/content-command-center/assets" className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4 hover:border-cyan-400/30 hover:bg-[#10223a]">
                     <div className="flex items-center justify-between">
                       <Icon className={cn("h-7 w-7", toneClasses(tone as Tone).text)} />
-                      <span className="rounded-lg bg-white/5 px-2 py-1 text-[10px] font-black text-white/70">SYNCED</span>
+                      <span className="rounded-lg bg-white/5 px-2 py-1 text-[10px] font-black text-slate-950/70">SYNCED</span>
                     </div>
                     <div className="mt-4 text-3xl font-black">{value}</div>
-                    <div className="text-sm font-black text-white/78">{label}</div>
-                    <div className="mt-1 text-xs font-bold text-white/84">{detail}</div>
+                    <div className="text-sm font-black text-slate-950/78">{label}</div>
+                    <div className="mt-1 text-xs font-bold text-slate-950/84">{detail}</div>
                   </Link>
                 ))}
               </div>
               <div className="mt-4 rounded-2xl border border-emerald-400/15 bg-emerald-500/10 p-4">
                 <div className="text-xs font-black uppercase tracking-[.16em] text-emerald-200">Production readiness</div>
                 <div className="mt-2 h-3 rounded-full bg-white/10"><div className="h-full w-[87%] rounded-full bg-gradient-to-r from-emerald-400 to-cyan-300 shadow-[0_0_22px_rgba(45,212,191,.35)]" /></div>
-                <div className="mt-2 text-sm font-black text-white/75">87% of active assets are reusable, tagged and channel-ready.</div>
+                <div className="mt-2 text-sm font-black text-slate-950/75">87% of active assets are reusable, tagged and channel-ready.</div>
               </div>
             </Panel>
 
@@ -803,7 +803,7 @@ export default function ContentCommandCenter() {
                     <div className="grid h-28 w-28 place-items-center rounded-full bg-[#06101d] text-center shadow-[0_0_44px_rgba(124,58,237,.3)]">
                       <div>
                         <div className="text-3xl font-black">92</div>
-                        <div className="text-xs font-bold text-white/70">Brand radar</div>
+                        <div className="text-xs font-bold text-slate-950/70">Brand radar</div>
                       </div>
                     </div>
                   </div>
@@ -814,7 +814,7 @@ export default function ContentCommandCenter() {
                   ["Legal", "98%", "left-10 bottom-12"],
                   ["Offer", "91%", "right-8 bottom-10"],
                 ].map(([label, value, pos]) => (
-                  <div key={String(label)} className={cn("absolute rounded-2xl border border-white/10 bg-black/25 px-3 py-2 backdrop-blur", pos as string)}>
+                  <div key={String(label)} className={cn("absolute rounded-2xl border border-slate-200 bg-white/25 px-3 py-2 backdrop-blur", pos as string)}>
                     <div className="text-xs font-black">{label}</div>
                     <div className="text-sm font-black text-cyan-200">{value}</div>
                   </div>
@@ -828,7 +828,7 @@ export default function ContentCommandCenter() {
               <div className="grid gap-3 md:grid-cols-4">
                 {["Today", "This Week", "This Month", "Campaign Lock"].map((label, index) => (
                   <div key={String(label)} className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4">
-                    <div className="text-xs font-black uppercase tracking-[.12em] text-white/70">{label}</div>
+                    <div className="text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{label}</div>
                     <div className="mt-2 text-2xl font-black">{[9, 36, 142, 18][index]}</div>
                     <div className="text-xs font-bold text-emerald-300">{["publishing slots", "active deadlines", "scheduled assets", "locked approvals"][index]}</div>
                   </div>
@@ -842,7 +842,7 @@ export default function ContentCommandCenter() {
                 ].map(([title, channel, date, status]) => (
                   <div key={title} className="grid grid-cols-[1fr_160px_130px_105px] items-center gap-3 rounded-2xl border border-white/5 bg-[#0b1a2b] p-3 text-sm">
                     <div className="font-black">{title}</div>
-                    <div className="text-xs font-bold text-white/70">{channel}</div>
+                    <div className="text-xs font-bold text-slate-950/70">{channel}</div>
                     <div className="text-xs font-black text-cyan-200">{date}</div>
                     <div className={cn("rounded-lg px-3 py-2 text-center text-xs font-black", status === "Approved" ? "bg-emerald-500/15 text-emerald-200" : status === "Scheduled" ? "bg-blue-500/15 text-blue-200" : "bg-amber-500/15 text-amber-200")}>{status}</div>
                   </div>
@@ -860,15 +860,15 @@ export default function ContentCommandCenter() {
                   <Link key={title as string} href="/market-os/content-command-center/academy" className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4 hover:border-violet-400/30">
                     <Icon className={cn("h-8 w-8", toneClasses(tone as Tone).text)} />
                     <div className="mt-4 text-sm font-black">{title}</div>
-                    <div className="text-xs font-bold text-white/70">{detail}</div>
+                    <div className="text-xs font-bold text-slate-950/70">{detail}</div>
                     <div className="mt-4 h-2 rounded-full bg-white/10"><div className={cn("h-full rounded-full bg-gradient-to-r", toneClasses(tone as Tone).ring)} style={{ width: progress as string }} /></div>
-                    <div className="mt-2 text-xs font-black text-white/80">{progress} complete</div>
+                    <div className="mt-2 text-xs font-black text-slate-950/80">{progress} complete</div>
                   </Link>
                 ))}
               </div>
               <div className="mt-4 rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4">
                 <div className="text-sm font-black text-cyan-100">Training objective</div>
-                <p className="mt-1 text-sm font-bold text-white/80">Standardize every AngelCare content operator on brand governance, B2B/B2C asset creation, approval control, publishing cadence and performance interpretation.</p>
+                <p className="mt-1 text-sm font-bold text-slate-950/80">Standardize every AngelCare content operator on brand governance, B2B/B2C asset creation, approval control, publishing cadence and performance interpretation.</p>
               </div>
             </Panel>
           </section>
@@ -1425,8 +1425,8 @@ function TemplatesManagementWorkspace({
       return (
         <div className="space-y-2">
           {selectedTemplate.rules.map((rule) => (
-            <div key={rule} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3">
-              <span className="text-sm font-black text-white">{rule}</span>
+            <div key={rule} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+              <span className="text-sm font-black text-slate-950">{rule}</span>
               <CheckCircle2 className="h-4 w-4 text-emerald-300" />
             </div>
           ))}
@@ -1437,10 +1437,10 @@ function TemplatesManagementWorkspace({
                 <div className="text-[10px] font-black uppercase tracking-[.18em] text-fuchsia-200">
                   Template Ecosystem Mapping
                 </div>
-                <h3 className="mt-1 text-2xl font-black text-white">
+                <h3 className="mt-1 text-2xl font-black text-slate-950">
                   Fully Synced Content Intelligence Layer
                 </h3>
-                <p className="mt-2 max-w-3xl text-sm font-bold text-white/70">
+                <p className="mt-2 max-w-3xl text-sm font-bold text-slate-950/70">
                   This preview is synced to the selected template and reflects its family, master category,
                   subcategory, modal scope, parameters and execution binding.
                 </p>
@@ -1450,7 +1450,7 @@ function TemplatesManagementWorkspace({
                 <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">
                   Sync State
                 </div>
-                <div className="mt-1 text-lg font-black text-white">
+                <div className="mt-1 text-lg font-black text-slate-950">
                   LIVE CONNECTED
                 </div>
               </div>
@@ -1463,9 +1463,9 @@ function TemplatesManagementWorkspace({
                 ["Subcategory / service", selectedTemplate.subcategory],
                 ["Lifecycle status", selectedTemplate.status],
               ].map(([label, value]) => (
-                <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.045] p-4">
-                  <div className="text-[10px] font-black uppercase tracking-[.14em] text-white/55">{label}</div>
-                  <div className="mt-2 text-sm font-black text-white">{value}</div>
+                <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.045] p-4">
+                  <div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-950/55">{label}</div>
+                  <div className="mt-2 text-sm font-black text-slate-950">{value}</div>
                 </div>
               ))}
             </div>
@@ -1518,7 +1518,7 @@ function TemplatesManagementWorkspace({
                   Execution binding
                 </div>
 
-                <div className="mt-3 space-y-2 text-xs font-bold text-white/75">
+                <div className="mt-3 space-y-2 text-xs font-bold text-slate-950/75">
                   <div>• Connected to creation modal</div>
                   <div>• Connected to approval workflow</div>
                   <div>• Connected to distribution plan</div>
@@ -1555,9 +1555,9 @@ function TemplatesManagementWorkspace({
             ["Owner", selectedTemplate.owner],
             ["Last updated", selectedTemplate.lastUpdated],
           ].map(([label, value]) => (
-            <div key={label} className="grid grid-cols-[145px_1fr] gap-3 rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3 text-sm font-bold">
-              <span className="text-white/58">{label}</span>
-              <span className="text-white">{value}</span>
+            <div key={label} className="grid grid-cols-[145px_1fr] gap-3 rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3 text-sm font-bold">
+              <span className="text-slate-950/58">{label}</span>
+              <span className="text-slate-950">{value}</span>
             </div>
           ))}
         </div>
@@ -1573,12 +1573,12 @@ function TemplatesManagementWorkspace({
             ["Version compared", "Imane L.", "Today 10:20", "violet"],
             ["Production used", "Marketing team", "Yesterday", "amber"],
           ].map(([title, actor, time, tone]) => (
-            <div key={title} className="rounded-2xl border border-white/10 bg-white/[.035] p-4">
+            <div key={title} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4">
               <div className="flex items-center justify-between gap-3">
-                <div className="text-sm font-black text-white">{title}</div>
+                <div className="text-sm font-black text-slate-950">{title}</div>
                 <span className={cn("rounded-full px-3 py-1 text-[10px] font-black uppercase", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>{time}</span>
               </div>
-              <div className="mt-1 text-xs font-bold text-white/62">{actor}</div>
+              <div className="mt-1 text-xs font-bold text-slate-950/62">{actor}</div>
             </div>
           ))}
         </div>
@@ -1589,10 +1589,10 @@ function TemplatesManagementWorkspace({
       return (
         <div className="grid gap-3">
           {["v3.2 Current", "v3.1 Approved", "v2.9 Archived"].map((version, index) => (
-            <button key={version} type="button" onClick={() => runCommand(`Template version selected: ${version}`)} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3 text-left">
+            <button key={version} type="button" onClick={() => runCommand(`Template version selected: ${version}`)} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3 text-left">
               <span>
-                <span className="block text-sm font-black text-white">{version}</span>
-                <span className="block text-xs font-bold text-white/60">{index === 0 ? "Production master" : "Previous controlled version"}</span>
+                <span className="block text-sm font-black text-slate-950">{version}</span>
+                <span className="block text-xs font-bold text-slate-950/60">{index === 0 ? "Production master" : "Previous controlled version"}</span>
               </span>
               <span className="rounded-xl bg-violet-500/15 px-3 py-2 text-xs font-black text-violet-100">{index === 0 ? "Active" : "Compare"}</span>
             </button>
@@ -1609,8 +1609,8 @@ function TemplatesManagementWorkspace({
             ["Legal/compliance check", selectedTemplate.family === "Corporate Docs" ? "Required" : "Optional", "amber"],
             ["Publishing lock", selectedTemplate.status === "Locked" ? "Locked" : "Open", "violet"],
           ].map(([step, state, tone]) => (
-            <div key={step} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3">
-              <span className="text-sm font-black text-white">{step}</span>
+            <div key={step} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+              <span className="text-sm font-black text-slate-950">{step}</span>
               <span className={cn("rounded-xl px-3 py-2 text-xs font-black", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>{state}</span>
             </div>
           ))}
@@ -1623,8 +1623,8 @@ function TemplatesManagementWorkspace({
       return (
         <div className="space-y-3">
           {selectedTemplate.channel.split("/").map((channel) => (
-            <div key={channel.trim()} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3">
-              <span className="text-sm font-black text-white">{channel.trim()}</span>
+            <div key={channel.trim()} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+              <span className="text-sm font-black text-slate-950">{channel.trim()}</span>
               <SendHorizonal className="h-4 w-4 text-cyan-200" />
             </div>
           ))}
@@ -1641,9 +1641,9 @@ function TemplatesManagementWorkspace({
             ["Auto-task routing", "Create production, review and approval tasks"],
             ["Auto-version lock", "Freeze approved master after validation"],
           ].map(([title, detail]) => (
-            <button key={title} type="button" onClick={() => runCommand(`${title}: ${selectedTemplate.name}`)} className="rounded-2xl border border-white/10 bg-white/[.035] p-4 text-left hover:border-violet-300/30">
-              <div className="text-sm font-black text-white">{title}</div>
-              <div className="mt-1 text-xs font-bold text-white/62">{detail}</div>
+            <button key={title} type="button" onClick={() => runCommand(`${title}: ${selectedTemplate.name}`)} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4 text-left hover:border-violet-300/30">
+              <div className="text-sm font-black text-slate-950">{title}</div>
+              <div className="mt-1 text-xs font-bold text-slate-950/62">{detail}</div>
             </button>
           ))}
         </div>
@@ -1658,8 +1658,8 @@ function TemplatesManagementWorkspace({
             ["Brand drift risk", selectedTemplate.status === "Draft" ? "Medium" : "Low"],
             ["Outdated version risk", selectedTemplate.status === "Locked" ? "Low" : "Watch"],
           ].map(([risk, level]) => (
-            <div key={risk} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3">
-              <span className="text-sm font-black text-white">{risk}</span>
+            <div key={risk} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+              <span className="text-sm font-black text-slate-950">{risk}</span>
               <span className={cn("rounded-xl px-3 py-2 text-xs font-black", level === "Low" ? "bg-emerald-500/15 text-emerald-100" : "bg-amber-500/15 text-amber-100")}>{level}</span>
             </div>
           ))}
@@ -1676,9 +1676,9 @@ function TemplatesManagementWorkspace({
             ["Approval confidence", `${selectedTemplate.readiness}%`],
             ["Launches", selectedTemplate.usage],
           ].map(([label, value]) => (
-            <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.035] p-4">
-              <div className="text-2xl font-black text-white">{value}</div>
-              <div className="text-[10px] font-black uppercase tracking-[.12em] text-white/60">{label}</div>
+            <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4">
+              <div className="text-2xl font-black text-slate-950">{value}</div>
+              <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
             </div>
           ))}
         </div>
@@ -1693,8 +1693,8 @@ function TemplatesManagementWorkspace({
           "Brand validation checklist",
           "Lifecycle and archive policy",
         ].map((item) => (
-          <div key={item} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3">
-            <span className="text-sm font-black text-white">{item}</span>
+          <div key={item} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+            <span className="text-sm font-black text-slate-950">{item}</span>
             <ShieldCheck className="h-4 w-4 text-violet-200" />
           </div>
         ))}
@@ -1706,7 +1706,7 @@ function TemplatesManagementWorkspace({
     if (value === "Approved") return "bg-emerald-500/20 text-emerald-100"
     if (value === "In Review") return "bg-amber-500/20 text-amber-100"
     if (value === "Locked") return "bg-violet-500/20 text-violet-100"
-    return "bg-slate-500/25 text-slate-100"
+    return "bg-slate-500/25 text-slate-900"
   }
 
   return (
@@ -1715,13 +1715,13 @@ function TemplatesManagementWorkspace({
         <div className="flex flex-col gap-5 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <div>
             <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-200">Template command ecosystem</div>
-            <h2 className="mt-1 text-4xl font-black text-white">Templates Workspace · Master Systems + Rules Control</h2>
-            <p className="mt-2 max-w-5xl text-sm font-bold leading-6 text-white/76">
+            <h2 className="mt-1 text-4xl font-black text-slate-950">Templates Workspace · Master Systems + Rules Control</h2>
+            <p className="mt-2 max-w-5xl text-sm font-bold leading-6 text-slate-950/76">
               Centralize every reusable AngelCare template across digital, print/offline, corporate documents and master workflow templates. Each master category follows the exact creation modal parameters, rules and approval structure.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-4 text-sm font-black text-white shadow-[0_18px_52px_rgba(124,58,237,.32)]">
+            <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-4 text-sm font-black text-slate-950 shadow-[0_18px_52px_rgba(124,58,237,.32)]">
               <Plus className="mr-2 inline h-4 w-4" /> Create Template
             </button>
             <button
@@ -1730,14 +1730,14 @@ function TemplatesManagementWorkspace({
                 setTemplatePreviewTab("Governance")
                 runCommand("Template governance cockpit opened")
               }}
-              className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm font-black text-white hover:bg-white/10"
+              className="rounded-2xl border border-slate-200 bg-white/5 px-6 py-4 text-sm font-black text-slate-950 hover:bg-slate-50"
             >
               <ShieldCheck className="mr-2 inline h-4 w-4" /> Governance
             </button>
             <button
               type="button"
               onClick={resetTemplateWorkspace}
-              className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm font-black text-white hover:bg-white/10"
+              className="rounded-2xl border border-slate-200 bg-white/5 px-6 py-4 text-sm font-black text-slate-950 hover:bg-slate-50"
             >
               <RefreshCw className="mr-2 inline h-4 w-4" /> Reset Templates
             </button>
@@ -1746,12 +1746,12 @@ function TemplatesManagementWorkspace({
 
         <div className="mt-6 grid gap-3 xl:grid-cols-[1fr_180px_190px_190px_160px_180px_120px]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search templates by family, category, subcategory, modal parameter, output, owner..."
-              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-white outline-none placeholder:text-white/60"
+              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-950/60"
             />
           </div>
           <SelectPill value={family} setValue={setFamily} options={templateFamilyOptions} />
@@ -1765,7 +1765,7 @@ function TemplatesManagementWorkspace({
               setTemplatePreviewTab("Fields")
               runCommand("Advanced template filters opened")
             }}
-            className="rounded-2xl border border-white/10 bg-white/5 px-4 text-xs font-black text-white/78"
+            className="rounded-2xl border border-slate-200 bg-white/5 px-4 text-xs font-black text-slate-950/78"
           >
             <SlidersHorizontal className="mr-2 inline h-4 w-4" /> Filters
           </button>
@@ -1779,11 +1779,11 @@ function TemplatesManagementWorkspace({
             ["Usage Events", templates.reduce((sum, item) => sum + item.usage, 0), "template launches", Workflow, "amber"],
             ["Sync State", templateSyncStatus.toUpperCase(), "production API status", RefreshCw, templateSyncStatus === "live" ? "emerald" : templateSyncStatus === "saving" ? "amber" : "rose"],
           ] as const).map(([label, value, detail, Icon, tone]) => (
-            <div key={label as string} className="rounded-2xl border border-white/10 bg-white/[.045] p-4">
+            <div key={label as string} className="rounded-2xl border border-slate-200 bg-white/[.045] p-4">
               <Icon className={cn("h-6 w-6", toneClasses(tone as Tone).text)} />
-              <div className="mt-3 text-2xl font-black text-white">{value}</div>
-              <div className="text-[10px] font-black uppercase tracking-[.12em] text-white/60">{label}</div>
-              <div className="mt-1 text-xs font-bold text-white/70">{detail}</div>
+              <div className="mt-3 text-2xl font-black text-slate-950">{value}</div>
+              <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
+              <div className="mt-1 text-xs font-bold text-slate-950/70">{detail}</div>
             </div>
           ))}
         </div>
@@ -1807,16 +1807,16 @@ function TemplatesManagementWorkspace({
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,.36),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.02),rgba(0,0,0,.48))]" />
                 <div className="absolute inset-0 grid place-items-center">
                   <div className="grid h-20 w-20 place-items-center rounded-[28px] border border-white/25 bg-white/15 shadow-[0_24px_70px_rgba(0,0,0,.26)] backdrop-blur-md transition group-hover:scale-105">
-                    <Icon className="h-10 w-10 text-white" />
+                    <Icon className="h-10 w-10 text-slate-950" />
                   </div>
                 </div>
               </div>
               <div className="p-5">
-                <div className="text-xl font-black text-white">{item.label}</div>
-                <p className="mt-2 min-h-[48px] text-sm font-bold leading-6 text-white/72">{item.description}</p>
+                <div className="text-xl font-black text-slate-950">{item.label}</div>
+                <p className="mt-2 min-h-[48px] text-sm font-bold leading-6 text-slate-950/72">{item.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {item.outputs.slice(0, 3).map((entry) => (
-                    <span key={entry} className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black text-white/70">{entry}</span>
+                    <span key={entry} className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black text-slate-950/70">{entry}</span>
                   ))}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
@@ -1827,7 +1827,7 @@ function TemplatesManagementWorkspace({
                       event.stopPropagation()
                       onCreateByFamily(item.id)
                     }}
-                    className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-black text-white hover:bg-white/10"
+                    className="rounded-xl border border-slate-200 bg-white/5 px-3 py-2 text-xs font-black text-slate-950 hover:bg-slate-50"
                   >
                     Open modal
                   </button>
@@ -1843,19 +1843,19 @@ function TemplatesManagementWorkspace({
           title={`Template Results · ${filteredTemplates.length} matched · live`}
           action={
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-violet-300/40 bg-violet-500/20" : "border-white/10 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-violet-300/40 bg-violet-500/20" : "border-white/10 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-violet-300/40 bg-violet-500/20" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-violet-300/40 bg-violet-500/20" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
             </div>
           }
         >
           {filteredTemplates.length === 0 && (
             <div className="rounded-[28px] border border-dashed border-cyan-300/25 bg-cyan-500/10 p-8 text-center">
               <LayoutTemplate className="mx-auto h-10 w-10 text-cyan-200" />
-              <h3 className="mt-4 text-xl font-black text-white">No templates match this cockpit state</h3>
-              <p className="mt-2 text-sm font-bold text-white/65">Adjust filters, reset the workspace, or create a new synced template.</p>
+              <h3 className="mt-4 text-xl font-black text-slate-950">No templates match this cockpit state</h3>
+              <p className="mt-2 text-sm font-bold text-slate-950/65">Adjust filters, reset the workspace, or create a new synced template.</p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
-                <button type="button" onClick={resetTemplateWorkspace} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-xs font-black text-white hover:bg-white/10">Reset workspace</button>
-                <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-xs font-black text-white">Create template</button>
+                <button type="button" onClick={resetTemplateWorkspace} className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-xs font-black text-slate-950 hover:bg-slate-50">Reset workspace</button>
+                <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-xs font-black text-slate-950">Create template</button>
               </div>
             </div>
           )}
@@ -1879,19 +1879,19 @@ function TemplatesManagementWorkspace({
                   >
                     <div className="flex items-start justify-between gap-3">
                       <span className={cn("grid h-13 w-13 place-items-center rounded-2xl bg-gradient-to-br p-3", toneClasses(template.tone).ring)}>
-                        <Icon className="h-6 w-6 text-white" />
+                        <Icon className="h-6 w-6 text-slate-950" />
                       </span>
                       <span className={cn("rounded-xl px-3 py-2 text-[10px] font-black uppercase", templateStatusClass(template.status))}>{template.status}</span>
                     </div>
-                    <h3 className="mt-4 text-lg font-black text-white">{template.name}</h3>
-                    <div className="mt-1 text-sm font-bold text-white/70">{template.family} · {template.category}</div>
+                    <h3 className="mt-4 text-lg font-black text-slate-950">{template.name}</h3>
+                    <div className="mt-1 text-sm font-bold text-slate-950/70">{template.family} · {template.category}</div>
                     <div className="mt-2 text-xs font-black text-cyan-200">{template.subcategory}</div>
-                    <div className="mt-2 text-xs font-bold text-white/62">{template.channel}</div>
-                    <div className="mt-2 rounded-lg border border-white/10 bg-white/[.04] px-2 py-1 text-[10px] font-black uppercase tracking-[.1em] text-white/55">{template.modalScope}</div>
+                    <div className="mt-2 text-xs font-bold text-slate-950/62">{template.channel}</div>
+                    <div className="mt-2 rounded-lg border border-slate-200 bg-white/[.04] px-2 py-1 text-[10px] font-black uppercase tracking-[.1em] text-slate-950/55">{template.modalScope}</div>
                     <div className="mt-4 h-2 rounded-full bg-white/10">
                       <div className={cn("h-full rounded-full bg-gradient-to-r", toneClasses(template.tone).ring)} style={{ width: `${template.readiness}%` }} />
                     </div>
-                    <div className="mt-2 flex items-center justify-between text-xs font-black text-white/70">
+                    <div className="mt-2 flex items-center justify-between text-xs font-black text-slate-950/70">
                       <span>{template.readiness}% readiness</span>
                       <span>{template.usage} uses</span>
                     </div>
@@ -1942,7 +1942,7 @@ function TemplatesManagementWorkspace({
 
                           deleteTemplate(template)
                         }}
-                        className="grid h-10 place-items-center rounded-xl border border-white/10 bg-white/5 text-white/72 hover:border-cyan-300/30 hover:bg-cyan-500/10"
+                        className="grid h-10 place-items-center rounded-xl border border-slate-200 bg-white/5 text-slate-950/72 hover:border-cyan-300/30 hover:bg-cyan-500/10"
                         title={String(label)}
                       >
                         <ActionIcon className="h-4 w-4" />
@@ -1955,22 +1955,22 @@ function TemplatesManagementWorkspace({
           </div>
         </Panel>
 
-        <Panel title="Template Control Preview" action={<button type="button" onClick={() => runCommand(`Expand template: ${selectedTemplate.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
+        <Panel title="Template Control Preview" action={<button type="button" onClick={() => runCommand(`Expand template: ${selectedTemplate.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
           <div className={cn("relative overflow-hidden rounded-3xl bg-gradient-to-br p-6", toneClasses(selectedTemplate.tone).ring)}>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_16%,rgba(255,255,255,.36),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.05),rgba(0,0,0,.52))]" />
             <div className="relative grid min-h-[220px] place-items-center text-center">
-              <div className="rounded-[30px] border border-white/20 bg-white/15 p-7 backdrop-blur-md">
-                <SelectedTemplateIcon className="mx-auto h-16 w-16 text-white" />
-                <div className="mt-4 text-2xl font-black text-white">{selectedTemplate.name}</div>
-                <div className="mt-2 text-sm font-black text-white/80">{selectedTemplate.family}</div>
+              <div className="rounded-[30px] border border-slate-200 bg-white/15 p-7 backdrop-blur-md">
+                <SelectedTemplateIcon className="mx-auto h-16 w-16 text-slate-950" />
+                <div className="mt-4 text-2xl font-black text-slate-950">{selectedTemplate.name}</div>
+                <div className="mt-2 text-sm font-black text-slate-950/80">{selectedTemplate.family}</div>
               </div>
             </div>
           </div>
 
           <div className="mt-5 flex items-start justify-between gap-3">
             <div>
-              <h3 className="text-xl font-black text-white">{selectedTemplate.name}</h3>
-              <div className="mt-1 text-sm font-bold text-white/65">{selectedTemplate.output} · {selectedTemplate.category}</div>
+              <h3 className="text-xl font-black text-slate-950">{selectedTemplate.name}</h3>
+              <div className="mt-1 text-sm font-bold text-slate-950/65">{selectedTemplate.output} · {selectedTemplate.category}</div>
               <div className="mt-1 text-xs font-black text-cyan-200">{selectedTemplate.subcategory}</div>
               <div className="mt-2 inline-flex rounded-full border border-emerald-300/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.12em] text-emerald-100">
                 Preview synced with Template Results
@@ -1985,14 +1985,14 @@ function TemplatesManagementWorkspace({
               ["Readiness", `${selectedTemplate.readiness}%`],
               ["Rules", selectedTemplate.rules.length],
             ].map(([label, value]) => (
-              <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.04] p-3 text-center">
-                <div className="text-xl font-black text-white">{value}</div>
-                <div className="text-[10px] font-black uppercase tracking-[.12em] text-white/60">{label}</div>
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-3 text-center">
+                <div className="text-xl font-black text-slate-950">{value}</div>
+                <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
               </div>
             ))}
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[.035]">
+          <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white/[.035]">
             <div className="flex gap-1 overflow-x-auto p-2">
               {templateExecutionTabs.map((tab) => {
                 const TabIcon = tab.icon
@@ -2009,7 +2009,7 @@ function TemplatesManagementWorkspace({
                       "flex shrink-0 items-center gap-2 rounded-xl px-3 py-3 text-xs font-black transition",
                       active
                         ? "bg-violet-500/25 text-violet-50 ring-1 ring-violet-300/35"
-                        : "text-white/62 hover:bg-white/5 hover:text-white",
+                        : "text-slate-950/62 hover:bg-white/5 hover:text-slate-950",
                     )}
                   >
                     <TabIcon className="h-4 w-4" />
@@ -2025,11 +2025,11 @@ function TemplatesManagementWorkspace({
           </div>
 
           <div className="mt-5 grid gap-2">
-            <button type="button" onClick={() => editTemplate(selectedTemplate)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-4 text-sm font-black text-white">
+            <button type="button" onClick={() => editTemplate(selectedTemplate)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-4 text-sm font-black text-slate-950">
               Edit in matching modal + Save workflow
             </button>
             <div className="grid grid-cols-2 gap-2">
-              <button type="button" onClick={() => runCommand(`Template version control: ${selectedTemplate.name}`)} className="rounded-2xl border border-violet-300/35 bg-violet-500/10 px-4 py-3 text-xs font-black text-white hover:bg-violet-500/20">
+              <button type="button" onClick={() => runCommand(`Template version control: ${selectedTemplate.name}`)} className="rounded-2xl border border-violet-300/35 bg-violet-500/10 px-4 py-3 text-xs font-black text-slate-950 hover:bg-violet-500/20">
                 Version Control
               </button>
               <button
@@ -2168,7 +2168,7 @@ function CorporateDocsWorkspace({
     if (value === "Approved") return "bg-emerald-500/20 text-emerald-100"
     if (value === "Published") return "bg-cyan-500/20 text-cyan-100"
     if (value === "In Review") return "bg-amber-500/20 text-amber-100"
-    if (value === "Draft") return "bg-slate-500/25 text-slate-100"
+    if (value === "Draft") return "bg-slate-500/25 text-slate-900"
     return "bg-rose-500/20 text-rose-100"
   }
 
@@ -2183,15 +2183,15 @@ function CorporateDocsWorkspace({
           ["Manuals & Guides", "3,218", "↑ 7% vs last month", BookOpen, "amber"],
           ["Compliance Docs", "1,987", "↑ 22% vs last month", BadgeCheck, "emerald"],
         ] as const).map(([label, value, trend, Icon, tone]) => (
-          <div key={String(label)} className="rounded-3xl border border-white/10 bg-[#0b1a2b] p-4">
+          <div key={String(label)} className="rounded-3xl border border-slate-200 bg-[#0b1a2b] p-4">
             <div className="flex items-center gap-3">
               <span className={cn("grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}><Icon className="h-5 w-5" /></span>
-              <div><div className="text-xs font-black text-white/70">{label}</div><div className="text-2xl font-black text-white">{value}</div><div className="text-[11px] font-bold text-emerald-300">{trend}</div></div>
+              <div><div className="text-xs font-black text-slate-950/70">{label}</div><div className="text-2xl font-black text-slate-950">{value}</div><div className="text-[11px] font-bold text-emerald-300">{trend}</div></div>
             </div>
           </div>
         ))}
-        <div className="rounded-3xl border border-white/10 bg-[#0b1a2b] p-4">
-          <div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-[conic-gradient(#8b5cf6_0_68%,rgba(255,255,255,.1)_68%_100%)]"><div className="grid h-11 w-11 place-items-center rounded-full bg-[#0b1a2b]"><Sparkle className="h-5 w-5 text-violet-200" /></div></div><div><div className="text-xs font-black text-white/70">Storage Used</div><div className="text-2xl font-black text-white">68%</div><div className="text-[11px] font-bold text-white/60">342 GB / 500 GB</div></div></div>
+        <div className="rounded-3xl border border-slate-200 bg-[#0b1a2b] p-4">
+          <div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-[conic-gradient(#8b5cf6_0_68%,rgba(255,255,255,.1)_68%_100%)]"><div className="grid h-11 w-11 place-items-center rounded-full bg-[#0b1a2b]"><Sparkle className="h-5 w-5 text-violet-200" /></div></div><div><div className="text-xs font-black text-slate-950/70">Storage Used</div><div className="text-2xl font-black text-slate-950">68%</div><div className="text-[11px] font-bold text-slate-950/60">342 GB / 500 GB</div></div></div>
         </div>
       </section>
 
@@ -2202,7 +2202,7 @@ function CorporateDocsWorkspace({
               {docCategories.map(([label, count, Icon, tone]) => (
                 <button key={String(label)} type="button" onClick={() => { setCategory(label as string); runCommand(`Document category selected: ${label}`) }} className={cn("flex items-center gap-4 rounded-2xl border p-4 text-left transition hover:-translate-y-0.5", category === label ? "border-violet-300/55 bg-violet-500/15" : "border-[#1d344d] bg-[#0b1a2b] hover:border-cyan-300/30")}>
                   <span className={cn("grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}><Icon className="h-5 w-5" /></span>
-                  <span><span className="block text-xs font-black text-white">{label}</span><span className="mt-1 block text-sm font-bold text-white/72">{count}</span></span>
+                  <span><span className="block text-xs font-black text-slate-950">{label}</span><span className="mt-1 block text-sm font-bold text-slate-950/72">{count}</span></span>
                 </button>
               ))}
               <button type="button" onClick={onCreateDoc} className="grid min-h-[82px] place-items-center rounded-2xl border border-dashed border-violet-300/25 bg-violet-500/8 text-center text-sm font-black text-violet-100"><Plus className="mb-1 h-5 w-5" /> Add Category</button>
@@ -2210,46 +2210,46 @@ function CorporateDocsWorkspace({
           </Panel>
 
           <Panel title="">
-            <div className="mb-5 flex flex-wrap gap-6 border-b border-white/10">
+            <div className="mb-5 flex flex-wrap gap-6 border-b border-slate-200">
               {["All Documents", "Recently Added", "Favorites", "Expiring Soon", "Needs Review", "Archived"].map((tab) => (
-                <button key={tab} type="button" onClick={() => { setActiveListTab(tab); runCommand(`Document tab: ${tab}`) }} className={cn("border-b-2 px-1 pb-4 text-sm font-black", activeListTab === tab ? "border-violet-400 text-violet-100" : "border-transparent text-white/62 hover:text-white")}>{tab}</button>
+                <button key={tab} type="button" onClick={() => { setActiveListTab(tab); runCommand(`Document tab: ${tab}`) }} className={cn("border-b-2 px-1 pb-4 text-sm font-black", activeListTab === tab ? "border-violet-400 text-violet-100" : "border-transparent text-slate-950/62 hover:text-slate-950")}>{tab}</button>
               ))}
             </div>
             <div className="mb-5 grid gap-3 xl:grid-cols-[1fr_150px_170px_170px_120px_120px]">
-              <div className="relative"><Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search documents..." className="h-12 w-full rounded-xl border border-cyan-300/20 bg-[#071426] pl-11 pr-4 text-sm font-bold text-white outline-none placeholder:text-white/55" /></div>
+              <div className="relative"><Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search documents..." className="h-12 w-full rounded-xl border border-cyan-300/20 bg-[#071426] pl-11 pr-4 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-950/55" /></div>
               <SelectPill value={category} setValue={setCategory} options={["All Categories", ...docCategories.map(([label]) => label as string)]} />
               <SelectPill value={subcategory} setValue={setSubcategory} options={["All Subcategories", "Employee Relations", "Corporate Policies", "Financial Reports", "Brand Identity", "Forms & Templates", "Security Policies", "Training Materials", "Contracts & Agreements"]} />
               <SelectPill value={docType} setValue={setDocType} options={["All Document Types", "Policy", "Presentation", "Guideline", "Form", "Guide", "Agreement"]} />
               <SelectPill value={status} setValue={setStatus} options={["All Status", "Approved", "Published", "In Review", "Draft"]} />
-              <button type="button" onClick={() => runCommand("Advanced document filters")} className="rounded-xl border border-white/10 bg-white/5 px-4 text-xs font-black text-white/75"><SlidersHorizontal className="mr-2 inline h-4 w-4" />More</button>
+              <button type="button" onClick={() => runCommand("Advanced document filters")} className="rounded-xl border border-slate-200 bg-white/5 px-4 text-xs font-black text-slate-950/75"><SlidersHorizontal className="mr-2 inline h-4 w-4" />More</button>
             </div>
             <div className="overflow-hidden rounded-2xl border border-[#1d344d]">
-              <div className="grid grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] gap-3 bg-white/[.035] px-4 py-3 text-xs font-black uppercase tracking-[.1em] text-white/55"><span>Document Name</span><span>Category</span><span>Subcategory</span><span>Type</span><span>Version</span><span>Status</span><span>Owner</span><span>Modified</span><span>Actions</span></div>
+              <div className="grid grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] gap-3 bg-white/[.035] px-4 py-3 text-xs font-black uppercase tracking-[.1em] text-slate-950/55"><span>Document Name</span><span>Category</span><span>Subcategory</span><span>Type</span><span>Version</span><span>Status</span><span>Owner</span><span>Modified</span><span>Actions</span></div>
               {filteredDocs.map((doc) => (
                 <button key={doc.id} type="button" onClick={() => { setSelectedDocId(doc.id); runCommand(`Document selected: ${doc.name}`) }} className={cn("grid w-full grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] items-center gap-3 border-t border-white/5 px-4 py-4 text-left text-sm hover:bg-white/[.04]", selectedDoc.id === doc.id && "bg-violet-500/10")}>
-                  <span className="flex items-center gap-3"><span className={cn("grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br", toneClasses(doc.iconTone).ring)}><FileText className="h-4 w-4" /></span><span><span className="block font-black text-white">{doc.name}</span><span className="block text-xs font-bold text-white/55">{doc.file}</span></span></span>
-                  <span className="font-bold text-cyan-200">{doc.category}</span><span className="font-bold text-violet-200">{doc.subcategory}</span><span className="font-black text-amber-200">{doc.type}</span><span className="font-bold text-white/75">{doc.version}</span><span className={cn("w-fit rounded-lg px-3 py-1.5 text-xs font-black", docStatusClass(doc.status))}>{doc.status}</span><span className="font-bold text-white/75">{doc.owner}</span><span className="font-bold text-white/60">{doc.modified}</span><span className="flex items-center gap-3 text-white/70"><Eye className="h-4 w-4" /><Download className="h-4 w-4" /><MoreVertical className="h-4 w-4" /></span>
+                  <span className="flex items-center gap-3"><span className={cn("grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br", toneClasses(doc.iconTone).ring)}><FileText className="h-4 w-4" /></span><span><span className="block font-black text-slate-950">{doc.name}</span><span className="block text-xs font-bold text-slate-950/55">{doc.file}</span></span></span>
+                  <span className="font-bold text-cyan-200">{doc.category}</span><span className="font-bold text-violet-200">{doc.subcategory}</span><span className="font-black text-amber-200">{doc.type}</span><span className="font-bold text-slate-950/75">{doc.version}</span><span className={cn("w-fit rounded-lg px-3 py-1.5 text-xs font-black", docStatusClass(doc.status))}>{doc.status}</span><span className="font-bold text-slate-950/75">{doc.owner}</span><span className="font-bold text-slate-950/60">{doc.modified}</span><span className="flex items-center gap-3 text-slate-950/70"><Eye className="h-4 w-4" /><Download className="h-4 w-4" /><MoreVertical className="h-4 w-4" /></span>
                 </button>
               ))}
             </div>
-            <div className="mt-5 flex items-center justify-between text-sm font-bold text-white/70"><span>Showing 1 to {filteredDocs.length} of 28,542 results</span><div className="flex items-center gap-2">{["‹", "1", "2", "3", "...", "357", "››"].map((page, index) => (<button key={index} type="button" onClick={() => runCommand(`Document page ${page}`)} className={cn("grid h-10 min-w-10 place-items-center rounded-xl border px-3", page === "1" ? "border-violet-300/40 bg-violet-500/20 text-violet-100" : "border-white/10 bg-white/5")}>{page}</button>))}<button type="button" className="h-10 rounded-xl border border-white/10 bg-white/5 px-3">20 / page</button></div></div>
+            <div className="mt-5 flex items-center justify-between text-sm font-bold text-slate-950/70"><span>Showing 1 to {filteredDocs.length} of 28,542 results</span><div className="flex items-center gap-2">{["‹", "1", "2", "3", "...", "357", "››"].map((page, index) => (<button key={index} type="button" onClick={() => runCommand(`Document page ${page}`)} className={cn("grid h-10 min-w-10 place-items-center rounded-xl border px-3", page === "1" ? "border-violet-300/40 bg-violet-500/20 text-violet-100" : "border-slate-200 bg-white/5")}>{page}</button>))}<button type="button" className="h-10 rounded-xl border border-slate-200 bg-white/5 px-3">20 / page</button></div></div>
           </Panel>
         </div>
 
-        <Panel title="Document Preview" action={<button type="button" onClick={() => runCommand(`Expand document preview: ${selectedDoc.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-blue-950 to-amber-100 p-5"><div className="grid h-56 place-items-center rounded-xl bg-black/25 text-center"><div className="rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur"><FileText className="mx-auto h-14 w-14 text-white" /><div className="mt-3 text-xl font-black text-white">{selectedDoc.name}</div><div className="mt-1 text-sm font-black text-white/80">{selectedDoc.version}</div></div></div><button type="button" onClick={() => runCommand("Previous document")} className="absolute left-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/35"><ArrowLeft className="h-4 w-4" /></button><button type="button" onClick={() => runCommand("Next document")} className="absolute right-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/35"><ArrowRight className="h-4 w-4" /></button></div>
-          <div className="mt-5 flex items-start justify-between gap-3"><div><h3 className="text-xl font-black text-white">{selectedDoc.name}</h3><div className="mt-1 text-sm font-bold text-white/65">{selectedDoc.type} · {selectedDoc.size} · A4</div></div><span className={cn("rounded-xl px-3 py-2 text-xs font-black", docStatusClass(selectedDoc.status))}>{selectedDoc.status}</span></div>
+        <Panel title="Document Preview" action={<button type="button" onClick={() => runCommand(`Expand document preview: ${selectedDoc.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-blue-950 to-amber-100 p-5"><div className="grid h-56 place-items-center rounded-xl bg-white/25 text-center"><div className="rounded-2xl border border-slate-200 bg-white/10 p-6 backdrop-blur"><FileText className="mx-auto h-14 w-14 text-slate-950" /><div className="mt-3 text-xl font-black text-slate-950">{selectedDoc.name}</div><div className="mt-1 text-sm font-black text-slate-950/80">{selectedDoc.version}</div></div></div><button type="button" onClick={() => runCommand("Previous document")} className="absolute left-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowLeft className="h-4 w-4" /></button><button type="button" onClick={() => runCommand("Next document")} className="absolute right-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowRight className="h-4 w-4" /></button></div>
+          <div className="mt-5 flex items-start justify-between gap-3"><div><h3 className="text-xl font-black text-slate-950">{selectedDoc.name}</h3><div className="mt-1 text-sm font-bold text-slate-950/65">{selectedDoc.type} · {selectedDoc.size} · A4</div></div><span className={cn("rounded-xl px-3 py-2 text-xs font-black", docStatusClass(selectedDoc.status))}>{selectedDoc.status}</span></div>
           <div className="mt-5 grid grid-cols-4 gap-2">{([
               ["View", Eye],
               ["Download", Download],
               ["Share", UploadCloud],
               ["More", MoreVertical],
-            ] as const).map(([label, Icon]) => (<button key={String(label)} type="button" onClick={() => runCommand(`${label}: ${selectedDoc.name}`)} className="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-black text-white/78 hover:border-cyan-300/30"><Icon className="mx-auto mb-1 h-4 w-4" /> {String(label)}</button>))}</div>
-          <div className="mt-5 border-b border-white/10"><div className="flex gap-7 text-sm font-black">{["Details", "Activity", "Versions", "Relations"].map((tab, index) => (<button key={tab} type="button" onClick={() => runCommand(`Document preview tab: ${tab}`)} className={cn("border-b-2 pb-4", index === 0 ? "border-violet-400 text-violet-100" : "border-transparent text-white/62")}>{tab}</button>))}</div></div>
-          <div className="mt-5 space-y-3 text-sm font-bold">{[["Description", `Comprehensive ${selectedDoc.type.toLowerCase()} for ${selectedDoc.category.toLowerCase()} operations.`], ["Category", selectedDoc.category], ["Subcategory", selectedDoc.subcategory], ["Document Type", selectedDoc.type], ["Version", selectedDoc.version.replace("v", "")], ["Status", selectedDoc.status], ["Owner", selectedDoc.owner], ["Created On", "Apr 15, 2025 10:30 AM"], ["Modified On", `${selectedDoc.modified} 02:15 PM`]].map(([label, value]) => (<div key={String(label)} className="grid grid-cols-[120px_1fr] gap-3"><span className="text-white/55">{label}</span><span className="text-white/86">{value}</span></div>))}</div>
-          <div className="mt-5 flex flex-wrap gap-2">{selectedDoc.tags.map((tag) => (<span key={tag} className="rounded-lg bg-white/10 px-3 py-1 text-xs font-black text-white/70">{tag}</span>))}</div>
-          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[.035] p-4"><div className="text-sm font-black text-white">Related Documents (12)</div><div className="mt-3 grid gap-2">{["Code of Conduct v1.7", "HR Policy Manual", "Benefits Overview 2025"].map((doc) => (<button key={doc} type="button" onClick={() => runCommand(`Related document opened: ${doc}`)} className="rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-left text-xs font-black text-white/75">{doc}</button>))}</div></div>
-          <button type="button" onClick={onCreateDoc} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-500/10 px-5 py-4 text-sm font-black text-white hover:bg-violet-500/20">Edit Document</button>
+            ] as const).map(([label, Icon]) => (<button key={String(label)} type="button" onClick={() => runCommand(`${label}: ${selectedDoc.name}`)} className="rounded-xl border border-slate-200 bg-white/5 px-3 py-3 text-xs font-black text-slate-950/78 hover:border-cyan-300/30"><Icon className="mx-auto mb-1 h-4 w-4" /> {String(label)}</button>))}</div>
+          <div className="mt-5 border-b border-slate-200"><div className="flex gap-7 text-sm font-black">{["Details", "Activity", "Versions", "Relations"].map((tab, index) => (<button key={tab} type="button" onClick={() => runCommand(`Document preview tab: ${tab}`)} className={cn("border-b-2 pb-4", index === 0 ? "border-violet-400 text-violet-100" : "border-transparent text-slate-950/62")}>{tab}</button>))}</div></div>
+          <div className="mt-5 space-y-3 text-sm font-bold">{[["Description", `Comprehensive ${selectedDoc.type.toLowerCase()} for ${selectedDoc.category.toLowerCase()} operations.`], ["Category", selectedDoc.category], ["Subcategory", selectedDoc.subcategory], ["Document Type", selectedDoc.type], ["Version", selectedDoc.version.replace("v", "")], ["Status", selectedDoc.status], ["Owner", selectedDoc.owner], ["Created On", "Apr 15, 2025 10:30 AM"], ["Modified On", `${selectedDoc.modified} 02:15 PM`]].map(([label, value]) => (<div key={String(label)} className="grid grid-cols-[120px_1fr] gap-3"><span className="text-slate-950/55">{label}</span><span className="text-slate-950/86">{value}</span></div>))}</div>
+          <div className="mt-5 flex flex-wrap gap-2">{selectedDoc.tags.map((tag) => (<span key={tag} className="rounded-lg bg-white/10 px-3 py-1 text-xs font-black text-slate-950/70">{tag}</span>))}</div>
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-white/[.035] p-4"><div className="text-sm font-black text-slate-950">Related Documents (12)</div><div className="mt-3 grid gap-2">{["Code of Conduct v1.7", "HR Policy Manual", "Benefits Overview 2025"].map((doc) => (<button key={doc} type="button" onClick={() => runCommand(`Related document opened: ${doc}`)} className="rounded-xl border border-slate-200 bg-white/[.04] px-3 py-2 text-left text-xs font-black text-slate-950/75">{doc}</button>))}</div></div>
+          <button type="button" onClick={onCreateDoc} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-500/10 px-5 py-4 text-sm font-black text-slate-950 hover:bg-violet-500/20">Edit Document</button>
         </Panel>
       </section>
     </section>
@@ -2487,7 +2487,7 @@ function PrintOfflineWorkspace({
     if (value === "In Review") return "bg-amber-500/20 text-amber-100"
     if (value === "In Production") return "bg-orange-500/20 text-orange-100"
     if (value === "Scheduled") return "bg-blue-500/20 text-blue-100"
-    return "bg-slate-500/20 text-slate-100"
+    return "bg-slate-500/20 text-slate-900"
   }
 
   return (
@@ -2496,11 +2496,11 @@ function PrintOfflineWorkspace({
         <div className="mb-5 flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <div>
             <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-200">Print & offline execution cockpit</div>
-            <h2 className="mt-1 text-3xl font-black text-white">Print & Offline Workspace · Live Output + Delivery Control</h2>
-            <p className="mt-2 max-w-4xl text-sm font-bold text-white/78">Built on the Print & Offline Create modal parameters: output, purpose, format, size, audience, delivery mode, status and live result navigation.</p>
+            <h2 className="mt-1 text-3xl font-black text-slate-950">Print & Offline Workspace · Live Output + Delivery Control</h2>
+            <p className="mt-2 max-w-4xl text-sm font-bold text-slate-950/78">Built on the Print & Offline Create modal parameters: output, purpose, format, size, audience, delivery mode, status and live result navigation.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onCreatePrint} className="inline-flex h-14 items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-500 px-7 text-sm font-black text-white shadow-[0_16px_42px_rgba(124,58,237,.28)]">
+            <button type="button" onClick={onCreatePrint} className="inline-flex h-14 items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-500 px-7 text-sm font-black text-slate-950 shadow-[0_16px_42px_rgba(124,58,237,.28)]">
               <Plus className="h-5 w-5" /> Create Print & Offline Content
             </button>
             <button
@@ -2520,7 +2520,7 @@ function PrintOfflineWorkspace({
                 setPrintPage(1)
                 runCommand("Print cockpit reset")
               }}
-              className="h-14 rounded-2xl border border-white/10 bg-white/5 px-6 text-sm font-black text-white hover:bg-white/10"
+              className="h-14 rounded-2xl border border-slate-200 bg-white/5 px-6 text-sm font-black text-slate-950 hover:bg-slate-50"
             >
               Reset Cockpit
             </button>
@@ -2538,12 +2538,12 @@ function PrintOfflineWorkspace({
 
         <div className="mt-4 grid gap-3 xl:grid-cols-[1fr_620px]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" />
             <input
               value={query}
               onChange={(event) => { setQuery(event.target.value); setPrintPage(1) }}
               placeholder="Search print/offline assets by output, purpose, category, tags, owner, format..."
-              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-white outline-none placeholder:text-white/60"
+              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-950/60"
             />
           </div>
           <div className="grid grid-cols-4 gap-3">
@@ -2553,11 +2553,11 @@ function PrintOfflineWorkspace({
               ["Output", printOutput.replace("All Print Outputs", "All"), "selected output", FileText, "violet"],
               ["Delivery", printDelivery.replace("All Delivery Modes", "All"), "delivery mode", Package, "amber"],
             ] as const).map(([label, value, detail, Icon, tone]) => (
-              <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.045] p-3">
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.045] p-3">
                 <Icon className={cn("h-5 w-5", toneClasses(tone as Tone).text)} />
-                <div className="mt-2 truncate text-xl font-black text-white">{value}</div>
-                <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-white/60">{label}</div>
-                <div className="mt-1 truncate text-[11px] font-bold text-white/70">{detail}</div>
+                <div className="mt-2 truncate text-xl font-black text-slate-950">{value}</div>
+                <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
+                <div className="mt-1 truncate text-[11px] font-bold text-slate-950/70">{detail}</div>
               </div>
             ))}
           </div>
@@ -2572,14 +2572,14 @@ function PrintOfflineWorkspace({
             ["Print Orders", "1,245", "active print ops", Package, "amber"],
             ["Storage Used", "68%", "342 GB / 500 GB", Palette, "rose"],
           ] as const).map(([label, value, detail, Icon, tone]) => (
-            <div key={String(label)} className="rounded-3xl border border-white/10 bg-white/[.04] p-4">
+            <div key={String(label)} className="rounded-3xl border border-slate-200 bg-white/[.04] p-4">
               <div className="flex items-center gap-3">
                 <span className={cn("grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}>
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <div className="text-xs font-black text-white/70">{label}</div>
-                  <div className="text-2xl font-black text-white">{value}</div>
+                  <div className="text-xs font-black text-slate-950/70">{label}</div>
+                  <div className="text-2xl font-black text-slate-950">{value}</div>
                   <div className="text-[11px] font-bold text-emerald-300">{detail}</div>
                 </div>
               </div>
@@ -2608,16 +2608,16 @@ function PrintOfflineWorkspace({
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,255,255,.38),transparent_24%),linear-gradient(135deg,rgba(0,0,0,.08),rgba(0,0,0,.46))]" />
                   <div className="absolute inset-0 grid place-items-center">
                     <div className="grid h-20 w-20 place-items-center rounded-[28px] border border-white/25 bg-white/15 shadow-[0_24px_70px_rgba(0,0,0,.26),inset_0_1px_0_rgba(255,255,255,.25)] backdrop-blur-md transition group-hover:scale-105">
-                      <CategoryIcon className="h-10 w-10 text-white drop-shadow-[0_10px_22px_rgba(0,0,0,.35)]" />
+                      <CategoryIcon className="h-10 w-10 text-slate-950 drop-shadow-[0_10px_22px_rgba(0,0,0,.35)]" />
                     </div>
                   </div>
-                  <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[10px] font-black uppercase tracking-[.14em] text-white/85">
+                  <div className="absolute left-4 top-4 rounded-full border border-slate-200 bg-white/30 px-3 py-1 text-[10px] font-black uppercase tracking-[.14em] text-slate-950/85">
                     Print type
                   </div>
                 </div>
                 <div className="p-4">
-                  <div className="text-lg font-black text-white">{category.label}</div>
-                  <div className="mt-1 text-sm font-bold text-white/72">{category.count.toLocaleString()} assets</div>
+                  <div className="text-lg font-black text-slate-950">{category.label}</div>
+                  <div className="mt-1 text-sm font-bold text-slate-950/72">{category.count.toLocaleString()} assets</div>
                   <div className="mt-3 h-1.5 rounded-full bg-white/10">
                     <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-violet-400" style={{ width: `${Math.min(100, Math.round(category.count / 25))}%` }} />
                   </div>
@@ -2629,7 +2629,7 @@ function PrintOfflineWorkspace({
         </Panel>
 
         <Panel title="Recent Content">
-          <div className="grid grid-cols-[1fr_100px_95px_110px_30px] gap-3 border-b border-white/10 px-2 pb-3 text-xs font-black uppercase tracking-[.12em] text-white/55">
+          <div className="grid grid-cols-[1fr_100px_95px_110px_30px] gap-3 border-b border-slate-200 px-2 pb-3 text-xs font-black uppercase tracking-[.12em] text-slate-950/55">
             <span>Asset</span><span>Type</span><span>Status</span><span>Modified</span><span />
           </div>
           <div className="space-y-2 pt-2">
@@ -2644,16 +2644,16 @@ function PrintOfflineWorkspace({
                 className="grid w-full grid-cols-[1fr_100px_95px_110px_30px] items-center gap-3 rounded-2xl border border-transparent p-2 text-left hover:border-cyan-300/20 hover:bg-white/[.04]"
               >
                 <span className="flex items-center gap-3">
-                  <span className="grid h-12 w-14 place-items-center rounded-xl bg-gradient-to-br from-amber-900 to-slate-200 text-[9px] font-black text-white">PRINT</span>
+                  <span className="grid h-12 w-14 place-items-center rounded-xl bg-gradient-to-br from-amber-900 to-slate-200 text-[9px] font-black text-slate-950">PRINT</span>
                   <span>
-                    <span className="block text-sm font-black text-white">{asset.name}</span>
-                    <span className="block text-xs font-bold text-white/60">{asset.category}</span>
+                    <span className="block text-sm font-black text-slate-950">{asset.name}</span>
+                    <span className="block text-xs font-bold text-slate-950/60">{asset.category}</span>
                   </span>
                 </span>
                 <span className="text-xs font-black text-rose-200">{asset.brand}</span>
                 <span className={cn("rounded-lg px-2 py-1 text-center text-[11px] font-black", printStatusClass(asset.status))}>{asset.status}</span>
-                <span className="text-xs font-bold text-white/62">{asset.modifiedBy}</span>
-                <MoreVertical className="h-4 w-4 text-white/50" />
+                <span className="text-xs font-bold text-slate-950/62">{asset.modifiedBy}</span>
+                <MoreVertical className="h-4 w-4 text-slate-950/50" />
               </button>
             ))}
           </div>
@@ -2661,21 +2661,21 @@ function PrintOfflineWorkspace({
 
         <Panel
           title="Content Preview"
-          action={<button type="button" onClick={() => runCommand(`Expand print preview: ${selectedAsset.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}
+          action={<button type="button" onClick={() => runCommand(`Expand print preview: ${selectedAsset.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}
         >
           <div className="rounded-2xl bg-gradient-to-br from-slate-700 via-blue-900 to-amber-100 p-4">
-            <div className="grid h-56 place-items-center rounded-xl bg-black/20 text-center">
+            <div className="grid h-56 place-items-center rounded-xl bg-white/20 text-center">
               <div>
-                <FileText className="mx-auto h-14 w-14 text-white/90" />
-                <div className="mt-3 text-lg font-black text-white">{selectedAsset.name}</div>
-                <div className="text-xs font-bold text-white/72">{selectedAsset.format} · {selectedAsset.dimensions}</div>
+                <FileText className="mx-auto h-14 w-14 text-slate-950/90" />
+                <div className="mt-3 text-lg font-black text-slate-950">{selectedAsset.name}</div>
+                <div className="text-xs font-bold text-slate-950/72">{selectedAsset.format} · {selectedAsset.dimensions}</div>
               </div>
             </div>
           </div>
           <div className="mt-5 flex items-start justify-between gap-4">
             <div>
-              <div className="text-xl font-black text-white">{selectedAsset.name}</div>
-              <div className="mt-1 text-sm font-bold text-white/68">{selectedAsset.category} · {selectedAsset.format} · {selectedAsset.size}</div>
+              <div className="text-xl font-black text-slate-950">{selectedAsset.name}</div>
+              <div className="mt-1 text-sm font-bold text-slate-950/68">{selectedAsset.category} · {selectedAsset.format} · {selectedAsset.size}</div>
             </div>
             <span className={cn("rounded-xl px-3 py-2 text-xs font-black", printStatusClass(selectedAsset.status))}>{selectedAsset.status}</span>
           </div>
@@ -2687,7 +2687,7 @@ function PrintOfflineWorkspace({
               ["Link", Link2],
               ["More", MoreVertical],
             ].map(([label, Icon]) => (
-              <button key={String(label)} type="button" onClick={() => runCommand(`${label}: ${selectedAsset.name}`)} className="grid h-12 place-items-center rounded-xl border border-white/10 bg-white/5 hover:border-cyan-300/30">
+              <button key={String(label)} type="button" onClick={() => runCommand(`${label}: ${selectedAsset.name}`)} className="grid h-12 place-items-center rounded-xl border border-slate-200 bg-white/5 hover:border-cyan-300/30">
                 <Icon className="h-4 w-4" />
               </button>
             ))}
@@ -2705,12 +2705,12 @@ function PrintOfflineWorkspace({
               ["Usage", selectedAsset.usage],
             ].map(([label, value]) => (
               <div key={String(label)} className="grid grid-cols-[120px_1fr] gap-3">
-                <span className="text-white/66">{label}</span>
-                <span className="text-white">{value}</span>
+                <span className="text-slate-950/66">{label}</span>
+                <span className="text-slate-950">{value}</span>
               </div>
             ))}
           </div>
-          <button type="button" onClick={onCreatePrint} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-500/10 px-5 py-4 text-sm font-black text-white hover:bg-violet-500/20">
+          <button type="button" onClick={onCreatePrint} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-500/10 px-5 py-4 text-sm font-black text-slate-950 hover:bg-violet-500/20">
             Edit Content
           </button>
         </Panel>
@@ -2727,7 +2727,7 @@ function PrintOfflineWorkspace({
                   setSelectedSubcategory(label)
                   runCommand(`Print subcategory selected: ${label}`)
                 }}
-                className={cn("flex w-full items-center justify-between rounded-xl px-3 py-3 text-sm font-black transition", selectedSubcategory === label ? "bg-violet-500/25 text-white" : "bg-white/[.03] text-white/72 hover:bg-white/[.07]")}
+                className={cn("flex w-full items-center justify-between rounded-xl px-3 py-3 text-sm font-black transition", selectedSubcategory === label ? "bg-violet-500/25 text-slate-950" : "bg-white/[.03] text-slate-950/72 hover:bg-white/[.07]")}
               >
                 <span>{label}</span>
                 <span>{count}</span>
@@ -2743,24 +2743,24 @@ function PrintOfflineWorkspace({
           title={`Advanced Print Results · ${filteredAssets.length} matched`}
           action={
             <div className="flex flex-wrap items-center gap-2">
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-500/15" : "border-white/10 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-500/15" : "border-white/10 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
               <button type="button" onClick={onCreatePrint} className="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-4 py-2 text-xs font-black text-cyan-100">Create matching print asset</button>
             </div>
           }
         >
           <div className="mb-5 rounded-[28px] border border-cyan-300/15 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,.13),transparent_38%),#071426] p-4">
             <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Live print query</div>
-            <div className="mt-1 text-lg font-black text-white">{printOutput} → {selectedCategory} → {selectedSubcategory}</div>
-            <div className="mt-1 text-xs font-bold text-white/72">Purpose: {printPurpose} · Format: {format} · Size: {size} · Status: {status} · Delivery: {printDelivery} · Search: {query.trim() || "No keyword"}</div>
+            <div className="mt-1 text-lg font-black text-slate-950">{printOutput} → {selectedCategory} → {selectedSubcategory}</div>
+            <div className="mt-1 text-xs font-bold text-slate-950/72">Purpose: {printPurpose} · Format: {format} · Size: {size} · Status: {status} · Delivery: {printDelivery} · Search: {query.trim() || "No keyword"}</div>
           </div>
 
           {filteredAssets.length === 0 ? (
             <div className="rounded-[32px] border border-dashed border-cyan-300/25 bg-cyan-500/8 p-10 text-center">
               <ScanSearch className="mx-auto h-12 w-12 text-cyan-200" />
-              <div className="mt-4 text-2xl font-black text-white">No print/offline content matches this command</div>
-              <p className="mx-auto mt-2 max-w-3xl text-sm font-bold leading-6 text-white/74">Adjust output, purpose, category, format, size, status, delivery or search keyword — or create a matching print/offline workflow.</p>
-              <button type="button" onClick={onCreatePrint} className="mt-6 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white">Create Print Content</button>
+              <div className="mt-4 text-2xl font-black text-slate-950">No print/offline content matches this command</div>
+              <p className="mx-auto mt-2 max-w-3xl text-sm font-bold leading-6 text-slate-950/74">Adjust output, purpose, category, format, size, status, delivery or search keyword — or create a matching print/offline workflow.</p>
+              <button type="button" onClick={onCreatePrint} className="mt-6 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950">Create Print Content</button>
             </div>
           ) : (
             <>
@@ -2779,21 +2779,21 @@ function PrintOfflineWorkspace({
                       className="relative h-32 w-full bg-gradient-to-br from-slate-700 via-blue-900 to-amber-200 text-left"
                     >
                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,.35),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.08),rgba(0,0,0,.45))]" />
-                      <span className="absolute left-3 top-3 rounded-full bg-black/40 px-2 py-1 text-[10px] font-black text-white">{asset.format}</span>
+                      <span className="absolute left-3 top-3 rounded-full bg-white/40 px-2 py-1 text-[10px] font-black text-slate-950">{asset.format}</span>
                       <span className={cn("absolute right-3 top-3 rounded-full px-2 py-1 text-[10px] font-black", printStatusClass(asset.status))}>{asset.status}</span>
                     </button>
                     <div className="p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <div className="truncate text-base font-black text-white">{asset.name}</div>
-                          <div className="mt-1 text-xs font-bold text-white/70">{asset.category} · {asset.subcategory}</div>
+                          <div className="truncate text-base font-black text-slate-950">{asset.name}</div>
+                          <div className="mt-1 text-xs font-bold text-slate-950/70">{asset.category} · {asset.subcategory}</div>
                         </div>
                         <span className="rounded-full bg-violet-500/15 px-3 py-1 text-[10px] font-black text-violet-100">{asset.brand}</span>
                       </div>
                       <div className="mt-3 flex flex-wrap gap-2">
                         <span className="rounded-full bg-cyan-500/15 px-3 py-1.5 text-[10px] font-black text-cyan-100">{asset.size}</span>
-                        <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-white/72">{asset.dimensions}</span>
-                        <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-white/72">{asset.pages} pages</span>
+                        <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-slate-950/72">{asset.dimensions}</span>
+                        <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-slate-950/72">{asset.pages} pages</span>
                       </div>
                       <div className="mt-4 grid grid-cols-4 gap-2">
                         <button type="button" onClick={() => { setSelectedAssetId(asset.id); runCommand(`View print content: ${asset.name}`) }} className="grid h-10 place-items-center rounded-xl border border-cyan-300/20 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/20" title="View"><Eye className="h-4 w-4" /></button>
@@ -2806,17 +2806,17 @@ function PrintOfflineWorkspace({
                 ))}
               </div>
 
-              <div className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-4 md:flex-row md:items-center md:justify-between">
-                <div className="text-sm font-bold text-white/72">Showing page {printPage} of {printTotalPages} · {filteredAssets.length} result{filteredAssets.length === 1 ? "" : "s"}</div>
+              <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 md:flex-row md:items-center md:justify-between">
+                <div className="text-sm font-bold text-slate-950/72">Showing page {printPage} of {printTotalPages} · {filteredAssets.length} result{filteredAssets.length === 1 ? "" : "s"}</div>
                 <div className="flex items-center gap-2">
-                  <button type="button" disabled={printPage <= 1} onClick={() => setPrintPage((page) => Math.max(1, page - 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 disabled:opacity-40">‹</button>
+                  <button type="button" disabled={printPage <= 1} onClick={() => setPrintPage((page) => Math.max(1, page - 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 disabled:opacity-40">‹</button>
                   {Array.from({ length: printTotalPages }).slice(0, 5).map((_, index) => {
                     const page = index + 1
                     return (
-                      <button key={page} type="button" onClick={() => setPrintPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", printPage === page ? "border-cyan-300/40 bg-cyan-500/20 text-cyan-100" : "border-white/10 bg-white/5 text-white/70")}>{page}</button>
+                      <button key={page} type="button" onClick={() => setPrintPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", printPage === page ? "border-cyan-300/40 bg-cyan-500/20 text-cyan-100" : "border-slate-200 bg-white/5 text-slate-950/70")}>{page}</button>
                     )
                   })}
-                  <button type="button" disabled={printPage >= printTotalPages} onClick={() => setPrintPage((page) => Math.min(printTotalPages, page + 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 disabled:opacity-40">›</button>
+                  <button type="button" disabled={printPage >= printTotalPages} onClick={() => setPrintPage((page) => Math.min(printTotalPages, page + 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 disabled:opacity-40">›</button>
                 </div>
               </div>
             </>
@@ -2834,10 +2834,10 @@ function PrintOfflineWorkspace({
             ["FRI 16", "Report Publication", "Annual Report 2025", "Draft"],
           ].map(([day, title, detail, eventStatus]) => (
             <div key={day} className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4">
-              <div className="mb-4 text-xs font-black uppercase tracking-[.12em] text-white/70">{day}</div>
-              <button type="button" onClick={() => runCommand(`Calendar event opened: ${title}`)} className="w-full rounded-xl border border-white/10 bg-white/[.04] p-3 text-left">
-                <div className="text-sm font-black text-white">{title}</div>
-                <div className="text-xs font-bold text-white/60">{detail}</div>
+              <div className="mb-4 text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{day}</div>
+              <button type="button" onClick={() => runCommand(`Calendar event opened: ${title}`)} className="w-full rounded-xl border border-slate-200 bg-white/[.04] p-3 text-left">
+                <div className="text-sm font-black text-slate-950">{title}</div>
+                <div className="text-xs font-bold text-slate-950/60">{detail}</div>
                 <span className={cn("mt-3 inline-flex rounded-lg px-2 py-1 text-[10px] font-black", printStatusClass(eventStatus))}>{eventStatus}</span>
               </button>
             </div>
@@ -3158,7 +3158,7 @@ function DigitalAssetWorkspace({
     if (status === "Approved") return "bg-emerald-500/20 text-emerald-100"
     if (status === "Published") return "bg-cyan-500/20 text-cyan-100"
     if (status === "In Review") return "bg-amber-500/20 text-amber-100"
-    return "bg-slate-500/20 text-slate-100"
+    return "bg-slate-500/20 text-slate-900"
   }
 
 
@@ -3229,16 +3229,16 @@ function DigitalAssetWorkspace({
         <div className="mb-5 flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <div>
             <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-200">Digital content execution cockpit</div>
-            <h2 className="mt-1 text-3xl font-black text-white">Digital Workspace · Live Output + Service Control</h2>
-            <p className="mt-2 max-w-4xl text-sm font-bold text-white/78">
+            <h2 className="mt-1 text-3xl font-black text-slate-950">Digital Workspace · Live Output + Service Control</h2>
+            <p className="mt-2 max-w-4xl text-sm font-bold text-slate-950/78">
               Built on the exact Digital Create modal parameters: primary output, related AngelCare service/product, channel, status, search, readiness and live execution navigation.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onCreateDigital} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.26)]">
+            <button type="button" onClick={onCreateDigital} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.26)]">
               <Plus className="h-4 w-4" /> Create Digital Content
             </button>
-            <button type="button" onClick={() => updateDigitalWorkspace({ output: DIGITAL_OUTPUT_TYPES[0], service: DIGITAL_RELATED_SERVICES[0], status: "All Status", channel: "All Channels", query: "" })} className="rounded-2xl border border-white/10 bg-white/[.05] px-5 py-3 text-sm font-black text-white hover:bg-white/10">
+            <button type="button" onClick={() => updateDigitalWorkspace({ output: DIGITAL_OUTPUT_TYPES[0], service: DIGITAL_RELATED_SERVICES[0], status: "All Status", channel: "All Channels", query: "" })} className="rounded-2xl border border-slate-200 bg-white/[.05] px-5 py-3 text-sm font-black text-slate-950 hover:bg-slate-50">
               Reset Cockpit
             </button>
           </div>
@@ -3277,29 +3277,29 @@ function DigitalAssetWorkspace({
 
         <div className="mt-4 grid gap-3 xl:grid-cols-[1fr_auto]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" />
             <input
               value={digitalQuery}
               onChange={(event) => updateDigitalWorkspace({ query: event.target.value })}
               placeholder="Search digital assets by output, service, owner, channel..."
-              className="h-13 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-white outline-none placeholder:text-white/65"
+              className="h-13 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-950/65"
             />
           </div>
           <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
             {digitalCommandCards.map((card) => {
               const Icon = card.icon
               return (
-                <div key={card.label} className="rounded-2xl border border-white/10 bg-white/[.045] p-3">
+                <div key={card.label} className="rounded-2xl border border-slate-200 bg-white/[.045] p-3">
                   <div className="flex items-center gap-2">
                     <span className={cn("grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br", toneClasses(card.tone).ring)}>
-                      <Icon className="h-4 w-4 text-white" />
+                      <Icon className="h-4 w-4 text-slate-950" />
                     </span>
                     <div className="min-w-0">
-                      <div className="text-lg font-black text-white">{card.value}</div>
-                      <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-white/60">{card.label}</div>
+                      <div className="text-lg font-black text-slate-950">{card.value}</div>
+                      <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{card.label}</div>
                     </div>
                   </div>
-                  <div className="mt-2 truncate text-[11px] font-bold text-white/70">{card.detail}</div>
+                  <div className="mt-2 truncate text-[11px] font-bold text-slate-950/70">{card.detail}</div>
                 </div>
               )
             })}
@@ -3307,7 +3307,7 @@ function DigitalAssetWorkspace({
         </div>
 
         <div className="mt-5">
-          <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-white/70">Master digital output categories</div>
+          <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-slate-950/70">Master digital output categories</div>
           <div className="grid gap-3 lg:grid-cols-6">
             {DIGITAL_OUTPUT_TYPES.slice(0, 6).map((output) => (
               <button
@@ -3316,7 +3316,7 @@ function DigitalAssetWorkspace({
                 onClick={() => updateDigitalWorkspace({ output, service: "All AngelCare Services" })}
                 className={cn(
                   "rounded-2xl border px-3 py-3 text-left text-xs font-black transition hover:-translate-y-0.5",
-                  selectedOutput === output ? "border-cyan-300/45 bg-cyan-500/15 text-cyan-100" : "border-white/10 bg-white/[.035] text-white/75 hover:border-violet-300/30"
+                  selectedOutput === output ? "border-cyan-300/45 bg-cyan-500/15 text-cyan-100" : "border-slate-200 bg-white/[.035] text-slate-950/75 hover:border-violet-300/30"
                 )}
               >
                 {output}
@@ -3356,8 +3356,8 @@ function DigitalAssetWorkspace({
                 <Icon className="h-7 w-7" />
               </span>
               <span className="min-w-0">
-                <span className="block text-xs font-bold text-white/72">{label}</span>
-                <span className="block text-3xl font-black text-white">{value}</span>
+                <span className="block text-xs font-bold text-slate-950/72">{label}</span>
+                <span className="block text-3xl font-black text-slate-950">{value}</span>
                 <span className="block text-xs font-black text-emerald-300">{trend}</span>
               </span>
             </div>
@@ -3371,8 +3371,8 @@ function DigitalAssetWorkspace({
           action={
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => runCommand("Open category command center")} className="rounded-xl border border-cyan-300/25 bg-cyan-500/10 px-4 py-2 text-xs font-black text-cyan-100">Command view</button>
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/35 bg-cyan-500/15" : "border-white/10 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/35 bg-cyan-500/15" : "border-white/10 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/35 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/35 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
             </div>
           }
         >
@@ -3383,11 +3383,11 @@ function DigitalAssetWorkspace({
               ["Service", selectedService.split(" ")[0], selectedService, BriefcaseBusiness, "amber"],
               ["Matched", syncedDigitalAssets.length, "live filtered results", ScanSearch, "emerald"],
             ] as const).map(([label, value, detail, Icon, tone]) => (
-              <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.04] p-4">
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-4">
                 <Icon className={cn("h-6 w-6", toneClasses(tone as Tone).text)} />
-                <div className="mt-3 truncate text-2xl font-black text-white">{value}</div>
-                <div className="text-xs font-black uppercase tracking-[.12em] text-white/70">{label}</div>
-                <div className="mt-1 truncate text-xs font-bold text-white/70">{detail}</div>
+                <div className="mt-3 truncate text-2xl font-black text-slate-950">{value}</div>
+                <div className="text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{label}</div>
+                <div className="mt-1 truncate text-xs font-bold text-slate-950/70">{detail}</div>
               </div>
             ))}
           </div>
@@ -3421,24 +3421,24 @@ function DigitalAssetWorkspace({
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,.35),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.08),rgba(0,0,0,.45))]" />
                     <div className="absolute left-3 top-3 flex flex-wrap gap-2">
                       {isActive && <span className="rounded-full bg-cyan-400 px-3 py-1 text-[10px] font-black text-slate-950">ACTIVE</span>}
-                      <span className="rounded-full bg-black/40 px-3 py-1 text-[10px] font-black text-white">{connectedCount} synced</span>
+                      <span className="rounded-full bg-white/40 px-3 py-1 text-[10px] font-black text-slate-950">{connectedCount} synced</span>
                     </div>
-                    <div className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/35">
-                      <Eye className="h-4 w-4 text-white" />
+                    <div className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/35">
+                      <Eye className="h-4 w-4 text-slate-950" />
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
-                      <div className="truncate text-sm font-black text-white">{category.label}</div>
-                      <div className="mt-1 text-xs font-bold text-white/80">{category.countLabel} · {connectedSubcategories.length} services/subcategories</div>
+                      <div className="truncate text-sm font-black text-slate-950">{category.label}</div>
+                      <div className="mt-1 text-xs font-bold text-slate-950/80">{category.countLabel} · {connectedSubcategories.length} services/subcategories</div>
                     </div>
                   </button>
 
                   <div className="p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="truncate text-base font-black text-white">{category.label}</div>
-                        <div className="mt-1 text-xs font-bold text-white/72">Connected to live output/service cockpit</div>
+                        <div className="truncate text-base font-black text-slate-950">{category.label}</div>
+                        <div className="mt-1 text-xs font-bold text-slate-950/72">Connected to live output/service cockpit</div>
                       </div>
-                      <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", isActive ? "bg-cyan-400 text-slate-950" : "bg-white/10 text-white/70")}>
+                      <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", isActive ? "bg-cyan-400 text-slate-950" : "bg-white/10 text-slate-950/70")}>
                         {isActive ? "ACTIVE" : "READY"}
                       </span>
                     </div>
@@ -3507,8 +3507,8 @@ function DigitalAssetWorkspace({
                       </button>
                     </div>
 
-                    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[.035] p-3">
-                      <div className="flex items-center justify-between text-[11px] font-black text-white/72">
+                    <div className="mt-4 rounded-2xl border border-slate-200 bg-white/[.035] p-3">
+                      <div className="flex items-center justify-between text-[11px] font-black text-slate-950/72">
                         <span>Live match coverage</span>
                         <span>{connectedCount}/{syncedDigitalAssets.length || 0}</span>
                       </div>
@@ -3531,8 +3531,8 @@ function DigitalAssetWorkspace({
             >
               <span>
                 <Plus className="mx-auto h-10 w-10 text-cyan-100" />
-                <span className="mt-4 block text-base font-black text-white">Add New Category</span>
-                <span className="mt-2 block text-xs font-bold text-white/72">Create category, attach subcategories, and sync to the cockpit</span>
+                <span className="mt-4 block text-base font-black text-slate-950">Add New Category</span>
+                <span className="mt-2 block text-xs font-bold text-slate-950/72">Create category, attach subcategories, and sync to the cockpit</span>
               </span>
             </button>
           </div>
@@ -3540,26 +3540,26 @@ function DigitalAssetWorkspace({
 
         <Panel
           title="CONTENT PREVIEW"
-          action={<button type="button" onClick={() => runCommand("Open preview fullscreen")} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 hover:border-cyan-300/35"><Maximize2 className="h-4 w-4" /></button>}
+          action={<button type="button" onClick={() => runCommand("Open preview fullscreen")} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 hover:border-cyan-300/35"><Maximize2 className="h-4 w-4" /></button>}
         >
           <div className="relative overflow-hidden rounded-2xl border border-[#1d344d] bg-gradient-to-br from-slate-800 via-blue-900 to-slate-900">
             <div className="grid h-52 place-items-center">
-              <div className="rounded-3xl border border-white/15 bg-white/10 px-8 py-6 text-center backdrop-blur">
+              <div className="rounded-3xl border border-slate-200 bg-white/10 px-8 py-6 text-center backdrop-blur">
                 <ImageIcon className="mx-auto h-14 w-14 text-cyan-100" />
-                <div className="mt-3 text-sm font-black text-white">{selectedAsset}</div>
-                <div className="mt-1 text-xs font-bold text-white/72">Preview renderer active</div>
+                <div className="mt-3 text-sm font-black text-slate-950">{selectedAsset}</div>
+                <div className="mt-1 text-xs font-bold text-slate-950/72">Preview renderer active</div>
               </div>
             </div>
-            <button type="button" onClick={() => runCommand("Previous preview")} className="absolute left-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-black/35"><ArrowLeft className="h-4 w-4" /></button>
-            <button type="button" onClick={() => runCommand("Next preview")} className="absolute right-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-black/35"><ArrowRight className="h-4 w-4" /></button>
+            <button type="button" onClick={() => runCommand("Previous preview")} className="absolute left-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowLeft className="h-4 w-4" /></button>
+            <button type="button" onClick={() => runCommand("Next preview")} className="absolute right-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowRight className="h-4 w-4" /></button>
           </div>
 
           <div className="mt-5 flex items-start justify-between gap-4">
             <div>
-              <div className="text-base font-black text-white">{selectedAsset}</div>
-              <div className="mt-1 text-xs font-bold text-white/70">JPG Image · 2.4 MB · 1920x1080</div>
+              <div className="text-base font-black text-slate-950">{selectedAsset}</div>
+              <div className="mt-1 text-xs font-bold text-slate-950/70">JPG Image · 2.4 MB · 1920x1080</div>
             </div>
-            <select value={assetStatus} onChange={(e) => { setAssetStatus(e.target.value); runCommand(`Status changed to ${e.target.value}`) }} className={cn("rounded-xl border border-white/10 px-3 py-2 text-sm font-black", digitalStatusClass(assetStatus))}>
+            <select value={assetStatus} onChange={(e) => { setAssetStatus(e.target.value); runCommand(`Status changed to ${e.target.value}`) }} className={cn("rounded-xl border border-slate-200 px-3 py-2 text-sm font-black", digitalStatusClass(assetStatus))}>
               {["Approved", "Published", "In Review", "Draft"].map((item) => <option key={item}>{item}</option>)}
             </select>
           </div>
@@ -3572,15 +3572,15 @@ function DigitalAssetWorkspace({
               ["Link", Link2],
               ["Archive", ClipboardCheck],
             ].map(([label, Icon]) => (
-              <button key={String(label)} type="button" onClick={() => runCommand(`${label} asset: ${selectedAsset}`)} className="grid h-10 place-items-center rounded-xl border border-white/10 bg-white/[.04] hover:border-cyan-300/35 hover:bg-cyan-500/10">
+              <button key={String(label)} type="button" onClick={() => runCommand(`${label} asset: ${selectedAsset}`)} className="grid h-10 place-items-center rounded-xl border border-slate-200 bg-white/[.04] hover:border-cyan-300/35 hover:bg-cyan-500/10">
                 <Icon className="h-4 w-4" />
               </button>
             ))}
           </div>
 
-          <div className="mt-5 flex border-b border-white/10 text-sm font-black">
+          <div className="mt-5 flex border-b border-slate-200 text-sm font-black">
             {["DETAILS", "METADATA", "ACTIVITY", "VERSIONS"].map((tab, index) => (
-              <button key={tab} type="button" onClick={() => runCommand(`Preview tab opened: ${tab}`)} className={cn("px-4 py-3", index === 0 ? "border-b-2 border-violet-400 text-violet-100" : "text-white/68 hover:text-white")}>{tab}</button>
+              <button key={tab} type="button" onClick={() => runCommand(`Preview tab opened: ${tab}`)} className={cn("px-4 py-3", index === 0 ? "border-b-2 border-violet-400 text-violet-100" : "text-slate-950/68 hover:text-slate-950")}>{tab}</button>
             ))}
           </div>
 
@@ -3596,8 +3596,8 @@ function DigitalAssetWorkspace({
               ["Usage", "Website, Social Media, Ads"],
             ].map(([label, value]) => (
               <div key={String(label)} className="grid grid-cols-[120px_1fr] gap-4">
-                <span className="font-bold text-white/68">{label}</span>
-                <span className="font-black text-white">{value}</span>
+                <span className="font-bold text-slate-950/68">{label}</span>
+                <span className="font-black text-slate-950">{value}</span>
               </div>
             ))}
           </div>
@@ -3628,8 +3628,8 @@ function DigitalAssetWorkspace({
         >
           <div className="mb-4 rounded-3xl border border-cyan-300/15 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,.16),transparent_36%),#071426] p-4">
             <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Choose content family first</div>
-            <div className="mt-1 text-2xl font-black text-white">{selectedOutput}</div>
-            <div className="mt-1 text-xs font-bold text-white/72">Each output opens AngelCare service/product subcategories.</div>
+            <div className="mt-1 text-2xl font-black text-slate-950">{selectedOutput}</div>
+            <div className="mt-1 text-xs font-bold text-slate-950/72">Each output opens AngelCare service/product subcategories.</div>
           </div>
 
           <div className="space-y-3">
@@ -3642,14 +3642,14 @@ function DigitalAssetWorkspace({
                   onClick={() => updateDigitalWorkspace({ output, service: "All AngelCare Services" })}
                   className={cn(
                     "w-full rounded-2xl border p-3 text-left transition hover:-translate-y-0.5",
-                    selectedOutput === output ? "border-cyan-300/45 bg-cyan-500/15 shadow-[0_0_26px_rgba(34,211,238,.12)]" : "border-white/10 bg-[#0b1a2b] hover:border-violet-300/30"
+                    selectedOutput === output ? "border-cyan-300/45 bg-cyan-500/15 shadow-[0_0_26px_rgba(34,211,238,.12)]" : "border-slate-200 bg-[#0b1a2b] hover:border-violet-300/30"
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-black text-white">{output}</span>
-                    <span className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-black text-white/70">{outputCount}</span>
+                    <span className="text-sm font-black text-slate-950">{output}</span>
+                    <span className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-black text-slate-950/70">{outputCount}</span>
                   </div>
-                  <div className="mt-2 text-[11px] font-bold text-white/70">Open services → choose asset scope</div>
+                  <div className="mt-2 text-[11px] font-bold text-slate-950/70">Open services → choose asset scope</div>
                 </button>
               )
             })}
@@ -3662,8 +3662,8 @@ function DigitalAssetWorkspace({
         >
           <div className="mb-4 rounded-3xl border border-violet-300/15 bg-[radial-gradient(circle_at_0%_0%,rgba(168,85,247,.16),transparent_36%),#071426] p-4">
             <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">Subcategories for selected output</div>
-            <div className="mt-1 text-2xl font-black text-white">{selectedService}</div>
-            <div className="mt-1 text-xs font-bold text-white/72">Example: Publication Story → A.A AngelCare Academy → content grid.</div>
+            <div className="mt-1 text-2xl font-black text-slate-950">{selectedService}</div>
+            <div className="mt-1 text-xs font-bold text-slate-950/72">Example: Publication Story → A.A AngelCare Academy → content grid.</div>
           </div>
 
           <div className="space-y-3">
@@ -3676,14 +3676,14 @@ function DigitalAssetWorkspace({
                   onClick={() => updateDigitalWorkspace({ service })}
                   className={cn(
                     "w-full rounded-2xl border p-3 text-left transition hover:-translate-y-0.5",
-                    selectedService === service ? "border-violet-300/45 bg-violet-500/18 shadow-[0_0_26px_rgba(168,85,247,.14)]" : "border-white/10 bg-[#0b1a2b] text-white/82 hover:border-cyan-300/30"
+                    selectedService === service ? "border-violet-300/45 bg-violet-500/18 shadow-[0_0_26px_rgba(168,85,247,.14)]" : "border-slate-200 bg-[#0b1a2b] text-slate-950/82 hover:border-cyan-300/30"
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-black text-white">{service}</span>
-                    <ChevronRight className="h-4 w-4 text-white/70" />
+                    <span className="text-sm font-black text-slate-950">{service}</span>
+                    <ChevronRight className="h-4 w-4 text-slate-950/70" />
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-white/70">
+                  <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-slate-950/70">
                     <span>Service-linked content scope</span>
                     <span>{serviceCount} assets</span>
                   </div>
@@ -3697,8 +3697,8 @@ function DigitalAssetWorkspace({
           title={`3. CONTENT RESULTS · ${selectedOutput} · ${selectedService}`}
           action={
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-500/15" : "border-white/10 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-500/15" : "border-white/10 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
               <button type="button" onClick={onCreateDigital} className="rounded-xl border border-cyan-300/25 bg-cyan-500/10 px-4 py-2 text-xs font-black text-cyan-100">Create matching content</button>
             </div>
           }
@@ -3706,8 +3706,8 @@ function DigitalAssetWorkspace({
           {!digitalServiceIsSelected ? (
             <div className="rounded-[32px] border border-dashed border-violet-300/30 bg-violet-500/8 p-10 text-center">
               <BriefcaseBusiness className="mx-auto h-12 w-12 text-violet-100" />
-              <div className="mt-4 text-2xl font-black text-white">Choose a service/product to show content</div>
-              <p className="mx-auto mt-2 max-w-2xl text-sm font-bold leading-6 text-white/74">
+              <div className="mt-4 text-2xl font-black text-slate-950">Choose a service/product to show content</div>
+              <p className="mx-auto mt-2 max-w-2xl text-sm font-bold leading-6 text-slate-950/74">
                 Select a master output on the left, then choose one AngelCare service/product in the middle. Results, grid/list view, pagination and actions will appear instantly.
               </p>
             </div>
@@ -3720,11 +3720,11 @@ function DigitalAssetWorkspace({
                   ["Service", selectedService.split(" ")[0], selectedService, BriefcaseBusiness, "amber"],
                   ["Readiness", `${digitalReadiness}%`, "filtered quality score", BadgeCheck, "emerald"],
                 ] as const).map(([label, value, detail, Icon, tone]) => (
-                  <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.04] p-4">
+                  <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-4">
                     <Icon className={cn("h-6 w-6", toneClasses(tone as Tone).text)} />
-                    <div className="mt-3 text-2xl font-black text-white">{value}</div>
-                    <div className="text-xs font-black uppercase tracking-[.12em] text-white/70">{label}</div>
-                    <div className="mt-1 truncate text-xs font-bold text-white/70">{detail}</div>
+                    <div className="mt-3 text-2xl font-black text-slate-950">{value}</div>
+                    <div className="text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{label}</div>
+                    <div className="mt-1 truncate text-xs font-bold text-slate-950/70">{detail}</div>
                   </div>
                 ))}
               </div>
@@ -3733,9 +3733,9 @@ function DigitalAssetWorkspace({
                 {visibleDigitalAssets.length === 0 ? (
                   <div className="col-span-full rounded-[28px] border border-dashed border-cyan-300/25 bg-cyan-500/8 p-8 text-center">
                     <ScanSearch className="mx-auto h-10 w-10 text-cyan-200" />
-                    <div className="mt-3 text-lg font-black text-white">No content matches this output + service</div>
-                    <p className="mt-1 text-sm font-bold text-white/72">Create a matching digital content workflow or adjust filters.</p>
-                    <button type="button" onClick={onCreateDigital} className="mt-5 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-white">
+                    <div className="mt-3 text-lg font-black text-slate-950">No content matches this output + service</div>
+                    <p className="mt-1 text-sm font-bold text-slate-950/72">Create a matching digital content workflow or adjust filters.</p>
+                    <button type="button" onClick={onCreateDigital} className="mt-5 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-slate-950">
                       Create matching digital content
                     </button>
                   </div>
@@ -3756,40 +3756,40 @@ function DigitalAssetWorkspace({
                     )}
                   >
                     <div className="relative h-28 bg-gradient-to-br from-slate-700 via-blue-900 to-amber-200">
-                      <div className="absolute inset-0 bg-black/15" />
-                      <span className="absolute left-3 top-3 rounded-full bg-black/35 px-2 py-1 text-[10px] font-black text-white">{asset.readiness}% ready</span>
-                      {(asset.type === "video" || asset.type === "image") && <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-black/35"><Eye className="h-4 w-4" /></span>}
+                      <div className="absolute inset-0 bg-white/15" />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/35 px-2 py-1 text-[10px] font-black text-slate-950">{asset.readiness}% ready</span>
+                      {(asset.type === "video" || asset.type === "image") && <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/35"><Eye className="h-4 w-4" /></span>}
                     </div>
                     <div className="p-3">
-                      <div className="truncate text-xs font-black text-white">{asset.name} ›</div>
-                      <div className="mt-1 text-[11px] font-bold text-white/72">{asset.meta}</div>
+                      <div className="truncate text-xs font-black text-slate-950">{asset.name} ›</div>
+                      <div className="mt-1 text-[11px] font-bold text-slate-950/72">{asset.meta}</div>
                       <div className="mt-2 flex flex-wrap gap-1">
                         <span className={cn("inline-flex rounded-lg px-2 py-1 text-[10px] font-black", digitalStatusClass(asset.status))}>{asset.status}</span>
                         <span className="rounded-lg bg-cyan-500/15 px-2 py-1 text-[10px] font-black text-cyan-100">{asset.output}</span>
                       </div>
-                      <div className="mt-2 truncate text-[11px] font-bold text-white/68">{asset.service}</div>
+                      <div className="mt-2 truncate text-[11px] font-bold text-slate-950/68">{asset.service}</div>
                       <div className="mt-1 text-[11px] font-black text-violet-200">{asset.channel} · {asset.owner}</div>
                     </div>
-                    {viewMode === "list" && <MoreVertical className="mr-4 h-4 w-4 text-white/60" />}
+                    {viewMode === "list" && <MoreVertical className="mr-4 h-4 w-4 text-slate-950/60" />}
                   </button>
                 ))}
               </div>
 
-              <div className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-4 md:flex-row md:items-center md:justify-between">
-                <div className="text-sm font-bold text-white/72">
+              <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 md:flex-row md:items-center md:justify-between">
+                <div className="text-sm font-bold text-slate-950/72">
                   Showing page {digitalPage} of {digitalTotalPages} · {syncedDigitalAssets.length} result{syncedDigitalAssets.length === 1 ? "" : "s"}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button" disabled={digitalPage <= 1} onClick={() => setDigitalPage((page) => Math.max(1, page - 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 disabled:opacity-40">‹</button>
+                  <button type="button" disabled={digitalPage <= 1} onClick={() => setDigitalPage((page) => Math.max(1, page - 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 disabled:opacity-40">‹</button>
                   {Array.from({ length: digitalTotalPages }).slice(0, 5).map((_, index) => {
                     const page = index + 1
                     return (
-                      <button key={page} type="button" onClick={() => setDigitalPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", digitalPage === page ? "border-cyan-300/40 bg-cyan-500/20 text-cyan-100" : "border-white/10 bg-white/5 text-white/70")}>
+                      <button key={page} type="button" onClick={() => setDigitalPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", digitalPage === page ? "border-cyan-300/40 bg-cyan-500/20 text-cyan-100" : "border-slate-200 bg-white/5 text-slate-950/70")}>
                         {page}
                       </button>
                     )
                   })}
-                  <button type="button" disabled={digitalPage >= digitalTotalPages} onClick={() => setDigitalPage((page) => Math.min(digitalTotalPages, page + 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 disabled:opacity-40">›</button>
+                  <button type="button" disabled={digitalPage >= digitalTotalPages} onClick={() => setDigitalPage((page) => Math.min(digitalTotalPages, page + 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 disabled:opacity-40">›</button>
                 </div>
               </div>
             </>
@@ -3834,32 +3834,32 @@ function DigitalCategoryModal({
     })
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white/70 p-4 backdrop-blur-md">
       <div className="w-full max-w-4xl rounded-[32px] border border-cyan-300/20 bg-[#071426] p-6 shadow-[0_30px_90px_rgba(0,0,0,.72)]">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Digital taxonomy builder</div>
-            <h2 className="mt-1 text-3xl font-black text-white">{editingCategory ? "Edit Category + Subcategories" : "Create Category + Subcategories"}</h2>
-            <p className="mt-1 text-sm font-bold text-white/70">Creates a live in-page category, immediately filters subcategories, and persists the taxonomy in browser storage.</p>
+            <h2 className="mt-1 text-3xl font-black text-slate-950">{editingCategory ? "Edit Category + Subcategories" : "Create Category + Subcategories"}</h2>
+            <p className="mt-1 text-sm font-bold text-slate-950/70">Creates a live in-page category, immediately filters subcategories, and persists the taxonomy in browser storage.</p>
           </div>
-          <button type="button" onClick={onClose} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white hover:bg-white/10">Close</button>
+          <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 bg-white/5 px-4 py-2 text-sm font-black text-slate-950 hover:bg-slate-50">Close</button>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
           <div className="space-y-4">
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Category name</span>
-              <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Example: PUBLICATIONS CAROUSELS" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-white outline-none" />
+              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Category name</span>
+              <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Example: PUBLICATIONS CAROUSELS" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
             </label>
 
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Count label</span>
-              <input value={countLabel} onChange={(e) => setCountLabel(e.target.value)} placeholder="Example: 450 items" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-white outline-none" />
+              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Count label</span>
+              <input value={countLabel} onChange={(e) => setCountLabel(e.target.value)} placeholder="Example: 450 items" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
             </label>
 
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Visual gradient</span>
-              <select value={gradient} onChange={(e) => setGradient(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-white outline-none">
+              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Visual gradient</span>
+              <select value={gradient} onChange={(e) => setGradient(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none">
                 <option value="from-violet-900 to-cyan-300">Violet / Cyan</option>
                 <option value="from-amber-900 to-slate-200">Amber / Slate</option>
                 <option value="from-blue-900 to-emerald-300">Blue / Emerald</option>
@@ -3870,19 +3870,19 @@ function DigitalCategoryModal({
           </div>
 
           <label className="grid gap-2">
-            <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Subcategories — one per line: name, count</span>
-            <textarea value={subInput} onChange={(e) => setSubInput(e.target.value)} className="min-h-[226px] rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] p-4 text-sm font-black text-white outline-none" />
+            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Subcategories — one per line: name, count</span>
+            <textarea value={subInput} onChange={(e) => setSubInput(e.target.value)} className="min-h-[226px] rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] p-4 text-sm font-black text-slate-950 outline-none" />
           </label>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[.03] p-4">
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-white/[.03] p-4">
           <div className="mb-3 text-xs font-black uppercase tracking-[.14em] text-cyan-200">Live preview</div>
           <div className="grid gap-4 md:grid-cols-[260px_1fr]">
             <div className="overflow-hidden rounded-2xl border border-violet-300/30 bg-[#0b1a2b]">
               <div className={cn("h-28 bg-gradient-to-br", gradient)} />
               <div className="p-4">
-                <div className="text-sm font-black text-white">{label || "NEW CATEGORY"}</div>
-                <div className="mt-1 text-sm font-bold text-white/70">{countLabel}</div>
+                <div className="text-sm font-black text-slate-950">{label || "NEW CATEGORY"}</div>
+                <div className="mt-1 text-sm font-bold text-slate-950/70">{countLabel}</div>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -3896,12 +3896,12 @@ function DigitalCategoryModal({
         </div>
 
         <div className="mt-5 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-white">Cancel</button>
+          <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black text-slate-950">Cancel</button>
           <button
             type="button"
             disabled={!label.trim()}
             onClick={() => onSave({ id: editingCategory?.id, label, countLabel, gradient, subcategories })}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Save className="h-4 w-4" /> {editingCategory ? "Save Category Changes" : "Create Live Category"}
           </button>
@@ -3925,38 +3925,38 @@ function DigitalSubcategoryModal({
   const [count, setCount] = useState(String(subcategory?.count ?? 0))
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white/70 p-4 backdrop-blur-md">
       <div className="w-full max-w-xl rounded-[28px] border border-cyan-300/20 bg-[#071426] p-6 shadow-[0_30px_90px_rgba(0,0,0,.72)]">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Subcategory manager</div>
-            <h2 className="mt-1 text-2xl font-black text-white">{subcategory ? "Edit Subcategory" : "Add Subcategory"}</h2>
-            <p className="mt-1 text-sm font-bold text-white/70">Manage the active category’s subcategory list and sync instantly in-page.</p>
+            <h2 className="mt-1 text-2xl font-black text-slate-950">{subcategory ? "Edit Subcategory" : "Add Subcategory"}</h2>
+            <p className="mt-1 text-sm font-bold text-slate-950/70">Manage the active category’s subcategory list and sync instantly in-page.</p>
           </div>
-          <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 text-white hover:bg-white/10">
+          <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 text-slate-950 hover:bg-slate-50">
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="grid gap-4">
           <label className="grid gap-2">
-            <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Subcategory name</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Example: ACADEMY" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-white outline-none" />
+            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Subcategory name</span>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Example: ACADEMY" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
           </label>
 
           <label className="grid gap-2">
-            <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Content count</span>
-            <input value={count} onChange={(e) => setCount(e.target.value)} type="number" min="0" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-white outline-none" />
+            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Content count</span>
+            <input value={count} onChange={(e) => setCount(e.target.value)} type="number" min="0" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
           </label>
         </div>
 
         <div className="mt-5 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-white">Cancel</button>
+          <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black text-slate-950">Cancel</button>
           <button
             type="button"
             disabled={!name.trim()}
             onClick={() => onSave({ id: subcategory?.id, name, count: Number(count || 0) })}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Save className="h-4 w-4" /> Save Subcategory
           </button>
@@ -4460,7 +4460,7 @@ function AdvancedCreateContentModal({
   )
 
   return (
-    <div className="fixed inset-0 z-[99999] overflow-y-auto bg-black/75 p-4 backdrop-blur-md">
+    <div className="fixed inset-0 z-[99999] overflow-y-auto bg-white/75 p-4 backdrop-blur-md">
       {taskEditorOpen && taskDraft && (
         <ContentTaskEditorModal
           task={taskDraft}
@@ -4476,20 +4476,20 @@ function AdvancedCreateContentModal({
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex gap-4">
             <div className={cn("grid h-16 w-16 place-items-center rounded-3xl bg-gradient-to-br shadow-xl", toneClasses(record.tone).ring)}>
-              <Icon className="h-8 w-8 text-white" />
+              <Icon className="h-8 w-8 text-slate-950" />
             </div>
             <div>
               <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Advanced content creation studio</div>
-              <h2 className="mt-1 text-4xl font-black text-white">{record.label}</h2>
-              <p className="mt-2 max-w-4xl text-sm font-bold text-white/72">{record.short}</p>
+              <h2 className="mt-1 text-4xl font-black text-slate-950">{record.label}</h2>
+              <p className="mt-2 max-w-4xl text-sm font-bold text-slate-950/72">{record.short}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="rounded-2xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-3">
               <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">Brief readiness</div>
-              <div className="text-2xl font-black text-white">{completion}%</div>
+              <div className="text-2xl font-black text-slate-950">{completion}%</div>
             </div>
-            <button type="button" onClick={onClose} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-white hover:bg-white/10">Cancel</button>
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black text-slate-950 hover:bg-slate-50">Cancel</button>
             <button
               type="button"
               onClick={() => {
@@ -4503,7 +4503,7 @@ function AdvancedCreateContentModal({
             }
             onSubmit(title || `${record.label} content`)
           }}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.3)]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.3)]"
             >
               <Save className="h-4 w-4" /> {editPayload ? "Save Template Changes" : record.id === "templates" ? "Create Template Workflow" : record.id === "print-offline" ? "Create Print Workflow" : "Create Workflow"}
             </button>
@@ -4517,21 +4517,21 @@ function AdvancedCreateContentModal({
             ["Channel", channel],
             ["Output", output],
           ].map(([label, value]) => (
-            <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.035] p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.14em] text-white/72">{label}</div>
-              <div className="mt-2 text-sm font-black text-white">{value}</div>
+            <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-950/72">{label}</div>
+              <div className="mt-2 text-sm font-black text-slate-950">{value}</div>
             </div>
           ))}
         </section>
 
         <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.12fr)_minmax(520px,.88fr)]">
           <section className="space-y-5">
-            <div className="rounded-3xl border border-white/10 bg-white/[.035] p-5">
-              <h3 className="mb-4 text-lg font-black text-white">1. Strategic Brief</h3>
+            <div className="rounded-3xl border border-slate-200 bg-white/[.035] p-5">
+              <h3 className="mb-4 text-lg font-black text-slate-950">1. Strategic Brief</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="grid gap-2 md:col-span-2">
-                  <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Content title</span>
-                  <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={`Example: AngelCare ${record.label} for preschool partnership activation`} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-white outline-none" />
+                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Content title</span>
+                  <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={`Example: AngelCare ${record.label} for preschool partnership activation`} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none" />
                 </label>
                 <FormSelect label="Audience" value={audience} setValue={setAudience} options={["B2B kindergarten / preschool", "Parents / B2C families", "Internal staff", "Corporate partners", "Event attendees", "Executive direction"]} />
                 <FormSelect label="Objective" value={objective} setValue={setObjective} options={["Lead generation and market activation", "Brand awareness", "Sales conversion", "Training and enablement", "Retention and loyalty", "Operational alignment"]} />
@@ -4551,10 +4551,10 @@ function AdvancedCreateContentModal({
                         <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">
                           Synced Template Parameters
                         </div>
-                        <h3 className="mt-1 text-2xl font-black text-white">
+                        <h3 className="mt-1 text-2xl font-black text-slate-950">
                           {editPayload ? "Edit Template Parameters" : "Create Template Parameters"}
                         </h3>
-                        <p className="mt-2 text-sm font-bold text-white/70">
+                        <p className="mt-2 text-sm font-bold text-slate-950/70">
                           Select the exact family, output, subcategory/service and lifecycle status this template should follow.
                         </p>
                       </div>
@@ -4589,8 +4589,8 @@ function AdvancedCreateContentModal({
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
                         <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">{editPayload ? "Template edit cockpit" : "Template creation cockpit"}</div>
-                        <h3 className="mt-1 text-xl font-black text-white">Synced Template Parameters</h3>
-                        <p className="mt-1 text-xs font-bold text-white/65">Edit the exact template ecosystem: family, category, subcategory, modal scope, status and matched modal parameters.</p>
+                        <h3 className="mt-1 text-xl font-black text-slate-950">Synced Template Parameters</h3>
+                        <p className="mt-1 text-xs font-bold text-slate-950/65">Edit the exact template ecosystem: family, category, subcategory, modal scope, status and matched modal parameters.</p>
                       </div>
                       <span className="rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-[10px] font-black uppercase text-emerald-100">Live synced</span>
                     </div>
@@ -4622,18 +4622,18 @@ function AdvancedCreateContentModal({
                 <FormSelect label="Scenario" value={scenario} setValue={setScenario} options={record.scenarios} />
                 <FormSelect label="Priority" value={priority} setValue={setPriority} options={["Critical", "High", "Medium", "Low"]} />
                 <label className="grid gap-2">
-                  <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Owner</span>
-                  <input value={owner} onChange={(e) => setOwner(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-white outline-none" />
+                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Owner</span>
+                  <input value={owner} onChange={(e) => setOwner(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none" />
                 </label>
                 <label className="grid gap-2">
-                  <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">Deadline</span>
-                  <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-white outline-none" />
+                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Deadline</span>
+                  <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none" />
                 </label>
               </div>
             </div>
 
             <div className="rounded-3xl border border-violet-300/15 bg-[#0b1a2b] p-5">
-              <h3 className="mb-4 text-lg font-black text-white">2. Deliverables & Requirements</h3>
+              <h3 className="mb-4 text-lg font-black text-slate-950">2. Deliverables & Requirements</h3>
               <div className="grid gap-3 md:grid-cols-4">
                 {record.outputs.map((item) => (
                   <button
@@ -4643,8 +4643,8 @@ function AdvancedCreateContentModal({
                     className={cn(
                       "rounded-2xl border p-4 text-left text-sm font-black transition",
                       deliverables.includes(item)
-                        ? "border-violet-300/45 bg-violet-500/20 text-white"
-                        : "border-white/10 bg-white/[.03] text-white/72 hover:border-cyan-300/30"
+                        ? "border-violet-300/45 bg-violet-500/20 text-slate-950"
+                        : "border-slate-200 bg-white/[.03] text-slate-950/72 hover:border-cyan-300/30"
                     )}
                   >
                     {item}
@@ -4660,12 +4660,12 @@ function AdvancedCreateContentModal({
             </div>
 
             <div className="rounded-3xl border border-emerald-300/15 bg-[#0b1a2b] p-5">
-              <h3 className="mb-4 text-lg font-black text-white">3. Creative Direction & Execution Notes</h3>
+              <h3 className="mb-4 text-lg font-black text-slate-950">3. Creative Direction & Execution Notes</h3>
               <textarea
                 value={brief}
                 onChange={(e) => setBrief(e.target.value)}
                 placeholder="Describe the offer, message, visual direction, target emotion, CTA, proof points, legal constraints, versions needed, language adaptation, and execution notes..."
-                className="min-h-[190px] w-full rounded-2xl border border-cyan-300/20 bg-[#071426] p-4 text-sm font-bold text-white outline-none"
+                className="min-h-[190px] w-full rounded-2xl border border-cyan-300/20 bg-[#071426] p-4 text-sm font-bold text-slate-950 outline-none"
               />
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <FormSelect label="Language / localization" value={language} setValue={setLanguage} options={["French + Arabic + English ready", "French only", "Arabic only", "English only", "French + Arabic", "French + English"]} />
@@ -4679,16 +4679,16 @@ function AdvancedCreateContentModal({
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 shadow-[0_0_34px_rgba(34,211,238,.28)]">
-                    <PanelRightOpen className="h-6 w-6 text-white" />
+                    <PanelRightOpen className="h-6 w-6 text-slate-950" />
                   </div>
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">Live execution rail</div>
-                    <div className="text-xl font-black text-white">Tasks + Team Coordination</div>
+                    <div className="text-xl font-black text-slate-950">Tasks + Team Coordination</div>
                   </div>
                 </div>
                 <div className="rounded-2xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-right">
                   <div className="text-[10px] font-black text-emerald-200">SYNCED</div>
-                  <div className="text-sm font-black text-white">Live</div>
+                  <div className="text-sm font-black text-slate-950">Live</div>
                 </div>
               </div>
 
@@ -4712,18 +4712,18 @@ function AdvancedCreateContentModal({
               </div>
             </div>
 
-            <div className="rounded-[32px] border border-white/10 bg-[#081624]/85 p-4 shadow-[0_18px_60px_rgba(0,0,0,.28)]">
+            <div className="rounded-[32px] border border-slate-200 bg-[#081624]/85 p-4 shadow-[0_18px_60px_rgba(0,0,0,.28)]">
               <div className="mb-4 flex items-center gap-3">
                 <Radar className="h-5 w-5 text-violet-200" />
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-white/70">Lower execution intelligence</div>
-                  <h3 className="text-lg font-black text-white">Coverage + Scenario + Next Actions</h3>
+                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-950/70">Lower execution intelligence</div>
+                  <h3 className="text-lg font-black text-slate-950">Coverage + Scenario + Next Actions</h3>
                 </div>
               </div>
 
               <div className="space-y-5">
                 <div className="rounded-3xl border border-cyan-300/15 bg-[#0b1a2b] p-5">
-              <h3 className="text-lg font-black text-white">Execution Coverage</h3>
+              <h3 className="text-lg font-black text-slate-950">Execution Coverage</h3>
               <div className="mt-4 space-y-3">
                 {[
                   ["Strategy", title ? "Ready" : "Needs title"],
@@ -4735,15 +4735,15 @@ function AdvancedCreateContentModal({
                   ["Brand", brandControl ? "Controlled" : "Flexible"],
                   ["Distribution", distributionRequired ? "Planned" : "Not required"],
                 ].map(([label, value]) => (
-                  <div key={String(label)} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] px-4 py-3">
-                    <span className="text-sm font-bold text-white/70">{label}</span>
-                    <span className="text-sm font-black text-white">{value}</span>
+                  <div key={String(label)} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.03] px-4 py-3">
+                    <span className="text-sm font-bold text-slate-950/70">{label}</span>
+                    <span className="text-sm font-black text-slate-950">{value}</span>
                   </div>
                 ))}
               </div>
             </div>
                 <div className="rounded-3xl border border-violet-300/15 bg-[#0b1a2b] p-5">
-              <h3 className="text-lg font-black text-white">AngelCare Scenario Library</h3>
+              <h3 className="text-lg font-black text-slate-950">AngelCare Scenario Library</h3>
               <div className="mt-4 grid gap-2">
                 {record.scenarios.map((item) => (
                   <button
@@ -4752,7 +4752,7 @@ function AdvancedCreateContentModal({
                     onClick={() => setScenario(item)}
                     className={cn(
                       "rounded-2xl border px-4 py-3 text-left text-sm font-black transition",
-                      scenario === item ? "border-violet-300/45 bg-violet-500/20" : "border-white/10 bg-white/[.03] hover:border-cyan-300/30"
+                      scenario === item ? "border-violet-300/45 bg-violet-500/20" : "border-slate-200 bg-white/[.03] hover:border-cyan-300/30"
                     )}
                   >
                     {item}
@@ -4761,8 +4761,8 @@ function AdvancedCreateContentModal({
               </div>
             </div>
                 <div className="rounded-3xl border border-emerald-300/15 bg-[#0b1a2b] p-5">
-              <h3 className="text-lg font-black text-white">Next Actions Created</h3>
-              <div className="mt-4 space-y-3 text-sm font-bold text-white/72">
+              <h3 className="text-lg font-black text-slate-950">Next Actions Created</h3>
+              <div className="mt-4 space-y-3 text-sm font-bold text-slate-950/72">
                 <div className="rounded-2xl bg-white/[.035] p-3">Create content task in Market OS</div>
                 <div className="rounded-2xl bg-white/[.035] p-3">Attach asset requirements and owner</div>
                 <div className="rounded-2xl bg-white/[.035] p-3">Send to review / approval pipeline</div>
@@ -4800,10 +4800,10 @@ function ContentTasksCard({
       <div className="flex items-center justify-between gap-3">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">Smart execution tasks</div>
-          <h3 className="mt-1 text-2xl font-black text-white">Related Tasks</h3>
-          <p className="mt-1 text-xs font-bold text-white/72">Create, open, view and edit production, approval and publishing tasks.</p>
+          <h3 className="mt-1 text-2xl font-black text-slate-950">Related Tasks</h3>
+          <p className="mt-1 text-xs font-bold text-slate-950/72">Create, open, view and edit production, approval and publishing tasks.</p>
         </div>
-        <button type="button" onClick={onCreate} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white">
+        <button type="button" onClick={onCreate} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-slate-950">
           <Plus className="mr-2 inline h-4 w-4" /> Add
         </button>
       </div>
@@ -4814,26 +4814,26 @@ function ContentTasksCard({
           ["Review", review],
           ["Done", done],
         ].map(([label, value]) => (
-          <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[.04] p-3 text-center">
-            <div className="text-xl font-black text-white">{value}</div>
-            <div className="text-[10px] font-black uppercase text-white/70">{label}</div>
+          <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-3 text-center">
+            <div className="text-xl font-black text-slate-950">{value}</div>
+            <div className="text-[10px] font-black uppercase text-slate-950/70">{label}</div>
           </div>
         ))}
       </div>
       <div className="mt-4 space-y-2">
         {tasks.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 p-4 text-sm font-bold text-white/60">No related tasks yet.</div>
+          <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-950/60">No related tasks yet.</div>
         ) : tasks.map((task) => (
-          <button key={task.id} type="button" onClick={() => onOpen(task)} className={cn("w-full rounded-2xl border p-3 text-left", activeTaskId === task.id ? "border-cyan-300/40 bg-cyan-500/10" : "border-white/10 bg-white/[.03]")}>
+          <button key={task.id} type="button" onClick={() => onOpen(task)} className={cn("w-full rounded-2xl border p-3 text-left", activeTaskId === task.id ? "border-cyan-300/40 bg-cyan-500/10" : "border-slate-200 bg-white/[.03]")}>
             <div className="flex items-center justify-between gap-3">
-              <div className="font-black text-white">{task.title}</div>
-              <select value={task.status} onChange={(event) => onStatus(task.id, event.target.value as ContentRelatedTask["status"])} className="rounded-xl border border-white/10 bg-[#071426] px-3 py-2 text-xs font-black text-white">
+              <div className="font-black text-slate-950">{task.title}</div>
+              <select value={task.status} onChange={(event) => onStatus(task.id, event.target.value as ContentRelatedTask["status"])} className="rounded-xl border border-slate-200 bg-[#071426] px-3 py-2 text-xs font-black text-slate-950">
                 <option value="active">active</option>
                 <option value="review">review</option>
                 <option value="done">done</option>
               </select>
             </div>
-            <div className="mt-1 text-xs font-bold text-white/66">{task.owner} · {task.dueDate} · {task.priority}</div>
+            <div className="mt-1 text-xs font-bold text-slate-950/66">{task.owner} · {task.dueDate} · {task.priority}</div>
           </button>
         ))}
       </div>
@@ -4861,10 +4861,10 @@ function ContentCommentsCard({
       <div className="flex items-center justify-between gap-3">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Team coordination</div>
-          <h3 className="mt-1 text-2xl font-black text-white">Comments</h3>
-          <p className="mt-1 text-xs font-bold text-white/72">Internal coordination notes linked to this content workflow.</p>
+          <h3 className="mt-1 text-2xl font-black text-slate-950">Comments</h3>
+          <p className="mt-1 text-xs font-bold text-slate-950/72">Internal coordination notes linked to this content workflow.</p>
         </div>
-        <select value={commentAudience} onChange={(event) => setCommentAudience(event.target.value)} className="rounded-xl border border-white/10 bg-[#071426] px-3 py-2 text-xs font-black text-white">
+        <select value={commentAudience} onChange={(event) => setCommentAudience(event.target.value)} className="rounded-xl border border-slate-200 bg-[#071426] px-3 py-2 text-xs font-black text-slate-950">
           <option>Internal team</option>
           <option>Design</option>
           <option>Management</option>
@@ -4872,19 +4872,19 @@ function ContentCommentsCard({
         </select>
       </div>
       <div className="mt-4 flex gap-2">
-        <input value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add internal comment..." className="h-12 flex-1 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-bold text-white outline-none" />
-        <button type="button" onClick={onAdd} className="rounded-2xl bg-cyan-600 px-5 text-sm font-black text-white">Add</button>
+        <input value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add internal comment..." className="h-12 flex-1 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-bold text-slate-950 outline-none" />
+        <button type="button" onClick={onAdd} className="rounded-2xl bg-cyan-600 px-5 text-sm font-black text-slate-950">Add</button>
       </div>
       <div className="mt-4 space-y-2">
         {comments.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 p-4 text-sm font-bold text-white/60">No comments yet.</div>
+          <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-950/60">No comments yet.</div>
         ) : comments.map((comment) => (
-          <div key={comment.id} className="rounded-2xl border border-white/10 bg-white/[.03] p-3">
+          <div key={comment.id} className="rounded-2xl border border-slate-200 bg-white/[.03] p-3">
             <div className="flex items-center justify-between gap-3">
-              <div className="text-sm font-black text-white">{comment.author}</div>
+              <div className="text-sm font-black text-slate-950">{comment.author}</div>
               <div className="text-[10px] font-black uppercase text-cyan-200">{comment.audience}</div>
             </div>
-            <div className="mt-1 text-sm font-bold text-white/76">{comment.message}</div>
+            <div className="mt-1 text-sm font-bold text-slate-950/76">{comment.message}</div>
           </div>
         ))}
       </div>
@@ -4905,58 +4905,58 @@ function ContentTaskEditorModal({
   const [draft, setDraft] = useState<ContentRelatedTask>(task)
 
   return (
-    <div className="fixed inset-0 z-[100000] grid place-items-center bg-black/70 p-4 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100000] grid place-items-center bg-white/70 p-4 backdrop-blur-md">
       <div className="w-full max-w-2xl rounded-[32px] border border-cyan-300/25 bg-[#071426] p-6 shadow-[0_30px_120px_rgba(0,0,0,.75)]">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Task editor</div>
-            <h3 className="mt-1 text-2xl font-black text-white">Edit related task</h3>
+            <h3 className="mt-1 text-2xl font-black text-slate-950">Edit related task</h3>
           </div>
-          <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5">
+          <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5">
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="grid gap-4">
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-white/70">
+          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
             Title
             <input
               value={draft.title}
               onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
-              className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-white outline-none"
+              className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
             />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-white/70">
+          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
             Description
             <textarea
               value={draft.description}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))}
-              className="min-h-28 rounded-2xl border border-cyan-300/20 bg-[#06111f] p-4 text-sm font-bold text-white outline-none"
+              className="min-h-28 rounded-2xl border border-cyan-300/20 bg-[#06111f] p-4 text-sm font-bold text-slate-950 outline-none"
             />
           </label>
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-white/70">
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
               Owner
               <input
                 value={draft.owner}
                 onChange={(event) => setDraft((current) => ({ ...current, owner: event.target.value }))}
-                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-white outline-none"
+                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
               />
             </label>
-            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-white/70">
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
               Due date
               <input
                 value={draft.dueDate}
                 onChange={(event) => setDraft((current) => ({ ...current, dueDate: event.target.value }))}
-                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-white outline-none"
+                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
               />
             </label>
-            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-white/70">
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
               Status
               <select
                 value={draft.status}
                 onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as ContentRelatedTask["status"] }))}
-                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-white outline-none"
+                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
               >
                 <option value="active">active</option>
                 <option value="review">review</option>
@@ -4967,10 +4967,10 @@ function ContentTaskEditorModal({
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-white">
+          <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black text-slate-950">
             Cancel
           </button>
-          <button type="button" onClick={() => onSave(draft)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-white">
+          <button type="button" onClick={() => onSave(draft)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-slate-950">
             Save Task
           </button>
         </div>
@@ -4983,8 +4983,8 @@ function ContentTaskEditorModal({
 function FormSelect({ label, value, setValue, options }: { label: string; value: string; setValue: (value: string) => void; options: string[] }) {
   return (
     <label className="grid gap-2">
-      <span className="text-xs font-black uppercase tracking-[.14em] text-white/72">{label}</span>
-      <select value={value} onChange={(e) => setValue(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-white outline-none">
+      <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">{label}</span>
+      <select value={value} onChange={(e) => setValue(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none">
         {options.map((option) => <option key={option}>{option}</option>)}
       </select>
     </label>
@@ -4998,14 +4998,14 @@ function ToggleCard({ label, detail, value, setValue }: { label: string; detail:
       onClick={() => setValue(!value)}
       className={cn(
         "rounded-2xl border p-4 text-left transition",
-        value ? "border-emerald-300/35 bg-emerald-500/15" : "border-white/10 bg-white/[.03]"
+        value ? "border-emerald-300/35 bg-emerald-500/15" : "border-slate-200 bg-white/[.03]"
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-black text-white">{label}</span>
-        <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", value ? "bg-emerald-400 text-slate-950" : "bg-white/10 text-white")}>{value ? "ON" : "OFF"}</span>
+        <span className="text-sm font-black text-slate-950">{label}</span>
+        <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", value ? "bg-emerald-400 text-slate-950" : "bg-white/10 text-slate-950")}>{value ? "ON" : "OFF"}</span>
       </div>
-      <div className="mt-2 text-xs font-bold text-white/78">{detail}</div>
+      <div className="mt-2 text-xs font-bold text-slate-950/78">{detail}</div>
     </button>
   )
 }
@@ -5020,7 +5020,7 @@ function MetricCard({ label, value, trend, tone, icon: Icon }: { label: string; 
           <Icon className="h-7 w-7" />
         </span>
         <div>
-          <div className="text-xs font-bold text-white/72">{label}</div>
+          <div className="text-xs font-bold text-slate-950/72">{label}</div>
           <div className="text-3xl font-black">{value}</div>
           <div className={cn("text-xs font-black", trend.startsWith("↓") ? "text-red-400" : "text-emerald-300")}>{trend}</div>
         </div>
@@ -5033,7 +5033,7 @@ function Panel({ title, action, children }: { title: string; action?: ReactNode;
   return (
     <section className="ultra-card rounded-2xl border border-[#1d344d] bg-[#0a1828]/95 p-5 shadow-[0_20px_58px_rgba(0,0,0,.28)]">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 className="text-lg font-black uppercase tracking-tight text-white/90">{title}</h2>
+        <h2 className="text-lg font-black uppercase tracking-tight text-slate-950/90">{title}</h2>
         <div className="text-sm font-black text-violet-300">{action}</div>
       </div>
       {children}
@@ -5043,7 +5043,7 @@ function Panel({ title, action, children }: { title: string; action?: ReactNode;
 
 function SelectPill({ value, setValue, options }: { value: string; setValue: (value: string) => void; options: string[] }) {
   return (
-    <select value={value} onChange={(e) => setValue(e.target.value)} className="h-9 rounded-xl border border-[#1d344d] bg-[#081827] px-3 text-xs font-black text-white outline-none">
+    <select value={value} onChange={(e) => setValue(e.target.value)} className="h-9 rounded-xl border border-[#1d344d] bg-[#081827] px-3 text-xs font-black text-slate-950 outline-none">
       {options.map((option) => <option key={option}>{option}</option>)}
     </select>
   )
@@ -5052,7 +5052,7 @@ function SelectPill({ value, setValue, options }: { value: string; setValue: (va
 function ScoreLine({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="mb-1 flex justify-between text-xs font-black text-white/84"><span>{label}</span><span>{value}/100</span></div>
+      <div className="mb-1 flex justify-between text-xs font-black text-slate-950/84"><span>{label}</span><span>{value}/100</span></div>
       <div className="h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{ width: `${value}%` }} /></div>
     </div>
   )

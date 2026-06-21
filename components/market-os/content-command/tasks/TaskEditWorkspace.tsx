@@ -29,7 +29,7 @@ export function TaskEditWorkspace({ taskId }: { taskId: string }) {
   if (!task) {
     return (
       <Shell>
-        <main className="mx-auto max-w-5xl p-6">
+        <main data-market-os-root className="mx-auto max-w-5xl p-6">
           <Panel className="p-8">
             <h1 className="text-3xl font-black">Task not found</h1>
             <div className="mt-5">
@@ -61,12 +61,12 @@ export function TaskEditWorkspace({ taskId }: { taskId: string }) {
   return (
     <Shell>
       <main className="mx-auto max-w-5xl space-y-6 p-4 lg:p-8">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-white shadow-2xl">
+        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-slate-950 shadow-2xl">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
             Task Edit Workspace
           </p>
           <h1 className="mt-4 text-4xl font-black tracking-tight">{task.title}</h1>
-          <p className="mt-3 text-sm font-semibold text-slate-300">
+          <p className="mt-3 text-sm font-semibold text-slate-600">
             Edit operational task details and persist changes into the real Content Command task store.
           </p>
         </section>

@@ -161,34 +161,34 @@ export default function AuditPlaybookMemoryEngine() {
   const converted = memoryItems.filter((item) => item.status === "converted").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Local Memory View
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Audit, Playbook & Learning Memory Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This component is now self-contained. It no longer imports the removed lib memory engine, so the build can pass while keeping the page visible.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Business Impact Logged</p>
+              <p className="text-xs uppercase text-slate-600">Business Impact Logged</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalImpact)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Reusable Playbooks</p>
+              <p className="text-xs uppercase text-slate-600">Reusable Playbooks</p>
               <p className="mt-2 text-3xl font-black">{playbooks}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High-Risk Lessons</p>
+              <p className="text-xs uppercase text-slate-600">High-Risk Lessons</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Converted Knowledge</p>
+              <p className="text-xs uppercase text-slate-600">Converted Knowledge</p>
               <p className="mt-2 text-3xl font-black">{converted}</p>
             </div>
           </div>
@@ -249,38 +249,38 @@ export default function AuditPlaybookMemoryEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{item.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Source: {item.sourceModule} · Owner: {item.owner} · Date: {item.createdAt}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Impact</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Impact</p>
                   <p className="mt-1 font-black">{formatMad(item.businessImpactMad)}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Lesson</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Lesson</p>
                   <p className="mt-2 text-sm text-slate-700">{item.lesson}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Rule to Remember</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Rule to Remember</p>
                   <p className="mt-2 text-sm text-slate-700">{item.ruleToRemember}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Reusable Playbook</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Reusable Playbook</p>
                   <p className="mt-2 text-sm text-slate-700">{item.reusablePlaybook}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="audit" engine="system" actionKey="convert_to_playbook" actionLabel="Convert to Playbook" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Convert to Playbook</MarketActionButton>
+                <MarketActionButton moduleKey="audit" engine="system" actionKey="convert_to_playbook" actionLabel="Convert to Playbook" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Convert to Playbook</MarketActionButton>
                 <MarketActionButton moduleKey="audit" engine="system" actionKey="validate_lesson" actionLabel="Validate Lesson" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Validate Lesson</MarketActionButton>
                 <MarketActionButton moduleKey="audit" engine="system" actionKey="create_rule" actionLabel="Create Rule" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Create Rule</MarketActionButton>
                 <MarketActionButton moduleKey="audit" engine="system" actionKey="archive" actionLabel="Archive" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Archive</MarketActionButton>

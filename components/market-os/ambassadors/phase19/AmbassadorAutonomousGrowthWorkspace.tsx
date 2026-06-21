@@ -24,9 +24,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -71,7 +71,7 @@ export default function AmbassadorAutonomousGrowthWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{loop.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{loop.domain} · Owner: {loop.owner}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{loop.domain} · Owner: {loop.owner}</p>
                   </div>
                   <Badge tone={loop.priority === 'critical' ? 'danger' : loop.priority === 'high' ? 'warning' : 'info'}>
                     {loop.priority}
@@ -100,7 +100,7 @@ export default function AmbassadorAutonomousGrowthWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{loop.title}</h3>
                     <Badge tone={loop.priority === 'critical' ? 'danger' : 'warning'}>{loop.priority}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{loop.expectedImpactMad.toLocaleString()} MAD expected impact</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{loop.expectedImpactMad.toLocaleString()} MAD expected impact</p>
                 </article>
               ))}
             </div>
@@ -117,7 +117,7 @@ export default function AmbassadorAutonomousGrowthWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{item.title}</h3>
                     <Badge tone={item.severity === 'critical' ? 'danger' : 'warning'}>{item.severity}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{item.mitigation}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{item.mitigation}</p>
                 </article>
               ))}
             </div>
@@ -140,7 +140,7 @@ export default function AmbassadorAutonomousGrowthWorkspace() {
               <p className='mt-3 text-sm font-medium text-slate-700'>
                 Move {item.movedMissions} missions: {item.sourceSegment} → {item.targetSegment}
               </p>
-              <p className='mt-2 text-sm text-slate-500'>Expected lift: {item.expectedConversionLift}%</p>
+              <p className='mt-2 text-sm text-slate-9500'>Expected lift: {item.expectedConversionLift}%</p>
             </article>
           ))}
         </div>
@@ -158,7 +158,7 @@ export default function AmbassadorAutonomousGrowthWorkspace() {
                   <h3 className='font-semibold text-slate-950'>{item.city}</h3>
                   <Badge tone={item.urgency === 'critical' ? 'danger' : 'warning'}>{item.urgency}</Badge>
                 </div>
-                <p className='mt-2 text-sm text-slate-500'>{item.triggerReason}</p>
+                <p className='mt-2 text-sm text-slate-9500'>{item.triggerReason}</p>
                 <p className='mt-3 text-sm font-medium text-slate-700'>
                   Need {item.requiredAmbassadors} ambassadors via {item.suggestedSource} · Capacity {item.expectedRevenueCapacityMad.toLocaleString()} MAD
                 </p>
@@ -178,7 +178,7 @@ export default function AmbassadorAutonomousGrowthWorkspace() {
                   <h3 className='font-semibold text-slate-950'>{item.title}</h3>
                   <Badge tone={item.riskScore >= 40 ? 'warning' : 'success'}>{item.riskScore}% risk</Badge>
                 </div>
-                <p className='mt-2 text-sm text-slate-500'>{item.targetCity} · {item.scenarioType}</p>
+                <p className='mt-2 text-sm text-slate-9500'>{item.targetCity} · {item.scenarioType}</p>
                 <p className='mt-3 text-sm font-medium text-slate-700'>
                   {item.expectedLeads} leads · {item.expectedConversions} conversions · {item.expectedRevenueMad.toLocaleString()} MAD
                 </p>

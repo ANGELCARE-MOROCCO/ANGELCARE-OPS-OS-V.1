@@ -762,3 +762,36 @@ table {
 .carelink-radar-map .carelink-radar-halo {
   pointer-events: none !important;
 }
+
+/* =========================================================
+   MARKET OS — LOCAL WHITE THEME STABILIZATION
+   Scoped safety layer. Does not affect other modules.
+   ========================================================= */
+
+body:has([data-market-os-root]) {
+  background: #ffffff;
+}
+
+[data-market-os-root] {
+  background: #ffffff !important;
+  color: #020617;
+}
+
+[data-market-os-root] .market-os-surface,
+[data-market-os-root] .market-os-card,
+[data-market-os-root] .market-os-panel {
+  background: #ffffff;
+  color: #020617;
+  border-color: #e2e8f0;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+[data-market-os-root] .market-os-muted {
+  color: #64748b;
+}
+
+[data-market-os-root] .market-os-subtle {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+

@@ -3,7 +3,7 @@
 
 export default function IncentivesSafetySnapshotHardFix() {
   return (
-    <div className="rounded-[36px] border border-slate-800 bg-[#020617] p-6 shadow-2xl">
+    <div className="rounded-[36px] border border-slate-200 bg-[#020617] p-6 shadow-2xl">
       <div className="flex items-start justify-between">
         <div>
           <div
@@ -45,7 +45,7 @@ export default function IncentivesSafetySnapshotHardFix() {
         ].map(([value, label]) => (
           <div
             key={label}
-            className="rounded-[28px] border border-white/10 bg-white/10 p-6"
+            className="rounded-[28px] border border-slate-200 bg-white/10 p-6"
           >
             <div
               style={{

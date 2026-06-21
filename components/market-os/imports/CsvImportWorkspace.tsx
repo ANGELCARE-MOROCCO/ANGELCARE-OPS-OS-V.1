@@ -28,7 +28,7 @@ export function CsvImportWorkspace() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
 
         <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
@@ -47,7 +47,7 @@ export function CsvImportWorkspace() {
               </p>
             </div>
 
-            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-slate-950 px-5 py-4 text-sm font-black text-white">
+            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-black text-slate-950">
               Upload CSV
               <input
                 type="file"
@@ -75,7 +75,7 @@ export function CsvImportWorkspace() {
 
             <button
               onClick={validate}
-              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-white"
+              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-slate-950"
             >
               Validate Structure
             </button>
@@ -139,7 +139,7 @@ export function CsvImportWorkspace() {
             </table>
 
             {rows.length === 0 ? (
-              <div className="p-10 text-center text-sm font-bold text-slate-500">
+              <div className="p-10 text-center text-sm font-bold text-slate-9500">
                 Upload a CSV file to preview records.
               </div>
             ) : null}
@@ -159,7 +159,7 @@ function Metric({
 }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+      <p className="text-xs font-black uppercase tracking-wider text-slate-9500">
         {label}
       </p>
 

@@ -28,7 +28,7 @@ export default function AmbassadorPermissionMatrixWorkspace() {
       <div className='rounded-2xl border border-slate-200 bg-white shadow-sm'>
         <div className='overflow-x-auto'>
           <table className='min-w-full divide-y divide-slate-100 text-sm'>
-            <thead className='bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500'>
+            <thead className='bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-9500'>
               <tr>
                 <th className='px-5 py-3'>Action</th>
                 <th className='px-5 py-3'>Roles</th>

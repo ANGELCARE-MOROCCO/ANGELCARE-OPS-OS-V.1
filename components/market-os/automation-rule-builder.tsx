@@ -135,34 +135,34 @@ export default function AutomationRuleBuilder() {
   const ownerRules = rules.filter((r) => r.action_type === "assign_owner").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Final Pack 27
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Visual Automation Rule Builder
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Create, activate, deactivate and run automation rules without terminal commands.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Active Rules</p>
+              <p className="text-xs uppercase text-slate-600">Active Rules</p>
               <p className="mt-2 text-3xl font-black">{activeRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Inactive Rules</p>
+              <p className="text-xs uppercase text-slate-600">Inactive Rules</p>
               <p className="mt-2 text-3xl font-black">{inactiveRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Next Action Rules</p>
+              <p className="text-xs uppercase text-slate-600">Next Action Rules</p>
               <p className="mt-2 text-3xl font-black">{nextActionRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Owner Rules</p>
+              <p className="text-xs uppercase text-slate-600">Owner Rules</p>
               <p className="mt-2 text-3xl font-black">{ownerRules}</p>
             </div>
           </div>
@@ -240,7 +240,7 @@ export default function AutomationRuleBuilder() {
             <button
               onClick={createRule}
               disabled={loading}
-              className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white disabled:opacity-50"
+              className="rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-950 disabled:opacity-50"
             >
               Create Rule
             </button>
@@ -266,7 +266,7 @@ export default function AutomationRuleBuilder() {
             ))}
 
             {!actions.length && (
-              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
                 No latest actions yet.
               </div>
             )}
@@ -288,7 +288,7 @@ export default function AutomationRuleBuilder() {
                   </div>
 
                   <h2 className="text-xl font-black">{rule.rule_name || "Untitled rule"}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     If {rule.condition_key} {rule.condition_operator} {rule.condition_value || "empty"} → {rule.action_type}: {rule.action_value}
                   </p>
                 </div>
@@ -312,7 +312,7 @@ export default function AutomationRuleBuilder() {
           ))}
 
           {!rules.length && (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-500">
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-9500">
               No automation rules yet.
             </div>
           )}

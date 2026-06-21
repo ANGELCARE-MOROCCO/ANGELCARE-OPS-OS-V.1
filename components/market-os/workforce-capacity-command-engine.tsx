@@ -22,7 +22,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -52,35 +52,35 @@ export default function WorkforceCapacityCommandEngine() {
   const avgProductivity = Math.round(workforceAgents.reduce((sum, a) => sum + a.productivityScore, 0) / workforceAgents.length)
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 14
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Marketing Workforce & Capacity Command Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer controls marketing people, workload, capacity, skill fit, task pressure,
             productivity, quality and redistribution decisions.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Active Tasks</p>
+              <p className="text-xs uppercase text-slate-600">Active Tasks</p>
               <p className="mt-2 text-3xl font-black">{totalTasks}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Blocked Tasks</p>
+              <p className="text-xs uppercase text-slate-600">Blocked Tasks</p>
               <p className="mt-2 text-3xl font-black">{blockedTasks}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Overloaded Agents</p>
+              <p className="text-xs uppercase text-slate-600">Overloaded Agents</p>
               <p className="mt-2 text-3xl font-black">{overloaded}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Productivity</p>
+              <p className="text-xs uppercase text-slate-600">Avg Productivity</p>
               <p className="mt-2 text-3xl font-black">{avgProductivity}%</p>
             </div>
           </div>
@@ -145,15 +145,15 @@ export default function WorkforceCapacityCommandEngine() {
                     </div>
 
                     <h2 className="text-xl font-black">{agent.name}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-9500">
                       Focus: {agent.currentFocus}
                     </p>
                   </div>
 
                   <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                    <p className="text-xs font-bold uppercase text-slate-500">Task Load</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Task Load</p>
                     <p className="mt-1 font-black">{agent.activeTasks} active</p>
-                    <p className="text-xs text-slate-500">{agent.blockedTasks} blocked</p>
+                    <p className="text-xs text-slate-9500">{agent.blockedTasks} blocked</p>
                   </div>
                 </div>
 
@@ -164,7 +164,7 @@ export default function WorkforceCapacityCommandEngine() {
                       <span>{capacityUse}%</span>
                     </div>
                     <Bar value={capacityUse} />
-                    <p className="mt-2 text-xs text-slate-500">{agent.usedHours}/{agent.weeklyCapacityHours}h</p>
+                    <p className="mt-2 text-xs text-slate-9500">{agent.usedHours}/{agent.weeklyCapacityHours}h</p>
                   </div>
 
                   <div className="rounded-2xl border border-slate-200 p-4">
@@ -194,21 +194,21 @@ export default function WorkforceCapacityCommandEngine() {
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-3">
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Overload Reason</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Overload Reason</p>
                     <p className="mt-2 text-sm text-slate-700">{agent.overloadReason}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Redistribution</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Redistribution</p>
                     <p className="mt-2 text-sm text-slate-700">{agent.recommendedRedistribution}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Management Action</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Management Action</p>
                     <p className="mt-2 text-sm text-slate-700">{agent.nextManagementAction}</p>
                   </div>
                 </div>
 
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <MarketActionButton moduleKey="workforce" engine="data" actionKey="assign_reassign_tasks" actionLabel="Reassign Tasks" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Reassign Tasks</MarketActionButton>
+                  <MarketActionButton moduleKey="workforce" engine="data" actionKey="assign_reassign_tasks" actionLabel="Reassign Tasks" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Reassign Tasks</MarketActionButton>
                   <MarketActionButton moduleKey="workforce" engine="data" actionKey="add_capacity_note" actionLabel="Add Capacity Note" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Add Capacity Note</MarketActionButton>
                   <MarketActionButton moduleKey="workforce" engine="data" actionKey="open_workload" actionLabel="Open Workload" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Open Workload</MarketActionButton>
                   <MarketActionButton moduleKey="workforce" engine="data" actionKey="escalate_capacity_risk" actionLabel="Escalate Capacity Risk" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Escalate Capacity Risk</MarketActionButton>

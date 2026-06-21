@@ -63,7 +63,7 @@ export function CsvSyncControlWorkspace() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
         <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">
@@ -90,14 +90,14 @@ export function CsvSyncControlWorkspace() {
               ))}
             </select>
 
-            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white">
+            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950">
               Upload CSV
               <input type="file" accept=".csv" className="hidden" onChange={handleFile} />
             </label>
 
             <button
               onClick={runDryPlan}
-              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-white"
+              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-slate-950"
             >
               Run Dry Sync Plan
             </button>
@@ -149,7 +149,7 @@ export function CsvSyncControlWorkspace() {
               </div>
             </div>
           ) : (
-            <div className="mt-5 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-500">
+            <div className="mt-5 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-9500">
               Upload a valid CSV, then run dry sync plan.
             </div>
           )}
@@ -185,7 +185,7 @@ export function CsvSyncControlWorkspace() {
                   ))}
                 </tbody>
               </table>
-              {rows.length === 0 ? <div className="p-10 text-center text-sm font-bold text-slate-500">No CSV loaded.</div> : null}
+              {rows.length === 0 ? <div className="p-10 text-center text-sm font-bold text-slate-9500">No CSV loaded.</div> : null}
             </div>
           </section>
 
@@ -195,13 +195,13 @@ export function CsvSyncControlWorkspace() {
               {history.map((entry) => (
                 <article key={entry.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-sm font-black text-slate-950">{entry.fileName}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-500">
+                  <p className="mt-1 text-xs font-bold text-slate-9500">
                     {entry.datasetType} · {entry.rowCount} rows · {entry.status}
                   </p>
                 </article>
               ))}
               {history.length === 0 ? (
-                <p className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm font-bold text-slate-500">
+                <p className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm font-bold text-slate-9500">
                   No import jobs yet.
                 </p>
               ) : null}
@@ -216,7 +216,7 @@ export function CsvSyncControlWorkspace() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</p>
       <p className="mt-3 truncate text-2xl font-black text-slate-950">{value}</p>
     </div>
   )

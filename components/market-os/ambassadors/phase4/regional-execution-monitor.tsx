@@ -11,7 +11,7 @@ export function RegionalExecutionMonitor({ signals }: Props) {
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Regional execution</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-9500">Regional execution</p>
         <h2 className="mt-1 text-2xl font-black text-slate-950">Coverage, conversion and territory gap monitoring</h2>
       </div>
 
@@ -21,7 +21,7 @@ export function RegionalExecutionMonitor({ signals }: Props) {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-black text-slate-950">{signal.city}</h3>
-                <p className="text-xs font-semibold text-slate-500">{signal.region}</p>
+                <p className="text-xs font-semibold text-slate-9500">{signal.region}</p>
               </div>
               <AmbassadorRiskBadge risk={signal.riskLevel} />
             </div>
@@ -43,7 +43,7 @@ export function RegionalExecutionMonitor({ signals }: Props) {
 function Mini({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-      <p className="text-xs font-semibold text-slate-500">{label}</p>
+      <p className="text-xs font-semibold text-slate-9500">{label}</p>
       <p className="mt-1 font-black text-slate-950">{value}</p>
     </div>
   );

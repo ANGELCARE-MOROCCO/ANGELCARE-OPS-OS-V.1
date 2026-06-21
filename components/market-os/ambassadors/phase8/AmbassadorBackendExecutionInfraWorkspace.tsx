@@ -77,7 +77,7 @@ export default function AmbassadorBackendExecutionInfraWorkspace() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
           <h2 className="text-lg font-bold text-slate-950">Role permission matrix</h2>
-          <p className="mt-1 text-sm text-slate-500">Use this to prevent unsafe ambassador, proof, reward, and payout actions.</p>
+          <p className="mt-1 text-sm text-slate-9500">Use this to prevent unsafe ambassador, proof, reward, and payout actions.</p>
         </div>
         <div className="grid gap-4 p-5 lg:grid-cols-2">
           {(Object.entries(ambassadorRolePermissions) as [AmbassadorRole, AmbassadorPermission[]][]).map(([role, permissions]) => (
@@ -89,7 +89,7 @@ export default function AmbassadorBackendExecutionInfraWorkspace() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
           <h2 className="text-lg font-bold text-slate-950">Supabase schema blueprint</h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-9500">
             SQL-ready foundation. Review before running in production.
           </p>
         </div>

@@ -86,42 +86,42 @@ export const MODULE_PERMISSIONS = {
 } as const
 
 export const USER_ROLE_OPTIONS = [
-  { label: 'CEO', value: 'ceo', department: 'Direction', defaultHome: '/workspace' },
-  { label: 'Direction', value: 'direction', department: 'Direction', defaultHome: '/workspace' },
-  { label: 'Admin', value: 'admin', department: 'Administration', defaultHome: '/workspace' },
+  { label: 'CEO', value: 'ceo', department: 'Direction', defaultHome: '/dashboard' },
+  { label: 'Direction', value: 'direction', department: 'Direction', defaultHome: '/dashboard' },
+  { label: 'Admin', value: 'admin', department: 'Administration', defaultHome: '/dashboard' },
 
-  { label: 'Marketing', value: 'marketing', department: 'Marketing', defaultHome: '/workspace' },
-  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/workspace' },
-  { label: 'Operations', value: 'operations', department: 'Operations', defaultHome: '/workspace' },
-  { label: 'HR', value: 'hr', department: 'Human Resources', defaultHome: '/workspace' },
-  { label: 'Session Leader', value: 'session_leader', department: 'Operations', defaultHome: '/workspace' },
-  { label: 'Finance', value: 'finance', department: 'Finance', defaultHome: '/workspace' },
-  { label: 'Academy Admin', value: 'academy_admin', department: 'Academy', defaultHome: '/workspace' },
-  { label: 'Academy Trainer', value: 'academy_trainer', department: 'Academy', defaultHome: '/workspace' },
+  { label: 'Marketing', value: 'marketing', department: 'Marketing', defaultHome: '/dashboard' },
+  { label: 'C.S.A', value: 'csa', department: 'Customer Success', defaultHome: '/dashboard' },
+  { label: 'Operations', value: 'operations', department: 'Operations', defaultHome: '/dashboard' },
+  { label: 'HR', value: 'hr', department: 'Human Resources', defaultHome: '/dashboard' },
+  { label: 'Session Leader', value: 'session_leader', department: 'Operations', defaultHome: '/dashboard' },
+  { label: 'Finance', value: 'finance', department: 'Finance', defaultHome: '/dashboard' },
+  { label: 'Academy Admin', value: 'academy_admin', department: 'Academy', defaultHome: '/dashboard' },
+  { label: 'Academy Trainer', value: 'academy_trainer', department: 'Academy', defaultHome: '/dashboard' },
 
-  { label: 'Staff', value: 'staff', department: 'Staff Portal', defaultHome: '/workspace' },
-  { label: 'Caregiver', value: 'caregiver', department: 'Field Staff', defaultHome: '/workspace' },
+  { label: 'Staff', value: 'staff', department: 'Staff Portal', defaultHome: '/dashboard' },
+  { label: 'Caregiver', value: 'caregiver', department: 'Field Staff', defaultHome: '/dashboard' },
 ] as const
 
 export type UserRoleKey = typeof USER_ROLE_OPTIONS[number]['value']
 
 export const ROLE_HOME_ROUTES: Record<string, string> = {
-  ceo: '/workspace',
-  direction: '/workspace',
-  admin: '/workspace',
+  ceo: '/dashboard',
+  direction: '/dashboard',
+  admin: '/dashboard',
 
-  marketing: '/workspace',
-  csa: '/workspace',
-  operations: '/workspace',
-  hr: '/workspace',
-  session_leader: '/workspace',
-  finance: '/workspace',
-  academy_admin: '/workspace',
-  academy_trainer: '/workspace',
+  marketing: '/dashboard',
+  csa: '/dashboard',
+  operations: '/dashboard',
+  hr: '/dashboard',
+  session_leader: '/dashboard',
+  finance: '/dashboard',
+  academy_admin: '/dashboard',
+  academy_trainer: '/dashboard',
 
-  staff: '/workspace',
-  caregiver: '/workspace',
-  employee: '/workspace',
+  staff: '/dashboard',
+  caregiver: '/dashboard',
+  employee: '/dashboard',
 }
 
 export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
@@ -444,7 +444,7 @@ export function getDefaultHomeForRole(user: any) {
 
 export function getFirstAllowedRoute(user: any) {
   if (!user) return '/login'
-  return '/workspace'
+  return '/dashboard'
 }
 
 export const b2bPartnershipPermissionKeys = [

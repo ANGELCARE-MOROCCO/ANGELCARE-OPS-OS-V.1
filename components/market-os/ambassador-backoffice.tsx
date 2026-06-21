@@ -65,7 +65,7 @@ function Hero({ total, active, payouts, proofs, reset }: { total: number; active
             <Badge tone="emerald">Ambassador Unit Agent</Badge>
             <Badge tone="amber">Stable TS Phase 1</Badge>
           </div>
-          <h1 className="mt-5 max-w-5xl text-4xl font-black leading-tight tracking-tight text-white md:text-6xl">
+          <h1 className="mt-5 max-w-5xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-6xl">
             Ambassador operations command workspace.
           </h1>
           <p className="mt-5 max-w-4xl text-base font-semibold leading-8 text-emerald-50/85 md:text-lg">
@@ -81,10 +81,10 @@ function Hero({ total, active, payouts, proofs, reset }: { total: number; active
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Ambassadors</p><p className="mt-2 text-4xl font-black text-white">{total}</p><p className="text-sm font-bold text-emerald-50/70">Profiles controlled</p></div>
-          <div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Active</p><p className="mt-2 text-4xl font-black text-white">{active}</p><p className="text-sm font-bold text-emerald-50/70">Ready to execute</p></div>
-          <div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Proof queue</p><p className="mt-2 text-4xl font-black text-white">{proofs}</p><p className="text-sm font-bold text-emerald-50/70">Needs review</p></div>
-          <div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Payout queue</p><p className="mt-2 text-4xl font-black text-white">{payouts}</p><p className="text-sm font-bold text-emerald-50/70">Finance control</p></div>
+          <div className="rounded-3xl border border-slate-200 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Ambassadors</p><p className="mt-2 text-4xl font-black text-slate-950">{total}</p><p className="text-sm font-bold text-emerald-50/70">Profiles controlled</p></div>
+          <div className="rounded-3xl border border-slate-200 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Active</p><p className="mt-2 text-4xl font-black text-slate-950">{active}</p><p className="text-sm font-bold text-emerald-50/70">Ready to execute</p></div>
+          <div className="rounded-3xl border border-slate-200 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Proof queue</p><p className="mt-2 text-4xl font-black text-slate-950">{proofs}</p><p className="text-sm font-bold text-emerald-50/70">Needs review</p></div>
+          <div className="rounded-3xl border border-slate-200 bg-white/10 p-5"><p className="text-xs font-black uppercase text-emerald-100/70">Payout queue</p><p className="mt-2 text-4xl font-black text-slate-950">{payouts}</p><p className="text-sm font-bold text-emerald-50/70">Finance control</p></div>
         </div>
       </div>
     </DarkPanel>
@@ -107,7 +107,7 @@ function Gateways() {
           <Link key={gateway.href} href={gateway.href} className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-xl">
             <div className="flex items-start justify-between">
               <span className="rounded-2xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-800">{gateway.layer}</span>
-              <span className="text-slate-300 group-hover:text-emerald-700">→</span>
+              <span className="text-slate-600 group-hover:text-emerald-700">→</span>
             </div>
             <h3 className="mt-4 text-lg font-black text-slate-950">{gateway.label}</h3>
             <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{gateway.detail}</p>
@@ -133,10 +133,10 @@ function IntelligencePanel() {
   return (
     <DarkPanel className="p-5">
       <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-200">AI-style decision panel</p>
-      <h2 className="mt-2 text-2xl font-black text-white">Operator next moves</h2>
+      <h2 className="mt-2 text-2xl font-black text-slate-950">Operator next moves</h2>
       <div className="mt-5 space-y-3">
         {nextActions.map((action) => (
-          <Link key={action.label} href={action.href} className="flex items-center justify-between rounded-2xl bg-white/10 p-4 text-sm font-bold text-emerald-50/90 transition hover:bg-white/15">
+          <Link key={action.label} href={action.href} className="flex items-center justify-between rounded-2xl bg-white/10 p-4 text-sm font-bold text-emerald-50/90 transition hover:bg-slate-100">
             <span>{action.label}</span>
             <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-950">{action.count}</span>
           </Link>
@@ -159,15 +159,15 @@ function AmbassadorCard({ a, onStatus }: { a: Ambassador; onStatus: (id: string,
       <div className="flex items-start justify-between gap-3">
         <div>
           <Link href={`/market-os/ambassadors/${a.id}`} className="text-lg font-black text-slate-950 hover:underline">{a.name}</Link>
-          <p className="mt-1 text-sm font-bold text-slate-500">{a.city} • {a.tier} • {a.manager}</p>
+          <p className="mt-1 text-sm font-bold text-slate-9500">{a.city} • {a.tier} • {a.manager}</p>
         </div>
         <Badge tone={statusTone(a.status) as "slate" | "emerald" | "amber" | "rose" | "blue"}>{a.status}</Badge>
       </div>
       <div className="mt-4 grid gap-3 md:grid-cols-4">
-        <div><p className="text-xs font-black uppercase text-slate-400">Health</p><Meter value={health} /><p className="mt-1 text-xs font-black">{pct(health)}</p></div>
-        <div><p className="text-xs font-black uppercase text-slate-400">Readiness</p><Meter value={a.readiness} /><p className="mt-1 text-xs font-black">{pct(a.readiness)}</p></div>
-        <div><p className="text-xs font-black uppercase text-slate-400">Compliance</p><Meter value={a.complianceScore} /><p className="mt-1 text-xs font-black">{pct(a.complianceScore)}</p></div>
-        <div><p className="text-xs font-black uppercase text-slate-400">Lead score</p><Meter value={a.leadScore} /><p className="mt-1 text-xs font-black">{pct(a.leadScore)}</p></div>
+        <div><p className="text-xs font-black uppercase text-slate-500">Health</p><Meter value={health} /><p className="mt-1 text-xs font-black">{pct(health)}</p></div>
+        <div><p className="text-xs font-black uppercase text-slate-500">Readiness</p><Meter value={a.readiness} /><p className="mt-1 text-xs font-black">{pct(a.readiness)}</p></div>
+        <div><p className="text-xs font-black uppercase text-slate-500">Compliance</p><Meter value={a.complianceScore} /><p className="mt-1 text-xs font-black">{pct(a.complianceScore)}</p></div>
+        <div><p className="text-xs font-black uppercase text-slate-500">Lead score</p><Meter value={a.leadScore} /><p className="mt-1 text-xs font-black">{pct(a.leadScore)}</p></div>
       </div>
       <div className="mt-4 grid gap-2 md:grid-cols-3">
         <p className="rounded-2xl bg-slate-50 p-3 text-sm font-bold text-slate-700">Revenue: <b className="text-slate-950">{mad(a.revenueMAD)}</b></p>
@@ -194,9 +194,9 @@ function AmbassadorCard({ a, onStatus }: { a: Ambassador; onStatus: (id: string,
 
 function CommandTables({ view }: { view: ViewMode }) {
   const { store, commit } = useAmbassadorStore()
-  if (view === "recruitment") return <Panel className="p-5"><h2 className="text-2xl font-black">Recruitment pipeline</h2><div className="mt-5 grid gap-3">{store.applications.map((app) => <div key={app.id} className="rounded-2xl border p-4"><div className="flex justify-between"><div><p className="font-black">{app.name}</p><p className="text-sm font-bold text-slate-500">{app.city} • {app.source}</p></div><Badge tone={riskTone(app.priority) as "slate" | "emerald" | "amber" | "rose" | "blue"}>{app.stage}</Badge></div><p className="mt-2 text-sm font-semibold text-slate-600">Next: {app.nextStep}</p><Button href="/market-os/ambassadors/recruitment" kind="primary">Open pipeline</Button></div>)}</div></Panel>
-  if (view === "missions") return <Panel className="p-5"><h2 className="text-2xl font-black">Mission command</h2><div className="mt-5 grid gap-3">{store.missions.map((mission) => <div key={mission.id} className="rounded-2xl border p-4"><div className="flex justify-between"><div><p className="font-black">{mission.title}</p><p className="text-sm font-bold text-slate-500">{ambassadorName(store, mission.ambassadorId)} • {mission.channel} • Due {mission.dueDate}</p></div><Badge tone={statusTone(mission.status) as "slate" | "emerald" | "amber" | "rose" | "blue"}>{mission.status}</Badge></div><p className="mt-2 text-sm font-semibold text-slate-600">{mission.instructions}</p><Button onClick={() => commit((draft) => { draft.missions = draft.missions.map((item) => item.id === mission.id ? { ...item, status: missionNext(item.status) } : item) }, "advance mission", `Moved ${mission.title}`)} kind="primary">Move mission forward</Button></div>)}</div></Panel>
-  if (view === "proofs") return <Panel className="p-5"><h2 className="text-2xl font-black">Proof validation</h2><div className="mt-5 grid gap-3">{store.proofs.map((proof) => <div key={proof.id} className="rounded-2xl border p-4"><p className="font-black">{ambassadorName(store, proof.ambassadorId)} proof</p><p className="text-sm font-bold text-slate-500">{proof.type} • {proof.link}</p><div className="mt-3 flex gap-2"><Button href="/market-os/ambassadors/proofs" kind="success">Open validation</Button></div></div>)}</div></Panel>
+  if (view === "recruitment") return <Panel className="p-5"><h2 className="text-2xl font-black">Recruitment pipeline</h2><div className="mt-5 grid gap-3">{store.applications.map((app) => <div key={app.id} className="rounded-2xl border p-4"><div className="flex justify-between"><div><p className="font-black">{app.name}</p><p className="text-sm font-bold text-slate-9500">{app.city} • {app.source}</p></div><Badge tone={riskTone(app.priority) as "slate" | "emerald" | "amber" | "rose" | "blue"}>{app.stage}</Badge></div><p className="mt-2 text-sm font-semibold text-slate-600">Next: {app.nextStep}</p><Button href="/market-os/ambassadors/recruitment" kind="primary">Open pipeline</Button></div>)}</div></Panel>
+  if (view === "missions") return <Panel className="p-5"><h2 className="text-2xl font-black">Mission command</h2><div className="mt-5 grid gap-3">{store.missions.map((mission) => <div key={mission.id} className="rounded-2xl border p-4"><div className="flex justify-between"><div><p className="font-black">{mission.title}</p><p className="text-sm font-bold text-slate-9500">{ambassadorName(store, mission.ambassadorId)} • {mission.channel} • Due {mission.dueDate}</p></div><Badge tone={statusTone(mission.status) as "slate" | "emerald" | "amber" | "rose" | "blue"}>{mission.status}</Badge></div><p className="mt-2 text-sm font-semibold text-slate-600">{mission.instructions}</p><Button onClick={() => commit((draft) => { draft.missions = draft.missions.map((item) => item.id === mission.id ? { ...item, status: missionNext(item.status) } : item) }, "advance mission", `Moved ${mission.title}`)} kind="primary">Move mission forward</Button></div>)}</div></Panel>
+  if (view === "proofs") return <Panel className="p-5"><h2 className="text-2xl font-black">Proof validation</h2><div className="mt-5 grid gap-3">{store.proofs.map((proof) => <div key={proof.id} className="rounded-2xl border p-4"><p className="font-black">{ambassadorName(store, proof.ambassadorId)} proof</p><p className="text-sm font-bold text-slate-9500">{proof.type} • {proof.link}</p><div className="mt-3 flex gap-2"><Button href="/market-os/ambassadors/proofs" kind="success">Open validation</Button></div></div>)}</div></Panel>
   return <Panel className="p-5"><h2 className="text-2xl font-black capitalize">{view} workspace</h2><p className="mt-2 text-sm font-semibold text-slate-600">Open the dedicated route for full form controls and detailed execution tools.</p><Button href={`/market-os/ambassadors/${view}`} kind="primary">Open {view}</Button></Panel>
 }
 
@@ -221,7 +221,7 @@ export default function AmbassadorBackoffice() {
 
   return (
     <Shell>
-      <main className="mx-auto max-w-[1900px] space-y-6 p-4 lg:p-8">
+      <main data-market-os-root className="mx-auto max-w-[1900px] space-y-6 p-4 lg:p-8">
         <Hero total={store.ambassadors.length} active={store.ambassadors.filter((ambassador) => ambassador.status === "active").length} payouts={pendingPayouts} proofs={pendingProofs} reset={reset} />
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
           <Metric label="Revenue impact" value={mad(revenue)} sub="Ambassador attributed" />
@@ -259,7 +259,7 @@ export default function AmbassadorBackoffice() {
         <Panel className="p-5">
           <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">Activity log</p>
           <h2 className="mt-2 text-2xl font-black">Recent execution trail</h2>
-          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">{store.logs.slice(0, 8).map((log) => <div key={log.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs font-black uppercase text-slate-400">{log.action}</p><p className="mt-2 text-sm font-black text-slate-950">{log.entity}</p><p className="mt-1 text-xs font-bold text-slate-500">{log.detail}</p></div>)}</div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">{store.logs.slice(0, 8).map((log) => <div key={log.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs font-black uppercase text-slate-500">{log.action}</p><p className="mt-2 text-sm font-black text-slate-950">{log.entity}</p><p className="mt-1 text-xs font-bold text-slate-9500">{log.detail}</p></div>)}</div>
         </Panel>
       </main>
     </Shell>

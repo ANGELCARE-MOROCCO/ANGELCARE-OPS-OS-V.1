@@ -37,7 +37,7 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
 
@@ -52,27 +52,27 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
 
         <div className="mt-6 grid gap-4 md:grid-cols-6">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Intel Score</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Intel Score</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{intelligenceScore}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Critical Insights</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Critical Insights</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{criticalInsights.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Campaigns Risk</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Campaigns Risk</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{campaignsAtRisk.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Pressure Teams</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Pressure Teams</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{highPressureTeams.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Anomalies</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Anomalies</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{highAnomalies.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Decisions</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Decisions</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{decisionItems.length}</p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{insight.title}</p>
-                    <p className="mt-1 text-xs text-slate-500">{insight.area} · confidence {insight.confidence}%</p>
+                    <p className="mt-1 text-xs text-slate-9500">{insight.area} · confidence {insight.confidence}%</p>
                     <p className="mt-3 text-sm text-slate-600">{insight.summary}</p>
                     <p className="mt-3 text-sm font-semibold text-slate-800">{insight.recommendation}</p>
                   </div>
@@ -107,7 +107,7 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{item.headline}</p>
-                      <p className="mt-1 text-xs text-slate-500">Owner: {item.owner}</p>
+                      <p className="mt-1 text-xs text-slate-9500">Owner: {item.owner}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Badge>{item.priority}</Badge>
@@ -148,7 +148,7 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
             {phase35CampaignForecasts.map((forecast) => (
               <article key={forecast.id} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{forecast.campaign}</p>
-                <p className="mt-1 text-xs text-slate-500">Delivery probability: {forecast.deliveryProbability}%</p>
+                <p className="mt-1 text-xs text-slate-9500">Delivery probability: {forecast.deliveryProbability}%</p>
                 <p className="mt-3 text-sm text-slate-600">{forecast.predictedBlocker}</p>
                 <p className="mt-3 text-sm font-semibold text-slate-800">{forecast.recommendedMove}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -166,7 +166,7 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
             {phase35WorkloadForecasts.map((forecast) => (
               <article key={forecast.id} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{forecast.team}</p>
-                <p className="mt-1 text-xs text-slate-500">Pressure: {forecast.pressureScore}%</p>
+                <p className="mt-1 text-xs text-slate-9500">Pressure: {forecast.pressureScore}%</p>
                 <p className="mt-3 text-sm text-slate-600">{forecast.predictedRisk}</p>
                 <p className="mt-3 text-sm font-semibold text-slate-800">{forecast.recommendedAction}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -183,7 +183,7 @@ export function ContentCommandPhase35ExecutiveIntelligenceWorkspace(): React.Rea
             {phase35OperationalAnomalies.map((anomaly) => (
               <article key={anomaly.id} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{anomaly.title}</p>
-                <p className="mt-1 text-xs text-slate-500">{anomaly.detectedIn}</p>
+                <p className="mt-1 text-xs text-slate-9500">{anomaly.detectedIn}</p>
                 <p className="mt-3 text-sm text-slate-600">{anomaly.signal}</p>
                 <p className="mt-3 text-sm font-semibold text-slate-800">{anomaly.response}</p>
                 <div className="mt-3 flex flex-wrap gap-2">

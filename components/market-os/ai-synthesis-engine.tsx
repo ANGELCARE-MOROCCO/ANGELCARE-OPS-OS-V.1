@@ -110,12 +110,12 @@ export default function AiSynthesisEngine() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">Market-OS · Activation Pack 02</p>
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">Market-OS · Activation Pack 02</p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">AI Synthesis Engine</h1>
-          <p className="mt-4 max-w-3xl text-slate-300">Executable synthesis layer: convert synthesis into task chains, board actions and outcome monitoring.</p>
+          <p className="mt-4 max-w-3xl text-slate-600">Executable synthesis layer: convert synthesis into task chains, board actions and outcome monitoring.</p>
         </div>
 
         {message && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">{message}</div>}
@@ -128,15 +128,15 @@ export default function AiSynthesisEngine() {
                   <div className="mb-3 flex flex-wrap gap-2"><span className={`rounded-full border px-3 py-1 text-xs font-bold ${badgeClass(item.priority)}`}>{item.priority}</span><span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold">{item.owner}</span></div>
                   <h2 className="text-xl font-black">{item.title}</h2>
                 </div>
-                <div className="rounded-2xl bg-slate-50 p-4 text-right"><p className="text-xs font-bold uppercase text-slate-500">Impact</p><p className="font-black">{formatMad(item.impactMad)}</p></div>
+                <div className="rounded-2xl bg-slate-50 p-4 text-right"><p className="text-xs font-bold uppercase text-slate-9500">Impact</p><p className="font-black">{formatMad(item.impactMad)}</p></div>
               </div>
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
-                <div className="rounded-2xl border border-slate-200 p-4"><p className="text-xs font-bold uppercase text-slate-500">Diagnosis</p><p className="mt-2 text-sm">{item.diagnosis}</p></div>
-                <div className="rounded-2xl border border-slate-200 p-4"><p className="text-xs font-bold uppercase text-slate-500">Command</p><p className="mt-2 text-sm font-semibold">{item.command}</p></div>
-                <div className="rounded-2xl border border-slate-200 p-4"><p className="text-xs font-bold uppercase text-slate-500">Success Metric</p><p className="mt-2 text-sm">{item.successMetric}</p></div>
+                <div className="rounded-2xl border border-slate-200 p-4"><p className="text-xs font-bold uppercase text-slate-9500">Diagnosis</p><p className="mt-2 text-sm">{item.diagnosis}</p></div>
+                <div className="rounded-2xl border border-slate-200 p-4"><p className="text-xs font-bold uppercase text-slate-9500">Command</p><p className="mt-2 text-sm font-semibold">{item.command}</p></div>
+                <div className="rounded-2xl border border-slate-200 p-4"><p className="text-xs font-bold uppercase text-slate-9500">Success Metric</p><p className="mt-2 text-sm">{item.successMetric}</p></div>
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
-                <button onClick={() => createTaskChain(item)} disabled={loadingId === item.id} className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">Create Task Chain</button>
+                <button onClick={() => createTaskChain(item)} disabled={loadingId === item.id} className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950 disabled:opacity-50">Create Task Chain</button>
                 <button onClick={() => sendToBoard(item)} disabled={loadingId === item.id} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold disabled:opacity-50">Send to Board</button>
                 <button onClick={() => monitorOutcome(item)} disabled={loadingId === item.id} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold disabled:opacity-50">Monitor Outcome</button>
               </div>

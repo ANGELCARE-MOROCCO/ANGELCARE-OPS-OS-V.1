@@ -1,0 +1,1100 @@
+"use client"
+
+import Link from "next/link"
+import React, { useEffect, useMemo, useState } from "react"
+
+type Stage = "planning" | "production" | "approval" | "launch-ready" | "live" | "optimization"
+type Risk = "low" | "medium" | "high" | "critical"
+type TaskStatus = "todo" | "doing" | "done" | "blocked"
+type ApprovalStatus = "pending" | "approved" | "rejected"
+type Panel = "overview" | "create" | "launch" | "budget" | "risk" | "tasks" | "performance" | "approvals" | "calendar"
+
+type Campaign = {
+  id: string
+  name: string
+  objective: string
+  campaignType: string
+  targetAudience: string
+  marketSegment: string
+  businessAxis: string
+  channelMix: string
+  geography: string
+  offer: string
+  landingOrLocation: string
+  owner: string
+  team: string
+  channel: string
+  stage: Stage
+  risk: Risk
+  startDate: string
+  launchDate: string
+  endDate: string
+  budgetMad: number
+  spentMad: number
+  revenueMad: number
+  leads: number
+  readiness: number
+  primaryKpi: string
+  secondaryKpi: string
+  trackingPlan: string
+  approvalNeed: string
+  assetNeed: string
+  complianceNotes: string
+  notes: string
+  commandNotes: string
+  nextDecision: string
+  createdAt: string
+  updatedAt: string
+}
+
+type Task = {
+  id: string
+  campaignId: string
+  title: string
+  owner: string
+  status: TaskStatus
+  priority: "low" | "medium" | "high"
+  dueDate: string
+  createdAt: string
+}
+
+type Approval = {
+  id: string
+  campaignId: string
+  title: string
+  owner: string
+  status: ApprovalStatus
+  createdAt: string
+}
+
+type RiskRecord = {
+  id: string
+  campaignId: string
+  title: string
+  level: Risk
+  owner: string
+  createdAt: string
+}
+
+type Log = {
+  id: string
+  campaignId?: string
+  message: string
+  meta: string
+  createdAt: string
+}
+
+type WorkspaceState = {
+  campaigns: Campaign[]
+  tasks: Task[]
+  approvals: Approval[]
+  risks: RiskRecord[]
+  logs: Log[]
+  selectedId: string | null
+}
+
+type ModalMode = "create" | "edit"
+
+const STORAGE_KEY = "angelcare.market_os.campaign_command_center.operational_modal.v1"
+
+const stages: Stage[] = ["planning", "production", "approval", "launch-ready", "live", "optimization"]
+const risks: Risk[] = ["low", "medium", "high", "critical"]
+
+const stageLabel: Record<Stage, string> = {
+  planning: "Planning",
+  production: "Production",
+  approval: "Approval",
+  "launch-ready": "Launch Ready",
+  live: "Live",
+  optimization: "Optimization",
+}
+
+const riskLabel: Record<Risk, string> = {
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+  critical: "Critical",
+}
+
+const campaignTypeOptions = [
+  "Digital acquisition",
+  "Offline activation",
+  "B2B partnership",
+  "B2C family campaign",
+  "Institutional campaign",
+  "Referral campaign",
+  "Seasonal campaign",
+  "Launch campaign",
+  "Retention campaign",
+  "Brand awareness",
+]
+
+const targetAudienceOptions = [
+  "Parents",
+  "Families",
+  "Mothers",
+  "New parents",
+  "Hotels",
+  "Clinics",
+  "Schools",
+  "Nurseries",
+  "Companies",
+  "Partners",
+  "Academy candidates",
+  "Mixed B2B + B2C",
+]
+
+const marketSegmentOptions = [
+  "Premium families",
+  "Mass market",
+  "Corporate accounts",
+  "Healthcare partners",
+  "Education partners",
+  "Hospitality partners",
+  "Recruitment pipeline",
+  "Academy pipeline",
+  "Existing customers",
+  "New customers",
+]
+
+const businessAxisOptions = [
+  "CareLink operations",
+  "Home childcare",
+  "Postpartum care",
+  "Academy training",
+  "B2B partnerships",
+  "Marketplace/add-ons",
+  "Sales CRM",
+  "Recruitment",
+  "Brand trust",
+  "Revenue recovery",
+]
+
+const channelMixOptions = [
+  "Meta Ads",
+  "Google Ads",
+  "WhatsApp outreach",
+  "Email campaign",
+  "Phone outreach",
+  "Field activation",
+  "Partner referral",
+  "Events",
+  "Flyers / offline",
+  "Landing page",
+  "SEO / blog",
+  "Mixed channel",
+]
+
+const kpiOptions = [
+  "Leads",
+  "Appointments",
+  "Qualified opportunities",
+  "Contracts",
+  "Revenue MAD",
+  "ROAS",
+  "Conversion rate",
+  "Partnerships signed",
+  "Applications",
+  "Brand reach",
+  "Retention",
+  "Client reactivation",
+]
+
+const emptyState: WorkspaceState = {
+  campaigns: [],
+  tasks: [],
+  approvals: [],
+  risks: [],
+  logs: [],
+  selectedId: null,
+}
+
+function emptyCampaignDraft(): Campaign {
+  const today = isoToday()
+  return {
+    id: "",
+    name: "",
+    objective: "",
+    campaignType: campaignTypeOptions[0],
+    targetAudience: targetAudienceOptions[0],
+    marketSegment: marketSegmentOptions[0],
+    businessAxis: businessAxisOptions[0],
+    channelMix: channelMixOptions[0],
+    geography: "Morocco",
+    offer: "",
+    landingOrLocation: "",
+    owner: "",
+    team: "Market-OS",
+    channel: "Mixed channel",
+    stage: "planning",
+    risk: "low",
+    startDate: today,
+    launchDate: today,
+    endDate: today,
+    budgetMad: 0,
+    spentMad: 0,
+    revenueMad: 0,
+    leads: 0,
+    readiness: 0,
+    primaryKpi: kpiOptions[0],
+    secondaryKpi: kpiOptions[1],
+    trackingPlan: "",
+    approvalNeed: "",
+    assetNeed: "",
+    complianceNotes: "",
+    notes: "",
+    commandNotes: "",
+    nextDecision: "",
+    createdAt: "",
+    updatedAt: "",
+  }
+}
+
+function id(prefix: string) {
+  return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`
+}
+
+function isoToday() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function parseState(raw: string | null): WorkspaceState {
+  if (!raw) return emptyState
+  try {
+    const parsed = JSON.parse(raw) as Partial<WorkspaceState>
+    return {
+      campaigns: Array.isArray(parsed.campaigns) ? parsed.campaigns : [],
+      tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
+      approvals: Array.isArray(parsed.approvals) ? parsed.approvals : [],
+      risks: Array.isArray(parsed.risks) ? parsed.risks : [],
+      logs: Array.isArray(parsed.logs) ? parsed.logs : [],
+      selectedId: typeof parsed.selectedId === "string" ? parsed.selectedId : null,
+    }
+  } catch {
+    return emptyState
+  }
+}
+
+function mad(value: number) {
+  return `MAD ${new Intl.NumberFormat("en-US").format(Math.round(Number(value || 0)))}`
+}
+
+function roas(campaign: Campaign) {
+  if (!campaign.spentMad) return 0
+  return Math.round((campaign.revenueMad / campaign.spentMad) * 10) / 10
+}
+
+function pct(value: number) {
+  return `${Math.max(0, Math.min(100, Math.round(value || 0)))}%`
+}
+
+function riskTone(risk: Risk): "emerald" | "amber" | "rose" {
+  if (risk === "high" || risk === "critical") return "rose"
+  if (risk === "medium") return "amber"
+  return "emerald"
+}
+
+function Pill({ children, tone = "slate" }: { children: React.ReactNode; tone?: "blue" | "emerald" | "amber" | "rose" | "violet" | "slate" }) {
+  const tones = {
+    blue: "border-blue-100 bg-blue-50 text-blue-700",
+    emerald: "border-emerald-100 bg-emerald-50 text-emerald-700",
+    amber: "border-amber-100 bg-amber-50 text-amber-700",
+    rose: "border-rose-100 bg-rose-50 text-rose-700",
+    violet: "border-violet-100 bg-violet-50 text-violet-700",
+    slate: "border-slate-200 bg-slate-50 text-slate-700",
+  }
+
+  return (
+    <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${tones[tone]}`}>
+      {children}
+    </span>
+  )
+}
+
+function Icon({ icon, tone = "blue" }: { icon: string; tone?: "blue" | "emerald" | "amber" | "rose" | "violet" | "slate" }) {
+  const tones = {
+    blue: "bg-blue-50 text-blue-700",
+    emerald: "bg-emerald-50 text-emerald-700",
+    amber: "bg-amber-50 text-amber-700",
+    rose: "bg-rose-50 text-rose-700",
+    violet: "bg-violet-50 text-violet-700",
+    slate: "bg-slate-50 text-slate-700",
+  }
+
+  return <span className={`grid h-10 w-10 place-items-center rounded-2xl text-sm font-black ${tones[tone]}`}>{icon}</span>
+}
+
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <section className={`rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.045)] ${className}`}>{children}</section>
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{label}</span>
+      {children}
+    </label>
+  )
+}
+
+function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input {...props} className={`rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50 ${props.className || ""}`} />
+}
+
+function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  return <select {...props} className={`rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50 ${props.className || ""}`} />
+}
+
+function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea {...props} className={`min-h-[112px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50 ${props.className || ""}`} />
+}
+
+export default function CampaignLifecycleExecutionWorkspace() {
+  const [hydrated, setHydrated] = useState(false)
+  const [state, setState] = useState<WorkspaceState>(emptyState)
+  const [query, setQuery] = useState("")
+  const [stageFilter, setStageFilter] = useState<"all" | Stage>("all")
+  const [riskFilter, setRiskFilter] = useState<"all" | Risk>("all")
+  const [activePanel, setActivePanel] = useState<Panel>("overview")
+  const [modalMode, setModalMode] = useState<ModalMode>("create")
+  const [modalOpen, setModalOpen] = useState(false)
+  const [draft, setDraft] = useState<Campaign>(emptyCampaignDraft())
+
+  useEffect(() => {
+    setState(parseState(window.localStorage.getItem(STORAGE_KEY)))
+    setHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hydrated) return
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  }, [state, hydrated])
+
+  function commit(next: WorkspaceState, message: string, meta = "Campaign lifecycle", campaignId?: string) {
+    const log: Log = {
+      id: id("log"),
+      campaignId,
+      message,
+      meta,
+      createdAt: new Date().toISOString(),
+    }
+    setState({ ...next, logs: [log, ...next.logs].slice(0, 160) })
+  }
+
+  const selected = useMemo(() => {
+    return state.campaigns.find((campaign) => campaign.id === state.selectedId) || state.campaigns[0] || null
+  }, [state.campaigns, state.selectedId])
+
+  const selectedTasks = useMemo(() => selected ? state.tasks.filter((task) => task.campaignId === selected.id) : [], [selected, state.tasks])
+  const selectedRisks = useMemo(() => selected ? state.risks.filter((risk) => risk.campaignId === selected.id) : [], [selected, state.risks])
+  const selectedApprovals = useMemo(() => selected ? state.approvals.filter((approval) => approval.campaignId === selected.id) : [], [selected, state.approvals])
+  const selectedLogs = useMemo(() => selected ? state.logs.filter((log) => log.campaignId === selected.id).slice(0, 12) : [], [selected, state.logs])
+
+  const filteredCampaigns = useMemo(() => {
+    return state.campaigns.filter((campaign) => {
+      const haystack = `${campaign.name} ${campaign.objective} ${campaign.owner} ${campaign.team} ${campaign.channel} ${campaign.campaignType} ${campaign.targetAudience} ${campaign.marketSegment} ${campaign.businessAxis}`.toLowerCase()
+      return (
+        (!query.trim() || haystack.includes(query.toLowerCase())) &&
+        (stageFilter === "all" || campaign.stage === stageFilter) &&
+        (riskFilter === "all" || campaign.risk === riskFilter)
+      )
+    })
+  }, [state.campaigns, query, stageFilter, riskFilter])
+
+  const metrics = useMemo(() => {
+    const totalBudget = state.campaigns.reduce((sum, c) => sum + c.budgetMad, 0)
+    const totalSpend = state.campaigns.reduce((sum, c) => sum + c.spentMad, 0)
+    const totalRevenue = state.campaigns.reduce((sum, c) => sum + c.revenueMad, 0)
+    const leads = state.campaigns.reduce((sum, c) => sum + c.leads, 0)
+    const budgetControlled = state.campaigns.length
+      ? Math.round((state.campaigns.filter((c) => !c.budgetMad || c.spentMad <= c.budgetMad).length / state.campaigns.length) * 100)
+      : 0
+
+    return {
+      active: state.campaigns.length,
+      launchReady: state.campaigns.filter((c) => c.stage === "launch-ready" || c.stage === "live").length,
+      budgetControlled,
+      highRisk: state.campaigns.filter((c) => c.risk === "high" || c.risk === "critical").length,
+      roas: totalSpend ? Math.round((totalRevenue / totalSpend) * 100) / 100 : 0,
+      leads,
+      tasksDue: state.tasks.filter((t) => t.status !== "done").length,
+      approvalsDue: state.approvals.filter((a) => a.status === "pending").length,
+      totalBudget,
+      totalSpend,
+      totalRevenue,
+    }
+  }, [state])
+
+  function openCreateModal() {
+    setModalMode("create")
+    setDraft(emptyCampaignDraft())
+    setModalOpen(true)
+    setActivePanel("create")
+  }
+
+  function openEditModal(campaign = selected) {
+    if (!campaign) return
+    setModalMode("edit")
+    setDraft(campaign)
+    setState({ ...state, selectedId: campaign.id })
+    setModalOpen(true)
+  }
+
+  function saveCampaign(event?: React.FormEvent) {
+    event?.preventDefault()
+    if (!draft.name.trim()) return
+
+    const now = new Date().toISOString()
+
+    if (modalMode === "create") {
+      const campaign: Campaign = {
+        ...draft,
+        id: id("cmp"),
+        name: draft.name.trim(),
+        owner: draft.owner.trim() || "Unassigned",
+        team: draft.team.trim() || "Market-OS",
+        budgetMad: Number(draft.budgetMad || 0),
+        spentMad: Number(draft.spentMad || 0),
+        revenueMad: Number(draft.revenueMad || 0),
+        leads: Number(draft.leads || 0),
+        readiness: Number(draft.readiness || 0),
+        createdAt: now,
+        updatedAt: now,
+      }
+
+      commit(
+        { ...state, campaigns: [campaign, ...state.campaigns], selectedId: campaign.id },
+        "Campaign created",
+        campaign.name,
+        campaign.id,
+      )
+
+      setModalOpen(false)
+      setActivePanel("overview")
+      return
+    }
+
+    const existing = state.campaigns.find((campaign) => campaign.id === draft.id)
+    if (!existing) return
+
+    const updated: Campaign = {
+      ...draft,
+      name: draft.name.trim(),
+      owner: draft.owner.trim() || "Unassigned",
+      team: draft.team.trim() || "Market-OS",
+      budgetMad: Number(draft.budgetMad || 0),
+      spentMad: Number(draft.spentMad || 0),
+      revenueMad: Number(draft.revenueMad || 0),
+      leads: Number(draft.leads || 0),
+      readiness: Number(draft.readiness || 0),
+      updatedAt: now,
+    }
+
+    commit(
+      {
+        ...state,
+        selectedId: updated.id,
+        campaigns: state.campaigns.map((campaign) => campaign.id === updated.id ? updated : campaign),
+      },
+      "Campaign saved",
+      updated.name,
+      updated.id,
+    )
+
+    setModalOpen(false)
+  }
+
+  function deleteCampaignPermanently(campaignId = draft.id) {
+    if (!campaignId) return
+    const campaign = state.campaigns.find((item) => item.id === campaignId)
+    const nextCampaigns = state.campaigns.filter((item) => item.id !== campaignId)
+    commit(
+      {
+        campaigns: nextCampaigns,
+        tasks: state.tasks.filter((item) => item.campaignId !== campaignId),
+        approvals: state.approvals.filter((item) => item.campaignId !== campaignId),
+        risks: state.risks.filter((item) => item.campaignId !== campaignId),
+        logs: state.logs.filter((item) => item.campaignId !== campaignId),
+        selectedId: nextCampaigns[0]?.id || null,
+      },
+      "Campaign permanently deleted",
+      campaign?.name || "Deleted campaign",
+      campaignId,
+    )
+    setModalOpen(false)
+    setActivePanel("overview")
+  }
+
+  function updateCampaign(idValue: string, patch: Partial<Campaign>, message = "Campaign updated") {
+    const campaign = state.campaigns.find((c) => c.id === idValue)
+    if (!campaign) return
+    commit(
+      {
+        ...state,
+        selectedId: idValue,
+        campaigns: state.campaigns.map((c) => c.id === idValue ? { ...c, ...patch, updatedAt: new Date().toISOString() } : c),
+      },
+      message,
+      campaign.name,
+      idValue,
+    )
+  }
+
+  function addTask(campaignId = selected?.id) {
+    if (!campaignId) return
+    const task: Task = {
+      id: id("task"),
+      campaignId,
+      title: "New execution task",
+      owner: "Market-OS",
+      status: "todo",
+      priority: "medium",
+      dueDate: isoToday(),
+      createdAt: new Date().toISOString(),
+    }
+    commit({ ...state, selectedId: campaignId, tasks: [task, ...state.tasks] }, "Task created", task.title, campaignId)
+  }
+
+  function addRisk(campaignId = selected?.id) {
+    if (!campaignId) return
+    const risk: RiskRecord = {
+      id: id("risk"),
+      campaignId,
+      title: "Operational risk detected",
+      level: "medium",
+      owner: "Market-OS",
+      createdAt: new Date().toISOString(),
+    }
+    commit({ ...state, selectedId: campaignId, risks: [risk, ...state.risks] }, "Risk logged", risk.title, campaignId)
+  }
+
+  function addApproval(campaignId = selected?.id) {
+    if (!campaignId) return
+    const approval: Approval = {
+      id: id("approval"),
+      campaignId,
+      title: "Campaign approval request",
+      owner: "Marketing Director",
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    }
+    commit({ ...state, selectedId: campaignId, approvals: [approval, ...state.approvals] }, "Approval requested", approval.title, campaignId)
+  }
+
+  function runLaunchReadiness() {
+    if (!selected) return
+    const doneTasks = selectedTasks.filter((t) => t.status === "done").length
+    const taskScore = selectedTasks.length ? Math.round((doneTasks / selectedTasks.length) * 35) : 0
+    const approvalScore = selectedApprovals.length && selectedApprovals.every((a) => a.status === "approved") ? 25 : 0
+    const budgetScore = !selected.budgetMad || selected.spentMad <= selected.budgetMad ? 20 : 8
+    const riskPenalty = selectedRisks.filter((r) => r.level === "high" || r.level === "critical").length * 15
+    const readiness = Math.max(0, Math.min(100, 20 + taskScore + approvalScore + budgetScore - riskPenalty))
+    updateCampaign(selected.id, { readiness, stage: readiness >= 85 ? "launch-ready" : readiness >= 55 ? "approval" : selected.stage }, "Launch readiness checked")
+  }
+
+  function advanceStage() {
+    if (!selected) return
+    const index = stages.indexOf(selected.stage)
+    updateCampaign(selected.id, { stage: stages[Math.min(stages.length - 1, index + 1)] }, "Campaign advanced")
+  }
+
+  function exportWorkspace() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement("a")
+    anchor.href = url
+    anchor.download = `angelcare-campaign-command-center-${isoToday()}.json`
+    anchor.click()
+    URL.revokeObjectURL(url)
+    commit(state, "Workspace exported", "JSON export")
+  }
+
+  const kpis = [
+    ["Active Campaigns", metrics.active, "Live records", "▣", "blue"],
+    ["Launch Readiness", metrics.launchReady, "Ready/live", "◇", "emerald"],
+    ["Budget Controlled", `${metrics.budgetControlled}%`, "Within MAD budget", "◔", "emerald"],
+    ["High Risk", metrics.highRisk, "Needs action", "△", "rose"],
+    ["ROAS", `${metrics.roas}x`, "MAD revenue/spend", "◈", "violet"],
+    ["Leads", metrics.leads, "Total captured", "◌", "blue"],
+    ["Tasks Due", metrics.tasksDue, "Open tasks", "□", "amber"],
+    ["Approvals Due", metrics.approvalsDue, "Pending approvals", "⬡", "violet"],
+  ] as const
+
+  if (!hydrated) {
+    return (
+      <main className="min-h-screen bg-white p-6 text-slate-950">
+        <Card className="p-8">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">ANGELCARE Market-OS</p>
+          <h1 className="mt-2 text-3xl font-black">Loading campaign command center…</h1>
+        </Card>
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-white text-slate-950">
+      <div className="grid min-h-screen xl:grid-cols-[292px_minmax(0,1fr)]">
+        <aside className="border-r border-slate-200 bg-white p-5">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-black text-white">AC</div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">ANGELCARE</p>
+              <h2 className="text-lg font-black">Market-OS</h2>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-black text-slate-500">Campaign OS</p>
+            <p className="mt-1 text-sm font-black text-slate-950">Enterprise Workspace</p>
+          </div>
+
+          <nav className="mt-6 grid gap-1 text-sm font-black text-slate-700">
+            {[
+              ["Command Board", "⌘", "overview"],
+              ["Execution Workspace", "✣", "overview"],
+              ["Create Campaign", "+", "create"],
+              ["Launch Control", "◇", "launch"],
+              ["Budget Cockpit", "MAD", "budget"],
+              ["Risk Center", "△", "risk"],
+              ["Performance Pulse", "↗", "performance"],
+              ["Approvals", "⬡", "approvals"],
+              ["Calendar", "◷", "calendar"],
+            ].map(([labelText, icon, panel]) => (
+              <button
+                key={labelText}
+                onClick={() => panel === "create" ? openCreateModal() : setActivePanel(panel as Panel)}
+                className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-left transition ${activePanel === panel ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50"}`}
+              >
+                <span className="grid h-8 w-8 place-items-center rounded-xl border border-slate-200 bg-white text-[11px]">{icon}</span>
+                <span className="flex-1">{labelText}</span>
+                {labelText === "Approvals" && metrics.approvalsDue ? <span className="rounded-full bg-rose-50 px-2 py-1 text-[10px] text-rose-700">{metrics.approvalsDue}</span> : null}
+              </button>
+            ))}
+          </nav>
+
+          <Link href="/market-os" className="mt-8 flex rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-600">← Back to Market OS</Link>
+        </aside>
+
+        <section className="min-w-0 bg-slate-50/70">
+          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-5 py-3 backdrop-blur-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-2">
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">System Status</p>
+                  <p className="text-xs font-black text-emerald-900">All systems operational</p>
+                </div>
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search campaigns, tasks, owners, or keywords..." className="h-12 min-w-[280px] flex-1 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50" />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button onClick={openCreateModal} className="rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white">+ Create Campaign</button>
+                <button onClick={runLaunchReadiness} disabled={!selected} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 disabled:opacity-50">Launch Control</button>
+                <button onClick={() => setActivePanel("budget")} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Budget Cockpit</button>
+                <button onClick={() => selected ? addRisk() : setActivePanel("risk")} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Risk Center</button>
+                <button onClick={() => setActivePanel("performance")} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Performance</button>
+              </div>
+            </div>
+          </header>
+
+          <div className="space-y-5 p-5">
+            <section className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h1 className="text-4xl font-black tracking-[-0.06em] text-slate-950">ANGELCARE Campaign Command Center</h1>
+                <p className="mt-2 text-sm font-bold text-slate-500">Execute with precision. Control risk. Maximize performance.</p>
+              </div>
+              <button onClick={exportWorkspace} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Export Workspace</button>
+            </section>
+
+            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-8">
+              {kpis.map(([labelText, value, note, icon, tone]) => (
+                <Card key={labelText} className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{labelText}</p>
+                      <p className="mt-3 text-2xl font-black text-slate-950">{value}</p>
+                    </div>
+                    <Icon icon={icon} tone={tone} />
+                  </div>
+                  <p className="mt-3 text-xs font-bold text-slate-500">{note}</p>
+                </Card>
+              ))}
+            </section>
+
+            <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_430px]">
+              <div className="space-y-5">
+                <Card className="p-5">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Campaign Execution Board</h2>
+                    <button onClick={() => setStageFilter("all")} className="text-xs font-black text-blue-600">View All Campaigns</button>
+                  </div>
+                  <div className="mt-5 grid gap-3 md:grid-cols-3 2xl:grid-cols-6">
+                    {stages.map((stage) => {
+                      const count = state.campaigns.filter((campaign) => campaign.stage === stage).length
+                      return (
+                        <button key={stage} onClick={() => setStageFilter(stage)} className={`rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ${stageFilter === stage ? "border-blue-200 bg-blue-50" : "border-slate-200 bg-white"}`}>
+                          <p className="text-xs font-black text-blue-700">{stageLabel[stage]}</p>
+                          <p className="mt-2 text-2xl font-black">{count}</p>
+                          <p className="text-xs font-bold text-slate-500">Campaigns</p>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </Card>
+
+                <section className="grid gap-5 xl:grid-cols-[1.1fr_0.8fr_0.9fr]">
+                  <Card className="p-5">
+                    <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Budget & ROI Cockpit</h2>
+                    <div className="mt-5 grid gap-3 md:grid-cols-3">
+                      <div className="rounded-3xl bg-slate-50 p-4"><p className="text-xs font-black uppercase text-slate-400">Total Budget</p><p className="mt-2 text-xl font-black">{mad(metrics.totalBudget)}</p></div>
+                      <div className="rounded-3xl bg-slate-50 p-4"><p className="text-xs font-black uppercase text-slate-400">Total Spend</p><p className="mt-2 text-xl font-black">{mad(metrics.totalSpend)}</p></div>
+                      <div className="rounded-3xl bg-slate-50 p-4"><p className="text-xs font-black uppercase text-slate-400">ROI Forecast</p><p className="mt-2 text-xl font-black">{metrics.roas}x</p></div>
+                    </div>
+                    <div className="mt-5 space-y-2">
+                      {filteredCampaigns.slice(0, 5).length ? filteredCampaigns.slice(0, 5).map((campaign) => (
+                        <button key={campaign.id} onClick={() => setState({ ...state, selectedId: campaign.id })} className="grid w-full gap-3 rounded-2xl border border-slate-200 bg-white p-3 text-left hover:bg-slate-50 md:grid-cols-[1fr_120px_90px_90px]">
+                          <span className="text-sm font-black">{campaign.name}</span>
+                          <span className="text-xs font-bold text-slate-500">{mad(campaign.spentMad)}</span>
+                          <span className="text-xs font-black text-emerald-700">{roas(campaign)}x</span>
+                          <Pill tone={riskTone(campaign.risk)}>{riskLabel[campaign.risk]}</Pill>
+                        </button>
+                      )) : (
+                        <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                          <h3 className="text-xl font-black">No campaigns yet</h3>
+                          <p className="mt-2 text-sm font-bold text-slate-500">Create campaigns to activate the cockpit.</p>
+                          <button onClick={openCreateModal} className="mt-4 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white">+ Create campaign</button>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+
+                  <Card className="p-5">
+                    <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Launch Readiness</h2>
+                    <div className="mt-5 grid place-items-center rounded-3xl bg-emerald-50 p-6">
+                      <p className="text-5xl font-black text-emerald-700">{selected ? pct(selected.readiness) : "—"}</p>
+                      <p className="mt-2 text-sm font-black text-emerald-900">{selected ? "Launch Score" : "Select campaign"}</p>
+                    </div>
+                    <div className="mt-4 grid gap-2 text-sm font-bold text-slate-600">
+                      <div className="flex justify-between"><span>Tasks Completed</span><span>{selectedTasks.filter((t) => t.status === "done").length} / {selectedTasks.length}</span></div>
+                      <div className="flex justify-between"><span>Approvals</span><span>{selectedApprovals.filter((a) => a.status === "approved").length} / {selectedApprovals.length}</span></div>
+                      <div className="flex justify-between"><span>Risk Review</span><span>{selectedRisks.length} open</span></div>
+                    </div>
+                    <button onClick={runLaunchReadiness} disabled={!selected} className="mt-4 w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white disabled:opacity-50">Run Launch Readiness Check</button>
+                  </Card>
+
+                  <Card className="p-5">
+                    <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Risk & Escalation</h2>
+                    <div className="mt-5 grid gap-2">
+                      {selectedRisks.slice(0, 4).length ? selectedRisks.slice(0, 4).map((risk) => (
+                        <div key={risk.id} className="rounded-2xl border border-slate-200 p-3">
+                          <Pill tone={riskTone(risk.level)}>{riskLabel[risk.level]}</Pill>
+                          <p className="mt-2 text-sm font-black">{risk.title}</p>
+                          <p className="text-xs font-bold text-slate-500">Owner: {risk.owner}</p>
+                        </div>
+                      )) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No risks logged.</div>}
+                    </div>
+                    <button onClick={() => addRisk()} disabled={!selected} className="mt-4 w-full rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50">Log Risk</button>
+                  </Card>
+                </section>
+
+                <Card className="p-5">
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Campaign Portfolio</h2>
+                    <div className="flex gap-2">
+                      <Select value={stageFilter} onChange={(e) => setStageFilter(e.target.value as "all" | Stage)}>
+                        <option value="all">All stages</option>
+                        {stages.map((stage) => <option key={stage} value={stage}>{stageLabel[stage]}</option>)}
+                      </Select>
+                      <Select value={riskFilter} onChange={(e) => setRiskFilter(e.target.value as "all" | Risk)}>
+                        <option value="all">All risks</option>
+                        {risks.map((risk) => <option key={risk} value={risk}>{riskLabel[risk]}</option>)}
+                      </Select>
+                    </div>
+                  </div>
+
+                  {filteredCampaigns.length ? (
+                    <div className="grid gap-3 2xl:grid-cols-2">
+                      {filteredCampaigns.map((campaign) => (
+                        <div key={campaign.id} className="rounded-[24px] border border-slate-200 bg-white p-4">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <h3 className="text-lg font-black text-slate-950">{campaign.name}</h3>
+                              <p className="mt-1 text-xs font-bold text-slate-500">{campaign.campaignType} • {campaign.targetAudience} • {campaign.channelMix}</p>
+                            </div>
+                            <Pill tone={riskTone(campaign.risk)}>{riskLabel[campaign.risk]}</Pill>
+                          </div>
+                          <div className="mt-4 grid gap-2 md:grid-cols-4">
+                            <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black text-slate-400">Stage</p><p className="text-sm font-black">{stageLabel[campaign.stage]}</p></div>
+                            <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black text-slate-400">Readiness</p><p className="text-sm font-black">{pct(campaign.readiness)}</p></div>
+                            <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black text-slate-400">Spend</p><p className="text-sm font-black">{mad(campaign.spentMad)}</p></div>
+                            <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black text-slate-400">ROAS</p><p className="text-sm font-black">{roas(campaign)}x</p></div>
+                          </div>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button onClick={() => setState({ ...state, selectedId: campaign.id })} className="rounded-2xl border border-slate-200 px-4 py-2 text-xs font-black">Select</button>
+                            <button onClick={() => openEditModal(campaign)} className="rounded-2xl bg-slate-950 px-4 py-2 text-xs font-black text-white">Edit</button>
+                            <button onClick={() => addTask(campaign.id)} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-black text-blue-700">Add task</button>
+                            <button onClick={() => addApproval(campaign.id)} className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-black text-amber-700">Approval</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+                      <h3 className="text-2xl font-black">No campaign records found</h3>
+                      <p className="mt-2 text-sm font-bold text-slate-500">Create a campaign to activate the execution board.</p>
+                      <button onClick={openCreateModal} className="mt-5 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">+ Create campaign</button>
+                    </div>
+                  )}
+                </Card>
+              </div>
+
+              <aside className="space-y-5">
+                <Card className="p-5">
+                  <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Selected Campaign Command</h2>
+                  {selected ? (
+                    <div className="mt-4">
+                      <h3 className="text-2xl font-black">{selected.name}</h3>
+                      <p className="mt-2 text-sm font-bold text-slate-500">{selected.objective || "No objective written yet."}</p>
+                      <div className="mt-4 grid grid-cols-2 gap-2">
+                        <button onClick={() => openEditModal(selected)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white">Edit campaign</button>
+                        <button onClick={advanceStage} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black">Advance stage</button>
+                        <button onClick={() => addTask()} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700">Add task</button>
+                        <button onClick={() => addApproval()} className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-700">Approval</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No campaign selected.</div>
+                  )}
+                </Card>
+
+                <Card className="p-5">
+                  <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Tasks / Execution Queue</h2>
+                  <div className="mt-4 grid gap-2">
+                    <button onClick={() => addTask()} disabled={!selected} className="rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white disabled:opacity-50">+ Add Task</button>
+                    {selectedTasks.slice(0, 5).length ? selectedTasks.slice(0, 5).map((task) => (
+                      <div key={task.id} className="rounded-2xl border border-slate-200 p-3">
+                        <p className="text-sm font-black">{task.title}</p>
+                        <div className="mt-2 flex justify-between"><Pill tone={task.status === "done" ? "emerald" : task.status === "blocked" ? "rose" : "blue"}>{task.status}</Pill><span className="text-xs font-bold text-slate-500">{task.dueDate}</span></div>
+                      </div>
+                    )) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No tasks yet.</div>}
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Quick Actions</h2>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <button onClick={openCreateModal} className="rounded-2xl border border-blue-100 bg-blue-50 px-3 py-3 text-xs font-black text-blue-700">Create Campaign</button>
+                    <button onClick={runLaunchReadiness} disabled={!selected} className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-3 text-xs font-black text-emerald-700 disabled:opacity-50">Launch Control</button>
+                    <button onClick={() => setActivePanel("budget")} className="rounded-2xl border border-violet-100 bg-violet-50 px-3 py-3 text-xs font-black text-violet-700">Budget Cockpit</button>
+                    <button onClick={() => addRisk()} disabled={!selected} className="rounded-2xl border border-rose-100 bg-rose-50 px-3 py-3 text-xs font-black text-rose-700 disabled:opacity-50">Risk Center</button>
+                    <button onClick={() => setActivePanel("performance")} className="rounded-2xl border border-sky-100 bg-sky-50 px-3 py-3 text-xs font-black text-sky-700">Performance</button>
+                    <button onClick={() => addApproval()} disabled={!selected} className="rounded-2xl border border-amber-100 bg-amber-50 px-3 py-3 text-xs font-black text-amber-700 disabled:opacity-50">Approvals</button>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700">Team Activity / Approvals / Messaging</h2>
+                  <div className="mt-4 space-y-2">
+                    {state.logs.slice(0, 5).length ? state.logs.slice(0, 5).map((log) => (
+                      <div key={log.id} className="rounded-2xl border border-slate-200 p-3">
+                        <p className="text-sm font-black">{log.message}</p>
+                        <p className="text-xs font-bold text-slate-500">{log.meta}</p>
+                      </div>
+                    )) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No activity yet.</div>}
+                  </div>
+                </Card>
+              </aside>
+            </section>
+          </div>
+        </section>
+      </div>
+
+      {modalOpen ? (
+        <div className="fixed inset-0 z-[1000] overflow-y-auto bg-slate-950/40 p-4 backdrop-blur-md">
+          <form onSubmit={saveCampaign} className="mx-auto my-6 max-w-[1500px] overflow-hidden rounded-[34px] bg-white shadow-[0_40px_120px_rgba(15,23,42,0.30)]">
+            <div className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-6 py-5 backdrop-blur-xl">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">ANGELCARE Campaign Studio</p>
+                  <h2 className="mt-1 text-3xl font-black tracking-[-0.05em]">
+                    {modalMode === "create" ? "Create new campaign" : "Edit campaign command dossier"}
+                  </h2>
+                  <p className="mt-1 text-sm font-bold text-slate-500">
+                    Digital, offline, B2B, B2C, partnership, brand, sales and field activation campaign management.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {modalMode === "edit" ? (
+                    <button type="button" onClick={() => deleteCampaignPermanently()} className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-black text-white">
+                      Delete permanently
+                    </button>
+                  ) : null}
+                  <button type="button" onClick={() => setModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+                    Cancel
+                  </button>
+                  <button className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white">
+                    {modalMode === "create" ? "Save & create campaign" : "Save changes"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-5 p-6">
+              <section className="grid gap-5 xl:grid-cols-3">
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Campaign identity</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Campaign name"><Input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Example: Postpartum premium acquisition campaign" /></Field>
+                    <Field label="Objective"><Textarea value={draft.objective} onChange={(e) => setDraft({ ...draft, objective: e.target.value })} placeholder="Define campaign objective, target outcome, conversion logic..." /></Field>
+                    <Field label="Offer / message"><Textarea value={draft.offer} onChange={(e) => setDraft({ ...draft, offer: e.target.value })} placeholder="Offer, promise, package, promotion, partnership value..." /></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Market and target</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Campaign type"><Select value={draft.campaignType} onChange={(e) => setDraft({ ...draft, campaignType: e.target.value })}>{campaignTypeOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                    <Field label="Target audience"><Select value={draft.targetAudience} onChange={(e) => setDraft({ ...draft, targetAudience: e.target.value })}>{targetAudienceOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                    <Field label="Market segment"><Select value={draft.marketSegment} onChange={(e) => setDraft({ ...draft, marketSegment: e.target.value })}>{marketSegmentOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                    <Field label="Business axis"><Select value={draft.businessAxis} onChange={(e) => setDraft({ ...draft, businessAxis: e.target.value })}>{businessAxisOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Execution setup</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Channel mix"><Select value={draft.channelMix} onChange={(e) => setDraft({ ...draft, channelMix: e.target.value })}>{channelMixOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                    <Field label="Main channel"><Input value={draft.channel} onChange={(e) => setDraft({ ...draft, channel: e.target.value })} placeholder="Meta, Google, WhatsApp, Field, B2B..." /></Field>
+                    <Field label="Geography"><Input value={draft.geography} onChange={(e) => setDraft({ ...draft, geography: e.target.value })} placeholder="Morocco, Rabat, Casablanca, national..." /></Field>
+                    <Field label="Landing page / location"><Input value={draft.landingOrLocation} onChange={(e) => setDraft({ ...draft, landingOrLocation: e.target.value })} placeholder="Landing page, branch, event, partner location..." /></Field>
+                  </div>
+                </Card>
+              </section>
+
+              <section className="grid gap-5 xl:grid-cols-4">
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Ownership</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Owner"><Input value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} placeholder="Marketing Director, Sales, Partnership..." /></Field>
+                    <Field label="Team"><Input value={draft.team} onChange={(e) => setDraft({ ...draft, team: e.target.value })} placeholder="Market-OS, Sales, B2B, Academy..." /></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Status</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Stage"><Select value={draft.stage} onChange={(e) => setDraft({ ...draft, stage: e.target.value as Stage })}>{stages.map((stage) => <option key={stage} value={stage}>{stageLabel[stage]}</option>)}</Select></Field>
+                    <Field label="Risk"><Select value={draft.risk} onChange={(e) => setDraft({ ...draft, risk: e.target.value as Risk })}>{risks.map((risk) => <option key={risk} value={risk}>{riskLabel[risk]}</option>)}</Select></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Dates</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Start date"><Input type="date" value={draft.startDate} onChange={(e) => setDraft({ ...draft, startDate: e.target.value })} /></Field>
+                    <Field label="Launch date"><Input type="date" value={draft.launchDate} onChange={(e) => setDraft({ ...draft, launchDate: e.target.value })} /></Field>
+                    <Field label="End date"><Input type="date" value={draft.endDate} onChange={(e) => setDraft({ ...draft, endDate: e.target.value })} /></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Budget and KPI</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Budget MAD"><Input type="number" value={draft.budgetMad} onChange={(e) => setDraft({ ...draft, budgetMad: Number(e.target.value) })} /></Field>
+                    <Field label="Spent MAD"><Input type="number" value={draft.spentMad} onChange={(e) => setDraft({ ...draft, spentMad: Number(e.target.value) })} /></Field>
+                    <Field label="Revenue MAD"><Input type="number" value={draft.revenueMad} onChange={(e) => setDraft({ ...draft, revenueMad: Number(e.target.value) })} /></Field>
+                    <Field label="Leads"><Input type="number" value={draft.leads} onChange={(e) => setDraft({ ...draft, leads: Number(e.target.value) })} /></Field>
+                  </div>
+                </Card>
+              </section>
+
+              <section className="grid gap-5 xl:grid-cols-3">
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Measurement</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Primary KPI"><Select value={draft.primaryKpi} onChange={(e) => setDraft({ ...draft, primaryKpi: e.target.value })}>{kpiOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                    <Field label="Secondary KPI"><Select value={draft.secondaryKpi} onChange={(e) => setDraft({ ...draft, secondaryKpi: e.target.value })}>{kpiOptions.map((item) => <option key={item}>{item}</option>)}</Select></Field>
+                    <Field label="Tracking plan"><Textarea value={draft.trackingPlan} onChange={(e) => setDraft({ ...draft, trackingPlan: e.target.value })} placeholder="UTM, CRM stage, call tracking, WhatsApp source, partner code..." /></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Assets and approvals</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Required assets"><Textarea value={draft.assetNeed} onChange={(e) => setDraft({ ...draft, assetNeed: e.target.value })} placeholder="Landing page, visuals, copy, offer proof, WhatsApp scripts, sales deck..." /></Field>
+                    <Field label="Approval requirements"><Textarea value={draft.approvalNeed} onChange={(e) => setDraft({ ...draft, approvalNeed: e.target.value })} placeholder="Director approval, budget approval, legal/compliance, partner validation..." /></Field>
+                  </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-lg font-black">Governance</h3>
+                  <div className="mt-4 grid gap-3">
+                    <Field label="Compliance notes"><Textarea value={draft.complianceNotes} onChange={(e) => setDraft({ ...draft, complianceNotes: e.target.value })} placeholder="Brand claims, client privacy, lead consent, partner constraints..." /></Field>
+                    <Field label="General notes"><Textarea value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} placeholder="Operational notes for execution team..." /></Field>
+                  </div>
+                </Card>
+              </section>
+
+              {modalMode === "edit" ? (
+                <section className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
+                  <Card className="p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">Deep Command Management</p>
+                        <h3 className="mt-1 text-2xl font-black">Campaign command controls</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <button type="button" onClick={() => addTask(draft.id)} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700">+ Task</button>
+                        <button type="button" onClick={() => addApproval(draft.id)} className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-700">Approval</button>
+                        <button type="button" onClick={() => addRisk(draft.id)} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">Risk</button>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid gap-4 xl:grid-cols-3">
+                      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Readiness</p>
+                        <Input type="number" value={draft.readiness} onChange={(e) => setDraft({ ...draft, readiness: Number(e.target.value) })} className="mt-3" />
+                      </div>
+                      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Next decision</p>
+                        <Textarea value={draft.nextDecision} onChange={(e) => setDraft({ ...draft, nextDecision: e.target.value })} className="mt-3 min-h-[96px]" />
+                      </div>
+                      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Command notes</p>
+                        <Textarea value={draft.commandNotes} onChange={(e) => setDraft({ ...draft, commandNotes: e.target.value })} className="mt-3 min-h-[96px]" />
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 md:grid-cols-3">
+                      <div className="rounded-3xl border border-slate-200 bg-white p-4"><p className="text-[10px] font-black text-slate-400">Tasks</p><p className="mt-2 text-2xl font-black">{state.tasks.filter((item) => item.campaignId === draft.id).length}</p></div>
+                      <div className="rounded-3xl border border-slate-200 bg-white p-4"><p className="text-[10px] font-black text-slate-400">Approvals</p><p className="mt-2 text-2xl font-black">{state.approvals.filter((item) => item.campaignId === draft.id).length}</p></div>
+                      <div className="rounded-3xl border border-slate-200 bg-white p-4"><p className="text-[10px] font-black text-slate-400">Risks</p><p className="mt-2 text-2xl font-black">{state.risks.filter((item) => item.campaignId === draft.id).length}</p></div>
+                    </div>
+                  </Card>
+
+                  <Card className="p-5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-violet-700">Recent Activities</p>
+                    <h3 className="mt-1 text-2xl font-black">Campaign timeline</h3>
+                    <div className="mt-5 space-y-3">
+                      {selectedLogs.length ? selectedLogs.map((log) => (
+                        <div key={log.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                          <p className="text-sm font-black text-slate-950">{log.message}</p>
+                          <p className="mt-1 text-xs font-bold text-slate-500">{log.meta}</p>
+                          <p className="mt-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{new Date(log.createdAt).toLocaleString()}</p>
+                        </div>
+                      )) : (
+                        <div className="rounded-2xl bg-slate-50 p-5 text-sm font-bold text-slate-500">
+                          No campaign-specific activity yet. Save changes, add tasks, add approvals or log risks to populate this timeline.
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                </section>
+              ) : null}
+            </div>
+          </form>
+        </div>
+      ) : null}
+    </main>
+  )
+}

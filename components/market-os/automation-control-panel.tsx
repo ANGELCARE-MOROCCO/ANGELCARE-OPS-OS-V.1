@@ -58,34 +58,34 @@ export default function AutomationControlPanel() {
   const nextActionCount = logs.filter((log) => log.rule_key === "missing_next_action").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Hardening Pack 24
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Automation Control Panel
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Run Market-OS automation and review saved automation history across overdue escalation, owner assignment, blocker tasks and next-action repair.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Overdue Escalations</p>
+              <p className="text-xs uppercase text-slate-600">Overdue Escalations</p>
               <p className="mt-2 text-3xl font-black">{overdueCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Owner Fixes</p>
+              <p className="text-xs uppercase text-slate-600">Owner Fixes</p>
               <p className="mt-2 text-3xl font-black">{ownerCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Blocker Tasks</p>
+              <p className="text-xs uppercase text-slate-600">Blocker Tasks</p>
               <p className="mt-2 text-3xl font-black">{blockerCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Next Action Fixes</p>
+              <p className="text-xs uppercase text-slate-600">Next Action Fixes</p>
               <p className="mt-2 text-3xl font-black">{nextActionCount}</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function AutomationControlPanel() {
           <button
             onClick={runAutomation}
             disabled={loading}
-            className="mt-5 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white disabled:opacity-50"
+            className="mt-5 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-950 disabled:opacity-50"
           >
             {loading ? "Running Automation..." : "Run Automation Now"}
           </button>
@@ -129,7 +129,7 @@ export default function AutomationControlPanel() {
             ))}
 
             {!actions.length && (
-              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
                 No latest actions yet.
               </div>
             )}
@@ -153,11 +153,11 @@ export default function AutomationControlPanel() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                   <div>
                     <p className="text-sm font-bold">{log.action || "Automation action"}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       Rule: {log.rule_key || "general"} · Objective: {log.objective_id || "—"}
                     </p>
                   </div>
-                  <p className="text-xs font-semibold text-slate-500">
+                  <p className="text-xs font-semibold text-slate-9500">
                     {new Date(log.created_at).toLocaleString()}
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export default function AutomationControlPanel() {
             ))}
 
             {!logs.length && (
-              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
                 No saved automation logs yet.
               </div>
             )}

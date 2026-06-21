@@ -21,7 +21,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -59,16 +59,16 @@ export default function LeadIntakeControlEngine() {
   const highRisk = marketLeads.filter((lead) => lead.risk === "high" || lead.risk === "critical").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 18
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Meta / WhatsApp / Lead Intake Control Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer controls inbound marketing leads from Meta, WhatsApp, website,
             referral and partners: intent scoring, SLA response, ownership, script matching,
             attribution and estimated revenue value.
@@ -76,19 +76,19 @@ export default function LeadIntakeControlEngine() {
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Pipeline Value</p>
+              <p className="text-xs uppercase text-slate-600">Pipeline Value</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalValue)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Intent</p>
+              <p className="text-xs uppercase text-slate-600">Avg Intent</p>
               <p className="mt-2 text-3xl font-black">{avgIntent}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">SLA Urgent</p>
+              <p className="text-xs uppercase text-slate-600">SLA Urgent</p>
               <p className="mt-2 text-3xl font-black">{urgentLeads}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk</p>
+              <p className="text-xs uppercase text-slate-600">High Risk</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -152,15 +152,15 @@ export default function LeadIntakeControlEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{lead.name}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Campaign: {lead.campaign} · Service: {lead.serviceInterest} · Owner: {lead.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Estimated Value</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Estimated Value</p>
                   <p className="mt-1 font-black">{formatMad(lead.estimatedValueMad)}</p>
-                  <p className="text-xs text-slate-500">SLA: {lead.slaMinutesRemaining} min</p>
+                  <p className="text-xs text-slate-9500">SLA: {lead.slaMinutesRemaining} min</p>
                 </div>
               </div>
 
@@ -174,28 +174,28 @@ export default function LeadIntakeControlEngine() {
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Attribution</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Attribution</p>
                   <p className="mt-2 text-sm text-slate-700">{lead.attribution}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Last Message</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Last Message</p>
                   <p className="mt-2 text-sm text-slate-700">{lead.lastMessage}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Recommended Script</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Recommended Script</p>
                   <p className="mt-2 text-sm text-slate-700">{lead.recommendedScript}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4 lg:col-span-2">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{lead.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="conversion" engine="conversion" actionKey="assign_lead" actionLabel="Assign Lead" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Assign Lead</MarketActionButton>
+                <MarketActionButton moduleKey="conversion" engine="conversion" actionKey="assign_lead" actionLabel="Assign Lead" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Assign Lead</MarketActionButton>
                 <MarketActionButton moduleKey="conversion" engine="conversion" actionKey="start_sla_call" actionLabel="Start SLA Call" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Start SLA Call</MarketActionButton>
                 <MarketActionButton moduleKey="conversion" engine="conversion" actionKey="open_script" actionLabel="Open Script" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Open Script</MarketActionButton>
                 <MarketActionButton moduleKey="conversion" engine="conversion" actionKey="convert_to_task" actionLabel="Convert to Task" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Convert to Task</MarketActionButton>

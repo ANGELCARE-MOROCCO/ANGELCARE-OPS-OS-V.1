@@ -59,7 +59,7 @@ const gatewayCards = [
     href: "/market-os/content-command-center",
     status: "9 approvals waiting",
     pressure: "Editorial bottleneck",
-    color: "from-slate-700 to-slate-950",
+    color: "from-slate-700 to-white",
     actions: ["Approve", "Schedule", "Deploy"],
   },
 ]
@@ -138,10 +138,10 @@ export default function MarketOSV15MasterCommand() {
   }, [query])
 
   return (
-    <main className="min-h-screen bg-[#060816] text-white">
+    <main data-market-os-root className="min-h-screen bg-[#060816] text-slate-950">
       <div className="mx-auto max-w-[1900px] space-y-6 p-5 lg:p-8">
 
-        <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#0F172A] via-[#111827] to-black p-8 shadow-2xl">
+        <section className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-gradient-to-br from-[#0F172A] via-[#111827] to-white p-8 shadow-2xl">
           <div className="grid gap-8 xl:grid-cols-[1.2fr_.8fr]">
             <div>
               <div className="flex flex-wrap gap-2">
@@ -157,23 +157,23 @@ export default function MarketOSV15MasterCommand() {
                 AngelCare Marketing Execution Headquarters
               </h1>
 
-              <p className="mt-5 max-w-4xl text-lg font-semibold leading-8 text-slate-300">
+              <p className="mt-5 max-w-4xl text-lg font-semibold leading-8 text-slate-600">
                 Premium operational command layer for campaigns, SEO, content production,
                 partnerships, ambassadors, attribution, acquisition and revenue execution.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/market-os/campaign-lifecycle" className="rounded-2xl bg-cyan-600 px-6 py-4 text-sm font-black text-white hover:bg-cyan-500">
+                <Link href="/market-os/campaign-lifecycle" className="rounded-2xl bg-cyan-600 px-6 py-4 text-sm font-black text-slate-950 hover:bg-cyan-500">
                   Launch Campaign
                 </Link>
 
-                <Link href="/revenue-command-center/daily-tasks/new" className="rounded-2xl bg-violet-700 px-6 py-4 text-sm font-black text-white hover:bg-violet-600">
+                <Link href="/revenue-command-center/daily-tasks/new" className="rounded-2xl bg-violet-700 px-6 py-4 text-sm font-black text-slate-950 hover:bg-violet-600">
                   Create Task
                 </Link>
 
                 <button
                   onClick={() => setFocusMode(!focusMode)}
-                  className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm font-black hover:bg-white/10"
+                  className="rounded-2xl border border-slate-200 bg-white/5 px-6 py-4 text-sm font-black hover:bg-slate-50"
                 >
                   {focusMode ? "Disable Focus Mode" : "Enable Focus Mode"}
                 </button>
@@ -191,9 +191,9 @@ export default function MarketOSV15MasterCommand() {
               ].map(([label, value]) => (
                 <div
                   key={label}
-                  className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl"
+                  className="rounded-3xl border border-slate-200 bg-white/5 p-5 backdrop-blur-xl"
                 >
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
                     {label}
                   </p>
                   <p className="mt-4 text-4xl font-black">{value}</p>
@@ -207,17 +207,17 @@ export default function MarketOSV15MasterCommand() {
           {gatewayCards.map((card) => (
             <div
               key={card.title}
-              className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#0F172A]"
+              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[#0F172A]"
             >
               <div className={`bg-gradient-to-r ${card.color} p-5`}>
                 <h3 className="text-xl font-black">{card.title}</h3>
-                <p className="mt-2 text-sm font-semibold text-white/80">
+                <p className="mt-2 text-sm font-semibold text-slate-950/80">
                   {card.status}
                 </p>
               </div>
 
               <div className="space-y-4 p-5">
-                <p className="text-sm font-bold text-slate-400">
+                <p className="text-sm font-bold text-slate-500">
                   {card.pressure}
                 </p>
 
@@ -225,7 +225,7 @@ export default function MarketOSV15MasterCommand() {
                   {card.actions.map((action) => (
                     <button
                       key={action}
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black hover:bg-white/10"
+                      className="rounded-2xl border border-slate-200 bg-white/5 px-4 py-3 text-sm font-black hover:bg-slate-50"
                     >
                       {action}
                     </button>
@@ -260,7 +260,7 @@ export default function MarketOSV15MasterCommand() {
                 Create Task
               </Link>
 
-              <Link href="/revenue-command-center/daily-tasks/board" className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-black">
+              <Link href="/revenue-command-center/daily-tasks/board" className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black">
                 Open Board
               </Link>
             </div>
@@ -273,8 +273,8 @@ export default function MarketOSV15MasterCommand() {
               ["Blocked Tasks", "7"],
               ["Agent Load", "83%"],
             ].map(([k, v]) => (
-              <div key={k} className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+              <div key={k} className="rounded-3xl border border-slate-200 bg-white/30 p-5">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-9500">
                   {k}
                 </p>
                 <p className="mt-3 text-4xl font-black">{v}</p>
@@ -283,7 +283,7 @@ export default function MarketOSV15MasterCommand() {
           </div>
 
           <div className="mt-8 grid gap-4 xl:grid-cols-[1fr_.7fr]">
-            <div className="rounded-3xl border border-white/10 bg-black/30 p-6">
+            <div className="rounded-3xl border border-slate-200 bg-white/30 p-6">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-2xl font-black">
                   Smart Execution Queue
@@ -293,7 +293,7 @@ export default function MarketOSV15MasterCommand() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search execution cards..."
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white outline-none"
+                  className="rounded-2xl border border-slate-200 bg-white/5 px-4 py-3 text-sm font-black text-slate-950 outline-none"
                 />
               </div>
 
@@ -309,13 +309,13 @@ export default function MarketOSV15MasterCommand() {
                           {card.title}
                         </h4>
 
-                        <p className="mt-2 max-w-3xl text-sm font-semibold leading-7 text-slate-300">
+                        <p className="mt-2 max-w-3xl text-sm font-semibold leading-7 text-slate-600">
                           {card.description}
                         </p>
                       </div>
 
-                      <div className="rounded-2xl bg-black/30 px-5 py-4 text-right">
-                        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                      <div className="rounded-2xl bg-white/30 px-5 py-4 text-right">
+                        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-9500">
                           Operational Value
                         </p>
                         <p className="mt-2 text-2xl font-black">
@@ -328,7 +328,7 @@ export default function MarketOSV15MasterCommand() {
                       {card.actions.map((action) => (
                         <button
                           key={action}
-                          className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-black hover:bg-white/10"
+                          className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black hover:bg-slate-50"
                         >
                           {action}
                         </button>
@@ -361,7 +361,7 @@ export default function MarketOSV15MasterCommand() {
                   ].map((item) => (
                     <div
                       key={item}
-                      className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm font-black"
+                      className="rounded-2xl border border-slate-200 bg-white/20 p-4 text-sm font-black"
                     >
                       {item}
                     </div>
@@ -384,7 +384,7 @@ export default function MarketOSV15MasterCommand() {
                   ].map((item) => (
                     <button
                       key={item}
-                      className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4 text-left text-sm font-black hover:bg-black/30"
+                      className="rounded-2xl border border-slate-200 bg-white/20 px-4 py-4 text-left text-sm font-black hover:bg-white/30"
                     >
                       {item}
                     </button>
@@ -392,8 +392,8 @@ export default function MarketOSV15MasterCommand() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-[#0F172A] p-6">
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+              <div className="rounded-3xl border border-slate-200 bg-[#0F172A] p-6">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
                   Smart Navigation
                 </p>
 
@@ -407,7 +407,7 @@ export default function MarketOSV15MasterCommand() {
                     <Link
                       key={label}
                       href={href}
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm font-black hover:bg-white/10"
+                      className="rounded-2xl border border-slate-200 bg-white/5 px-4 py-4 text-sm font-black hover:bg-slate-50"
                     >
                       {label}
                     </Link>

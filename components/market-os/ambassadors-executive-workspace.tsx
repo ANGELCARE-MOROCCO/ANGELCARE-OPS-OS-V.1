@@ -177,7 +177,7 @@ export default function AmbassadorsExecutiveWorkspace() {
     }));
   }
 
-  return <main className="amb-page">
+  return <main data-market-os-root className="amb-page">
     <section className="amb-hero">
       <div className="amb-hero-copy">
         <span className="amb-eyebrow">Market-OS · Ambassador & Affiliate Program</span>

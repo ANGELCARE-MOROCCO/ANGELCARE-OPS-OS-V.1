@@ -5,5 +5,5 @@ export function getDefaultHome(
   void role
   void permissions
 
-  return "/workspace"
+  return "/dashboard"
 }

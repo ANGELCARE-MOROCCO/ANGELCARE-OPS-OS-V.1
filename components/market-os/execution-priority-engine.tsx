@@ -76,7 +76,7 @@ export default function ExecutionPriorityEngine() {
   }, [objectives, notes])
 
   return (
-    <main className="p-6 bg-slate-50 min-h-screen">
+    <main data-market-os-root className="p-6 bg-slate-50 min-h-screen">
       <h1 className="text-3xl font-black mb-6">
         Execution Priority Engine
       </h1>
@@ -86,7 +86,7 @@ export default function ExecutionPriorityEngine() {
           <div className="flex justify-between">
             <div>
               <h2 className="font-bold">{o.title}</h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-9500">
                 Priority: {o.priority} · Status: {o.status}
               </p>
             </div>

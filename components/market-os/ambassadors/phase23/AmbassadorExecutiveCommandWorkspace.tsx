@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -86,7 +86,7 @@ export default function AmbassadorExecutiveCommandWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{item.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>
+                    <p className='mt-1 text-sm text-slate-9500'>
                       Owner: {item.owner}
                     </p>
                   </div>
@@ -147,7 +147,7 @@ export default function AmbassadorExecutiveCommandWorkspace() {
                     </Badge>
                   </div>
 
-                  <p className='mt-2 text-sm text-slate-500'>
+                  <p className='mt-2 text-sm text-slate-9500'>
                     {risk.mitigation}
                   </p>
                 </article>
@@ -171,7 +171,7 @@ export default function AmbassadorExecutiveCommandWorkspace() {
                         {brief.title}
                       </h3>
 
-                      <p className='mt-1 text-sm text-slate-500'>
+                      <p className='mt-1 text-sm text-slate-9500'>
                         {brief.source}
                       </p>
                     </div>

@@ -41,15 +41,15 @@ export function TaskExecutionCommandCenter() {
 
   return (
     <Shell>
-      <main className="mx-auto max-w-[1600px] space-y-6 p-4 lg:p-8">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[radial-gradient(circle_at_top_right,rgba(244,63,94,0.25),transparent_30%),linear-gradient(135deg,#020617,#0f172a_55%,#7f1d1d)] p-8 text-white shadow-2xl">
+      <main data-market-os-root className="mx-auto max-w-[1600px] space-y-6 p-4 lg:p-8">
+        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[radial-gradient(circle_at_top_right,rgba(244,63,94,0.25),transparent_30%),linear-gradient(135deg,#020617,#0f172a_55%,#7f1d1d)] p-8 text-slate-950 shadow-2xl">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
             Content Command / Task Execution
           </p>
           <h1 className="mt-4 text-5xl font-black tracking-tight">
             Task Execution Command Center
           </h1>
-          <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-slate-300">
+          <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-slate-600">
             Open, inspect, edit and control operational tasks. This page turns imported CSV tasks
             into clickable execution objects with detail pages, edit controls, activity history and checklist readiness.
           </p>
@@ -84,7 +84,7 @@ export function TaskExecutionCommandCenter() {
                   key={mode}
                   onClick={() => setFilter(mode)}
                   className={`rounded-2xl px-4 py-3 text-sm font-black ${
-                    filter === mode ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-700"
+                    filter === mode ? "bg-white text-slate-950" : "border border-slate-200 bg-white text-slate-700"
                   }`}
                 >
                   {statusLabel(mode)}
@@ -116,7 +116,7 @@ export function TaskExecutionCommandCenter() {
                     <Badge kind="priority">{task.priority}</Badge>
                   </div>
                   <h3 className="mt-4 text-lg font-black text-slate-950">{task.title}</h3>
-                  <p className="mt-2 text-xs font-bold text-slate-500">
+                  <p className="mt-2 text-xs font-bold text-slate-9500">
                     {task.id} · {task.owner} · Due: {task.dueDate || "--"}
                   </p>
                   <div className="mt-4 grid grid-cols-2 gap-2">

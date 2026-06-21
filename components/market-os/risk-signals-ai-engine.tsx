@@ -57,35 +57,35 @@ export default function RiskSignalsAiEngine() {
   )
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 5
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Risk, Signals & AI Recommendation Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This anticipative layer detects weak signals from strategy, execution, approvals and ROI.
             It classifies risk, estimates business impact, recommends action and prepares the next execution task.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High/Critical Risks</p>
+              <p className="text-xs uppercase text-slate-600">High/Critical Risks</p>
               <p className="mt-2 text-3xl font-black">{criticalCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Potential Impact</p>
+              <p className="text-xs uppercase text-slate-600">Potential Impact</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalImpact)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">New Signals</p>
+              <p className="text-xs uppercase text-slate-600">New Signals</p>
               <p className="mt-2 text-3xl font-black">{newSignals}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">AI Confidence</p>
+              <p className="text-xs uppercase text-slate-600">AI Confidence</p>
               <p className="mt-2 text-3xl font-black">{avgConfidence}%</p>
             </div>
           </div>
@@ -146,35 +146,35 @@ export default function RiskSignalsAiEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{signal.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Source: {signal.source} · Owner: {signal.owner} · Detected: {signal.detectedAt}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Estimated Impact</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Estimated Impact</p>
                   <p className="mt-1 font-black">{formatMad(signal.impactMad)}</p>
-                  <p className="text-xs text-slate-500">Confidence: {signal.confidence}%</p>
+                  <p className="text-xs text-slate-9500">Confidence: {signal.confidence}%</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">AI Diagnosis</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">AI Diagnosis</p>
                   <p className="mt-2 text-sm text-slate-700">{signal.diagnosis}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Recommended Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Recommended Action</p>
                   <p className="mt-2 text-sm text-slate-700">{signal.recommendedAction}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Trigger Task</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Trigger Task</p>
                   <p className="mt-2 text-sm text-slate-700">{signal.triggerTask}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="risk" engine="data" actionKey="create_corrective_task" actionLabel="Create Corrective Task" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Create Corrective Task</MarketActionButton>
+                <MarketActionButton moduleKey="risk" engine="data" actionKey="create_corrective_task" actionLabel="Create Corrective Task" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Create Corrective Task</MarketActionButton>
                 <MarketActionButton moduleKey="risk" engine="data" actionKey="assign_owner" actionLabel="Assign Owner" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Assign Owner</MarketActionButton>
                 <MarketActionButton moduleKey="risk" engine="data" actionKey="execute_monitor_signal" actionLabel="Monitor Signal" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Monitor Signal</MarketActionButton>
                 <MarketActionButton moduleKey="risk" engine="data" actionKey="escalate_risk" actionLabel="Escalate Risk" className="rounded-2xl border border-red-200 px-4 py-2 text-sm font-bold text-red-700">Escalate Risk</MarketActionButton>

@@ -62,26 +62,48 @@ function refundMatches(row: ReturnType<typeof buildAcademyPaymentsMetrics>['refu
   return true
 }
 
+
+function nullableUuid(value: FormDataEntryValue | null): string | null {
+  const raw = String(value || '').trim()
+  if (!raw) return null
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(raw) ? raw : null
+}
+
 async function createPaymentAction(formData: FormData) {
   'use server'
   await requireAccess('academy.manage')
   const supabase = await createClient()
-  let enrollmentId = String(formData.get('enrollment_id') || '')
-  let traineeId = String(formData.get('trainee_id') || '')
+  let enrollmentId = nullableUuid(formData.get('enrollment_id'))
+  let traineeId = nullableUuid(formData.get('trainee_id'))
   const amount = Number(formData.get('amount') || 0)
+
   if (!traineeId && enrollmentId) {
-    const { data } = await supabase.from('academy_enrollments').select('trainee_id').eq('id', enrollmentId).maybeSingle()
-    traineeId = String(data?.trainee_id || '')
+    const { data } = await supabase
+      .from('academy_enrollments')
+      .select('trainee_id')
+      .eq('id', enrollmentId)
+      .maybeSingle()
+
+    traineeId = nullableUuid(data?.trainee_id || null)
   }
+
   if (traineeId && !enrollmentId) {
-    const { data } = await supabase.from('academy_enrollments').select('id').eq('trainee_id', traineeId).order('created_at', { ascending: false }).limit(1).maybeSingle()
-    enrollmentId = String(data?.id || '')
+    const { data } = await supabase
+      .from('academy_enrollments')
+      .select('id')
+      .eq('trainee_id', traineeId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    enrollmentId = nullableUuid(data?.id || null)
   }
+
   if (!traineeId || !Number.isFinite(amount) || amount <= 0) redirect('/academy/payments?modal=create&error=missing_payment_fields')
   const status = String(formData.get('status') || 'completed')
   const payload = {
     trainee_id: traineeId,
-    enrollment_id: enrollmentId || null,
+    enrollment_id: enrollmentId,
     amount,
     currency: 'MAD',
     method: String(formData.get('method') || 'Cash'),
@@ -147,6 +169,138 @@ function RefundForm({ payments }: { payments: ReturnType<typeof buildAcademyPaym
   return <div className="inlineCard formCard"><div className="inlineHead"><h3>Process Refund</h3><Link href="/academy/payments">×</Link></div><form action={refundAction}><label>Transaction<Select name="payment_id">{payments.map((p) => <option key={p.id} value={p.id}>{p.reference} — {mad(p.amount)}</option>)}</Select></label><label>Refund Amount<Input name="amount" type="number" min="1" step="0.01" placeholder="149.00" /></label><label>Refund Reason<Select name="reason"><option>Select reason</option><option>Course not as expected</option><option>Financial reasons</option><option>Found better alternative</option><option>Schedule conflict</option></Select></label><label>Notes<Textarea name="notes" placeholder="Enter refund notes..." /></label><div className="inlineFoot"><Link href="/academy/payments">Cancel</Link><button className="danger">Process Refund</button></div></form></div>
 }
 function DetailsCard({ metrics }: { metrics: ReturnType<typeof buildAcademyPaymentsMetrics> }) { const p = metrics.paymentRows[0]; return <div className="inlineCard"><div className="inlineHead"><h3>Transaction Details</h3><span>×</span></div>{p ? <div className="detailGrid"><div><h4>Transaction Information</h4><p><b>Transaction ID</b><span>{p.reference}</span></p><p><b>Date</b><span>{date(p.date)}</span></p><p><b>Status</b><Pill tone={toneFor(p.status)}>{p.status}</Pill></p><p><b>Payment Method</b><span>{p.method}</span></p><p><b>Amount</b><span>{mad(p.amount)}</span></p></div><div><h4>Student Information</h4><div className="student"><i>{initials(p.traineeName)}</i><div><strong>{p.traineeName}</strong><small>{p.traineeEmail || 'Live Academy trainee'}</small></div></div><h4>Course</h4><strong>{p.courseName}</strong><Link className="softBtn" href="/academy/courses">View Course</Link></div></div> : <p>No payment selected.</p>}<div className="inlineFoot"><Link className="dangerLink" href="/academy/payments?view=refunds">Refund Transaction</Link><Link href="/academy/payments">Close</Link></div></div> }
+
+function PaymentDetailModal({
+  payment,
+  refund,
+}: {
+  payment: ReturnType<typeof buildAcademyPaymentsMetrics>['paymentRows'][number]
+  refund?: any
+}) {
+  const isRefunded = normFilter(payment.status).includes('refund')
+  const refundId = refund?.refundId || refund?.id || payment.id
+  const receiptHref = isRefunded
+    ? `/academy/payments/refund-receipt/${encodeURIComponent(String(refundId))}`
+    : `/academy/payments/receipt/${encodeURIComponent(String(payment.id))}`
+
+  const paymentProgress = isRefunded ? 100 : normFilter(payment.status).includes('pending') ? 48 : 100
+  const netAmount = isRefunded ? 0 : payment.amount
+  const refundedAmount = isRefunded ? payment.amount : Number(refund?.amount || 0)
+
+  return (
+    <div className="paymentModalOverlay">
+      <section className="paymentModalCard">
+        <div className="paymentModalHero">
+          <div>
+            <span className="paymentModalEyebrow">Academy Payment Dossier</span>
+            <h2>{payment.traineeName}</h2>
+            <p>{payment.courseName} · {payment.groupName || 'No group'} · {payment.locationName || 'Morocco'}</p>
+          </div>
+          <div className="paymentModalStatus">
+            <Pill tone={toneFor(payment.status)}>{payment.status}</Pill>
+            <strong>{mad(payment.amount)}</strong>
+            <small>{payment.reference}</small>
+          </div>
+        </div>
+
+        <div className="paymentModalGrid">
+          <div className="paymentModalPanel">
+            <h3>Transaction Intelligence</h3>
+            <div className="paymentModalChart">
+              <i style={{ height: `${Math.max(18, Math.min(100, paymentProgress))}%` }} />
+              <i style={{ height: `${isRefunded ? 78 : 34}%` }} />
+              <i style={{ height: `${normFilter(payment.method).includes('cash') ? 68 : 42}%` }} />
+              <i style={{ height: `${payment.amount > 0 ? 92 : 12}%` }} />
+            </div>
+            <div className="paymentModalStats">
+              <span><b>{mad(payment.amount)}</b><small>Gross paid</small></span>
+              <span><b>{mad(netAmount)}</b><small>Net retained</small></span>
+              <span><b>{mad(refundedAmount)}</b><small>Refunded</small></span>
+            </div>
+          </div>
+
+          <div className="paymentModalPanel">
+            <h3>Student & Program</h3>
+            <div className="student modalStudent">
+              <i>{initials(payment.traineeName)}</i>
+              <div>
+                <strong>{payment.traineeName}</strong>
+                <small>{payment.traineeEmail || 'Live Academy trainee'}</small>
+              </div>
+            </div>
+            <p><b>Course</b><span>{payment.courseName}</span></p>
+            <p><b>Group</b><span>{payment.groupName}</span></p>
+            <p><b>Location</b><span>{payment.locationName}</span></p>
+          </div>
+
+          <div className="paymentModalPanel">
+            <h3>Payment Data</h3>
+            <p><b>Transaction ID</b><span>{payment.reference}</span></p>
+            <p><b>Payment ID</b><span>{payment.id}</span></p>
+            <p><b>Method</b><span>{payment.method}</span></p>
+            <p><b>Date</b><span>{date(payment.date)}</span></p>
+            <p><b>Status</b><span><Pill tone={toneFor(payment.status)}>{payment.status}</Pill></span></p>
+          </div>
+
+          <div className="paymentModalPanel">
+            <h3>{isRefunded ? 'Refund Receipt' : 'Payment Receipt'}</h3>
+            <p>
+              <b>Receipt type</b>
+              <span>{isRefunded ? 'Refund receipt PDF' : 'Payment receipt PDF'}</span>
+            </p>
+            <p>
+              <b>Template source</b>
+              <span>Existing Academy receipt route</span>
+            </p>
+            <div className="paymentModalActions">
+              <Link target="_blank" href={receiptHref}>Print / Save PDF</Link>
+              <Link href="/academy/payments">Close</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Link className="paymentModalBackdrop" href="/academy/payments" aria-label="Close payment details" />
+
+      <style>{`
+        .paymentRowClickable{position:relative;cursor:pointer}
+        .paymentRowClickable:hover{background:#f8fbff}
+        .paymentRowOpen{position:relative;z-index:2;color:inherit;text-decoration:none}
+        .paymentRowOpen::after{content:"";position:absolute;inset:-22px -900px;z-index:1}
+        .paymentRowClickable .miniBtn{position:relative;z-index:4}
+        .paymentModalOverlay{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:28px;background:rgba(15,23,42,.42);backdrop-filter:blur(10px)}
+        .paymentModalBackdrop{position:absolute;inset:0}
+        .paymentModalCard{position:relative;z-index:2;width:min(1120px,calc(100vw - 52px));max-height:calc(100vh - 56px);overflow:auto;border-radius:34px;background:#fff;box-shadow:0 34px 120px rgba(15,23,42,.28);border:1px solid rgba(226,232,240,.95)}
+        .paymentModalHero{display:flex;justify-content:space-between;gap:28px;padding:30px 34px;background:linear-gradient(135deg,#f8fbff,#f5f3ff 55%,#ecfeff);border-bottom:1px solid #e7ecf4}
+        .paymentModalEyebrow{display:inline-flex;border-radius:999px;background:#eef2ff;color:#4f46e5;padding:7px 11px;font-weight:1000;font-size:11px;text-transform:uppercase;letter-spacing:.12em}
+        .paymentModalHero h2{margin:12px 0 6px;font-size:32px;letter-spacing:-.05em;color:#111827}
+        .paymentModalHero p{margin:0;color:#64748b;font-weight:800}
+        .paymentModalStatus{text-align:right;display:grid;gap:8px;justify-items:end}
+        .paymentModalStatus strong{font-size:30px;color:#111827}
+        .paymentModalStatus small{font-weight:900;color:#64748b}
+        .paymentModalGrid{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;padding:22px}
+        .paymentModalPanel{border:1px solid #e7ecf4;border-radius:24px;background:#fff;padding:22px;box-shadow:0 16px 38px rgba(15,23,42,.05)}
+        .paymentModalPanel h3{margin:0 0 16px;font-size:16px;color:#111827}
+        .paymentModalPanel p{display:grid;grid-template-columns:145px 1fr;gap:14px;margin:12px 0;color:#475569;font-weight:800}
+        .paymentModalPanel p b{color:#111827}
+        .paymentModalPanel p span{min-width:0;overflow-wrap:anywhere}
+        .modalStudent{margin-bottom:16px}
+        .paymentModalChart{height:170px;border-radius:22px;background:linear-gradient(180deg,#f8fafc,#eef2ff);display:flex;align-items:end;gap:14px;padding:20px}
+        .paymentModalChart i{flex:1;border-radius:999px 999px 8px 8px;background:linear-gradient(180deg,#6d4df6,#14b8a6);box-shadow:0 12px 28px rgba(79,70,229,.22)}
+        .paymentModalStats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+        .paymentModalStats span{border-radius:18px;background:#f8fafc;padding:14px}
+        .paymentModalStats b{display:block;color:#111827;font-size:16px}
+        .paymentModalStats small{color:#64748b;font-weight:900}
+        .paymentModalActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+        .paymentModalActions a{border-radius:16px;padding:13px 16px;text-decoration:none;font-weight:1000;border:1px solid #e2e8f0;background:#f8fafc;color:#111827}
+        .paymentModalActions a:first-child{background:#111827;color:#fff;border-color:#111827}
+        @media(max-width:900px){.paymentModalHero,.paymentModalGrid{grid-template-columns:1fr;display:grid}.paymentModalStatus{text-align:left;justify-items:start}.paymentModalPanel p{grid-template-columns:1fr}.paymentModalStats{grid-template-columns:1fr}}
+      `}</style>
+    </div>
+  )
+}
+
+
 function FiltersCard() { return <div className="inlineCard"><div className="inlineHead"><h3>Advanced Filters</h3><span>×</span></div><div className="grid2"><label>Date Range<Input defaultValue="May 1, 2026 – May 31, 2026" /></label><label>Status<Select name="status"><option>All Statuses</option></Select></label><label>Payment Method<Select name="method"><option>All Methods</option></Select></label><label>Course<Select name="course"><option>All Courses</option></Select></label><label>Amount Range<Input placeholder="Min Amount" /></label><label>&nbsp;<Input placeholder="Max Amount" /></label></div><label>Country<Select name="country"><option>Morocco</option></Select></label><div className="inlineFoot"><button type="button">Reset</button><button type="button">Apply Filters</button></div></div> }
 
 function PaymentHome({ metrics, trainees, enrollments }: { metrics: ReturnType<typeof buildAcademyPaymentsMetrics>; trainees: AnyRow[]; enrollments: AnyRow[] }) {
@@ -157,7 +311,10 @@ function MainTables({ metrics }: { metrics: ReturnType<typeof buildAcademyPaymen
   return <div className="row secondRow"><Panel title="Recent Transactions"><div className="tabs"><span>All ({metrics.paymentRows.length})</span><span>Completed ({metrics.kpis.successfulPayments})</span><span>Pending ({metrics.kpis.pendingPayments})</span><span>Refunded ({metrics.kpis.refundedPayments})</span></div><PaymentTable rows={metrics.paymentRows.slice(0, 10)}/></Panel><div className="sidePanels"><Panel title="Revenue by Country"><div className="mapBox">🌍</div>{metrics.revenueByCountry.map((r) => <p key={r.label} className="country"><span>🇲🇦 {r.label}</span><b>{mad(r.amount)}</b></p>)}</Panel><Panel title="Payment Status"><Donut total={metrics.paymentRows.length} slices={metrics.statusDistribution} center={String(metrics.paymentRows.length)}/></Panel><Panel title="Quick Actions"><div className="quick"><Link href="/academy/payments?modal=create">New Payment</Link><Link href="/academy/payments?view=invoices">Generate Invoice</Link><Link href="/academy/payments?view=refunds">Process Refund</Link><Link href="/academy/reports">Export Report</Link></div></Panel></div></div>
 }
 function PaymentTable({ rows }: { rows: ReturnType<typeof buildAcademyPaymentsMetrics>['paymentRows'] }) {
-  return <table><thead><tr><th>Transaction ID</th><th>Student</th><th>Course</th><th>Group</th><th>Location</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>{rows.length ? rows.map((p) => <tr key={p.id}><td>{p.reference}</td><td><div className="miniStudent"><i>{initials(p.traineeName)}</i><b>{p.traineeName}</b></div></td><td>{p.courseName}</td><td>{p.groupName}</td><td>{p.locationName}</td><td>{mad(p.amount)}</td><td>{p.method}</td><td><Pill tone={toneFor(p.status)}>{p.status}</Pill></td><td>{date(p.date)}</td><td><Link className="miniBtn" href={`/academy/payments?payment=${p.id}`}>⋯</Link></td></tr>) : <tr><td colSpan={10}>No live payment records yet.</td></tr>}</tbody></table>
+  return <table><thead><tr><th>Transaction ID</th><th>Student</th><th>Course</th><th>Group</th><th>Location</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>{rows.length ? rows.map((p) => {
+    const openHref = `/academy/payments?payment=${encodeURIComponent(String(p.id))}`
+    return <tr key={p.id} className="paymentRowClickable"><td><Link className="paymentRowOpen" href={openHref}>{p.reference}</Link></td><td><div className="miniStudent"><i>{initials(p.traineeName)}</i><b>{p.traineeName}</b></div></td><td>{p.courseName}</td><td>{p.groupName}</td><td>{p.locationName}</td><td>{mad(p.amount)}</td><td>{p.method}</td><td><Pill tone={toneFor(p.status)}>{p.status}</Pill></td><td>{date(p.date)}</td><td><Link className="miniBtn" href={openHref}>Open</Link></td></tr>
+  }) : <tr><td colSpan={10}>No live payment records yet.</td></tr>}</tbody></table>
 }
 function AllPaymentsWorkspace({ metrics, filters }: { metrics: ReturnType<typeof buildAcademyPaymentsMetrics>; filters: Record<string, string> }) {
   const filteredRows = metrics.paymentRows.filter((row) => paymentMatches(row, filters))
@@ -202,6 +359,17 @@ export default async function AcademyPaymentsPage({ searchParams }: { searchPara
     safeTable(supabase, 'academy_payments'), safeTable(supabase, 'academy_refunds'), safeTable(supabase, 'academy_invoices'), safeTable(supabase, 'academy_enrollments'), safeTable(supabase, 'academy_trainees'), safeTable(supabase, 'academy_courses'), safeTable(supabase, 'academy_groups'), safeTable(supabase, 'academy_locations'),
   ])
   const metrics = buildAcademyPaymentsMetrics({ payments, refunds, invoices, enrollments, trainees, courses, groups, locations })
+  const selectedPaymentId = String(params.payment || '')
+  const selectedPayment = selectedPaymentId
+    ? metrics.paymentRows.find((row) => String(row.id) === selectedPaymentId || String(row.reference) === selectedPaymentId)
+    : null
+  const selectedPaymentRefund = selectedPayment
+    ? metrics.refundRows.find((row: any) =>
+        String(row.id) === String(selectedPayment.id) ||
+        String(row.paymentId || row.payment_id || '') === String(selectedPayment.id) ||
+        String(row.reference || '') === String(selectedPayment.reference)
+      )
+    : null
   const view = String(params.view || 'home') as PaymentWorkspaceMode
   const mode: PaymentWorkspaceMode = ['payments', 'refunds', 'invoices'].includes(view) ? view : 'home'
   const modal = String(params.modal || '')
@@ -214,7 +382,8 @@ export default async function AcademyPaymentsPage({ searchParams }: { searchPara
     status: firstParam(params, 'status'),
   }
   const selectedRefundId = firstParam(params, 'refund')
-  return <main className="page"><Sidebar/><section className="content"><header className="top"><div><h1>Payments Dashboard</h1><p>Live Academy revenue, transactions, refunds, invoices and payment operations in Moroccan Dirhams.</p><small>Last live sync: {date(metrics.generatedAt)}</small></div><div className="topActions"><Link href="/academy/reports">⇩ Export</Link><Link href="/academy/payments?modal=create">＋ New Payment</Link></div></header><Tabs mode={mode} metrics={metrics}/>{mode === 'home' ? <PaymentHome metrics={metrics} trainees={trainees} enrollments={enrollments}/> : null}{mode === 'payments' ? <AllPaymentsWorkspace metrics={metrics} filters={filters}/> : null}{mode === 'refunds' ? <RefundsWorkspace metrics={metrics} filters={filters} selectedRefundId={selectedRefundId}/> : null}{mode === 'invoices' ? <InvoicesWorkspace metrics={metrics}/> : null}{modal === 'create' ? <div className="overlay"><CreatePaymentModal trainees={trainees} enrollments={enrollments} error={String(params.error || '')}/></div> : null}{modal === 'refund' ? <div className="overlay"><RefundForm payments={metrics.paymentRows}/></div> : null}<style>{css}</style></section></main>
+  return <main className="page"><Sidebar/><section className="content"><header className="top"><div><h1>Payments Dashboard</h1><p>Live Academy revenue, transactions, refunds, invoices and payment operations in Moroccan Dirhams.</p><small>Last live sync: {date(metrics.generatedAt)}</small></div><div className="topActions"><Link href="/academy/reports">⇩ Export</Link><Link href="/academy/payments?modal=create">＋ New Payment</Link></div></header><Tabs mode={mode} metrics={metrics}/>{mode === 'home' ? <PaymentHome metrics={metrics} trainees={trainees} enrollments={enrollments}/> : null}{mode === 'payments' ? <AllPaymentsWorkspace metrics={metrics} filters={filters}/> : null}{mode === 'refunds' ? <RefundsWorkspace metrics={metrics} filters={filters} selectedRefundId={selectedRefundId}/> : null}{mode === 'invoices' ? <InvoicesWorkspace metrics={metrics}/> : null}{modal === 'create' ? <div className="overlay"><CreatePaymentModal trainees={trainees} enrollments={enrollments} error={String(params.error || '')}/></div> : null}{modal === 'refund' ? <div className="overlay"><RefundForm payments={metrics.paymentRows}/></div> : null}<style>{css}</style></section>      {selectedPayment ? <PaymentDetailModal payment={selectedPayment} refund={selectedPaymentRefund} /> : null}
+</main>
 }
 
 const css = `

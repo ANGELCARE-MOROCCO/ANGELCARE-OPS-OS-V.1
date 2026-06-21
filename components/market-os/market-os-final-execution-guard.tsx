@@ -53,7 +53,7 @@ export default function MarketOsFinalExecutionGuard() {
         onClick={() => setOpen((v) => !v)}
         className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-xl transition hover:shadow-2xl"
       >
-        <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Market-OS Final Lock</div>
+        <div className="text-xs uppercase tracking-[0.18em] text-slate-9500">Market-OS Final Lock</div>
         <div className="mt-1 text-sm font-black text-slate-900">
           {busy ? 'Checking execution…' : ok ? 'Execution QA passing' : `${suspectCount} suspect button${suspectCount === 1 ? '' : 's'}`}
         </div>
@@ -64,7 +64,7 @@ export default function MarketOsFinalExecutionGuard() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-sm font-black text-slate-950">Final production execution audit</div>
-              <div className="mt-1 text-xs text-slate-500">Runtime scan + DB/API health + audit persistence.</div>
+              <div className="mt-1 text-xs text-slate-9500">Runtime scan + DB/API health + audit persistence.</div>
             </div>
             <button
               type="button"
@@ -79,15 +79,15 @@ export default function MarketOsFinalExecutionGuard() {
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-2xl bg-slate-50 p-3">
               <div className="text-lg font-black text-slate-950">{audit?.totalButtons ?? '—'}</div>
-              <div className="text-[10px] uppercase tracking-wider text-slate-500">Buttons</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-9500">Buttons</div>
             </div>
             <div className="rounded-2xl bg-slate-50 p-3">
               <div className="text-lg font-black text-slate-950">{suspectCount}</div>
-              <div className="text-[10px] uppercase tracking-wider text-slate-500">Suspect</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-9500">Suspect</div>
             </div>
             <div className="rounded-2xl bg-slate-50 p-3">
               <div className="text-lg font-black text-slate-950">{health?.ok ? 'OK' : 'Check'}</div>
-              <div className="text-[10px] uppercase tracking-wider text-slate-500">DB/API</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-9500">DB/API</div>
             </div>
           </div>
 

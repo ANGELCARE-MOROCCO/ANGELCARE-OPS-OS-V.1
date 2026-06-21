@@ -48,9 +48,9 @@ function Metric({ label, value, icon: Icon, sub }: { label: string; value: strin
   return (
     <div className="rounded-[1.7rem] border border-slate-200 bg-white p-5 shadow-sm">
       <Icon className="h-5 w-5 text-pink-600" />
-      <p className="mt-4 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">{label}</p>
+      <p className="mt-4 text-[11px] font-black uppercase tracking-[0.18em] text-slate-9500">{label}</p>
       <p className="mt-1 text-3xl font-black text-slate-950">{value}</p>
-      <p className="mt-1 text-xs font-bold text-slate-500">{sub}</p>
+      <p className="mt-1 text-xs font-bold text-slate-9500">{sub}</p>
     </div>
   )
 }
@@ -113,7 +113,7 @@ export default function ContentCampaignSyncEngine() {
               <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-blue-700">Sync Engine</span>
             </div>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-950">Campaign-driven content enforcement</h2>
-            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
+            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-9500">
               Detects missing campaign deliverables, creates required content tasks, monitors approval and publishing readiness, and highlights production risks.
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function ContentCampaignSyncEngine() {
             <button disabled={busy} onClick={() => location.reload()} className={cn(button, "border border-slate-200 bg-white text-slate-800")}>
               <RefreshCw className="mr-2 h-4 w-4" /> Refresh
             </button>
-            <Link href="/market-os/content-command-center" className={cn(button, "bg-slate-950 text-white")}>
+            <Link href="/market-os/content-command-center" className={cn(button, "bg-white text-slate-950")}>
               <ArrowUpRight className="mr-2 h-4 w-4" /> Content center
             </Link>
           </div>
@@ -162,7 +162,7 @@ export default function ContentCampaignSyncEngine() {
                         </span>
                       </div>
                       <h4 className="mt-3 text-lg font-black text-slate-950">{item.campaign_name}</h4>
-                      <p className="mt-1 text-sm font-semibold text-slate-500">{item.service_name || "No service linked"} · {item.owner}</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-9500">{item.service_name || "No service linked"} · {item.owner}</p>
                     </div>
                     <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-black text-slate-700">{item.deadline}</p>
                   </div>
@@ -194,31 +194,31 @@ export default function ContentCampaignSyncEngine() {
                 <div>
                   <Badge status={selected.status}>{selected.status}</Badge>
                   <h4 className="mt-3 text-xl font-black text-slate-950">{selected.campaign_name}</h4>
-                  <p className="mt-1 text-sm font-semibold text-slate-500">{selected.notes || "No notes."}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-9500">{selected.notes || "No notes."}</p>
                 </div>
 
-                <button disabled={busy} onClick={() => runAction("generate_task")} className={cn(button, "w-full bg-pink-600 text-white")}>
+                <button disabled={busy} onClick={() => runAction("generate_task")} className={cn(button, "w-full bg-pink-600 text-slate-950")}>
                   <Plus className="mr-2 h-4 w-4" /> Generate missing content task
                 </button>
-                <button disabled={busy} onClick={() => runAction("mark_synced")} className={cn(button, "w-full bg-emerald-600 text-white")}>
+                <button disabled={busy} onClick={() => runAction("mark_synced")} className={cn(button, "w-full bg-emerald-600 text-slate-950")}>
                   <CheckCircle2 className="mr-2 h-4 w-4" /> Mark sync reviewed
                 </button>
-                <button disabled={busy} onClick={() => runAction("escalate")} className={cn(button, "w-full bg-slate-950 text-white")}>
+                <button disabled={busy} onClick={() => runAction("escalate")} className={cn(button, "w-full bg-white text-slate-950")}>
                   <ShieldCheck className="mr-2 h-4 w-4" /> Escalate to marketing manager
                 </button>
 
                 <p className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600">{message}</p>
               </div>
             ) : (
-              <p className="mt-4 text-sm font-semibold text-slate-500">Select a requirement to operate.</p>
+              <p className="mt-4 text-sm font-semibold text-slate-9500">Select a requirement to operate.</p>
             )}
           </section>
 
-          <section className="rounded-[2.2rem] border border-slate-200 bg-slate-950 p-5 text-white shadow-xl">
-            <h3 className="flex items-center gap-2 text-xl font-black text-white">
+          <section className="rounded-[2.2rem] border border-slate-200 bg-white p-5 text-slate-950 shadow-xl">
+            <h3 className="flex items-center gap-2 text-xl font-black text-slate-950">
               <Target className="h-5 w-5 text-pink-300" /> Governance rule
             </h3>
-            <div className="mt-4 space-y-3 text-sm font-bold text-white/75">
+            <div className="mt-4 space-y-3 text-sm font-bold text-slate-950/75">
               <p className="rounded-2xl bg-white/10 p-4">
                 A campaign is not execution-ready until required content volume is produced, approved and published.
               </p>

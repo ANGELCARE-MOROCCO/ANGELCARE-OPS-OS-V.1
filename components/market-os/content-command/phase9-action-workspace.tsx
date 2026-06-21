@@ -26,7 +26,7 @@ function ActionButton(props: { action: Phase9WorkspaceAction; onRun: (action: Ph
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-bold text-slate-950">{props.action.label}</p>
-          <p className="mt-1 text-xs text-slate-500">{props.action.targetWorkspace}</p>
+          <p className="mt-1 text-xs text-slate-9500">{props.action.targetWorkspace}</p>
         </div>
         <Pill>{props.action.status}</Pill>
       </div>
@@ -41,7 +41,7 @@ function TaskRow(props: { task: Phase9TaskCard }): React.ReactElement {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-slate-950">{props.task.title}</p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-9500">
             {props.task.workspace} · Owner: {props.task.owner}
           </p>
         </div>
@@ -57,7 +57,7 @@ function TaskRow(props: { task: Phase9TaskCard }): React.ReactElement {
 function DetailPanel(props: { record: Phase9DetailPanelRecord }): React.ReactElement {
   return (
     <aside className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Detail Panel</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">Detail Panel</p>
       <h3 className="mt-2 text-xl font-bold text-slate-950">{props.record.title}</h3>
       <p className="mt-1 text-sm text-slate-600">{props.record.subtitle}</p>
 
@@ -69,7 +69,7 @@ function DetailPanel(props: { record: Phase9DetailPanelRecord }): React.ReactEle
       <div className="mt-5 space-y-3">
         {props.record.metadata.map((item) => (
           <div key={item.label} className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.label}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">{item.label}</p>
             <p className="text-sm font-semibold text-slate-900">{item.value}</p>
           </div>
         ))}
@@ -95,7 +95,7 @@ export function ContentCommandPhase9ActionWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Phase 9 Actionable Controls</h2>

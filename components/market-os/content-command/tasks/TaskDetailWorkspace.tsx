@@ -74,7 +74,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
   if (!task) {
     return (
       <Shell>
-        <main className="mx-auto max-w-5xl p-6">
+        <main data-market-os-root className="mx-auto max-w-5xl p-6">
           <Panel className="p-8">
             <h1 className="text-3xl font-black">Task not found</h1>
             <p className="mt-2 text-sm font-semibold text-slate-600">No task exists with ID {taskId}.</p>
@@ -92,7 +92,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
   return (
     <Shell>
       <main className="mx-auto max-w-[1500px] space-y-6 p-4 lg:p-8">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-white shadow-2xl">
+        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-slate-950 shadow-2xl">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
@@ -126,7 +126,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
                   key={status}
                   onClick={() => changeStatus(status)}
                   className={`rounded-2xl px-4 py-3 text-sm font-black ${
-                    task.status === status ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-700"
+                    task.status === status ? "bg-white text-slate-950" : "border border-slate-200 bg-white text-slate-700"
                   }`}
                 >
                   {statusLabel(status)}
@@ -153,7 +153,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
                 className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none"
                 rows={4}
               />
-              <button onClick={addNote} className="mt-3 rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-white">
+              <button onClick={addNote} className="mt-3 rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-slate-950">
                 Add Note
               </button>
             </div>
@@ -172,7 +172,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
                 placeholder="Add checklist item..."
                 className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none"
               />
-              <button onClick={addChecklist} className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white">
+              <button onClick={addChecklist} className="rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950">
                 Add
               </button>
             </div>
@@ -180,7 +180,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
             <div className="mt-5 space-y-3">
               {checklist.map((item) => (
                 <div key={item.id} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <button onClick={() => { toggleTaskChecklistItem(item.id); reload() }} className={`text-left text-sm font-bold ${item.done ? "line-through text-slate-400" : "text-slate-800"}`}>
+                  <button onClick={() => { toggleTaskChecklistItem(item.id); reload() }} className={`text-left text-sm font-bold ${item.done ? "line-through text-slate-500" : "text-slate-800"}`}>
                     {item.done ? "✅ " : "⬜ "} {item.label}
                   </button>
                   <button onClick={() => { deleteTaskChecklistItem(item.id); reload() }} className="text-xs font-black text-red-600">
@@ -189,7 +189,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
                 </div>
               ))}
               {!checklist.length ? (
-                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
+                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
                   No checklist items yet.
                 </p>
               ) : null}
@@ -204,10 +204,10 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
               <Link href={`/market-os/content-command-center/${linkedContent.id}`} className="mt-4 block rounded-3xl border border-slate-200 bg-slate-50 p-5 hover:bg-white">
                 <h3 className="text-lg font-black text-slate-950">{linkedContent.title}</h3>
                 <p className="mt-2 text-sm font-semibold text-slate-600">{linkedContent.channel} · {linkedContent.campaign}</p>
-                <p className="mt-2 text-xs font-bold text-slate-500">{linkedContent.status} · {linkedContent.owner}</p>
+                <p className="mt-2 text-xs font-bold text-slate-9500">{linkedContent.status} · {linkedContent.owner}</p>
               </Link>
             ) : (
-              <p className="mt-4 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-500">
+              <p className="mt-4 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-9500">
                 No linked content found. CSV imported tasks are attached to the fallback content item until assigned.
               </p>
             )}
@@ -219,12 +219,12 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
               {activity.map((event) => (
                 <article key={event.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-sm font-black text-slate-950">{statusLabel(event.action)}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-500">{event.timestamp}</p>
+                  <p className="mt-1 text-xs font-bold text-slate-9500">{event.timestamp}</p>
                   <p className="mt-2 text-sm font-semibold text-slate-700">{event.detail}</p>
                 </article>
               ))}
               {!activity.length ? (
-                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
+                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
                   No activity yet.
                 </p>
               ) : null}
@@ -239,7 +239,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
       <p className="mt-2 text-sm font-black text-slate-900">{value}</p>
     </div>
   )

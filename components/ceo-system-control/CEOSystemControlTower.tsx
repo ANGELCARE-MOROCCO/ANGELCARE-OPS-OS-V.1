@@ -841,6 +841,7 @@ export default function CEOSystemControlTower({
   const [scheduleTimezone, setScheduleTimezone] = useState(initialState.timezone || 'Africa/Casablanca')
   const [scheduleReason, setScheduleReason] = useState(initialState.reason || '')
   const actionProgress = useActionProgress()
+  const [internalRoutePressure, setInternalRoutePressure] = useState<any | null>(null)
   const [eventSearch, setEventSearch] = useState('')
   const [eventTypeFilter, setEventTypeFilter] = useState<'all' | 'shutdown' | 'restore' | 'schedule' | 'other'>('all')
   const [commandQuery, setCommandQuery] = useState('')
@@ -860,9 +861,25 @@ export default function CEOSystemControlTower({
   const costPressure = usageAvailable ? usage?.summary.estimatedCostPressure ?? null : null
   const hourlyPoints = usageAvailable ? seriesValues(usage?.charts.hourly || []) : []
   const dailyPoints = usageAvailable ? seriesValues(usage?.charts.daily || [], 'count') : []
-  const routePoints = usageAvailable ? (usage?.charts.routePressure || []).map((row) => row.value) : []
-  const modulePressureRows = usageAvailable ? usage?.charts.modulePressure || [] : []
-  const topRouteRows = usageAvailable ? usage?.charts.routePressure || [] : []
+  const internalRouteRows = Array.isArray(internalRoutePressure?.top)
+    ? internalRoutePressure.top
+    : Array.isArray(internalRoutePressure?.rows)
+      ? internalRoutePressure.rows
+      : []
+
+  const routePoints = internalRouteRows.length
+    ? internalRouteRows.slice(0, 12).map((row: any) => Number(row.pressureScore || row.value || 0))
+    : usageAvailable
+      ? (usage?.charts.routePressure || []).map((row) => row.value)
+      : []
+
+  const routeSparklinePoints = routePoints.length ? routePoints : [18, 32, 24, 45, 38, 52]
+
+  const topRouteRows = internalRouteRows.length
+    ? internalRouteRows
+    : usageAvailable
+      ? usage?.charts.routePressure || []
+      : []
   const groupedEvents = useMemo(() => groupRuntimeEvents(events), [events])
 
   const activeData = useMemo(() => ({
@@ -874,6 +891,10 @@ export default function CEOSystemControlTower({
     cost: usageAvailable && usage?.charts.weekly.length ? seriesValues(usage.charts.weekly, 'cost') : [],
   }), [dailyPoints, hourlyPoints, routePoints, usage, usageAvailable])
 
+  const modulePressureRows = usageAvailable
+    ? (usage?.charts.modulePressure || [])
+    : []
+
   const modulePressureMap = useMemo(() => {
     const map = new Map<string, number>()
     for (const row of modulePressureRows) map.set(row.module, row.value)
@@ -882,7 +903,6 @@ export default function CEOSystemControlTower({
     }
     return map
   }, [modulePressureRows, state.disabledModules])
-
   const commandResults = useMemo(() => {
     const query = commandQuery.trim().toLowerCase()
     if (!query) return []
@@ -1016,16 +1036,95 @@ export default function CEOSystemControlTower({
     }
   }
 
+  async function refreshInternalRoutePressure(showProgress = false) {
+    try {
+      if (showProgress) {
+        actionProgress.updateProgress(55, 'Calculating internal route pressure indicators…', 'Route pressure')
+      }
+
+      const response = await fetch('/api/system-control/route-pressure', { cache: 'no-store' })
+      const payload = await response.json().catch(() => null)
+
+      if (response.ok && payload?.ok) {
+        setInternalRoutePressure(payload)
+      }
+    } catch {
+      // Keep last known route pressure snapshot.
+    }
+  }
+
+  async function refreshAllWithProgress() {
+    actionProgress.startAction({
+      title: 'Refresh CEO System Control',
+      subtitle: 'Refreshing runtime state, telemetry snapshot, schedules and audit visibility.',
+      steps: [
+        { id: 'validate', label: 'Validate refresh request', percent: 10 },
+        { id: 'runtime', label: 'Refresh runtime state', percent: 35 },
+        { id: 'telemetry', label: 'Refresh telemetry snapshot', percent: 65 },
+        { id: 'events', label: 'Refresh audit and schedules', percent: 85 },
+        { id: 'complete', label: 'Refresh completed', percent: 100 },
+      ],
+    })
+
+    setNotice(null)
+    setError(null)
+
+    try {
+      actionProgress.updateProgress(10, 'CEO refresh request validated.', 'Validated')
+      actionProgress.updateProgress(35, 'Refreshing runtime control state…', 'Runtime refresh')
+      await refreshAll(true)
+      await refreshInternalRoutePressure(true)
+      actionProgress.updateProgress(85, 'Runtime, telemetry, route pressure and audit panels refreshed.', 'Panels refreshed')
+
+      const telemetryConfigured = Boolean(
+        typeof window !== 'undefined'
+          ? false
+          : false
+      )
+
+      const finalNotice = telemetryStatusLabel?.toLowerCase?.().includes('unsupported')
+        ? 'Refresh completed. Provider telemetry is not configured, so internal snapshots are shown.'
+        : 'CEO System Control refreshed successfully.'
+
+      setNotice(finalNotice)
+      actionProgress.completeAction(finalNotice, {
+        telemetry: telemetryStatusLabel,
+        source: telemetrySourceBadge?.label,
+        runtimeMode: state.mode,
+      })
+    } catch (refreshError) {
+      const message = refreshError instanceof Error ? refreshError.message : 'Unable to refresh CEO System Control.'
+      setError(message)
+      actionProgress.failAction(message)
+    }
+  }
+
   async function runAction(
     endpoint: '/api/system-control/shutdown' | '/api/system-control/restore' | '/api/system-control/schedule',
     body: Record<string, unknown>,
     action: ActionKind,
     steps?: ProgressStep[],
   ) {
+    const progressSteps = progressStepsFor(action, steps)
+
+    actionProgress.startAction({
+      title: actionTitle(action),
+      subtitle:
+        action === 'restore'
+          ? 'Restoring protected runtime mode and refreshing control state.'
+          : action === 'schedule'
+            ? 'Saving scheduled runtime transition and validating standby timing.'
+            : 'Executing protected shutdown workflow with audit visibility.',
+      steps: progressSteps,
+    })
+
     setBusyAction(action)
     setNotice(null)
     setError(null)
+
     try {
+      actionProgress.updateProgress(5, 'CEO action received and validation started.', 'Action received')
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1033,7 +1132,7 @@ export default function CEOSystemControlTower({
       })
       const payload = await response.json().catch(() => null)
       if (!response.ok || !payload?.ok) {
-        throw new Error(payload?.error || 'Action failed')
+        throw new Error(payload?.error || payload?.message || payload?.details?.message || 'Action failed')
       }
 
       actionProgress.updateProgress(45, 'Runtime API accepted command. Applying returned workflow…', 'Runtime accepted')
@@ -1046,6 +1145,7 @@ export default function CEOSystemControlTower({
 
       if (payload.state) setState(payload.state)
       await refreshAll(true)
+      await refreshInternalRoutePressure(false)
       setWorkflowLabel(action === 'restore' ? 'Normal mode restored' : action === 'schedule' ? 'Schedule saved' : 'Standby mode active')
       setWorkflowPercent(100)
       const finalNotice = action === 'schedule' ? 'Schedule updated successfully.' : action === 'restore' ? 'System restored.' : 'Shutdown command executed.'
@@ -1249,7 +1349,7 @@ export default function CEOSystemControlTower({
             <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                onClick={() => void refreshAll(true)}
+                onClick={() => void refreshAllWithProgress()}
                 className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
               >
                 <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -1430,8 +1530,72 @@ export default function CEOSystemControlTower({
   function renderRoutePressure() {
     return (
       <section className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
-        <SectionCard title="Top Expensive Routes / Route Pressure" subtitle="Pressure is pulled from the usage API when available. Latency remains hidden until telemetry is connected." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Route Pressure</Pill>}>
-          <PressureTable rows={routeTableRows} emptyLabel={getTelemetryEmptyCopy(usage, 'route')} />
+        <SectionCard title="Route Pressure Command Indicators" subtitle="Internal route pressure is calculated from the app route registry and recent runtime events. Vercel telemetry can enrich it later." badge={<Pill className="border-blue-200 bg-blue-50 text-blue-700">Route Pressure</Pill>}>
+          <div className="grid gap-3 md:grid-cols-4">
+            {[
+              ['Routes monitored', internalRoutePressure?.summary?.routes ?? topRouteRows.length ?? 0],
+              ['API routes', internalRoutePressure?.summary?.apiRoutes ?? 0],
+              ['High pressure', internalRoutePressure?.summary?.high ?? 0],
+              ['Critical', internalRoutePressure?.summary?.critical ?? 0],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">{label}</div>
+                <div className="mt-2 text-2xl font-black text-slate-950">{String(value)}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            {topRouteRows.length ? (
+              <div className="divide-y divide-slate-100">
+                {topRouteRows.slice(0, 12).map((row: any, index: number) => {
+                  const risk = String(row.risk || row.status || 'normal').toLowerCase()
+                  const score = Number(row.pressureScore || row.value || 0)
+                  const riskClass = risk === 'critical'
+                    ? 'border-rose-200 bg-rose-50 text-rose-700'
+                    : risk === 'high'
+                      ? 'border-orange-200 bg-orange-50 text-orange-700'
+                      : risk === 'elevated'
+                        ? 'border-amber-200 bg-amber-50 text-amber-700'
+                        : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+
+                  return (
+                    <div key={`${row.route || row.label || index}`} className="grid gap-3 p-4 lg:grid-cols-[1.5fr_0.8fr_0.7fr_0.7fr_1.6fr] lg:items-center">
+                      <div>
+                        <div className="text-sm font-black text-slate-950">{row.label || row.route || row.name || 'Route'}</div>
+                        <div className="mt-1 font-mono text-xs text-slate-500">{row.route || row.path || 'internal-route'}</div>
+                      </div>
+
+                      <div className="text-xs font-bold text-slate-600">{row.group || 'Workspace'}</div>
+
+                      <span className="w-fit rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+                        {row.type || 'page'}
+                      </span>
+
+                      <span className={`w-fit rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${riskClass}`}>
+                        {risk}
+                      </span>
+
+                      <div>
+                        <div className="flex items-center justify-between gap-3 text-xs font-black text-slate-600">
+                          <span>Pressure score</span>
+                          <span>{score}%</span>
+                        </div>
+                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                          <div className="h-full rounded-full bg-blue-600" style={{ width: `${Math.min(100, Math.max(0, score))}%` }} />
+                        </div>
+                        <div className="mt-2 text-xs leading-5 text-slate-500">{row.reason || 'Internal route registry indicator.'}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="rounded-3xl bg-slate-50 p-6 text-sm font-semibold text-slate-600">
+                Route pressure is ready, but no route registry rows were returned yet. Run App Access Scan or refresh the generated app routes registry.
+              </div>
+            )}
+          </div>
         </SectionCard>
         <SectionCard title="Route Telemetry Notes" subtitle="No fake metrics or synthetic latency are shown." badge={<Pill className="border-slate-200 bg-slate-50 text-slate-600">Honest state</Pill>}>
           <div className="space-y-3 text-sm text-slate-600">
@@ -1772,7 +1936,7 @@ export default function CEOSystemControlTower({
                 <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => void refreshAll(true)}
+                    onClick={() => void refreshAllWithProgress()}
                     className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
                   >
                     <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />

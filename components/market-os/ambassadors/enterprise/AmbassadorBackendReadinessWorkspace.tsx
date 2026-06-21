@@ -32,7 +32,7 @@ export default function AmbassadorBackendReadinessWorkspace() {
             <div className='flex items-start justify-between gap-3'>
               <div>
                 <h2 className='font-bold text-slate-950'>{connector.name}</h2>
-                <p className='mt-1 text-sm text-slate-500'>{connector.target}</p>
+                <p className='mt-1 text-sm text-slate-9500'>{connector.target}</p>
               </div>
               <Badge tone={connector.status === 'connected' ? 'success' : connector.status === 'blocked' ? 'danger' : 'warning'}>
                 {connector.status}

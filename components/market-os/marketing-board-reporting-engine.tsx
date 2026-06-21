@@ -21,7 +21,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -58,35 +58,35 @@ export default function MarketingBoardReportingEngine() {
   const highRisk = reports.filter((report) => report.risk === "high" || report.risk === "critical").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 22
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Marketing Reporting & Board Export Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer converts Market-OS activity into daily, weekly, campaign and investor-ready
             reports with KPI health, execution health, financial impact, risks and decisions needed.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Reported Impact</p>
+              <p className="text-xs uppercase text-slate-600">Reported Impact</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalImpact)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Investor Readiness</p>
+              <p className="text-xs uppercase text-slate-600">Investor Readiness</p>
               <p className="mt-2 text-3xl font-black">{avgInvestor}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Pending Review</p>
+              <p className="text-xs uppercase text-slate-600">Pending Review</p>
               <p className="mt-2 text-3xl font-black">{pendingReview}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Reports</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Reports</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -147,13 +147,13 @@ export default function MarketingBoardReportingEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{report.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Period: {report.period} · Owner: {report.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Revenue Impact</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Revenue Impact</p>
                   <p className="mt-1 font-black">{formatMad(report.revenueImpactMad)}</p>
                 </div>
               </div>
@@ -184,25 +184,25 @@ export default function MarketingBoardReportingEngine() {
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Summary</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Summary</p>
                   <p className="mt-2 text-sm text-slate-700">{report.summary}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Key Risks</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Key Risks</p>
                   <p className="mt-2 text-sm text-slate-700">{report.keyRisks}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Decisions Needed</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Decisions Needed</p>
                   <p className="mt-2 text-sm text-slate-700">{report.decisionsNeeded}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{report.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="reporting" engine="data" actionKey="export_report" actionLabel="Export Report" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Export Report</MarketActionButton>
+                <MarketActionButton moduleKey="reporting" engine="data" actionKey="export_report" actionLabel="Export Report" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Export Report</MarketActionButton>
                 <MarketActionButton moduleKey="reporting" engine="data" actionKey="submit_review" actionLabel="Submit Review" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Submit Review</MarketActionButton>
                 <MarketActionButton moduleKey="reporting" engine="data" actionKey="approve_report" actionLabel="Approve Report" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Approve Report</MarketActionButton>
                 <MarketActionButton moduleKey="reporting" engine="data" actionKey="create_board_task" actionLabel="Create Board Task" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Create Board Task</MarketActionButton>

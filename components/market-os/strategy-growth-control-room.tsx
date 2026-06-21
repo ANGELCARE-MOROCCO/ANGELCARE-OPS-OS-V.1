@@ -120,16 +120,16 @@ export default function StrategyGrowthControlRoom() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Typed Recovery
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Execution + Audit System
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Typed strategy execution page with objective completion and audit timeline tracking.
           </p>
         </div>
@@ -155,7 +155,7 @@ export default function StrategyGrowthControlRoom() {
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div>
                     <h2 className="text-xl font-black">{objective.title}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-9500">
                       Status: {objective.status || "unknown"}
                       {objective.owner_name ? ` · Owner: ${objective.owner_name}` : ""}
                     </p>
@@ -164,7 +164,7 @@ export default function StrategyGrowthControlRoom() {
                   <button
                     onClick={() => markCompleted(objective)}
                     disabled={loading || objective.status === "completed"}
-                    className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                    className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950 disabled:opacity-50"
                   >
                     {objective.status === "completed" ? "Completed" : loading ? "Saving..." : "Complete"}
                   </button>
@@ -177,14 +177,14 @@ export default function StrategyGrowthControlRoom() {
                     {objectiveAudit.map((event) => (
                       <div key={event.id} className="rounded-2xl border border-slate-200 bg-white p-3 text-sm">
                         <p className="font-bold">{event.event_title}</p>
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-xs text-slate-9500">
                           {event.actor_name || "System"} · {new Date(event.created_at).toLocaleString()}
                         </p>
                       </div>
                     ))}
 
                     {!objectiveAudit.length && (
-                      <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-center text-xs font-bold text-slate-500">
+                      <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-center text-xs font-bold text-slate-9500">
                         No audit events yet.
                       </div>
                     )}
@@ -195,7 +195,7 @@ export default function StrategyGrowthControlRoom() {
           })}
 
           {!objectives.length && (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-500">
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-9500">
               No objectives found.
             </div>
           )}

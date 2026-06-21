@@ -250,7 +250,7 @@ export function useAmbassadorStore() {
 }
 
 export function Button({ children, href, onClick, kind="soft", type="button" }:{children:React.ReactNode; href?:string; onClick?:()=>void; kind?:"primary"|"soft"|"danger"|"success"|"dark"; type?:"button"|"submit"}) {
-  const cls = kind==="primary" ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-200 hover:bg-emerald-400" : kind==="danger" ? "bg-rose-600 text-white hover:bg-rose-700" : kind==="success" ? "bg-emerald-700 text-white hover:bg-emerald-800" : kind==="dark" ? "bg-slate-950 text-white hover:bg-slate-800" : "border border-slate-200 bg-white text-slate-950 shadow-sm hover:bg-slate-50"
+  const cls = kind==="primary" ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-200 hover:bg-emerald-400" : kind==="danger" ? "bg-rose-600 text-slate-950 hover:bg-rose-700" : kind==="success" ? "bg-emerald-700 text-slate-950 hover:bg-emerald-800" : kind==="dark" ? "bg-white text-slate-950 hover:bg-white" : "border border-slate-200 bg-white text-slate-950 shadow-sm hover:bg-slate-50"
   const base = `inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition ${cls}`
   if (href) return <Link href={href} className={base}>{children}</Link>
   return <button type={type} onClick={onClick} className={base}>{children}</button>
@@ -258,13 +258,13 @@ export function Button({ children, href, onClick, kind="soft", type="button" }:{
 export function Panel({ children, className="" }:{children:React.ReactNode; className?:string}) { return <section className={`rounded-3xl border border-slate-200 bg-white shadow-sm ${className}`}>{children}</section> }
 export function DarkPanel({ children, className="" }:{children:React.ReactNode; className?:string}) {
   return (
-    <section className={`rounded-3xl border border-emerald-300/25 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white shadow-2xl shadow-emerald-950/20 ${className}`}>
+    <section className={`rounded-3xl border border-emerald-300/25 bg-gradient-to-br from-white via-slate-50 to-emerald-950 text-slate-950 shadow-2xl shadow-emerald-950/20 ${className}`}>
       {children}
     </section>
   )
 }
-export function Field({ label, children, help }:{label:string; children:React.ReactNode; help?:string}) { return <label className="block"><span className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</span><div className="mt-2">{children}</div>{help?<p className="mt-1 text-xs font-bold text-slate-500">{help}</p>:null}</label> }
-export const inputClass = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+export function Field({ label, children, help }:{label:string; children:React.ReactNode; help?:string}) { return <label className="block"><span className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</span><div className="mt-2">{children}</div>{help?<p className="mt-1 text-xs font-bold text-slate-9500">{help}</p>:null}</label> }
+export const inputClass = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
 export function Input(props:React.InputHTMLAttributes<HTMLInputElement>) { return <input {...props} className={`${inputClass} ${props.className||""}`} /> }
 export function TextArea(props:React.TextareaHTMLAttributes<HTMLTextAreaElement>) { return <textarea {...props} className={`${inputClass} min-h-[120px] ${props.className||""}`} /> }
 export function Select(props:React.SelectHTMLAttributes<HTMLSelectElement>) { return <select {...props} className={`${inputClass} ${props.className||""}`} /> }
@@ -285,7 +285,7 @@ export function Metric({ label, value, sub, tone="slate" }:{label:string; value:
 }
 export function Shell({ children }:{children:React.ReactNode}) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#d1fae5_0,#f8fafc_30%,#ffffff_100%)] text-slate-950 selection:bg-emerald-200 selection:text-slate-950">
+    <div data-market-os-root className="min-h-screen bg-[radial-gradient(circle_at_top_left,#d1fae5_0,#f8fafc_30%,#ffffff_100%)] text-slate-950 selection:bg-emerald-200 selection:text-slate-950">
       <div className="mx-auto w-full max-w-[1500px] px-4 pt-6 sm:px-6 lg:px-8">
         <TrainingAcademyAccessCard />
       </div>
@@ -329,11 +329,11 @@ export function TrainingAcademyAccessCard() {
         </div>
 
         <div className="rounded-3xl border border-white bg-white/90 p-5 shadow-sm backdrop-blur">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-500">Recommended first step</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-9500">Recommended first step</p>
           <p className="mt-2 text-lg font-black text-slate-950">
             Train users before giving them finance, compliance, or AI execution access.
           </p>
-          <div className="mt-5 inline-flex items-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition group-hover:bg-emerald-700">
+          <div className="mt-5 inline-flex items-center rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950 transition group-hover:bg-emerald-700">
             Open Training Academy →
           </div>
         </div>

@@ -39,9 +39,9 @@ function Card({
 }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{title}</p>
+      <p className="text-sm font-medium text-slate-9500">{title}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{subtitle}</p>
+      <p className="mt-2 text-sm text-slate-9500">{subtitle}</p>
     </div>
   );
 }
@@ -53,13 +53,13 @@ export default function AmbassadorAutomationExecutionWorkspace() {
 
   return (
     <section className="space-y-6 p-6">
-      <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 text-white shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-slate-800 p-6 text-slate-950 shadow-sm">
         <div className="max-w-4xl">
           <Badge tone="info">Phase 5 · Automations Execution</Badge>
           <h1 className="mt-4 text-3xl font-bold tracking-tight">
             Ambassador Automation & Execution Command Center
           </h1>
-          <p className="mt-3 text-sm leading-6 text-slate-200">
+          <p className="mt-3 text-sm leading-6 text-slate-700">
             A stable TypeScript workspace for automation rules, workflow stages,
             notifications, escalations, and execution tasks inside the Ambassador unit.
           </p>
@@ -77,7 +77,7 @@ export default function AmbassadorAutomationExecutionWorkspace() {
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 p-5">
             <h2 className="text-lg font-bold text-slate-950">Automation rules</h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-9500">
               Prioritized operational rules that convert ambassador events into manager actions.
             </p>
           </div>
@@ -87,7 +87,7 @@ export default function AmbassadorAutomationExecutionWorkspace() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-semibold text-slate-950">{rule.name}</h3>
-                    <p className="mt-1 text-sm leading-6 text-slate-500">{rule.description}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-9500">{rule.description}</p>
                   </div>
                   <Badge
                     tone={
@@ -129,7 +129,7 @@ export default function AmbassadorAutomationExecutionWorkspace() {
                       {stage.status}
                     </Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-slate-9500">
                     Owner: {stage.owner} · SLA: {stage.slaHours}h
                   </p>
                 </div>
@@ -146,7 +146,7 @@ export default function AmbassadorAutomationExecutionWorkspace() {
                     <p className="font-semibold text-slate-950">{item.ambassadorName}</p>
                     <Badge tone={item.severity === "critical" ? "danger" : "warning"}>{item.severity}</Badge>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">{item.reason}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-9500">{item.reason}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">{item.nextAction}</p>
                 </div>
               ))}
@@ -158,13 +158,13 @@ export default function AmbassadorAutomationExecutionWorkspace() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
           <h2 className="text-lg font-bold text-slate-950">Execution task queue</h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-9500">
             Stable queue model for automation-generated tasks, campaign work, compliance follow-ups, and payout actions.
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-9500">
               <tr>
                 <th className="px-5 py-3">Task</th>
                 <th className="px-5 py-3">Assignee</th>

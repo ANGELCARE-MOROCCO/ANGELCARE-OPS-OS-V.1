@@ -32,7 +32,7 @@ export default function AmbassadorAuditModelsWorkspace() {
             <div className='flex items-start justify-between gap-3'>
               <div>
                 <h2 className='font-bold text-slate-950'>{model.eventName}</h2>
-                <p className='mt-1 text-sm text-slate-500'>{model.entity}</p>
+                <p className='mt-1 text-sm text-slate-9500'>{model.entity}</p>
               </div>
               <Badge tone={model.retention === 'permanent' ? 'danger' : 'info'}>{model.retention}</Badge>
             </div>

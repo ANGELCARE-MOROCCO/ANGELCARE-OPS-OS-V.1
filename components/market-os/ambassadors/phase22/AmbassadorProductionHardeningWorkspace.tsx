@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -61,7 +61,7 @@ export default function AmbassadorProductionHardeningWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{item.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{item.area}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{item.area}</p>
                   </div>
                   <Badge tone={item.status === 'passed' ? 'success' : item.severity === 'critical' ? 'danger' : 'warning'}>
                     {item.status}
@@ -87,7 +87,7 @@ export default function AmbassadorProductionHardeningWorkspace() {
                       {gate.status}
                     </Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{gate.nextAction}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{gate.nextAction}</p>
                 </article>
               ))}
             </div>
@@ -104,7 +104,7 @@ export default function AmbassadorProductionHardeningWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{check.checkName}</h3>
                     <Badge tone={check.status === 'passed' ? 'success' : 'warning'}>{check.status}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{check.detail}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{check.detail}</p>
                 </article>
               ))}
             </div>
@@ -118,7 +118,7 @@ export default function AmbassadorProductionHardeningWorkspace() {
         </div>
         <div className='overflow-x-auto'>
           <table className='min-w-full divide-y divide-slate-100 text-sm'>
-            <thead className='bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500'>
+            <thead className='bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-9500'>
               <tr>
                 <th className='px-5 py-3'>Route</th>
                 <th className='px-5 py-3'>Phase</th>

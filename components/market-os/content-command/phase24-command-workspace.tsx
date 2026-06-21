@@ -31,7 +31,7 @@ export function ContentCommandPhase24ExecutiveCommandWorkspace(): React.ReactEle
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -44,19 +44,19 @@ export function ContentCommandPhase24ExecutiveCommandWorkspace(): React.ReactEle
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Command Confidence</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Command Confidence</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{confidence}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Critical KPIs</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Critical KPIs</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{criticalKpis.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Campaigns At Risk</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Campaigns At Risk</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{campaignsAtRisk.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Escalations</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Escalations</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{escalations.length}</p>
           </div>
         </div>
@@ -67,7 +67,7 @@ export function ContentCommandPhase24ExecutiveCommandWorkspace(): React.ReactEle
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {phase24CommandKpis.map((kpi) => (
             <article key={kpi.id} className="rounded-2xl border border-slate-100 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{kpi.label}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">{kpi.label}</p>
               <div className="mt-3 flex items-center justify-between gap-3">
                 <p className="text-2xl font-bold text-slate-950">{kpi.value}</p>
                 <div className="flex gap-2">
@@ -89,7 +89,7 @@ export function ContentCommandPhase24ExecutiveCommandWorkspace(): React.ReactEle
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{campaign.campaign}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       Blocked: {campaign.blockedItems} · Approvals: {campaign.pendingApprovals}
                     </p>
                     <p className="mt-3 text-sm text-slate-600">{campaign.recommendation}</p>
@@ -113,7 +113,7 @@ export function ContentCommandPhase24ExecutiveCommandWorkspace(): React.ReactEle
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                      <p className="mt-1 text-xs text-slate-500">{item.area}</p>
+                      <p className="mt-1 text-xs text-slate-9500">{item.area}</p>
                       <p className="mt-3 text-sm text-slate-600">{item.requiredDecision}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -134,7 +134,7 @@ export function ContentCommandPhase24ExecutiveCommandWorkspace(): React.ReactEle
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                      <p className="mt-1 text-xs text-slate-500">Owner: {item.owner}</p>
+                      <p className="mt-1 text-xs text-slate-9500">Owner: {item.owner}</p>
                       <p className="mt-3 text-sm text-slate-600">{item.nextAction}</p>
                     </div>
                     <Badge>{item.severity}</Badge>

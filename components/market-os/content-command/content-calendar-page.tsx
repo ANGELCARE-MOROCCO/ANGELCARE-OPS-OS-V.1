@@ -53,7 +53,7 @@ export default function ContentCalendarPage(): React.ReactElement {
 
   return (
     <Shell>
-      <main className="mx-auto max-w-[1800px] space-y-6 p-4 lg:p-8">
+      <main data-market-os-root className="mx-auto max-w-[1800px] space-y-6 p-4 lg:p-8">
         <PageHeader
           eyebrow="Content Command / Calendar"
           title="Monthly publishing calendar"
@@ -107,7 +107,7 @@ export default function ContentCalendarPage(): React.ReactElement {
 
         <section className="grid gap-5 xl:grid-cols-[1.4fr_.8fr]">
           <Panel className="overflow-hidden">
-            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-100 text-center text-xs font-black uppercase tracking-wider text-slate-500">
+            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-100 text-center text-xs font-black uppercase tracking-wider text-slate-9500">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                 <div key={day} className="p-3">
                   {day}
@@ -137,7 +137,7 @@ export default function ContentCalendarPage(): React.ReactElement {
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-black">{day.getDate()}</span>
                       {dayItems.length > 0 ? (
-                        <span className="rounded-full bg-slate-950 px-2 py-1 text-xs font-black text-white">
+                        <span className="rounded-full bg-white px-2 py-1 text-xs font-black text-slate-950">
                           {dayItems.length}
                         </span>
                       ) : null}
@@ -177,7 +177,7 @@ export default function ContentCalendarPage(): React.ReactElement {
                     {item.title}
                   </Link>
 
-                  <p className="mt-1 text-xs font-bold text-slate-500">
+                  <p className="mt-1 text-xs font-bold text-slate-9500">
                     Due: {item.dueDate} • Scheduled: {item.scheduledDate}
                   </p>
 
@@ -214,7 +214,7 @@ export default function ContentCalendarPage(): React.ReactElement {
               ))}
 
               {selectedItems.length === 0 ? (
-                <p className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm font-semibold text-slate-500">
+                <p className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm font-semibold text-slate-9500">
                   No items for this date. Use Create Content and set scheduled date to{" "}
                   {selectedDate}.
                 </p>

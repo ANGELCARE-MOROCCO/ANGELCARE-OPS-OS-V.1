@@ -21,7 +21,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -58,35 +58,35 @@ export default function DataPipelineAttributionEngine() {
   const badData = attributionRecords.filter((item) => item.status === "missing" || item.status === "conflict").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 26
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Marketing Data Pipeline & Source Attribution Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer proves where leads, conversions and revenue come from. It connects source,
             campaign, channel cost, qualified leads, revenue and attribution confidence.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Channel Cost</p>
+              <p className="text-xs uppercase text-slate-600">Channel Cost</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalCost)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Revenue Tracked</p>
+              <p className="text-xs uppercase text-slate-600">Revenue Tracked</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalRevenue)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Confidence</p>
+              <p className="text-xs uppercase text-slate-600">Avg Confidence</p>
               <p className="mt-2 text-3xl font-black">{avgConfidence}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Bad Data</p>
+              <p className="text-xs uppercase text-slate-600">Bad Data</p>
               <p className="mt-2 text-3xl font-black">{badData}</p>
             </div>
           </div>
@@ -152,15 +152,15 @@ export default function DataPipelineAttributionEngine() {
                     </div>
 
                     <h2 className="text-xl font-black">{item.campaign}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-9500">
                       Leads: {item.leads} · Qualified: {item.qualifiedLeads} · Conversions: {item.conversions}
                     </p>
                   </div>
 
                   <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                    <p className="text-xs font-bold uppercase text-slate-500">Revenue</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Revenue</p>
                     <p className="mt-1 font-black">{formatMad(item.revenueMad)}</p>
-                    <p className="text-xs text-slate-500">Cost: {formatMad(item.channelCostMad)}</p>
+                    <p className="text-xs text-slate-9500">Cost: {formatMad(item.channelCostMad)}</p>
                   </div>
                 </div>
 
@@ -173,32 +173,32 @@ export default function DataPipelineAttributionEngine() {
                     <Bar value={item.attributionConfidence} />
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Qualified Rate</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Qualified Rate</p>
                     <p className="mt-1 text-lg font-black">{qualifiedRate}%</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Conversion Rate</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Conversion Rate</p>
                     <p className="mt-1 text-lg font-black">{conversionRate}%</p>
                   </div>
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-3">
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Data Issue</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Data Issue</p>
                     <p className="mt-2 text-sm text-slate-700">{item.dataIssue}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Business Meaning</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Business Meaning</p>
                     <p className="mt-2 text-sm text-slate-700">{item.businessMeaning}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                     <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
                   </div>
                 </div>
 
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <MarketActionButton moduleKey="data" engine="data" actionKey="fix_attribution" actionLabel="Fix Attribution" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Fix Attribution</MarketActionButton>
+                  <MarketActionButton moduleKey="data" engine="data" actionKey="fix_attribution" actionLabel="Fix Attribution" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Fix Attribution</MarketActionButton>
                   <MarketActionButton moduleKey="data" engine="data" actionKey="link_campaign" actionLabel="Link Campaign" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Link Campaign</MarketActionButton>
                   <MarketActionButton moduleKey="data" engine="data" actionKey="validate_source" actionLabel="Validate Source" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Validate Source</MarketActionButton>
                   <MarketActionButton moduleKey="data" engine="data" actionKey="create_data_task" actionLabel="Create Data Task" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Create Data Task</MarketActionButton>

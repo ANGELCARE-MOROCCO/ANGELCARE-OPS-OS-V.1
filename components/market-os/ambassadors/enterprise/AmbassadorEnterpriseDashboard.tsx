@@ -22,9 +22,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -67,14 +67,14 @@ export default function AmbassadorEnterpriseDashboard() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{module.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{module.layer} · Phase {module.phaseRange} · Owner: {module.owner}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{module.layer} · Phase {module.phaseRange} · Owner: {module.owner}</p>
                   </div>
                   <Badge tone={module.maturityScore >= 90 ? 'success' : module.maturityScore >= 84 ? 'warning' : 'danger'}>
                     {module.maturityScore}%
                   </Badge>
                 </div>
                 <p className='mt-3 text-sm text-slate-600'>{module.purpose}</p>
-                <p className='mt-3 text-xs font-medium text-slate-500'>{module.route}</p>
+                <p className='mt-3 text-xs font-medium text-slate-9500'>{module.route}</p>
               </article>
             ))}
           </div>
@@ -92,7 +92,7 @@ export default function AmbassadorEnterpriseDashboard() {
                     <h3 className='font-semibold text-slate-950'>{module.title}</h3>
                     <Badge tone='warning'>{module.productionStatus}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{module.purpose}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{module.purpose}</p>
                 </article>
               ))}
             </div>
@@ -109,7 +109,7 @@ export default function AmbassadorEnterpriseDashboard() {
                     <h3 className='font-semibold text-slate-950'>{item.title}</h3>
                     <Badge tone={item.status === 'blocked' ? 'danger' : 'warning'}>{item.status}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{item.instruction}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{item.instruction}</p>
                 </article>
               ))}
             </div>

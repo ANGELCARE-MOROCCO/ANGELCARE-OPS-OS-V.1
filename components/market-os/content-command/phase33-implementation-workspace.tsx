@@ -57,7 +57,7 @@ export function ContentCommandPhase33ImplementationWorkspace(): React.ReactEleme
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
 
@@ -72,23 +72,23 @@ export function ContentCommandPhase33ImplementationWorkspace(): React.ReactEleme
 
         <div className="mt-6 grid gap-4 md:grid-cols-5">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Connection Score</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Connection Score</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{connectionScore}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Ready</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Ready</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{readyToConnect.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Critical</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Critical</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{criticalItems.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Dependencies</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Dependencies</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{unresolvedDependencies.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Cutover Open</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Cutover Open</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{openCutover.length}</p>
           </div>
         </div>
@@ -119,7 +119,7 @@ export function ContentCommandPhase33ImplementationWorkspace(): React.ReactEleme
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                    <p className="mt-1 text-xs text-slate-500">{item.area}</p>
+                    <p className="mt-1 text-xs text-slate-9500">{item.area}</p>
                     <p className="mt-3 text-sm text-slate-600">{item.nextStep}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -181,7 +181,7 @@ export function ContentCommandPhase33ImplementationWorkspace(): React.ReactEleme
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {phase33ConnectionScores.map((item) => (
             <article key={item.label} className="rounded-2xl border border-slate-100 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.label}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">{item.label}</p>
               <p className="mt-2 text-3xl font-bold text-slate-950">{item.score}%</p>
               <p className="mt-2 text-sm text-slate-600">{item.recommendation}</p>
             </article>

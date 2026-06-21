@@ -9,16 +9,16 @@ const checks = [
 
 export default function DeploymentSafetyCheck() {
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 33
           </p>
           <h1 className="mt-3 text-4xl font-black">
             Vercel Safety & Deployment Check Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Final pre-deployment control page for Market-OS route safety, imports, SQL and Vercel readiness.
           </p>
         </div>

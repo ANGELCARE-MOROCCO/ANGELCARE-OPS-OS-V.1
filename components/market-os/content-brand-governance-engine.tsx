@@ -22,7 +22,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${value}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${value}%` }} />
     </div>
   )
 }
@@ -57,35 +57,35 @@ export default function ContentBrandGovernanceEngine() {
   const missingCount = contentAssets.reduce((sum, a) => sum + a.missing.length, 0)
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 7
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Content Production & Brand Governance Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer transforms campaigns into controlled production: content briefs, copywriting,
             design, brand review, compliance review, approval, publishing readiness and performance feedback.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Brand Score</p>
+              <p className="text-xs uppercase text-slate-600">Avg Brand Score</p>
               <p className="mt-2 text-3xl font-black">{avgBrand}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Compliance</p>
+              <p className="text-xs uppercase text-slate-600">Avg Compliance</p>
               <p className="mt-2 text-3xl font-black">{avgCompliance}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Assets</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Assets</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Missing Items</p>
+              <p className="text-xs uppercase text-slate-600">Missing Items</p>
               <p className="mt-2 text-3xl font-black">{missingCount}</p>
             </div>
           </div>
@@ -140,15 +140,15 @@ export default function ContentBrandGovernanceEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{asset.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Campaign: {asset.campaign} · Owner: {asset.owner} · Channel: {asset.channel}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Deadline</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Deadline</p>
                   <p className="mt-1 font-black">{asset.deadline}</p>
-                  <p className="text-xs text-slate-500">Readiness: {asset.readiness}%</p>
+                  <p className="text-xs text-slate-9500">Readiness: {asset.readiness}%</p>
                 </div>
               </div>
 
@@ -189,21 +189,21 @@ export default function ContentBrandGovernanceEngine() {
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Brand Issue</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Brand Issue</p>
                   <p className="mt-2 text-sm text-slate-700">{asset.brandIssue}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Compliance Issue</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Compliance Issue</p>
                   <p className="mt-2 text-sm text-slate-700">{asset.complianceIssue}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{asset.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="content" engine="content" actionKey="create_production_task" actionLabel="Create Production Task" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Create Production Task</MarketActionButton>
+                <MarketActionButton moduleKey="content" engine="content" actionKey="create_production_task" actionLabel="Create Production Task" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Create Production Task</MarketActionButton>
                 <MarketActionButton moduleKey="content" engine="content" actionKey="submit_brand_review" actionLabel="Submit Brand Review" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Submit Brand Review</MarketActionButton>
                 <MarketActionButton moduleKey="content" engine="content" actionKey="submit_compliance_review" actionLabel="Submit Compliance Review" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Submit Compliance Review</MarketActionButton>
                 <MarketActionButton moduleKey="content" engine="content" actionKey="approve_asset" actionLabel="Approve Asset" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Approve Asset</MarketActionButton>

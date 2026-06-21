@@ -335,7 +335,7 @@ export function isOverdue(date: string) {
 
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#02040d] text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[#02040d] text-slate-950">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(124,58,237,.22),transparent_30%),radial-gradient(circle_at_84%_4%,rgba(6,182,212,.18),transparent_28%),radial-gradient(circle_at_75%_86%,rgba(245,158,11,.10),transparent_30%),linear-gradient(180deg,#070b18_0%,#030612_58%,#01030a_100%)]" />
       <ContentCommandNavigation />
       <div className="relative min-w-0 xl:pl-[330px]">
@@ -360,7 +360,7 @@ export function Badge({ children, kind = "soft" }: { children: React.ReactNode; 
     success: "border-emerald-200 bg-emerald-50 text-emerald-700",
     warning: "border-amber-200 bg-amber-50 text-amber-700",
     danger: "border-red-200 bg-red-50 text-red-700",
-    dark: "border-white/15 bg-white/10 text-white",
+    dark: "border-slate-200 bg-white/10 text-slate-950",
   }
   return <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider ${styles[kind]}`}>{children}</span>
 }
@@ -368,21 +368,21 @@ export function Badge({ children, kind = "soft" }: { children: React.ReactNode; 
 export function Button({ children, onClick, href, kind = "soft", type = "button", disabled = false }: { children: React.ReactNode; onClick?: () => void; href?: string; kind?: "primary" | "soft" | "danger" | "dark"; type?: "button" | "submit"; disabled?: boolean }) {
   const base = "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50"
   const styles = {
-    primary: "bg-rose-600 text-white shadow-lg shadow-rose-200 hover:bg-rose-700",
+    primary: "bg-rose-600 text-slate-950 shadow-lg shadow-rose-200 hover:bg-rose-700",
     soft: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
-    danger: "bg-red-600 text-white hover:bg-red-700",
-    dark: "bg-slate-950 text-white hover:bg-slate-800",
+    danger: "bg-red-600 text-slate-950 hover:bg-red-700",
+    dark: "bg-white text-slate-950 hover:bg-white",
   }
   if (href) return <Link href={href} className={`${base} ${styles[kind]}`}>{children}</Link>
   return <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${styles[kind]}`}>{children}</button>
 }
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="block space-y-2"><span className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</span>{children}</label>
+  return <label className="block space-y-2"><span className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</span>{children}</label>
 }
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-400 ${props.className ?? ""}`} />
+  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-slate-400 ${props.className ?? ""}`} />
 }
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
@@ -390,7 +390,7 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
 }
 
 export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea {...props} rows={props.rows ?? 5} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-400 ${props.className ?? ""}`} />
+  return <textarea {...props} rows={props.rows ?? 5} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-slate-400 ${props.className ?? ""}`} />
 }
 
 export function Meter({ value }: { value: number }) {
@@ -398,7 +398,7 @@ export function Meter({ value }: { value: number }) {
 }
 
 export function Metric({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return <Panel className="p-5"><p className="text-xs font-black uppercase tracking-wider text-slate-400">{label}</p><p className="mt-2 text-3xl font-black">{value}</p><p className="mt-1 text-xs font-bold text-slate-500">{sub}</p></Panel>
+  return <Panel className="p-5"><p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p><p className="mt-2 text-3xl font-black">{value}</p><p className="mt-1 text-xs font-bold text-slate-9500">{sub}</p></Panel>
 }
 
 export function PageHeader({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description: string; actions?: React.ReactNode }) {
@@ -512,14 +512,14 @@ export function ContentRow({ item, tasks, onAdvance, onArchive, onDelete }: { it
   const itemTasks = tasks.filter((task) => task.contentId === item.id)
   const completed = itemTasks.filter((task) => task.status === "done").length
   return <div className="grid gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm lg:grid-cols-[1.5fr_.8fr_.8fr_.8fr_1.3fr] lg:items-center">
-    <div><div className="flex flex-wrap items-center gap-2"><Badge>{statusLabel(item.status)}</Badge><Badge kind="priority">{item.priority}</Badge></div><h3 className="mt-3 text-lg font-black">{item.title}</h3><p className="mt-1 text-xs font-bold text-slate-500">{item.channel} • {item.campaign || "No campaign"}</p></div>
-    <div><p className="text-xs font-black uppercase text-slate-400">Owner</p><p className="mt-1 text-sm font-bold">{item.owner}</p></div>
-    <div><p className="text-xs font-black uppercase text-slate-400">Due</p><p className="mt-1 text-sm font-bold">{item.dueDate}</p></div>
-    <div><p className="text-xs font-black uppercase text-slate-400">Tasks</p><p className="mt-1 text-sm font-bold">{completed}/{itemTasks.length}</p></div>
+    <div><div className="flex flex-wrap items-center gap-2"><Badge>{statusLabel(item.status)}</Badge><Badge kind="priority">{item.priority}</Badge></div><h3 className="mt-3 text-lg font-black">{item.title}</h3><p className="mt-1 text-xs font-bold text-slate-9500">{item.channel} • {item.campaign || "No campaign"}</p></div>
+    <div><p className="text-xs font-black uppercase text-slate-500">Owner</p><p className="mt-1 text-sm font-bold">{item.owner}</p></div>
+    <div><p className="text-xs font-black uppercase text-slate-500">Due</p><p className="mt-1 text-sm font-bold">{item.dueDate}</p></div>
+    <div><p className="text-xs font-black uppercase text-slate-500">Tasks</p><p className="mt-1 text-sm font-bold">{completed}/{itemTasks.length}</p></div>
     <div className="flex flex-wrap justify-start gap-2 lg:justify-end"><Button href={`/market-os/content-command-center/${item.id}`}>Open</Button><Button href={`/market-os/content-command-center/${item.id}/edit`}>Edit</Button><Button onClick={onAdvance} kind="dark">Next</Button><Button onClick={onArchive}>Archive</Button><Button onClick={onDelete} kind="danger">Delete</Button></div>
   </div>
 }
 
 export function NotFoundPanel({ id }: { id: string }) {
-  return <Shell><main className="mx-auto max-w-5xl p-6"><PageHeader eyebrow="Content Command" title="Content item not found" description={`No content item exists with id ${id}.`} actions={<Button href="/market-os/content-command-center" kind="primary">Back</Button>} /></main></Shell>
+  return <Shell><main data-market-os-root className="mx-auto max-w-5xl p-6"><PageHeader eyebrow="Content Command" title="Content item not found" description={`No content item exists with id ${id}.`} actions={<Button href="/market-os/content-command-center" kind="primary">Back</Button>} /></main></Shell>
 }

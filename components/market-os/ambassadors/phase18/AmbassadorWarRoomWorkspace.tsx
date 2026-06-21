@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -66,7 +66,7 @@ export default function AmbassadorWarRoomWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{alert.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>
+                    <p className='mt-1 text-sm text-slate-9500'>
                       {alert.city} · {alert.category}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export default function AmbassadorWarRoomWorkspace() {
                     </Badge>
                   </div>
 
-                  <p className='mt-2 text-sm text-slate-500'>{item.summary}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{item.summary}</p>
                 </article>
               ))}
             </div>
@@ -128,7 +128,7 @@ export default function AmbassadorWarRoomWorkspace() {
                   <div className='flex items-start justify-between gap-3'>
                     <div>
                       <h3 className='font-semibold text-slate-950'>{item.operation}</h3>
-                      <p className='mt-1 text-sm text-slate-500'>
+                      <p className='mt-1 text-sm text-slate-9500'>
                         {item.owner} · {item.latencyMs}ms
                       </p>
                     </div>
@@ -162,7 +162,7 @@ export default function AmbassadorWarRoomWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{item.ambassadorName}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>
+                    <p className='mt-1 text-sm text-slate-9500'>
                       {item.city} · {item.timestamp}
                     </p>
                   </div>
@@ -190,7 +190,7 @@ export default function AmbassadorWarRoomWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{item.city}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>
+                    <p className='mt-1 text-sm text-slate-9500'>
                       {item.activeAmbassadors} active ambassadors
                     </p>
                   </div>

@@ -228,7 +228,7 @@ export default function AcademyProgramsClient({ initialDashboard }: Props) {
   async function saveProgram() {
     setSaving(true)
     const payload = { ...modal.form, total_hours: totalHours(modal.form), readiness_score: readiness(modal.form), currency: 'Dhs' }
-    const url = modal.id ? `/api/academy/programs/${modal.id}/pdf` : '/api/academy/programs'
+    const url = modal.id ? `/api/academy/programs/${modal.id}` : '/api/academy/programs'
     const method = modal.id ? 'PATCH' : 'POST'
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     const json = await safeJson(res)

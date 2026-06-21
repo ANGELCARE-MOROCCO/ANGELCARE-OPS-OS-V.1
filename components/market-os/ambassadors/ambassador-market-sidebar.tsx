@@ -60,14 +60,14 @@ export default function AmbassadorMarketSidebar() {
   return (
     <aside className="sticky top-0 h-screen w-[248px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white px-4 py-5">
       <div className="mb-6 px-2">
-        <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">Market-OS</div>
+        <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Market-OS</div>
         <div className="mt-1 text-xl font-black tracking-tight text-slate-950">Ambassador OS</div>
       </div>
 
       <nav className="space-y-6">
         {groups.map((group) => (
           <section key={group.label}>
-            <div className="mb-2 px-2 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+            <div className="mb-2 px-2 text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
               {group.label}
             </div>
             <div className="space-y-1">
@@ -85,7 +85,7 @@ export default function AmbassadorMarketSidebar() {
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-950",
                     ].join(" ")}
                   >
-                    <Icon className={active ? "text-violet-700" : "text-slate-500"} size={16} />
+                    <Icon className={active ? "text-violet-700" : "text-slate-9500"} size={16} />
                     <span>{item.label}</span>
                   </Link>
                 )
@@ -99,7 +99,7 @@ export default function AmbassadorMarketSidebar() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-base font-black text-violet-700">Ask Angel AI</div>
-            <div className="text-xs font-semibold text-slate-500">Your AI Assistant</div>
+            <div className="text-xs font-semibold text-slate-9500">Your AI Assistant</div>
           </div>
           <Sparkles className="text-violet-500" size={20} />
         </div>

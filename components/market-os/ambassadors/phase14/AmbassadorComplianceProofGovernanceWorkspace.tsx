@@ -18,9 +18,9 @@ function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-9500">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{helper}</p>
+      <p className="mt-2 text-sm text-slate-9500">{helper}</p>
     </article>
   );
 }
@@ -57,7 +57,7 @@ export default function AmbassadorComplianceProofGovernanceWorkspace() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-semibold text-slate-950">{proof.ambassadorName}</h3>
-                    <p className="mt-1 text-sm text-slate-500">{proof.campaignName} · Reviewer: {proof.reviewer}</p>
+                    <p className="mt-1 text-sm text-slate-9500">{proof.campaignName} · Reviewer: {proof.reviewer}</p>
                   </div>
                   <Badge tone={proof.decision === "approved" ? "success" : proof.decision === "revision_requested" ? "warning" : "info"}>{proof.decision}</Badge>
                 </div>
@@ -78,7 +78,7 @@ export default function AmbassadorComplianceProofGovernanceWorkspace() {
               {criticalCases.map((item) => (
                 <article key={item.id} className="p-5">
                   <div className="flex items-start justify-between gap-3"><h3 className="font-semibold text-slate-950">{item.ambassadorName}</h3><Badge tone="danger">{item.severity}</Badge></div>
-                  <p className="mt-2 text-sm text-slate-500">{item.issue}</p>
+                  <p className="mt-2 text-sm text-slate-9500">{item.issue}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">{item.nextAction}</p>
                 </article>
               ))}
@@ -91,7 +91,7 @@ export default function AmbassadorComplianceProofGovernanceWorkspace() {
               {reviewProofs.map((proof) => (
                 <article key={proof.id} className="p-5">
                   <h3 className="font-semibold text-slate-950">{proof.ambassadorName}</h3>
-                  <p className="mt-2 text-sm text-slate-500">{proof.reviewNotes}</p>
+                  <p className="mt-2 text-sm text-slate-9500">{proof.reviewNotes}</p>
                 </article>
               ))}
             </div>

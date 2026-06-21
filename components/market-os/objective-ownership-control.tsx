@@ -127,24 +127,24 @@ export default function ObjectiveOwnershipControl() {
   const reviewers = owners.filter((o) => o.role === "reviewer").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Hardening Pack 14
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Objective Ownership Control
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Assign multiple owners, roles, authorities and responsibilities to each strategic objective.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
-            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-300">Accountable</p><p className="mt-2 text-3xl font-black">{accountable}</p></div>
-            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-300">Managers</p><p className="mt-2 text-3xl font-black">{managers}</p></div>
-            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-300">Executors</p><p className="mt-2 text-3xl font-black">{executors}</p></div>
-            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-300">Reviewers</p><p className="mt-2 text-3xl font-black">{reviewers}</p></div>
+            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-600">Accountable</p><p className="mt-2 text-3xl font-black">{accountable}</p></div>
+            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-600">Managers</p><p className="mt-2 text-3xl font-black">{managers}</p></div>
+            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-600">Executors</p><p className="mt-2 text-3xl font-black">{executors}</p></div>
+            <div className="rounded-3xl bg-white/10 p-4"><p className="text-xs uppercase text-slate-600">Reviewers</p><p className="mt-2 text-3xl font-black">{reviewers}</p></div>
           </div>
         </div>
 
@@ -171,7 +171,7 @@ export default function ObjectiveOwnershipControl() {
                   onClick={() => setSelectedObjectiveId(objective.id)}
                   className={`rounded-2xl border p-4 text-left ${
                     selectedObjectiveId === objective.id
-                      ? "border-slate-950 bg-slate-950 text-white"
+                      ? "border-slate-950 bg-white text-slate-950"
                       : "border-slate-200 bg-slate-50"
                   }`}
                 >
@@ -229,7 +229,7 @@ export default function ObjectiveOwnershipControl() {
               </select>
             </div>
 
-            <button onClick={addOwner} className="mt-4 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white">
+            <button onClick={addOwner} className="mt-4 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-950">
               Add Owner
             </button>
 
@@ -257,7 +257,7 @@ export default function ObjectiveOwnershipControl() {
               ))}
 
               {!selectedOwners.length && (
-                <div className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
+                <div className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
                   No owners assigned yet.
                 </div>
               )}

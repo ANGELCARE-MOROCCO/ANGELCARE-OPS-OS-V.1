@@ -107,34 +107,34 @@ export default function DeadlineSlaControl() {
   const completed = objectives.filter((o) => o.status === "completed").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Hardening Pack 16
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Deadline & SLA Control Center
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Control execution pressure by monitoring deadlines, overdue objectives, critical SLA risks and missing due dates.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Overdue</p>
+              <p className="text-xs uppercase text-slate-600">Overdue</p>
               <p className="mt-2 text-3xl font-black">{overdue}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Critical 24h</p>
+              <p className="text-xs uppercase text-slate-600">Critical 24h</p>
               <p className="mt-2 text-3xl font-black">{critical}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">No Deadline</p>
+              <p className="text-xs uppercase text-slate-600">No Deadline</p>
               <p className="mt-2 text-3xl font-black">{noDeadline}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Completed</p>
+              <p className="text-xs uppercase text-slate-600">Completed</p>
               <p className="mt-2 text-3xl font-black">{completed}</p>
             </div>
           </div>
@@ -190,26 +190,26 @@ export default function DeadlineSlaControl() {
                   </div>
 
                   <h2 className="text-xl font-black">{objective.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Owner: {objective.owner_name || "Unassigned"} · Deadline: {objective.deadline || "Not set"}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Days Remaining</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Days Remaining</p>
                   <p className="mt-1 text-2xl font-black">{days === null ? "—" : days}</p>
                 </div>
               </div>
 
               <div className="mt-5 rounded-2xl border border-slate-200 p-4">
-                <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                 <p className="mt-2 text-sm text-slate-700">{objective.next_action || "No next action defined."}</p>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
                 <button
                   onClick={() => updateObjective(objective, { status: "active" })}
-                  className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white"
+                  className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950"
                 >
                   Mark Active
                 </button>
@@ -230,7 +230,7 @@ export default function DeadlineSlaControl() {
           ))}
 
           {!enriched.length && (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-500">
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm font-bold text-slate-9500">
               No deadline/SLA items found.
             </div>
           )}

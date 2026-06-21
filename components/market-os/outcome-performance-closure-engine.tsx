@@ -19,7 +19,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -50,35 +50,35 @@ export default function OutcomePerformanceClosureEngine() {
   const avgConfidence = Math.round(outcomeItems.reduce((sum, item) => sum + item.confidence, 0) / outcomeItems.length)
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 30
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Outcome Tracking & Performance Closure Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer closes the execution loop: every AI task chain and campaign action must be measured,
             judged, converted into learning, then closed, repeated or improved.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Revenue Impact</p>
+              <p className="text-xs uppercase text-slate-600">Revenue Impact</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalImpact)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Successful / Repeat</p>
+              <p className="text-xs uppercase text-slate-600">Successful / Repeat</p>
               <p className="mt-2 text-3xl font-black">{successful}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Need Improve</p>
+              <p className="text-xs uppercase text-slate-600">Need Improve</p>
               <p className="mt-2 text-3xl font-black">{needsImprove}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Confidence</p>
+              <p className="text-xs uppercase text-slate-600">Confidence</p>
               <p className="mt-2 text-3xl font-black">{avgConfidence}%</p>
             </div>
           </div>
@@ -128,15 +128,15 @@ export default function OutcomePerformanceClosureEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{item.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Chain: {item.linkedChain} · Owner: {item.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Impact</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Impact</p>
                   <p className="mt-1 font-black">{formatMad(item.revenueImpactMad)}</p>
-                  <p className="text-xs text-slate-500">Confidence: {item.confidence}%</p>
+                  <p className="text-xs text-slate-9500">Confidence: {item.confidence}%</p>
                 </div>
               </div>
 
@@ -150,36 +150,36 @@ export default function OutcomePerformanceClosureEngine() {
 
               <div className="mt-5 grid gap-4 md:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Before</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Before</p>
                   <p className="mt-2 text-sm text-slate-700">{item.beforeMetric}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">After</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">After</p>
                   <p className="mt-2 text-sm text-slate-700">{item.afterMetric}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Result Summary</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Result Summary</p>
                   <p className="mt-2 text-sm text-slate-700">{item.resultSummary}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Lesson Learned</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Lesson Learned</p>
                   <p className="mt-2 text-sm text-slate-700">{item.lessonLearned}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Decision</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Decision</p>
                   <p className="mt-2 text-sm text-slate-700">{item.decision}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="outcomes" engine="data" actionKey="execute_close_outcome" actionLabel="Close Outcome" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Close Outcome</MarketActionButton>
+                <MarketActionButton moduleKey="outcomes" engine="data" actionKey="execute_close_outcome" actionLabel="Close Outcome" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Close Outcome</MarketActionButton>
                 <MarketActionButton moduleKey="outcomes" engine="data" actionKey="convert_to_playbook" actionLabel="Convert to Playbook" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Convert to Playbook</MarketActionButton>
                 <MarketActionButton moduleKey="outcomes" engine="data" actionKey="execute_repeat_action" actionLabel="Repeat Action" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Repeat Action</MarketActionButton>
                 <MarketActionButton moduleKey="outcomes" engine="data" actionKey="create_improvement_task" actionLabel="Create Improvement Task" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Create Improvement Task</MarketActionButton>

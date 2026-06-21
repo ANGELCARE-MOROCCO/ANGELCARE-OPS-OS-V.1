@@ -185,34 +185,34 @@ export default function AiExecutionAdvisor() {
   const normal = advisors.filter((a) => a.advice.urgency === "normal").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Hardening Pack 20
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             AI Execution Advisor
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Converts objectives, deadlines and blockers into practical management recommendations, then converts recommendations into task chains.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Critical</p>
+              <p className="text-xs uppercase text-slate-600">Critical</p>
               <p className="mt-2 text-3xl font-black">{critical}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Urgent</p>
+              <p className="text-xs uppercase text-slate-600">Urgent</p>
               <p className="mt-2 text-3xl font-black">{urgent}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Priority</p>
+              <p className="text-xs uppercase text-slate-600">High Priority</p>
               <p className="mt-2 text-3xl font-black">{high}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Normal</p>
+              <p className="text-xs uppercase text-slate-600">Normal</p>
               <p className="mt-2 text-3xl font-black">{normal}</p>
             </div>
           </div>
@@ -265,21 +265,21 @@ export default function AiExecutionAdvisor() {
               </div>
 
               <h2 className="text-xl font-black">{objective.title}</h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-9500">
                 Owner: {objective.owner_name || "Unassigned"} · Deadline: {objective.deadline || "Not set"} · Days: {days ?? "—"}
               </p>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Recommended Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Recommended Action</p>
                   <p className="mt-2 text-sm font-semibold text-slate-800">{advice.action}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Reason</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Reason</p>
                   <p className="mt-2 text-sm text-slate-700">{advice.reason}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Current Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Current Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{objective.next_action || "No next action defined."}</p>
                 </div>
               </div>
@@ -288,7 +288,7 @@ export default function AiExecutionAdvisor() {
                 <button
                   onClick={() => convertToTaskChain(objective, advice.action)}
                   disabled={loadingId === objective.id}
-                  className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                  className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950 disabled:opacity-50"
                 >
                   {loadingId === objective.id ? "Converting..." : "Convert to Task Chain"}
                 </button>

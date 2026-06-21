@@ -13,7 +13,7 @@ export function ContentCommandTrainingAccessButton(): React.ReactElement {
         <span className="block text-[10px] uppercase tracking-[0.2em] text-amber-700">Académie interne</span>
         <span className="block text-sm text-slate-950">Formation complète</span>
       </span>
-      <span className="rounded-full bg-slate-950 px-2.5 py-1 text-xs font-black text-white">Ouvrir →</span>
+      <span className="rounded-full bg-white px-2.5 py-1 text-xs font-black text-slate-950">Ouvrir →</span>
     </Link>
   )
 }

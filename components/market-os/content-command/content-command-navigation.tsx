@@ -56,7 +56,7 @@ export function ContentCommandNavigation() {
   const groups = groupedRoutes()
 
   return (
-    <aside className="z-40 border-b border-white/10 bg-[#050814]/95 text-white shadow-[0_28px_80px_rgba(0,0,0,.45)] backdrop-blur-2xl xl:fixed xl:inset-y-0 xl:left-0 xl:w-[330px] xl:border-b-0 xl:border-r xl:border-white/10">
+    <aside className="z-40 border-b border-slate-200 bg-[#050814]/95 text-slate-950 shadow-[0_28px_80px_rgba(0,0,0,.45)] backdrop-blur-2xl xl:fixed xl:inset-y-0 xl:left-0 xl:w-[330px] xl:border-b-0 xl:border-r xl:border-slate-200">
       <div className="flex h-full flex-col overflow-y-auto px-4 py-5 xl:px-5 xl:py-6">
         <Link href="/market-os/marketing-home" className="group mb-5 flex items-center gap-4 rounded-[28px] border border-amber-300/20 bg-gradient-to-br from-white/10 via-white/[.04] to-amber-300/10 p-4 shadow-[0_18px_50px_rgba(245,158,11,.12)]">
           <div className="grid h-14 w-14 place-items-center rounded-[22px] bg-gradient-to-br from-amber-200 via-yellow-400 to-orange-600 text-slate-950 shadow-lg shadow-amber-500/25 transition group-hover:scale-105">
@@ -64,8 +64,8 @@ export function ContentCommandNavigation() {
           </div>
           <div className="min-w-0">
             <div className="truncate text-[11px] font-black uppercase tracking-[.22em] text-amber-100">Market OS</div>
-            <div className="truncate text-xl font-black tracking-tight text-white">Content Command</div>
-            <div className="mt-1 truncate text-xs font-bold text-white/60">Brand · Content · Execution</div>
+            <div className="truncate text-xl font-black tracking-tight text-slate-950">Content Command</div>
+            <div className="mt-1 truncate text-xs font-bold text-slate-950/60">Brand · Content · Execution</div>
           </div>
         </Link>
 
@@ -73,11 +73,11 @@ export function ContentCommandNavigation() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">Submodule mode</p>
-              <p className="mt-1 text-sm font-black text-white">Futuristic workspace</p>
+              <p className="mt-1 text-sm font-black text-slate-950">Futuristic workspace</p>
             </div>
             <div className="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-300/15 text-cyan-100"><Zap className="h-5 w-5" /></div>
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-black uppercase tracking-[.08em] text-white/70">
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-black uppercase tracking-[.08em] text-slate-950/70">
             <span className="rounded-xl bg-white/10 px-2 py-2">Live</span><span className="rounded-xl bg-white/10 px-2 py-2">Brand</span><span className="rounded-xl bg-white/10 px-2 py-2">Ops</span>
           </div>
         </div>
@@ -85,12 +85,12 @@ export function ContentCommandNavigation() {
         <nav className="space-y-5" aria-label="Content Command Center sidebar">
           {(Object.keys(groups) as Array<keyof typeof groups>).map((section) => (
             <div key={section}>
-              <div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[.2em] text-white/40">{section}</div>
+              <div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[.2em] text-slate-950/40">{section}</div>
               <div className="space-y-2">
                 {groups[section].map((route) => {
                   const active = !route.external && (pathname === route.href || pathname.startsWith(`${route.href}/`))
-                  const className = active ? "border-violet-300/40 bg-gradient-to-r from-violet-600/80 via-fuchsia-600/50 to-cyan-500/30 text-white shadow-[0_14px_42px_rgba(124,58,237,.28)]" : "border-white/10 bg-white/[.045] text-white/78 hover:border-cyan-300/30 hover:bg-white/[.08] hover:text-white"
-                  const content = <><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl ${active ? "bg-white/20 text-white" : "bg-white/10 text-cyan-100"}`}>{route.icon}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-black">{route.label}</span><span className="mt-0.5 block truncate text-[11px] font-semibold text-white/48">{route.description}</span></span><span className={`h-2.5 w-2.5 rounded-full ${active ? "bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,.75)]" : "bg-white/20"}`} /></>
+                  const className = active ? "border-violet-300/40 bg-gradient-to-r from-violet-600/80 via-fuchsia-600/50 to-cyan-500/30 text-slate-950 shadow-[0_14px_42px_rgba(124,58,237,.28)]" : "border-slate-200 bg-white/[.045] text-slate-950/78 hover:border-cyan-300/30 hover:bg-white/[.08] hover:text-slate-950"
+                  const content = <><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl ${active ? "bg-white/20 text-slate-950" : "bg-white/10 text-cyan-100"}`}>{route.icon}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-black">{route.label}</span><span className="mt-0.5 block truncate text-[11px] font-semibold text-slate-950/48">{route.description}</span></span><span className={`h-2.5 w-2.5 rounded-full ${active ? "bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,.75)]" : "bg-white/20"}`} /></>
                   return route.external ? <Link key={route.key} href={route.href} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 transition ${className}`} title={route.description}>{content}</Link> : <Link key={route.key} href={route.href} className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 transition ${className}`} title={route.description}>{content}</Link>
                 })}
               </div>
@@ -98,9 +98,9 @@ export function ContentCommandNavigation() {
           ))}
         </nav>
 
-        <div className="mt-6 rounded-[26px] border border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,.18),transparent_35%),rgba(255,255,255,.045)] p-4">
-          <p className="text-[10px] font-black uppercase tracking-[.18em] text-white/45">Operating doctrine</p>
-          <p className="mt-2 text-sm font-bold leading-6 text-white/75">Every content action must connect to assets, tasks, briefings, calendar timing and internal training quality.</p>
+        <div className="mt-6 rounded-[26px] border border-slate-200 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,.18),transparent_35%),rgba(255,255,255,.045)] p-4">
+          <p className="text-[10px] font-black uppercase tracking-[.18em] text-slate-950/45">Operating doctrine</p>
+          <p className="mt-2 text-sm font-bold leading-6 text-slate-950/75">Every content action must connect to assets, tasks, briefings, calendar timing and internal training quality.</p>
         </div>
       </div>
     </aside>

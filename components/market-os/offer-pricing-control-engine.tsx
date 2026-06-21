@@ -19,7 +19,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${value}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${value}%` }} />
     </div>
   )
 }
@@ -53,35 +53,35 @@ export default function OfferPricingControlEngine() {
   const highRisk = offers.filter((o) => o.risk === "high" || o.risk === "critical").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 9
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Offer Engineering & Pricing Control Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer turns research and strategy into controlled offers: pricing, margins,
             conversion potential, approval rules, discount discipline and revenue readiness.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Revenue Potential</p>
+              <p className="text-xs uppercase text-slate-600">Revenue Potential</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalPotential)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Margin</p>
+              <p className="text-xs uppercase text-slate-600">Avg Margin</p>
               <p className="mt-2 text-3xl font-black">{avgMargin}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Need Approval</p>
+              <p className="text-xs uppercase text-slate-600">Need Approval</p>
               <p className="mt-2 text-3xl font-black">{approvalCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Offers</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Offers</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -135,15 +135,15 @@ export default function OfferPricingControlEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{offer.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Strategy: {offer.strategy} · Segment: {offer.segment} · Owner: {offer.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Base Price</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Base Price</p>
                   <p className="mt-1 font-black">{formatMad(offer.basePriceMad)}</p>
-                  <p className="text-xs text-slate-500">Cost: {formatMad(offer.costMad)}</p>
+                  <p className="text-xs text-slate-9500">Cost: {formatMad(offer.costMad)}</p>
                 </div>
               </div>
 
@@ -156,32 +156,32 @@ export default function OfferPricingControlEngine() {
                   <Bar value={offer.readiness} />
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Expected Conversion</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Expected Conversion</p>
                   <p className="mt-1 text-lg font-black">{offer.expectedConversion}%</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Revenue Potential</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Revenue Potential</p>
                   <p className="mt-1 text-lg font-black">{formatMad(offer.revenuePotentialMad)}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Pricing Issue</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Pricing Issue</p>
                   <p className="mt-2 text-sm text-slate-700">{offer.pricingIssue}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Offer Strength</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Offer Strength</p>
                   <p className="mt-2 text-sm text-slate-700">{offer.offerStrength}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{offer.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="offer" engine="content" actionKey="create_offer_task" actionLabel="Create Offer Task" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Create Offer Task</MarketActionButton>
+                <MarketActionButton moduleKey="offer" engine="content" actionKey="create_offer_task" actionLabel="Create Offer Task" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Create Offer Task</MarketActionButton>
                 <MarketActionButton moduleKey="offer" engine="content" actionKey="request_pricing_approval" actionLabel="Request Pricing Approval" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Request Pricing Approval</MarketActionButton>
                 <MarketActionButton moduleKey="offer" engine="content" actionKey="execute_simulate_margin" actionLabel="Simulate Margin" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Simulate Margin</MarketActionButton>
                 <MarketActionButton moduleKey="offer" engine="content" actionKey="mark_ready" actionLabel="Mark Ready" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Mark Ready</MarketActionButton>

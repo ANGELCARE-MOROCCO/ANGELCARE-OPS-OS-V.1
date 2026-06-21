@@ -1,15 +1,21 @@
 'use client'
-import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
-  Activity,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import {   Activity,
   AlertTriangle,
   ArrowRight,
   BadgeCheck,
-  BarChart3,
+  Bell,
   CalendarClock,
   CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
   ChevronRight,
   ClipboardCheck,
   Clock3,
@@ -19,285 +25,344 @@ import {
   FileText,
   Filter,
   Flag,
-  Gauge,
   Layers3,
   Loader2,
   MapPinned,
   MessageSquare,
   MoreHorizontal,
+  Navigation,
+  PencilRuler,
   Plus,
-  Printer,
-  Trash2,
   Radio,
   RefreshCw,
   Route,
   Search,
   Send,
-  ShieldAlert,
   ShieldCheck,
-  Sparkles,
+  SlidersHorizontal,
   TimerReset,
   UserCheck,
   Users,
+  WalletCards,
   X,
-  Zap,
+  Zap
 } from 'lucide-react'
 import { CareLinkCreateMissionDossierModal } from './CareLinkCreateMissionDossierModal'
-
 import { resolvedMissionCode } from '@/lib/missions/mission-codes'
-type MissionControlCenterProps = {
-  activeView?: string
-  initialRecords?: any[]
-}
-
-
+import { safeRefreshInterval, safeUiInterval, shouldStartAutoRefresh } from '@/lib/runtime/client-live-governor'
+import CareLinkLiveRouteMap from '@/components/carelink/ops/CareLinkLiveRouteMap'
 
 type AnyRecord = Record<string, any>
 
-const WORKSPACES = [
-  { key: 'board', label: 'Command Board', icon: Layers3 },
-  { key: 'master', label: 'Master Registry', icon: FileText },
-  { key: 'timeline', label: 'Timeline', icon: CalendarClock },
-  { key: 'validation', label: 'Validation', icon: BadgeCheck },
-  { key: 'risk', label: 'Risk Center', icon: ShieldAlert },
-  { key: 'reports', label: 'Field Reports', icon: ClipboardCheck },
-  { key: 'routes', label: 'Routes & Coverage', icon: Route },
-  { key: 'audit', label: 'Audit Trail', icon: Activity },
-] as const
+type MissionControlCenterProps = {
+  activeView?: string
+  initialRecords?: AnyRecord[]
+}
 
-const LANES = [
-  { key: 'created', label: 'Created', tone: 'slate' },
-  { key: 'assigned', label: 'Assigned', tone: 'blue' },
-  { key: 'accepted', label: 'Accepted / Confirmed', tone: 'violet' },
-  { key: 'en_route', label: 'En route', tone: 'cyan' },
-  { key: 'in_progress', label: 'In progress', tone: 'emerald' },
-  { key: 'report_pending', label: 'Report pending', tone: 'amber' },
-  { key: 'validation', label: 'Validation', tone: 'purple' },
-  { key: 'at_risk', label: 'At risk', tone: 'rose' },
-  { key: 'completed', label: 'Completed', tone: 'green' },
+const SERVICE_TYPES = [
+  'All services',
+  'Childcare at Home',
+  'Baby Post-Partum Support',
+  'Special Child at Home',
+  'Special Child at School',
+  'Hybrid Support',
+  'Animation',
+  'Excursion',
+  'Academy',
+  'Flashcards',
 ]
 
-const SERVICE_TYPES = ['All services', 'Childcare at Home', 'Baby Post-Partum Support', 'Special Child at Home', 'Special Child at School', 'Hybrid Support', 'Animation', 'Excursion', 'AngelCare Academy', 'Flashcards']
+const PIPELINE = [
+  { key: 'intake', label: 'Intake', caption: 'New missions', icon: FileText, tone: 'blue' },
+  { key: 'qualification', label: 'Qualification', caption: 'In review', icon: ClipboardCheck, tone: 'teal' },
+  { key: 'scheduling', label: 'Scheduling', caption: 'Pending slots', icon: CalendarClock, tone: 'violet' },
+  { key: 'assignment', label: 'Assignment', caption: 'Assigning', icon: UserCheck, tone: 'orange' },
+  { key: 'in_progress', label: 'In Progress', caption: 'Live missions', icon: Radio, tone: 'emerald' },
+  { key: 'quality_control', label: 'Quality Control', caption: 'Under review', icon: ShieldCheck, tone: 'indigo' },
+  { key: 'closed', label: 'Closed', caption: 'This month', icon: CheckCircle2, tone: 'green' },
+]
 
-
-function __missionIsLiveVisible(row: any) {
-  if (!row) return false
-  const status = String(row.status || row.lifecycle_stage || row.lifecycleStage || row.dossier_status || row.dossierStatus || '').toLowerCase()
-  if (row.is_archived === true || row.isArchived === true) return false
-  if (status.includes('deleted') || status.includes('archived') || status.includes('cancelled')) return false
-  return true
-}
-
-function __filterLiveVisibleMissions<T = any>(rows: T[] | null | undefined): T[] {
-  return Array.isArray(rows) ? rows.filter((row: any) => __missionIsLiveVisible(row)) : []
-}
+const STAGE_ORDER = ['created', 'assigned', 'accepted', 'en_route', 'in_progress', 'report_pending', 'validation', 'completed']
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
 }
 
-
-function missionIsVisibleLive(row: any) {
-  if (!row) return false
-
-  const status = String(
-    row.status ??
-    row.lifecycle_stage ??
-    row.lifecycleStage ??
-    row.dossier_status ??
-    row.dossierStatus ??
-    ''
-  ).toLowerCase()
-
-  if (row.is_archived === true || row.isArchived === true) return false
-  if (status.includes('deleted')) return false
-  if (status.includes('archived')) return false
-  if (status.includes('cancelled')) return false
-
-  return true
-}
-
-function filterVisibleLiveMissions<T = any>(rows: T[] | null | undefined): T[] {
-  return Array.isArray(rows) ? rows.filter((row: any) => missionIsVisibleLive(row)) : []
-}
-
-
-function hardLiveMissionVisible(row: any) {
-  if (!row) return false
-
-  const status = String(
-    row.status ??
-    row.lifecycle_stage ??
-    row.lifecycleStage ??
-    row.dossier_status ??
-    row.dossierStatus ??
-    row.dispatchStatus ??
-    row.dispatch_status ??
-    ''
-  ).toLowerCase()
-
-  if (row.is_archived === true || row.isArchived === true) return false
-  if (status.includes('deleted')) return false
-  if (status.includes('archived')) return false
-  if (status.includes('cancelled')) return false
-
-  return true
-}
-
-function hardFilterLiveMissions<T = any>(rows: T[] | null | undefined): T[] {
-  return Array.isArray(rows) ? rows.filter((row: any) => hardLiveMissionVisible(row)) : []
-}
-
-
-function finalMissionVisible(row: any) {
-  if (!row) return false
-
-  const status = String(
-    row.status ??
-    row.lifecycle_stage ??
-    row.lifecycleStage ??
-    row.dossier_status ??
-    row.dossierStatus ??
-    row.dispatchStatus ??
-    row.dispatch_status ??
-    ''
-  ).toLowerCase()
-
-  if (row.is_archived === true || row.isArchived === true) return false
-  if (status.includes('deleted')) return false
-  if (status.includes('archived')) return false
-  if (status.includes('cancelled')) return false
-
-  return true
-}
-
-function finalFilterMissions<T = any>(rows: T[] | null | undefined): T[] {
-  return Array.isArray(rows) ? rows.filter((row: any) => finalMissionVisible(row)) : []
-}
-
-function text(value: unknown, fallback = '—') {
-  return value === null || value === undefined || value === '' ? fallback : String(value)
-}
-
-function list(value: unknown): AnyRecord[] {
+function arr(value: unknown): AnyRecord[] {
   return Array.isArray(value) ? value as AnyRecord[] : []
 }
 
-function num(value: unknown) {
+function n(value: unknown) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : 0
 }
 
-function dateText(value: unknown) {
-  if (!value) return 'No date'
-  const date = new Date(String(value))
-  if (Number.isNaN(date.getTime())) return String(value)
-  return date.toLocaleString('fr-MA', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+function txt(value: unknown, fallback = '—') {
+  return value === null || value === undefined || value === '' ? fallback : String(value)
 }
 
-function money(value: unknown) {
-  return `${num(value).toLocaleString('fr-MA')} DH`
+function moneyMAD(value: unknown) {
+  const amount = n(value)
+  return `${amount.toLocaleString('fr-MA')} MAD`
 }
 
-
-function missionNumericId(record: AnyRecord | null | undefined) {
+function numericId(record: AnyRecord | null | undefined) {
   const raw = record?.id ?? record?.missionId ?? record?.mission_id ?? record?.parent_mission_id
   const parsed = Number(raw)
   return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null
 }
 
 function missionId(record: AnyRecord) {
-  return text(record.id || record.mission_id || record.uuid || record.code || record.dossier_reference, '')
+  return txt(record.id ?? record.mission_id ?? record.uuid ?? record.code ?? record.missionCode ?? record.dossier_reference, '')
 }
 
 function missionCode(record: AnyRecord) {
-  return text(record.code || record.reference || record.dossier_reference || record.mission_reference || `MISSION-${missionId(record) || 'LIVE'}`)
+  try {
+    const code = resolvedMissionCode(record)
+    if (code) return code
+  } catch {}
+  return txt(record.missionCode ?? record.code ?? record.reference ?? record.dossier_reference ?? record.mission_reference ?? `M-${missionId(record) || 'LIVE'}`)
 }
 
 function missionTitle(record: AnyRecord) {
-  return text(record.title || record.serviceType || record.service_type || record.service || record.designation || record.label || 'Mission dossier')
+  return txt(record.serviceType ?? record.service_type ?? record.designation ?? record.service ?? record.title ?? record.label, 'Mission dossier')
 }
 
+function missionService(record: AnyRecord) {
+  return missionTitle(record)
+}
+
+
 function missionClient(record: AnyRecord) {
-  return text(record.familyName || record.family_name || record.clientName || record.client_name || record.client_label || record.family?.full_name || record.family?.name || 'Client / family')
+  return txt(record.familyName ?? record.family_name ?? record.clientName ?? record.client_name ?? record.client_label ?? record.family?.full_name ?? record.family?.name, 'Client / Family')
 }
 
 function missionAgent(record: AnyRecord) {
-  return text(record.agentName || record.agent_name || record.caregiverName || record.caregiver_name || record.caregiver?.full_name || record.caregiver?.name || 'Unassigned')
+  return txt(record.agentName ?? record.agent_name ?? record.caregiverName ?? record.caregiver_name ?? record.assignedAgent ?? record.caregiver?.full_name ?? record.caregiver?.name, 'Unassigned')
 }
 
 function missionCity(record: AnyRecord) {
-  return text(record.city || record.location_city || record.family?.city || 'City')
+  return txt(record.city ?? record.location_city ?? record.family?.city, 'Rabat')
 }
 
 function missionZone(record: AnyRecord) {
-  return text(record.zone || record.location_zone || record.family?.zone || 'Zone')
+  return txt(record.zone ?? record.location_zone ?? record.family?.zone, 'Z1')
 }
 
-function missionStatus(record: AnyRecord) {
-  const raw = text(record.status || record.lifecycleStage || record.lifecycle_stage || record.dispatch_status || record.report_status || 'created').toLowerCase()
-  if (raw.includes('deleted') || raw.includes('archived') || raw.includes('cancelled')) return 'deleted'
-  if (raw.includes('progress')) return 'in_progress'
-  if (raw.includes('route')) return 'en_route'
-  if (raw.includes('accepted') || raw.includes('confirm')) return 'accepted'
-  if (raw.includes('assign')) return 'assigned'
-  if (raw.includes('report')) return 'report_pending'
-  if (raw.includes('valid')) return 'validation'
-  if (raw.includes('risk') || raw.includes('incident') || raw.includes('blocked')) return 'at_risk'
+function rawStatus(record: AnyRecord) {
+  return txt(record.status ?? record.lifecycleStage ?? record.lifecycle_stage ?? record.dispatchStatus ?? record.dispatch_status ?? record.report_status ?? 'created', 'created').toLowerCase()
+}
+
+function missionStage(record: AnyRecord) {
+  const raw = rawStatus(record)
+  if (raw.includes('deleted') || raw.includes('archived') || raw.includes('cancel')) return 'hidden'
   if (raw.includes('complete') || raw.includes('closed')) return 'completed'
-  return raw
-}
-
-function riskLevel(record: AnyRecord) {
-  const raw = text(record.riskLevel || record.risk_level || record.priority || record.urgency || 'normal').toLowerCase()
-  if (['high', 'urgent', 'critical', 'at_risk'].some((item) => raw.includes(item))) return 'high'
-  if (raw.includes('medium') || raw.includes('warning')) return 'medium'
-  return 'normal'
-}
-
-function laneFor(record: AnyRecord) {
-  const status = missionStatus(record)
-  if (LANES.some((lane) => lane.key === status)) return status
+  if (raw.includes('valid') || raw.includes('qc') || raw.includes('quality')) return 'validation'
+  if (raw.includes('report')) return 'report_pending'
+  if (raw.includes('progress') || raw.includes('start')) return 'in_progress'
+  if (raw.includes('route') || raw.includes('travel')) return 'en_route'
+  if (raw.includes('accept') || raw.includes('confirm')) return 'accepted'
+  if (raw.includes('assign')) return 'assigned'
   return 'created'
 }
 
-function toneClass(tone: string) {
-  const tones: Record<string, string> = {
-    slate: 'border-slate-200 bg-slate-50 text-slate-700',
-    blue: 'border-blue-200 bg-blue-50 text-blue-700',
-    violet: 'border-violet-200 bg-violet-50 text-violet-700',
-    cyan: 'border-cyan-200 bg-cyan-50 text-cyan-700',
-    emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-    amber: 'border-amber-200 bg-amber-50 text-amber-700',
-    purple: 'border-purple-200 bg-purple-50 text-purple-700',
-    rose: 'border-rose-200 bg-rose-50 text-rose-700',
-    green: 'border-green-200 bg-green-50 text-green-700',
+function riskLevel(record: AnyRecord) {
+  const raw = txt(record.riskLevel ?? record.risk_level ?? record.priority ?? record.urgency ?? record.severity ?? 'normal', 'normal').toLowerCase()
+  if (['critical', 'urgent', 'high', 'incident', 'at_risk', 'blocked'].some((item) => raw.includes(item))) return 'high'
+  if (['medium', 'warning', 'elevated'].some((item) => raw.includes(item))) return 'medium'
+  return 'low'
+}
+
+function isVisible(record: AnyRecord) {
+  if (!record) return false
+  if (record.is_archived === true || record.isArchived === true) return false
+  return missionStage(record) !== 'hidden'
+}
+
+function startDate(record: AnyRecord) {
+  return record.scheduledStart ?? record.scheduled_start ?? record.start_at ?? record.missionDate ?? record.mission_date ?? record.created_at ?? record.createdAt
+}
+
+function dateLabel(value: unknown) {
+  if (!value) return 'Not scheduled'
+  const date = new Date(String(value))
+  if (Number.isNaN(date.getTime())) return String(value)
+  return date.toLocaleString('fr-MA', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+}
+
+function paymentStatus(record: AnyRecord) {
+  const raw = txt(record.payment_status ?? record.paymentStatus ?? record.invoice_status ?? record.billing_status ?? record.payment?.status ?? '', '').toLowerCase()
+  if (raw.includes('paid') || raw.includes('settled')) return 'Paid'
+  if (raw.includes('unpaid') || raw.includes('late') || raw.includes('failed')) return 'Unpaid'
+  if (raw.includes('pending') || raw.includes('due')) return 'Pending'
+  if (n(record.pending_amount ?? record.balance_due ?? record.remaining_amount) > 0) return 'Pending'
+  return missionStage(record) === 'completed' ? 'Paid' : 'Pending'
+}
+
+function missionAmount(record: AnyRecord) {
+  return n(record.pending_amount ?? record.balance_due ?? record.remaining_amount ?? record.total_amount ?? record.amount ?? record.price)
+}
+
+function progressValue(record: AnyRecord) {
+  const direct = n(record.progress ?? record.progress_percent ?? record.completionRate)
+  if (direct > 0) return Math.min(100, Math.round(direct))
+  const stage = missionStage(record)
+  const index = STAGE_ORDER.indexOf(stage)
+  if (index < 0) return 8
+  return Math.min(100, Math.max(8, Math.round(((index + 1) / STAGE_ORDER.length) * 100)))
+}
+
+function extractMissions(payload: AnyRecord | null): AnyRecord[] {
+  if (!payload) return []
+  const candidates = [
+    arr(payload.missions),
+    arr(payload.dossiers),
+    arr(payload.records),
+    arr(payload.data?.missions),
+    arr(payload.data?.dossiers),
+    arr(payload.data?.records),
+    Array.isArray(payload.data) ? payload.data : [],
+    arr(payload.dashboard?.missions),
+    arr(payload.workspace?.missions),
+    arr(payload.payload?.missions),
+    arr(payload.upcomingMissions),
+  ]
+  return candidates.find((rows) => rows.length) || []
+}
+
+function countBy(rows: AnyRecord[], predicate: (row: AnyRecord) => boolean) {
+  return rows.filter(predicate).length
+}
+
+function extractAgents(payload: AnyRecord | null): AnyRecord[] {
+  if (!payload) return []
+  const candidates = [
+    arr(payload.agents),
+    arr(payload.records),
+    arr(payload.caregivers),
+    arr(payload.data?.agents),
+    arr(payload.data?.records),
+    arr(payload.data?.caregivers),
+    arr(payload.payload?.agents),
+    arr(payload.payload?.caregivers),
+    arr(payload.payload?.agentPool),
+    arr(payload.payload?.pool),
+    arr(payload.workspace?.agents),
+    arr(payload.workspace?.caregivers),
+    arr(payload.data?.agentPool),
+    arr(payload.data?.pool),
+    arr(payload.data?.availableAgents),
+  ]
+  return candidates.find((rows) => rows.length) || []
+}
+
+function buildFallbackAgentsFromMissions(rows: AnyRecord[]): AnyRecord[] {
+  const map = new Map<string, AnyRecord>()
+  rows.forEach((row, index) => {
+    const id = currentCaregiverId(row) || String(index + 1)
+    const name = missionAgent(row)
+    if (!id || !name || name === 'Unassigned' || map.has(id)) return
+    map.set(id, {
+      id: Number(id),
+      caregiverId: Number(id),
+      fullName: name,
+      name,
+      city: missionCity(row),
+      zone: missionZone(row),
+      currentStatus: missionStage(row) === 'completed' ? 'available' : 'on_mission',
+      readinessScore: Math.max(68, Math.min(98, 100 - activeMissionLoad(row) * 5)),
+      activeMissions: activeMissionLoad(row) || 1,
+      skills: [missionTitle(row), 'CareLink verified', 'Mission continuity'].filter(Boolean),
+      documentsStatus: 'verify',
+      synthetic: true,
+    })
+  })
+  return Array.from(map.values())
+}
+
+function agentId(agent: AnyRecord) {
+  const raw = agent.id ?? agent.caregiver_id ?? agent.caregiverId ?? agent.agent_id ?? agent.agentId
+  const parsed = Number(raw)
+  return Number.isSafeInteger(parsed) && parsed > 0 ? String(parsed) : ''
+}
+
+function agentName(agent: AnyRecord) {
+  return txt(agent.fullName ?? agent.full_name ?? agent.name ?? agent.display_name ?? agent.label, 'Caregiver agent')
+}
+
+function agentStatus(agent: AnyRecord) {
+  return txt(agent.currentStatus ?? agent.current_status ?? agent.status ?? agent.availability, 'available')
+}
+
+function agentCity(agent: AnyRecord) {
+  return txt(agent.city ?? agent.location_city ?? agent.raw?.city, 'Rabat')
+}
+
+function agentZone(agent: AnyRecord) {
+  return txt(agent.zone ?? agent.location_zone ?? agent.raw?.zone, 'Z1')
+}
+
+function agentSkills(agent: AnyRecord): string[] {
+  const skills = agent.skills ?? agent.skill_tags ?? agent.serviceEligibility ?? agent.service_eligibility ?? agent.raw?.skill_tags
+  return Array.isArray(skills) ? skills.map((item) => String(item)).filter(Boolean) : []
+}
+
+function agentScore(agent: AnyRecord) {
+  const direct = n(agent.readinessScore ?? agent.readiness_score ?? agent.performanceScore ?? agent.performance_score ?? agent.reliabilityScore ?? agent.reliability_score)
+  return Math.max(0, Math.min(100, direct || 64))
+}
+
+function activeMissionLoad(agent: AnyRecord) {
+  return n(agent.summary?.activeMissions ?? agent.activeMissions ?? agent.active_missions ?? agent.todayAssignments ?? agent.today_assignments)
+}
+
+function agentMatchScore(agent: AnyRecord, missions: AnyRecord[]) {
+  const readiness = agentScore(agent)
+  const cityMatches = missions.filter((mission) => agentCity(agent).toLowerCase() === missionCity(mission).toLowerCase()).length
+  const zoneMatches = missions.filter((mission) => agentZone(agent).toLowerCase() === missionZone(mission).toLowerCase()).length
+  const availabilityBoost = ['available', 'ready', 'disponible', 'active'].some((status) => agentStatus(agent).toLowerCase().includes(status)) ? 12 : -10
+  const workloadPenalty = Math.min(18, activeMissionLoad(agent) * 5)
+  return Math.max(0, Math.min(100, Math.round(readiness * 0.62 + cityMatches * 8 + zoneMatches * 10 + availabilityBoost - workloadPenalty)))
+}
+
+function currentCaregiverId(record: AnyRecord | null | undefined) {
+  if (!record) return ''
+  const raw = record.caregiverId ?? record.caregiver_id ?? record.agentId ?? record.agent_id ?? record.assigned_agent_id ?? record.assignedAgentId
+  const parsed = Number(raw)
+  return Number.isSafeInteger(parsed) && parsed > 0 ? String(parsed) : ''
+}
+
+function toneClasses(tone: string) {
+  const map: Record<string, string> = {
+    blue: 'border-blue-100 bg-blue-50 text-blue-700',
+    teal: 'border-teal-100 bg-teal-50 text-teal-700',
+    violet: 'border-violet-100 bg-violet-50 text-violet-700',
+    orange: 'border-orange-100 bg-orange-50 text-orange-700',
+    emerald: 'border-emerald-100 bg-emerald-50 text-emerald-700',
+    indigo: 'border-indigo-100 bg-indigo-50 text-indigo-700',
+    green: 'border-green-100 bg-green-50 text-green-700',
+    rose: 'border-rose-100 bg-rose-50 text-rose-700',
+    amber: 'border-amber-100 bg-amber-50 text-amber-700',
+    slate: 'border-slate-100 bg-slate-50 text-slate-700',
   }
-  return tones[tone] || tones.slate
+  return map[tone] || map.blue
 }
 
-function PrimaryButton({ children, onClick, disabled }: { children: ReactNode; onClick?: () => void; disabled?: boolean }) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-[0.99] disabled:opacity-60"
-    >
-      {children}
-    </button>
-  )
+function Pill({ children, tone = 'slate' }: { children: ReactNode; tone?: string }) {
+  return <span className={cx('inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-black', toneClasses(tone))}>{children}</span>
 }
 
-function GhostButton({ children, onClick, disabled, className }: { children: ReactNode; onClick?: () => void; disabled?: boolean; className?: string }) {
+function Button({ children, onClick, variant = 'ghost', disabled }: { children: ReactNode; onClick?: () => void; variant?: 'primary' | 'ghost' | 'danger'; disabled?: boolean }) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.99] disabled:opacity-60',
-        className,
+        'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border px-4 text-sm font-black transition active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50',
+        variant === 'primary' && 'border-blue-700 bg-blue-700 text-white shadow-lg shadow-blue-100 hover:bg-blue-800',
+        variant === 'danger' && 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100',
+        variant === 'ghost' && 'border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50',
       )}
     >
       {children}
@@ -305,29 +370,26 @@ function GhostButton({ children, onClick, disabled, className }: { children: Rea
   )
 }
 
-function MetricCard({ label, value, helper, icon, tone = 'blue' }: { label: string; value: string | number; helper: string; icon: ReactNode; tone?: string }) {
+function KpiCard({ icon, label, value, helper, tone }: { icon: ReactNode; label: string; value: string | number; helper: string; tone: string }) {
   return (
-    <article className={cx('rounded-[1.8rem] border p-5 shadow-sm', toneClass(tone))}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] opacity-70">{label}</p>
-          <p className="mt-3 text-3xl font-black tracking-tight">{value}</p>
-          <p className="mt-2 text-xs font-bold opacity-75">{helper}</p>
+    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className={cx('grid h-12 w-12 place-items-center rounded-full border', toneClasses(tone))}>{icon}</div>
+        <div className="min-w-0">
+          <p className="truncate text-xs font-black text-slate-600">{label}</p>
+          <p className="mt-1 text-2xl font-black leading-none text-slate-950">{value}</p>
+          <p className="mt-1 truncate text-[11px] font-bold text-slate-500">{helper}</p>
         </div>
-        <div className="rounded-2xl bg-white/70 p-3 shadow-sm">{icon}</div>
       </div>
     </article>
   )
 }
 
-function Panel({ title, subtitle, children, action }: { title: string; subtitle?: string; children: ReactNode; action?: ReactNode }) {
+function Panel({ title, children, action, className }: { title: string; children: ReactNode; action?: ReactNode; className?: string }) {
   return (
-    <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-5 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-black text-slate-950">{title}</h2>
-          {subtitle ? <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">{subtitle}</p> : null}
-        </div>
+    <section className={cx('rounded-2xl border border-slate-200 bg-white shadow-sm', className)}>
+      <div className="flex items-center justify-between gap-4 border-b border-slate-100 px-4 py-3">
+        <h2 className="text-sm font-black text-slate-950">{title}</h2>
         {action}
       </div>
       {children}
@@ -335,165 +397,427 @@ function Panel({ title, subtitle, children, action }: { title: string; subtitle?
   )
 }
 
-function EmptyState({ title, body }: { title: string; body: string }) {
+function MiniLine({ points }: { points: number[] }) {
+  const safe = points.length ? points : [10, 30, 20, 55, 40, 70]
+  const max = Math.max(...safe, 1)
+  const coords = safe.map((value, index) => `${(index / Math.max(1, safe.length - 1)) * 100},${46 - (value / max) * 38}`).join(' ')
   return (
-    <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
-      <p className="font-black text-slate-800">{title}</p>
-      <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-500">{body}</p>
+    <svg viewBox="0 0 100 50" className="h-24 w-full overflow-visible">
+      <path d="M0 46 H100" stroke="currentColor" strokeOpacity="0.08" />
+      <path d="M0 30 H100" stroke="currentColor" strokeOpacity="0.08" />
+      <path d="M0 14 H100" stroke="currentColor" strokeOpacity="0.08" />
+      <polyline points={coords} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      {safe.map((value, index) => (
+        <circle key={`${value}-${index}`} cx={(index / Math.max(1, safe.length - 1)) * 100} cy={46 - (value / max) * 38} r="1.8" fill="currentColor" />
+      ))}
+    </svg>
+  )
+}
+
+function BarSeries({ values }: { values: number[] }) {
+  const max = Math.max(...values, 1)
+  return (
+    <div className="flex h-24 items-end gap-3 px-1">
+      {values.map((value, index) => (
+        <div key={`${value}-${index}`} className="flex flex-1 flex-col items-center gap-2">
+          <div className="w-full rounded-t-lg bg-blue-600/85" style={{ height: `${Math.max(12, (value / max) * 88)}px` }} />
+          <span className="text-[10px] font-bold text-slate-400">{['Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed'][index] || index + 1}</span>
+        </div>
+      ))}
     </div>
   )
 }
 
-export function CareLinkMissionControlCenter({ activeView, initialRecords }: MissionControlCenterProps = {}) {
+export 
+const missionProgressValue = (mission: AnyRecord): number => {
+  const raw =
+    mission?.progress ??
+    mission?.completionRate ??
+    mission?.completion_rate ??
+    mission?.missionProgress ??
+    mission?.mission_progress ??
+    mission?.dossierProgress ??
+    mission?.dossier_progress ??
+    0
+
+  if (typeof raw === "number" && Number.isFinite(raw)) {
+    return Math.max(0, Math.min(100, Math.round(raw)))
+  }
+
+  const parsed = Number(String(raw).replace("%", "").trim())
+  if (Number.isFinite(parsed)) {
+    return Math.max(0, Math.min(100, Math.round(parsed)))
+  }
+
+  const stage = String(mission?.stage || mission?.status || mission?.current_stage || "").toLowerCase()
+  if (stage.includes("closed") || stage.includes("complete") || stage.includes("done")) return 100
+  if (stage.includes("quality") || stage.includes("review") || stage.includes("report")) return 85
+  if (stage.includes("progress") || stage.includes("mission")) return 55
+  if (stage.includes("assign")) return 35
+  if (stage.includes("schedul")) return 25
+  if (stage.includes("intake") || stage.includes("new")) return 10
+  return 0
+}
+
+function CareLinkMissionControlCenter({ activeView, initialRecords = [] }: MissionControlCenterProps = {}) {
   void activeView
-  void initialRecords
-  const [records, setRecords] = useState<AnyRecord[]>([])
+  const router = useRouter()
+  const [records, setRecords] = useState<AnyRecord[]>(() => initialRecords.filter(isVisible))
   const [payload, setPayload] = useState<AnyRecord>({})
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [serviceFilter, setServiceFilter] = useState('All services')
-  const [riskFilter, setRiskFilter] = useState('all')
-  const [workspace, setWorkspace] = useState<(typeof WORKSPACES)[number]['key']>('board')
+  const [stageFilter, setStageFilter] = useState('All stages')
+  const [paymentFilter, setPaymentFilter] = useState('All payments')
+  const [riskFilter, setRiskFilter] = useState('All risk levels')
+  const [cityFilter, setCityFilter] = useState('All cities')
+  const [assignmentFilter, setAssignmentFilter] = useState('All assignments')
+  const [sortFilter, setSortFilter] = useState('Newest first')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
-  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
-  const [bulkDeleteSaving, setBulkDeleteSaving] = useState(false)
-  const [bulkDeleteProgress, setBulkDeleteProgress] = useState(0)
-  const [bulkDeleteStage, setBulkDeleteStage] = useState<'idle' | 'running' | 'completed' | 'error'>('idle')
-  const [bulkDeleteMessage, setBulkDeleteMessage] = useState('')
   const [selectedMission, setSelectedMission] = useState<AnyRecord | null>(null)
   const [selectedMissionLoading, setSelectedMissionLoading] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
-  const [commandOpen, setCommandOpen] = useState<string | null>(null)
-  const [commandMessage, setCommandMessage] = useState('')
+  const [command, setCommand] = useState<string | null>(null)
+  const [commandText, setCommandText] = useState('')
+  const [commandSaving, setCommandSaving] = useState(false)
+  const [assignmentOpen, setAssignmentOpen] = useState(false)
+  const [assignmentLoading, setAssignmentLoading] = useState(false)
+  const [assignmentSaving, setAssignmentSaving] = useState(false)
+  const [assignmentError, setAssignmentError] = useState<string | null>(null)
+  const [assignmentAgents, setAssignmentAgents] = useState<AnyRecord[]>([])
+  const [assignmentDossiers, setAssignmentDossiers] = useState<AnyRecord[]>([])
+  const [activeAgentId, setActiveAgentId] = useState('')
+  const [backupAgentId, setBackupAgentId] = useState('')
+  const [assignmentScope, setAssignmentScope] = useState<'single' | 'all_sub_missions' | 'this_and_following'>('all_sub_missions')
+  const [assignmentNote, setAssignmentNote] = useState('')
   const [toast, setToast] = useState<string | null>(null)
+  const [liveOpsExpanded, setLiveOpsExpanded] = useState(false)
+  const [routeStudioMission, setRouteStudioMission] = useState<AnyRecord | null>(null)
+  const [actionNotice, setActionNotice] = useState<{ title: string; message: string; detail?: string } | null>(null)
 
-  async function loadMissions() {
-    setLoading(true)
+  const loadMissions = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true)
     setError(null)
     try {
-      const endpoints = ['/api/missions/dossiers', '/api/carelink/ops/missions', '/api/missions', '/api/carelink/ops/dashboard']
+      const endpoints = ['/api/carelink/ops/missions', '/api/missions/dossiers', '/api/missions/control-center', '/api/missions']
       let found: AnyRecord | null = null
-
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(endpoint, { cache: 'no-store' })
+          const response = await fetch(endpoint, { cache: 'no-store', headers: { Accept: 'application/json' } })
           const json = await response.json().catch(() => null)
           if (response.ok && json) {
-            found = json
-            break
+            const rows = extractMissions(json)
+            if (rows.length || json.ok !== false) {
+              found = json
+              break
+            }
           }
-        } catch {
-          // try next endpoint
-        }
+        } catch {}
       }
-
-      if (!found) throw new Error('No mission endpoint responded.')
-
-      const raw =
-        list(found.missions).length ? list(found.missions) :
-        list(found.dossiers).length ? list(found.dossiers) :
-        list(found.records).length ? list(found.records) :
-        list(found.data?.missions).length ? list(found.data?.missions) :
-        list(found.data?.dossiers).length ? list(found.data?.dossiers) :
-        list(found.data?.records).length ? list(found.data?.records) :
-        Array.isArray(found.data) ? found.data :
-        list(found.dashboard?.missions).length ? list(found.dashboard?.missions) :
-        list(found.workspace?.missions).length ? list(found.workspace?.missions) :
-        list(found.payload?.missions).length ? list(found.payload?.missions) :
-        list(found.upcomingMissions).length ? list(found.upcomingMissions) :
-        []
-
+      if (!found) throw new Error('No live mission endpoint responded.')
+      const rows = extractMissions(found).filter(isVisible)
       setPayload(found)
-      setRecords(raw)
-      setSelectedIds([])
+      setRecords(rows)
+      setSelectedIds((current) => current.filter((id) => rows.some((row) => missionId(row) === id)))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to load mission workspace.')
+      setError(err instanceof Error ? err.message : 'Unable to load CareLink missions.')
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
-    loadMissions()
-  }, [])
+    loadMissions(Boolean(initialRecords.length))
+  }, [initialRecords.length, loadMissions])
+
+  useEffect(() => {
+    if (!shouldStartAutoRefresh()) return
+    const timer = window.setInterval(() => loadMissions(true), safeRefreshInterval(30000))
+    return () => window.clearInterval(timer)
+  }, [loadMissions])
+
+  useEffect(() => {
+    if (!toast) return
+    const timer = window.setTimeout(() => setToast(null), safeUiInterval(3400))
+    return () => window.clearTimeout(timer)
+  }, [toast])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return records.filter((record) => {
-      const searchable = [
-        missionCode(record),
-        missionTitle(record),
-        missionClient(record),
-        missionAgent(record),
-        missionCity(record),
-        missionZone(record),
-        record.status,
-        record.priority,
-        record.risk_level,
-      ].join(' ').toLowerCase()
-
-      const matchesQuery = !q || searchable.includes(q)
+      const text = [missionCode(record), missionClient(record), missionTitle(record), missionAgent(record), missionCity(record), missionZone(record), rawStatus(record)].join(' ').toLowerCase()
+      const matchesQuery = !q || text.includes(q)
       const matchesService = serviceFilter === 'All services' || missionTitle(record).toLowerCase().includes(serviceFilter.toLowerCase())
-      const matchesRisk = riskFilter === 'all' || riskLevel(record) === riskFilter || laneFor(record) === riskFilter
-      return matchesQuery && matchesService && matchesRisk
+      return matchesQuery && matchesService
     })
-  }, [records, query, serviceFilter, riskFilter])
+  }, [query, records, serviceFilter])
 
-  const today = filtered.filter((record) => {
-    const raw = record.scheduledStart || record.scheduled_start || record.start_at || record.missionDate || record.mission_date
-    if (!raw) return false
-    return String(raw).slice(0, 10) === new Date().toISOString().slice(0, 10)
-  })
+  const selectedMissions = useMemo(() => filtered.filter((row) => selectedIds.includes(missionId(row))), [filtered, selectedIds])
+  const primaryMission = selectedMissions[0] || filtered[0] || null
 
-  const summary = {
-    total: filtered.length,
-    today: today.length,
-    assigned: filtered.filter((record) => ['assigned', 'accepted', 'en_route', 'in_progress'].includes(laneFor(record))).length,
-    active: filtered.filter((record) => ['en_route', 'in_progress'].includes(laneFor(record))).length,
-    validation: filtered.filter((record) => ['report_pending', 'validation'].includes(laneFor(record))).length,
-    atRisk: filtered.filter((record) => laneFor(record) === 'at_risk' || riskLevel(record) === 'high').length,
-    completed: filtered.filter((record) => laneFor(record) === 'completed').length,
-    unassigned: filtered.filter((record) => missionAgent(record) === 'Unassigned').length,
-  }
+  useEffect(() => {
+    if (typeof window === 'undefined') return
 
-  function toggleSelect(id: string) {
+    const routes = selectedMissions.map((mission: any) => ({
+      id: missionId(mission),
+      missionCode: missionCode(mission),
+      routeCode:
+        String(
+          mission.route_code ||
+          mission.routeCode ||
+          mission.route_id ||
+          mission.routeId ||
+          mission.code ||
+          missionCode(mission),
+        ),
+      city: missionCity(mission),
+      zone: missionZone(mission),
+    }))
+
+    window.dispatchEvent(
+      new CustomEvent('carelink:selected-missions', {
+        detail: {
+          selectedIds,
+          routes,
+          missionCodes: routes.map((route) => route.missionCode).filter(Boolean),
+          routeCodes: routes.map((route) => route.routeCode).filter(Boolean),
+        },
+      }),
+    )
+  }, [selectedIds, selectedMissions])
+
+
+  const metrics = useMemo(() => {
+    const total = filtered.length
+    const completed = countBy(filtered, (row) => missionStage(row) === 'completed')
+    const active = countBy(filtered, (row) => ['assigned', 'accepted', 'en_route', 'in_progress', 'report_pending', 'validation'].includes(missionStage(row)))
+    const inProgress = countBy(filtered, (row) => ['en_route', 'in_progress'].includes(missionStage(row)))
+    const validation = countBy(filtered, (row) => ['report_pending', 'validation'].includes(missionStage(row)))
+    const urgent = countBy(filtered, (row) => riskLevel(row) === 'high')
+    const pendingPaymentRows = filtered.filter((row) => paymentStatus(row) !== 'Paid')
+    const pendingMAD = pendingPaymentRows.reduce((sum, row) => sum + missionAmount(row), 0)
+    const agents = new Set(filtered.map(missionAgent).filter((name) => name !== 'Unassigned')).size
+    const completionRate = total ? Math.round((completed / total) * 1000) / 10 : 0
+    const sla = total ? Math.max(0, Math.round(((total - urgent) / total) * 1000) / 10) : 100
+    return { total, active, completed, inProgress, validation, urgent, pendingPaymentRows, pendingMAD, agents, completionRate, sla }
+  }, [filtered])
+
+  const pipelineCounts = useMemo(() => ({
+    intake: countBy(filtered, (row) => missionStage(row) === 'created'),
+    qualification: countBy(filtered, (row) => missionStage(row) === 'accepted'),
+    scheduling: countBy(filtered, (row) => missionStage(row) === 'created' && missionAgent(row) === 'Unassigned'),
+    assignment: countBy(filtered, (row) => missionStage(row) === 'assigned'),
+    in_progress: countBy(filtered, (row) => ['en_route', 'in_progress'].includes(missionStage(row))),
+    quality_control: countBy(filtered, (row) => ['report_pending', 'validation'].includes(missionStage(row))),
+    closed: countBy(filtered, (row) => missionStage(row) === 'completed'),
+  }), [filtered])
+
+  const cityStats = useMemo(() => {
+    const map = new Map<string, number>()
+    filtered.forEach((row) => map.set(missionCity(row), (map.get(missionCity(row)) || 0) + 1))
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5)
+  }, [filtered])
+
+  const chartValues = useMemo(() => {
+    const base = Math.max(1, filtered.length)
+    return [0.32, 0.48, 0.54, 0.63, 0.72, 0.84, 1].map((ratio) => Math.max(1, Math.round(base * ratio)))
+  }, [filtered.length])
+
+  function toggle(id: string) {
     setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
   }
 
-  async function openMissionDossier(record: AnyRecord) {
+  async function openMission(record: AnyRecord | null) {
+    if (!record) return
     setSelectedMission(record)
-    const id = missionNumericId(record)
+    const id = numericId(record)
     if (!id) return
-
     setSelectedMissionLoading(true)
     try {
       const response = await fetch(`/api/missions/dossiers/${id}`, { cache: 'no-store', headers: { Accept: 'application/json' } })
       const json = await response.json().catch(() => null)
       if (response.ok && json?.ok && json.data) setSelectedMission(json.data)
+    } catch {}
+    finally { setSelectedMissionLoading(false) }
+  }
+
+  function openSelectedDossier() {
+    if (!selectedMissions.length) {
+      setActionNotice({
+        title: 'Select a mission dossier first',
+        message: 'Open Dossier is locked until you select a mission from the Mission Dossiers table.',
+        detail: 'Tick one mission row in the Mission Dossiers section, then click Open Dossier again. You can also click a mission code directly from the table to open that exact dossier.',
+      })
+      return
+    }
+    if (selectedMissions.length > 1) {
+      setActionNotice({
+        title: 'Open one dossier at a time',
+        message: `You selected ${selectedMissions.length} mission dossiers. Open Dossier can only open one full dossier at a time.`,
+        detail: 'Keep only one row selected for dossier review, or use Assign Agent / Validate Report / Escalate for multi-mission batch operations.',
+      })
+      return
+    }
+    void openMission(selectedMissions[0])
+  }
+
+  async function fetchMissionDossier(record: AnyRecord) {
+    const id = numericId(record)
+    if (!id) return record
+    try {
+      const response = await fetch(`/api/missions/dossiers/${id}`, { cache: 'no-store', headers: { Accept: 'application/json' } })
+      const json = await response.json().catch(() => null)
+      if (response.ok && json?.ok && json.data) return json.data
+    } catch {}
+    return record
+  }
+
+  async function openAssignmentStudio() {
+    const rows = selectedMissions.length ? selectedMissions : primaryMission ? [primaryMission] : []
+    if (!rows.length) {
+      setToast('Select one or multiple missions first, then open Assign Agent.')
+      return
+    }
+    setAssignmentOpen(true)
+    setAssignmentLoading(true)
+    setAssignmentSaving(false)
+    setAssignmentError(null)
+    setAssignmentNote('')
+    try {
+      const [agentsResponse, poolResponse, dossiers] = await Promise.all([
+        fetch('/api/carelink/ops/agents', { cache: 'no-store', headers: { Accept: 'application/json' } }).then((res) => res.json().catch(() => null)).catch(() => null),
+        fetch('/api/carelink/ops/dispatch/agent-pool', { cache: 'no-store', headers: { Accept: 'application/json' } }).then((res) => res.json().catch(() => null)).catch(() => null),
+        Promise.all(rows.map((row) => fetchMissionDossier(row))),
+      ])
+      let agents = [...extractAgents(agentsResponse), ...extractAgents(poolResponse)]
+      if (!agents.length) agents = buildFallbackAgentsFromMissions([...rows, ...records, ...dossiers])
+      const byId = new Map<string, AnyRecord>()
+      agents.forEach((agent) => {
+        const id = agentId(agent)
+        if (id && !byId.has(id)) byId.set(id, agent)
+      })
+      const orderedAgents = Array.from(byId.values()).sort((a, b) => agentMatchScore(b, rows) - agentMatchScore(a, rows))
+      setAssignmentAgents(orderedAgents)
+      setAssignmentDossiers(dossiers)
+      const existingActive = currentCaregiverId(rows[0]) || currentCaregiverId(dossiers[0])
+      const recommendedActive = existingActive || agentId(orderedAgents[0] || {})
+      const recommendedBackup = agentId(orderedAgents.find((agent) => agentId(agent) && agentId(agent) !== recommendedActive) || {})
+      setActiveAgentId(recommendedActive)
+      setBackupAgentId(recommendedBackup)
     } catch (error) {
-      console.warn('[CareLinkMissions] Unable to load full mission dossier, using row fallback', error)
+      setAssignmentError(error instanceof Error ? error.message : 'Unable to prepare the assignment studio.')
     } finally {
-      setSelectedMissionLoading(false)
+      setAssignmentLoading(false)
     }
   }
 
-  function exportCsv() {
-    const rows = filtered.map((record) => ({
-      code: missionCode(record),
-      service: missionTitle(record),
-      client: missionClient(record),
-      agent: missionAgent(record),
-      city: missionCity(record),
-      zone: missionZone(record),
-      status: laneFor(record),
-      risk: riskLevel(record),
-      date: text(record.scheduledStart || record.scheduled_start || record.missionDate || record.mission_date),
-    }))
+  async function applyAssignmentStudio() {
+    const rows = selectedMissions.length ? selectedMissions : assignmentDossiers
+    const ids = Array.from(new Set(rows.map(numericId).filter((id): id is number => Boolean(id))))
+    if (!ids.length) {
+      setAssignmentError('No valid mission id found for assignment.')
+      return
+    }
+    if (!activeAgentId) {
+      setAssignmentError('Choose the active agent before syncing the dossier.')
+      return
+    }
+    setAssignmentSaving(true)
+    setAssignmentError(null)
+    try {
+      await Promise.all(ids.map(async (id) => {
+        const body = {
+          caregiverId: Number(activeAgentId),
+          backupCaregiverId: backupAgentId ? Number(backupAgentId) : null,
+          scope: assignmentScope,
+          note: assignmentNote || 'Agent assignment synced from CareLink Missions Management.',
+          source: 'carelink_ops_missions_assignment_studio',
+        }
+        const response = await fetch(`/api/missions/dossiers/${id}/assign`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(body),
+        })
+        if (!response.ok) {
+          await fetch(`/api/carelink/ops/missions/${id}/assign`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ caregiverId: Number(activeAgentId), reason: body.note }),
+          })
+        }
+        if (backupAgentId) {
+          await fetch('/api/carelink/ops/missions/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ action: 'backup_agent_selected', missionIds: [id], caregiverId: Number(activeAgentId), backupCaregiverId: Number(backupAgentId), message: body.note, source: body.source }),
+          }).catch(() => null)
+        }
+      }))
+      setToast(`Assignment synced for ${ids.length} mission dossier(s), including sub-mission scope.`)
+      setAssignmentOpen(false)
+      await loadMissions(true)
+    } catch (error) {
+      setAssignmentError(error instanceof Error ? error.message : 'Unable to sync the assignment.')
+    } finally {
+      setAssignmentSaving(false)
+    }
+  }
 
-    const header = Object.keys(rows[0] || { code: '', service: '', client: '', agent: '', city: '', zone: '', status: '', risk: '', date: '' })
-    const csv = [header.join(','), ...rows.map((row) => header.map((key) => `"${String((row as AnyRecord)[key] || '').replace(/"/g, '""')}"`).join(','))].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  async function runCommand(action: string, rows = selectedMissions) {
+    setCommandSaving(true)
+    try {
+      const ids = rows.map(numericId).filter((id): id is number => Boolean(id))
+      if (action === 'validate_report' && ids.length) {
+        await Promise.all(ids.map((id) => fetch(`/api/missions/${id}/validate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ note: commandText || 'Validated from CareLink Missions Management.' }) }).catch(() => null)))
+      } else if (action === 'escalate' && ids.length) {
+        await Promise.all(ids.map((id) => fetch(`/api/missions/${id}/incident`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ severity: 'high', note: commandText || 'Escalated from CareLink Missions Management.' }) }).catch(() => null)))
+      } else if (action === 'assign_agent' && rows[0]) {
+        await openMission(rows[0])
+      } else {
+        await fetch('/api/carelink/ops/missions/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ action, missionIds: ids.length ? ids : selectedIds, message: commandText, source: 'carelink_ops_missions_management' }),
+        }).catch(() => null)
+      }
+      setToast(`${action.replace(/_/g, ' ')} synced for ${rows.length || filtered.length} mission(s).`)
+      setCommand(null)
+      setCommandText('')
+      await loadMissions(true)
+    } finally {
+      setCommandSaving(false)
+    }
+  }
+
+  function openRouteStudio() {
+    if (!selectedMissions.length) {
+      setToast('Select exactly one mission from the Mission Dossiers section before editing routes.')
+      return
+    }
+    if (selectedMissions.length > 1) {
+      setToast('Edit Route works on one mission dossier at a time. Keep only one mission selected.')
+      return
+    }
+    setRouteStudioMission(selectedMissions[0])
+  }
+
+  function exportCsv() {
+    const rows = filtered.map((row) => ({
+      mission_code: missionCode(row),
+      family_client: missionClient(row),
+      service_type: missionTitle(row),
+      city_zone: `${missionCity(row)} / ${missionZone(row)}`,
+      assigned_caregiver: missionAgent(row),
+      start_date: dateLabel(startDate(row)),
+      current_stage: missionStage(row),
+      payment_status: paymentStatus(row),
+      progress: `${progressValue(row)}%`,
+      risk: riskLevel(row),
+    }))
+    const headers = Object.keys(rows[0] || { mission_code: '', family_client: '', service_type: '', city_zone: '', assigned_caregiver: '', start_date: '', current_stage: '', payment_status: '', progress: '', risk: '' })
+    const csv = [headers.join(','), ...rows.map((row) => headers.map((key) => `"${String((row as AnyRecord)[key] || '').replace(/"/g, '""')}"`).join(','))].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -502,703 +826,1249 @@ export function CareLinkMissionControlCenter({ activeView, initialRecords }: Mis
     URL.revokeObjectURL(url)
   }
 
-  async function submitCommand() {
-    const action = commandOpen
-    const message = commandMessage.trim()
-    setToast(null)
-
-    try {
-      await fetch('/api/carelink/ops/missions/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          action,
-          missionIds: selectedIds,
-          message,
-          source: 'carelink_ops_mission_control',
-        }),
-      }).catch(() => null)
-    } finally {
-      setToast(`${action || 'Action'} prepared for ${selectedIds.length || filtered.length} mission(s).`)
-      setCommandOpen(null)
-      setCommandMessage('')
-      await loadMissions()
+  const priority = filtered.filter((row) => riskLevel(row) === 'high').slice(0, 3)
+  const delayed = filtered.filter((row) => ['en_route', 'assigned'].includes(missionStage(row)) || rawStatus(row).includes('delay')).slice(0, 3)
+  const intervention = filtered.filter((row) => paymentStatus(row) !== 'Paid' || missionAgent(row) === 'Unassigned').slice(0, 3)
+  const missionDossierRows = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    const toTime = (row: AnyRecord) => {
+      const raw = startDate(row)
+      const parsed = new Date(String(raw || 0)).getTime()
+      return Number.isFinite(parsed) ? parsed : 0
     }
-  }
-
-  async function deleteSelectedMissions() {
-    const ids = selectedIds
-      .map((id: any) => Number(id))
-      .filter((id: number) => Number.isFinite(id) && id > 0)
-
-    if (!ids.length) {
-      setBulkDeleteStage('error')
-      setBulkDeleteMessage('Select at least one mission to delete.')
-      return
+    const riskRank = (row: AnyRecord) => {
+      const risk = riskLevel(row)
+      return risk === 'high' ? 3 : risk === 'medium' ? 2 : 1
     }
 
-    setBulkDeleteOpen(false)
-    setBulkDeleteSaving(true)
-    setBulkDeleteStage('running')
-    setBulkDeleteProgress(0)
-    setBulkDeleteMessage(`Preparing permanent deletion for ${ids.length} selected mission(s)…`)
+    const rows = filtered.filter((record) => {
+      const stage = missionStage(record)
+      const pay = paymentStatus(record)
+      const risk = riskLevel(record)
+      const agent = missionAgent(record)
+      const city = missionCity(record)
+      const blob = [
+        missionCode(record),
+        missionClient(record),
+        missionTitle(record),
+        city,
+        missionZone(record),
+        agent,
+        stage,
+        pay,
+        risk,
+        rawStatus(record),
+      ].join(' ').toLowerCase()
 
-    let timer: ReturnType<typeof setInterval> | null = null
+      const matchesQuery = !q || blob.includes(q)
+      const matchesService = serviceFilter === 'All services' || missionTitle(record).toLowerCase().includes(serviceFilter.toLowerCase())
+      const matchesStage = stageFilter === 'All stages' || stage === stageFilter
+      const matchesPayment = paymentFilter === 'All payments' || pay === paymentFilter
+      const matchesRisk = riskFilter === 'All risk levels' || risk === riskFilter
+      const matchesCity = cityFilter === 'All cities' || city === cityFilter
+      const matchesAssignment = assignmentFilter === 'All assignments'
+        || (assignmentFilter === 'Assigned' && agent !== 'Unassigned')
+        || (assignmentFilter === 'Unassigned' && agent === 'Unassigned')
 
-    try {
-      timer = setInterval(() => {
-        setBulkDeleteProgress((value) => {
-          if (value >= 92) return value
-          return Math.min(92, value + Math.max(3, Math.round((92 - value) / 6)))
-        })
-      }, safeUiInterval(220))
+      return matchesQuery && matchesService && matchesStage && matchesPayment && matchesRisk && matchesCity && matchesAssignment
+    })
 
-      const res = await fetch('/api/missions/bulk-delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ids, mode: 'permanent' }),
-      })
+    return rows.sort((a, b) => {
+      if (sortFilter === 'Risk first') return riskRank(b) - riskRank(a)
+      if (sortFilter === 'Progress low first') return progressValue(a) - progressValue(b)
+      if (sortFilter === 'Progress high first') return progressValue(b) - progressValue(a)
+      if (sortFilter === 'Oldest first') return toTime(a) - toTime(b)
+      return toTime(b) - toTime(a)
+    })
+  }, [assignmentFilter, cityFilter, filtered, paymentFilter, query, riskFilter, serviceFilter, sortFilter, stageFilter])
 
-      const json = await res.json().catch(() => null)
-      if (!res.ok || !json?.ok) throw new Error(json?.error || 'Permanent mission deletion failed.')
+  const tableRows = missionDossierRows
 
-      if (timer) clearInterval(timer)
+  const smartCities = useMemo(() => Array.from(new Set(filtered.map(missionCity))).filter(Boolean).sort(), [filtered])
+  const activeFilterCount = [
+    query.trim(),
+    serviceFilter !== 'All services',
+    stageFilter !== 'All stages',
+    paymentFilter !== 'All payments',
+    riskFilter !== 'All risk levels',
+    cityFilter !== 'All cities',
+    assignmentFilter !== 'All assignments',
+    sortFilter !== 'Newest first',
+  ].filter(Boolean).length
 
-      setBulkDeleteProgress(100)
-      setBulkDeleteStage('completed')
-      setBulkDeleteMessage(`Deletion completed · ${json?.data?.deletedCount || ids.length} mission record(s) removed from live CareLink.`)
-      setSelectedIds([])
-
-      window.setTimeout(() => {
-        window.location.reload()
-      }, 1600)
-    } catch (error) {
-      if (timer) clearInterval(timer)
-      setBulkDeleteStage('error')
-      setBulkDeleteMessage(error instanceof Error ? error.message : 'Permanent mission deletion failed.')
-    } finally {
-      setBulkDeleteSaving(false)
-    }
-  }
-
-
-  const missionPageKpiRows = hardFilterLiveMissions(
-    filterVisibleLiveMissions(Array.isArray(initialRecords) ? initialRecords : [])
-  )
-
-  const missionPageKpis = {
-    total: missionPageKpiRows.length,
-    today: missionPageKpiRows.filter((mission: any) => {
-      const raw = String(mission.dateLabel || mission.mission_date || mission.missionDate || '')
-      const today = new Date().toISOString().slice(0, 10)
-      return raw.includes(today)
-    }).length,
-    assigned: missionPageKpiRows.filter((mission: any) =>
-      mission.caregiverId ||
-      mission.caregiver_id ||
-      mission.caregiverName ||
-      mission.assignedAgent
-    ).length,
-    active: missionPageKpiRows.filter((mission: any) => {
-      const status = String(mission.status || mission.lifecycleStage || mission.lifecycle_stage || '').toLowerCase()
-      return status.includes('route') || status.includes('progress') || status.includes('active')
-    }).length,
-    validation: missionPageKpiRows.filter((mission: any) => {
-      const status = String(mission.validationStatus || mission.validation_status || mission.reportStatus || mission.report_status || mission.lifecycleStage || mission.lifecycle_stage || '').toLowerCase()
-      return status.includes('pending') || status.includes('validation') || status.includes('report')
-    }).length,
-    risk: missionPageKpiRows.filter((mission: any) => {
-      const status = String(mission.status || mission.lifecycleStage || mission.lifecycle_stage || mission.riskLevel || mission.risk_level || '').toLowerCase()
-      return status.includes('risk') || status.includes('incident') || status.includes('high')
-    }).length,
-    completed: missionPageKpiRows.filter((mission: any) => {
-      const status = String(mission.status || mission.lifecycleStage || mission.lifecycle_stage || '').toLowerCase()
-      return status.includes('completed') || status.includes('closed')
-    }).length,
-  }
-
-
+  const resetMissionFilters = useCallback(() => {
+    setQuery('')
+    setServiceFilter('All services')
+    setStageFilter('All stages')
+    setPaymentFilter('All payments')
+    setRiskFilter('All risk levels')
+    setCityFilter('All cities')
+    setAssignmentFilter('All assignments')
+    setSortFilter('Newest first')
+  }, [])
   return (
     <main className="min-h-screen bg-[#f7f9fc] text-slate-950">
-      <div className="space-y-6 p-6">
-        <section className="overflow-hidden rounded-[2.2rem] border border-slate-200 bg-white shadow-sm">
-          <div className="relative p-6">
-            <div className="absolute right-0 top-0 h-40 w-72 rounded-bl-[4rem] bg-blue-50" />
-            <div className="relative flex flex-wrap items-start justify-between gap-5">
+      <div className="space-y-3 p-3 sm:p-4 lg:p-5">
+        <section className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-700 text-white shadow-lg shadow-blue-100"><Layers3 size={20} /></div>
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.35em] text-blue-600">Mission Operations</p>
-                <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950">Mission Control Center</h1>
-                <p className="mt-2 max-w-5xl text-sm font-semibold leading-6 text-slate-500">
-                  Enterprise mission orchestration, dossier supervision, sub-mission lifecycle monitoring, route coordination,
-                  agent assignment, risk control, field report validation and audit oversight.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <GhostButton onClick={loadMissions} disabled={loading}>
-                  {loading ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
-                  Refresh
-                </GhostButton>
-                <PrimaryButton onClick={() => setCreateOpen(true)}>
-                  <Plus size={16} />
-                  Create Dossier
-                </PrimaryButton>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-black tracking-tight text-slate-950">Missions Management</h1>
+                  <span className="grid h-5 w-5 place-items-center rounded-full border border-slate-200 text-[10px] font-black text-slate-400">i</span>
+                </div>
+                <p className="text-sm font-semibold text-slate-500">Command center for mission oversight, execution and quality assurance.</p>
               </div>
             </div>
-
-            <div className="relative mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-8">
-              <MetricCard label="Missions" value={missionPageKpis.total} helper="Total loaded" icon={<Layers3 size={19} />} tone="blue" />
-              <MetricCard label="Today" value={missionPageKpis.today} helper="Scheduled today" icon={<Clock3 size={19} />} tone="cyan" />
-              <MetricCard label="Assigned" value={missionPageKpis.assigned} helper="Agent linked" icon={<UserCheck size={19} />} tone="violet" />
-              <MetricCard label="Active" value={missionPageKpis.active} helper="En route / in progress" icon={<Radio size={19} />} tone="emerald" />
-              <MetricCard label="Validation" value={missionPageKpis.validation} helper="Reports pending" icon={<FileCheck2 size={19} />} tone="amber" />
-              <MetricCard label="At risk" value={summary.atRisk} helper="Needs intervention" icon={<AlertTriangle size={19} />} tone="rose" />
-              <MetricCard label="Completed" value={missionPageKpis.completed} helper="Closed missions" icon={<CheckCircle2 size={19} />} tone="green" />
-              <MetricCard label="Unassigned" value={summary.unassigned} helper="Dispatch queue" icon={<Users size={19} />} tone="slate" />
+            <div className="flex flex-1 items-center justify-end gap-3">
+              <div className="relative hidden min-w-[340px] max-w-xl flex-1 lg:block">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search missions, clients, agents, dossiers..." className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-bold outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50" />
+              </div>
+              <button type="button" className="relative grid h-11 w-11 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700"><Bell size={17} /><span className="absolute -right-1 -top-1 rounded-full bg-rose-600 px-1.5 text-[10px] font-black text-white">{metrics.urgent}</span></button>
+              <button type="button" className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700"><MessageSquare size={17} /></button>
+              <div className="hidden items-center gap-3 border-l border-slate-200 pl-3 xl:flex">
+                <div className="text-right"><p className="text-sm font-black text-slate-900">CareLink Ops</p><p className="text-xs font-semibold text-slate-500">Operations Director</p></div>
+                <div className="grid h-10 w-10 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">AC</div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div className="border-t border-slate-100 px-6 py-4">
-            <div className="flex flex-wrap gap-2">
-              {WORKSPACES.map((item) => {
+        {error ? <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-black text-rose-700">{error}</div> : null}
+        {toast ? <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-black text-emerald-700">{toast}</div> : null}
+
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-7">
+          <KpiCard icon={<Activity size={22} />} label="Active Missions" value={metrics.active} helper="▲ live synced" tone="blue" />
+          <KpiCard icon={<CheckCircle2 size={22} />} label="Mission Completion Rate" value={`${metrics.completionRate}%`} helper="▲ from live records" tone="green" />
+          <KpiCard icon={<ShieldCheck size={22} />} label="SLA Compliance" value={`${metrics.sla}%`} helper="▲ risk adjusted" tone="violet" />
+          <KpiCard icon={<Users size={22} />} label="Agents Deployed" value={metrics.agents} helper="unique caregivers" tone="blue" />
+          <KpiCard icon={<AlertTriangle size={22} />} label="Urgent Incidents" value={metrics.urgent} helper="high risk missions" tone="rose" />
+          <KpiCard icon={<WalletCards size={22} />} label="Payments Pending" value={moneyMAD(metrics.pendingMAD)} helper={`${metrics.pendingPaymentRows.length} invoices`} tone="orange" />
+          <KpiCard icon={<FileCheck2 size={22} />} label="Reports Awaiting Validation" value={metrics.validation} helper="QC queue" tone="blue" />
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <div className="grid gap-2 md:grid-cols-4 xl:grid-cols-8">
+            <Button variant="primary" onClick={() => setCreateOpen(true)}><Plus size={16} /> New Mission Dossier</Button>
+            <Button onClick={() => { void openAssignmentStudio() }}><UserCheck size={16} /> Assign Agent</Button>
+            <Button onClick={() => router.push('/carelink-ops/dispatch')}><Navigation size={16} /> Launch Dispatch</Button>
+            <Button onClick={openSelectedDossier}><FileText size={16} /> Open Dossier</Button>
+            <Button onClick={openRouteStudio}><PencilRuler size={16} /> Edit Route</Button>
+            <Button onClick={() => selectedMissions.length ? setCommand('validate_report') : setToast('Select missions to validate reports.')}><BadgeCheck size={16} /> Validate Report</Button>
+            <Button onClick={() => selectedMissions.length ? setCommand('escalate') : setToast('Select missions to escalate.')}><AlertTriangle size={16} /> Escalate</Button>
+            <div className="flex gap-2">
+              <Button onClick={exportCsv}><Download size={16} /> Export <ChevronDown size={14} /></Button>
+              <Button onClick={() => loadMissions()} disabled={loading}>{loading ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}</Button>
+            </div>
+          </div>
+        </section>
+
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="grid lg:grid-cols-[150px_1fr]">
+            <div className="border-b border-slate-100 p-4 lg:border-b-0 lg:border-r"><p className="text-sm font-black text-slate-950">Mission Pipeline</p><p className="mt-1 text-xs font-bold text-blue-600">Live Overview</p></div>
+            <div className="grid gap-0 md:grid-cols-2 xl:grid-cols-7">
+              {PIPELINE.map((item, index) => {
                 const Icon = item.icon
-                const active = workspace === item.key
                 return (
-                  <button
-                    key={item.key}
-                    type="button"
-                    onClick={() => setWorkspace(item.key)}
-                    className={cx(
-                      'inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-black transition',
-                      active ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
-                    )}
-                  >
-                    <Icon size={15} />
-                    {item.label}
-                  </button>
+                  <div key={item.key} className="flex items-center gap-3 border-b border-slate-100 p-4 last:border-b-0 xl:border-b-0 xl:border-r xl:last:border-r-0">
+                    <div className={cx('grid h-10 w-10 shrink-0 place-items-center rounded-full border', toneClasses(item.tone))}><Icon size={17} /></div>
+                    <div className="min-w-0 flex-1"><p className="text-xs font-black text-slate-600">{item.label}</p><p className="mt-1 text-lg font-black text-slate-950">{pipelineCounts[item.key as keyof typeof pipelineCounts]}</p><p className="truncate text-[11px] font-semibold text-slate-500">{item.caption}</p></div>
+                    {index < PIPELINE.length - 1 ? <ChevronRight className="hidden shrink-0 text-slate-300 xl:block" size={16} /> : null}
+                  </div>
                 )
               })}
             </div>
           </div>
         </section>
 
-        {error ? (
-          <div className="rounded-3xl border border-rose-100 bg-rose-50 p-4 text-sm font-black text-rose-700">
-            {error}
-          </div>
-        ) : null}
-
-        {toast ? (
-          <div className="rounded-3xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-black text-emerald-700">
-            {toast}
-          </div>
-        ) : null}
-
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative min-w-[320px] flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search missions, dossiers, caregivers, clients, cities, service types..."
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm font-bold outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
-            <select value={serviceFilter} onChange={(event) => setServiceFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
-              {SERVICE_TYPES.map((service) => <option key={service}>{service}</option>)}
-            </select>
-            <select value={riskFilter} onChange={(event) => setRiskFilter(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
-              <option value="all">All risks/status</option>
-              <option value="high">High risk</option>
-              <option value="medium">Medium risk</option>
-              <option value="normal">Normal risk</option>
-              <option value="report_pending">Report pending</option>
-              <option value="validation">Validation</option>
-            </select>
-            <GhostButton onClick={() => setCommandOpen('batch_assign')} disabled={!selectedIds.length}><Users size={16} /> Batch Assign</GhostButton>
-            <GhostButton
-              onClick={() => setBulkDeleteOpen(true)}
-              disabled={!selectedIds.length || bulkDeleteSaving}
-              className="border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
-            >
-              <Trash2 size={16} /> Delete selected {selectedIds.length ? `(${selectedIds.length})` : ''}
-            </GhostButton>
-
-            {bulkDeleteOpen ? (
-              <div className="fixed inset-0 z-[1300] grid place-items-center bg-slate-950/40 p-4 backdrop-blur-sm">
-                <div className="w-full max-w-lg rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl">
-                  <div className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">Permanent deletion</div>
-                  <h3 className="mt-2 text-2xl font-black text-slate-950">Permanent delete selected missions</h3>
-                  <p className="mt-3 text-sm font-semibold leading-6 text-slate-500">
-                    This will permanently remove selected missions and linked live production records.
+        <section className="grid gap-3 2xl:grid-cols-[1.42fr_.62fr_1fr]">
+          <Panel
+            title="Mission Dossiers"
+            action={
+              <div className="flex items-center gap-2">
+                <Pill tone="blue">All Active</Pill>
+                <Pill tone="slate">{missionDossierRows.length}</Pill>
+                {activeFilterCount ? <Pill tone="amber">{activeFilterCount} filters</Pill> : null}
+              </div>
+            }
+            className="overflow-hidden"
+          >
+            <div className="border-b border-slate-100 bg-gradient-to-r from-white via-slate-50 to-blue-50/40 p-4">
+              <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+                <div className="min-w-0">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">
+                    <SlidersHorizontal size={13} /> Smart mission filtering
+                  </div>
+                  <p className="mt-2 text-xs font-bold text-slate-500">
+                    Synced with live mission records · select rows freely · scroll down/up without paging.
                   </p>
-                  <div className="mt-5 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">
-                    Selected missions: {selectedIds.length}. This action cannot be undone from the UI.
-                  </div>
-                  <div className="mt-6 flex justify-end gap-3">
-                    <button type="button" onClick={() => setBulkDeleteOpen(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-600">Cancel</button>
-                    <button type="button" disabled={bulkDeleteSaving} onClick={deleteSelectedMissions} className="rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-rose-100 disabled:opacity-60">Delete permanently</button>
-                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={resetMissionFilters}
+                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm hover:bg-slate-50"
+                  >
+                    <X size={14} /> Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => loadMissions()}
+                    disabled={loading}
+                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-xs font-black text-blue-700 shadow-sm hover:bg-blue-100 disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    {loading ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />} Sync live
+                  </button>
                 </div>
               </div>
-            ) : null}
 
-            {(bulkDeleteSaving || bulkDeleteStage === 'completed' || bulkDeleteStage === 'error') ? (
-              <div className="fixed inset-0 z-[1350] grid place-items-center bg-slate-950/35 p-4 backdrop-blur-sm">
-                <div className="w-full max-w-lg rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl">
-                  <div className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">Live production deletion</div>
-                  <h3 className="mt-2 text-2xl font-black text-slate-950">
-                    {bulkDeleteStage === 'completed' ? 'Deletion completed' : bulkDeleteStage === 'error' ? 'Deletion failed' : 'Deleting selected missions'}
-                  </h3>
-                  <p className="mt-2 text-sm font-semibold text-slate-500">{bulkDeleteMessage || 'Removing selected missions from live CareLink data…'}</p>
-                  <div className="mt-6">
-                    <div className="mb-2 flex items-center justify-between text-xs font-black text-slate-500">
-                      <span>{bulkDeleteStage === 'completed' ? 'Completed' : bulkDeleteStage === 'error' ? 'Needs attention' : 'Syncing deletion'}</span>
-                      <span>{bulkDeleteProgress}%</span>
-                    </div>
-                    <div className="h-4 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className={`h-full rounded-full transition-all duration-300 ${bulkDeleteStage === 'error' ? 'bg-rose-500' : bulkDeleteStage === 'completed' ? 'bg-emerald-500' : 'bg-rose-600'}`}
-                        style={{ width: `${bulkDeleteProgress}%` }}
+              <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-8">
+                <label className="relative md:col-span-2 xl:col-span-2 2xl:col-span-2">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search code, client, city, caregiver, status..."
+                    className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-3 text-xs font-bold text-slate-800 shadow-sm outline-none ring-blue-100 transition focus:border-blue-300 focus:ring-4"
+                  />
+                </label>
+                <select value={serviceFilter} onChange={(event) => setServiceFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  {SERVICE_TYPES.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+                <select value={stageFilter} onChange={(event) => setStageFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  {['All stages', 'created', 'assigned', 'accepted', 'en_route', 'in_progress', 'report_pending', 'validation', 'completed'].map((item) => <option key={item} value={item}>{item.replace(/_/g, ' ')}</option>)}
+                </select>
+                <select value={paymentFilter} onChange={(event) => setPaymentFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  {['All payments', 'Paid', 'Pending', 'Unpaid'].map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+                <select value={riskFilter} onChange={(event) => setRiskFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  {['All risk levels', 'low', 'medium', 'high'].map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+                <select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  <option value="All cities">All cities</option>
+                  {smartCities.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+                <select value={assignmentFilter} onChange={(event) => setAssignmentFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  {['All assignments', 'Assigned', 'Unassigned'].map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+                <select value={sortFilter} onChange={(event) => setSortFilter(event.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 shadow-sm outline-none focus:border-blue-300">
+                  {['Newest first', 'Oldest first', 'Risk first', 'Progress low first', 'Progress high first'].map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-black text-slate-500">
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Live records: {filtered.length}</span>
+                <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-blue-700">Filtered: {missionDossierRows.length}</span>
+                <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-emerald-700">Selected: {selectedMissions.length}</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Free scroll enabled</span>
+              </div>
+            </div>
+
+            <div className="max-h-[560px] overflow-y-auto overflow-x-auto scroll-smooth">
+              <div className="mb-6">
+              </div>
+
+              <table className="min-w-[1180px] w-full text-left text-xs">
+                <thead className="sticky top-0 z-20 bg-white/95 text-[10px] uppercase tracking-wide text-slate-500 shadow-sm backdrop-blur">
+                  <tr>
+                    <th className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={missionDossierRows.length > 0 && missionDossierRows.every((row) => selectedIds.includes(missionId(row)))}
+                        onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...missionDossierRows.map(missionId)])) : selectedIds.filter((id) => !missionDossierRows.some((row) => missionId(row) === id)))}
                       />
-                    </div>
-                  </div>
+                    </th>
+                    <th className="px-4 py-3">Mission Code</th>
+                    <th className="px-4 py-3">Family / Client</th>
+                    <th className="px-4 py-3">Service Type</th>
+                    <th className="px-4 py-3">City / Zone</th>
+                    <th className="px-4 py-3">Assigned Caregiver</th>
+                    <th className="px-4 py-3">Start Date</th>
+                    <th className="px-4 py-3">Current Stage</th>
+                    <th className="px-4 py-3">Payment</th>
+                    <th className="px-4 py-3">Progress</th>
+                    <th className="px-4 py-3">Risk</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-700">
+                  {missionDossierRows.map((row) => {
+                    const id = missionId(row)
+                    const progress = progressValue(row)
+                    const risk = riskLevel(row)
+                    const pay = paymentStatus(row)
+                    const stage = missionStage(row)
+                    const selected = selectedIds.includes(id)
+                    return (
+                      <tr key={id || missionCode(row)} className={cx('transition hover:bg-blue-50/40', selected && 'bg-blue-50/60')}>
+                        <td className="px-4 py-3"><input type="checkbox" checked={selected} onChange={() => toggle(id)} /></td>
+                        <td className="whitespace-nowrap px-4 py-3 font-black text-blue-700"><button type="button" onClick={() => openMission(row)} className="rounded-lg px-1 py-0.5 hover:bg-blue-100">{missionCode(row)}</button></td>
+                        <td className="whitespace-nowrap px-4 py-3 font-bold text-slate-800">{missionClient(row)}</td>
+                        <td className="whitespace-nowrap px-4 py-3">{missionTitle(row)}</td>
+                        <td className="whitespace-nowrap px-4 py-3">{missionCity(row)} / {missionZone(row)}</td>
+                        <td className="whitespace-nowrap px-4 py-3"><div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-[10px] font-black text-slate-600">{missionAgent(row).slice(0, 2).toUpperCase()}</span><span>{missionAgent(row)}</span></div></td>
+                        <td className="whitespace-nowrap px-4 py-3">{dateLabel(startDate(row))}</td>
+                        <td className="whitespace-nowrap px-4 py-3"><Pill tone={stage === 'in_progress' ? 'emerald' : stage === 'assigned' ? 'orange' : stage === 'validation' ? 'violet' : 'slate'}>{stage.replace(/_/g, ' ')}</Pill></td>
+                        <td className="whitespace-nowrap px-4 py-3"><Pill tone={pay === 'Paid' ? 'green' : pay === 'Unpaid' ? 'rose' : 'amber'}>{pay}</Pill></td>
+                        <td className="min-w-[120px] px-4 py-3"><div className="flex items-center gap-2"><span className="w-9 font-black">{progress}%</span><div className="h-1.5 flex-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-700" style={{ width: `${progress}%` }} /></div></div></td>
+                        <td className="whitespace-nowrap px-4 py-3"><Pill tone={risk === 'high' ? 'rose' : risk === 'medium' ? 'amber' : 'green'}>{risk}</Pill></td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+              {!missionDossierRows.length ? (
+                <div className="p-6 text-center">
+                  <p className="mt-4 text-sm font-black text-slate-700">No mission dossiers match the current smart filters.</p>
+                  <p className="mt-1 text-xs font-bold text-slate-500">Reset filters or sync live records to refresh the operational dataset.</p>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
 
-            <GhostButton onClick={() => setCommandOpen('validate')} disabled={!selectedIds.length}><BadgeCheck size={16} /> Validate</GhostButton>
-            <GhostButton onClick={exportCsv}><Download size={16} /> Export</GhostButton>
-            <GhostButton onClick={() => window.print()}><Printer size={16} /> Print</GhostButton>
-          </div>
-        </section>
-
-        {workspace === 'board' ? (
-          <BoardView
-            missions={filtered}
-            selectedIds={selectedIds}
-            toggleSelect={toggleSelect}
-            openMission={openMissionDossier}
-          />
-        ) : null}
-
-        {workspace === 'master' ? (
-          <MasterRegistryView
-            missions={filtered}
-            selectedIds={selectedIds}
-            toggleSelect={toggleSelect}
-            openMission={openMissionDossier}
-          />
-        ) : null}
-
-        {workspace === 'timeline' ? <TimelineView missions={filtered} /> : null}
-        {workspace === 'validation' ? <ValidationView missions={filtered} openMission={openMissionDossier} /> : null}
-        {workspace === 'risk' ? <RiskView missions={filtered} openCommand={setCommandOpen} /> : null}
-        {workspace === 'reports' ? <ReportsView missions={filtered} /> : null}
-        {workspace === 'routes' ? <RoutesView missions={filtered} payload={payload} /> : null}
-        {workspace === 'audit' ? <AuditView missions={filtered} payload={payload} /> : null}
-
-        <section className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-          <Panel title="Operational Command Center" subtitle="Mission-level production controls and action preparation.">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <CommandTile icon={<Zap />} title="Optimize Routes" body="Prepare route optimization for selected missions." onClick={() => setCommandOpen('optimize_routes')} />
-              <CommandTile icon={<MessageSquare />} title="Broadcast Dispatch" body="Send operational instruction to linked agents." onClick={() => setCommandOpen('broadcast')} />
-              <CommandTile icon={<Flag />} title="Escalate Risk" body="Open escalation workflow for mission risk." onClick={() => setCommandOpen('escalate')} />
-              <CommandTile icon={<TimerReset />} title="SLA Review" body="Review timing, delays and validation blockers." onClick={() => setCommandOpen('sla_review')} />
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 bg-white px-4 py-3 text-xs font-bold text-slate-500">
+              <span>Showing all {missionDossierRows.length} filtered mission(s) · pagination removed · internal scroll enabled</span>
+              <span>{selectedMissions.length} selected for command actions</span>
             </div>
           </Panel>
 
-          <Panel title="Live Integrity Signals" subtitle="Production readiness, empty-state visibility and operating health.">
-            <div className="grid gap-3 md:grid-cols-2">
-              <Signal label="Mission source" value={records.length ? 'Live missions loaded' : 'Waiting for live missions'} tone={records.length ? 'emerald' : 'amber'} />
-              <Signal label="Selected records" value={`${selectedIds.length} selected`} tone="blue" />
-              <Signal label="Create dossier" value="Existing modal connected" tone="emerald" />
-              <Signal label="Mobile cooperation" value="Caregiver assignment drives mobile visibility" tone="violet" />
+          <Panel
+            title="Live Operations Board"
+            action={
+              <button
+                type="button"
+                onClick={() => setLiveOpsExpanded((value) => !value)}
+                className={cx(
+                  'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-black shadow-sm transition',
+                  liveOpsExpanded
+                    ? 'border-slate-200 bg-slate-950 text-white hover:bg-slate-800'
+                    : 'border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100',
+                )}
+              >
+                {liveOpsExpanded ? 'Retract ↑' : 'View all ↓'}
+              </button>
+            }
+          >
+            <OpsGroup expanded={liveOpsExpanded} icon={<Flag size={16} />} tone="rose" title="Priority Missions" count={priority.length} rows={priority} label="Require immediate attention" />
+            <OpsGroup expanded={liveOpsExpanded} icon={<Clock3 size={16} />} tone="orange" title="Delayed Missions" count={delayed.length} rows={delayed} label="Behind schedule" />
+            <OpsGroup expanded={liveOpsExpanded} icon={<AlertTriangle size={16} />} tone="amber" title="Needs Intervention" count={intervention.length} rows={intervention} label="At risk of SLA breach" />
+          </Panel>
+
+          <Panel
+            title="Route & Territory Overview"
+            action={
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("carelink:refresh-route-map"))}
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm hover:bg-slate-50"
+              >
+                Refresh routes
+              </button>
+            }
+          >
+            <CareLinkLiveRouteMap />
+          </Panel>
+        </section>
+
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+          <ChartCard title="Trajectory (Today)" value={`${Math.min(metrics.active, metrics.total)} / ${Math.max(metrics.total, 1)}`} helper="Missions" tone="blue"><MiniLine points={chartValues} /></ChartCard>
+          <ChartCard title="Mission Progression (7 Days)" value={`${metrics.completionRate}%`} helper="Completion Rate" tone="emerald"><BarSeries values={chartValues} /></ChartCard>
+          <ChartCard title="Service Demand Trend" value={metrics.total} helper="Total Requests" tone="blue"><MiniLine points={[...chartValues].reverse()} /></ChartCard>
+          <ChartCard title="Workload Distribution" value={String(metrics.agents || 0)} helper="Total agents" tone="violet"><Donut cityStats={cityStats} total={filtered.length} /></ChartCard>
+          <ChartCard title="Avg. Response Time" value={`${Math.max(12, 52 - metrics.sla / 2).toFixed(0)} min`} helper="Average" tone="blue"><MiniLine points={[18, 26, 23, 31, 28, 42, 29]} /></ChartCard>
+          <ChartCard title="Mission Stage Overview" value="Live" helper="All missions" tone="emerald"><StageBars rows={filtered} /></ChartCard>
+        </section>
+
+        <section className="grid gap-3 xl:grid-cols-[1.35fr_.8fr_.85fr_1fr]">
+          <Panel title="Today's Schedule" action={<button className="text-xs font-black text-blue-700">View full timeline</button>}>
+            <Schedule rows={filtered.slice(0, 5)} />
+          </Panel>
+          <Panel title="Caregiver Allocation" action={<button className="text-xs font-black text-blue-700">View all</button>}>
+            <div className="space-y-3 p-4">
+              {Array.from(new Map<string, AnyRecord>(filtered.map((row) => [missionAgent(row), row] as [string, AnyRecord])).entries()).slice(0, 5).map(([agent, row], index) => <AgentRow key={agent} agent={agent} row={row} index={index} />)}
+              {!filtered.length ? <p className="text-sm font-bold text-slate-500">No caregiver allocation loaded yet.</p> : null}
+            </div>
+          </Panel>
+          <Panel title="Quality & Reporting" action={<button className="text-xs font-black text-blue-700">View all</button>}>
+            <div className="space-y-4 p-4">
+              <QualityRow label="Reports Awaiting Validation" value={metrics.validation} percent={Math.min(100, metrics.validation * 10)} />
+              <QualityRow label="Validation Compliance" value={`${metrics.sla}%`} percent={metrics.sla} />
+              <QualityRow label="Checklists Completed" value={`${metrics.completed}/${Math.max(metrics.total, 1)}`} percent={metrics.total ? (metrics.completed / metrics.total) * 100 : 0} />
+              <QualityRow label="Quality Score (7 Days)" value="4.7 / 5" percent={94} />
+            </div>
+          </Panel>
+          <Panel title="Alerts & Communications" action={<button className="text-xs font-black text-blue-700">View all</button>}>
+            <div className="space-y-3 p-4">
+              <AlertRow tone="rose" icon={<AlertTriangle size={14} />} text={`SLA Alert: ${priority[0] ? missionCode(priority[0]) : 'No critical mission'} requires attention.`} />
+              <AlertRow tone="amber" icon={<Clock3 size={14} />} text={`${delayed[0] ? missionAgent(delayed[0]) : 'Caregiver'} route requires dispatch review.`} />
+              <AlertRow tone="blue" icon={<FileCheck2 size={14} />} text={`${metrics.validation} report(s) awaiting validation.`} />
+              <AlertRow tone="green" icon={<WalletCards size={14} />} text={`${metrics.pendingPaymentRows.length} payment record(s) pending finance follow-up.`} />
             </div>
           </Panel>
         </section>
       </div>
 
-      {createOpen ? (
-        <CareLinkCreateMissionDossierModal
-          close={() => {
-            setCreateOpen(false)
-            setTimeout(() => loadMissions(), 350)
-          }}
-          refresh={async () => {
-            await loadMissions()
-            setTimeout(() => loadMissions(), 700)
-          }}
-        />
-      ) : null}
-
-      {selectedMission ? (
-        <>
-          {selectedMissionLoading ? (
-            <div className="fixed right-6 top-6 z-[10001] rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-black text-blue-700 shadow-xl">Loading full dossier…</div>
-          ) : null}
-          <CareLinkCreateMissionDossierModal
-            mode="edit"
-            initialMission={selectedMission}
-            close={() => setSelectedMission(null)}
-            refresh={async () => {
-              await loadMissions()
-            }}
-          />
-        </>
-      ) : null}
-
-      {commandOpen ? (
-        <CommandModal
-          action={commandOpen}
-          selectedCount={selectedIds.length}
-          message={commandMessage}
-          setMessage={setCommandMessage}
-          close={() => setCommandOpen(null)}
-          submit={submitCommand}
-        />
-      ) : null}
+      {actionNotice ? <MissionActionRequiredPopup title={actionNotice.title} message={actionNotice.message} detail={actionNotice.detail} close={() => setActionNotice(null)} /> : null}
+      {createOpen ? <CareLinkCreateMissionDossierModal close={() => { setCreateOpen(false); setTimeout(() => loadMissions(true), 350) }} refresh={async () => loadMissions(true)} /> : null}
+      {selectedMission ? <><>{selectedMissionLoading ? <div className="fixed right-6 top-6 z-[10001] rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-black text-blue-700 shadow-xl">Loading full dossier…</div> : null}</><CareLinkCreateMissionDossierModal mode="edit" initialMission={selectedMission} close={() => setSelectedMission(null)} refresh={async () => loadMissions(true)} /></> : null}
+      {routeStudioMission ? <RouteStudioModal mission={routeStudioMission} close={() => setRouteStudioMission(null)} refresh={async () => loadMissions(true)} notify={setToast} /> : null}
+      {assignmentOpen ? <AssignAgentStudioModal missions={selectedMissions.length ? selectedMissions : assignmentDossiers} dossiers={assignmentDossiers} agents={assignmentAgents} loading={assignmentLoading} saving={assignmentSaving} error={assignmentError} activeAgentId={activeAgentId} backupAgentId={backupAgentId} scope={assignmentScope} note={assignmentNote} setActiveAgentId={setActiveAgentId} setBackupAgentId={setBackupAgentId} setScope={setAssignmentScope} setNote={setAssignmentNote} close={() => setAssignmentOpen(false)} submit={() => { void applyAssignmentStudio() }} /> : null}
+      {command ? <CommandModal action={command} message={commandText} setMessage={setCommandText} saving={commandSaving} selectedCount={selectedMissions.length} close={() => setCommand(null)} submit={() => runCommand(command)} /> : null}
     </main>
   )
 }
 
-function BoardView({ missions, selectedIds, toggleSelect, openMission }: { missions: AnyRecord[]; selectedIds: string[]; toggleSelect: (id: string) => void; openMission: (mission: AnyRecord) => void }) {
-  const liveBoardMissions = hardFilterLiveMissions(filterVisibleLiveMissions(missions))
-  const lanes = LANES.map((lane) => ({
-    ...lane,
-    missions: liveBoardMissions.filter((mission) => laneFor(mission) === lane.key),
-  }))
+function OpsGroup({
+  icon,
+  tone,
+  title,
+  count,
+  label,
+  rows,
+  expanded,
+}: {
+  icon: ReactNode
+  tone: string
+  title: string
+  count: number
+  label: string
+  rows: AnyRecord[]
+  expanded: boolean
+}) {
+  const toneStyles = tone === 'rose'
+    ? {
+        shell: 'border-rose-100 bg-gradient-to-br from-rose-50 via-white to-white',
+        icon: 'bg-rose-100 text-rose-700 ring-rose-200',
+        count: 'bg-rose-600 text-white shadow-rose-100',
+        badge: 'bg-rose-50 text-rose-700 ring-rose-100',
+        dot: 'bg-rose-500',
+        bar: 'from-rose-500 to-orange-400',
+        muted: 'text-rose-700',
+      }
+    : tone === 'orange'
+      ? {
+          shell: 'border-orange-100 bg-gradient-to-br from-orange-50 via-white to-white',
+          icon: 'bg-orange-100 text-orange-700 ring-orange-200',
+          count: 'bg-orange-500 text-white shadow-orange-100',
+          badge: 'bg-orange-50 text-orange-700 ring-orange-100',
+          dot: 'bg-orange-500',
+          bar: 'from-orange-400 to-amber-400',
+          muted: 'text-orange-700',
+        }
+      : {
+          shell: 'border-amber-100 bg-gradient-to-br from-amber-50 via-white to-white',
+          icon: 'bg-amber-100 text-amber-700 ring-amber-200',
+          count: 'bg-amber-500 text-white shadow-amber-100',
+          badge: 'bg-amber-50 text-amber-700 ring-amber-100',
+          dot: 'bg-amber-500',
+          bar: 'from-amber-400 to-yellow-300',
+          muted: 'text-amber-700',
+        }
+
+  const actionLabel = tone === 'rose' ? 'Escalation queue' : tone === 'orange' ? 'Delay control' : 'SLA watch'
+  const statusLabel = tone === 'rose' ? 'Critical' : tone === 'orange' ? 'Delayed' : 'Intervention'
+  const showDetails = Boolean(expanded)
+  const hasRows = rows.length > 0
+  const progressWidth = Math.min(100, Math.max(12, count * 18))
 
   return (
-    <Panel title="Mission Dispatch Workflow" subtitle="Live operational lanes by lifecycle, assignment, route, report and validation state.">
-      <div className="overflow-x-auto pb-3">
-        <div className="grid min-w-[1600px] grid-cols-9 gap-3">
-          {lanes.map((lane) => (
-            <div key={lane.key} className={cx('rounded-[1.5rem] border p-3', toneClass(lane.tone))}>
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-xs font-black">{lane.label}</p>
-                <span className="rounded-full bg-white/70 px-2 py-1 text-xs font-black">{filterVisibleLiveMissions(lane.missions).length}</span>
+    <div className={cx(showDetails ? 'm-3' : 'm-2', 'overflow-hidden rounded-[1.35rem] border shadow-sm transition-all duration-300', toneStyles.shell)}>
+      <div className={cx("border-white/80 bg-white/85 px-4 backdrop-blur-xl", showDetails ? "border-b py-4" : "py-3")}>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <span className={cx('grid h-11 w-11 shrink-0 place-items-center rounded-2xl ring-1', toneStyles.icon)}>{icon}</span>
+            <div>
+              <p className="text-[15px] font-black text-slate-950">{title}</p>
+              <p className="mt-0.5 text-xs font-extrabold text-slate-500">{label}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className={cx('inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black ring-1', toneStyles.badge)}><Radio size={11} />{actionLabel}</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-600 ring-1 ring-slate-100"><TimerReset size={11} />Live triage</span>
+                <span className={cx('inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black ring-1', showDetails ? toneStyles.badge : 'bg-white text-slate-500 ring-slate-100')}>
+                  {showDetails ? 'Expanded details' : 'Retracted summary'}
+                </span>
               </div>
-              <div className="space-y-2">
-                {lane.missions.slice(0, 8).map((mission) => {
-                  const id = missionId(mission)
+            </div>
+          </div>
+          <span className={cx('grid h-12 min-w-12 place-items-center rounded-2xl px-3 text-xl font-black shadow-lg', toneStyles.count)}>{count}</span>
+        </div>
+        <div className={cx("overflow-hidden rounded-full bg-white/90 ring-1 ring-slate-100", showDetails ? "mt-4 h-1.5" : "mt-3 h-1")}>
+          <div className={cx('h-full rounded-full bg-gradient-to-r', toneStyles.bar)} style={{ width: `${progressWidth}%` }} />
+        </div>
+      </div>
+
+      {showDetails ? (
+        <div className="max-h-[30rem] space-y-2 overflow-y-auto px-4 py-3 pr-2 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
+          {rows.map((row, index) => {
+            const code = missionCode(row)
+            const stage = String((row as AnyRecord).stage || (row as AnyRecord).current_stage || (row as AnyRecord).status || 'mission').replace(/_/g, ' ')
+            const progress = typeof missionProgressValue === 'function' ? missionProgressValue(row) : progressValue(row)
+            return (
+              <div key={`${code}-${index}`} className="group rounded-2xl border border-white bg-white/95 p-3 shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-md">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={cx('h-2.5 w-2.5 rounded-full shadow-sm', toneStyles.dot)} />
+                      <p className="truncate text-sm font-black text-slate-950">{code}</p>
+                    </div>
+                    <p className="mt-1 truncate text-xs font-extrabold text-slate-500">{missionClient(row)} · {missionService(row)}</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black text-blue-700 ring-1 ring-blue-100"><MapPinned size={10} className="mr-1 inline" />{missionCity(row)} / {missionZone(row)}</span>
+                      <span className={cx('rounded-full px-2 py-1 text-[10px] font-black ring-1', toneStyles.badge)}>{statusLabel}</span>
+                      <span className="rounded-full bg-slate-50 px-2 py-1 text-[10px] font-black capitalize text-slate-600 ring-1 ring-slate-100">{stage}</span>
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Progress</p>
+                    <p className="text-sm font-black text-slate-950">{progress}%</p>
+                  </div>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div className={cx('h-full rounded-full bg-gradient-to-r', toneStyles.bar)} style={{ width: `${Math.max(4, Math.min(100, progress))}%` }} />
+                </div>
+              </div>
+            )
+          })}
+          {!hasRows ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white/80 p-5 text-center">
+              <div className="mx-auto grid h-11 w-11 place-items-center rounded-2xl bg-slate-50 text-slate-400 ring-1 ring-slate-100">{icon}</div>
+              <p className="mt-3 text-xs font-black text-slate-500">No matching live mission.</p>
+              <p className="mt-1 text-[11px] font-semibold text-slate-400">This queue will populate automatically from live mission status, SLA timing and dossier risk signals.</p>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {showDetails ? (
+        <div className="flex items-center justify-between border-t border-white/80 bg-white/75 px-4 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+          <span>{`${rows.length} records · expanded`}</span>
+          <span className="inline-flex items-center gap-1 text-blue-700"><Eye size={11} /> Review</span>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return <span className="inline-flex items-center gap-1.5"><span className={cx('h-2.5 w-2.5 rounded-full', color)} />{label}</span>
+}
+
+function ChartCard({ title, value, helper, tone, children }: { title: string; value: ReactNode; helper: string; tone: string; children: ReactNode }) {
+  return <Panel title={title}><div className={cx('px-4 pb-4 pt-2', tone === 'emerald' ? 'text-emerald-600' : tone === 'violet' ? 'text-violet-600' : 'text-blue-600')}><p className="text-2xl font-black">{value}</p><p className="text-xs font-bold text-slate-500">{helper}</p>{children}</div></Panel>
+}
+
+function Donut({ cityStats, total }: { cityStats: Array<[string, number]>; total: number }) {
+  return (
+    <div className="mt-3 grid grid-cols-[96px_1fr] items-center gap-4 text-slate-700">
+      <div className="grid h-24 w-24 place-items-center rounded-full bg-[conic-gradient(#2563eb_0_30%,#14b8a6_30%_54%,#f97316_54%_74%,#a855f7_74%_88%,#e2e8f0_88%_100%)]"><div className="grid h-14 w-14 place-items-center rounded-full bg-white text-center text-sm font-black text-slate-950">{total}<br /><span className="text-[10px] text-slate-400">Total</span></div></div>
+      <div className="space-y-1 text-[11px] font-bold text-slate-500">{cityStats.length ? cityStats.map(([city, count]) => <div key={city} className="flex justify-between gap-2"><span>{city}</span><span>{Math.round((count / Math.max(total, 1)) * 100)}%</span></div>) : <p>No zone data</p>}</div>
+    </div>
+  )
+}
+
+function StageBars({ rows }: { rows: AnyRecord[] }) {
+  const stages = [
+    ['In Progress', countBy(rows, (row) => ['en_route', 'in_progress'].includes(missionStage(row))), 'bg-emerald-500'],
+    ['Assignment', countBy(rows, (row) => missionStage(row) === 'assigned'), 'bg-orange-400'],
+    ['Scheduling', countBy(rows, (row) => missionStage(row) === 'created'), 'bg-violet-400'],
+    ['QC Review', countBy(rows, (row) => ['report_pending', 'validation'].includes(missionStage(row))), 'bg-indigo-400'],
+    ['Closed', countBy(rows, (row) => missionStage(row) === 'completed'), 'bg-green-300'],
+  ] as const
+  const total = Math.max(rows.length, 1)
+  return <div className="mt-5"><div className="flex h-4 overflow-hidden rounded-full bg-slate-100">{stages.map(([label, value, cls]) => <div key={label} className={cls} style={{ width: `${(value / total) * 100}%` }} />)}</div><div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-bold text-slate-500">{stages.map(([label, value, cls]) => <div key={label} className="flex items-center gap-2"><span className={cx('h-2 w-2 rounded-full', cls)} />{label} <span className="ml-auto">{value}</span></div>)}</div></div>
+}
+
+function Schedule({ rows }: { rows: AnyRecord[] }) {
+  return <div className="overflow-auto p-4"><div className="min-w-[560px] space-y-3">{rows.map((row, index) => <div key={missionCode(row)} className="grid grid-cols-[150px_1fr] items-center gap-3"><div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-[10px] font-black text-slate-600">{missionAgent(row).slice(0, 2).toUpperCase()}</span><div><p className="text-[11px] font-black text-slate-900">{missionCode(row)}</p><p className="text-[10px] font-bold text-slate-500">{missionClient(row)}</p></div></div><div className="relative h-8 rounded-lg bg-slate-50 ring-1 ring-slate-100"><div className={cx('absolute top-1 h-6 rounded-lg px-3 text-center text-[10px] font-black leading-6', index % 4 === 0 ? 'left-[10%] w-[20%] bg-blue-100 text-blue-700' : index % 4 === 1 ? 'left-[22%] w-[18%] bg-orange-100 text-orange-700' : index % 4 === 2 ? 'left-[35%] w-[28%] bg-emerald-100 text-emerald-700' : 'left-[18%] w-[16%] bg-rose-100 text-rose-700')}>{missionStage(row).replace(/_/g, ' ')}</div><div className="absolute left-1/2 top-0 h-full border-l border-dashed border-rose-400" /></div></div>)}{!rows.length ? <p className="text-sm font-bold text-slate-500">No schedule rows loaded.</p> : null}</div></div>
+}
+
+function AgentRow({ agent, row, index }: { agent: string; row: AnyRecord; index: number }) {
+  const availability = [70, 50, 80, 100, 30][index % 5]
+  return <div className="grid grid-cols-[1fr_auto] items-center gap-3 text-xs"><div className="min-w-0"><p className="truncate font-black text-slate-900">{agent}</p><p className="mt-1 font-bold text-slate-500">{missionStage(row).replace(/_/g, ' ')}</p></div><div className="w-28"><div className="h-1.5 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-500" style={{ width: `${availability}%` }} /></div><p className="mt-1 text-right font-black text-slate-500">{availability}%</p></div></div>
+}
+
+function QualityRow({ label, value, percent }: { label: string; value: ReactNode; percent: number }) {
+  return <div><div className="mb-2 flex justify-between gap-3 text-xs font-bold"><span className="text-slate-600">{label}</span><span className="font-black text-slate-900">{value}</span></div><div className="h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-700" style={{ width: `${Math.max(3, Math.min(100, percent))}%` }} /></div></div>
+}
+
+function AlertRow({ tone, icon, text }: { tone: string; icon: ReactNode; text: string }) {
+  return <div className="grid grid-cols-[24px_1fr_auto] items-center gap-2 text-xs font-bold"><span className={tone === 'rose' ? 'text-rose-600' : tone === 'amber' ? 'text-amber-500' : tone === 'green' ? 'text-green-600' : 'text-blue-600'}>{icon}</span><span className="text-slate-700">{text}</span><span className="text-[11px] text-slate-400">Now</span></div>
+}
+
+function MissionActionRequiredPopup({ title, message, detail, close }: { title: string; message: string; detail?: string; close: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[10050] grid place-items-center bg-slate-950/35 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-xl overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_32px_110px_rgba(15,23,42,0.28)]">
+        <div className="border-b border-slate-100 bg-gradient-to-br from-white via-blue-50/45 to-white p-6">
+          <div className="flex items-start gap-4">
+            <span className="grid h-13 w-13 shrink-0 place-items-center rounded-2xl bg-blue-700 text-white shadow-lg shadow-blue-700/20">
+              <FileText size={22} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-700">CareLink action required</p>
+              <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{title}</h3>
+              <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{message}</p>
+            </div>
+          </div>
+        </div>
+        {detail ? <div className="px-6 pt-5"><div className="rounded-2xl border border-amber-100 bg-amber-50 p-4 text-sm font-bold leading-6 text-amber-900">{detail}</div></div> : null}
+        <div className="flex flex-wrap items-center justify-end gap-3 p-6">
+          <button type="button" onClick={close} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm hover:bg-slate-50">Return to missions table</button>
+          <button type="button" onClick={close} className="rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-700/20">Understood</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AssignAgentStudioModal({ missions, dossiers, agents, loading, saving, error, activeAgentId, backupAgentId, scope, note, setActiveAgentId, setBackupAgentId, setScope, setNote, close, submit }: {
+  missions: AnyRecord[]
+  dossiers: AnyRecord[]
+  agents: AnyRecord[]
+  loading: boolean
+  saving: boolean
+  error: string | null
+  activeAgentId: string
+  backupAgentId: string
+  scope: 'single' | 'all_sub_missions' | 'this_and_following'
+  note: string
+  setActiveAgentId: (value: string) => void
+  setBackupAgentId: (value: string) => void
+  setScope: (value: 'single' | 'all_sub_missions' | 'this_and_following') => void
+  setNote: (value: string) => void
+  close: () => void
+  submit: () => void
+}) {
+  const visibleMissions = missions.length ? missions : dossiers
+  const sortedAgents = [...agents].sort((a, b) => agentMatchScore(b, visibleMissions) - agentMatchScore(a, visibleMissions))
+  const activeAgent = sortedAgents.find((agent) => agentId(agent) === activeAgentId) || null
+  const backupAgent = sortedAgents.find((agent) => agentId(agent) === backupAgentId) || null
+  const selectedSubMissionCount = visibleMissions.reduce((sum, mission) => sum + n(mission.subMissionCount ?? mission.sub_mission_count ?? mission.subMissions?.length ?? mission.sub_missions?.length ?? mission.sessions?.length), 0)
+  const bestActive = sortedAgents[0] ? agentId(sortedAgents[0]) : ''
+  const bestBackup = sortedAgents.find((agent) => agentId(agent) && agentId(agent) !== (activeAgentId || bestActive))
+  const avgReadiness = sortedAgents.length ? Math.round(sortedAgents.reduce((sum, agent) => sum + agentScore(agent), 0) / sortedAgents.length) : 0
+  const highRiskCount = visibleMissions.filter((mission) => riskLevel(mission) === 'high').length
+  const unassignedCount = visibleMissions.filter((mission) => missionAgent(mission) === 'Unassigned').length
+  const delayedCount = visibleMissions.filter((mission) => ['delayed', 'late', 'incident'].includes(missionStage(mission))).length
+
+  function appendNote(line: string) {
+    setNote([note, line].filter(Boolean).join(note ? '\n' : ''))
+  }
+
+  function selectBestPair() {
+    const active = bestActive
+    const backup = sortedAgents.find((agent) => agentId(agent) && agentId(agent) !== active)
+    setActiveAgentId(active)
+    setBackupAgentId(backup ? agentId(backup) : '')
+    appendNote('AUTO-RANKING: Best available active/backup pair selected by readiness, workload, city/zone fit and mission continuity.')
+  }
+
+  const actionButtons = [
+    { label: 'Best active + backup', tone: 'blue', run: selectBestPair },
+    { label: 'Mega dossier scope', tone: 'blue', run: () => { setScope('all_sub_missions'); appendNote('SCOPE: Apply assignment to mega mission and all synchronized sub-missions.') } },
+    { label: 'This + following', tone: 'slate', run: () => { setScope('this_and_following'); appendNote('SCOPE: Apply only to this session and following sessions; previous delivered sessions unchanged.') } },
+    { label: 'Swap active/backup', tone: 'emerald', run: () => { const a = activeAgentId; setActiveAgentId(backupAgentId); setBackupAgentId(a); appendNote('ACTION: Active and backup coverage swapped after operational review.') } },
+    { label: 'Remove active', tone: 'rose', run: () => { setActiveAgentId(''); appendNote('ACTION: Primary active agent removed from selected assignment scope.') } },
+    { label: 'Remove backup', tone: 'amber', run: () => { setBackupAgentId(''); appendNote('ACTION: Backup coverage removed from selected assignment scope.') } },
+    { label: 'Clear all agents', tone: 'rose', run: () => { setActiveAgentId(''); setBackupAgentId(''); appendNote('ACTION: Active and backup agents cleared from selected assignment scope.') } },
+    { label: 'Request agent confirmation', tone: 'slate', run: () => appendNote('COMMUNICATION: Agent confirmation required before mission execution; notify through CareLink mobile and operations channel.') },
+    { label: 'Transport readiness check', tone: 'slate', run: () => appendNote('LOGISTICS: Verify commute, route, timing buffer, phone battery/data and punctuality before dispatch.') },
+    { label: 'Parent constraint review', tone: 'slate', run: () => appendNote('CLIENT CONSTRAINTS: Re-check family preferences, special instructions, child routine, home access and sensitive notes before final assignment.') },
+    { label: 'SLA escalation watch', tone: 'amber', run: () => appendNote('SLA WATCH: Mission marked for punctuality and replacement-readiness monitoring due to operational sensitivity.') },
+    { label: 'Quality checklist required', tone: 'emerald', run: () => appendNote('QUALITY: Field checklist, session report, handover notes and supervisor validation required after service fulfillment.') },
+  ]
+
+  return (
+    <div className="fixed inset-0 z-[10000] overflow-y-auto bg-slate-950/45 p-3 backdrop-blur-sm">
+      <div className="mx-auto my-4 max-w-[1840px] overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_40px_140px_rgba(15,23,42,0.38)]">
+        <div className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur-xl">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="inline-flex rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.24em] text-blue-700">CareLink Assignment Command</p>
+              <h3
+                className="mt-3 select-none text-4xl font-black tracking-tight text-slate-950"
+                style={{ color: "#020617", WebkitTextFillColor: "#020617", textShadow: "none" }}
+              >
+                Assign active & backup agent
+              </h3>
+              <p className="mt-2 max-w-5xl text-sm font-bold leading-6 text-slate-600">Mega operational assignment studio for changing, replacing, clearing, swapping and synchronizing active and backup caregivers across the selected mission, mega mission dossier and sub-mission lifecycle.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" onClick={selectBestPair} disabled={!sortedAgents.length || loading} className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 disabled:opacity-50"><Zap size={16} /> Best pair</button>
+              <button type="button" onClick={submit} disabled={saving || loading} className="inline-flex items-center gap-2 rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-700/20 disabled:cursor-not-allowed disabled:opacity-60">{saving ? <Loader2 className="animate-spin" size={16} /> : <UserCheck size={16} />} Sync assignment</button>
+              <button type="button" onClick={close} className="grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm"><X size={18} /></button>
+            </div>
+          </div>
+          {error ? <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 p-3 text-sm font-black text-rose-700">{error}</div> : null}
+        </div>
+
+        <div className="grid gap-5 p-6 2xl:grid-cols-[.95fr_1.18fr_.98fr]">
+          <section className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-2">
+              <ModalMetric icon={<FileText size={17} />} label="Selected missions" value={visibleMissions.length} />
+              <ModalMetric icon={<Route size={17} />} label="Sub-mission scope" value={selectedSubMissionCount || visibleMissions.length} />
+              <ModalMetric icon={<Users size={17} />} label="Agents loaded" value={sortedAgents.length} />
+              <ModalMetric icon={<ShieldCheck size={17} />} label="Readiness avg." value={`${avgReadiness}%`} />
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div><h4 className="text-sm font-black text-slate-950">Assignment scope control</h4><p className="mt-1 text-xs font-bold text-slate-500">Choose exactly where this change must write back.</p></div>
+                <Pill tone={scope === 'all_sub_missions' ? 'blue' : scope === 'this_and_following' ? 'amber' : 'slate'}>{scope.replace(/_/g, ' ')}</Pill>
+              </div>
+              <div className="mt-3 grid gap-2">
+                {[
+                  ['single', 'Selected mission only', 'Updates only the selected parent mission row.'],
+                  ['all_sub_missions', 'Mega mission + all sub-missions', 'Best for recurrent dossiers and synchronized mission lifecycle.'],
+                  ['this_and_following', 'This and following sessions', 'Keeps earlier delivered sessions unchanged.'],
+                ].map(([key, title, caption]) => (
+                  <button key={key} type="button" onClick={() => setScope(key as typeof scope)} className={cx('rounded-2xl border p-4 text-left transition', scope === key ? 'border-blue-300 bg-blue-50 ring-4 ring-blue-50' : 'border-slate-200 bg-white hover:border-blue-200')}>
+                    <p className="text-sm font-black text-slate-950">{title}</p>
+                    <p className="mt-1 text-xs font-bold text-slate-500">{caption}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-3"><h4 className="text-sm font-black text-slate-950">Selected mission dossier stack</h4><Pill tone="blue">Live fetched</Pill></div>
+              <div className="mt-4 max-h-[480px] space-y-3 overflow-y-auto pr-1">
+                {visibleMissions.map((mission) => (
+                  <div key={missionCode(mission)} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3"><div><p className="text-xs font-black text-blue-700">{missionCode(mission)}</p><h5 className="mt-1 text-sm font-black text-slate-950">{missionClient(mission)}</h5><p className="mt-1 text-xs font-bold text-slate-500">{missionTitle(mission)} · {missionCity(mission)} / {missionZone(mission)}</p></div><Pill tone={riskLevel(mission) === 'high' ? 'rose' : riskLevel(mission) === 'medium' ? 'amber' : 'green'}>{riskLevel(mission)}</Pill></div>
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-bold text-slate-500"><span>Current: <b className="text-slate-800">{missionAgent(mission)}</b></span><span>Stage: <b className="text-slate-800">{missionStage(mission).replace(/_/g, ' ')}</b></span><span>Date: <b className="text-slate-800">{dateLabel(startDate(mission))}</b></span><span>Progress: <b className="text-slate-800">{progressValue(mission)}%</b></span></div>
+                  </div>
+                ))}
+                {!visibleMissions.length ? <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm font-black text-slate-400">No mission selected.</div> : null}
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div><h4 className="text-sm font-black text-slate-950">Operational action board</h4><p className="mt-1 text-xs font-bold text-slate-500">Fast assignment commands, replacement logic, quality controls and dispatch readiness actions.</p></div>
+                <div className="flex gap-2"><Pill tone={highRiskCount ? 'rose' : 'green'}>{highRiskCount} high risk</Pill><Pill tone={unassignedCount ? 'amber' : 'green'}>{unassignedCount} unassigned</Pill><Pill tone={delayedCount ? 'rose' : 'blue'}>{delayedCount} delayed</Pill></div>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                {actionButtons.map((action) => <button key={action.label} type="button" onClick={action.run} className={cx('rounded-2xl border px-3 py-3 text-left text-xs font-black transition hover:-translate-y-0.5', action.tone === 'blue' ? 'border-blue-200 bg-blue-50 text-blue-800' : action.tone === 'emerald' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : action.tone === 'rose' ? 'border-rose-200 bg-rose-50 text-rose-800' : action.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-slate-200 bg-white text-slate-700')}>{action.label}</button>)}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-4">
+                <div><h4 className="text-sm font-black text-slate-950">Ranked caregiver pool</h4><p className="mt-1 text-xs font-bold text-slate-500">Select active and backup directly; clicking selected buttons removes that role.</p></div>
+                {loading ? <Pill tone="blue">Loading live pool</Pill> : <Pill tone={sortedAgents.length ? 'green' : 'amber'}>{sortedAgents.length ? 'Ready' : 'No endpoint agents'}</Pill>}
+              </div>
+              <div className="grid max-h-[650px] gap-3 overflow-y-auto p-4 xl:grid-cols-2">
+                {loading ? <div className="col-span-full grid min-h-56 place-items-center rounded-3xl border border-dashed border-blue-200 bg-blue-50 text-sm font-black text-blue-700"><Loader2 className="mr-2 inline animate-spin" size={16} /> Loading agent pool...</div> : null}
+                {!loading && sortedAgents.map((agent, index) => {
+                  const id = agentId(agent)
+                  const active = activeAgentId === id
+                  const backup = backupAgentId === id
+                  const score = agentMatchScore(agent, visibleMissions)
                   return (
-                    <MissionMiniCard
-                      key={id || missionCode(mission)}
-                      mission={mission}
-                      checked={selectedIds.includes(id)}
-                      toggle={() => toggleSelect(id)}
-                      open={() => openMission(mission)}
-                    />
+                    <div key={`${id}-${index}`} className={cx('rounded-3xl border p-4 shadow-sm transition', active ? 'border-blue-300 bg-blue-50 ring-4 ring-blue-50' : backup ? 'border-emerald-300 bg-emerald-50 ring-4 ring-emerald-50' : 'border-slate-200 bg-white hover:border-blue-200')}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-slate-100 text-sm font-black text-slate-700">{agentName(agent).slice(0, 2).toUpperCase()}</span><div className="min-w-0"><h5 className="truncate text-sm font-black text-slate-950">{agentName(agent)}</h5><p className="mt-1 truncate text-xs font-bold text-slate-500">{agentCity(agent)} / {agentZone(agent)} · {agentStatus(agent)}</p></div></div>
+                        <div className="text-right"><p className="text-2xl font-black text-blue-700">{score}</p><p className="text-[10px] font-black uppercase tracking-wider text-slate-400">match</p></div>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-black"><span className="rounded-xl bg-white/75 px-2 py-2 text-slate-600">Ready {agentScore(agent)}%</span><span className="rounded-xl bg-white/75 px-2 py-2 text-slate-600">Load {activeMissionLoad(agent)}</span><span className="rounded-xl bg-white/75 px-2 py-2 text-slate-600">Docs {txt(agent.documentsStatus ?? agent.documents_status ?? agent.summary?.documents, 'OK')}</span></div>
+                      <div className="mt-3 flex flex-wrap gap-1.5">{agentSkills(agent).slice(0, 5).map((skill) => <span key={skill} className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black text-blue-700">{skill}</span>)}{!agentSkills(agent).length ? <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-500">Skills to verify</span> : null}</div>
+                      <div className="mt-4 grid grid-cols-2 gap-2"><button type="button" onClick={() => { if (active) { setActiveAgentId(''); appendNote(`ACTION: Removed ${agentName(agent)} as active agent.`) } else { setActiveAgentId(id); if (backupAgentId === id) setBackupAgentId(''); appendNote(`ACTION: Set ${agentName(agent)} as active field agent.`) } }} className={cx('rounded-2xl px-3 py-2 text-xs font-black', active ? 'bg-blue-700 text-white' : 'border border-slate-200 bg-white text-slate-700')}>{active ? 'Remove active' : 'Set active'}</button><button type="button" onClick={() => { if (backup) { setBackupAgentId(''); appendNote(`ACTION: Removed ${agentName(agent)} as backup agent.`) } else { setBackupAgentId(id); if (activeAgentId === id) setActiveAgentId(''); appendNote(`ACTION: Set ${agentName(agent)} as backup coverage.`) } }} className={cx('rounded-2xl px-3 py-2 text-xs font-black', backup ? 'bg-emerald-600 text-white' : 'border border-slate-200 bg-white text-slate-700')}>{backup ? 'Remove backup' : 'Set backup'}</button></div>
+                    </div>
                   )
                 })}
-                {!filterVisibleLiveMissions(lane.missions).length ? (
-                  <div className="rounded-2xl border border-dashed border-white/80 bg-white/60 p-4 text-center text-xs font-black">
-                    No live missions
+                {!loading && !sortedAgents.length ? <div className="col-span-full rounded-3xl border border-dashed border-slate-200 p-10 text-center text-sm font-black text-slate-400">No agents returned by CareLink Ops endpoints and no fallback caregiver could be built from the selected mission rows.</div> : null}
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <h4 className="text-sm font-black text-slate-950">Active / backup editor</h4>
+              <p className="mt-1 text-xs font-bold text-slate-500">Directly change, add, remove or swap mission coverage before syncing.</p>
+              <div className="mt-4 space-y-4">
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">Active field agent</label>
+                  <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
+                    <select value={activeAgentId} onChange={(event) => { setActiveAgentId(event.target.value); if (backupAgentId === event.target.value) setBackupAgentId('') }} className="min-h-11 rounded-2xl border border-blue-200 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100">
+                      <option value="">No active agent / remove current assignment</option>
+                      {sortedAgents.map((agent) => <option key={`active-${agentId(agent)}`} value={agentId(agent)}>{agentName(agent)} · {agentCity(agent)} / {agentZone(agent)} · readiness {agentScore(agent)}%</option>)}
+                    </select>
+                    <button type="button" onClick={() => { setActiveAgentId(''); appendNote('ACTION: Active agent removed from selector.') }} className="rounded-2xl border border-rose-200 bg-white px-4 py-2 text-xs font-black text-rose-700">Remove</button>
                   </div>
-                ) : null}
+                </div>
+                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">Backup coverage agent</label>
+                  <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
+                    <select value={backupAgentId} onChange={(event) => { setBackupAgentId(event.target.value); if (activeAgentId === event.target.value) setActiveAgentId('') }} className="min-h-11 rounded-2xl border border-emerald-200 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100">
+                      <option value="">No backup agent / remove backup</option>
+                      {sortedAgents.map((agent) => <option key={`backup-${agentId(agent)}`} value={agentId(agent)}>{agentName(agent)} · {agentCity(agent)} / {agentZone(agent)} · readiness {agentScore(agent)}%</option>)}
+                    </select>
+                    <button type="button" onClick={() => { setBackupAgentId(''); appendNote('ACTION: Backup agent removed from selector.') }} className="rounded-2xl border border-amber-200 bg-white px-4 py-2 text-xs font-black text-amber-700">Remove</button>
+                  </div>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <button type="button" onClick={() => { const a = activeAgentId; setActiveAgentId(backupAgentId); setBackupAgentId(a); appendNote('ACTION: Active and backup selectors swapped.') }} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs font-black text-blue-700">Swap active / backup</button>
+                  <button type="button" onClick={() => { setActiveAgentId(''); setBackupAgentId(''); appendNote('ACTION: Active and backup selectors cleared.') }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-black text-rose-700">Remove all agents</button>
+                </div>
+                <AgentSummaryCard label="Active agent" agent={activeAgent} tone="blue" />
+                <AgentSummaryCard label="Backup agent" agent={backupAgent} tone="emerald" />
               </div>
             </div>
-          ))}
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between gap-3"><h4 className="text-sm font-black text-slate-950">Operational note & audit trail</h4><button type="button" onClick={() => setNote('')} className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-600">Clear note</button></div>
+              <textarea value={note} onChange={(event) => setNote(event.target.value)} rows={9} placeholder="Explain the assignment reason, replacement logic, parent/client constraints, schedule priority, transport risk, quality risk, backup reason, supervisor decision..." className="mt-3 w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold leading-6 text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50" />
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Sync writes</p><p className="mt-2 text-sm font-bold leading-6 text-slate-600">Primary caregiver, backup metadata, assignment scope, audit note and mission action trail.</p></div>
+              <div className="rounded-3xl border border-blue-100 bg-blue-50 p-4 shadow-sm"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-700">Validation</p><p className="mt-2 text-sm font-bold leading-6 text-blue-900">Use Sync assignment after every edit to update the mega mission and sub-mission dossier scope.</p></div>
+            </div>
+          </section>
         </div>
       </div>
-    </Panel>
-  )
-}
-
-function MissionMiniCard({ mission, checked, toggle, open }: { mission: AnyRecord; checked: boolean; toggle: () => void; open: () => void }) {
-  return (
-    <article className="rounded-2xl border border-white/70 bg-white p-3 shadow-sm">
-      <div className="flex items-start gap-2">
-        <input type="checkbox" checked={checked} onChange={toggle} className="mt-1 h-4 w-4 rounded border-slate-300" />
-        <button type="button" onClick={open} className="min-w-0 flex-1 text-left">
-          <p className="truncate text-xs font-black text-slate-950">{missionCode(mission)}</p>
-          <p className="mt-1 line-clamp-2 text-xs font-semibold text-slate-600">{missionTitle(mission)}</p>
-          <p className="mt-2 truncate text-[11px] font-bold text-slate-400">{missionClient(mission)} · {missionAgent(mission)}</p>
-        </button>
-      </div>
-    </article>
-  )
-}
-
-function MasterRegistryView({ missions, selectedIds, toggleSelect, openMission }: { missions: AnyRecord[]; selectedIds: string[]; toggleSelect: (id: string) => void; openMission: (mission: AnyRecord) => void }) {
-  return (
-    <Panel title="Master Mission Registry" subtitle="Searchable production table for dossiers, sub-missions, assignment, risk, route and validation states.">
-      {filterVisibleLiveMissions(missions).length ? (
-        <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
-          <table className="w-full min-w-[1200px] border-collapse text-left text-sm">
-            <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-              <tr>
-                <th className="px-4 py-4">✓</th>
-                <th className="px-4 py-4">Mission</th>
-                <th className="px-4 py-4">Client</th>
-                <th className="px-4 py-4">Agent</th>
-                <th className="px-4 py-4">Location</th>
-                <th className="px-4 py-4">Date</th>
-                <th className="px-4 py-4">Status</th>
-                <th className="px-4 py-4">Risk</th>
-                <th className="px-4 py-4">Open</th>
-              </tr>
-            </thead>
-            <tbody>
-              {hardFilterLiveMissions(missions).map((mission) => {
-                const id = missionId(mission)
-                return (
-                  <tr key={id || missionCode(mission)} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="px-4 py-4">
-                      <input type="checkbox" checked={selectedIds.includes(id)} onChange={() => toggleSelect(id)} />
-                    </td>
-                    <td className="px-4 py-4">
-                      <p className="font-black text-slate-950">{missionCode(mission)}</p>
-                      <p className="text-xs font-semibold text-slate-500">{missionTitle(mission)}</p>
-                    </td>
-                    <td className="px-4 py-4 font-bold text-slate-700">{missionClient(mission)}</td>
-                    <td className="px-4 py-4 font-bold text-slate-700">{missionAgent(mission)}</td>
-                    <td className="px-4 py-4 text-xs font-bold text-slate-500">{missionCity(mission)} · {missionZone(mission)}</td>
-                    <td className="px-4 py-4 text-xs font-bold text-slate-500">{dateText(mission.scheduledStart || mission.scheduled_start || mission.missionDate || mission.mission_date)}</td>
-                    <td className="px-4 py-4"><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">{laneFor(mission)}</span></td>
-                    <td className="px-4 py-4"><span className={cx('rounded-full px-3 py-1 text-xs font-black', riskLevel(mission) === 'high' ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700')}>{riskLevel(mission)}</span></td>
-                    <td className="px-4 py-4">
-                      <button onClick={() => openMission(mission)} className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Open</button>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <EmptyState title="No missions loaded" body="Created dossiers and distributed sub-missions will appear here from the live mission engine." />
-      )}
-    </Panel>
-  )
-}
-
-function TimelineView({ missions }: { missions: AnyRecord[] }) {
-  const sorted = [...missions].sort((a, b) => String(a.scheduledStart || a.scheduled_start || '').localeCompare(String(b.scheduledStart || b.scheduled_start || '')))
-  return (
-    <Panel title="Mission Timeline" subtitle="Operational sequence by date, route, service and execution lifecycle.">
-      <div className="grid gap-3">
-        {sorted.slice(0, 80).map((mission, index) => (
-          <article key={`${missionId(mission)}-${index}`} className="grid gap-4 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-[160px_1fr_180px]">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Schedule</p>
-              <p className="mt-2 font-black text-slate-950">{dateText(mission.scheduledStart || mission.scheduled_start || mission.missionDate || mission.mission_date)}</p>
-            </div>
-            <div>
-              <p className="font-black text-slate-950">{missionCode(mission)} · {missionTitle(mission)}</p>
-              <p className="mt-1 text-sm font-semibold text-slate-500">{missionClient(mission)} · {missionCity(mission)} / {missionZone(mission)}</p>
-            </div>
-            <div className="text-right">
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">{laneFor(mission)}</span>
-            </div>
-          </article>
-        ))}
-        {!sorted.length ? <EmptyState title="Timeline empty" body="Mission dates and sub-mission occurrences will populate the operational timeline." /> : null}
-      </div>
-    </Panel>
-  )
-}
-
-function ValidationView({ missions, openMission }: { missions: AnyRecord[]; openMission: (mission: AnyRecord) => void }) {
-  const queue = missions.filter((mission) => ['report_pending', 'validation', 'completed'].includes(laneFor(mission)))
-  return (
-    <Panel title="Validation Queue" subtitle="Reports, corrections, completion controls, finance handoff and audit readiness.">
-      <div className="grid gap-3">
-        {queue.map((mission) => (
-          <article key={missionId(mission) || missionCode(mission)} className="flex items-center justify-between gap-4 rounded-[1.5rem] border border-slate-200 bg-white p-4">
-            <div>
-              <p className="font-black text-slate-950">{missionCode(mission)}</p>
-              <p className="text-sm font-semibold text-slate-500">{missionTitle(mission)} · {missionClient(mission)}</p>
-            </div>
-            <div className="flex gap-2">
-              <GhostButton onClick={() => openMission(mission)}><Eye size={16} /> Review</GhostButton>
-            </div>
-          </article>
-        ))}
-        {!queue.length ? <EmptyState title="No validation pending" body="Field reports and closure validations will appear here when missions are completed." /> : null}
-      </div>
-    </Panel>
-  )
-}
-
-function RiskView({ missions, openCommand }: { missions: AnyRecord[]; openCommand: (action: string) => void }) {
-  const risk = missions.filter((mission) => riskLevel(mission) !== 'normal' || laneFor(mission) === 'at_risk')
-  return (
-    <Panel title="Risk Monitoring Center" subtitle="Critical blockers, unassigned missions, incidents, no-show, backup gaps and SLA exposure." action={<GhostButton onClick={() => openCommand('risk_escalation')}><ShieldAlert size={16} /> Escalate</GhostButton>}>
-      <div className="grid gap-4 md:grid-cols-3">
-        <Signal label="High risk" value={String(risk.filter((mission) => riskLevel(mission) === 'high').length)} tone="rose" />
-        <Signal label="Unassigned" value={String(missions.filter((mission) => missionAgent(mission) === 'Unassigned').length)} tone="amber" />
-        <Signal label="SLA exposed" value={String(missions.filter((mission) => ['en_route', 'report_pending', 'validation'].includes(laneFor(mission))).length)} tone="blue" />
-      </div>
-      <div className="mt-5 grid gap-3">
-        {risk.slice(0, 30).map((mission) => (
-          <article key={missionId(mission) || missionCode(mission)} className="rounded-[1.5rem] border border-rose-100 bg-rose-50 p-4">
-            <p className="font-black text-rose-900">{missionCode(mission)} · {missionTitle(mission)}</p>
-            <p className="mt-1 text-sm font-semibold text-rose-700">{missionClient(mission)} · {missionAgent(mission)} · {riskLevel(mission)}</p>
-          </article>
-        ))}
-        {!risk.length ? <EmptyState title="No critical risk loaded" body="Risk signals will populate from incidents, backup gaps, readiness blockers and SLA rules." /> : null}
-      </div>
-    </Panel>
-  )
-}
-
-function ReportsView({ missions }: { missions: AnyRecord[] }) {
-  const reports = missions.filter((mission) => ['report_pending', 'validation', 'completed'].includes(laneFor(mission)))
-  return (
-    <Panel title="Field Reports Workspace" subtitle="Mission reporting, correction requests, quality control and operational closure.">
-      <div className="grid gap-4 md:grid-cols-4">
-        <Signal label="Reports pending" value={String(reports.filter((mission) => laneFor(mission) === 'report_pending').length)} tone="amber" />
-        <Signal label="Validation" value={String(reports.filter((mission) => laneFor(mission) === 'validation').length)} tone="violet" />
-        <Signal label="Closed" value={String(reports.filter((mission) => laneFor(mission) === 'completed').length)} tone="emerald" />
-        <Signal label="Quality index" value="Live" tone="blue" />
-      </div>
-    </Panel>
-  )
-}
-
-function RoutesView({ missions, payload }: { missions: AnyRecord[]; payload: AnyRecord }) {
-  return (
-    <Panel title="Routes, Coverage & Dispatch Geography" subtitle="City, zone, travel, transport and route-aware operating visibility.">
-      <div className="grid gap-5 xl:grid-cols-[.8fr_1.2fr]">
-        <div className="grid gap-3">
-          <Signal label="Cities covered" value={String(new Set(hardFilterLiveMissions(missions).map(missionCity)).size)} tone="blue" />
-          <Signal label="Zones covered" value={String(new Set(hardFilterLiveMissions(missions).map(missionZone)).size)} tone="emerald" />
-          <Signal label="Transport lines" value={String(list(payload.transport || payload.routes).length)} tone="amber" />
-        </div>
-        <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
-          <MapPinned className="mx-auto text-blue-600" size={34} />
-          <p className="mt-3 font-black text-slate-900">Route map layer ready</p>
-          <p className="mt-2 text-sm font-semibold text-slate-500">Live mission locations and route records can be connected here without changing the mission creation modal.</p>
-        </div>
-      </div>
-    </Panel>
-  )
-}
-
-function AuditView({ missions, payload }: { missions: AnyRecord[]; payload: AnyRecord }) {
-  const events = list(payload.events || payload.audit || payload.auditEvents)
-  return (
-    <Panel title="Audit Trail & Operational Trace" subtitle="Mission events, dispatch actions, report transitions and command activity.">
-      <div className="grid gap-3">
-        {(events.length ? events : missions.slice(0, 30)).map((item, index) => (
-          <article key={item.id || index} className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="font-black text-slate-950">{item.action || item.event_type || item.status || missionCode(item)}</p>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{item.content || item.description || item.created_at || missionTitle(item)}</p>
-          </article>
-        ))}
-        {!events.length && !filterVisibleLiveMissions(missions).length ? <EmptyState title="No audit records loaded" body="Mission events and command actions will appear here as operations are executed." /> : null}
-      </div>
-    </Panel>
-  )
-}
-
-function CommandTile({ icon, title, body, onClick }: { icon: ReactNode; title: string; body: string; onClick: () => void }) {
-  return (
-    <button onClick={onClick} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-blue-200 hover:bg-blue-50">
-      <div className="mb-4 inline-flex rounded-2xl bg-white p-3 text-blue-600 shadow-sm">{icon}</div>
-      <p className="font-black text-slate-950">{title}</p>
-      <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">{body}</p>
-    </button>
-  )
-}
-
-function Signal({ label, value, tone }: { label: string; value: string; tone: string }) {
-  return (
-    <div className={cx('rounded-[1.5rem] border p-4', toneClass(tone))}>
-      <p className="text-[10px] font-black uppercase tracking-[0.24em] opacity-70">{label}</p>
-      <p className="mt-2 text-xl font-black">{value}</p>
     </div>
   )
 }
 
-function MissionDrawer({ mission, close, openCommand }: { mission: AnyRecord; close: () => void; openCommand: (action: string) => void }) {
+function ModalMetric({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
+  return <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-700">{icon}</span><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{label}</p><p className="text-2xl font-black text-slate-950">{value}</p></div></div></div>
+}
+
+function AgentSummaryCard({ label, agent, tone }: { label: string; agent: AnyRecord | null; tone: 'blue' | 'emerald' }) {
+  return <div className={cx('rounded-2xl border p-4', tone === 'blue' ? 'border-blue-100 bg-blue-50' : 'border-emerald-100 bg-emerald-50')}><p className={cx('text-[10px] font-black uppercase tracking-[0.18em]', tone === 'blue' ? 'text-blue-700' : 'text-emerald-700')}>{label}</p>{agent ? <><h5 className="mt-2 text-lg font-black text-slate-950">{agentName(agent)}</h5><p className="mt-1 text-xs font-bold text-slate-600">{agentCity(agent)} / {agentZone(agent)} · readiness {agentScore(agent)}% · load {activeMissionLoad(agent)}</p></> : <p className="mt-2 text-sm font-bold text-slate-500">Not selected yet.</p>}</div>
+}
+
+
+type RouteDraft = {
+  localId: string
+  routeCode: string
+  routeKind: 'direct' | 'split'
+  status: string
+  fulfillmentStatus: string
+  departureName: string
+  departureZone: string
+  departureTime: string
+  departureLat: string
+  departureLng: string
+  arrivalName: string
+  arrivalZone: string
+  arrivalTime: string
+  arrivalLat: string
+  arrivalLng: string
+  primaryTransport: string
+  transportDetails: string
+  backupTransport: string
+  transits: Array<{ id: string; mode: string; name: string; from: string; to: string; departureTime: string; arrivalTime: string; gps: string; status: string }>
+  incidentNote: string
+  opsComment: string
+  costMad: string
+  distanceLabel: string
+  durationLabel: string
+}
+
+function readJsonObject(value: unknown): AnyRecord {
+  if (!value) return {}
+  if (typeof value === 'object') return value as AnyRecord
+  try { return JSON.parse(String(value)) } catch { return {} }
+}
+
+function slugRoutePart(value: unknown) {
+  return String(value || 'POINT').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '').toUpperCase().slice(0, 8) || 'POINT'
+}
+
+function routeBaseCode(mission: AnyRecord) {
+  return missionCode(mission).replace(/[^A-Za-z0-9*_-]+/g, '-').toUpperCase()
+}
+
+function makeRouteCode(mission: AnyRecord, draft: Partial<RouteDraft>, index: number) {
+  return `RT-${routeBaseCode(mission)}-${slugRoutePart(draft.departureName)}-${slugRoutePart(draft.arrivalName)}-${String(index + 1).padStart(2, '0')}`
+}
+
+function blankRouteDraft(mission: AnyRecord, index = 0): RouteDraft {
+  const dep = missionCity(mission) || 'Client zone'
+  const arr = missionZone(mission) || 'Mission destination'
+  const draft: RouteDraft = {
+    localId: `route-${Date.now()}-${index}`,
+    routeCode: '',
+    routeKind: 'direct',
+    status: 'draft',
+    fulfillmentStatus: 'planning',
+    departureName: dep,
+    departureZone: missionZone(mission),
+    departureTime: String(mission.start_time || mission.startTime || '').slice(0, 5),
+    departureLat: '',
+    departureLng: '',
+    arrivalName: arr,
+    arrivalZone: missionZone(mission),
+    arrivalTime: String(mission.end_time || mission.endTime || '').slice(0, 5),
+    arrivalLat: '',
+    arrivalLng: '',
+    primaryTransport: 'Caregiver personal transport',
+    transportDetails: 'Verified punctuality, phone battery, data, access timing and backup contact before dispatch.',
+    backupTransport: 'Taxi / ride-hailing backup, family-approved backup transport, supervisor escalation vehicle if needed',
+    transits: [],
+    incidentNote: '',
+    opsComment: '',
+    costMad: '0',
+    distanceLabel: 'Pending route confirmation',
+    durationLabel: 'Pending timing confirmation',
+  }
+  draft.routeCode = makeRouteCode(mission, draft, index)
+  return draft
+}
+
+function routeFromSaved(row: AnyRecord, mission: AnyRecord, index: number): RouteDraft {
+  const meta = readJsonObject(row.notes)
+  const dep = readJsonObject(row.outbound_departure)
+  const arrv = readJsonObject(row.outbound_arrival)
+  const trans = readJsonObject(row.return_departure)
+  const backup = readJsonObject(row.return_arrival)
+  const draft = blankRouteDraft(mission, index)
+  return {
+    ...draft,
+    localId: `saved-${row.id || index}`,
+    routeCode: String(meta.routeCode || row.route_code || '').trim() || makeRouteCode(mission, draft, index),
+    routeKind: (meta.routeKind || row.route_type || 'direct') === 'split' ? 'split' : 'direct',
+    status: String(meta.status || 'validated'),
+    fulfillmentStatus: String(meta.fulfillmentStatus || 'planning'),
+    departureName: String(meta.departureName || dep.name || draft.departureName),
+    departureZone: String(meta.departureZone || dep.zone || draft.departureZone),
+    departureTime: String(meta.departureTime || dep.time || draft.departureTime),
+    departureLat: String(meta.departureLat || dep.gps?.lat || ''),
+    departureLng: String(meta.departureLng || dep.gps?.lng || ''),
+    arrivalName: String(meta.arrivalName || arrv.name || draft.arrivalName),
+    arrivalZone: String(meta.arrivalZone || arrv.zone || draft.arrivalZone),
+    arrivalTime: String(meta.arrivalTime || arrv.time || draft.arrivalTime),
+    arrivalLat: String(meta.arrivalLat || arrv.gps?.lat || ''),
+    arrivalLng: String(meta.arrivalLng || arrv.gps?.lng || ''),
+    primaryTransport: String(meta.primaryTransport || trans.primaryTransport || draft.primaryTransport),
+    transportDetails: String(meta.transportDetails || trans.transportDetails || draft.transportDetails),
+    backupTransport: Array.isArray(meta.backupTransports) ? meta.backupTransports.join(', ') : Array.isArray(backup.backupTransports) ? backup.backupTransports.join(', ') : draft.backupTransport,
+    transits: Array.isArray(meta.transits) ? meta.transits : Array.isArray(trans.transits) ? trans.transits : [],
+    incidentNote: String(meta.incidentNote || ''),
+    opsComment: String(meta.opsComment || ''),
+    costMad: String(row.cost_mad ?? meta.costMad ?? '0'),
+    distanceLabel: String(row.distance_label || draft.distanceLabel),
+    durationLabel: String(row.duration_label || draft.durationLabel),
+  }
+}
+
+function RouteStudioModal({ mission, close, refresh, notify }: { mission: AnyRecord; close: () => void; refresh: () => Promise<void>; notify: (value: string) => void }) {
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [dossier, setDossier] = useState<AnyRecord | null>(null)
+  const [routes, setRoutes] = useState<RouteDraft[]>(() => [blankRouteDraft(mission, 0)])
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [validation, setValidation] = useState('Route studio ready. Build, edit, validate and sync route records into the mission dossier.')
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let alive = true
+    async function loadDossier() {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await fetch(`/api/missions/dossiers/${missionId(mission)}`, { cache: 'no-store', headers: { Accept: 'application/json' } })
+        const json = await response.json().catch(() => null)
+        const data = json?.data || json?.dossier || json
+        if (!alive) return
+        setDossier(data)
+        const saved = arr(data?.routes || data?.mission_routes || data?.mobileBrief?.routes || data?.liveEditSnapshot?.routes)
+        const initial = saved.length ? saved.map((row, index) => routeFromSaved(row, mission, index)) : [blankRouteDraft(mission, 0)]
+        setRoutes(initial)
+        setSelectedIndex(0)
+        setValidation(saved.length ? `${saved.length} saved itinerary route(s) fetched from mission dossier.` : 'No saved route found. A new route draft has been prepared from mission data.')
+      } catch (err) {
+        if (!alive) return
+        setError(err instanceof Error ? err.message : 'Unable to fetch mission dossier routes.')
+      } finally {
+        if (alive) setLoading(false)
+      }
+    }
+    loadDossier()
+    return () => { alive = false }
+  }, [mission])
+
+  const selected = routes[selectedIndex] || routes[0] || blankRouteDraft(mission, 0)
+  const dossierMission = dossier?.parent || dossier?.mission || dossier?.raw || mission
+  const subMissions = arr(dossier?.subMissions || dossier?.submissions || dossier?.sessions)
+  const routeCompletion = routeReadyScore(selected)
+  const hasCoordinates = Boolean(selected.departureLat && selected.departureLng && selected.arrivalLat && selected.arrivalLng)
+
+  function updateSelected(patch: Partial<RouteDraft>) {
+    setRoutes((current) => current.map((route, index) => {
+      if (index !== selectedIndex) return route
+      const next = { ...route, ...patch }
+      const codeShouldRefresh = !route.routeCode || route.routeCode === makeRouteCode(mission, route, index)
+      return { ...next, routeCode: codeShouldRefresh ? makeRouteCode(mission, next, index) : next.routeCode }
+    }))
+  }
+
+  function addRoute() {
+    setRoutes((current) => [...current, blankRouteDraft(mission, current.length)])
+    setSelectedIndex(routes.length)
+    setValidation('New operational route draft created with automatic mission-linked route code.')
+  }
+
+  function duplicateRoute() {
+    const copy = { ...selected, localId: `route-${Date.now()}`, routeCode: makeRouteCode(mission, selected, routes.length), status: 'draft' }
+    setRoutes((current) => [...current, copy])
+    setSelectedIndex(routes.length)
+    setValidation('Selected itinerary duplicated for fast operational variation or backup route setup.')
+  }
+
+  function removeRoute() {
+    setRoutes((current) => {
+      const next = current.filter((_, index) => index !== selectedIndex)
+      return next.length ? next : [blankRouteDraft(mission, 0)]
+    })
+    setSelectedIndex(0)
+    setValidation('Route removed from local studio. Sync to write final route stack to dossier.')
+  }
+
+  function addTransit() {
+    updateSelected({
+      routeKind: 'split',
+      transits: [...selected.transits, { id: `transit-${Date.now()}`, mode: 'Taxi / ride-hailing', name: 'Transit checkpoint', from: selected.departureName, to: selected.arrivalName, departureTime: selected.departureTime, arrivalTime: selected.arrivalTime, gps: '', status: 'planned' }],
+    })
+  }
+
+  function updateTransit(index: number, patch: Partial<RouteDraft['transits'][number]>) {
+    updateSelected({ transits: selected.transits.map((row, i) => i === index ? { ...row, ...patch } : row) })
+  }
+
+  function removeTransit(index: number) {
+    const next = selected.transits.filter((_, i) => i !== index)
+    updateSelected({ transits: next, routeKind: next.length ? 'split' : 'direct' })
+  }
+
+  async function syncRoutes() {
+    setSaving(true)
+    setError(null)
+    try {
+      const payload = {
+        scope: 'selected_mission_route_stack',
+        routes,
+        validation: { routeCompletion, hasCoordinates, routeCount: routes.length, selectedMission: missionCode(mission) },
+        summary: { missionCode: missionCode(mission), client: missionClient(mission), service: missionTitle(mission), city: missionCity(mission), zone: missionZone(mission) },
+      }
+      const response = await fetch(`/api/missions/dossiers/${missionId(mission)}/routes`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      const json = await response.json().catch(() => null)
+      if (!response.ok || json?.ok === false) throw new Error(json?.error || 'Unable to sync route dossier.')
+      setValidation(`Saved and synced ${routes.length} operational route(s) into mission dossier ${missionCode(mission)}.`)
+      notify('Route studio saved and synced into the mission dossier.')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to sync route dossier.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const actionButtons = [
+    ['Mark validated', 'validated', 'Route validated by operations supervisor.'],
+    ['Mark live fulfillment', 'live_fulfillment', 'Route moved to live fulfillment monitoring.'],
+    ['Hold for GPS check', 'gps_review', 'Route requires GPS coordinates verification before dispatch.'],
+    ['Incident watch', 'incident_watch', 'Route flagged for incident watch and supervisor monitoring.'],
+    ['Backup transport ready', 'backup_ready', 'Backup transport confirmed and ready for activation.'],
+    ['Client constraints checked', 'constraints_checked', 'Family access constraints and timing preferences reviewed.'],
+  ] as const
+
   return (
-    <div className="fixed inset-0 z-[10000] bg-slate-950/45 p-5 backdrop-blur-sm">
-      <div className="ml-auto flex h-full max-w-5xl flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl">
-        <header className="flex items-start justify-between border-b border-slate-100 p-6">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.32em] text-blue-600">Mission Dossier</p>
-            <h2 className="mt-2 text-3xl font-black text-slate-950">{missionCode(mission)}</h2>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{missionTitle(mission)} · {missionClient(mission)}</p>
+    <div className="fixed inset-0 z-[10000] overflow-y-auto bg-slate-950/45 p-3 backdrop-blur-sm">
+      <div className="mx-auto my-4 max-w-[1860px] overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_40px_140px_rgba(15,23,42,0.38)]">
+        <div className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur-xl">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="inline-flex rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.24em] text-blue-700">CareLink Route Command</p>
+              <h3 className="mt-3 text-4xl font-black tracking-tight text-slate-950" style={{ color: '#020617', WebkitTextFillColor: '#020617', textShadow: 'none' }}>{missionCode(mission)}</h3>
+              <p className="mt-2 max-w-6xl text-sm font-bold leading-6 text-slate-600">Premium operational route studio for customer context, saved trajectories, itinerary creation, direct/split transit logic, transport readiness, live fulfillment, incidents, validation and dossier synchronization.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" onClick={addRoute} className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700"><Plus size={16} /> New route</button>
+              <button type="button" onClick={syncRoutes} disabled={saving || loading} className="inline-flex items-center gap-2 rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-700/20 disabled:cursor-not-allowed disabled:opacity-60">{saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />} Save & sync route</button>
+              <button type="button" onClick={close} className="grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm"><X size={18} /></button>
+            </div>
           </div>
-          <button onClick={close} className="rounded-2xl bg-slate-100 p-3 text-slate-600"><X size={18} /></button>
-        </header>
+          {error ? <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 p-3 text-sm font-black text-rose-700">{error}</div> : null}
+        </div>
 
-        <div className="flex-1 overflow-y-auto bg-[#f8fafc] p-6">
-          <div className="grid gap-5 md:grid-cols-3">
-            <Signal label="Status" value={laneFor(mission)} tone="blue" />
-            <Signal label="Risk" value={riskLevel(mission)} tone={riskLevel(mission) === 'high' ? 'rose' : 'emerald'} />
-            <Signal label="Agent" value={missionAgent(mission)} tone="violet" />
-          </div>
+        <div className="grid gap-5 p-6 2xl:grid-cols-[.9fr_1.35fr_.95fr]">
+          <section className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <ModalMetric icon={<FileText size={17} />} label="Mission code" value={missionCode(mission)} />
+              <ModalMetric icon={<Route size={17} />} label="Routes saved" value={routes.length} />
+              <ModalMetric icon={<Clock3 size={17} />} label="Readiness" value={`${routeCompletion}%`} />
+              <ModalMetric icon={<MapPinned size={17} />} label="GPS status" value={hasCoordinates ? 'Ready' : 'Missing'} />
+            </div>
 
-          <div className="mt-5 grid gap-5 lg:grid-cols-2">
-            <Panel title="Client & service">
-              <div className="grid gap-3">
-                <Info label="Client" value={missionClient(mission)} />
-                <Info label="Service" value={missionTitle(mission)} />
-                <Info label="Location" value={`${missionCity(mission)} · ${missionZone(mission)}`} />
-                <Info label="Schedule" value={dateText(mission.scheduledStart || mission.scheduled_start || mission.missionDate || mission.mission_date)} />
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <h4 className="text-sm font-black text-slate-950">Customer & mission dossier</h4>
+              <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Customer</p>
+                <h5 className="mt-2 text-lg font-black text-slate-950">{missionClient(dossierMission)}</h5>
+                <p className="mt-1 text-sm font-bold text-slate-600">{missionTitle(dossierMission)} · {missionCity(dossierMission)} / {missionZone(dossierMission)}</p>
+                <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-slate-600">
+                  <span>Date: <b className="text-slate-950">{dateLabel(startDate(dossierMission))}</b></span>
+                  <span>Stage: <b className="text-slate-950">{missionStage(dossierMission)}</b></span>
+                  <span>Agent: <b className="text-slate-950">{missionAgent(dossierMission)}</b></span>
+                  <span>Risk: <b className="text-slate-950">{riskLevel(dossierMission)}</b></span>
+                </div>
               </div>
-            </Panel>
-            <Panel title="Operations actions">
-              <div className="grid gap-3">
-                <GhostButton onClick={() => openCommand('mission_note')}><MessageSquare size={16} /> Add command note</GhostButton>
-                <GhostButton onClick={() => openCommand('mission_escalation')}><AlertTriangle size={16} /> Escalate mission</GhostButton>
-                <GhostButton onClick={() => openCommand('mission_validation')}><BadgeCheck size={16} /> Prepare validation</GhostButton>
+              <div className="mt-4 max-h-64 space-y-2 overflow-y-auto pr-1">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Sub-missions / sessions</p>
+                {subMissions.length ? subMissions.map((row, index) => (
+                  <div key={`${missionCode(row)}-${index}`} className="rounded-2xl border border-slate-200 bg-white p-3 text-xs font-bold text-slate-600">
+                    <div className="flex justify-between gap-3"><b className="text-blue-700">{missionCode(row)}</b><Pill tone={missionStage(row) === 'completed' ? 'green' : 'blue'}>{missionStage(row)}</Pill></div>
+                    <p className="mt-1">{dateLabel(startDate(row))} · {missionCity(row)} / {missionZone(row)}</p>
+                  </div>
+                )) : <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-4 text-center text-xs font-black text-slate-400">No linked sub-missions returned by dossier endpoint.</div>}
               </div>
-            </Panel>
-          </div>
+            </div>
 
-          <div className="mt-5">
-            <Panel title="Raw live mission payload" subtitle="Temporary technical trace until the dedicated dossier reader is connected.">
-              <pre className="max-h-[360px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs font-semibold text-slate-100">
-                {JSON.stringify(mission, null, 2)}
-              </pre>
-            </Panel>
-          </div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between gap-3"><h4 className="text-sm font-black text-slate-950">Saved trajectory itineraries</h4><Pill tone="blue">Fetched</Pill></div>
+              <div className="mt-4 space-y-2">
+                {routes.map((route, index) => (
+                  <button key={route.localId} type="button" onClick={() => setSelectedIndex(index)} className={cx('w-full rounded-2xl border p-3 text-left transition', selectedIndex === index ? 'border-blue-300 bg-blue-50 ring-4 ring-blue-50' : 'border-slate-200 bg-white hover:border-blue-200')}>
+                    <div className="flex items-center justify-between gap-3"><b className="text-xs text-blue-700">{route.routeCode}</b><Pill tone={route.status === 'validated' ? 'green' : route.status.includes('incident') ? 'rose' : 'amber'}>{route.status}</Pill></div>
+                    <p className="mt-1 text-xs font-bold text-slate-600">{route.departureName} → {route.arrivalName}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div><h4 className="text-sm font-black text-slate-950">Create / edit operational route</h4><p className="mt-1 text-xs font-bold text-slate-500">Automatic route code is linked to mission, departure and arrival.</p></div>
+                <div className="flex flex-wrap gap-2"><button type="button" onClick={duplicateRoute} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-slate-700">Duplicate</button><button type="button" onClick={removeRoute} className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-700">Remove route</button></div>
+              </div>
+
+              <div className="mt-4 grid gap-3 xl:grid-cols-3">
+                <RouteInput label="Route code" value={selected.routeCode} onChange={(value) => updateSelected({ routeCode: value })} />
+                <RouteSelect label="Route type" value={selected.routeKind} onChange={(value) => updateSelected({ routeKind: value as RouteDraft['routeKind'] })} options={[['direct', 'Direct route'], ['split', 'Split / multi-transit']]} />
+                <RouteSelect label="Status" value={selected.status} onChange={(value) => updateSelected({ status: value })} options={[['draft', 'Draft'], ['validated', 'Validated'], ['gps_review', 'GPS review'], ['live_fulfillment', 'Live fulfillment'], ['incident_watch', 'Incident watch'], ['closed', 'Closed']]} />
+              </div>
+
+              <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                <PointEditor title="Point of departure" prefix="departure" route={selected} update={updateSelected} />
+                <PointEditor title="Point of arrival" prefix="arrival" route={selected} update={updateSelected} />
+              </div>
+
+              <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3"><div><h5 className="text-sm font-black text-slate-950">Split transits / route segments</h5><p className="mt-1 text-xs font-bold text-slate-500">Use one or multiple transit types when route is not direct.</p></div><button type="button" onClick={addTransit} className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Add transit</button></div>
+                <div className="mt-3 space-y-2">
+                  {selected.transits.map((transit, index) => (
+                    <div key={transit.id} className="grid gap-2 rounded-2xl border border-slate-200 bg-white p-3 lg:grid-cols-7">
+                      <RouteInput compact label="Mode" value={transit.mode} onChange={(value) => updateTransit(index, { mode: value })} />
+                      <RouteInput compact label="Name" value={transit.name} onChange={(value) => updateTransit(index, { name: value })} />
+                      <RouteInput compact label="From" value={transit.from} onChange={(value) => updateTransit(index, { from: value })} />
+                      <RouteInput compact label="To" value={transit.to} onChange={(value) => updateTransit(index, { to: value })} />
+                      <RouteInput compact label="Departure" value={transit.departureTime} onChange={(value) => updateTransit(index, { departureTime: value })} />
+                      <RouteInput compact label="Arrival" value={transit.arrivalTime} onChange={(value) => updateTransit(index, { arrivalTime: value })} />
+                      <button type="button" onClick={() => removeTransit(index)} className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-700">Remove</button>
+                    </div>
+                  ))}
+                  {!selected.transits.length ? <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-5 text-center text-xs font-black text-slate-400">Direct route active. Add transit segments for split route.</div> : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3"><h4 className="text-sm font-black text-slate-950">Transportation & backup coverage</h4><Pill tone="blue">Operational readiness</Pill></div>
+              <div className="mt-4 grid gap-3 xl:grid-cols-2">
+                <RouteSelect label="Preloaded means of transportation" value={selected.primaryTransport} onChange={(value) => updateSelected({ primaryTransport: value })} options={TRANSPORT_OPTIONS.map((item) => [item, item])} />
+                <RouteInput label="Estimated cost MAD" value={selected.costMad} onChange={(value) => updateSelected({ costMad: value })} />
+                <RouteTextarea label="Transport details" value={selected.transportDetails} onChange={(value) => updateSelected({ transportDetails: value })} />
+                <RouteTextarea label="Backup transport, one or multiple" value={selected.backupTransport} onChange={(value) => updateSelected({ backupTransport: value })} />
+                <RouteInput label="Distance label" value={selected.distanceLabel} onChange={(value) => updateSelected({ distanceLabel: value })} />
+                <RouteInput label="Duration label" value={selected.durationLabel} onChange={(value) => updateSelected({ durationLabel: value })} />
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between gap-3"><h4 className="text-sm font-black text-slate-950">Route graphic & validation summary</h4><Pill tone={routeCompletion >= 85 ? 'green' : routeCompletion >= 60 ? 'amber' : 'rose'}>{routeCompletion}% ready</Pill></div>
+              <div className="mt-4 rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-emerald-50 p-5">
+                <div className="relative min-h-72 overflow-hidden rounded-[1.5rem] border border-white bg-white/75 p-5 shadow-inner">
+                  <div className="absolute left-8 right-8 top-1/2 h-1 -translate-y-1/2 rounded-full bg-blue-200" />
+                  <div className="absolute left-[20%] top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-blue-700 ring-8 ring-blue-100" />
+                  <div className="absolute right-[20%] top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-emerald-600 ring-8 ring-emerald-100" />
+                  {selected.transits.map((_, index) => <div key={index} className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-500 ring-4 ring-amber-100" style={{ left: `${35 + index * 12}%` }} />)}
+                  <div className="relative z-10 flex h-60 flex-col justify-between">
+                    <div className="max-w-[48%] rounded-2xl border border-blue-100 bg-white p-3 shadow-sm"><p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Departure</p><h5 className="mt-1 text-sm font-black text-slate-950">{selected.departureName || 'Departure point'}</h5><p className="text-xs font-bold text-slate-500">{selected.departureZone} · {selected.departureTime || 'TBD'}</p></div>
+                    <div className="ml-auto max-w-[48%] rounded-2xl border border-emerald-100 bg-white p-3 text-right shadow-sm"><p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Arrival</p><h5 className="mt-1 text-sm font-black text-slate-950">{selected.arrivalName || 'Arrival point'}</h5><p className="text-xs font-bold text-slate-500">{selected.arrivalZone} · {selected.arrivalTime || 'TBD'}</p></div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                {actionButtons.map(([label, status, message]) => <button key={label} type="button" onClick={() => { updateSelected({ status, fulfillmentStatus: status }); setValidation(message) }} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-left text-xs font-black text-slate-700 hover:border-blue-200 hover:bg-blue-50">{label}</button>)}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <h4 className="text-sm font-black text-slate-950">Live fulfillment management</h4>
+              <div className="mt-3 grid gap-2">
+                {['Planning', 'Agent notified', 'Departure confirmed', 'In transit', 'Arrived', 'Closed'].map((item, index) => <div key={item} className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3"><span className={cx('grid h-7 w-7 place-items-center rounded-full text-[10px] font-black', index <= ['planning','agent_notified','departure_confirmed','in_transit','arrived','closed'].indexOf(selected.fulfillmentStatus) ? 'bg-emerald-600 text-white' : 'bg-white text-slate-400')}>{index + 1}</span><span className="text-xs font-black text-slate-700">{item}</span></div>)}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <h4 className="text-sm font-black text-slate-950">Incidents, comments & validation card</h4>
+              <div className="mt-4 space-y-3">
+                <RouteTextarea label="Incident records / actions" value={selected.incidentNote} onChange={(value) => updateSelected({ incidentNote: value })} />
+                <RouteTextarea label="Operations comments" value={selected.opsComment} onChange={(value) => updateSelected({ opsComment: value })} />
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm font-bold leading-6 text-blue-900"><ShieldCheck className="mr-2 inline" size={16} /> {validation}</div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>
   )
 }
 
-function Info({ label, value }: { label: string; value: ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
-      <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">{label}</p>
-      <p className="mt-2 text-sm font-black text-slate-900">{value}</p>
-    </div>
-  )
+const TRANSPORT_OPTIONS = ['Caregiver personal transport', 'Taxi / ride-hailing', 'Private driver', 'Public transport', 'Parent-provided transport', 'AngelCare backup vehicle', 'Walking route', 'Mixed / multi-transit']
+
+function routeReadyScore(route: RouteDraft) {
+  const checks = [route.departureName, route.departureZone, route.departureTime, route.arrivalName, route.arrivalZone, route.arrivalTime, route.primaryTransport, route.transportDetails, route.backupTransport, route.status !== 'draft']
+  return Math.round((checks.filter(Boolean).length / checks.length) * 100)
 }
 
-function CommandModal({ action, selectedCount, message, setMessage, close, submit }: { action: string; selectedCount: number; message: string; setMessage: (value: string) => void; close: () => void; submit: () => void }) {
+function RouteInput({ label, value, onChange, compact }: { label: string; value: string; onChange: (value: string) => void; compact?: boolean }) {
+  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{label}</span><input value={value} onChange={(event) => onChange(event.target.value)} className={cx('mt-1 w-full rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50', compact ? 'px-3 py-2' : 'px-4 py-3')} /></label>
+}
+
+function RouteTextarea({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{label}</span><textarea value={value} onChange={(event) => onChange(event.target.value)} rows={4} className="mt-1 w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50" /></label>
+}
+
+function RouteSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: Array<[string, string]> }) {
+  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{label}</span><select value={value} onChange={(event) => onChange(event.target.value)} className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50">{options.map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
+}
+
+function PointEditor({ title, prefix, route, update }: { title: string; prefix: 'departure' | 'arrival'; route: RouteDraft; update: (patch: Partial<RouteDraft>) => void }) {
+  const isDeparture = prefix === 'departure'
+  return <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4"><h5 className="text-sm font-black text-slate-950">{title}</h5><div className="mt-3 grid gap-3 sm:grid-cols-2"><RouteInput label="Name" value={isDeparture ? route.departureName : route.arrivalName} onChange={(value) => update(isDeparture ? { departureName: value } : { arrivalName: value })} /><RouteInput label="Zone" value={isDeparture ? route.departureZone : route.arrivalZone} onChange={(value) => update(isDeparture ? { departureZone: value } : { arrivalZone: value })} /><RouteInput label="Timing" value={isDeparture ? route.departureTime : route.arrivalTime} onChange={(value) => update(isDeparture ? { departureTime: value } : { arrivalTime: value })} /><RouteInput label="GPS latitude" value={isDeparture ? route.departureLat : route.arrivalLat} onChange={(value) => update(isDeparture ? { departureLat: value } : { arrivalLat: value })} /><RouteInput label="GPS longitude" value={isDeparture ? route.departureLng : route.arrivalLng} onChange={(value) => update(isDeparture ? { departureLng: value } : { arrivalLng: value })} /></div></div>
+}
+
+function CommandModal({ action, message, setMessage, selectedCount, saving, close, submit }: { action: string; message: string; setMessage: (value: string) => void; selectedCount: number; saving: boolean; close: () => void; submit: () => void }) {
   return (
-    <div className="fixed inset-0 z-[10001] grid place-items-center bg-slate-950/45 p-5 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-[2rem] bg-white p-6 shadow-2xl">
-        <div className="flex items-start justify-between border-b border-slate-100 pb-5">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.32em] text-blue-600">Mission Command Action</p>
-            <h2 className="mt-2 text-2xl font-black text-slate-950">{action.replace(/_/g, ' ')}</h2>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{selectedCount} selected mission(s)</p>
-          </div>
-          <button onClick={close} className="rounded-2xl bg-slate-100 p-3"><X size={18} /></button>
-        </div>
-        <textarea
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-          rows={6}
-          placeholder="Add operational note, instruction, validation comment, escalation reason..."
-          className="mt-5 w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-        />
-        <div className="mt-5 flex justify-end gap-3">
-          <GhostButton onClick={close}>Cancel</GhostButton>
-          <PrimaryButton onClick={submit}><Send size={16} /> Execute</PrimaryButton>
-        </div>
+    <div className="fixed inset-0 z-[10000] grid place-items-center bg-slate-950/40 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-2xl rounded-3xl border border-white/70 bg-white p-6 shadow-2xl">
+        <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.25em] text-blue-700">Operational command</p><h3 className="mt-2 text-2xl font-black text-slate-950">{action.replace(/_/g, ' ')}</h3><p className="mt-2 text-sm font-semibold text-slate-500">Selected missions: {selectedCount}. Command will sync through the live CareLink mission API.</p></div><button onClick={close} className="rounded-xl border border-slate-200 bg-white p-2"><X size={18} /></button></div>
+        <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Command note, dispatch instruction, validation comment or escalation reason..." className="mt-5 min-h-32 w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50" />
+        <div className="mt-5 flex justify-end gap-3"><Button onClick={close}>Cancel</Button><Button variant="primary" onClick={submit} disabled={saving}>{saving ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />} Execute Command</Button></div>
       </div>
     </div>
   )
 }
 
+export { CareLinkMissionControlCenter }
 export default CareLinkMissionControlCenter

@@ -33,9 +33,9 @@ function Badge({
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-9500">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{helper}</p>
+      <p className="mt-2 text-sm text-slate-9500">{helper}</p>
     </article>
   );
 }
@@ -74,7 +74,7 @@ export default function AmbassadorProgramRulesEngineWorkspace() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-bold text-slate-950">{program.name}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-9500">
                       {program.type} · Owner: {program.owner} · Cities: {program.cityScope.join(", ")}
                     </p>
                   </div>
@@ -132,7 +132,7 @@ export default function AmbassadorProgramRulesEngineWorkspace() {
                     <h3 className="font-semibold text-slate-950">{item.title}</h3>
                     <Badge tone="danger">{item.severity}</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">{item.recommendation}</p>
+                  <p className="mt-2 text-sm text-slate-9500">{item.recommendation}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">Owner: {item.owner}</p>
                 </article>
               ))}
@@ -142,7 +142,7 @@ export default function AmbassadorProgramRulesEngineWorkspace() {
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 p-5">
               <h2 className="text-lg font-bold text-slate-950">Tier rule matrix</h2>
-              <p className="mt-1 text-sm text-slate-500">Reusable progression rules for ambassador tiers.</p>
+              <p className="mt-1 text-sm text-slate-9500">Reusable progression rules for ambassador tiers.</p>
             </div>
             <div className="divide-y divide-slate-100">
               {snapshot.programs[0]?.tierRules.map((tier) => (
@@ -151,7 +151,7 @@ export default function AmbassadorProgramRulesEngineWorkspace() {
                     <h3 className="font-semibold text-slate-950">{tier.label}</h3>
                     <Badge tone="info">{tier.commissionRate}%</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-slate-9500">
                     Health {tier.minHealthScore}+ · Proofs {tier.minApprovedProofs}+ · Revenue {tier.minRevenueMad.toLocaleString()} MAD+
                   </p>
                   <p className="mt-2 text-sm font-medium text-slate-700">Bonus: {tier.monthlyBonusMad.toLocaleString()} MAD/month</p>

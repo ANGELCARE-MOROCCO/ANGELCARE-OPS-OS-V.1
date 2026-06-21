@@ -31,19 +31,19 @@ export default function ApprovalSlaEscalationEngine() {
   })
 
   return (
-    <main className="p-6 bg-slate-50 min-h-screen">
+    <main data-market-os-root className="p-6 bg-slate-50 min-h-screen">
       <h1 className="text-3xl font-black mb-6">
         Approval SLA Escalation Engine
       </h1>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow">
-          <p className="text-sm text-gray-500">Total Objectives</p>
+          <p className="text-sm text-slate-9500">Total Objectives</p>
           <p className="text-2xl font-bold">{objectives.length}</p>
         </div>
 
         <div className="bg-white p-4 rounded-xl shadow">
-          <p className="text-sm text-gray-500">At Risk / Overdue</p>
+          <p className="text-sm text-slate-9500">At Risk / Overdue</p>
           <p className="text-2xl font-bold text-red-600">{atRisk.length}</p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function ApprovalSlaEscalationEngine() {
         ))}
 
         {!atRisk.length && (
-          <p className="text-gray-400 text-sm">No SLA issues</p>
+          <p className="text-slate-500 text-sm">No SLA issues</p>
         )}
       </div>
     </main>

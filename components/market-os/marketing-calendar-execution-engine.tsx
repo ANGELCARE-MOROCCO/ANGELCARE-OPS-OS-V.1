@@ -49,35 +49,35 @@ export default function MarketingCalendarExecutionEngine() {
   const p0Count = calendarItems.filter((item) => item.priority === "P0").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 21
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Marketing Calendar & Daily Execution Board
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer creates the daily operating rhythm for Market-OS: today’s approvals,
             launches, production blocks, reviews, partnership actions and execution priorities.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Today / Doing</p>
+              <p className="text-xs uppercase text-slate-600">Today / Doing</p>
               <p className="mt-2 text-3xl font-black">{todayCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Blocked</p>
+              <p className="text-xs uppercase text-slate-600">Blocked</p>
               <p className="mt-2 text-3xl font-black">{blockedCount}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk</p>
+              <p className="text-xs uppercase text-slate-600">High Risk</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">P0 Items</p>
+              <p className="text-xs uppercase text-slate-600">P0 Items</p>
               <p className="mt-2 text-3xl font-black">{p0Count}</p>
             </div>
           </div>
@@ -143,34 +143,34 @@ export default function MarketingCalendarExecutionEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{item.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     {item.date} · {item.timeBlock} · Owner: {item.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Linked Engine</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Linked Engine</p>
                   <p className="mt-1 max-w-[220px] text-sm font-bold">{item.linkedEngine}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Expected Output</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Expected Output</p>
                   <p className="mt-2 text-sm text-slate-700">{item.expectedOutput}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Blocker</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Blocker</p>
                   <p className="mt-2 text-sm text-slate-700">{item.blocker}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="calendar" engine="content" actionKey="start_work_block" actionLabel="Start Work Block" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Start Work Block</MarketActionButton>
+                <MarketActionButton moduleKey="calendar" engine="content" actionKey="start_work_block" actionLabel="Start Work Block" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Start Work Block</MarketActionButton>
                 <MarketActionButton moduleKey="calendar" engine="content" actionKey="mark_done" actionLabel="Mark Done" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Mark Done</MarketActionButton>
                 <MarketActionButton moduleKey="calendar" engine="content" actionKey="move_date" actionLabel="Move Date" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Move Date</MarketActionButton>
                 <MarketActionButton moduleKey="calendar" engine="content" actionKey="escalate_blocker" actionLabel="Escalate Blocker" className="rounded-2xl border border-red-200 px-4 py-2 text-sm font-bold text-red-700">Escalate Blocker</MarketActionButton>

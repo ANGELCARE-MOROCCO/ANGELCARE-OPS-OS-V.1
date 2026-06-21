@@ -58,16 +58,16 @@ export default function StrategyExecutionEngine() {
   const evidenceTasks = executionTasks.filter((t) => t.evidenceRequired).length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 2
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Strategy Execution Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This is the execution layer connected logically after the Strategy Growth Control Room.
             It turns strategic objectives into accountable daily tasks with owners, deadlines,
             SLA risk, proof requirements, approvals and expected business impact.
@@ -75,19 +75,19 @@ export default function StrategyExecutionEngine() {
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Total Tasks</p>
+              <p className="text-xs uppercase text-slate-600">Total Tasks</p>
               <p className="mt-2 text-3xl font-black">{totalTasks}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Blocked</p>
+              <p className="text-xs uppercase text-slate-600">Blocked</p>
               <p className="mt-2 text-3xl font-black">{blockedTasks}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Need Approval</p>
+              <p className="text-xs uppercase text-slate-600">Need Approval</p>
               <p className="mt-2 text-3xl font-black">{approvalTasks}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Need Evidence</p>
+              <p className="text-xs uppercase text-slate-600">Need Evidence</p>
               <p className="mt-2 text-3xl font-black">{evidenceTasks}</p>
             </div>
           </div>
@@ -137,15 +137,15 @@ export default function StrategyExecutionEngine() {
                     </div>
 
                     <h2 className="text-xl font-black">{task.title}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-9500">
                       Objective: {task.objective} · Owner: {task.owner} · Department: {task.department}
                     </p>
                   </div>
 
                   <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                    <p className="text-xs font-bold uppercase text-slate-500">Deadline</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Deadline</p>
                     <p className="mt-1 font-black">{task.deadline}</p>
-                    <p className="text-xs text-slate-500">SLA: {task.slaHours}h</p>
+                    <p className="text-xs text-slate-9500">SLA: {task.slaHours}h</p>
                   </div>
                 </div>
 
@@ -155,27 +155,27 @@ export default function StrategyExecutionEngine() {
                     <span>{task.progress}%</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-slate-950" style={{ width: `${task.progress}%` }} />
+                    <div className="h-full rounded-full bg-white" style={{ width: `${task.progress}%` }} />
                   </div>
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-3">
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Blocker</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Blocker</p>
                     <p className="mt-2 text-sm text-slate-700">{task.blocker}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                     <p className="mt-2 text-sm text-slate-700">{task.nextAction}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <p className="text-xs font-bold uppercase text-slate-500">Expected Impact</p>
+                    <p className="text-xs font-bold uppercase text-slate-9500">Expected Impact</p>
                     <p className="mt-2 text-sm text-slate-700">{task.expectedImpact}</p>
                   </div>
                 </div>
 
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <MarketActionButton moduleKey="strategy-execution-engine" actionKey="mark_doing" actionLabel="Mark Doing" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">
+                  <MarketActionButton moduleKey="strategy-execution-engine" actionKey="mark_doing" actionLabel="Mark Doing" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">
                     Mark Doing
                   </MarketActionButton>
                   <MarketActionButton moduleKey="strategy-execution-engine" actionKey="submit_for_review" actionLabel="Submit for Review" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">

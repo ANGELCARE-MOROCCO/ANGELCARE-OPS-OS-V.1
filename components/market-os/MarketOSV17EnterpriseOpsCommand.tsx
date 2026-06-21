@@ -241,10 +241,10 @@ function statusClass(status: Status) {
 }
 
 function priorityClass(priority: Priority) {
-  if (priority === "P0") return "bg-red-700 text-white"
-  if (priority === "P1") return "bg-blue-700 text-white"
-  if (priority === "P2") return "bg-slate-700 text-white"
-  return "bg-slate-500 text-white"
+  if (priority === "P0") return "bg-red-700 text-slate-950"
+  if (priority === "P1") return "bg-blue-700 text-slate-950"
+  if (priority === "P2") return "bg-slate-50 text-slate-950"
+  return "bg-slate-500 text-slate-950"
 }
 
 export default function MarketOSV17EnterpriseOpsCommand() {
@@ -336,7 +336,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F3F5F8] text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-[#F3F5F8] text-slate-950">
       <div className="mx-auto max-w-[1900px] space-y-6 p-5 lg:p-8">
 
         <section className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
@@ -359,8 +359,8 @@ export default function MarketOSV17EnterpriseOpsCommand() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/market-os/campaign-lifecycle" className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white hover:bg-blue-800">Campaign Lifecycle</Link>
-                <Link href="/market-os/content-command-center" className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-black text-white hover:bg-slate-800">Content Command</Link>
+                <Link href="/market-os/campaign-lifecycle" className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-slate-950 hover:bg-blue-800">Campaign Lifecycle</Link>
+                <Link href="/market-os/content-command-center" className="rounded-xl bg-white px-5 py-3 text-sm font-black text-slate-950 hover:bg-white">Content Command</Link>
                 <Link href="/market-os/seo-blog-workspace" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">SEO Blog Workspace</Link>
                 <Link href="/market-os/ambassadors" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">Ambassadors</Link>
               </div>
@@ -382,7 +382,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 ["P0 Layers", stats.p0],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">{k}</p>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-9500">{k}</p>
                   <p className="mt-3 text-3xl font-black text-slate-950">{v}</p>
                 </div>
               ))}
@@ -403,7 +403,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 ))}
               </div>
               <div className="mt-5 grid grid-cols-2 gap-2">
-                <Link href={module.route} className="rounded-xl bg-slate-950 px-4 py-3 text-center text-xs font-black text-white">Open</Link>
+                <Link href={module.route} className="rounded-xl bg-white px-4 py-3 text-center text-xs font-black text-slate-950">Open</Link>
                 <button onClick={() => log(module.title, "Quick action requested")} className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-xs font-black text-slate-700 hover:bg-slate-50">Quick Action</button>
               </div>
             </article>
@@ -418,8 +418,8 @@ export default function MarketOSV17EnterpriseOpsCommand() {
               placeholder="Search layers, submodules, owners, actions, risks..."
               className="rounded-xl border border-slate-300 bg-white px-5 py-4 text-sm font-bold outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
             />
-            <button onClick={() => execute(selected.id, "Escalate Selected")} className="rounded-xl bg-red-700 px-5 py-4 text-sm font-black text-white hover:bg-red-800">Escalate Selected</button>
-            <button onClick={() => execute(selected.id, "Recover Selected")} className="rounded-xl bg-emerald-700 px-5 py-4 text-sm font-black text-white hover:bg-emerald-800">Recover Selected</button>
+            <button onClick={() => execute(selected.id, "Escalate Selected")} className="rounded-xl bg-red-700 px-5 py-4 text-sm font-black text-slate-950 hover:bg-red-800">Escalate Selected</button>
+            <button onClick={() => execute(selected.id, "Recover Selected")} className="rounded-xl bg-emerald-700 px-5 py-4 text-sm font-black text-slate-950 hover:bg-emerald-800">Recover Selected</button>
           </div>
         </section>
 
@@ -433,13 +433,13 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 </div>
 
                 <h3 className="mt-4 text-xl font-black text-slate-950">{layer.title}</h3>
-                <p className="mt-1 text-xs font-black uppercase tracking-[0.15em] text-slate-400">{layer.domain}</p>
+                <p className="mt-1 text-xs font-black uppercase tracking-[0.15em] text-slate-500">{layer.domain}</p>
                 <p className="mt-3 min-h-[84px] text-sm font-semibold leading-6 text-slate-600">{layer.description}</p>
 
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <div className="rounded-xl bg-slate-50 p-3 text-center"><p className="text-xs font-black text-slate-400">Queue</p><p className="text-xl font-black">{layer.queue}</p></div>
-                  <div className="rounded-xl bg-slate-50 p-3 text-center"><p className="text-xs font-black text-slate-400">Block</p><p className="text-xl font-black">{layer.blockers}</p></div>
-                  <div className="rounded-xl bg-slate-50 p-3 text-center"><p className="text-xs font-black text-slate-400">Appr.</p><p className="text-xl font-black">{layer.approvals}</p></div>
+                  <div className="rounded-xl bg-slate-50 p-3 text-center"><p className="text-xs font-black text-slate-500">Queue</p><p className="text-xl font-black">{layer.queue}</p></div>
+                  <div className="rounded-xl bg-slate-50 p-3 text-center"><p className="text-xs font-black text-slate-500">Block</p><p className="text-xl font-black">{layer.blockers}</p></div>
+                  <div className="rounded-xl bg-slate-50 p-3 text-center"><p className="text-xs font-black text-slate-500">Appr.</p><p className="text-xl font-black">{layer.approvals}</p></div>
                 </div>
 
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
@@ -461,7 +461,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 ))}
               </div>
 
-              <Link href={layer.route} className="mt-3 block rounded-xl bg-slate-950 px-4 py-3 text-center text-sm font-black text-white hover:bg-slate-800">
+              <Link href={layer.route} className="mt-3 block rounded-xl bg-white px-4 py-3 text-center text-sm font-black text-slate-950 hover:bg-white">
                 Open Workspace
               </Link>
             </article>
@@ -478,7 +478,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                   Create tasks, assign owners, open blockers, request evidence, trigger approvals and move work into the Daily Tasks workspace.
                 </p>
               </div>
-              <Link href="/revenue-command-center/daily-tasks" className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white">Open Daily Tasks</Link>
+              <Link href="/revenue-command-center/daily-tasks" className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-slate-950">Open Daily Tasks</Link>
             </div>
 
             <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_.25fr]">
@@ -488,7 +488,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 placeholder="Create a Market-OS execution task..."
                 className="rounded-xl border border-slate-300 bg-white px-5 py-4 text-sm font-bold outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
               />
-              <button onClick={createMasterTask} className="rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white">Create Task</button>
+              <button onClick={createMasterTask} className="rounded-xl bg-white px-5 py-4 text-sm font-black text-slate-950">Create Task</button>
             </div>
 
             <div className="mt-6 grid gap-3 md:grid-cols-4">
@@ -511,7 +511,7 @@ export default function MarketOSV17EnterpriseOpsCommand() {
 
           <div className="grid gap-6">
             <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Selected Layer Control</p>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-9500">Selected Layer Control</p>
               <h3 className="mt-2 text-2xl font-black text-slate-950">{selected.title}</h3>
               <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{selected.description}</p>
 
@@ -523,18 +523,18 @@ export default function MarketOSV17EnterpriseOpsCommand() {
                 ))}
               </div>
 
-              <Link href={selected.route} className="mt-4 block rounded-xl bg-slate-950 px-5 py-4 text-center text-sm font-black text-white">
+              <Link href={selected.route} className="mt-4 block rounded-xl bg-white px-5 py-4 text-center text-sm font-black text-slate-950">
                 Open Selected Workspace
               </Link>
             </div>
 
             <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Execution Activity</p>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-9500">Execution Activity</p>
               <div className="mt-4 max-h-[430px] space-y-3 overflow-auto pr-1">
                 {logs.map((entry) => (
                   <div key={entry.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                     <p className="text-sm font-black text-slate-950">{entry.action}</p>
-                    <p className="mt-1 text-xs font-bold text-slate-500">{entry.layer} • {entry.at}</p>
+                    <p className="mt-1 text-xs font-bold text-slate-9500">{entry.layer} • {entry.at}</p>
                   </div>
                 ))}
               </div>

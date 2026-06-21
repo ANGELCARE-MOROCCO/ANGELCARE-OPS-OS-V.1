@@ -43,6 +43,8 @@
     "recovery",
     ".next",
     "_old_*",
-    "modules"
+    "modules",
+    "backups",
+    "backups/**"
   ]
 }

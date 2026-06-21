@@ -8,12 +8,12 @@ export default function MarketOsSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-72 bg-slate-950 text-white min-h-screen p-4">
+    <aside className="w-72 bg-white text-slate-950 min-h-screen p-4">
       <h1 className="text-xl font-black mb-6">Market-OS</h1>
 
       {marketOsSidebarItems.map((group) => (
         <div key={group.group} className="mb-6">
-          <p className="text-xs uppercase text-slate-400 mb-2">{group.group}</p>
+          <p className="text-xs uppercase text-slate-500 mb-2">{group.group}</p>
 
           <div className="flex flex-col gap-1">
             {group.items.map((item) => {
@@ -26,7 +26,7 @@ export default function MarketOsSidebar() {
                   className={`px-3 py-2 rounded-xl text-sm font-semibold ${
                     active
                       ? "bg-white text-slate-950"
-                      : "text-slate-300 hover:bg-white/10"
+                      : "text-slate-600 hover:bg-slate-50"
                   }`}
                 >
                   {item.title}

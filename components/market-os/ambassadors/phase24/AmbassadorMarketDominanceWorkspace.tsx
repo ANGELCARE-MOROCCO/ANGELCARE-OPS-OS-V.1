@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -64,7 +64,7 @@ export default function AmbassadorMarketDominanceWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{region.city}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>Demand {region.demandScore} · Momentum {region.growthMomentum}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>Demand {region.demandScore} · Momentum {region.growthMomentum}</p>
                   </div>
                   <Badge tone={region.demandScore >= 85 ? 'success' : 'warning'}>{region.ambassadorInfluenceScore}% influence</Badge>
                 </div>
@@ -104,7 +104,7 @@ export default function AmbassadorMarketDominanceWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{item.title}</h3>
                     <Badge tone={item.priority === 'critical' ? 'danger' : 'warning'}>{item.priority}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{item.city} · {item.category} · {item.timing}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{item.city} · {item.category} · {item.timing}</p>
                   <p className='mt-3 text-sm font-medium text-slate-700'>{item.expectedImpactMad.toLocaleString()} MAD · {item.actionPlan}</p>
                 </article>
               ))}
@@ -124,7 +124,7 @@ export default function AmbassadorMarketDominanceWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{item.competitorName}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{item.city} · {item.activityType}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{item.city} · {item.activityType}</p>
                   </div>
                   <Badge tone={item.threatLevel === 'critical' ? 'danger' : item.threatLevel === 'high' ? 'warning' : 'info'}>{item.threatLevel}</Badge>
                 </div>
@@ -145,7 +145,7 @@ export default function AmbassadorMarketDominanceWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{item.topic}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{item.channel} · {item.trend}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{item.channel} · {item.trend}</p>
                   </div>
                   <Badge tone={item.sentimentScore >= 80 ? 'success' : item.sentimentScore >= 65 ? 'warning' : 'danger'}>{item.sentimentScore}%</Badge>
                 </div>

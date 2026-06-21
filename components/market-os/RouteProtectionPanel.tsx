@@ -34,14 +34,14 @@ export default function RouteProtectionPanel() {
           </div>
           <div>
             <h2 className="text-lg font-black text-slate-950">Route Protection Review</h2>
-            <p className="text-sm text-slate-500">{status}</p>
+            <p className="text-sm text-slate-9500">{status}</p>
           </div>
         </div>
         <div className="flex gap-2">
           <button onClick={load} className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold hover:bg-slate-50">
             <RefreshCw className="h-4 w-4" /> Refresh
           </button>
-          <button onClick={seedChecks} className="h-10 cursor-pointer rounded-xl bg-slate-950 px-3 text-sm font-bold text-white">Seed Checks</button>
+          <button onClick={seedChecks} className="h-10 cursor-pointer rounded-xl bg-white px-3 text-sm font-bold text-slate-950">Seed Checks</button>
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export default function RouteProtectionPanel() {
         {routes.map((route) => (
           <div key={route} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <div className="font-black text-slate-950">{route}</div>
-            <div className="mt-1 text-xs font-black uppercase text-slate-400">authenticated</div>
+            <div className="mt-1 text-xs font-black uppercase text-slate-500">authenticated</div>
           </div>
         ))}
       </div>

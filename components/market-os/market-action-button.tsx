@@ -108,7 +108,7 @@ export default function MarketActionButton({
         disabled={loading}
         className={
           className ||
-          'rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50'
+          'rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50'
         }
       >
         {loading ? 'Executing...' : children || label || actionLabel || actionKey.replace(/_/g, ' ')}

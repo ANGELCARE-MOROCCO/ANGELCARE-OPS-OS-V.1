@@ -66,7 +66,7 @@ export default function DeploymentHardeningPanel() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-950">Deployment Hardening</h1>
-              <p className="text-sm text-slate-500">{status}</p>
+              <p className="text-sm text-slate-9500">{status}</p>
             </div>
           </div>
           <button onClick={load} className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold hover:bg-slate-50">
@@ -76,29 +76,29 @@ export default function DeploymentHardeningPanel() {
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <ShieldCheck className="h-5 w-5 text-slate-400" />
+            <ShieldCheck className="h-5 w-5 text-slate-500" />
             <div className="mt-3 text-lg font-black text-slate-950">{provider?.status || "checking"}</div>
-            <div className="text-xs font-black uppercase text-slate-400">Provider env</div>
+            <div className="text-xs font-black uppercase text-slate-500">Provider env</div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <ShieldCheck className="h-5 w-5 text-slate-400" />
+            <ShieldCheck className="h-5 w-5 text-slate-500" />
             <div className="mt-3 text-lg font-black text-slate-950">{mailbox?.status || "checking"}</div>
-            <div className="text-xs font-black uppercase text-slate-400">Mailbox validation</div>
+            <div className="text-xs font-black uppercase text-slate-500">Mailbox validation</div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <AlertTriangle className="h-5 w-5 text-slate-400" />
+            <AlertTriangle className="h-5 w-5 text-slate-500" />
             <div className="mt-3 text-3xl font-black text-slate-950">{incidents.length}</div>
-            <div className="text-xs font-black uppercase text-slate-400">Incidents</div>
+            <div className="text-xs font-black uppercase text-slate-500">Incidents</div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <Server className="h-5 w-5 text-slate-400" />
+            <Server className="h-5 w-5 text-slate-500" />
             <div className="mt-3 text-3xl font-black text-slate-950">{events.length}</div>
-            <div className="text-xs font-black uppercase text-slate-400">Monitoring events</div>
+            <div className="text-xs font-black uppercase text-slate-500">Monitoring events</div>
           </div>
         </div>
 
         <div className="mt-6 flex gap-2">
-          <button onClick={logIncident} className="h-11 cursor-pointer rounded-2xl bg-slate-950 px-4 text-sm font-black text-white">Log Incident</button>
+          <button onClick={logIncident} className="h-11 cursor-pointer rounded-2xl bg-white px-4 text-sm font-black text-slate-950">Log Incident</button>
           <button onClick={logEvent} className="h-11 cursor-pointer rounded-2xl border border-slate-200 px-4 text-sm font-black hover:bg-slate-50">Log Event</button>
         </div>
       </div>

@@ -43,9 +43,9 @@ function MetricCard({
 }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-9500">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{helper}</p>
+      <p className="mt-2 text-sm text-slate-9500">{helper}</p>
     </article>
   );
 }
@@ -82,7 +82,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 p-5">
             <h2 className="text-lg font-bold text-slate-950">Training progress</h2>
-            <p className="mt-1 text-sm text-slate-500">Monitor certification progress and campaign readiness.</p>
+            <p className="mt-1 text-sm text-slate-9500">Monitor certification progress and campaign readiness.</p>
           </div>
           <div className="divide-y divide-slate-100">
             {snapshot.progress.map((item) => {
@@ -92,7 +92,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <h3 className="font-semibold text-slate-950">{item.ambassadorName}</h3>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm text-slate-9500">
                         {item.city} · {item.currentLevel} → {item.targetLevel} · Trainer: {item.trainerOwner}
                       </p>
                     </div>
@@ -124,7 +124,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
                     <h3 className="font-semibold text-slate-950">{item.ambassadorName}</h3>
                     <Badge tone="success">{item.targetLevel}</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-slate-9500">
                     Score {item.averageScore}% · Progress {calculateProgressPercent(item)}%
                   </p>
                 </article>
@@ -143,7 +143,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
                     <h3 className="font-semibold text-slate-950">{review.ambassadorName}</h3>
                     <Badge tone="danger">{review.priority}</Badge>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">{review.notes}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-9500">{review.notes}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">
                     Owner: {review.owner} · Due: {review.dueDate}
                   </p>
@@ -163,7 +163,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
                     <h3 className="font-semibold text-slate-950">{skill.ambassadorName}</h3>
                     <Badge tone="danger">{skill.score}%</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">{skill.skillArea}: {skill.evidence}</p>
+                  <p className="mt-2 text-sm text-slate-9500">{skill.skillArea}: {skill.evidence}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">{skill.recommendedImprovement}</p>
                 </article>
               ))}
@@ -175,7 +175,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
           <h2 className="text-lg font-bold text-slate-950">Learning paths</h2>
-          <p className="mt-1 text-sm text-slate-500">Certification structures that can later sync with AngelCare Academy.</p>
+          <p className="mt-1 text-sm text-slate-9500">Certification structures that can later sync with AngelCare Academy.</p>
         </div>
         <div className="grid gap-4 p-5 lg:grid-cols-2">
           {snapshot.learningPaths.map((path) => (
@@ -183,7 +183,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-bold text-slate-950">{path.name}</h3>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Target: {path.targetLevel} · Owner: {path.owner}
                   </p>
                 </div>
@@ -194,7 +194,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
               <p className="mt-3 text-sm text-slate-600">
                 {path.modules.length} modules · {path.estimatedHours}h estimated
               </p>
-              <p className="mt-3 text-xs font-medium text-slate-500">Modules: {path.modules.join(", ")}</p>
+              <p className="mt-3 text-xs font-medium text-slate-9500">Modules: {path.modules.join(", ")}</p>
             </article>
           ))}
         </div>
@@ -212,7 +212,7 @@ export default function AmbassadorTrainingCertificationWorkspace() {
               <p className="mt-2 text-sm text-slate-600">
                 {module.category} · {module.durationMinutes} min · pass {module.passingScore}%
               </p>
-              <p className="mt-2 text-sm text-slate-500">Owner: {module.owner}</p>
+              <p className="mt-2 text-sm text-slate-9500">Owner: {module.owner}</p>
             </article>
           ))}
         </div>

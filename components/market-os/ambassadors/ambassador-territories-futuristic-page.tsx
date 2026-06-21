@@ -19,7 +19,7 @@ function MetricCard({ icon: Icon, label, value, hint }: { icon: any; label: stri
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{label}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{label}</p>
           <p className="mt-1 text-2xl font-black text-slate-950">{value}</p>
           <p className="mt-1 text-xs font-semibold text-emerald-600">{hint}</p>
         </div>
@@ -30,7 +30,7 @@ function MetricCard({ icon: Icon, label, value, hint }: { icon: any; label: stri
 
 export default function AmbassadorTerritoriesFuturisticPage() {
   return (
-    <main className="min-h-screen bg-[#f7f8fc] p-6 text-slate-900">
+    <main data-market-os-root className="min-h-screen bg-[#f7f8fc] p-6 text-slate-900">
       <div className="mx-auto max-w-[1500px] space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-[34px] border border-slate-200 bg-white/95 p-6 shadow-sm">
           <div>
@@ -38,11 +38,11 @@ export default function AmbassadorTerritoriesFuturisticPage() {
               <ArrowLeft className="h-4 w-4" /> Back to Ambassadors
             </Link>
             <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">Ambassador Territories</h1>
-            <p className="mt-1 max-w-3xl text-sm font-medium text-slate-500">
+            <p className="mt-1 max-w-3xl text-sm font-medium text-slate-9500">
               Territory command center for Morocco ambassador coverage, city activation, lead density, and growth execution.
             </p>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-200">
+          <button className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-slate-950 shadow-lg shadow-violet-200">
             <Plus className="h-4 w-4" /> Create Territory
           </button>
         </header>
@@ -59,7 +59,7 @@ export default function AmbassadorTerritoriesFuturisticPage() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-black text-slate-950">Morocco Territory Map</h2>
-                <p className="text-sm font-medium text-slate-500">Coverage intensity by strategic city cluster.</p>
+                <p className="text-sm font-medium text-slate-9500">Coverage intensity by strategic city cluster.</p>
               </div>
               <Sparkles className="h-5 w-5 text-violet-500" />
             </div>
@@ -72,7 +72,7 @@ export default function AmbassadorTerritoriesFuturisticPage() {
                     className="absolute rounded-2xl border border-violet-200 bg-white/90 px-3 py-2 text-xs font-black text-violet-700 shadow-lg shadow-violet-100"
                     style={{ left: `${18 + i * 12}%`, top: `${18 + (i % 3) * 20}%` }}
                   >
-                    <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-violet-600 text-white">{t.ambassadors}</span>
+                    <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-violet-600 text-slate-950">{t.ambassadors}</span>
                     {t.city}
                   </div>
                 ))}
@@ -109,13 +109,13 @@ export default function AmbassadorTerritoriesFuturisticPage() {
           <div className="mb-5 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-black text-slate-950">Territory Directory</h2>
-              <p className="text-sm font-medium text-slate-500">Operational coverage and growth signals.</p>
+              <p className="text-sm font-medium text-slate-9500">Operational coverage and growth signals.</p>
             </div>
             <BarChart3 className="h-5 w-5 text-violet-500" />
           </div>
           <div className="overflow-hidden rounded-3xl border border-slate-100">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-[0.16em] text-slate-400">
+              <thead className="bg-slate-50 text-xs uppercase tracking-[0.16em] text-slate-500">
                 <tr><th className="p-4">City</th><th className="p-4">Ambassadors</th><th className="p-4">Leads</th><th className="p-4">Conversion</th><th className="p-4">Priority</th></tr>
               </thead>
               <tbody>

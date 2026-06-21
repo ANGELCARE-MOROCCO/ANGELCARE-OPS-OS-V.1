@@ -31,7 +31,7 @@ export default function AmbassadorProductionTransitionWorkspace() {
             <div className='flex items-start justify-between gap-3'>
               <div>
                 <h2 className='font-bold text-slate-950'>{item.title}</h2>
-                <p className='mt-1 text-sm text-slate-500'>{item.area}</p>
+                <p className='mt-1 text-sm text-slate-9500'>{item.area}</p>
               </div>
               <Badge tone={item.status === 'passed' ? 'success' : item.status === 'blocked' ? 'danger' : 'warning'}>{item.status}</Badge>
             </div>

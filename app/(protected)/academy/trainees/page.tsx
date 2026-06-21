@@ -2414,7 +2414,7 @@ export default async function AcademyTraineesPage({
                 >
                   Trainees Operations Center
                 </h1>
-                <Pill tone="purple">v10.0 live</Pill>
+                <Pill tone="purple">Production live</Pill>
               </div>
               <p
                 style={{

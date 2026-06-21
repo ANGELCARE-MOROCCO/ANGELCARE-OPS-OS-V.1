@@ -36,14 +36,14 @@ const engines = [
 
 export default function MarketOsFinalIndex() {
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Final Index
           </p>
           <h1 className="mt-3 text-4xl font-black">Market-OS Command Index</h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             Central access point for the full Market-OS strategic marketing operating system.
           </p>
         </div>
@@ -55,11 +55,11 @@ export default function MarketOsFinalIndex() {
               href={href}
               className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm hover:border-slate-950"
             >
-              <p className="text-xs font-bold uppercase text-slate-400">
+              <p className="text-xs font-bold uppercase text-slate-500">
                 Engine {String(index + 1).padStart(2, "0")}
               </p>
               <h2 className="mt-2 text-lg font-black">{title}</h2>
-              <p className="mt-3 text-sm text-slate-500">{href}</p>
+              <p className="mt-3 text-sm text-slate-9500">{href}</p>
             </Link>
           ))}
         </div>

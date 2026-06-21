@@ -52,9 +52,9 @@ export function CsvLiveOperationsBridgeWorkspace() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#312e81)] p-8 text-white shadow-2xl">
+        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#312e81)] p-8 text-slate-950 shadow-2xl">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
             Market OS / CSV Phase 5
           </p>
@@ -63,7 +63,7 @@ export function CsvLiveOperationsBridgeWorkspace() {
             CSV → Live Operations Bridge
           </h1>
 
-          <p className="mt-5 max-w-4xl text-sm font-semibold leading-7 text-slate-300">
+          <p className="mt-5 max-w-4xl text-sm font-semibold leading-7 text-slate-600">
             Convert validated CSV task rows into live operational task objects.
             This bridge stores the imported tasks locally first so you can verify
             the mapping before connecting it deeper to Supabase, realtime and the main task board.
@@ -78,14 +78,14 @@ export function CsvLiveOperationsBridgeWorkspace() {
             <button
               onClick={approveBridge}
               disabled={errors.length > 0 || convertedTasks.length === 0}
-              className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white disabled:opacity-40"
+              className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-40"
             >
               Approve Live Bridge Import
             </button>
 
             <button
               onClick={clearBridge}
-              className="rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-white"
+              className="rounded-2xl border border-slate-200 bg-white/10 px-5 py-3 text-sm font-black text-slate-950"
             >
               Clear Local Bridge
             </button>
@@ -117,7 +117,7 @@ export function CsvLiveOperationsBridgeWorkspace() {
           <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-6">
               <h2 className="text-2xl font-black text-slate-950">Converted Task Objects</h2>
-              <p className="mt-2 text-sm font-semibold text-slate-500">
+              <p className="mt-2 text-sm font-semibold text-slate-9500">
                 {fileName || "Upload a CSV file to convert tasks."}
               </p>
             </div>
@@ -129,7 +129,7 @@ export function CsvLiveOperationsBridgeWorkspace() {
                 ))}
 
                 {convertedTasks.length === 0 ? (
-                  <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-500">
+                  <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-9500">
                     No converted tasks yet.
                   </p>
                 ) : null}
@@ -140,7 +140,7 @@ export function CsvLiveOperationsBridgeWorkspace() {
           <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-6">
               <h2 className="text-2xl font-black text-slate-950">Live Local Bridge Store</h2>
-              <p className="mt-2 text-sm font-semibold text-slate-500">
+              <p className="mt-2 text-sm font-semibold text-slate-9500">
                 These are the tasks currently saved in the local bridge layer.
               </p>
             </div>
@@ -152,7 +152,7 @@ export function CsvLiveOperationsBridgeWorkspace() {
                 ))}
 
                 {liveTasks.length === 0 ? (
-                  <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-500">
+                  <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-9500">
                     No live local bridge tasks yet.
                   </p>
                 ) : null}
@@ -179,7 +179,7 @@ export function CsvLiveOperationsBridgeWorkspace() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</p>
       <p className="mt-3 truncate text-2xl font-black text-slate-950">{value}</p>
     </div>
   )
@@ -190,7 +190,7 @@ function TaskCard({ task }: { task: LiveTask }) {
     <article className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-black text-slate-950">{task.title}</p>
-        <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black uppercase text-white">
+        <span className="rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-slate-950">
           {task.status}
         </span>
       </div>

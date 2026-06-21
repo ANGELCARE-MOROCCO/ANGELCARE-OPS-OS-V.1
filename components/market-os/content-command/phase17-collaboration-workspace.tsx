@@ -32,7 +32,7 @@ export function ContentCommandPhase17CollaborationWorkspace(): React.ReactElemen
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -45,15 +45,15 @@ export function ContentCommandPhase17CollaborationWorkspace(): React.ReactElemen
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Active Users</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Active Users</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{activeUsers.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Unread Notifications</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Unread Notifications</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{unreadNotifications.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Blocked Reviews</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Blocked Reviews</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{blockedReviews.length}</p>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function ContentCommandPhase17CollaborationWorkspace(): React.ReactElemen
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{user.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-slate-9500">
                         {user.role} · {user.currentArea} · {user.lastSeen}
                       </p>
                     </div>
@@ -110,7 +110,7 @@ export function ContentCommandPhase17CollaborationWorkspace(): React.ReactElemen
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{session.title}</p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-slate-9500">
                         {session.assetTitle} · Reviewer: {session.reviewer}
                       </p>
                     </div>
@@ -152,7 +152,7 @@ export function ContentCommandPhase17CollaborationWorkspace(): React.ReactElemen
                     <p className="text-sm font-bold text-slate-950">
                       {event.actor} {event.verb.replaceAll('_', ' ')}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       {event.targetTitle} · {event.targetType} · {event.createdAt}
                     </p>
                   </article>

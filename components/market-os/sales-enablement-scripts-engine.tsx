@@ -18,7 +18,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${value}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${value}%` }} />
     </div>
   )
 }
@@ -53,35 +53,35 @@ export default function SalesEnablementScriptsEngine() {
   const highRisk = scripts.filter((s) => s.risk === "high" || s.risk === "critical").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 10
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Sales Enablement, Scripts & Objection Intelligence Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer converts offers into real sales execution: scripts, objection handling,
             agent assignment, usage feedback, conversion tracking and continuous improvement.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Conversion</p>
+              <p className="text-xs uppercase text-slate-600">Avg Conversion</p>
               <p className="mt-2 text-3xl font-black">{avgConversion}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Objection Coverage</p>
+              <p className="text-xs uppercase text-slate-600">Objection Coverage</p>
               <p className="mt-2 text-3xl font-black">{avgCoverage}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Assigned Agents</p>
+              <p className="text-xs uppercase text-slate-600">Assigned Agents</p>
               <p className="mt-2 text-3xl font-black">{assignedAgents}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Scripts</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Scripts</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -134,15 +134,15 @@ export default function SalesEnablementScriptsEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{script.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Offer: {script.linkedOffer} · Scenario: {script.scenario} · Owner: {script.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Conversion</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Conversion</p>
                   <p className="mt-1 font-black">{script.conversionRate}%</p>
-                  <p className="text-xs text-slate-500">Usage: {script.usageCount}</p>
+                  <p className="text-xs text-slate-9500">Usage: {script.usageCount}</p>
                 </div>
               </div>
 
@@ -162,32 +162,32 @@ export default function SalesEnablementScriptsEngine() {
                   <Bar value={script.confidenceScore} />
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Assigned Agents</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Assigned Agents</p>
                   <p className="mt-1 text-lg font-black">{script.assignedAgents}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Top Objection</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Top Objection</p>
                   <p className="mt-2 text-sm text-slate-700">{script.topObjection}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Weak Point</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Weak Point</p>
                   <p className="mt-2 text-sm text-slate-700">{script.weakPoint}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Improvement Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Improvement Action</p>
                   <p className="mt-2 text-sm text-slate-700">{script.improvementAction}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Expected Impact</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Expected Impact</p>
                   <p className="mt-2 text-sm text-slate-700">{script.expectedImpact}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="enablement" engine="content" actionKey="assign_to_agents" actionLabel="Assign to Agents" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Assign to Agents</MarketActionButton>
+                <MarketActionButton moduleKey="enablement" engine="content" actionKey="assign_to_agents" actionLabel="Assign to Agents" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Assign to Agents</MarketActionButton>
                 <MarketActionButton moduleKey="enablement" engine="content" actionKey="add_objection" actionLabel="Add Objection" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Add Objection</MarketActionButton>
                 <MarketActionButton moduleKey="enablement" engine="content" actionKey="request_review" actionLabel="Request Review" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Request Review</MarketActionButton>
                 <MarketActionButton moduleKey="enablement" engine="content" actionKey="execute_optimize_script" actionLabel="Optimize Script" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Optimize Script</MarketActionButton>

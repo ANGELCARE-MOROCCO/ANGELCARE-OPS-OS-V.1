@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -65,7 +65,7 @@ export default function AmbassadorLiveExecutionWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{runtime.workflow}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{runtime.owner}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{runtime.owner}</p>
                   </div>
 
                   <Badge tone={
@@ -127,7 +127,7 @@ export default function AmbassadorLiveExecutionWorkspace() {
               {snapshot.dependencies.map((dependency) => (
                 <article key={dependency.id} className='p-5'>
                   <h3 className='font-semibold text-slate-950'>{dependency.parentWorkflow}</h3>
-                  <p className='mt-2 text-sm text-slate-500'>Depends on: {dependency.dependentWorkflow}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>Depends on: {dependency.dependentWorkflow}</p>
 
                   <div className='mt-3'>
                     <Badge tone={
@@ -158,7 +158,7 @@ export default function AmbassadorLiveExecutionWorkspace() {
               <div className='flex items-start justify-between gap-3'>
                 <div>
                   <h3 className='font-semibold text-slate-950'>{event.source}</h3>
-                  <p className='mt-1 text-sm text-slate-500'>{event.type} · {event.timestamp}</p>
+                  <p className='mt-1 text-sm text-slate-9500'>{event.type} · {event.timestamp}</p>
                 </div>
 
                 <Badge tone={

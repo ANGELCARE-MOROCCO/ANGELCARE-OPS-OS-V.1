@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -67,7 +67,7 @@ export default function AmbassadorMultiAgentWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{agent.name}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{agent.role} · Owner: {agent.owner}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{agent.role} · Owner: {agent.owner}</p>
                   </div>
 
                   <Badge tone={
@@ -105,7 +105,7 @@ export default function AmbassadorMultiAgentWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{item.objective}</h3>
                     <Badge tone={item.priority === 'critical' ? 'danger' : 'warning'}>{item.priority}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>Lead: {item.leadAgent}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>Lead: {item.leadAgent}</p>
                   <p className='mt-2 text-sm font-medium text-slate-700'>
                     Impact: {item.expectedImpactMad.toLocaleString()} MAD · Status: {item.status}
                   </p>
@@ -126,7 +126,7 @@ export default function AmbassadorMultiAgentWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{rule.title}</h3>
                     <Badge tone={rule.severity === 'critical' ? 'danger' : 'warning'}>{rule.severity}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>{rule.rule}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>{rule.rule}</p>
                 </article>
               ))}
             </div>
@@ -167,7 +167,7 @@ export default function AmbassadorMultiAgentWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{audit.agentName}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>{audit.timestamp}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>{audit.timestamp}</p>
                   </div>
                   <Badge tone='info'>{audit.confidenceScore}%</Badge>
                 </div>

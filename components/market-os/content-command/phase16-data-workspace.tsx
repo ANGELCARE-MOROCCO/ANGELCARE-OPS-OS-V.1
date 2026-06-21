@@ -61,7 +61,7 @@ export function ContentCommandPhase16DataWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Phase 16 Data Readiness</h2>
@@ -80,7 +80,7 @@ export function ContentCommandPhase16DataWorkspace(): React.ReactElement {
 
           <div className="mt-5 space-y-4">
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Kind</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Kind</span>
               <select
                 value={draft.kind}
                 onChange={(event) => setDraft((current) => ({ ...current, kind: event.target.value as Phase16CreateRecordInput['kind'] }))}
@@ -93,7 +93,7 @@ export function ContentCommandPhase16DataWorkspace(): React.ReactElement {
             </label>
 
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Title</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Title</span>
               <input
                 value={draft.title}
                 onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
@@ -103,7 +103,7 @@ export function ContentCommandPhase16DataWorkspace(): React.ReactElement {
             </label>
 
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Owner</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Owner</span>
               <input
                 value={draft.owner}
                 onChange={(event) => setDraft((current) => ({ ...current, owner: event.target.value }))}
@@ -136,7 +136,7 @@ export function ContentCommandPhase16DataWorkspace(): React.ReactElement {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{record.title}</p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-slate-9500">
                         {record.kind} · Owner: {record.owner}
                       </p>
                     </div>
@@ -160,7 +160,7 @@ export function ContentCommandPhase16DataWorkspace(): React.ReactElement {
           {phase16SupabaseTableMap.map((item) => (
             <article key={item.entityKind} className="rounded-2xl border border-slate-100 p-4">
               <p className="text-sm font-bold text-slate-950">{item.tableName}</p>
-              <p className="mt-1 text-xs text-slate-500">{item.entityKind}</p>
+              <p className="mt-1 text-xs text-slate-9500">{item.entityKind}</p>
               <p className="mt-3 text-sm text-slate-600">{item.notes}</p>
             </article>
           ))}

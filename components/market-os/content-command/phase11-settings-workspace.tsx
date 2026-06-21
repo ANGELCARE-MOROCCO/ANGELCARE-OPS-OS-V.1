@@ -29,7 +29,7 @@ function ConfigRow(props: { option: Phase11ConfigOption }): React.ReactElement {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-bold text-slate-950">{props.option.label}</p>
-          <p className="mt-1 text-xs text-slate-500">{props.option.description}</p>
+          <p className="mt-1 text-xs text-slate-9500">{props.option.description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge>{props.option.enabled ? 'Enabled' : 'Disabled'}</Badge>
@@ -52,7 +52,7 @@ export function ContentCommandPhase11SettingsWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Phase 11 Configuration Settings</h2>
@@ -115,7 +115,7 @@ export function ContentCommandPhase11SettingsWorkspace(): React.ReactElement {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-bold text-slate-950">{rule.title}</p>
-                        <p className="mt-1 text-xs text-slate-500">{rule.description}</p>
+                        <p className="mt-1 text-xs text-slate-9500">{rule.description}</p>
                       </div>
                       <Badge>{rule.severity}</Badge>
                     </div>
@@ -132,7 +132,7 @@ export function ContentCommandPhase11SettingsWorkspace(): React.ReactElement {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-bold text-slate-950">{rule.title}</p>
-                        <p className="mt-1 text-xs text-slate-500">{rule.appliesTo}</p>
+                        <p className="mt-1 text-xs text-slate-9500">{rule.appliesTo}</p>
                       </div>
                       <Badge>{rule.targetHours}h</Badge>
                     </div>

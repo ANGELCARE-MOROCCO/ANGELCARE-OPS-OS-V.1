@@ -31,7 +31,7 @@ export function ContentCommandPhase30MigrationWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -44,19 +44,19 @@ export function ContentCommandPhase30MigrationWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Migration Steps</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Migration Steps</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{orderedSteps.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Blocked Steps</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Blocked Steps</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{blockedSteps.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">SQL Needs Review</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">SQL Needs Review</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{unsafeSql.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Checklist Open</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Checklist Open</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{incompleteChecklist.length}</p>
           </div>
         </div>
@@ -73,7 +73,7 @@ export function ContentCommandPhase30MigrationWorkspace(): React.ReactElement {
                     <p className="text-sm font-bold text-slate-950">
                       {step.order}. {step.title}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">{step.stage} · {step.sqlObject}</p>
+                    <p className="mt-1 text-xs text-slate-9500">{step.stage} · {step.sqlObject}</p>
                     <p className="mt-3 text-sm text-slate-600">{step.notes}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -94,11 +94,11 @@ export function ContentCommandPhase30MigrationWorkspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{blueprint.title}</p>
-                    <p className="mt-1 text-xs text-slate-500">{blueprint.tableName}</p>
+                    <p className="mt-1 text-xs text-slate-9500">{blueprint.tableName}</p>
                   </div>
                   <Badge>{blueprint.safeToRun ? 'Safe' : 'Review first'}</Badge>
                 </div>
-                <pre className="mt-4 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100">
+                <pre className="mt-4 overflow-auto rounded-2xl bg-white p-4 text-xs text-slate-900">
                   {blueprint.sqlPreview}
                 </pre>
               </article>

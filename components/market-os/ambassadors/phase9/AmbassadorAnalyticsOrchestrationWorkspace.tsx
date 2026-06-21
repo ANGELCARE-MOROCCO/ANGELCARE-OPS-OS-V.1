@@ -41,9 +41,9 @@ function MetricCard({
 }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-9500">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{helper}</p>
+      <p className="mt-2 text-sm text-slate-9500">{helper}</p>
     </article>
   );
 }
@@ -78,7 +78,7 @@ export default function AmbassadorAnalyticsOrchestrationWorkspace() {
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 p-5">
             <h2 className="text-lg font-bold text-slate-950">Campaign performance orchestration</h2>
-            <p className="mt-1 text-sm text-slate-500">Identify where campaign performance is strong and where execution is blocked.</p>
+            <p className="mt-1 text-sm text-slate-9500">Identify where campaign performance is strong and where execution is blocked.</p>
           </div>
           <div className="divide-y divide-slate-100">
             {snapshot.campaigns.map((campaign) => (
@@ -86,7 +86,7 @@ export default function AmbassadorAnalyticsOrchestrationWorkspace() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-semibold text-slate-950">{campaign.campaignName}</h3>
-                    <p className="mt-1 text-sm text-slate-500">{campaign.city} · Bottleneck: {campaign.bottleneck}</p>
+                    <p className="mt-1 text-sm text-slate-9500">{campaign.city} · Bottleneck: {campaign.bottleneck}</p>
                   </div>
                   <Badge tone={campaign.roiScore >= 85 ? "success" : campaign.roiScore >= 70 ? "warning" : "danger"}>
                     ROI {campaign.roiScore}
@@ -115,7 +115,7 @@ export default function AmbassadorAnalyticsOrchestrationWorkspace() {
                     <h3 className="font-semibold text-slate-950">{action.title}</h3>
                     <Badge tone="danger">{action.priority}</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-slate-9500">
                     Owner: {action.owner} · Impact: {action.expectedImpactMad.toLocaleString()} MAD · Due: {action.dueDate}
                   </p>
                 </article>
@@ -134,7 +134,7 @@ export default function AmbassadorAnalyticsOrchestrationWorkspace() {
                     <h3 className="font-semibold text-slate-950">{risk.ambassadorName}</h3>
                     <Badge tone={risk.riskScore >= 80 ? "danger" : "warning"}>{risk.riskScore}</Badge>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">{risk.riskReason}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-9500">{risk.riskReason}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">{risk.recommendedAction}</p>
                 </article>
               ))}
@@ -146,11 +146,11 @@ export default function AmbassadorAnalyticsOrchestrationWorkspace() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
           <h2 className="text-lg font-bold text-slate-950">Attribution intelligence</h2>
-          <p className="mt-1 text-sm text-slate-500">Track who generated what, from which channel, and with what confidence.</p>
+          <p className="mt-1 text-sm text-slate-9500">Track who generated what, from which channel, and with what confidence.</p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-9500">
               <tr>
                 <th className="px-5 py-3">Ambassador</th>
                 <th className="px-5 py-3">Channel</th>

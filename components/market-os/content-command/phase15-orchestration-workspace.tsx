@@ -19,7 +19,7 @@ export function ContentCommandPhase15OrchestrationWorkspace(): React.ReactElemen
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
           Content Command Center
         </p>
 
@@ -43,7 +43,7 @@ export function ContentCommandPhase15OrchestrationWorkspace(): React.ReactElemen
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{step.title}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       {step.owner} · Dependencies: {step.dependencyCount}
                     </p>
                   </div>
@@ -64,7 +64,7 @@ export function ContentCommandPhase15OrchestrationWorkspace(): React.ReactElemen
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{gate.title}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-9500">
                       Severity: {gate.severity}
                     </p>
                   </div>
@@ -84,7 +84,7 @@ export function ContentCommandPhase15OrchestrationWorkspace(): React.ReactElemen
               <article key={route.id} className="rounded-2xl border border-slate-100 p-4">
                 <div>
                   <p className="text-sm font-bold text-slate-950">{route.area}</p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-slate-9500">
                     Owner: {route.escalationOwner}
                   </p>
                   <p className="mt-3 text-sm text-slate-600">

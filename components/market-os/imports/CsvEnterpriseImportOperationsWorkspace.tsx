@@ -35,7 +35,7 @@ export function CsvEnterpriseImportOperationsWorkspace() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
         <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">
@@ -65,14 +65,14 @@ export function CsvEnterpriseImportOperationsWorkspace() {
               ))}
             </select>
 
-            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white">
+            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950">
               Upload CSV
               <input type="file" accept=".csv" className="hidden" onChange={handleFile} />
             </label>
 
             <button
               onClick={revalidate}
-              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-white"
+              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-slate-950"
             >
               Validate Against Schema
             </button>
@@ -111,7 +111,7 @@ export function CsvEnterpriseImportOperationsWorkspace() {
                       {column.required ? "required" : "optional"}
                     </span>
                   </div>
-                  <p className="mt-2 text-xs font-semibold text-slate-500">{column.description}</p>
+                  <p className="mt-2 text-xs font-semibold text-slate-9500">{column.description}</p>
                 </article>
               ))}
             </div>
@@ -152,7 +152,7 @@ export function CsvEnterpriseImportOperationsWorkspace() {
             <button
               onClick={() => setApproved(true)}
               disabled={rows.length === 0 || errors.length > 0}
-              className="mt-6 rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white disabled:opacity-40"
+              className="mt-6 rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-40"
             >
               Approve Import for Phase 5 Sync
             </button>
@@ -162,7 +162,7 @@ export function CsvEnterpriseImportOperationsWorkspace() {
         <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 p-6">
             <h2 className="text-2xl font-black text-slate-950">CSV Preview</h2>
-            <p className="mt-2 text-sm font-semibold text-slate-500">{fileName || "No file uploaded."}</p>
+            <p className="mt-2 text-sm font-semibold text-slate-9500">{fileName || "No file uploaded."}</p>
           </div>
 
           <div className="overflow-auto">
@@ -188,7 +188,7 @@ export function CsvEnterpriseImportOperationsWorkspace() {
             </table>
 
             {rows.length === 0 ? (
-              <div className="p-10 text-center text-sm font-bold text-slate-500">
+              <div className="p-10 text-center text-sm font-bold text-slate-9500">
                 Upload a CSV file to begin review.
               </div>
             ) : null}
@@ -202,7 +202,7 @@ export function CsvEnterpriseImportOperationsWorkspace() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</p>
       <p className="mt-3 truncate text-2xl font-black text-slate-950">{value}</p>
     </div>
   )

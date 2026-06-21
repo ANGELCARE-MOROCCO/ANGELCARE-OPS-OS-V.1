@@ -49,35 +49,35 @@ export default function RoleWorkspacePermissionsEngine() {
   const avgEngines = Math.round(rolePermissions.reduce((sum, r) => sum + r.enginesAllowed, 0) / rolePermissions.length)
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 25
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Permission & Role Workspace Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer protects Market-OS by controlling who can see, act, approve, escalate,
             export and access strategic or financial areas.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Full Access Roles</p>
+              <p className="text-xs uppercase text-slate-600">Full Access Roles</p>
               <p className="mt-2 text-3xl font-black">{fullAccess}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Restricted Roles</p>
+              <p className="text-xs uppercase text-slate-600">Restricted Roles</p>
               <p className="mt-2 text-3xl font-black">{restricted}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Need Review</p>
+              <p className="text-xs uppercase text-slate-600">Need Review</p>
               <p className="mt-2 text-3xl font-black">{review}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Engines</p>
+              <p className="text-xs uppercase text-slate-600">Avg Engines</p>
               <p className="mt-2 text-3xl font-black">{avgEngines}</p>
             </div>
           </div>
@@ -134,40 +134,40 @@ export default function RoleWorkspacePermissionsEngine() {
               </div>
 
               <h2 className="text-xl font-black">{roleLabel(item.role)} Workspace Rights</h2>
-              <p className="mt-1 text-sm text-slate-500">Allowed engines: {item.enginesAllowed}</p>
+              <p className="mt-1 text-sm text-slate-9500">Allowed engines: {item.enginesAllowed}</p>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Approval Power</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Approval Power</p>
                   <p className="mt-2 text-sm text-slate-700">{item.approvalPower}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Financial Visibility</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Financial Visibility</p>
                   <p className="mt-2 text-sm text-slate-700">{item.financialVisibility}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Execution Rights</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Execution Rights</p>
                   <p className="mt-2 text-sm text-slate-700">{item.executionRights}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Restricted Areas</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Restricted Areas</p>
                   <p className="mt-2 text-sm text-slate-700">{item.restrictedAreas}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Reason</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Reason</p>
                   <p className="mt-2 text-sm text-slate-700">{item.reason}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="permissions" engine="system" actionKey="execute_apply_role_rules" actionLabel="Apply Role Rules" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Apply Role Rules</MarketActionButton>
+                <MarketActionButton moduleKey="permissions" engine="system" actionKey="execute_apply_role_rules" actionLabel="Apply Role Rules" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Apply Role Rules</MarketActionButton>
                 <MarketActionButton moduleKey="permissions" engine="system" actionKey="execute_edit_permissions" actionLabel="Edit Permissions" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Edit Permissions</MarketActionButton>
                 <MarketActionButton moduleKey="permissions" engine="system" actionKey="review_access" actionLabel="Review Access" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Review Access</MarketActionButton>
                 <MarketActionButton moduleKey="permissions" engine="system" actionKey="open_audit" actionLabel="Open Audit" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Open Audit</MarketActionButton>

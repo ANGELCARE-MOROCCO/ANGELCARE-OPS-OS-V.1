@@ -104,7 +104,7 @@ type FieldProps = {
 
 export const Field = ({ label, children, className = "" }: FieldProps) => (
   <label className={className || "block"}>
-    {label ? <span className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-slate-500">{label}</span> : null}
+    {label ? <span className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-slate-9500">{label}</span> : null}
     {children}
   </label>
 )
@@ -144,7 +144,7 @@ export const PrimaryButton = (props: React.ButtonHTMLAttributes<HTMLButtonElemen
     {...props}
     className={
       props.className ||
-      "rounded-xl bg-emerald-700 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-emerald-800"
+      "rounded-xl bg-emerald-700 px-4 py-2 text-sm font-black text-slate-950 shadow-sm transition hover:bg-emerald-800"
     }
   />
 )
@@ -164,7 +164,7 @@ export const DangerButton = (props: React.ButtonHTMLAttributes<HTMLButtonElement
     {...props}
     className={
       props.className ||
-      "rounded-xl bg-rose-600 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-rose-700"
+      "rounded-xl bg-rose-600 px-4 py-2 text-sm font-black text-slate-950 shadow-sm transition hover:bg-rose-700"
     }
   />
 )
@@ -181,7 +181,7 @@ export const Panel = ({ title, subtitle, children, className = "" }: PanelProps)
     {title || subtitle ? (
       <div className="mb-4">
         {title ? <h2 className="text-lg font-black text-slate-950">{title}</h2> : null}
-        {subtitle ? <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-1 text-sm font-semibold leading-6 text-slate-9500">{subtitle}</p> : null}
       </div>
     ) : null}
     {children}
@@ -198,9 +198,9 @@ type MetricCardProps = {
 
 export const MetricCard = ({ label, value, note, children, className = "" }: MetricCardProps) => (
   <div className={className || "rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm"}>
-    {label ? <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{label}</p> : null}
+    {label ? <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{label}</p> : null}
     {value !== undefined ? <p className="mt-2 text-2xl font-black text-slate-950">{value}</p> : null}
-    {note ? <p className="mt-1 text-xs font-bold text-slate-500">{note}</p> : null}
+    {note ? <p className="mt-1 text-xs font-bold text-slate-9500">{note}</p> : null}
     {children}
   </div>
 )
@@ -215,9 +215,9 @@ type PageShellProps = {
 export const PageShell = ({ children, className = "", title, subtitle }: PageShellProps) => (
   <main className={className || "min-h-screen bg-slate-50 p-4 text-slate-950 lg:p-8"}>
     {title || subtitle ? (
-      <section className="mb-6 rounded-3xl bg-slate-950 p-6 text-white">
-        {title ? <h1 className="text-3xl font-black text-white">{title}</h1> : null}
-        {subtitle ? <p className="mt-2 text-sm font-semibold text-white/75">{subtitle}</p> : null}
+      <section className="mb-6 rounded-3xl bg-white p-6 text-slate-950">
+        {title ? <h1 className="text-3xl font-black text-slate-950">{title}</h1> : null}
+        {subtitle ? <p className="mt-2 text-sm font-semibold text-slate-950/75">{subtitle}</p> : null}
       </section>
     ) : null}
     {children}

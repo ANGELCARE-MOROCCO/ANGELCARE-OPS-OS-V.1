@@ -27,7 +27,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${value}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${value}%` }} />
     </div>
   )
 }
@@ -64,16 +64,16 @@ export default function ResearchCompetitiveIntelligenceEngine() {
   const avgUrgency = Math.round(researchSignals.reduce((sum, s) => sum + s.urgency, 0) / researchSignals.length)
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 8
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Market Research & Competitive Intelligence Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer gives Market-OS a real intelligence desk: competitor observations,
             customer pain signals, pricing intelligence, city opportunities, market gaps and
             strategic recommendations converted into execution tasks.
@@ -81,19 +81,19 @@ export default function ResearchCompetitiveIntelligenceEngine() {
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Revenue Potential</p>
+              <p className="text-xs uppercase text-slate-600">Revenue Potential</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalPotential)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Opportunities</p>
+              <p className="text-xs uppercase text-slate-600">High Opportunities</p>
               <p className="mt-2 text-3xl font-black">{highOpp}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Confidence</p>
+              <p className="text-xs uppercase text-slate-600">Avg Confidence</p>
               <p className="mt-2 text-3xl font-black">{avgConfidence}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Urgency</p>
+              <p className="text-xs uppercase text-slate-600">Avg Urgency</p>
               <p className="mt-2 text-3xl font-black">{avgUrgency}%</p>
             </div>
           </div>
@@ -155,15 +155,15 @@ export default function ResearchCompetitiveIntelligenceEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{signal.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Market: {signal.market} · Source: {signal.source} · Owner: {signal.owner}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Revenue Potential</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Revenue Potential</p>
                   <p className="mt-1 font-black">{formatMad(signal.revenuePotentialMad)}</p>
-                  <p className="text-xs text-slate-500">Confidence: {signal.confidence}%</p>
+                  <p className="text-xs text-slate-9500">Confidence: {signal.confidence}%</p>
                 </div>
               </div>
 
@@ -186,26 +186,26 @@ export default function ResearchCompetitiveIntelligenceEngine() {
 
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Finding</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Finding</p>
                   <p className="mt-2 text-sm text-slate-700">{signal.finding}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Strategic Meaning</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Strategic Meaning</p>
                   <p className="mt-2 text-sm text-slate-700">{signal.strategicMeaning}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Recommended Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Recommended Action</p>
                   <p className="mt-2 text-sm text-slate-700">{signal.recommendedAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase text-slate-500">Execution Task to Trigger</p>
+                <p className="text-xs font-bold uppercase text-slate-9500">Execution Task to Trigger</p>
                 <p className="mt-2 text-sm font-semibold text-slate-800">{signal.executionTask}</p>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="research" engine="data" actionKey="convert_to_strategy_task" actionLabel="Convert to Strategy Task" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Convert to Strategy Task</MarketActionButton>
+                <MarketActionButton moduleKey="research" engine="data" actionKey="convert_to_strategy_task" actionLabel="Convert to Strategy Task" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Convert to Strategy Task</MarketActionButton>
                 <MarketActionButton moduleKey="research" engine="data" actionKey="validate_research" actionLabel="Validate Research" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Validate Research</MarketActionButton>
                 <MarketActionButton moduleKey="research" engine="data" actionKey="execute_attach_evidence" actionLabel="Attach Evidence" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Attach Evidence</MarketActionButton>
                 <MarketActionButton moduleKey="research" engine="data" actionKey="archive_signal" actionLabel="Archive Signal" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Archive Signal</MarketActionButton>

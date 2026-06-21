@@ -19,9 +19,9 @@ function Badge({ children, tone = 'neutral' }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className='rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
-      <p className='text-sm text-slate-500'>{label}</p>
+      <p className='text-sm text-slate-9500'>{label}</p>
       <p className='mt-2 text-3xl font-bold text-slate-950'>{value}</p>
-      <p className='mt-2 text-sm text-slate-500'>{helper}</p>
+      <p className='mt-2 text-sm text-slate-9500'>{helper}</p>
     </article>
   );
 }
@@ -61,7 +61,7 @@ export default function AmbassadorOperatingModelWorkspace() {
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-950'>{pillar.title}</h3>
-                    <p className='mt-1 text-sm text-slate-500'>Owner: {pillar.owner}</p>
+                    <p className='mt-1 text-sm text-slate-9500'>Owner: {pillar.owner}</p>
                   </div>
                   <Badge tone={pillar.maturityScore >= 90 ? 'success' : 'warning'}>{pillar.maturityScore}%</Badge>
                 </div>
@@ -84,7 +84,7 @@ export default function AmbassadorOperatingModelWorkspace() {
                     <h3 className='font-semibold text-slate-950'>{gate.gate}</h3>
                     <Badge tone={gate.priority === 'critical' ? 'danger' : gate.priority === 'high' ? 'warning' : 'info'}>{gate.priority}</Badge>
                   </div>
-                  <p className='mt-2 text-sm text-slate-500'>Approver: {gate.requiredApprover}</p>
+                  <p className='mt-2 text-sm text-slate-9500'>Approver: {gate.requiredApprover}</p>
                   <p className='mt-2 text-sm font-medium text-slate-700'>{gate.rule}</p>
                 </article>
               ))}
@@ -122,7 +122,7 @@ export default function AmbassadorOperatingModelWorkspace() {
                 <h3 className='font-bold text-slate-950'>{rhythm.ritual}</h3>
                 <Badge tone='info'>{rhythm.cadence}</Badge>
               </div>
-              <p className='mt-2 text-sm text-slate-500'>Owner: {rhythm.owner}</p>
+              <p className='mt-2 text-sm text-slate-9500'>Owner: {rhythm.owner}</p>
               <p className='mt-3 text-sm font-medium text-slate-700'>{rhythm.expectedOutput}</p>
             </article>
           ))}

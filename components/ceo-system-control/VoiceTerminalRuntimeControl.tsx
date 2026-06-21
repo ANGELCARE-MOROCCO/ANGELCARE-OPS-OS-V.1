@@ -73,22 +73,43 @@ export default function VoiceTerminalRuntimeControl() {
       progress.setStep('validate', 'done', 'CEO action validated.', 20)
       progress.setStep('update', 'running', 'Updating Voice Terminal runtime flag…', 75)
 
-      const response = await fetch('/api/system-control/module-flags/voice_terminal', {
-        method: 'PATCH',
+      let response = await fetch('/api/system-control/action', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          enabled,
+          action: enabled ? 'enable_module' : 'disable_module',
+          moduleKey: 'voice_terminal',
           reason: reason || (enabled ? 'Voice Terminal restored by CEO.' : 'Voice Terminal temporarily disabled by CEO.'),
         }),
       })
 
-      const payload = await response.json().catch(() => null)
+      let payload = await response.json().catch(() => null)
 
       if (!response.ok || !payload?.ok) {
-        throw new Error(payload?.error || 'Unable to update Voice Terminal.')
+        response = await fetch('/api/system-control/module-flags/voice_terminal', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            enabled,
+            reason: reason || (enabled ? 'Voice Terminal restored by CEO.' : 'Voice Terminal temporarily disabled by CEO.'),
+          }),
+        })
+
+        payload = await response.json().catch(() => null)
       }
 
-      setFlag(payload.data)
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload?.error || payload?.message || 'Unable to update Voice Terminal.')
+      }
+
+      setFlag(payload.data || payload.report || {
+        module_key: 'voice_terminal',
+        module_label: 'Voice Terminal',
+        enabled,
+        status: enabled ? 'active' : 'disabled',
+        reason,
+        last_action: enabled ? 'enable_module' : 'disable_module',
+      })
 
       progress.setStep('refresh', 'running', 'Refreshing runtime status…', 95)
       await load(false)

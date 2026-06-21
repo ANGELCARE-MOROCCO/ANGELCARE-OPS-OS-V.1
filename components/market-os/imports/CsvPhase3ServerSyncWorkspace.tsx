@@ -67,7 +67,7 @@ export function CsvPhase3ServerSyncWorkspace() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl space-y-6">
         <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">
@@ -100,7 +100,7 @@ export function CsvPhase3ServerSyncWorkspace() {
               {syncModes.map((mode) => <option key={mode} value={mode}>{mode}</option>)}
             </select>
 
-            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white">
+            <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950">
               Upload CSV
               <input type="file" accept=".csv" className="hidden" onChange={handleFile} />
             </label>
@@ -108,7 +108,7 @@ export function CsvPhase3ServerSyncWorkspace() {
             <button
               onClick={runServerSync}
               disabled={loading || rows.length === 0}
-              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50"
+              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-50"
             >
               {loading ? "Running..." : "Run Server Sync"}
             </button>
@@ -135,7 +135,7 @@ export function CsvPhase3ServerSyncWorkspace() {
 
         <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-black text-slate-950">Sync Result</h2>
-          <pre className="mt-4 max-h-[420px] overflow-auto rounded-3xl bg-slate-950 p-5 text-xs font-bold text-emerald-200">
+          <pre className="mt-4 max-h-[420px] overflow-auto rounded-3xl bg-white p-5 text-xs font-bold text-emerald-200">
             {result ? JSON.stringify(result, null, 2) : "No server sync executed yet."}
           </pre>
         </section>
@@ -147,7 +147,7 @@ export function CsvPhase3ServerSyncWorkspace() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</p>
       <p className="mt-3 truncate text-2xl font-black text-slate-950">{value}</p>
     </div>
   )

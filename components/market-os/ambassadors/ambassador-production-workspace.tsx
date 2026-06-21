@@ -303,7 +303,7 @@ function StatusBadge({ status }: { status?: string | null }) {
 function FieldLabel({ label, children, error }: { label: string; children: ReactNode; error?: string }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</span>
+      <span className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-9500">{label}</span>
       <div className="mt-2">{children}</div>
       {error ? <div className="mt-1 text-xs font-bold text-rose-600">{error}</div> : null}
     </label>
@@ -368,7 +368,7 @@ function ActionButton({
       onClick={onClick}
       className={classNames(
         "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-60",
-        variant === "primary" && "bg-violet-600 text-white shadow-lg shadow-violet-100 hover:bg-violet-700",
+        variant === "primary" && "bg-violet-600 text-slate-950 shadow-lg shadow-violet-100 hover:bg-violet-700",
         variant === "secondary" && "border border-slate-200 bg-white text-slate-800 hover:border-violet-300 hover:bg-violet-50",
         variant === "danger" && "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100",
         variant === "ghost" && "text-slate-600 hover:bg-slate-100"
@@ -392,7 +392,7 @@ function KpiCard({ label, value, meta, icon: Icon, tone, onClick }: { label: str
           <Icon size={20} />
         </div>
         <div className="min-w-0">
-          <div className="text-[11px] font-black uppercase tracking-[0.08em] text-slate-500">{label}</div>
+          <div className="text-[11px] font-black uppercase tracking-[0.08em] text-slate-9500">{label}</div>
           <div className="mt-1 text-2xl font-black text-slate-950">{value}</div>
           <div className="mt-1 text-[11px] font-black text-emerald-600">{meta}</div>
         </div>
@@ -419,7 +419,7 @@ function TableShell({
       <div className="flex items-start justify-between border-b border-slate-100 p-5">
         <div>
           <h2 className="font-black text-slate-950">{title}</h2>
-          <p className="mt-1 text-sm font-semibold text-slate-500">{description}</p>
+          <p className="mt-1 text-sm font-semibold text-slate-9500">{description}</p>
         </div>
       </div>
       {loading ? (
@@ -432,10 +432,10 @@ function TableShell({
         <div className="grid min-h-[220px] place-items-center p-8 text-center">
           <div>
             <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-slate-100">
-              <Search size={20} className="text-slate-500" />
+              <Search size={20} className="text-slate-9500" />
             </div>
             <div className="mt-3 text-sm font-black text-slate-950">No records found</div>
-            <div className="mt-1 text-xs font-semibold text-slate-500">Adjust filters or create a new live record.</div>
+            <div className="mt-1 text-xs font-semibold text-slate-9500">Adjust filters or create a new live record.</div>
           </div>
         </div>
       ) : (
@@ -469,9 +469,9 @@ function ModalShell({
   saveLabel?: string
 }) {
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-white/50 p-4 backdrop-blur-sm">
       <div className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-2xl">
-        <header className="relative overflow-hidden bg-gradient-to-r from-slate-950 via-violet-800 to-blue-700 p-6 text-white">
+        <header className="relative overflow-hidden bg-gradient-to-r from-white via-violet-800 to-blue-700 p-6 text-slate-950">
           <Icon className="absolute -right-10 -top-10 opacity-10" size={190} />
           <div className="relative flex items-start justify-between gap-4">
             <div className="flex gap-4">
@@ -480,7 +480,7 @@ function ModalShell({
               </div>
               <div>
                 <h2 className="text-2xl font-black tracking-tight">{title}</h2>
-                <p className="mt-2 max-w-2xl text-sm font-semibold text-white/75">{description}</p>
+                <p className="mt-2 max-w-2xl text-sm font-semibold text-slate-950/75">{description}</p>
               </div>
             </div>
             <button type="button" onClick={onClose} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/15 hover:bg-white/25">
@@ -506,7 +506,7 @@ function ModalShell({
 
 function ConfirmModal({ state, saving, error, onClose, onConfirm }: { state: ConfirmState; saving: boolean; error?: string | null; onClose: () => void; onConfirm: () => void }) {
   return (
-    <div className="fixed inset-0 z-[95] flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[95] flex items-center justify-center bg-white/50 p-4 backdrop-blur-sm">
       <div className="w-full max-w-lg rounded-[24px] bg-white p-6 shadow-2xl">
         <div className="flex items-start gap-4">
           <div className="grid h-12 w-12 place-items-center rounded-2xl bg-rose-50 text-rose-600">
@@ -554,7 +554,7 @@ function DetailDrawer({
   const audit = snapshot.audit.filter((item) => item.entity_id === ambassador.id).slice(0, 8)
 
   return (
-    <div className="fixed inset-0 z-[85] bg-slate-950/30">
+    <div className="fixed inset-0 z-[85] bg-white/30">
       <aside className="ml-auto h-full w-full max-w-4xl overflow-y-auto bg-white shadow-2xl">
         <header className="sticky top-0 z-10 border-b border-slate-100 bg-white p-6">
           <div className="flex items-start justify-between gap-4">
@@ -565,7 +565,7 @@ function DetailDrawer({
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <StatusBadge status={ambassador.status} />
                   <StatusBadge status={ambassador.lifecycle_stage} />
-                  <span className="text-sm font-bold text-slate-500">{ambassador.city || "No city"} · {ambassador.region || "No region"}</span>
+                  <span className="text-sm font-bold text-slate-9500">{ambassador.city || "No city"} · {ambassador.region || "No region"}</span>
                 </div>
               </div>
             </div>
@@ -593,7 +593,7 @@ function DetailDrawer({
                 <div key={String(label)} className="rounded-2xl border border-slate-200 p-4">
                   <CardIcon className="text-violet-600" size={18} />
                   <div className="mt-2 text-xl font-black">{String(value)}</div>
-                  <div className="text-xs font-black uppercase text-slate-500">{String(label)}</div>
+                  <div className="text-xs font-black uppercase text-slate-9500">{String(label)}</div>
                 </div>
               )
             })}
@@ -634,7 +634,7 @@ function InfoPanel({ title, rows }: { title: string; rows: string[][] }) {
       <div className="mt-4 space-y-3">
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2 text-sm">
-            <span className="font-bold text-slate-500">{label}</span>
+            <span className="font-bold text-slate-9500">{label}</span>
             <span className="text-right font-black text-slate-900">{value}</span>
           </div>
         ))}
@@ -648,7 +648,7 @@ function RelatedList({ title, items, empty }: { title: string; items: string[]; 
     <section className="rounded-2xl border border-slate-200 p-5">
       <h3 className="font-black text-slate-950">{title}</h3>
       <div className="mt-4 grid gap-2">
-        {items.length ? items.map((item) => <div key={item} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">{item}</div>) : <div className="text-sm font-semibold text-slate-500">{empty}</div>}
+        {items.length ? items.map((item) => <div key={item} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">{item}</div>) : <div className="text-sm font-semibold text-slate-9500">{empty}</div>}
       </div>
     </section>
   )
@@ -1263,7 +1263,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-950">
       <AmbassadorMarketSidebar />
-      <main className="min-w-0 flex-1 px-6 py-6 lg:px-8">
+      <main data-market-os-root className="min-w-0 flex-1 px-6 py-6 lg:px-8">
         <header className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="flex items-center gap-3">
@@ -1272,7 +1272,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
               </div>
               <div>
                 <h1 className="text-[30px] font-black tracking-tight">{config.title}</h1>
-                <p className="mt-1 text-sm font-semibold text-slate-500">{config.description}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-9500">{config.description}</p>
               </div>
             </div>
           </div>
@@ -1307,7 +1307,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
 
         <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="grid gap-3 lg:grid-cols-[1.4fr_0.7fr_0.7fr_0.7fr_0.55fr]">
-            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">
+            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-9500">
               <Search size={17} />
               <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent outline-none" placeholder="Search live Ambassador records..." />
             </label>
@@ -1368,17 +1368,17 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
       <TableShell title="Ambassadors" description="Live directory records with profile, assignment, edit and archive actions." loading={loading} empty={!filteredAmbassadors.length}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+            <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-9500">
               <tr><th className="px-5 py-3">Ambassador</th><th>City / Region</th><th>Territory</th><th>Status</th><th>Scores</th><th>Missions</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {filteredAmbassadors.map((item) => (
                 <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-                  <td className="px-5 py-4"><button type="button" onClick={() => setDetail(item)} className="flex items-center gap-3 text-left"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-100 text-xs font-black text-violet-700">{initials(item.full_name)}</span><span><b className="block text-slate-950">{item.full_name}</b><span className="text-xs font-semibold text-slate-500">{item.email || item.phone || "No contact"}</span></span></button></td>
-                  <td className="font-bold text-slate-700">{item.city || "Not set"}<div className="text-xs text-slate-500">{item.region || "No region"}</div></td>
+                  <td className="px-5 py-4"><button type="button" onClick={() => setDetail(item)} className="flex items-center gap-3 text-left"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-100 text-xs font-black text-violet-700">{initials(item.full_name)}</span><span><b className="block text-slate-950">{item.full_name}</b><span className="text-xs font-semibold text-slate-9500">{item.email || item.phone || "No contact"}</span></span></button></td>
+                  <td className="font-bold text-slate-700">{item.city || "Not set"}<div className="text-xs text-slate-9500">{item.region || "No region"}</div></td>
                   <td className="font-bold text-slate-700">{item.territory_name || "Unassigned"}</td>
                   <td><StatusBadge status={item.status} /></td>
-                  <td className="font-black">{item.performance_score}/100<div className="text-xs text-slate-500">KPI {item.kpi_score}/100</div></td>
+                  <td className="font-black">{item.performance_score}/100<div className="text-xs text-slate-9500">KPI {item.kpi_score}/100</div></td>
                   <td className="font-black">{item.missions_completed}/{item.missions_assigned}</td>
                   <td><RowActions actions={[
                     ["View", Eye, () => setDetail(item)],
@@ -1401,8 +1401,8 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <div className="grid gap-3 md:grid-cols-3">
           {filteredTerritories.slice(0, 6).map((item) => (
             <button type="button" key={item.id} onClick={() => openModal("territory", item)} className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm hover:border-violet-300">
-              <div className="flex items-start justify-between"><div><h3 className="font-black">{item.name}</h3><p className="text-sm font-semibold text-slate-500">{item.city || "No city"} · {item.region || "No region"}</p></div><StatusBadge status={item.status} /></div>
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div className="rounded-xl bg-slate-50 p-3"><b>{item.active_ambassadors_count}</b><div className="text-xs font-bold text-slate-500">Active</div></div><div className="rounded-xl bg-slate-50 p-3"><b>{item.coverage_goal}</b><div className="text-xs font-bold text-slate-500">Goal</div></div></div>
+              <div className="flex items-start justify-between"><div><h3 className="font-black">{item.name}</h3><p className="text-sm font-semibold text-slate-9500">{item.city || "No city"} · {item.region || "No region"}</p></div><StatusBadge status={item.status} /></div>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div className="rounded-xl bg-slate-50 p-3"><b>{item.active_ambassadors_count}</b><div className="text-xs font-bold text-slate-9500">Active</div></div><div className="rounded-xl bg-slate-50 p-3"><b>{item.coverage_goal}</b><div className="text-xs font-bold text-slate-9500">Goal</div></div></div>
             </button>
           ))}
         </div>
@@ -1410,7 +1410,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
           <DataTable headers={["Territory", "Region", "Coverage", "Manager", "Status", "Actions"]}>
             {filteredTerritories.map((item) => (
               <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-                <td className="px-5 py-4 font-black">{item.name}<div className="text-xs font-semibold text-slate-500">{item.city || "No city"} · {item.zone || "No zone"}</div></td>
+                <td className="px-5 py-4 font-black">{item.name}<div className="text-xs font-semibold text-slate-9500">{item.city || "No city"} · {item.zone || "No zone"}</div></td>
                 <td className="font-bold">{item.region || "Not set"}</td>
                 <td className="font-black">{item.active_ambassadors_count}/{item.coverage_goal}</td>
                 <td className="font-bold">{item.manager_name || "Not set"}</td>
@@ -1430,7 +1430,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <DataTable headers={["Mission", "Ambassador", "Priority", "Status", "Due", "Actions"]}>
           {filteredMissions.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-              <td className="px-5 py-4 font-black">{item.title}<div className="text-xs font-semibold text-slate-500">{item.mission_type || "field mission"} · {item.city || "No city"}</div></td>
+              <td className="px-5 py-4 font-black">{item.title}<div className="text-xs font-semibold text-slate-9500">{item.mission_type || "field mission"} · {item.city || "No city"}</div></td>
               <td className="font-bold">{ambassadorName(item.ambassador_id)}</td>
               <td><StatusBadge status={item.priority} /></td>
               <td><StatusBadge status={item.status} /></td>
@@ -1449,15 +1449,15 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <section className="grid gap-3 md:grid-cols-4 xl:grid-cols-7">
           {recruitmentStages.map((stage) => {
             const count = snapshot.recruitment.filter((item) => item.stage === stage).length
-            return <button type="button" key={stage} onClick={() => setStatusFilter(stage)} className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-violet-300"><div className="text-xl font-black">{count}</div><div className="text-xs font-black capitalize text-slate-500">{stage.replaceAll("_", " ")}</div></button>
+            return <button type="button" key={stage} onClick={() => setStatusFilter(stage)} className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-violet-300"><div className="text-xl font-black">{count}</div><div className="text-xs font-black capitalize text-slate-9500">{stage.replaceAll("_", " ")}</div></button>
           })}
         </section>
         <TableShell title="Recruitment Pipeline" description="Candidate records with stage movement, edit and archive actions." loading={loading} empty={!filteredRecruitment.length}>
           <DataTable headers={["Candidate", "City", "Source", "Stage", "Score", "Next Step", "Actions"]}>
             {filteredRecruitment.map((item) => (
               <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-                <td className="px-5 py-4 font-black">{item.candidate_name}<div className="text-xs font-semibold text-slate-500">{item.email || item.phone || "No contact"}</div></td>
-                <td className="font-bold">{item.city || "Not set"}<div className="text-xs text-slate-500">{item.region || "No region"}</div></td>
+                <td className="px-5 py-4 font-black">{item.candidate_name}<div className="text-xs font-semibold text-slate-9500">{item.email || item.phone || "No contact"}</div></td>
+                <td className="font-bold">{item.city || "Not set"}<div className="text-xs text-slate-9500">{item.region || "No region"}</div></td>
                 <td className="font-bold">{item.source || "Not set"}</td>
                 <td><StatusBadge status={item.stage} /></td>
                 <td className="font-black">{item.evaluation_score}/100</td>
@@ -1497,7 +1497,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
           {filteredTraining.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
               <td className="px-5 py-4 font-black">{ambassadorName(item.ambassador_id)}</td>
-              <td className="font-bold">{item.training_name}<div className="text-xs text-slate-500">{item.certification_name || "No certification"}</div></td>
+              <td className="font-bold">{item.training_name}<div className="text-xs text-slate-9500">{item.certification_name || "No certification"}</div></td>
               <td><StatusBadge status={item.status} /></td>
               <td><StatusBadge status={item.certification_status || "pending"} /></td>
               <td className="font-black">{item.score}/100</td>
@@ -1516,7 +1516,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <DataTable headers={["Goal", "Ambassador", "Period", "Progress", "Status", "Actions"]}>
           {filteredGoals.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-              <td className="px-5 py-4 font-black">{item.goal_type}<div className="text-xs font-semibold text-slate-500">{item.manager_notes || "No manager note"}</div></td>
+              <td className="px-5 py-4 font-black">{item.goal_type}<div className="text-xs font-semibold text-slate-9500">{item.manager_notes || "No manager note"}</div></td>
               <td className="font-bold">{ambassadorName(item.ambassador_id)}</td>
               <td className="font-bold">{item.period}</td>
               <td className="font-black">{item.current_value}/{item.target_value}<Progress value={item.completion_rate} /></td>
@@ -1551,7 +1551,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <DataTable headers={["Ambassador", "Type", "Amount", "Status", "Approved", "Paid", "Actions"]}>
           {filteredIncentives.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-              <td className="px-5 py-4 font-black">{ambassadorName(item.ambassador_id)}<div className="text-xs font-semibold text-slate-500">{item.reason || "No reason"}</div></td>
+              <td className="px-5 py-4 font-black">{ambassadorName(item.ambassador_id)}<div className="text-xs font-semibold text-slate-9500">{item.reason || "No reason"}</div></td>
               <td className="font-bold">{item.incentive_type.replaceAll("_", " ")}</td>
               <td className="font-black">{formatMoney(item.amount, item.currency)}</td>
               <td><StatusBadge status={item.status} /></td>
@@ -1595,7 +1595,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
       <section className="grid gap-5 xl:grid-cols-[1fr_0.7fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <div><h2 className="font-black">Module Settings</h2><p className="mt-1 text-sm font-semibold text-slate-500">Persist rules that drive Ambassador module behavior.</p></div>
+            <div><h2 className="font-black">Module Settings</h2><p className="mt-1 text-sm font-semibold text-slate-9500">Persist rules that drive Ambassador module behavior.</p></div>
             <ActionButton onClick={() => openModal("settings")} icon={Settings} variant="primary">Edit Settings</ActionButton>
           </div>
           <div className="mt-5 grid gap-3">
@@ -1607,7 +1607,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
               ["Training rules", stringifyJson(settings?.training_rules)],
               ["KPI rules", stringifyJson(settings?.kpi_rules)],
               ["Notification rules", stringifyJson(settings?.notification_rules)],
-            ].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-4"><div className="text-xs font-black uppercase text-slate-500">{label}</div><pre className="mt-2 whitespace-pre-wrap text-xs font-bold text-slate-800">{value}</pre></div>)}
+            ].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-4"><div className="text-xs font-black uppercase text-slate-9500">{label}</div><pre className="mt-2 whitespace-pre-wrap text-xs font-bold text-slate-800">{value}</pre></div>)}
           </div>
         </div>
         <AuditPanel audit={snapshot.audit} />
@@ -1672,7 +1672,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   }
 
   function checklistForm(record: AmbassadorOnboardingRecord) {
-    return <section className="grid gap-3">{record.checklist.length ? record.checklist.map((step) => <button type="button" key={step.id} disabled={saving} onClick={() => void completeOnboardingStep(record, step)} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold hover:border-violet-300"><span>{step.label}</span><StatusBadge status={step.done ? "completed" : "pending"} /></button>) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No checklist items yet. Edit this onboarding plan to add checklist items.</div>}</section>
+    return <section className="grid gap-3">{record.checklist.length ? record.checklist.map((step) => <button type="button" key={step.id} disabled={saving} onClick={() => void completeOnboardingStep(record, step)} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold hover:border-violet-300"><span>{step.label}</span><StatusBadge status={step.done ? "completed" : "pending"} /></button>) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-9500">No checklist items yet. Edit this onboarding plan to add checklist items.</div>}</section>
   }
 
   function trainingForm() {
@@ -1700,7 +1700,7 @@ function DataTable({ headers, children }: { headers: string[]; children: ReactNo
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[920px] text-left text-sm">
-        <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+        <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-9500">
           <tr>{headers.map((header, index) => <th key={header} className={index === 0 ? "px-5 py-3" : "py-3"}>{header}</th>)}</tr>
         </thead>
         <tbody>{children}</tbody>
@@ -1738,10 +1738,10 @@ function AuditPanel({ audit }: { audit: AmbassadorAuditLog[] }) {
         {audit.slice(0, 10).map((item) => (
           <div key={item.id} className="rounded-2xl bg-slate-50 p-3">
             <div className="text-xs font-black text-slate-950">{item.action}</div>
-            <div className="mt-1 text-xs font-semibold text-slate-500">{item.summary || item.entity_type}</div>
+            <div className="mt-1 text-xs font-semibold text-slate-9500">{item.summary || item.entity_type}</div>
           </div>
         ))}
-        {!audit.length ? <div className="text-sm font-semibold text-slate-500">No audit events yet.</div> : null}
+        {!audit.length ? <div className="text-sm font-semibold text-slate-9500">No audit events yet.</div> : null}
       </div>
     </aside>
   )

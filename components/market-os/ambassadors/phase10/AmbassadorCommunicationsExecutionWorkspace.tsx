@@ -42,9 +42,9 @@ function MetricCard({
 }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-9500">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{helper}</p>
+      <p className="mt-2 text-sm text-slate-9500">{helper}</p>
     </article>
   );
 }
@@ -79,7 +79,7 @@ export default function AmbassadorCommunicationsExecutionWorkspace() {
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 p-5">
             <h2 className="text-lg font-bold text-slate-950">Broadcast execution queue</h2>
-            <p className="mt-1 text-sm text-slate-500">Operational campaigns, reminders, proof revisions, and announcements.</p>
+            <p className="mt-1 text-sm text-slate-9500">Operational campaigns, reminders, proof revisions, and announcements.</p>
           </div>
           <div className="divide-y divide-slate-100">
             {snapshot.broadcasts.map((broadcast) => (
@@ -87,7 +87,7 @@ export default function AmbassadorCommunicationsExecutionWorkspace() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-semibold text-slate-950">{broadcast.title}</h3>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-9500">
                       {broadcast.channel} · {broadcast.audienceLabel} · Sender: {broadcast.sender}
                     </p>
                   </div>
@@ -118,7 +118,7 @@ export default function AmbassadorCommunicationsExecutionWorkspace() {
                     <h3 className="font-semibold text-slate-950">{broadcast.title}</h3>
                     <Badge tone={broadcast.failedCount > 0 ? "danger" : "warning"}>{broadcast.status}</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-slate-9500">
                     Failed: {broadcast.failedCount} · Scheduled: {broadcast.scheduledFor}
                   </p>
                 </article>
@@ -142,7 +142,7 @@ export default function AmbassadorCommunicationsExecutionWorkspace() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
           <h2 className="text-lg font-bold text-slate-950">Message templates</h2>
-          <p className="mt-1 text-sm text-slate-500">Reusable messages for onboarding, missions, revisions, rewards, payouts, training, and compliance.</p>
+          <p className="mt-1 text-sm text-slate-9500">Reusable messages for onboarding, missions, revisions, rewards, payouts, training, and compliance.</p>
         </div>
         <div className="grid gap-4 p-5 lg:grid-cols-2">
           {snapshot.templates.map((template) => (
@@ -150,13 +150,13 @@ export default function AmbassadorCommunicationsExecutionWorkspace() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-bold text-slate-950">{template.name}</h3>
-                  <p className="mt-1 text-sm text-slate-500">{template.channel} · {template.category} · Owner: {template.owner}</p>
+                  <p className="mt-1 text-sm text-slate-9500">{template.channel} · {template.category} · Owner: {template.owner}</p>
                 </div>
                 <Badge tone={template.status === "active" ? "success" : "neutral"}>{template.status}</Badge>
               </div>
               <p className="mt-3 text-sm font-semibold text-slate-700">{template.subject}</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">{template.body}</p>
-              <p className="mt-3 text-xs font-medium text-slate-500">Variables: {template.variables.join(", ")}</p>
+              <p className="mt-3 text-xs font-medium text-slate-9500">Variables: {template.variables.join(", ")}</p>
             </article>
           ))}
         </div>
@@ -168,7 +168,7 @@ export default function AmbassadorCommunicationsExecutionWorkspace() {
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-9500">
               <tr>
                 <th className="px-5 py-3">Ambassador</th>
                 <th className="px-5 py-3">City</th>

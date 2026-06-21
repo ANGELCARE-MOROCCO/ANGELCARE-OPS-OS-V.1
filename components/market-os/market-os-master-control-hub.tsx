@@ -42,16 +42,16 @@ export default function MarketOsMasterControlHub() {
   const totalEngines = marketOsEngines.length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 17
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Market-OS Master Control Hub
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This hub connects every Market-OS execution engine into one operational entry point:
             strategy, execution, approval, ROI, risk, campaigns, content, research, offers,
             sales, partnerships, SEO, PR, workforce, executive control and learning memory.
@@ -59,19 +59,19 @@ export default function MarketOsMasterControlHub() {
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Total Engines</p>
+              <p className="text-xs uppercase text-slate-600">Total Engines</p>
               <p className="mt-2 text-3xl font-black">{totalEngines}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Active Engines</p>
+              <p className="text-xs uppercase text-slate-600">Active Engines</p>
               <p className="mt-2 text-3xl font-black">{activeItems}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Watch / Blocked</p>
+              <p className="text-xs uppercase text-slate-600">Watch / Blocked</p>
               <p className="mt-2 text-3xl font-black">{watchItems}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk</p>
+              <p className="text-xs uppercase text-slate-600">High Risk</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -124,11 +124,11 @@ export default function MarketOsMasterControlHub() {
 
               <div className="mt-4 grid gap-3 lg:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Owner</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Owner</p>
                   <p className="mt-2 text-sm font-semibold text-slate-800">{engine.owner}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{engine.nextAction}</p>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export default function MarketOsMasterControlHub() {
               <div className="mt-5">
                 <Link
                   href={engine.route}
-                  className="inline-flex rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800"
+                  className="inline-flex rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950 hover:bg-white"
                 >
                   Open Engine
                 </Link>

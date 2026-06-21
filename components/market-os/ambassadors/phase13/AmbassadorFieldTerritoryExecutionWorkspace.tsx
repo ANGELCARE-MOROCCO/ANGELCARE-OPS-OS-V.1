@@ -18,9 +18,9 @@ function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone
 function MetricCard({ label, value, helper }: { label: string; value: string | number; helper: string }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-9500">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{helper}</p>
+      <p className="mt-2 text-sm text-slate-9500">{helper}</p>
     </article>
   );
 }
@@ -60,7 +60,7 @@ export default function AmbassadorFieldTerritoryExecutionWorkspace() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-semibold text-slate-950">{zone.city}</h3>
-                    <p className="mt-1 text-sm text-slate-500">{zone.region} · Manager: {zone.manager}</p>
+                    <p className="mt-1 text-sm text-slate-9500">{zone.region} · Manager: {zone.manager}</p>
                   </div>
                   <Badge tone={zone.priority === "critical" ? "danger" : zone.priority === "high" ? "warning" : "neutral"}>{zone.status}</Badge>
                 </div>
@@ -82,7 +82,7 @@ export default function AmbassadorFieldTerritoryExecutionWorkspace() {
               {criticalTerritories.map((zone) => (
                 <article key={zone.id} className="p-5">
                   <div className="flex items-start justify-between gap-3"><h3 className="font-semibold text-slate-950">{zone.city}</h3><Badge tone="danger">{zone.priority}</Badge></div>
-                  <p className="mt-2 text-sm text-slate-500">Coverage {calculateTerritoryCoverage(zone)}% · Demand {zone.leadDemandScore}</p>
+                  <p className="mt-2 text-sm text-slate-9500">Coverage {calculateTerritoryCoverage(zone)}% · Demand {zone.leadDemandScore}</p>
                 </article>
               ))}
             </div>
@@ -94,7 +94,7 @@ export default function AmbassadorFieldTerritoryExecutionWorkspace() {
               {criticalGaps.map((gap) => (
                 <article key={gap.id} className="p-5">
                   <div className="flex items-start justify-between gap-3"><h3 className="font-semibold text-slate-950">{gap.city}</h3><Badge tone={gap.urgency === "critical" ? "danger" : "warning"}>{gap.urgency}</Badge></div>
-                  <p className="mt-2 text-sm text-slate-500">{gap.reason}</p>
+                  <p className="mt-2 text-sm text-slate-9500">{gap.reason}</p>
                   <p className="mt-2 text-sm font-medium text-slate-700">Need {gap.missingAmbassadors} · Source: {gap.recommendedSource}</p>
                 </article>
               ))}
@@ -107,7 +107,7 @@ export default function AmbassadorFieldTerritoryExecutionWorkspace() {
         <div className="border-b border-slate-100 p-5"><h2 className="text-lg font-bold text-slate-950">Field task queue</h2></div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-9500">
               <tr><th className="px-5 py-3">Task</th><th className="px-5 py-3">City</th><th className="px-5 py-3">Type</th><th className="px-5 py-3">Assignee</th><th className="px-5 py-3">Due</th><th className="px-5 py-3">Priority</th><th className="px-5 py-3">Status</th></tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -135,7 +135,7 @@ export default function AmbassadorFieldTerritoryExecutionWorkspace() {
               <Badge tone={activation.status === "completed" ? "success" : activation.status === "live" ? "info" : "neutral"}>{activation.status}</Badge>
               <h3 className="mt-4 font-bold text-slate-950">{activation.title}</h3>
               <p className="mt-2 text-sm text-slate-600">{activation.city} · {activation.location} · {activation.date}</p>
-              <p className="mt-3 text-sm text-slate-500">Owner: {activation.owner}</p>
+              <p className="mt-3 text-sm text-slate-9500">Owner: {activation.owner}</p>
               <p className="mt-3 text-sm font-medium text-slate-700">Check-ins: {activation.checkedInAmbassadors}/{activation.expectedAmbassadors} · Leads: {activation.generatedLeads}</p>
             </article>
           ))}

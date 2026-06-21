@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/getUser'
-import VoicePhoneWidget from '@/app/components/VoicePhoneWidget'
+import VoicePhoneWidgetGate from '@/app/components/VoicePhoneWidgetGate'
 import AngelCareConnect from '@/app/components/connect/AngelCareConnect'
 import OverheadPanel from '@/app/components/erp/OverheadPanel'
 import AppShell from '@/app/components/erp/AppShell'
@@ -37,7 +37,7 @@ export default async function ProtectedLayout({
       </div>
 
       {/* Global voice terminal */}
-      <VoicePhoneWidget />
+      <VoicePhoneWidgetGate />
 
       {/* AngelCare Connect bottom-right system */}
       <AngelCareConnect />

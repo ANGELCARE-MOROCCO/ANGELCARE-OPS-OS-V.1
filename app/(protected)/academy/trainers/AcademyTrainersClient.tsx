@@ -2043,7 +2043,7 @@ function TrainerModal({
     let mounted = true
 
     async function loadPrograms() {
-      const attempts = ['/api/academy/trainer-program-options', '/api/academy/programs', '/api/academy/courses']
+      const attempts = ['/api/academy/trainer-program-options', '/api/academy/programs']
       for (const url of attempts) {
         try {
           const response = await fetch(url, { cache: 'no-store' })

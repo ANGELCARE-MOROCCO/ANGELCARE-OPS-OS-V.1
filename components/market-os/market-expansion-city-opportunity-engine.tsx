@@ -21,7 +21,7 @@ function badgeClass(value: string) {
 function Bar({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div className="h-full rounded-full bg-slate-950" style={{ width: `${Math.min(100, value)}%` }} />
+      <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, value)}%` }} />
     </div>
   )
 }
@@ -58,16 +58,16 @@ export default function MarketExpansionCityOpportunityEngine() {
   const pilotReady = cityOpportunities.filter((item) => item.stage === "pilot" || item.stage === "launch_ready").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 20
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Market Expansion & City Opportunity Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer helps AngelCare evaluate cities and countries before expansion:
             demand, supply readiness, competition, legal complexity, revenue potential,
             launch priority and next action discipline.
@@ -75,19 +75,19 @@ export default function MarketExpansionCityOpportunityEngine() {
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Revenue Potential</p>
+              <p className="text-xs uppercase text-slate-600">Revenue Potential</p>
               <p className="mt-2 text-2xl font-black">{formatMad(totalRevenue)}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Avg Launch Priority</p>
+              <p className="text-xs uppercase text-slate-600">Avg Launch Priority</p>
               <p className="mt-2 text-3xl font-black">{avgPriority}%</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Markets</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Markets</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Pilot / Ready</p>
+              <p className="text-xs uppercase text-slate-600">Pilot / Ready</p>
               <p className="mt-2 text-3xl font-black">{pilotReady}</p>
             </div>
           </div>
@@ -151,13 +151,13 @@ export default function MarketExpansionCityOpportunityEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{item.city}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Owner: {item.owner} · Launch priority: {item.launchPriority}%
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Estimated Revenue</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Estimated Revenue</p>
                   <p className="mt-1 font-black">{formatMad(item.estimatedRevenueMad)}</p>
                 </div>
               </div>
@@ -198,25 +198,25 @@ export default function MarketExpansionCityOpportunityEngine() {
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Main Opportunity</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Main Opportunity</p>
                   <p className="mt-2 text-sm text-slate-700">{item.mainOpportunity}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Blocker</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Blocker</p>
                   <p className="mt-2 text-sm text-slate-700">{item.blocker}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Launch Condition</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Launch Condition</p>
                   <p className="mt-2 text-sm text-slate-700">{item.launchCondition}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                   <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="expansion" engine="acquisition" actionKey="create_expansion_task" actionLabel="Create Expansion Task" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Create Expansion Task</MarketActionButton>
+                <MarketActionButton moduleKey="expansion" engine="acquisition" actionKey="create_expansion_task" actionLabel="Create Expansion Task" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Create Expansion Task</MarketActionButton>
                 <MarketActionButton moduleKey="expansion" engine="acquisition" actionKey="validate_market" actionLabel="Validate Market" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Validate Market</MarketActionButton>
                 <MarketActionButton moduleKey="expansion" engine="acquisition" actionKey="execute_build_launch_plan" actionLabel="Build Launch Plan" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Build Launch Plan</MarketActionButton>
                 <MarketActionButton moduleKey="expansion" engine="acquisition" actionKey="mark_pilot" actionLabel="Mark Pilot" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Mark Pilot</MarketActionButton>

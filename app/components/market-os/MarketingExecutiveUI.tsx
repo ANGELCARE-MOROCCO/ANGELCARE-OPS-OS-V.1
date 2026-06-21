@@ -1,3 +1,69 @@
+
+function MarketOSHeroEnterprisePolish() {
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          [data-market-os-main-ui] {
+            color-scheme: light;
+          }
+
+          [data-market-os-main-ui] [style*="min-height: 230px"],
+          [data-market-os-main-ui] [style*="minHeight: 230"] {
+            position: relative;
+          }
+
+          [data-market-os-main-ui] [style*="min-height: 230px"]::before,
+          [data-market-os-main-ui] [style*="minHeight: 230"]::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+              radial-gradient(circle at 14% 20%, rgba(14,165,233,.10), transparent 24%),
+              radial-gradient(circle at 74% 0%, rgba(124,58,237,.10), transparent 28%);
+            pointer-events: none;
+          }
+        `,
+      }}
+    />
+  )
+}
+
+
+function MarketOSInlineWhiteGuard() {
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          [data-market-os-root] {
+            background: #ffffff !important;
+            color: #020617 !important;
+            color-scheme: light;
+          }
+
+          [data-market-os-root] a {
+            color: inherit;
+          }
+
+          [data-market-os-root] [style*="background: rgb(2, 6, 23)"],
+          [data-market-os-root] [style*="background:#020617"],
+          [data-market-os-root] [style*="background: #020617"],
+          [data-market-os-root] [style*="background:#0f172a"],
+          [data-market-os-root] [style*="background: #0f172a"] {
+            background: #ffffff !important;
+          }
+
+          [data-market-os-root] [style*="color: rgb(255, 255, 255)"],
+          [data-market-os-root] [style*="color:#ffffff"],
+          [data-market-os-root] [style*="color: #ffffff"] {
+            color: #020617 !important;
+          }
+        `,
+      }}
+    />
+  )
+}
+
 'use client'
 import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
@@ -176,7 +242,7 @@ export default function MarketingExecutiveUI() {
     : [
         { title: 'New lead generated', channel: 'Website Form', region: 'Casablanca', tag: 'Hot', time: new Date(Date.now() - 120000).toISOString(), href: '/leads' },
         { title: 'Campaign hit 100K impressions', channel: 'Facebook Ads', region: 'Rabat', tag: 'Info', time: new Date(Date.now() - 480000).toISOString(), href: '/market-os/campaign-lifecycle' },
-        { title: 'Content asset published', channel: 'Content Studio', region: 'Organic', tag: 'Success', time: new Date(Date.now() - 900000).toISOString(), href: '/market-os/content-command-center' },
+        { title: 'Content asset published', channel: 'Content Governance', region: 'Organic', tag: 'Success', time: new Date(Date.now() - 900000).toISOString(), href: '/market-os/content-command-center' },
         { title: 'Budget approved', channel: 'Google Ads', region: '4.20M MAD', tag: 'Finance', time: new Date(Date.now() - 1320000).toISOString(), href: '/revenue-command-center' },
       ]
 
@@ -229,38 +295,80 @@ export default function MarketingExecutiveUI() {
           </div>
         </header>
 
-        <section style={hero}>
-          <div style={heroIdentity}>
-            <div style={heroIcon}>✦</div>
-            <div>
-              <span style={eyebrow}>MARKETING COMMAND HQ</span>
-              <h1><span>AngelCare Marketing</span> Growth Control Center</h1>
-              <p>Daily acquisition, campaigns, content, partnerships and revenue influence — synchronized for execution.</p>
+        
+<section style={megaHero}>
+  
 
-              <div style={heroActions}>
-                <Link href="/market-os/campaign-lifecycle"><span>🎯</span> Campaign Control</Link>
-                <Link href="/market-os/content-command-center"><span>🧠</span> Content Studio</Link>
-                <Link href="/revenue-command-center"><span>💎</span> Revenue Influence</Link>
-              </div>
-            </div>
-          </div>
+  <div style={megaHeroInner}>
+    <div style={megaHeroLeft}>
+      <span style={megaEyebrow}>
+        <span>●</span>
+        ANGELCARE MARKET OS
+      </span>
 
-          <div style={liveCard}>
-            <div style={liveTop}>
-              <b><span>●</span> Market-OS Sync</b>
-              <span>{status === 'live' ? 'LIVE' : 'SAFE'}</span>
-            </div>
-            <strong>{status === 'live' ? 'Operationally synchronized' : 'Safe operating mode'}</strong>
-            <p>Updated {snapshot?.loadedAt ? new Date(snapshot.loadedAt).toLocaleTimeString() : 'initializing'}</p>
-            <div style={syncMiniGrid}>
-              <span>🎯 Campaigns</span>
-              <span>📈 Leads</span>
-              <span>💰 Revenue</span>
-              <span>🤝 Partners</span>
-            </div>
-            <div style={pulse}><i /></div>
-          </div>
-        </section>
+      <h1 style={megaTitle}>
+        Marketing intelligence,
+        <br />
+        growth execution &
+        <br />
+        <span style={megaTitleAccent}>market command.</span>
+      </h1>
+
+      <p style={megaSubtitle}>
+        A unified executive operating layer for ANGELCARE acquisition, campaigns,
+        content governance, partner influence, field activation and revenue intelligence.
+      </p>
+
+      <div style={megaPillRow}>
+        <span style={megaPill}>◎ Executive cockpit</span>
+        <span style={megaPill}>🎯 Campaign operations</span>
+        <span style={megaPill}>🧠 Content governance</span>
+        <span style={megaPill}>💎 Revenue intelligence</span>
+        <span style={megaPill}>🤝 Partner influence</span>
+      </div>
+    </div>
+
+    <aside style={megaRight}>
+      <div style={megaStatusHeader}>
+        <div>
+          <b style={{ display: 'block', fontSize: 18, color: '#020617' }}>Production Command</b>
+          <span style={{ display: 'block', marginTop: 4, color: '#64748b', fontSize: 13, fontWeight: 750 }}>
+            Live ANGELCARE market layer
+          </span>
+        </div>
+        <span style={megaLiveBadge}>● LIVE</span>
+      </div>
+
+      <div style={megaMetricGrid}>
+        <div style={megaMetric}>
+          <span style={megaMetricLabel}>Campaigns</span>
+          <b style={megaMetricValue}>Synced</b>
+        </div>
+        <div style={megaMetric}>
+          <span style={megaMetricLabel}>Leads</span>
+          <b style={megaMetricValue}>Active</b>
+        </div>
+        <div style={megaMetric}>
+          <span style={megaMetricLabel}>Revenue</span>
+          <b style={megaMetricValue}>Tracked</b>
+        </div>
+        <div style={megaMetric}>
+          <span style={megaMetricLabel}>Partners</span>
+          <b style={megaMetricValue}>Ready</b>
+        </div>
+      </div>
+
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8, color: '#64748b', fontSize: 12, fontWeight: 850 }}>
+          <span>Operational sync</span>
+          <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+        <div style={megaProgress} />
+      </div>
+    </aside>
+  </div>
+</section>
+
 
         <section style={kpiGrid}>
           {kpis.map(([label, value, delta, href, color, icon]) => (
@@ -461,7 +569,7 @@ export default function MarketingExecutiveUI() {
               {[
                 ['New Campaign', '/market-os/campaign-lifecycle', '📣'],
                 ['Create Audience', '/leads', '👥'],
-                ['Content Studio', '/market-os/content-command-center', '📝'],
+                ['Content Governance', '/market-os/content-command-center', '📝'],
                 ['Automation Rule', '/market-os/campaign-lifecycle', '⚙️'],
                 ['Generate Report', '/reports', '📄'],
                 ['All Workspaces', '/market-os', '▦'],
@@ -473,7 +581,7 @@ export default function MarketingExecutiveUI() {
         </section>
 
         <div style={syncDock}>
-          <b>Market-OS Sync Status</b>
+          <b>ANGELCARE Sync Status</b>
           {sync.slice(0, 7).map((item) => (
             <Link href={String(item.href)} key={String(item.module)}>
               {item.module}<span>✓</span>
@@ -582,7 +690,7 @@ const expansionHeader: React.CSSProperties = {
   padding: 22,
   borderRadius: 24,
   background: 'linear-gradient(135deg,rgba(14,165,233,.12),rgba(124,58,237,.16))',
-  border: '1px solid rgba(148,163,184,.16)',
+  border: '1px solid #e2e8f0',
   boxShadow: '0 24px 72px rgba(0,0,0,.22)',
 }
 
@@ -618,8 +726,8 @@ const metricCard: React.CSSProperties = {
   minHeight: 92,
   padding: 12,
   borderRadius: 15,
-  background: 'rgba(255,255,255,.045)',
-  border: '1px solid rgba(148,163,184,.12)',
+  background: '#ffffff',
+  border: '1px solid #e2e8f0',
   display: 'grid',
   gap: 4,
   textAlign: 'center',
@@ -638,7 +746,7 @@ const liveListRow: React.CSSProperties = {
   padding: 12,
   borderRadius: 14,
   background: 'rgba(255,255,255,.04)',
-  color: '#fff',
+  color: '#020617',
   textDecoration: 'none',
   border: '1px solid rgba(148,163,184,.10)',
 }
@@ -648,7 +756,7 @@ const emptyState: React.CSSProperties = {
   borderRadius: 14,
   background: 'rgba(255,255,255,.035)',
   border: '1px dashed rgba(148,163,184,.22)',
-  color: '#94a3b8',
+  color: '#64748b',
   fontWeight: 800,
 }
 
@@ -666,66 +774,255 @@ const qaMatrix: React.CSSProperties = {
   marginTop: 12,
   padding: 12,
   borderRadius: 14,
-  background: 'rgba(2,6,23,.28)',
+  background: '#ffffff',
 }
 
 
-const page: React.CSSProperties = { minHeight: '100vh', display: 'grid', gridTemplateColumns: '300px 1fr', background: 'radial-gradient(circle at 90% 20%,rgba(124,58,237,.13),transparent 32%),radial-gradient(circle at 15% 0%,rgba(14,165,233,.12),transparent 28%),#040b16', color: '#e5eefc', fontFamily: 'Inter, Arial, sans-serif' }
-const sidebar: React.CSSProperties = { height: '100vh', position: 'sticky', top: 0, overflowY: 'auto', padding: 22, background: 'linear-gradient(180deg,#06111f,#040816)', borderRight: '1px solid rgba(148,163,184,.16)', display: 'grid', alignContent: 'start', gap: 18 }
+
+const megaHero: React.CSSProperties = {
+  position: 'relative',
+  overflow: 'hidden',
+  minHeight: 310,
+  display: 'grid',
+  alignItems: 'stretch',
+  borderRadius: 34,
+  padding: 34,
+  background:
+    'radial-gradient(circle at 10% 20%,rgba(14,165,233,.10),transparent 28%),radial-gradient(circle at 76% 0%,rgba(124,58,237,.11),transparent 30%),linear-gradient(135deg,#ffffff 0%,#f8fafc 60%,#eef6ff 100%)',
+  border: '1px solid #dbeafe',
+  boxShadow: '0 30px 90px rgba(15,23,42,.09)',
+}
+
+const megaHeroInner: React.CSSProperties = {
+  position: 'relative',
+  zIndex: 1,
+  display: 'grid',
+  gridTemplateColumns: 'minmax(0,1fr) 360px',
+  gap: 28,
+  alignItems: 'stretch',
+}
+
+const megaHeroLeft: React.CSSProperties = {
+  display: 'grid',
+  alignContent: 'center',
+  gap: 18,
+  maxWidth: 980,
+}
+
+const megaEyebrow: React.CSSProperties = {
+  display: 'inline-flex',
+  width: 'fit-content',
+  alignItems: 'center',
+  gap: 10,
+  padding: '9px 13px',
+  borderRadius: 999,
+  background: '#ffffff',
+  border: '1px solid #dbeafe',
+  color: '#0369a1',
+  fontSize: 12,
+  fontWeight: 900,
+  letterSpacing: '.18em',
+  textTransform: 'uppercase',
+  boxShadow: '0 10px 26px rgba(15,23,42,.05)',
+}
+
+const megaTitle: React.CSSProperties = {
+  margin: 0,
+  maxWidth: 980,
+  fontSize: 'clamp(42px,5vw,78px)',
+  lineHeight: .9,
+  letterSpacing: '-.065em',
+  color: '#020617',
+  fontWeight: 950,
+}
+
+const megaTitleAccent: React.CSSProperties = {
+  display: 'inline-block',
+  background: 'linear-gradient(135deg,#0284c7,#7c3aed)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+}
+
+const megaSubtitle: React.CSSProperties = {
+  maxWidth: 900,
+  margin: 0,
+  color: '#475569',
+  fontSize: 18,
+  lineHeight: 1.65,
+  fontWeight: 650,
+}
+
+const megaPillRow: React.CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 10,
+  marginTop: 4,
+}
+
+const megaPill: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 8,
+  padding: '11px 14px',
+  borderRadius: 999,
+  background: 'rgba(255,255,255,.82)',
+  border: '1px solid #e2e8f0',
+  color: '#0f172a',
+  fontSize: 13,
+  fontWeight: 850,
+  boxShadow: '0 10px 26px rgba(15,23,42,.04)',
+}
+
+const megaRight: React.CSSProperties = {
+  alignSelf: 'stretch',
+  display: 'grid',
+  gap: 14,
+  padding: 18,
+  borderRadius: 26,
+  background: 'rgba(255,255,255,.88)',
+  border: '1px solid #e2e8f0',
+  boxShadow: '0 22px 54px rgba(15,23,42,.08)',
+  backdropFilter: 'blur(20px)',
+  position: 'relative',
+  zIndex: 3,
+}
+
+const megaStatusHeader: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 12,
+  paddingBottom: 12,
+  borderBottom: '1px solid #e2e8f0',
+}
+
+const megaLiveBadge: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 7,
+  padding: '8px 10px',
+  borderRadius: 999,
+  background: '#ecfdf5',
+  border: '1px solid #bbf7d0',
+  color: '#047857',
+  fontSize: 12,
+  fontWeight: 950,
+  letterSpacing: '.08em',
+  textTransform: 'uppercase',
+}
+
+const megaMetricGrid: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  gap: 10,
+}
+
+const megaMetric: React.CSSProperties = {
+  minHeight: 72,
+  borderRadius: 18,
+  padding: 13,
+  background: '#ffffff',
+  border: '1px solid #e2e8f0',
+  display: 'grid',
+  gap: 4,
+}
+
+const megaMetricLabel: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: 11,
+  fontWeight: 850,
+  textTransform: 'uppercase',
+  letterSpacing: '.08em',
+}
+
+const megaMetricValue: React.CSSProperties = {
+  color: '#020617',
+  fontSize: 20,
+  fontWeight: 950,
+  letterSpacing: '-.03em',
+}
+
+const megaProgress: React.CSSProperties = {
+  height: 9,
+  borderRadius: 999,
+  background: 'linear-gradient(90deg,#22c55e,#38bdf8,#8b5cf6)',
+  boxShadow: '0 10px 24px rgba(59,130,246,.18)',
+}
+
+const megaWatermark: React.CSSProperties = {
+  position: 'absolute',
+  left: 28,
+  bottom: -8,
+  width: '62%',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  fontSize: 88,
+  lineHeight: .85,
+  fontWeight: 950,
+  letterSpacing: '-.09em',
+  color: 'rgba(15,23,42,.045)',
+  pointerEvents: 'none',
+  userSelect: 'none',
+  zIndex: 0,
+}
+
+const page: React.CSSProperties = { minHeight: '100vh', display: 'grid', gridTemplateColumns: '300px minmax(0,1fr)', background: 'linear-gradient(135deg,#ffffff 0%,#f8fafc 58%,#eef6ff 100%)', color: '#0f172a', fontFamily: 'Inter, Arial, sans-serif' }
+const sidebar: React.CSSProperties = { height: '100vh', position: 'sticky', top: 0, overflowY: 'auto', padding: 22, background: 'linear-gradient(180deg,#ffffff,#f8fafc)', borderRight: '1px solid #e2e8f0', display: 'grid', alignContent: 'start', gap: 18, boxShadow: '12px 0 30px rgba(15,23,42,.05)' }
 const brand: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 12, fontSize: 23, paddingBottom: 10 }
-const logo: React.CSSProperties = { width: 52, height: 52, borderRadius: 18, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#06b6d4,#7c3aed)', boxShadow: '0 0 34px rgba(124,58,237,.42)' }
+const logo: React.CSSProperties = { width: 52, height: 52, borderRadius: 18, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#0ea5e9,#7c3aed)', boxShadow: '0 16px 36px rgba(59,130,246,.24)' }
 const navGroup: React.CSSProperties = { display: 'grid', gap: 7 }
-const navItem: React.CSSProperties = { display: 'grid', gridTemplateColumns: '26px 1fr auto', gap: 10, alignItems: 'center', padding: '11px 13px', borderRadius: 13, color: '#cbd5e1', textDecoration: 'none', background: 'rgba(255,255,255,.035)', fontWeight: 850 }
-const navActive: React.CSSProperties = { ...navItem, background: 'linear-gradient(135deg,#7c3aed,#2563eb)', color: '#fff', boxShadow: '0 0 28px rgba(124,58,237,.35)' }
-const assistant: React.CSSProperties = { padding: 16, borderRadius: 18, background: 'linear-gradient(180deg,rgba(124,58,237,.18),rgba(14,165,233,.08))', border: '1px solid rgba(124,58,237,.28)', display: 'grid', gap: 8 }
+const navItem: React.CSSProperties = { display: 'grid', gridTemplateColumns: '26px 1fr auto', gap: 10, alignItems: 'center', padding: '11px 13px', borderRadius: 13, color: '#475569', textDecoration: 'none', background: 'rgba(255,255,255,.035)', fontWeight: 850 }
+const navActive: React.CSSProperties = { ...navItem, background: 'linear-gradient(135deg,#eef2ff,#dbeafe)', color: '#1e1b4b', border: '1px solid #c7d2fe', boxShadow: '0 14px 28px rgba(79,70,229,.12)' }
+const assistant: React.CSSProperties = { padding: 16, borderRadius: 18, background: 'linear-gradient(180deg,#ffffff,#f8fafc)', border: '1px solid #e2e8f0', display: 'grid', gap: 8, boxShadow: '0 14px 32px rgba(15,23,42,.06)' }
 const assistantIcon: React.CSSProperties = { width: 38, height: 38, borderRadius: 14, display: 'grid', placeItems: 'center', background: 'rgba(124,58,237,.30)' }
-const assistantInput: React.CSSProperties = { padding: '12px 13px', borderRadius: 12, border: '1px solid rgba(148,163,184,.16)', background: 'rgba(2,6,23,.45)', color: '#fff' }
-const workspace: React.CSSProperties = { padding: 16, borderRadius: 18, background: 'rgba(255,255,255,.04)', border: '1px solid rgba(148,163,184,.12)', display: 'grid', gap: 8 }
-const main: React.CSSProperties = { padding: 22, display: 'grid', gap: 16 }
-const topbar: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center' }
-const search: React.CSSProperties = { padding: '15px 17px', borderRadius: 15, background: '#0d1726', border: '1px solid rgba(148,163,184,.14)', color: '#94a3b8' }
+const assistantInput: React.CSSProperties = { padding: '12px 13px', borderRadius: 14, border: '1px solid #e2e8f0', background: '#ffffff', color: '#0f172a', boxShadow: '0 10px 24px rgba(15,23,42,.05)' }
+const workspace: React.CSSProperties = { padding: 16, borderRadius: 18, background: 'rgba(255,255,255,.04)', border: '1px solid #e2e8f0', display: 'grid', gap: 8 }
+const main: React.CSSProperties = { minWidth: 0, padding: 28, display: 'grid', gap: 18, background: 'linear-gradient(135deg,#ffffff 0%,#f8fafc 60%,#eef6ff 100%)' }
+const topbar: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: 18, alignItems: 'center', marginBottom: 18 }
+const search: React.CSSProperties = { height: 66, display: 'flex', alignItems: 'center', padding: '0 24px', borderRadius: 18, background: 'rgba(255,255,255,.94)', border: '1px solid #e2e8f0', color: '#64748b', boxShadow: '0 18px 42px rgba(15,23,42,.07)', backdropFilter: 'blur(18px)' }
 const topButtons: React.CSSProperties = { display: 'flex', gap: 10 }
-const hero: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 350px', gap: 20, padding: 28, borderRadius: 26, background: 'radial-gradient(circle at 48% 0%,rgba(124,58,237,.30),transparent 44%),radial-gradient(circle at 8% 10%,rgba(14,165,233,.18),transparent 30%),linear-gradient(135deg,#0d1726,#101827)', border: '1px solid rgba(124,58,237,.38)', boxShadow: '0 34px 100px rgba(0,0,0,.30)' }
+const hero: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0,1.2fr) 320px', gap: 24, alignItems: 'stretch', padding: 32, borderRadius: 28, minHeight: 230, background: 'linear-gradient(135deg,#ffffff 0%,#f8fafc 62%,#eef4ff 100%)', border: '1px solid #dbeafe', boxShadow: '0 24px 64px rgba(15,23,42,.08)', position: 'relative', overflow: 'hidden' }
 const eyebrow: React.CSSProperties = { color: '#67e8f9', fontWeight: 1000, fontSize: 12, letterSpacing: 1.7 }
 
 const heroIdentity: React.CSSProperties = { display: 'grid', gridTemplateColumns: '74px 1fr', gap: 18, alignItems: 'center' }
-const heroIcon: React.CSSProperties = { width: 70, height: 70, borderRadius: 24, display: 'grid', placeItems: 'center', fontSize: 30, background: 'linear-gradient(135deg,#06b6d4,#7c3aed)', boxShadow: '0 0 42px rgba(124,58,237,.45)' }
+const heroIcon: React.CSSProperties = { width: 72, height: 72, borderRadius: 22, display: 'grid', placeItems: 'center', fontSize: 30, background: 'linear-gradient(135deg,#0ea5e9,#7c3aed)', boxShadow: '0 18px 42px rgba(59,130,246,.20)' }
 const syncMiniGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8, marginTop: 4 }
 
 const heroActions: React.CSSProperties = { display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 18 }
 const liveCard: React.CSSProperties = { padding: 18, borderRadius: 20, background: 'rgba(255,255,255,.055)', border: '1px solid rgba(148,163,184,.18)', display: 'grid', gap: 10 }
 const liveTop: React.CSSProperties = { display: 'flex', justifyContent: 'space-between' }
-const pulse: React.CSSProperties = { height: 10, borderRadius: 999, background: 'linear-gradient(90deg,#22c55e,#38bdf8,#8b5cf6)' }
+const pulse: React.CSSProperties = { height: 10, borderRadius: 999, background: 'linear-gradient(90deg,#22c55e,#38bdf8,#8b5cf6)', boxShadow: '0 8px 22px rgba(59,130,246,.18)' }
 const kpiGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 12 }
-const kpiCard: React.CSSProperties = { padding: 16, borderRadius: 18, background: 'linear-gradient(180deg,#101827,#0b1320)', border: '1px solid rgba(148,163,184,.16)', color: '#fff', textDecoration: 'none', display: 'grid', gap: 8, minHeight: 142, boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)' }
+const kpiCard: React.CSSProperties = { padding: 18, borderRadius: 20, background: 'linear-gradient(180deg,#ffffff,#f8fafc)', border: '1px solid #e2e8f0', color: '#0f172a', textDecoration: 'none', display: 'grid', gap: 8, minHeight: 142, boxShadow: '0 14px 36px rgba(15,23,42,.06)' }
 const kpiTop: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 10 }
 const commandGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1.25fr .95fr .95fr', gap: 14 }
 const secondGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 14 }
 const thirdGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: '.85fr 1fr .85fr', gap: 14 }
 const bottomGrid: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1.35fr .85fr', gap: 14 }
-const panel: React.CSSProperties = { padding: 18, borderRadius: 20, background: 'linear-gradient(180deg,#0d1726,#09111e)', border: '1px solid rgba(14,165,233,.20)', boxShadow: '0 24px 72px rgba(0,0,0,.26)' }
+const panel: React.CSSProperties = { padding: 20, borderRadius: 22, background: 'linear-gradient(180deg,#ffffff,#f8fafc)', border: '1px solid #e2e8f0', boxShadow: '0 18px 46px rgba(15,23,42,.07)' }
 const panelHeader: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }
 const segmented: React.CSSProperties = { display: 'flex', gap: 6, padding: 4, borderRadius: 12, background: 'rgba(255,255,255,.04)' }
-const seg: React.CSSProperties = { border: 'none', borderRadius: 10, padding: '8px 11px', background: 'transparent', color: '#94a3b8', fontWeight: 900, cursor: 'pointer' }
-const activeSeg: React.CSSProperties = { ...seg, background: 'linear-gradient(135deg,#7c3aed,#0ea5e9)', color: '#fff' }
-const chartBox: React.CSSProperties = { height: 350, borderRadius: 16, background: 'radial-gradient(circle at 40% 20%,rgba(34,197,94,.17),transparent 45%),rgba(2,6,23,.34)', overflow: 'hidden', position: 'relative' }
-const legend: React.CSSProperties = { position: 'absolute', left: 20, bottom: 16, display: 'flex', gap: 18, fontWeight: 900, color: '#cbd5e1' }
+const seg: React.CSSProperties = { border: 'none', borderRadius: 10, padding: '8px 11px', background: 'transparent', color: '#64748b', fontWeight: 900, cursor: 'pointer' }
+const activeSeg: React.CSSProperties = { ...seg, background: 'linear-gradient(135deg,#eef2ff,#dbeafe)', color: '#1e1b4b', border: '1px solid #c7d2fe', boxShadow: '0 12px 28px rgba(79,70,229,.12)' }
+const chartBox: React.CSSProperties = { height: 350, borderRadius: 18, background: 'radial-gradient(circle at 40% 20%,rgba(34,197,94,.08),transparent 45%),#ffffff', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.7)' }
+const legend: React.CSSProperties = { position: 'absolute', left: 20, bottom: 16, display: 'flex', gap: 18, fontWeight: 900, color: '#475569' }
 const channelShell: React.CSSProperties = { display: 'grid', gridTemplateColumns: '220px 1fr', gap: 16, alignItems: 'center' }
 const donut: React.CSSProperties = { width: 210, height: 210, borderRadius: '50%', display: 'grid', placeItems: 'center', textAlign: 'center', background: 'conic-gradient(#3b82f6 0 33%,#22c55e 33% 58%,#f59e0b 58% 77%,#ec4899 77% 90%,#64748b 90% 100%)' }
 const channelList: React.CSSProperties = { display: 'grid', gap: 9 }
 const funnelBox: React.CSSProperties = { display: 'grid', justifyItems: 'center', gap: 7 }
-const funnelStep: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'linear-gradient(90deg,rgba(59,130,246,.24),rgba(34,197,94,.18))', borderRadius: 12 }
+const funnelStep: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'linear-gradient(90deg,rgba(59,130,246,.10),rgba(34,197,94,.08))', borderRadius: 12, border: '1px solid #e2e8f0', color: '#0f172a' }
 const conversion: React.CSSProperties = { marginTop: 14, padding: 14, borderRadius: 13, background: 'rgba(255,255,255,.04)', display: 'flex', justifyContent: 'space-between' }
-const campaignRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '40px 1fr auto auto auto auto', gap: 10, alignItems: 'center', padding: 12, borderRadius: 14, background: 'rgba(255,255,255,.045)', color: '#fff', textDecoration: 'none', marginBottom: 8 }
+const campaignRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '40px 1fr auto auto auto auto', gap: 10, alignItems: 'center', padding: 12, borderRadius: 16, background: '#ffffff', color: '#0f172a', textDecoration: 'none', marginBottom: 8, border: '1px solid #e2e8f0', boxShadow: '0 8px 18px rgba(15,23,42,.04)' }
 const rank: React.CSSProperties = { width: 34, height: 34, borderRadius: 12, background: 'rgba(124,58,237,.35)', display: 'grid', placeItems: 'center', fontWeight: 1000 }
-const insightRow: React.CSSProperties = { display: 'grid', gap: 6, padding: 13, borderRadius: 14, background: 'rgba(255,255,255,.045)', color: '#fff', textDecoration: 'none', marginBottom: 8 }
+const insightRow: React.CSSProperties = { display: 'grid', gap: 6, padding: 13, borderRadius: 16, background: '#ffffff', color: '#0f172a', textDecoration: 'none', marginBottom: 8, border: '1px solid #e2e8f0', boxShadow: '0 8px 18px rgba(15,23,42,.04)' }
 const audienceShell: React.CSSProperties = { display: 'grid', gridTemplateColumns: '170px 1fr', gap: 14, alignItems: 'center' }
 const audienceDonut: React.CSSProperties = { width: 155, height: 155, borderRadius: '50%', display: 'grid', placeItems: 'center', background: 'conic-gradient(#8b5cf6 0 40%,#0ea5e9 40% 70%,#22c55e 70% 100%)', textAlign: 'center' }
 const audienceList: React.CSSProperties = { display: 'grid', gap: 5 }
-const contentRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: 10, padding: 11, color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(148,163,184,.12)' }
+const contentRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: 10, padding: 11, color: '#0f172a', textDecoration: 'none', borderBottom: '1px solid #e2e8f0' }
 const budgetGauge: React.CSSProperties = { height: 150, borderRadius: '150px 150px 20px 20px', display: 'grid', placeItems: 'center', background: 'conic-gradient(from 270deg,#3b82f6 0 70%,#22c55e 70% 88%,#1f2937 88% 100%)', textAlign: 'center' }
 const budgetRows: React.CSSProperties = { display: 'grid', gap: 6, marginTop: 10 }
-const activityRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '84px 1fr 150px 110px 70px', gap: 10, padding: 11, color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(148,163,184,.12)' }
+const activityRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: '84px 1fr 150px 110px 70px', gap: 10, padding: 11, color: '#0f172a', textDecoration: 'none', borderBottom: '1px solid #e2e8f0' }
 const quickActions: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }
-const quickAction: React.CSSProperties = { minHeight: 92, borderRadius: 16, background: 'rgba(255,255,255,.045)', color: '#fff', textDecoration: 'none', display: 'grid', placeItems: 'center', textAlign: 'center', padding: 12, border: '1px solid rgba(148,163,184,.12)' }
+const quickAction: React.CSSProperties = { minHeight: 96, borderRadius: 18, background: '#ffffff', color: '#0f172a', textDecoration: 'none', display: 'grid', placeItems: 'center', textAlign: 'center', padding: 14, border: '1px solid #e2e8f0', boxShadow: '0 10px 24px rgba(15,23,42,.05)' }
 const syncDock: React.CSSProperties = { justifySelf: 'center', display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', padding: '16px 24px', borderRadius: 22, background: 'rgba(13,23,38,.9)', border: '1px solid rgba(148,163,184,.18)', boxShadow: '0 20px 60px rgba(0,0,0,.24)' }

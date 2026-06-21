@@ -49,35 +49,35 @@ export default function OperatingDoctrineEngine() {
   const totalRules = doctrineRules.length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Pack 31
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Market-OS Final Operating Doctrine Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This layer converts all Market-OS execution into a permanent operating doctrine:
             strategic rules, governance standards, AI execution laws, reporting discipline and institutional control.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Total Doctrine Rules</p>
+              <p className="text-xs uppercase text-slate-600">Total Doctrine Rules</p>
               <p className="mt-2 text-3xl font-black">{totalRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Active / Locked</p>
+              <p className="text-xs uppercase text-slate-600">Active / Locked</p>
               <p className="mt-2 text-3xl font-black">{activeRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Need Review</p>
+              <p className="text-xs uppercase text-slate-600">Need Review</p>
               <p className="mt-2 text-3xl font-black">{reviewRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Rules</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Rules</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
           </div>
@@ -136,34 +136,34 @@ export default function OperatingDoctrineEngine() {
               </div>
 
               <h2 className="text-xl font-black">{item.title}</h2>
-              <p className="mt-1 text-sm text-slate-500">Owner: {item.owner}</p>
+              <p className="mt-1 text-sm text-slate-9500">Owner: {item.owner}</p>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-5">
                 <div className="rounded-2xl border border-slate-200 p-4 lg:col-span-2">
-                  <p className="text-xs font-bold uppercase text-slate-500">Rule</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Rule</p>
                   <p className="mt-2 text-sm font-semibold text-slate-800">{item.rule}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Reason</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Reason</p>
                   <p className="mt-2 text-sm text-slate-700">{item.reason}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Enforcement</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Enforcement</p>
                   <p className="mt-2 text-sm text-slate-700">{item.enforcement}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Success Condition</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Success Condition</p>
                   <p className="mt-2 text-sm text-slate-700">{item.successCondition}</p>
                 </div>
               </div>
 
               <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase text-slate-500">Next Action</p>
+                <p className="text-xs font-bold uppercase text-slate-9500">Next Action</p>
                 <p className="mt-2 text-sm text-slate-700">{item.nextAction}</p>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="doctrine" engine="system" actionKey="execute_lock_doctrine" actionLabel="Lock Doctrine" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Lock Doctrine</MarketActionButton>
+                <MarketActionButton moduleKey="doctrine" engine="system" actionKey="execute_lock_doctrine" actionLabel="Lock Doctrine" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Lock Doctrine</MarketActionButton>
                 <MarketActionButton moduleKey="doctrine" engine="system" actionKey="create_enforcement_task" actionLabel="Create Enforcement Task" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Create Enforcement Task</MarketActionButton>
                 <MarketActionButton moduleKey="doctrine" engine="system" actionKey="execute_send_to_board" actionLabel="Send to Board" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Send to Board</MarketActionButton>
                 <MarketActionButton moduleKey="doctrine" engine="system" actionKey="add_audit_rule" actionLabel="Add Audit Rule" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Add Audit Rule</MarketActionButton>

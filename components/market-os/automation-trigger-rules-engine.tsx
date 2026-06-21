@@ -158,34 +158,34 @@ export default function AutomationTriggerRulesEngine() {
   const draftRules = automationRules.filter((r) => r.status === "draft").length
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 text-slate-950">
+    <main data-market-os-root className="min-h-screen bg-slate-50 p-6 text-slate-950">
       <section className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-300">
+        <div className="rounded-[2rem] bg-white p-8 text-slate-950">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
             Market-OS · Self-contained rules view
           </p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">
             Marketing Automation & Trigger Rules Engine
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">
+          <p className="mt-4 max-w-3xl text-slate-600">
             This component no longer imports the removed automation lib. It stays visible and operational with local rule presets while you decide whether to rebuild the backend engine later.
           </p>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Active Rules</p>
+              <p className="text-xs uppercase text-slate-600">Active Rules</p>
               <p className="mt-2 text-3xl font-black">{activeRules}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Total Triggers</p>
+              <p className="text-xs uppercase text-slate-600">Total Triggers</p>
               <p className="mt-2 text-3xl font-black">{totalTriggers}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">High Risk Rules</p>
+              <p className="text-xs uppercase text-slate-600">High Risk Rules</p>
               <p className="mt-2 text-3xl font-black">{highRisk}</p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4">
-              <p className="text-xs uppercase text-slate-300">Draft Rules</p>
+              <p className="text-xs uppercase text-slate-600">Draft Rules</p>
               <p className="mt-2 text-3xl font-black">{draftRules}</p>
             </div>
           </div>
@@ -244,35 +244,35 @@ export default function AutomationTriggerRulesEngine() {
                   </div>
 
                   <h2 className="text-xl font-black">{rule.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-9500">
                     Source: {rule.sourceEngine} · Owner: {rule.owner} · SLA: {rule.sla}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 p-4 text-right">
-                  <p className="text-xs font-bold uppercase text-slate-500">Triggered</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Triggered</p>
                   <p className="mt-1 font-black">{rule.triggerCount} times</p>
-                  <p className="text-xs text-slate-500">Last: {rule.lastTriggered}</p>
+                  <p className="text-xs text-slate-9500">Last: {rule.lastTriggered}</p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Trigger Condition</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Trigger Condition</p>
                   <p className="mt-2 text-sm text-slate-700">{rule.triggerCondition}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase text-slate-500">Generated Action</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Generated Action</p>
                   <p className="mt-2 text-sm text-slate-700">{rule.generatedAction}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4 lg:col-span-2">
-                  <p className="text-xs font-bold uppercase text-slate-500">Business Reason</p>
+                  <p className="text-xs font-bold uppercase text-slate-9500">Business Reason</p>
                   <p className="mt-2 text-sm text-slate-700">{rule.businessReason}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <MarketActionButton moduleKey="automation" engine="data" actionKey="activate_rule" actionLabel="Activate Rule" className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Activate Rule</MarketActionButton>
+                <MarketActionButton moduleKey="automation" engine="data" actionKey="activate_rule" actionLabel="Activate Rule" className="rounded-2xl bg-white px-4 py-2 text-sm font-bold text-slate-950">Activate Rule</MarketActionButton>
                 <MarketActionButton moduleKey="automation" engine="data" actionKey="test_trigger" actionLabel="Test Trigger" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Test Trigger</MarketActionButton>
                 <MarketActionButton moduleKey="automation" engine="data" actionKey="pause_rule" actionLabel="Pause Rule" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">Pause Rule</MarketActionButton>
                 <MarketActionButton moduleKey="automation" engine="data" actionKey="log_view_trigger_log" actionLabel="View Trigger Log" className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-bold">View Trigger Log</MarketActionButton>

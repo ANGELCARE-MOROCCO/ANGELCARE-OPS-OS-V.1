@@ -68,8 +68,8 @@ export default function ContentCommandCenter() {
   const lanes = groupByStatus(activeItems)
 
   return <Shell>
-    <main className="mx-auto max-w-[1600px] space-y-6 p-4 lg:p-8"><div className="flex justify-end"><ContentCommandTrainingAccessButton /></div>
-      <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[radial-gradient(circle_at_top_right,rgba(244,63,94,0.30),transparent_30%),linear-gradient(135deg,#020617,#0f172a_52%,#312e81)] text-white shadow-2xl shadow-slate-300">
+    <main data-market-os-root className="mx-auto max-w-[1600px] space-y-6 p-4 lg:p-8"><div className="flex justify-end"><ContentCommandTrainingAccessButton /></div>
+      <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[radial-gradient(circle_at_top_right,rgba(244,63,94,0.30),transparent_30%),linear-gradient(135deg,#020617,#0f172a_52%,#312e81)] text-slate-950 shadow-2xl shadow-slate-300">
         <div className="grid gap-8 p-6 lg:grid-cols-[1.5fr_.8fr] lg:p-8">
           <div>
             <div className="flex flex-wrap gap-2">
@@ -77,12 +77,12 @@ export default function ContentCommandCenter() {
               <Badge kind="dark">Phase 2 Core Execution</Badge>
             </div>
             <h1 className="mt-5 max-w-5xl text-4xl font-black leading-tight tracking-tight md:text-5xl">Content production workspace, not a static dashboard.</h1>
-            <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-slate-300 md:text-base">Create, organize, assign, review, approve, schedule and monitor every marketing content item from one controlled Content Command Center surface.</p>
+            <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-slate-600 md:text-base">Create, organize, assign, review, approve, schedule and monitor every marketing content item from one controlled Content Command Center surface.</p>
             <div className="mt-6 flex flex-wrap gap-3"><Button href="/market-os/content-command-center/create" kind="primary">Create content</Button><Button href="/market-os/content-command-center/assets" kind="dark">Asset library</Button><Button href="/market-os/content-command-center/tasks" kind="dark">Production tasks</Button><ContentCommandTrainingAccessButton /><Button onClick={reset}>Reset local demo data</Button></div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-5"><p className="text-xs font-black uppercase tracking-widest text-slate-300">Workspace readiness</p><p className="mt-2 text-4xl font-black">{averageReadiness}%</p><div className="mt-4"><Meter value={averageReadiness} /></div></div>
-            <div className="grid grid-cols-3 gap-3"><div className="rounded-2xl border border-white/10 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-300">Urgent</p><p className="mt-2 text-2xl font-black">{urgent.length}</p></div><div className="rounded-2xl border border-white/10 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-300">Review</p><p className="mt-2 text-2xl font-black">{reviewQueue.length}</p></div><div className="rounded-2xl border border-white/10 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-300">Ready</p><p className="mt-2 text-2xl font-black">{publishable.length}</p></div></div>
+            <div className="rounded-3xl border border-slate-200 bg-white/10 p-5"><p className="text-xs font-black uppercase tracking-widest text-slate-600">Workspace readiness</p><p className="mt-2 text-4xl font-black">{averageReadiness}%</p><div className="mt-4"><Meter value={averageReadiness} /></div></div>
+            <div className="grid grid-cols-3 gap-3"><div className="rounded-2xl border border-slate-200 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-600">Urgent</p><p className="mt-2 text-2xl font-black">{urgent.length}</p></div><div className="rounded-2xl border border-slate-200 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-600">Review</p><p className="mt-2 text-2xl font-black">{reviewQueue.length}</p></div><div className="rounded-2xl border border-slate-200 bg-white/10 p-4"><p className="text-xs font-black uppercase text-slate-600">Ready</p><p className="mt-2 text-2xl font-black">{publishable.length}</p></div></div>
           </div>
         </div>
       </section>
@@ -106,18 +106,18 @@ export default function ContentCommandCenter() {
             <p className="mt-2 text-sm font-semibold text-slate-600">Search, filter, advance status, archive and delete content without leaving the submodule.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["all", "urgent", "review", "publishing", "blocked"] as const).map((mode) => <button key={mode} onClick={() => setFilter(mode)} className={`rounded-2xl px-4 py-3 text-sm font-black ${filter === mode ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-700"}`}>{statusLabel(mode)}</button>)}
+            {(["all", "urgent", "review", "publishing", "blocked"] as const).map((mode) => <button key={mode} onClick={() => setFilter(mode)} className={`rounded-2xl px-4 py-3 text-sm font-black ${filter === mode ? "bg-white text-slate-950" : "border border-slate-200 bg-white text-slate-700"}`}>{statusLabel(mode)}</button>)}
           </div>
         </div>
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by title, campaign, owner, channel or status..." className="mt-5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none" />
         <div className="mt-5 space-y-3">
           {filteredItems.map((item) => <ContentRow key={item.id} item={item} tasks={store.tasks} onAdvance={() => commit((draft) => { draft.items = draft.items.map((candidate) => candidate.id === item.id ? { ...candidate, status: nextStatus(candidate.status), updatedAt: new Date().toISOString() } : candidate) }, "content advance", `Advanced ${item.title}`)} onArchive={() => commit((draft) => { draft.items = draft.items.map((candidate) => candidate.id === item.id ? { ...candidate, status: "archived" } : candidate) }, "content archive", `Archived ${item.title}`)} onDelete={() => commit((draft) => { draft.items = draft.items.filter((candidate) => candidate.id !== item.id); draft.tasks = draft.tasks.filter((task) => task.contentId !== item.id); draft.assets = draft.assets.filter((asset) => asset.linkedContentId !== item.id) }, "content delete", `Deleted ${item.title}`)} />)}
-          {!filteredItems.length ? <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-500">No content matches this view.</p> : null}
+          {!filteredItems.length ? <p className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-9500">No content matches this view.</p> : null}
         </div>
       </Panel>
 
       <section className="grid gap-4 xl:grid-cols-7">
-        {statusFlow.map((status) => <Panel key={status} className="p-4 xl:col-span-1"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-black uppercase tracking-wider text-slate-600">{statusLabel(status)}</h3><Badge>{lanes[status].length}</Badge></div><div className="mt-4 space-y-3">{lanes[status].slice(0, 4).map((item) => <a key={item.id} href={`/market-os/content-command-center/${item.id}`} className="block rounded-2xl border border-slate-200 bg-slate-50 p-3 hover:bg-white"><p className="text-sm font-black text-slate-950">{item.title}</p><p className="mt-1 text-xs font-bold text-slate-500">{item.channel} • {item.owner}</p></a>)}</div></Panel>)}
+        {statusFlow.map((status) => <Panel key={status} className="p-4 xl:col-span-1"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-black uppercase tracking-wider text-slate-600">{statusLabel(status)}</h3><Badge>{lanes[status].length}</Badge></div><div className="mt-4 space-y-3">{lanes[status].slice(0, 4).map((item) => <a key={item.id} href={`/market-os/content-command-center/${item.id}`} className="block rounded-2xl border border-slate-200 bg-slate-50 p-3 hover:bg-white"><p className="text-sm font-black text-slate-950">{item.title}</p><p className="mt-1 text-xs font-bold text-slate-9500">{item.channel} • {item.owner}</p></a>)}</div></Panel>)}
       </section>
     </main>
   </Shell>
