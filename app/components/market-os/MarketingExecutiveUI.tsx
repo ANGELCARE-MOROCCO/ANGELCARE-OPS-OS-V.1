@@ -1,3 +1,4 @@
+'use client'
 
 function MarketOSHeroEnterprisePolish() {
   return (
@@ -63,8 +64,6 @@ function MarketOSInlineWhiteGuard() {
     />
   )
 }
-
-'use client'
 import { shouldStartAutoRefresh, safeRefreshInterval, safeUiInterval } from '@/lib/runtime/client-live-governor'
 
 import { useEffect, useMemo, useState } from 'react'
