@@ -4,6 +4,31 @@ import Link from "next/link"
 import * as React from "react"
 import { ContentCommandNavigation } from "./content-command-navigation"
 
+async function executeContentCommandSystemAction(action: string, payload: Record<string, unknown> = {}) {
+  try {
+    const response = await fetch("/api/market-os/content-command-center/actions", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        action,
+        payload,
+        source: "content-command-system",
+      }),
+    })
+
+    return await response.json().catch(() => null)
+  } catch (error) {
+    console.error("[CONTENT_COMMAND_SYSTEM_ACTION_ERROR]", action, error)
+    return null
+  }
+}
+
+
+
 export const CONTENT_ITEMS_KEY = "market_os_content_command_items_v2"
 export const CONTENT_TASKS_KEY = "market_os_content_command_tasks_v2"
 export const CONTENT_ASSETS_KEY = "market_os_content_command_assets_v2"
@@ -135,96 +160,13 @@ export function writeJson<T>(key: string, value: T) {
   if (typeof window !== "undefined") window.localStorage.setItem(key, JSON.stringify(value))
 }
 
-export const seedItems: ContentItem[] = [
-  {
-    id: "content-001",
-    title: "Postpartum reassurance carousel",
-    type: "Carousel",
-    channel: "Instagram",
-    campaign: "Premium Postpartum Reassurance",
-    owner: "Content Lead",
-    reviewer: "Brand Manager",
-    status: "draft",
-    priority: "High",
-    dueDate: todayISO(2),
-    scheduledDate: todayISO(4),
-    body: "A calm educational carousel explaining the first week after birth and when AngelCare support helps families feel safe.",
-    objective: "Generate qualified postpartum leads",
-    audience: "New mothers and families in Rabat / Temara",
-    angle: "Trusted reassurance from a trained care team",
-    cta: "Book a private care assessment",
-    assets: ["asset-001"],
-    brandScore: 82,
-    seoKeyword: "postpartum home care Morocco",
-    notes: "Needs final objection handling slide.",
-    createdAt: nowISO(),
-    updatedAt: nowISO(),
-  },
-  {
-    id: "content-002",
-    title: "Clinic partner referral one-pager",
-    type: "PDF",
-    channel: "Clinic Partner",
-    campaign: "Clinic Partnership Authority Sprint",
-    owner: "Partnership Content Lead",
-    reviewer: "Founder Review",
-    status: "review",
-    priority: "Critical",
-    dueDate: todayISO(1),
-    scheduledDate: todayISO(3),
-    body: "Executive one-pager for maternity clinics with referral process and care promise.",
-    objective: "Support partner meetings",
-    audience: "Clinic managers and gynecologists",
-    angle: "Reliable homecare extension for clinic patients",
-    cta: "Schedule a referral partnership call",
-    assets: ["asset-002"],
-    brandScore: 76,
-    seoKeyword: "maternity clinic partnership Morocco",
-    notes: "Founder must validate promise wording.",
-    createdAt: nowISO(),
-    updatedAt: nowISO(),
-  },
-  {
-    id: "content-003",
-    title: "Homecare service landing page copy",
-    type: "Landing Page",
-    channel: "Landing Page",
-    campaign: "Homecare Authority Sprint",
-    owner: "SEO Manager",
-    reviewer: "Brand Manager",
-    status: "idea",
-    priority: "Medium",
-    dueDate: todayISO(6),
-    scheduledDate: todayISO(8),
-    body: "Landing page draft for families comparing homecare options and looking for a premium structured service.",
-    objective: "Convert search traffic into assessment requests",
-    audience: "Families looking for professional homecare support",
-    angle: "Structured, reassuring and premium homecare execution",
-    cta: "Request a care assessment",
-    assets: [],
-    brandScore: 68,
-    seoKeyword: "homecare Morocco",
-    notes: "Needs FAQ block and service package proof points.",
-    createdAt: nowISO(),
-    updatedAt: nowISO(),
-  },
-]
+export const seedItems: ContentItem[] = []
 
-export const seedTasks: ContentTask[] = [
-  { id: "task-001", contentId: "content-001", title: "Write final carousel slide copy", owner: "Content Lead", status: "doing", dueDate: todayISO(1), priority: "High", notes: "Add clear CTA and family reassurance." },
-  { id: "task-002", contentId: "content-002", title: "Founder review on partner claim", owner: "Founder Review", status: "todo", dueDate: todayISO(1), priority: "Critical", notes: "Validate clinic promise before distribution." },
-  { id: "task-003", contentId: "content-003", title: "Add FAQ and package proof points", owner: "SEO Manager", status: "todo", dueDate: todayISO(4), priority: "Medium", notes: "Keep FAQ readable and brand-safe." },
-]
+export const seedTasks: ContentTask[] = []
 
-export const seedAssets: ContentAsset[] = [
-  { id: "asset-001", name: "Postpartum carousel visual kit", type: "Image", channel: "Instagram", linkedContentId: "content-001", owner: "Creative Producer", status: "draft", url: "", notes: "Needs brand-safe color check." },
-  { id: "asset-002", name: "Clinic referral PDF v1", type: "PDF", channel: "Clinic Partner", linkedContentId: "content-002", owner: "Partnership Content Lead", status: "needs revision", url: "", notes: "Update contact section." },
-]
+export const seedAssets: ContentAsset[] = []
 
-export const seedBriefs: ContentBrief[] = [
-  { id: "brief-001", title: "Premium postpartum trust brief", campaign: "Premium Postpartum Reassurance", audience: "Families seeking postnatal support", objective: "Qualified leads", message: "AngelCare brings structured care reassurance at home.", channel: "Instagram", owner: "Content Lead", dueDate: todayISO(2), status: "ready" },
-  { id: "brief-002", title: "Clinic partnership authority brief", campaign: "Clinic Partnership Authority Sprint", audience: "Maternity clinics", objective: "Partner meetings", message: "AngelCare is a reliable referral extension after discharge.", channel: "Clinic Partner", owner: "Partnership Content Lead", dueDate: todayISO(1), status: "draft" },
-]
+export const seedBriefs: ContentBrief[] = []
 
 export const seedRules: BrandRule[] = [
   { id: "rule-001", title: "Avoid medical promises that imply diagnosis or guaranteed outcomes", category: "Medical sensitivity", required: true, active: true, notes: "Use care support language and approved service wording." },
@@ -239,7 +181,7 @@ export function defaultStore(): ContentStore {
     assets: seedAssets,
     briefs: seedBriefs,
     rules: seedRules,
-    logs: [{ id: uid("log"), timestamp: nowISO(), action: "seed", entity: "workspace", detail: "Content Command Center initialized." }],
+    logs: [{ id: uid("log"), timestamp: nowISO(), action: "live contract", entity: "workspace", detail: "Content Command Center initialized." }],
   }
 }
 
@@ -335,7 +277,7 @@ export function isOverdue(date: string) {
 
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#02040d] text-slate-950">
+    <div className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] text-slate-950">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(124,58,237,.22),transparent_30%),radial-gradient(circle_at_84%_4%,rgba(6,182,212,.18),transparent_28%),radial-gradient(circle_at_75%_86%,rgba(245,158,11,.10),transparent_30%),linear-gradient(180deg,#070b18_0%,#030612_58%,#01030a_100%)]" />
       <ContentCommandNavigation />
       <div className="relative min-w-0 xl:pl-[330px]">
@@ -360,13 +302,13 @@ export function Badge({ children, kind = "soft" }: { children: React.ReactNode; 
     success: "border-emerald-200 bg-emerald-50 text-emerald-700",
     warning: "border-amber-200 bg-amber-50 text-amber-700",
     danger: "border-red-200 bg-red-50 text-red-700",
-    dark: "border-slate-200 bg-white/10 text-slate-950",
+    dark: "border-slate-200 bg-slate-100 text-slate-950",
   }
   return <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider ${styles[kind]}`}>{children}</span>
 }
 
 export function Button({ children, onClick, href, kind = "soft", type = "button", disabled = false }: { children: React.ReactNode; onClick?: () => void; href?: string; kind?: "primary" | "soft" | "danger" | "dark"; type?: "button" | "submit"; disabled?: boolean }) {
-  const base = "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50"
+  const base = "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition"
   const styles = {
     primary: "bg-rose-600 text-slate-950 shadow-lg shadow-rose-200 hover:bg-rose-700",
     soft: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
@@ -378,11 +320,11 @@ export function Button({ children, onClick, href, kind = "soft", type = "button"
 }
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="block space-y-2"><span className="text-xs font-black uppercase tracking-wider text-slate-9500">{label}</span>{children}</label>
+  return <label className="block space-y-2"><span className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</span>{children}</label>
 }
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-slate-400 ${props.className ?? ""}`} />
+  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-400 ${props.className ?? ""}`} />
 }
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
@@ -390,15 +332,15 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
 }
 
 export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea {...props} rows={props.rows ?? 5} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-slate-400 ${props.className ?? ""}`} />
+  return <textarea {...props} rows={props.rows ?? 5} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-400 ${props.className ?? ""}`} />
 }
 
 export function Meter({ value }: { value: number }) {
-  return <div className="h-2 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></div>
+  return <div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></div>
 }
 
 export function Metric({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return <Panel className="p-5"><p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p><p className="mt-2 text-3xl font-black">{value}</p><p className="mt-1 text-xs font-bold text-slate-9500">{sub}</p></Panel>
+  return <Panel className="p-5"><p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p><p className="mt-2 text-3xl font-black">{value}</p><p className="mt-1 text-xs font-bold text-slate-500">{sub}</p></Panel>
 }
 
 export function PageHeader({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description: string; actions?: React.ReactNode }) {
@@ -512,7 +454,7 @@ export function ContentRow({ item, tasks, onAdvance, onArchive, onDelete }: { it
   const itemTasks = tasks.filter((task) => task.contentId === item.id)
   const completed = itemTasks.filter((task) => task.status === "done").length
   return <div className="grid gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm lg:grid-cols-[1.5fr_.8fr_.8fr_.8fr_1.3fr] lg:items-center">
-    <div><div className="flex flex-wrap items-center gap-2"><Badge>{statusLabel(item.status)}</Badge><Badge kind="priority">{item.priority}</Badge></div><h3 className="mt-3 text-lg font-black">{item.title}</h3><p className="mt-1 text-xs font-bold text-slate-9500">{item.channel} • {item.campaign || "No campaign"}</p></div>
+    <div><div className="flex flex-wrap items-center gap-2"><Badge>{statusLabel(item.status)}</Badge><Badge kind="priority">{item.priority}</Badge></div><h3 className="mt-3 text-lg font-black">{item.title}</h3><p className="mt-1 text-xs font-bold text-slate-500">{item.channel} • {item.campaign || "No campaign"}</p></div>
     <div><p className="text-xs font-black uppercase text-slate-500">Owner</p><p className="mt-1 text-sm font-bold">{item.owner}</p></div>
     <div><p className="text-xs font-black uppercase text-slate-500">Due</p><p className="mt-1 text-sm font-bold">{item.dueDate}</p></div>
     <div><p className="text-xs font-black uppercase text-slate-500">Tasks</p><p className="mt-1 text-sm font-bold">{completed}/{itemTasks.length}</p></div>

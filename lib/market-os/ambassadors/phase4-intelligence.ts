@@ -1,70 +1,68 @@
-import type {
-  AmbassadorCampaignAssignment,
-  AmbassadorHealthRecord,
-  AmbassadorRiskLevel,
-  PayoutRiskStatus,
-} from "./phase4-types";
-
-export function formatMad(value: number): string {
-  return new Intl.NumberFormat("fr-MA", {
-    style: "currency",
-    currency: "MAD",
-    maximumFractionDigits: 0,
-  }).format(value);
+export function formatMad(value: number | string = 0) {
+  const amount = Number(value || 0)
+  return `${amount.toLocaleString("fr-MA")} MAD`
 }
 
-export function getRiskLabel(score: number): AmbassadorRiskLevel {
-  if (score >= 80) return "low";
-  if (score >= 60) return "medium";
-  if (score >= 40) return "high";
-  return "critical";
-}
-
-export function computeAmbassadorHealthScore(record: Pick<
-  AmbassadorHealthRecord,
-  "engagementScore" | "executionScore" | "complianceScore" | "missionsCompleted" | "overdueMissions"
->): number {
-  const base =
-    record.engagementScore * 0.25 +
-    record.executionScore * 0.35 +
-    record.complianceScore * 0.30 +
-    Math.min(record.missionsCompleted, 20) * 0.5;
-
-  const penalty = record.overdueMissions * 6;
-  return Math.max(0, Math.min(100, Math.round(base - penalty)));
-}
-
-export function getCampaignProgress(assignment: AmbassadorCampaignAssignment): number {
-  if (assignment.expectedRevenueMad <= 0) return 0;
-  return Math.max(
-    0,
-    Math.min(100, Math.round((assignment.currentRevenueMad / assignment.expectedRevenueMad) * 100)),
-  );
-}
-
-export function getPayoutDecision(status: PayoutRiskStatus): string {
-  if (status === "clear") return "Approve payout";
-  if (status === "review") return "Review before approval";
-  return "Block payout";
-}
-
-export function summarizeHealth(records: AmbassadorHealthRecord[]) {
-  const active = records.filter((record) => record.status === "active").length;
-  const watchlist = records.filter((record) => record.status === "watchlist").length;
-  const inactive = records.filter((record) => record.status === "inactive").length;
-  const averageHealth =
-    records.length === 0
-      ? 0
-      : Math.round(records.reduce((sum, record) => sum + record.healthScore, 0) / records.length);
-  const revenueMad = records.reduce((sum, record) => sum + record.revenueMad, 0);
-  const leads = records.reduce((sum, record) => sum + record.leadsGenerated, 0);
-
+export function summarizeHealth(input: any = {}) {
   return {
-    active,
-    watchlist,
-    inactive,
-    averageHealth,
-    revenueMad,
-    leads,
-  };
+    score: Number(input.score || input.averageHealth || 0),
+    averageHealth: Number(input.averageHealth || input.score || 0),
+    active: Number(input.active || 0),
+    watchlist: Number(input.watchlist || 0),
+    revenueMad: Number(input.revenueMad || input.revenue || 0),
+    status: input.status || "not-configured",
+    risk: input.risk || "low",
+    label: input.label || "Health not configured",
+  }
+}
+
+export function deriveAmbassadorHealth(input: any = {}) {
+  return summarizeHealth(input)
+}
+
+export function scoreAmbassadorHealth(input: any = {}) {
+  return summarizeHealth(input)
+}
+
+export function getCampaignProgress(input: any = {}) {
+  const total = Number(input.total || input.target || 0)
+  const done = Number(input.done || input.completed || input.progress || 0)
+  return total ? Math.round((done / total) * 100) : Number(input.progress || 0)
+}
+
+export function getPayoutDecision(input: any = {}) {
+  return String(input.decision || input.status || "Review")
+}
+
+export function getPayoutDecisionDetail(input: any = {}) {
+  return {
+    label: input.decision || "Review",
+    tone: input.tone || "slate",
+    blocked: Boolean(input.blocked),
+  }
+}
+
+export function deriveCampaignAssignments(input: any[] = []) {
+  return Array.isArray(input) ? input : []
+}
+
+export function deriveCompliancePayouts(input: any[] = []) {
+  return Array.isArray(input) ? input : []
+}
+
+export function deriveRegionalExecution(input: any[] = []) {
+  return Array.isArray(input) ? input : []
+}
+
+export default {
+  formatMad,
+  summarizeHealth,
+  deriveAmbassadorHealth,
+  scoreAmbassadorHealth,
+  getCampaignProgress,
+  getPayoutDecision,
+  getPayoutDecisionDetail,
+  deriveCampaignAssignments,
+  deriveCompliancePayouts,
+  deriveRegionalExecution,
 }

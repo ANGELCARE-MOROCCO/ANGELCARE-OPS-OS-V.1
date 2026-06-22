@@ -415,24 +415,37 @@ export function buildUserPermissionsForRole(role: string, extraPermissions: stri
   return Array.from(new Set([...getRoleTemplatePermissions(role), ...extraPermissions]))
 }
 
+function normalizeUserPermissions(user: any): string[] {
+  return Array.isArray(user?.permissions)
+    ? Array.from(new Set(user.permissions.map(String).map((item: string) => item.trim()).filter(Boolean)))
+    : []
+}
+
+function hasFullApplicationAccess(user: any) {
+  if (!user) return false
+  const role = normalizeRole(user)
+  const permissions = normalizeUserPermissions(user)
+
+  // SECURITY RULE:
+  // Only CEO/owner/super_admin or an explicit '*' permission can see every module.
+  // Admin/direction users must now respect the exact permissions assigned in Users Management.
+  return role === 'ceo' || role === 'owner' || role === 'super_admin' || permissions.includes('*')
+}
+
 export function hasPermission(user: any, permission: string) {
   if (!user) return false
+  if (hasFullApplicationAccess(user)) return true
 
-  const role = normalizeRole(user)
-  if (role === 'ceo' || role === 'admin' || role === 'direction') return true
-
-  const permissions = Array.isArray(user.permissions) ? user.permissions : []
-  return permissions.includes('*') || permissions.includes(permission)
+  const permissions = normalizeUserPermissions(user)
+  return permissions.includes(permission)
 }
 
 export function getAllowedModuleLinks(user: any) {
   if (!user) return []
 
-  const role = normalizeRole(user)
-  const allowed =
-    role === 'ceo' || role === 'admin' || role === 'direction' || (Array.isArray(user.permissions) && user.permissions.includes('*'))
-      ? MODULE_ACCESS_LINKS
-      : MODULE_ACCESS_LINKS.filter((link) => hasPermission(user, link.permission))
+  const allowed = hasFullApplicationAccess(user)
+    ? MODULE_ACCESS_LINKS
+    : MODULE_ACCESS_LINKS.filter((link) => hasPermission(user, link.permission))
 
   return [...allowed].sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
 }

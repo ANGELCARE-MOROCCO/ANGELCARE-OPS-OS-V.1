@@ -189,7 +189,7 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
                 </div>
               ))}
               {!checklist.length ? (
-                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
+                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
                   No checklist items yet.
                 </p>
               ) : null}
@@ -204,10 +204,10 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
               <Link href={`/market-os/content-command-center/${linkedContent.id}`} className="mt-4 block rounded-3xl border border-slate-200 bg-slate-50 p-5 hover:bg-white">
                 <h3 className="text-lg font-black text-slate-950">{linkedContent.title}</h3>
                 <p className="mt-2 text-sm font-semibold text-slate-600">{linkedContent.channel} · {linkedContent.campaign}</p>
-                <p className="mt-2 text-xs font-bold text-slate-9500">{linkedContent.status} · {linkedContent.owner}</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">{linkedContent.status} · {linkedContent.owner}</p>
               </Link>
             ) : (
-              <p className="mt-4 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-9500">
+              <p className="mt-4 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-500">
                 No linked content found. CSV imported tasks are attached to the fallback content item until assigned.
               </p>
             )}
@@ -219,12 +219,12 @@ export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
               {activity.map((event) => (
                 <article key={event.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-sm font-black text-slate-950">{statusLabel(event.action)}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-9500">{event.timestamp}</p>
+                  <p className="mt-1 text-xs font-bold text-slate-500">{event.timestamp}</p>
                   <p className="mt-2 text-sm font-semibold text-slate-700">{event.detail}</p>
                 </article>
               ))}
               {!activity.length ? (
-                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-9500">
+                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
                   No activity yet.
                 </p>
               ) : null}

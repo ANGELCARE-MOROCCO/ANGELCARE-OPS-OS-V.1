@@ -38,7 +38,7 @@ export function ContentCommandPhase29SchemaWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -51,19 +51,19 @@ export function ContentCommandPhase29SchemaWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Migration Readiness</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Migration Readiness</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{readiness}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Tables</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Tables</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{phase29TableBlueprints.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">RLS Tables</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">RLS Tables</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{rlsTables.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Pending Policies</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Pending Policies</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{pendingPolicies.length}</p>
           </div>
         </div>
@@ -147,7 +147,7 @@ export function ContentCommandPhase29SchemaWorkspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{policy.policyName}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{policy.tableName} · {policy.action}</p>
+                    <p className="mt-1 text-xs text-slate-500">{policy.tableName} · {policy.action}</p>
                     <p className="mt-3 text-sm text-slate-600">{policy.ruleDescription}</p>
                   </div>
                   <Badge>{policy.readyForMigration ? 'Ready' : 'Planned'}</Badge>
@@ -163,7 +163,7 @@ export function ContentCommandPhase29SchemaWorkspace(): React.ReactElement {
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {phase29MigrationReadiness.map((item) => (
             <article key={item.label} className="rounded-2xl border border-slate-100 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">{item.label}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.label}</p>
               <p className="mt-2 text-3xl font-bold text-slate-950">{item.percent}%</p>
               <p className="mt-2 text-sm text-slate-600">{item.blocker}</p>
             </article>

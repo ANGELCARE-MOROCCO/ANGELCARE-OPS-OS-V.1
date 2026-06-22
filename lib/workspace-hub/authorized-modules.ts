@@ -69,7 +69,12 @@ function normalizePermissions(input: unknown): string[] {
 
 function isFullAccessUser(user: AppUserLike) {
   const role = String(user.role || '').toLowerCase()
-  return ['ceo', 'admin', 'super_admin', 'owner'].includes(role)
+  const permissions = normalizePermissions(user.permissions)
+
+  // SECURITY RULE:
+  // Dashboard cards must be generated only from assigned permissions.
+  // Admin/direction no longer imply full module visibility unless '*' is explicitly assigned.
+  return ['ceo', 'super_admin', 'owner'].includes(role) || permissions.includes('*')
 }
 
 function normalizeRouteFromGenerated(route: any) {

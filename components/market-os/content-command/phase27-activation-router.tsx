@@ -21,7 +21,7 @@ function Badge(props: { children: React.ReactNode }): React.ReactElement {
 function PlaceholderWorkspace(props: { routeKey: Phase27RouteKey; componentName: string }): React.ReactElement {
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
         Local Workspace Host
       </p>
       <h3 className="mt-2 text-xl font-bold text-slate-950">{props.componentName}</h3>
@@ -47,7 +47,7 @@ export function ContentCommandPhase27ActivationRouter(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -60,15 +60,15 @@ export function ContentCommandPhase27ActivationRouter(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Registered Routes</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Registered Routes</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{routes.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Mounted</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Mounted</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{mountedCount}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Build Safe</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Build Safe</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{buildSafePercent}%</p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export function ContentCommandPhase27ActivationRouter(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{route.label}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{route.description}</p>
+                    <p className="mt-1 text-xs text-slate-500">{route.description}</p>
                   </div>
                   <Badge>{route.enabled ? 'Enabled' : 'Off'}</Badge>
                 </div>

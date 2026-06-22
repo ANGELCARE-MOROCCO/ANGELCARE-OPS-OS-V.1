@@ -78,6 +78,12 @@ function attachmentList(formData: FormData) {
     .filter((item) => item.url)
 }
 
+
+function traineeDossierHref(traineeId: any) {
+  const id = String(traineeId || '').trim()
+  return id ? `/academy/trainees/${encodeURIComponent(id)}/edit?section=job-placement` : '/academy/trainees'
+}
+
 function makePlacementRef() {
   const stamp = new Date().toISOString().replace(/\D/g, '').slice(0, 12)
   const suffix = Math.random().toString(36).slice(2, 6).toUpperCase()
@@ -214,6 +220,77 @@ async function updatePlacementCaseStatusAction(formData: FormData) {
 
   revalidatePath('/academy/job-placement')
   redirect(`/academy/job-placement?case=${caseId}&modal=case-management`)
+}
+
+async function updatePlacementCaseFullAction(formData: FormData) {
+  'use server'
+
+  await requireAccess('academy.manage')
+
+  const supabase = await createClient()
+  const caseId = cleanForm(formData.get('case_id'))
+
+  if (!caseId) redirect('/academy/job-placement')
+
+  const payload = {
+    trainee_id: cleanForm(formData.get('trainee_id')) || null,
+    program_id: cleanForm(formData.get('program_id')) || null,
+    cohort_id: cleanForm(formData.get('cohort_id')) || null,
+    partner_id: cleanForm(formData.get('partner_id')) || null,
+    status: cleanForm(formData.get('status')) || 'ready_for_placement',
+    priority: cleanForm(formData.get('priority')) || 'normal',
+    target_city: cleanForm(formData.get('target_city')),
+    preferred_role: cleanForm(formData.get('preferred_role')),
+    availability: cleanForm(formData.get('availability')),
+    advisor_name: cleanForm(formData.get('advisor_name')) || 'Academy Advisor',
+    match_score: Number(formData.get('match_score') || 82),
+    trainings_passed: jsonList(formData, 'trainings_passed'),
+    spoken_languages: jsonList(formData, 'spoken_languages'),
+    additional_skills: jsonList(formData, 'additional_skills'),
+    attachments: attachmentList(formData),
+    notes: cleanForm(formData.get('notes')),
+    updated_at: new Date().toISOString(),
+  }
+
+  const { error } = await supabase
+    .from('academy_placement_cases')
+    .update(payload)
+    .eq('id', caseId)
+
+  if (error) throw new Error(error.message)
+
+  await supabase.from('academy_placement_case_actions').insert({
+    case_id: caseId,
+    action_type: 'case_updated',
+    title: 'Placement case edited and saved',
+    owner_name: payload.advisor_name,
+    status: 'completed',
+    notes: 'Case core dossier, matching fields, skills/languages/trainings or attachments were updated.',
+  })
+
+  revalidatePath('/academy/job-placement')
+  redirect(`/academy/job-placement?case=${caseId}&modal=case-management`)
+}
+
+async function deletePlacementCasePermanentlyAction(formData: FormData) {
+  'use server'
+
+  await requireAccess('academy.manage')
+
+  const supabase = await createClient()
+  const caseId = cleanForm(formData.get('case_id'))
+
+  if (!caseId) redirect('/academy/job-placement')
+
+  const { error } = await supabase
+    .from('academy_placement_cases')
+    .delete()
+    .eq('id', caseId)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/academy/job-placement')
+  redirect('/academy/job-placement?deleted=placement_case')
 }
 
 async function deletePlacementCaseActionAction(formData: FormData) {
@@ -603,35 +680,447 @@ function CandidateMini({ row }: { row: AnyRow }) {
   )
 }
 
-function PipelineBoard({ rows }: { rows: AnyRow[] }) {
+
+function PipelineBoard({
+  rows,
+  params = {},
+}: {
+  rows: AnyRow[]
+  params?: Record<string, string | string[] | undefined>
+}) {
+  const readParam = (key: string, fallback = '') => {
+    const value = params[key]
+    return Array.isArray(value) ? String(value[0] || fallback) : String(value || fallback)
+  }
+
+  const expanded = readParam('pipeline', 'compact') === 'expanded'
+  const selectedStage = readParam('stage', 'all')
+  const query = readParam('pipeline_q', '').trim().toLowerCase()
+  const fromDate = readParam('from', '')
+  const toDate = readParam('to', '')
+
+  const stageMeta = [
+    { label: 'Ready for Placement', dot: '#2563eb', bg: '#eff6ff', soft: '#dbeafe', glow: 'rgba(37,99,235,.18)', icon: '🎓' },
+    { label: 'Employer Outreach', dot: '#7c3aed', bg: '#f5f3ff', soft: '#ede9fe', glow: 'rgba(124,58,237,.16)', icon: '🤝' },
+    { label: 'Interviewing', dot: '#f97316', bg: '#fff7ed', soft: '#fed7aa', glow: 'rgba(249,115,22,.16)', icon: '📅' },
+    { label: 'Offer Stage', dot: '#eab308', bg: '#fffbeb', soft: '#fde68a', glow: 'rgba(234,179,8,.18)', icon: '✍️' },
+    { label: 'Placed', dot: '#16a34a', bg: '#ecfdf5', soft: '#bbf7d0', glow: 'rgba(22,163,74,.16)', icon: '✅' },
+    { label: 'Follow-Up', dot: '#0891b2', bg: '#ecfeff', soft: '#cffafe', glow: 'rgba(8,145,178,.16)', icon: '🔁' },
+  ]
+
+  const baseRows = rows.filter((row) => {
+    const text = `${row.name} ${row.program} ${row.partner} ${row.city} ${row.skills} ${row.status}`.toLowerCase()
+    const stageOk = selectedStage === 'all' || row.status === selectedStage
+    const queryOk = !query || text.includes(query)
+
+    const updated = row.updated && row.updated !== '—' ? new Date(row.updated) : null
+    const fromOk = !fromDate || !updated || updated >= new Date(fromDate)
+    const toOk = !toDate || !updated || updated <= new Date(`${toDate}T23:59:59`)
+
+    return stageOk && queryOk && fromOk && toOk
+  })
+
+  const paramsHref = (patch: Record<string, string>) => {
+    const next = new URLSearchParams()
+
+    Object.entries(params).forEach(([key, value]) => {
+      const resolved = Array.isArray(value) ? value[0] : value
+      if (resolved) next.set(key, String(resolved))
+    })
+
+    Object.entries(patch).forEach(([key, value]) => {
+      if (value) next.set(key, value)
+      else next.delete(key)
+    })
+
+    const qs = next.toString()
+    return qs ? `/academy/job-placement?${qs}` : '/academy/job-placement'
+  }
+
+  const visibleLimit = expanded ? 12 : 3
+  const totalVisible = baseRows.length
+  const placedCount = baseRows.filter((row) => row.status === 'Placed').length
+  const interviewingCount = baseRows.filter((row) => row.status === 'Interviewing').length
+  const avgScore = Math.round(baseRows.reduce((sum, row) => sum + Number(row.score || 0), 0) / Math.max(1, baseRows.length))
+
   return (
-    <Panel title="1. Placement Pipeline">
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,minmax(140px,1fr))', gap: 10, padding: 12 }}>
-        {stageLabels.map((stage) => {
-          const items = rows.filter((row) => row.status === stage)
+    <section style={{
+      background: 'linear-gradient(180deg,#ffffff,#f8fbff)',
+      border: '1px solid #dfe8f6',
+      borderRadius: 28,
+      overflow: 'hidden',
+      boxShadow: '0 24px 70px rgba(15,23,42,.08)',
+      gridColumn: '1 / -1',
+    }}>
+      <div style={{
+        padding: 22,
+        borderBottom: '1px solid #e7ecf4',
+        background: 'linear-gradient(135deg,#ffffff,#f8fbff 45%,#eef2ff)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{
+                width: 46,
+                height: 46,
+                borderRadius: 16,
+                display: 'grid',
+                placeItems: 'center',
+                background: '#1657ff',
+                color: '#fff',
+                fontSize: 22,
+                boxShadow: '0 16px 30px rgba(22,87,255,.24)',
+              }}>▦</span>
+              <div>
+                <h3 style={{ margin: 0, color: '#111827', fontSize: 24, letterSpacing: '-.055em' }}>
+                  1. Placement Pipeline · PREMIUM V2 LIVE
+                </h3>
+                <p style={{ margin: '5px 0 0', color: '#64748b', fontSize: 13, fontWeight: 850 }}>
+                  Filter, expand, monitor and act on the live Academy placement flow.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Link href={paramsHref({ pipeline: expanded ? 'compact' : 'expanded' })} style={{
+              border: '1px solid #bed1ff',
+              background: expanded ? '#111827' : '#1657ff',
+              color: '#fff',
+              textDecoration: 'none',
+              borderRadius: 16,
+              padding: '13px 16px',
+              fontSize: 12,
+              fontWeight: 1000,
+              boxShadow: '0 14px 26px rgba(22,87,255,.18)',
+            }}>
+              {expanded ? '↑ Retract pipeline' : '↓ Expand all cards'}
+            </Link>
+
+            <Link href="/academy/job-placement" style={{
+              border: '1px solid #dbe3ef',
+              background: '#fff',
+              color: '#172033',
+              textDecoration: 'none',
+              borderRadius: 16,
+              padding: '13px 16px',
+              fontSize: 12,
+              fontWeight: 1000,
+            }}>
+              Reset filters
+            </Link>
+          </div>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,minmax(150px,1fr))',
+          gap: 12,
+          marginTop: 18,
+        }}>
+          {[
+            ['Visible candidates', totalVisible, '#1657ff', 'Live filtered'],
+            ['Placed', placedCount, '#16a34a', 'Closed outcomes'],
+            ['Interviewing', interviewingCount, '#f97316', 'Active interviews'],
+            ['Average score', `${avgScore}%`, '#7c3aed', 'Placement readiness'],
+          ].map(([label, value, color, sub]) => (
+            <div key={label} style={{
+              border: '1px solid #e7ecf4',
+              borderRadius: 18,
+              padding: 14,
+              background: '#fff',
+              boxShadow: '0 12px 28px rgba(15,23,42,.045)',
+            }}>
+              <p style={{ margin: 0, color: '#64748b', fontSize: 11, fontWeight: 1000, textTransform: 'uppercase', letterSpacing: '.12em' }}>{label}</p>
+              <strong style={{ display: 'block', marginTop: 6, color: String(color), fontSize: 24, letterSpacing: '-.04em' }}>{value}</strong>
+              <span style={{ color: '#94a3b8', fontSize: 11, fontWeight: 850 }}>{sub}</span>
+            </div>
+          ))}
+        </div>
+
+        <form action="/academy/job-placement" style={{
+          display: 'grid',
+          gridTemplateColumns: '1.2fr .85fr .7fr .7fr auto',
+          gap: 12,
+          alignItems: 'end',
+          marginTop: 18,
+        }}>
+          <input type="hidden" name="pipeline" value={expanded ? 'expanded' : 'compact'} />
+
+          <label style={pipelineFieldLabel}>
+            Search candidate / partner
+            <input name="pipeline_q" defaultValue={query} placeholder="Search name, city, skill, employer..." style={pipelineInput} />
+          </label>
+
+          <label style={pipelineFieldLabel}>
+            Stage
+            <select name="stage" defaultValue={selectedStage} style={pipelineInput}>
+              <option value="all">All stages</option>
+              {stageMeta.map((stage) => <option key={stage.label} value={stage.label}>{stage.label}</option>)}
+            </select>
+          </label>
+
+          <label style={pipelineFieldLabel}>
+            From
+            <input type="date" name="from" defaultValue={fromDate} style={pipelineInput} />
+          </label>
+
+          <label style={pipelineFieldLabel}>
+            To
+            <input type="date" name="to" defaultValue={toDate} style={pipelineInput} />
+          </label>
+
+          <button style={{
+            minHeight: 48,
+            border: '1px solid #1657ff',
+            borderRadius: 16,
+            background: '#1657ff',
+            color: '#fff',
+            padding: '0 18px',
+            fontSize: 12,
+            fontWeight: 1000,
+            cursor: 'pointer',
+            boxShadow: '0 12px 24px rgba(22,87,255,.18)',
+          }}>
+            Apply
+          </button>
+        </form>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6,minmax(190px,1fr))',
+        gap: 14,
+        padding: 18,
+        alignItems: 'stretch',
+        overflowX: 'auto',
+      }}>
+        {stageMeta.map((stage) => {
+          const items = baseRows.filter((row) => row.status === stage.label)
+          const shown = items.slice(0, visibleLimit)
+
           return (
-            <div key={stage} style={{
-              border: '1px solid #edf2f7',
-              borderRadius: 14,
-              background: '#fbfdff',
-              padding: 8,
+            <div key={stage.label} style={{
+              minWidth: 210,
+              border: `1px solid ${stage.soft}`,
+              borderRadius: 22,
+              background: `linear-gradient(180deg,${stage.bg},#ffffff 38%)`,
+              boxShadow: `0 20px 45px ${stage.glow}`,
+              padding: 12,
               display: 'grid',
-              gap: 8,
+              gap: 12,
               alignContent: 'start',
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#172033', fontSize: 11, fontWeight: 1000 }}>
-                <span>● {stage}</span>
-                <b>{items.length}</b>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 10,
+                padding: '4px 2px 2px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                  <span style={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    background: stage.dot,
+                    boxShadow: `0 0 0 6px ${stage.glow}`,
+                    flex: '0 0 auto',
+                  }} />
+                  <strong style={{ color: '#111827', fontSize: 14, letterSpacing: '-.03em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {stage.label}
+                  </strong>
+                </div>
+
+                <span style={{
+                  borderRadius: 999,
+                  background: '#fff',
+                  border: `1px solid ${stage.soft}`,
+                  color: stage.dot,
+                  padding: '6px 9px',
+                  fontSize: 11,
+                  fontWeight: 1000,
+                }}>
+                  {items.length}
+                </span>
               </div>
-              {(items.length ? items : rows.slice(0, 3)).slice(0, 3).map((row) => <CandidateMini key={`${stage}-${row.rowKey || row.id}`} row={row} />)}
-              <Link href="/academy/trainees" style={{ textAlign: 'center', color: '#1657ff', textDecoration: 'none', fontSize: 11, fontWeight: 1000 }}>+ {Math.max(0, items.length - 3)} more</Link>
+
+              {shown.length ? shown.map((row, index) => (
+                <Link
+                  key={`${stage.label}-${row.rowKey || row.id}-${index}`}
+                  href={row.caseId ? `/academy/job-placement?case=${row.caseId}&modal=case-management` : `/academy/job-placement?modal=placement-preview&preview=${encodeURIComponent(String(row.id || ''))}`}
+                  style={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'grid',
+                    gap: 12,
+                    minHeight: expanded ? 172 : 132,
+                    border: '1px solid rgba(226,232,240,.95)',
+                    borderLeft: `5px solid ${stage.dot}`,
+                    borderRadius: 20,
+                    background: '#fff',
+                    padding: 14,
+                    textDecoration: 'none',
+                    color: '#172033',
+                    boxShadow: '0 18px 38px rgba(15,23,42,.075)',
+                    transition: 'transform .18s ease, box-shadow .18s ease',
+                  }}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    right: -34,
+                    top: -34,
+                    width: 98,
+                    height: 98,
+                    borderRadius: '50%',
+                    background: stage.glow,
+                  }} />
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '42px 1fr auto', gap: 12, alignItems: 'center', position: 'relative' }}>
+                    <span style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      display: 'grid',
+                      placeItems: 'center',
+                      background: stage.bg,
+                      color: stage.dot,
+                      fontSize: 12,
+                      fontWeight: 1000,
+                    }}>
+                      {initials(row.name)}
+                    </span>
+
+                    <div style={{ minWidth: 0 }}>
+                      <strong style={{
+                        display: 'block',
+                        color: '#111827',
+                        fontSize: 13,
+                        lineHeight: 1.25,
+                        letterSpacing: '.02em',
+                      }}>
+                        {row.name}
+                      </strong>
+                      <span style={{
+                        display: 'block',
+                        marginTop: 4,
+                        color: '#64748b',
+                        fontSize: 12,
+                        fontWeight: 900,
+                        lineHeight: 1.35,
+                      }}>
+                        {row.program}
+                      </span>
+                    </div>
+
+                    <span style={{
+                      borderRadius: 12,
+                      background: '#dcfce7',
+                      color: '#15803d',
+                      padding: '8px 9px',
+                      fontSize: 12,
+                      fontWeight: 1000,
+                    }}>
+                      {row.score}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, position: 'relative' }}>
+                    <span style={pipelineTag}>{stage.icon} {stage.label}</span>
+                    <span style={pipelineTag}>📍 {row.city}</span>
+                    {expanded ? <span style={pipelineTag}>👤 {row.advisor}</span> : null}
+                    {expanded ? <span style={pipelineTag}>🏢 {row.partner}</span> : null}
+                  </div>
+
+                  {expanded ? (
+                    <div style={{
+                      display: 'grid',
+                      gap: 8,
+                      borderTop: '1px solid #edf2f7',
+                      paddingTop: 10,
+                      position: 'relative',
+                    }}>
+                      <p style={{ margin: 0, color: '#475569', fontSize: 12, fontWeight: 850, lineHeight: 1.55 }}>
+                        {row.skills}
+                      </p>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, color: '#64748b', fontSize: 11, fontWeight: 900 }}>
+                        <span>Next: {row.nextAction}</span>
+                        <span>{row.updated}</span>
+                      </div>
+                    </div>
+                  ) : null}
+                </Link>
+              )) : (
+                <div style={{
+                  border: '1px dashed #dbe3ef',
+                  borderRadius: 18,
+                  padding: 18,
+                  textAlign: 'center',
+                  color: '#94a3b8',
+                  fontSize: 12,
+                  fontWeight: 900,
+                  background: 'rgba(255,255,255,.72)',
+                }}>
+                  No candidates in this stage.
+                </div>
+              )}
+
+              {items.length > visibleLimit ? (
+                <Link href={paramsHref({ pipeline: 'expanded', stage: stage.label })} style={{
+                  textAlign: 'center',
+                  color: stage.dot,
+                  textDecoration: 'none',
+                  fontSize: 12,
+                  fontWeight: 1000,
+                  padding: '4px 0',
+                }}>
+                  + {items.length - visibleLimit} more
+                </Link>
+              ) : null}
             </div>
           )
         })}
       </div>
-    </Panel>
+    </section>
   )
 }
+
+const pipelineFieldLabel: CSSProperties = {
+  display: 'grid',
+  gap: 7,
+  color: '#64748b',
+  fontSize: 11,
+  fontWeight: 1000,
+  textTransform: 'uppercase',
+  letterSpacing: '.12em',
+}
+
+const pipelineInput: CSSProperties = {
+  width: '100%',
+  minHeight: 48,
+  border: '1px solid #dbe3ef',
+  borderRadius: 16,
+  background: '#fff',
+  color: '#111827',
+  padding: '0 14px',
+  fontSize: 13,
+  fontWeight: 850,
+  outline: 'none',
+  boxSizing: 'border-box',
+}
+
+const pipelineTag: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  border: '1px solid #e7ecf4',
+  borderRadius: 999,
+  background: '#f8fafc',
+  color: '#475569',
+  padding: '6px 8px',
+  fontSize: 10,
+  fontWeight: 950,
+}
+
 
 function MatchIntelligence({ rows }: { rows: AnyRow[] }) {
   return (
@@ -983,6 +1472,242 @@ function PlacementCaseCreateModal({
   )
 }
 
+
+
+function PlacementPreviewModal({
+  row,
+}: {
+  row: AnyRow
+}) {
+  const traineeHref = traineeDossierHref(row.id)
+  const editHref = `/academy/job-placement?modal=new-placement&trainee=${encodeURIComponent(String(row.id || ''))}`
+
+  return (
+    <section style={modalOverlay}>
+      <div style={caseManagerModal}>
+        <div style={modalHeroDark}>
+          <div>
+            <span style={modalEyebrowDark}>Placement Preview</span>
+            <h2 style={{ ...modalTitle, color: '#fff' }}>{row.name}</h2>
+            <p style={{ ...modalSub, color: 'rgba(255,255,255,.72)' }}>
+              {row.program} · {row.partner || 'Partner pipeline'} · {row.city || 'Morocco'} · Score {row.score || 0}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <Link href={editHref} style={primaryButton}>Edit case</Link>
+            <Link href={traineeHref} style={secondaryButton}>G-DOSSIER</Link>
+            <Link href="/academy/job-placement" style={modalCloseDark}>×</Link>
+          </div>
+        </div>
+
+        <div style={caseManagerGrid}>
+          <section style={modalPanel}>
+            <h3 style={panelTitle}>Candidate placement snapshot</h3>
+            <div style={candidateCard}>
+              <span style={{ ...avatarStyle, width: 62, height: 62, fontSize: 18 }}>{initials(row.name)}</span>
+              <div>
+                <strong style={{ fontSize: 20 }}>{row.name}</strong>
+                <p style={{ margin: '5px 0 0', color: '#64748b', fontWeight: 800 }}>{row.email || 'Academy trainee'} · {row.phone || '+212 —'}</p>
+                <p style={{ margin: '5px 0 0', color: '#64748b', fontWeight: 800 }}>Status: {row.status} · City: {row.city}</p>
+              </div>
+            </div>
+
+            <div style={miniKpiGrid}>
+              <span><b>{row.score || 0}%</b><small>Match score</small></span>
+              <span><b>{row.status}</b><small>Pipeline stage</small></span>
+              <span><b>{row.advisor || 'Academy Advisor'}</b><small>Advisor</small></span>
+            </div>
+
+            <div style={{ display: 'grid', gap: 12 }}>
+              <p style={{ margin: 0, color: '#475569', fontSize: 13, fontWeight: 850 }}><b style={{ color: '#111827' }}>Program:</b> {row.program}</p>
+              <p style={{ margin: 0, color: '#475569', fontSize: 13, fontWeight: 850 }}><b style={{ color: '#111827' }}>Partner:</b> {row.partner || 'Partner pipeline'}</p>
+              <p style={{ margin: 0, color: '#475569', fontSize: 13, fontWeight: 850 }}><b style={{ color: '#111827' }}>Skills:</b> {row.skills || 'Placement ready'}</p>
+              <p style={{ margin: 0, color: '#475569', fontSize: 13, fontWeight: 850 }}><b style={{ color: '#111827' }}>Next action:</b> {row.nextAction || 'Create placement case'}</p>
+            </div>
+          </section>
+
+          <section style={modalPanel}>
+            <h3 style={panelTitle}>Recommended actions</h3>
+            <div style={timelineWrap}>
+              {[
+                ['Open G-DOSSIER', 'Review full trainee record, Academy status, payment, attendance and placement section.'],
+                ['Create/Edit case', 'Convert this live trainee placement signal into a managed placement case.'],
+                ['Partner matching', 'Use partner pipeline and candidate readiness to prepare outreach.'],
+              ].map(([title, note]) => (
+                <article key={title} style={timelineItem}>
+                  <div>
+                    <strong>{title}</strong>
+                    <p>{note}</p>
+                  </div>
+                  <StatusPill>recommended</StatusPill>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+function PlacementCaseEditModal({
+  placementCase,
+  data,
+}: {
+  placementCase: AnyRow
+  data: AnyRow
+}) {
+  const trainees = Array.isArray(data.trainees) ? data.trainees : []
+  const programs = Array.isArray(data.courses) ? data.courses : []
+  const cohorts = Array.isArray(data.cohorts) ? data.cohorts : Array.isArray(data.groups) ? data.groups : []
+  const partners = Array.isArray(data.partners) ? data.partners : []
+  const trainee = trainees.find((row: AnyRow) => String(row.id) === String(placementCase.trainee_id)) || trainees[0] || {}
+
+  return (
+    <section style={modalOverlay}>
+      <div style={placementModal}>
+        <div style={modalHero}>
+          <div>
+            <span style={modalEyebrow}>Edit Placement Case</span>
+            <h2 style={modalTitle}>{s(placementCase.ref_code, 'Placement case')}</h2>
+            <p style={modalSub}>
+              Edit the live placement case dossier, trainee mapping, program/cohort/partner sync, matching data, skills, languages, trainings, attachments and operational notes.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <Link href={`/academy/job-placement?case=${placementCase.id}&modal=case-management`} style={secondaryButton}>Back to preview</Link>
+            <Link href="/academy/job-placement" style={modalClose}>×</Link>
+          </div>
+        </div>
+
+        <form action={updatePlacementCaseFullAction} style={modalGrid}>
+          <input type="hidden" name="case_id" value={placementCase.id} />
+
+          <section style={modalPanel}>
+            <h3 style={panelTitle}>1. Candidate dossier mapping</h3>
+
+            <div style={candidateCard}>
+              <span style={{ ...avatarStyle, width: 62, height: 62, fontSize: 18 }}>{initials(firstName(trainee))}</span>
+              <div>
+                <strong style={{ fontSize: 20 }}>{firstName(trainee)}</strong>
+                <p style={{ margin: '5px 0 0', color: '#64748b', fontWeight: 800 }}>
+                  {s(trainee.email, 'No email')} · {s(trainee.phone, 'No phone')}
+                </p>
+                <p style={{ margin: '5px 0 0', color: '#64748b', fontWeight: 800 }}>
+                  Current case: {s(placementCase.ref_code)}
+                </p>
+              </div>
+            </div>
+
+            <label style={fieldLabel}>Live trainee
+              <select name="trainee_id" defaultValue={String(placementCase.trainee_id || '')} style={inputStyle}>
+                {trainees.map((item: AnyRow) => <option key={item.id} value={item.id}>{firstName(item)} · {s(item.city, 'Morocco')}</option>)}
+              </select>
+            </label>
+
+            <label style={fieldLabel}>Placement status
+              <select name="status" defaultValue={String(placementCase.status || 'ready_for_placement')} style={inputStyle}>
+                <option value="ready_for_placement">Ready for placement</option>
+                <option value="employer_outreach">Employer outreach</option>
+                <option value="interviewing">Interviewing</option>
+                <option value="offer_stage">Offer stage</option>
+                <option value="placed">Placed</option>
+                <option value="follow_up">Follow-up</option>
+                <option value="at_risk">At-risk</option>
+              </select>
+            </label>
+
+            <div style={twoCol}>
+              <label style={fieldLabel}>Priority
+                <select name="priority" defaultValue={String(placementCase.priority || 'normal')} style={inputStyle}>
+                  <option>normal</option>
+                  <option>high</option>
+                  <option>urgent</option>
+                  <option>watchlist</option>
+                </select>
+              </label>
+              <label style={fieldLabel}>Match score
+                <input name="match_score" type="number" min="1" max="100" defaultValue={Number(placementCase.match_score || 82)} style={inputStyle} />
+              </label>
+            </div>
+          </section>
+
+          <section style={modalPanel}>
+            <h3 style={panelTitle}>2. Program, cohort & partner sync</h3>
+
+            <label style={fieldLabel}>Live program
+              <select name="program_id" defaultValue={String(placementCase.program_id || '')} style={inputStyle}>
+                <option value="">Select program</option>
+                {programs.map((item: AnyRow) => <option key={item.id} value={item.id}>{s(item.title || item.name, 'Academy Program')}</option>)}
+              </select>
+            </label>
+
+            <label style={fieldLabel}>Live cohort / group
+              <select name="cohort_id" defaultValue={String(placementCase.cohort_id || '')} style={inputStyle}>
+                <option value="">Select cohort</option>
+                {cohorts.map((item: AnyRow) => <option key={item.id} value={item.id}>{s(item.title || item.name || item.label, 'Academy Cohort')}</option>)}
+              </select>
+            </label>
+
+            <label style={fieldLabel}>Employer partner
+              <select name="partner_id" defaultValue={String(placementCase.partner_id || '')} style={inputStyle}>
+                <option value="">Partner pipeline / multiple</option>
+                {partners.map((item: AnyRow) => <option key={item.id} value={item.id}>{s(item.name, 'Partner')} · {s(item.city, 'Morocco')}</option>)}
+              </select>
+            </label>
+
+            <div style={twoCol}>
+              <label style={fieldLabel}>Target city
+                <input name="target_city" defaultValue={String(placementCase.target_city || trainee.city || '')} style={inputStyle} />
+              </label>
+              <label style={fieldLabel}>Preferred role
+                <input name="preferred_role" defaultValue={String(placementCase.preferred_role || '')} style={inputStyle} />
+              </label>
+            </div>
+
+            <label style={fieldLabel}>Availability
+              <select name="availability" defaultValue={String(placementCase.availability || 'immediate')} style={inputStyle}>
+                <option>immediate</option>
+                <option>within_7_days</option>
+                <option>within_30_days</option>
+                <option>weekends_only</option>
+                <option>part_time</option>
+                <option>full_time</option>
+              </select>
+            </label>
+          </section>
+
+          <section style={modalPanel}>
+            <h3 style={panelTitle}>3. Update trainings, languages, skills & attachments</h3>
+            <p style={{ margin: '0 0 14px', color: '#64748b', fontSize: 13, fontWeight: 850 }}>
+              Add the latest case evidence. Saved values replace the current case arrays and sync immediately.
+            </p>
+            <PlacementDynamicFields />
+          </section>
+
+          <section style={modalPanel}>
+            <h3 style={panelTitle}>4. Advisor & notes</h3>
+            <label style={fieldLabel}>Assigned advisor
+              <input name="advisor_name" defaultValue={String(placementCase.advisor_name || 'Academy Advisor')} style={inputStyle} />
+            </label>
+            <label style={fieldLabel}>Placement notes
+              <textarea name="notes" rows={8} defaultValue={String(placementCase.notes || '')} style={{ ...inputStyle, minHeight: 210 }} />
+            </label>
+          </section>
+
+          <div style={modalFooter}>
+            <Link href={`/academy/job-placement?case=${placementCase.id}&modal=case-management`} style={secondaryButton}>Cancel</Link>
+            <button style={primaryButton}>Save live changes</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  )
+}
+
+
 function CaseManagementModal({
   placementCase,
   actions,
@@ -1004,7 +1729,28 @@ function CaseManagementModal({
             <h2 style={{ ...modalTitle, color: '#fff' }}>{placementCase.ref_code}</h2>
             <p style={{ ...modalSub, color: 'rgba(255,255,255,.72)' }}>{firstName(trainee)} · {s(placementCase.preferred_role, 'Placement role')} · {s(placementCase.target_city, 'Morocco')}</p>
           </div>
-          <Link href="/academy/job-placement" style={modalCloseDark}>×</Link>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <Link href={`/academy/job-placement?case=${placementCase.id}&modal=edit-placement`} style={primaryButton}>Edit case</Link>
+            <form action={deletePlacementCasePermanentlyAction} style={{ display: 'inline-flex' }}>
+              <input type="hidden" name="case_id" value={placementCase.id} />
+              <button
+                type="submit"
+                style={{
+                  ...dangerButton,
+                  minHeight: 46,
+                  borderRadius: 14,
+                  background: '#dc2626',
+                  color: '#fff',
+                  borderColor: '#dc2626',
+                  boxShadow: '0 14px 28px rgba(220,38,38,.22)',
+                }}
+              >
+                Delete permanently
+              </button>
+            </form>
+            <Link href={traineeDossierHref(placementCase.trainee_id)} style={secondaryButton}>G-DOSSIER</Link>
+            <Link href="/academy/job-placement" style={modalCloseDark}>×</Link>
+          </div>
         </div>
 
         <div style={caseManagerGrid}>
@@ -1092,7 +1838,11 @@ export default async function AcademyJobPlacementPage({ searchParams }: { search
     readPlacementTable(supabase, 'academy_placement_cases'),
     readPlacementTable(supabase, 'academy_placement_case_actions'),
   ])
-  const rows = [...makeCaseRows(placementCases, data), ...makePlacementRows(data)]
+  // Production rule:
+  // Only saved academy_placement_cases should appear as managed placement cards.
+  // Legacy/generated trainee signals are intentionally hidden from the board
+  // so every visible card has a real case id, edit flow, delete flow and action logs.
+  const rows = makeCaseRows(placementCases, data)
   const partners = Array.isArray(data.partners) ? data.partners : []
   const certificates = Array.isArray(data.certificates) ? data.certificates : []
   const ready = rows.filter((r) => ['Ready for Placement', 'Employer Outreach'].includes(r.status)).length
@@ -1118,6 +1868,10 @@ export default async function AcademyJobPlacementPage({ searchParams }: { search
   const selectedCaseActions = selectedPlacementCase
     ? placementCaseActions.filter((item: AnyRow) => String(item.case_id) === String(selectedPlacementCase.id))
     : []
+  const selectedPreviewId = String(params.preview || '')
+  const selectedPreviewRow = selectedPreviewId
+    ? rows.find((item: AnyRow) => String(item.id) === selectedPreviewId || String(item.rowKey || '') === selectedPreviewId)
+    : null
 
   return (
     <main style={{ minHeight: '100vh', background: '#f6f8fc', color: '#172033', fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
@@ -1160,7 +1914,7 @@ export default async function AcademyJobPlacementPage({ searchParams }: { search
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '2fr .72fr .72fr', gap: 14, marginBottom: 14 }}>
-            <PipelineBoard rows={rows} />
+            <PipelineBoard rows={rows} params={params} />
             <MatchIntelligence rows={rows} />
             <EmployerDirectory partners={partners} />
           </div>
@@ -1177,8 +1931,16 @@ export default async function AcademyJobPlacementPage({ searchParams }: { search
             <PlacementCaseCreateModal data={data} selectedTraineeId={selectedTraineeId} error={error} />
           ) : null}
 
+          {modal === 'placement-preview' && selectedPreviewRow ? (
+            <PlacementPreviewModal row={selectedPreviewRow} />
+          ) : null}
+
           {modal === 'case-management' && selectedPlacementCase ? (
             <CaseManagementModal placementCase={selectedPlacementCase} actions={selectedCaseActions} data={data} />
+          ) : null}
+
+          {modal === 'edit-placement' && selectedPlacementCase ? (
+            <PlacementCaseEditModal placementCase={selectedPlacementCase} data={data} />
           ) : null}
 
           <footer style={{ display: 'flex', justifyContent: 'space-between', color: '#64748b', fontSize: 12, fontWeight: 800, padding: '20px 4px 6px' }}>

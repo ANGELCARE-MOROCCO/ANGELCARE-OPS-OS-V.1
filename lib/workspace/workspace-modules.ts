@@ -605,7 +605,7 @@ function userPermissions(user: any) {
 
 function isElevatedUser(user: any) {
   const role = normalizeRole(user)
-  return ['ceo', 'admin', 'direction'].includes(role) || userPermissions(user).includes('*')
+  return ['ceo', 'owner', 'super_admin'].includes(role) || userPermissions(user).includes('*')
 }
 
 function hasWorkspaceItemAccess(user: any, item: WorkspaceAccess) {

@@ -1,29 +1,43 @@
-// OPTION B QUICK BYPASS STUB
-// Satisfies TypeScript exports for legacy Market-OS UI components.
-// Temporary only: replace with real data/business logic later.
+export type MarketOSEngineRecord = Record<string, any>
+export type ExpansionMarket = string
+export type ExpansionRisk = "low" | "medium" | "high" | "critical" | string
+export type ExpansionStage = "research" | "validation" | "pilot" | "launch_ready" | "launched" | "paused" | string
 
-export type GenericRecord = Record<string, any>
-export type MarketOsRuntimeAudit = GenericRecord
+export const marketExpansionCityOpportunityEngineData: MarketOSEngineRecord[] = []
 
-export function formatMad(value: any) { return `MAD ${Number(value || 0).toLocaleString()}` }
-export function statusLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function typeLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function stageLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function roleLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function riskLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function areaLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function countryLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function decisionLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function sourceLabel(value: any) { return String(value || '').replaceAll('_', ' ') }
-export function getSlaRisk(..._args: any[]) { return 'low' }
-export async function runMarketOsRuntimeAudit(..._args: any[]) { return [] }
-export async function reportMarketOsRuntimeAudit(..._args: any[]) { return { ok: true } }
+export function formatMad(value: number | string = 0) {
+  const amount = Number(value || 0)
+  return `${amount.toLocaleString("fr-MA")} MAD`
+}
 
-export type ExpansionMarket = any
-export type ExpansionRisk = any
-export type ExpansionStage = any
+export function getEngineSnapshot(records: MarketOSEngineRecord[] = marketExpansionCityOpportunityEngineData) {
+  return {
+    ok: true,
+    source: "market-expansion-city-opportunity-engine-compat",
+    records,
+    items: records,
+    data: records,
+    totals: {
+      count: records.length,
+      total: records.length,
+      active: records.filter((item: any) => String(item.status || "").toLowerCase() === "active").length,
+    },
+    updatedAt: new Date().toISOString(),
+  }
+}
+
+export default marketExpansionCityOpportunityEngineData
+
 export const cityOpportunities: any[] = []
 
-export const data: any[] = []
-export const map: Record<string, any> = {}
-export function noop(..._args: any[]) { return null }
+export function countryLabel(value: any = "") {
+  return String(value || "Not configured")
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+export function stageLabel(value: any = "") {
+  return String(value || "Not configured")
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}

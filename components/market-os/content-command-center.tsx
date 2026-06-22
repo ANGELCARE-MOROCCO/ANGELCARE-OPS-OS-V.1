@@ -1,8 +1,21 @@
 "use client"
 
+import React, { useEffect, useMemo, useState, type ReactNode, useCallback } from "react"
+
 import Link from "next/link"
-import React, { useMemo, useState, type ReactNode, useEffect} from "react"
 import {
+
+
+
+
+
+
+
+
+
+
+
+
   Bell,
   BookOpen,
   Boxes,
@@ -75,6 +88,187 @@ import {
   ArrowRight,
   RefreshCw,
 } from "lucide-react"
+
+
+
+async function executeContentCommandAction(action: string, payload: Record<string, unknown> = {}) {
+  try {
+    const response = await fetch("/api/market-os/content-command-center/actions", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        action,
+        payload,
+        source: "content-command-center",
+      }),
+    })
+
+
+const contentCommandOperatorIdentity = {
+  name: "AngelCare Operator",
+  title: "Workspace User",
+  email: "",
+  initials: "AC",
+  avatarUrl: "",
+}
+
+    return await response.json().catch(() => null)
+  } catch (error) {
+    console.error("[CONTENT_COMMAND_ACTION_ERROR]", action, error)
+    return null
+  }
+}
+
+/* CONTENT_COMMAND_REAL_USER_IDENTITY_STANDARD_V1
+   Standard rule:
+   - Never hardcode the visible operator identity.
+   - Resolve authenticated/profile data first.
+   - Fall back only when user data is unavailable.
+*/
+interface ContentCommandOperatorIdentity {
+  name: string
+  title: string
+  email: string
+  initials: string
+  avatarUrl: string
+}
+
+const CONTENT_COMMAND_FALLBACK_OPERATOR: ContentCommandOperatorIdentity = {
+  name: "AngelCare Operator",
+  title: "Workspace User",
+  email: "",
+  initials: "AC",
+  avatarUrl: "",
+}
+
+function pickIdentitySource(payload: any) {
+  return payload?.user || payload?.profile || payload?.data?.user || payload?.data?.profile || payload?.data || payload || {}
+}
+
+function initialsFromIdentity(name?: string, email?: string) {
+  const cleanName = String(name || "").trim()
+
+  if (cleanName) {
+    const parts = cleanName.split(/\s+/).filter(Boolean)
+    const first = parts[0]?.[0] || ""
+    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] || "" : parts[0]?.[1] || ""
+    return `${first}${last}`.toUpperCase() || "AC"
+  }
+
+  const cleanEmail = String(email || "").trim()
+  if (cleanEmail) {
+    const local = cleanEmail.split("@")[0] || ""
+    return local.slice(0, 2).toUpperCase() || "AC"
+  }
+
+  return "AC"
+}
+
+function normalizeContentCommandOperator(payload: any): ContentCommandOperatorIdentity {
+  const source = pickIdentitySource(payload)
+
+  const firstName =
+    source.firstName ||
+    source.first_name ||
+    source.given_name ||
+    source.user_metadata?.first_name ||
+    source.user_metadata?.firstName ||
+    ""
+
+  const lastName =
+    source.lastName ||
+    source.last_name ||
+    source.family_name ||
+    source.user_metadata?.last_name ||
+    source.user_metadata?.lastName ||
+    ""
+
+  const composedName = `${firstName} ${lastName}`.trim()
+
+  const name =
+    source.fullName ||
+    source.full_name ||
+    source.name ||
+    source.displayName ||
+    source.display_name ||
+    source.user_metadata?.full_name ||
+    source.user_metadata?.name ||
+    composedName ||
+    source.email ||
+    CONTENT_COMMAND_FALLBACK_OPERATOR.name
+
+  const title =
+    source.title ||
+    source.roleTitle ||
+    source.role_title ||
+    source.jobTitle ||
+    source.job_title ||
+    source.position ||
+    source.department_role ||
+    source.app_metadata?.role ||
+    source.role ||
+    source.user_metadata?.title ||
+    source.user_metadata?.role ||
+    CONTENT_COMMAND_FALLBACK_OPERATOR.title
+
+  const email = source.email || source.primaryEmail || source.primary_email || ""
+
+  const avatarUrl =
+    source.avatarUrl ||
+    source.avatar_url ||
+    source.picture ||
+    source.image ||
+    source.user_metadata?.avatar_url ||
+    source.user_metadata?.picture ||
+    ""
+
+  return {
+    name: String(name),
+    title: String(title),
+    email: String(email),
+    initials: initialsFromIdentity(String(name), String(email)),
+    avatarUrl: String(avatarUrl),
+  }
+}
+
+async function loadContentCommandOperatorIdentity(): Promise<ContentCommandOperatorIdentity> {
+  const endpoints = ["/api/users/me", "/api/auth/me", "/api/me"]
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "GET",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      })
+
+      if (!response.ok) continue
+
+      const payload = await response.json().catch(() => null)
+      if (!payload) continue
+
+      const identity = normalizeContentCommandOperator(payload)
+
+      if (
+        identity.name !== CONTENT_COMMAND_FALLBACK_OPERATOR.name ||
+        identity.email ||
+        identity.avatarUrl
+      ) {
+        return identity
+      }
+    } catch {
+      // Try next endpoint.
+    }
+  }
+
+  return CONTENT_COMMAND_FALLBACK_OPERATOR
+}
+
 
 type Tone = "violet" | "blue" | "amber" | "emerald" | "rose" | "cyan" | "slate"
 
@@ -178,12 +372,12 @@ const performanceBars = [12, 24, 41, 29, 34, 58, 70, 56, 44, 61, 39, 43, 69, 49,
 
 function toneClasses(tone: Tone) {
   const map: Record<Tone, { bg: string; ring: string; text: string; glow: string; border: string }> = {
-    violet: { bg: "bg-violet-500/15", ring: "from-violet-500 to-purple-500", text: "text-violet-200", glow: "shadow-violet-500/20", border: "border-violet-400/25" },
-    blue: { bg: "bg-blue-500/15", ring: "from-blue-500 to-cyan-500", text: "text-blue-200", glow: "shadow-blue-500/20", border: "border-blue-400/25" },
-    amber: { bg: "bg-amber-500/15", ring: "from-amber-400 to-orange-500", text: "text-amber-200", glow: "shadow-amber-500/20", border: "border-amber-400/25" },
-    emerald: { bg: "bg-emerald-500/15", ring: "from-emerald-400 to-green-500", text: "text-emerald-200", glow: "shadow-emerald-500/20", border: "border-emerald-400/25" },
-    rose: { bg: "bg-rose-500/15", ring: "from-rose-400 to-pink-500", text: "text-rose-200", glow: "shadow-rose-500/20", border: "border-rose-400/25" },
-    cyan: { bg: "bg-cyan-500/15", ring: "from-cyan-400 to-blue-500", text: "text-cyan-200", glow: "shadow-cyan-500/20", border: "border-cyan-400/25" },
+    violet: { bg: "bg-violet-50", ring: "from-violet-500 to-purple-500", text: "text-violet-700", glow: "shadow-violet-500/20", border: "border-violet-400/25" },
+    blue: { bg: "bg-blue-500/15", ring: "from-blue-500 to-cyan-500", text: "text-blue-700", glow: "shadow-blue-500/20", border: "border-blue-400/25" },
+    amber: { bg: "bg-amber-50", ring: "from-amber-400 to-orange-500", text: "text-amber-700", glow: "shadow-amber-500/20", border: "border-amber-400/25" },
+    emerald: { bg: "bg-emerald-50", ring: "from-emerald-400 to-green-500", text: "text-emerald-700", glow: "shadow-emerald-500/20", border: "border-emerald-400/25" },
+    rose: { bg: "bg-rose-50", ring: "from-rose-400 to-pink-500", text: "text-rose-700", glow: "shadow-rose-500/20", border: "border-rose-400/25" },
+    cyan: { bg: "bg-cyan-50", ring: "from-cyan-400 to-blue-500", text: "text-cyan-700", glow: "shadow-cyan-500/20", border: "border-cyan-400/25" },
     slate: { bg: "bg-slate-500/15", ring: "from-slate-300 to-slate-500", text: "text-slate-700", glow: "shadow-slate-500/10", border: "border-slate-200" },
   }
   return map[tone]
@@ -194,6 +388,66 @@ function cn(...items: Array<string | false | null | undefined>) {
 }
 
 export default function ContentCommandCenter() {
+
+  const executeContentCommandAction = useCallback(
+    async (action: string, payload: Record<string, unknown> = {}) => {
+      const actionLabel = String(action || "content.command.action")
+
+      try {
+        const response = await fetch("/api/market-os/content-command-center/actions", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            action: actionLabel,
+            payload,
+            source: "content-command-center",
+          }),
+        })
+
+        const result = await response.json().catch(() => null)
+
+        if (!response.ok || !result?.ok) {
+          console.error("[CONTENT_COMMAND_ACTION_FAILED]", actionLabel, result)
+          return null
+        }
+
+        return result
+      } catch (error) {
+        console.error("[CONTENT_COMMAND_ACTION_ERROR]", actionLabel, error)
+        return null
+      }
+    },
+    [],
+  )
+
+
+  const [contentCommandOperatorIdentity, setContentCommandOperatorIdentity] =
+    useState<ContentCommandOperatorIdentity>(CONTENT_COMMAND_FALLBACK_OPERATOR)
+
+  useEffect(() => {
+    let mounted = true
+
+    loadContentCommandOperatorIdentity().then((identity) => {
+      if (mounted) setContentCommandOperatorIdentity(identity)
+    })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+
+  useEffect(() => {
+    document.body.classList.add('content-command-light-mode')
+    return () => {
+      document.body.classList.remove('content-command-light-mode')
+    }
+  }, [])
+
   const [activeTab, setActiveTab] = useState("All Content")
   const [status, setStatus] = useState("All Status")
   const [sort, setSort] = useState("Latest First")
@@ -273,7 +527,680 @@ export default function ContentCommandCenter() {
   const selectedTab = useMemo(() => categoryTabs.find((tab) => tab.label === activeTab), [activeTab])
 
   return (
-    <main data-content-command-exact="true" className="min-h-screen overflow-x-hidden bg-[#06101d] text-slate-950">
+    <main data-content-command-exact="true" className="min-h-screen overflow-x-hidden bg-white text-slate-950">
+      <style>{`
+        /* CONTENT_COMMAND_LIGHT_THEME_ENFORCER_V1
+           Scoped visual enforcement only.
+           No layout/grid/template/logic changes.
+        */
+
+        [data-content-command-exact="true"] {
+          background: #f8fafc !important;
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] * {
+          border-color: rgba(203, 213, 225, 0.95) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header,
+          footer,
+          [class*="ultra-card"],
+          [class*="rounded-2xl"],
+          [class*="rounded-3xl"],
+          [class*="rounded-[26px]"],
+          [class*="rounded-[28px]"],
+          [class*="rounded-[30px]"],
+          [class*="rounded-[32px]"],
+          [class*="rounded-[34px]"],
+          [class*="rounded-[38px]"]
+        ) {
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [class*="bg-[#0"],
+          [class*="bg-[#1"],
+          [class*="bg-slate-950"],
+          [class*="bg-slate-900"],
+          [class*="bg-slate-800"],
+          [class*="bg-zinc-950"],
+          [class*="bg-zinc-900"],
+          [class*="bg-neutral-950"],
+          [class*="bg-neutral-900"],
+          [class*="bg-black"],
+          [class*="bg-[radial-gradient"],
+          [class*="bg-[linear-gradient"]
+        ) {
+          background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+          color: #0f172a !important;
+          box-shadow: 0 18px 55px rgba(15, 23, 42, 0.08) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [class*="from-[#0"],
+          [class*="from-slate-950"],
+          [class*="from-slate-900"],
+          [class*="via-[#0"],
+          [class*="via-slate-950"],
+          [class*="via-slate-900"],
+          [class*="to-[#0"],
+          [class*="to-slate-950"],
+          [class*="to-slate-900"]
+        ) {
+          background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          h1, h2, h3, h4, h5, h6,
+          p, span, div, label, small,
+          a, button, td, th
+        ) {
+          color: inherit;
+        }
+
+        [data-content-command-exact="true"] :is(
+          h1, h2, h3, h4, h5, h6
+        ) {
+          color: #020617 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          p,
+          label,
+          small,
+          [class*="text-slate-"],
+          [class*="text-white"],
+          [class*="text-cyan-"],
+          [class*="text-violet-"],
+          [class*="text-emerald-"],
+          [class*="text-amber-"],
+          [class*="text-rose-"]
+        ) {
+          color: #475569 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          strong,
+          b,
+          [class*="font-black"],
+          [class*="font-extrabold"],
+          [class*="text-2xl"],
+          [class*="text-3xl"],
+          [class*="text-4xl"],
+          [class*="text-5xl"]
+        ) {
+          color: #020617 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          input,
+          textarea,
+          select
+        ) {
+          background: #ffffff !important;
+          color: #0f172a !important;
+          border-color: #cbd5e1 !important;
+          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        [data-content-command-exact="true"] input::placeholder,
+        [data-content-command-exact="true"] textarea::placeholder {
+          color: #94a3b8 !important;
+          opacity: 1 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [class*="border-[#"],
+          [class*="border-white"],
+          [class*="border-slate-800"],
+          [class*="border-slate-700"]
+        ) {
+          border-color: #cbd5e1 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [class*="shadow-[0_"],
+          [class*="shadow-black"],
+          [class*="drop-shadow"]
+        ) {
+          box-shadow: 0 18px 55px rgba(15, 23, 42, 0.08) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [class*="bg-emerald-"],
+          [class*="bg-cyan-"],
+          [class*="bg-violet-"],
+          [class*="bg-amber-"],
+          [class*="bg-rose-"],
+          [class*="bg-blue-"]
+        ) {
+          box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [class*="bg-emerald-50"],
+          [class*="bg-cyan-50"],
+          [class*="bg-violet-50"],
+          [class*="bg-amber-50"],
+          [class*="bg-rose-50"],
+          [class*="bg-blue-50"]
+        ) {
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-violet-600"],
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-blue-600"],
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-cyan-600"],
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-emerald-600"],
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-rose-600"] {
+          color: #ffffff !important;
+        }
+
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-violet-600"] *,
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-blue-600"] *,
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-cyan-600"] *,
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-emerald-600"] *,
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"][class*="from-rose-600"] * {
+          color: #ffffff !important;
+        }
+
+        [data-content-command-exact="true"] svg {
+          color: currentColor;
+        }
+
+        [data-content-command-exact="true"] [class*="text-cyan-"] {
+          color: #0e7490 !important;
+        }
+
+        [data-content-command-exact="true"] [class*="text-violet-"] {
+          color: #6d28d9 !important;
+        }
+
+        [data-content-command-exact="true"] [class*="text-emerald-"] {
+          color: #047857 !important;
+        }
+
+        [data-content-command-exact="true"] [class*="text-amber-"] {
+          color: #b45309 !important;
+        }
+
+        [data-content-command-exact="true"] [class*="text-rose-"] {
+          color: #be123c !important;
+        }
+
+        [data-content-command-exact="true"] [class*="bg-gradient-to-r"] {
+          border-color: transparent !important;
+        }
+      
+        /* CONTENT_COMMAND_LIGHT_THEME_ENFORCER_V2_FULL_COVERAGE
+           Extends light theme to portals, dialogs, dropdowns, floating panels,
+           and any Content Command related UI outside the main page root.
+        */
+
+        body.content-command-light-mode {
+          background: #f8fafc !important;
+          color: #0f172a !important;
+        }
+
+        body.content-command-light-mode :is(
+          [role="dialog"],
+          [data-radix-portal],
+          [data-radix-popper-content-wrapper],
+          [cmdk-root],
+          [data-content-command-scope],
+          [data-content-command-modal],
+          [data-content-command-panel]
+        ) {
+          color: #0f172a !important;
+        }
+
+        body.content-command-light-mode :is(
+          [role="dialog"],
+          [data-radix-portal] > *,
+          [data-radix-popper-content-wrapper] > *,
+          [cmdk-root],
+          [data-content-command-scope],
+          [data-content-command-modal],
+          [data-content-command-panel],
+          [class*="bg-[#0"],
+          [class*="bg-[#1"],
+          [class*="bg-slate-950"],
+          [class*="bg-slate-900"],
+          [class*="bg-slate-800"],
+          [class*="bg-black"],
+          [class*="bg-[radial-gradient"],
+          [class*="bg-[linear-gradient"]
+        ) {
+          background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+          color: #0f172a !important;
+          border-color: #cbd5e1 !important;
+          box-shadow: 0 18px 55px rgba(15, 23, 42, 0.08) !important;
+        }
+
+        body.content-command-light-mode :is(
+          [role="dialog"],
+          [data-radix-portal],
+          [data-radix-popper-content-wrapper],
+          [cmdk-root],
+          [data-content-command-scope],
+          [data-content-command-modal],
+          [data-content-command-panel]
+        ) :is(
+          h1, h2, h3, h4, h5, h6,
+          [class*="font-black"],
+          [class*="font-extrabold"],
+          [class*="text-2xl"],
+          [class*="text-3xl"],
+          [class*="text-4xl"]
+        ) {
+          color: #020617 !important;
+        }
+
+        body.content-command-light-mode :is(
+          [role="dialog"],
+          [data-radix-portal],
+          [data-radix-popper-content-wrapper],
+          [cmdk-root],
+          [data-content-command-scope],
+          [data-content-command-modal],
+          [data-content-command-panel]
+        ) :is(
+          p, span, label, small, div,
+          [class*="text-white"],
+          [class*="text-slate-"],
+          [class*="text-cyan-"],
+          [class*="text-violet-"],
+          [class*="text-emerald-"],
+          [class*="text-amber-"],
+          [class*="text-rose-"]
+        ) {
+          color: #475569 !important;
+        }
+
+        body.content-command-light-mode :is(
+          input,
+          textarea,
+          select
+        ) {
+          background: #ffffff !important;
+          color: #0f172a !important;
+          border-color: #cbd5e1 !important;
+          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        body.content-command-light-mode input::placeholder,
+        body.content-command-light-mode textarea::placeholder {
+          color: #94a3b8 !important;
+          opacity: 1 !important;
+        }
+
+        body.content-command-light-mode :is(
+          [class*="bg-gradient-to-r"][class*="from-violet-600"],
+          [class*="bg-gradient-to-r"][class*="from-blue-600"],
+          [class*="bg-gradient-to-r"][class*="from-cyan-600"],
+          [class*="bg-gradient-to-r"][class*="from-emerald-600"],
+          [class*="bg-gradient-to-r"][class*="from-rose-600"]
+        ),
+        body.content-command-light-mode :is(
+          [class*="bg-gradient-to-r"][class*="from-violet-600"],
+          [class*="bg-gradient-to-r"][class*="from-blue-600"],
+          [class*="bg-gradient-to-r"][class*="from-cyan-600"],
+          [class*="bg-gradient-to-r"][class*="from-emerald-600"],
+          [class*="bg-gradient-to-r"][class*="from-rose-600"]
+        ) * {
+          color: #ffffff !important;
+          border-color: transparent !important;
+        }
+
+        body.content-command-light-mode :is(
+          [class*="text-cyan-"]
+        ) {
+          color: #0e7490 !important;
+        }
+
+        body.content-command-light-mode :is(
+          [class*="text-violet-"]
+        ) {
+          color: #6d28d9 !important;
+        }
+
+        body.content-command-light-mode :is(
+          [class*="text-emerald-"]
+        ) {
+          color: #047857 !important;
+        }
+
+        body.content-command-light-mode :is(
+          [class*="text-amber-"]
+        ) {
+          color: #b45309 !important;
+        }
+
+        body.content-command-light-mode :is(
+          [class*="text-rose-"]
+        ) {
+          color: #be123c !important;
+        }
+
+      
+        /* CONTENT_COMMAND_REMAINING_DARK_SECTIONS_LIGHT_V3
+           Targets remaining dark section containers only.
+           Keeps layout/templates untouched.
+           Adds visible premium dark-line frames on white surfaces.
+        */
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header,
+          [data-content-command-panel],
+          [data-content-command-scope],
+          [class*="ultra-card"],
+          [class*="rounded-[34px]"],
+          [class*="rounded-[32px]"],
+          [class*="rounded-[30px]"],
+          [class*="rounded-[28px]"],
+          [class*="rounded-[26px]"]
+        ):not(button):not(input):not(textarea):not(select) {
+          background:
+            radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.055), transparent 32%),
+            radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.055), transparent 34%),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+          border: 1px solid rgba(15, 23, 42, 0.20) !important;
+          box-shadow:
+            0 22px 70px rgba(15, 23, 42, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header,
+          [class*="ultra-card"],
+          [class*="rounded-[34px]"],
+          [class*="rounded-[32px]"],
+          [class*="rounded-[30px]"],
+          [class*="rounded-[28px]"],
+          [class*="rounded-[26px]"]
+        ):not(button):not(input):not(textarea):not(select)::before {
+          border-color: rgba(15, 23, 42, 0.12) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header
+        ) > :is(
+          section,
+          article,
+          aside,
+          div
+        ):not(button):not(input):not(textarea):not(select) {
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header,
+          [class*="ultra-card"]
+        ) :is(h1, h2, h3, h4, h5, h6) {
+          color: #020617 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header,
+          [class*="ultra-card"]
+        ) :is(p, span, label, small) {
+          color: #475569 !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header,
+          [class*="ultra-card"]
+        ) :is(
+          [class*="font-black"],
+          [class*="font-extrabold"],
+          [class*="font-bold"]
+        ) {
+          color: #0f172a !important;
+        }
+
+        /* Inner tiles/cards: white with clear section dividers */
+        [data-content-command-exact="true"] :is(
+          section,
+          article,
+          aside,
+          nav,
+          header
+        ) :is(
+          [class*="rounded-xl"],
+          [class*="rounded-2xl"],
+          [class*="rounded-3xl"]
+        ):not(button):not(input):not(textarea):not(select):not([class*="bg-gradient-to-r"]) {
+          background: #ffffff !important;
+          border-color: rgba(15, 23, 42, 0.16) !important;
+          box-shadow: 0 12px 32px rgba(15, 23, 42, 0.065) !important;
+          color: #0f172a !important;
+        }
+
+        /* Keep active colorful CTA buttons intact */
+        [data-content-command-exact="true"] button[class*="bg-gradient-to-r"],
+        [data-content-command-exact="true"] button[class*="bg-gradient-to-r"] *,
+        body.content-command-light-mode button[class*="bg-gradient-to-r"],
+        body.content-command-light-mode button[class*="bg-gradient-to-r"] * {
+          color: #ffffff !important;
+          border-color: transparent !important;
+        }
+
+        /* Remaining dark visual strips/overlays inside cards become pale separators */
+        [data-content-command-exact="true"] :is(
+          [class*="bg-[radial-gradient"],
+          [class*="bg-[linear-gradient"],
+          [class*="from-[#"],
+          [class*="via-[#"],
+          [class*="to-[#"],
+          [class*="bg-[#0"],
+          [class*="bg-[#1"],
+          [class*="bg-slate-950"],
+          [class*="bg-slate-900"],
+          [class*="bg-slate-800"],
+          [class*="bg-black"]
+        ):not(button):not([class*="bg-gradient-to-r"]) {
+          background:
+            radial-gradient(circle at 12% 0%, rgba(34, 211, 238, 0.08), transparent 28%),
+            radial-gradient(circle at 88% 0%, rgba(168, 85, 247, 0.08), transparent 32%),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+          color: #0f172a !important;
+          border-color: rgba(15, 23, 42, 0.18) !important;
+        }
+
+        /* Right-side tall command columns: force premium white panels */
+        [data-content-command-exact="true"] :is(
+          [class*="AI CONTENT COMMAND"],
+          [class*="ASSET READINESS"],
+          [class*="CONTENT GOVERNANCE"]
+        ) {
+          background: #ffffff !important;
+          color: #0f172a !important;
+        }
+
+        /* Stronger fallback for dark-looking tall panels */
+        [data-content-command-exact="true"] :is(section, article, aside) > div[class*="h-full"],
+        [data-content-command-exact="true"] :is(section, article, aside) > div[class*="min-h"] {
+          background: #ffffff !important;
+          border: 1px solid rgba(15, 23, 42, 0.18) !important;
+          box-shadow: 0 18px 55px rgba(15, 23, 42, 0.08) !important;
+          color: #0f172a !important;
+        }
+
+      
+        /* CONTENT_COMMAND_FILTER_TEXT_VISIBILITY_FIX_V1
+           Fixes white/pale text inside filter bars, selects, placeholders,
+           dropdown triggers and options after light-theme conversion.
+        */
+
+        [data-content-command-exact="true"] :is(
+          input,
+          select,
+          textarea,
+          button[role="combobox"],
+          [role="combobox"],
+          [data-radix-select-trigger],
+          [data-radix-select-content],
+          [data-radix-select-viewport],
+          [data-radix-popper-content-wrapper],
+          [cmdk-input]
+        ),
+        body.content-command-light-mode :is(
+          input,
+          select,
+          textarea,
+          button[role="combobox"],
+          [role="combobox"],
+          [data-radix-select-trigger],
+          [data-radix-select-content],
+          [data-radix-select-viewport],
+          [data-radix-popper-content-wrapper],
+          [cmdk-input]
+        ) {
+          background: #ffffff !important;
+          color: #0f172a !important;
+          -webkit-text-fill-color: #0f172a !important;
+          border-color: #cbd5e1 !important;
+          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          input::placeholder,
+          textarea::placeholder
+        ),
+        body.content-command-light-mode :is(
+          input::placeholder,
+          textarea::placeholder
+        ) {
+          color: #64748b !important;
+          -webkit-text-fill-color: #64748b !important;
+          opacity: 1 !important;
+        }
+
+        [data-content-command-exact="true"] select option,
+        [data-content-command-exact="true"] select optgroup,
+        body.content-command-light-mode select option,
+        body.content-command-light-mode select optgroup {
+          background: #ffffff !important;
+          color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [data-radix-select-value],
+          [data-placeholder],
+          [role="option"],
+          [cmdk-item],
+          [cmdk-group],
+          [cmdk-list],
+          [cmdk-empty]
+        ),
+        body.content-command-light-mode :is(
+          [data-radix-select-value],
+          [data-placeholder],
+          [role="option"],
+          [cmdk-item],
+          [cmdk-group],
+          [cmdk-list],
+          [cmdk-empty]
+        ) {
+          color: #0f172a !important;
+          -webkit-text-fill-color: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [data-placeholder="true"],
+          [data-radix-select-value][data-placeholder],
+          .placeholder\:text-slate-400,
+          [class*="placeholder:text"]
+        ),
+        body.content-command-light-mode :is(
+          [data-placeholder="true"],
+          [data-radix-select-value][data-placeholder],
+          .placeholder\:text-slate-400,
+          [class*="placeholder:text"]
+        ) {
+          color: #64748b !important;
+          -webkit-text-fill-color: #64748b !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          select,
+          button[role="combobox"],
+          [role="combobox"],
+          [data-radix-select-trigger]
+        ) svg,
+        body.content-command-light-mode :is(
+          select,
+          button[role="combobox"],
+          [role="combobox"],
+          [data-radix-select-trigger]
+        ) svg {
+          color: #0f172a !important;
+          stroke: #0f172a !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [data-radix-select-content],
+          [data-radix-popper-content-wrapper] > *
+        ),
+        body.content-command-light-mode :is(
+          [data-radix-select-content],
+          [data-radix-popper-content-wrapper] > *
+        ) {
+          background: #ffffff !important;
+          color: #0f172a !important;
+          border: 1px solid #cbd5e1 !important;
+          box-shadow: 0 22px 70px rgba(15, 23, 42, 0.14) !important;
+        }
+
+        [data-content-command-exact="true"] :is(
+          [data-highlighted],
+          [role="option"]:hover,
+          [cmdk-item]:hover
+        ),
+        body.content-command-light-mode :is(
+          [data-highlighted],
+          [role="option"]:hover,
+          [cmdk-item]:hover
+        ) {
+          background: #eff6ff !important;
+          color: #1d4ed8 !important;
+          -webkit-text-fill-color: #1d4ed8 !important;
+        }
+
+      `}</style>
+
       <style dangerouslySetInnerHTML={{ __html: `
         [data-content-command-exact] * { box-sizing: border-box; }
         [data-content-command-exact] {
@@ -321,24 +1248,24 @@ export default function ContentCommandCenter() {
         [data-content-command-exact] .ultra-card {
           background: linear-gradient(180deg, rgba(14,31,51,.98), rgba(8,20,34,.98)) !important;
           border-color: rgba(103,232,249,.18) !important;
-          box-shadow: 0 20px 60px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.06) !important;
+          box-shadow: 0 20px 60px rgba(15,23,42,.10), inset 0 1px 0 rgba(255,255,255,.06) !important;
         }
       ` }} />
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_20%_4%,rgba(124,58,237,.13),transparent_28%),radial-gradient(circle_at_82%_0%,rgba(56,189,248,.10),transparent_30%),linear-gradient(180deg,rgba(2,6,23,.05),rgba(2,6,23,.45))]" />
 
       <div data-market-os-root className="relative flex min-h-screen">
-        <aside className="hidden w-[286px] shrink-0 border-r border-cyan-400/10 bg-[#06101d]/95 p-5 shadow-[18px_0_70px_rgba(0,0,0,.35)] xl:block">
-          <Link href="/market-os/marketing-home" className="mb-6 flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/[.03] p-4">
+        <aside className="hidden w-[286px] shrink-0 border-r border-cyan-400/10 bg-white p-5 shadow-[0_22px_70px_rgba(15,23,42,.10)] xl:block">
+          <Link href="/market-os/marketing-home" className="mb-6 flex items-center gap-3 rounded-3xl border border-slate-200 bg-white p-4">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-400 shadow-lg shadow-violet-500/25">
               <Sparkles className="h-6 w-6" />
             </div>
             <div>
               <div className="text-lg font-black tracking-[.18em]">MARKET OS</div>
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Content Command</div>
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-700">Content Command</div>
             </div>
           </Link>
 
-          <div className="mb-4 text-[11px] font-black uppercase tracking-[.18em] text-slate-950/70">Content workspace</div>
+          <div className="mb-4 text-[11px] font-black uppercase tracking-[.18em] text-slate-800">Content workspace</div>
           <nav className="space-y-2">
             {sidebarLinks.map((item, index) => {
               const Icon = item.icon
@@ -350,11 +1277,11 @@ export default function ContentCommandCenter() {
                   className={cn(
                     "group flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-black transition",
                     active
-                      ? "border-violet-400/35 bg-violet-600/25 text-slate-950 shadow-[0_12px_36px_rgba(124,58,237,.22)]"
-                      : "border-white/5 bg-white/[.025] text-slate-950/72 hover:border-cyan-300/25 hover:bg-cyan-500/10 hover:text-slate-950",
+                      ? "border-violet-400/35 bg-violet-50 text-slate-950 shadow-[0_12px_36px_rgba(124,58,237,.22)]"
+                      : "border-slate-200 bg-white text-slate-800 hover:border-cyan-300/25 hover:bg-cyan-50 hover:text-slate-950",
                   )}
                 >
-                  <span className={cn("grid h-9 w-9 place-items-center rounded-xl", active ? "bg-violet-500" : "bg-white/5 group-hover:bg-cyan-500/20")}>
+                  <span className={cn("grid h-9 w-9 place-items-center rounded-xl", active ? "bg-violet-500" : "bg-white/5 group-hover:bg-cyan-50")}>
                     <Icon className="h-4 w-4" />
                   </span>
                   <span className="leading-5">{item.label}</span>
@@ -363,8 +1290,8 @@ export default function ContentCommandCenter() {
             })}
           </nav>
 
-          <div className="mt-6 rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">Live command</div>
+          <div className="mt-6 rounded-3xl border border-emerald-400/20 bg-emerald-50 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-700">Live command</div>
             <div className="mt-2 text-2xl font-black">98%</div>
             <div className="mt-1 text-xs font-bold text-slate-950/80">Approval engine readiness</div>
           </div>
@@ -374,28 +1301,28 @@ export default function ContentCommandCenter() {
           <header className="mb-4 flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
             <div>
               <h1 className="text-[28px] font-black tracking-tight text-slate-950 md:text-[34px]">Content & Branding Management</h1>
-              <p className="mt-1 text-sm font-bold text-slate-950/82">Create. Manage. Approve. Distribute. Measure.</p>
+              <p className="mt-1 text-sm font-bold text-slate-800">Create. Manage. Approve. Distribute. Measure.</p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative w-full min-w-[320px] flex-1 2xl:w-[470px] 2xl:flex-none">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/70" />
-                <input className="h-14 w-full rounded-2xl border border-[#1f354d] bg-[#081827] pl-12 pr-14 text-sm font-bold text-slate-950 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,.04)] placeholder:text-slate-950/38" placeholder="Search content, assets, tags..." />
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-800" />
+                <input className="h-14 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-14 text-sm font-bold text-slate-950 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,.04)] placeholder:text-slate-400" placeholder="Search content, assets, tags..." />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white/5 px-2 py-1 text-xs font-black text-slate-950/74">⌘ K</span>
               </div>
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setCreateMenuOpen((open) => !open)}
-                  className="inline-flex h-14 items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 px-7 text-sm font-black shadow-[0_16px_42px_rgba(124,58,237,.28)] hover:from-violet-500 hover:to-purple-500"
+                  className="inline-flex h-14 items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 px-7 text-sm font-black shadow-[0_16px_42px_rgba(124,58,237,.28)] hover:from-violet-500 hover:to-purple-500 text-white"
                 >
                   <Plus className="h-5 w-5" /> + Create New Content <ChevronDown className="h-4 w-4" />
                 </button>
 
                 {createMenuOpen && (
-                  <div className="absolute right-0 top-16 z-[9999] w-[360px] overflow-hidden rounded-3xl border border-cyan-300/20 bg-[#071426] p-2 shadow-[0_24px_80px_rgba(0,0,0,.65)] backdrop-blur-xl">
+                  <div className="absolute right-0 top-16 z-[9999] w-[360px] overflow-hidden rounded-3xl border border-cyan-300/20 bg-white p-2 shadow-[0_22px_70px_rgba(15,23,42,.10)] backdrop-blur-xl">
                     <div className="px-4 py-3">
-                      <div className="text-[11px] font-black uppercase tracking-[.18em] text-cyan-200">Create new content</div>
-                      <div className="mt-1 text-xs font-bold text-slate-950/70">Choose a production family to launch its advanced AngelCare creation modal.</div>
+                      <div className="text-[11px] font-black uppercase tracking-[.18em] text-cyan-700">Create new content</div>
+                      <div className="mt-1 text-xs font-bold text-slate-800">Choose a production family to launch its advanced AngelCare creation modal.</div>
                     </div>
                     {CREATE_CONTENT_TYPES.filter((item) =>
                       ["digital-content", "print-offline", "corporate-docs", "templates"].includes(item.id),
@@ -410,7 +1337,7 @@ export default function ContentCommandCenter() {
                             setCreateContentType(item.id)
                             setCreateMenuOpen(false)
                           }}
-                          className="group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition hover:bg-cyan-500/10"
+                          className="group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition hover:bg-cyan-50"
                         >
                           <span className={cn("grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br shadow-lg", toneClasses(item.tone).ring)}>
                             <Icon className="h-5 w-5" />
@@ -419,29 +1346,37 @@ export default function ContentCommandCenter() {
                             <span className="block text-sm font-black text-slate-950">{item.label}</span>
                             <span className="block truncate text-xs font-bold text-slate-950/68">{item.short}</span>
                           </span>
-                          <ChevronRight className="h-4 w-4 text-slate-950/50 group-hover:text-cyan-200" />
+                          <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-cyan-700" />
                         </button>
                       )
                     })}
                   </div>
                 )}
               </div>
-              <button onClick={() => runCommand("Notifications")} className="relative grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white/[.03] hover:border-cyan-300/30 hover:bg-cyan-500/10">
-                <Bell className="h-5 w-5 text-slate-950/75" />
+              <button onClick={() => void executeContentCommandAction("notifications", { label: "Notifications" })} className="relative grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white hover:border-cyan-300/30 hover:bg-cyan-50">
+                <Bell className="h-5 w-5 text-slate-800" />
                 <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-red-500 text-[10px] font-black">12</span>
               </button>
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/[.03] px-3 py-2">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-amber-200 to-rose-400 text-sm font-black text-slate-950">SE</div>
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2">
+                <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-amber-200 to-rose-400 text-sm font-black text-slate-950">{contentCommandOperatorIdentity.avatarUrl ? (
+                    <img
+                      src={contentCommandOperatorIdentity.avatarUrl}
+                      alt={contentCommandOperatorIdentity.name}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    contentCommandOperatorIdentity.initials
+                  )}</div>
                 <div className="hidden sm:block">
-                  <div className="text-sm font-black">Salma El Alami</div>
-                  <div className="text-xs font-bold text-slate-950/74">Marketing Director</div>
+                  <div className="text-sm font-black">{contentCommandOperatorIdentity.name}</div>
+                  <div className="text-xs font-bold text-slate-950/74">{contentCommandOperatorIdentity.title}</div>
                 </div>
-                <ChevronDown className="h-4 w-4 text-slate-950/78" />
+                <ChevronDown className="h-4 w-4 text-slate-800" />
               </div>
             </div>
           </header>
 
-          <nav className="mb-5 overflow-hidden rounded-2xl border border-cyan-300/10 bg-[#081625]/95 p-2 shadow-[0_18px_60px_rgba(0,0,0,.32),inset_0_1px_0_rgba(255,255,255,.05)]">
+          <nav className="mb-5 overflow-hidden rounded-2xl border border-cyan-300/10 bg-white p-2 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
             <div className="flex gap-2 overflow-x-auto">
               {categoryTabs.map((tab) => {
                 const Icon = tab.icon
@@ -453,14 +1388,14 @@ export default function ContentCommandCenter() {
                     className={cn(
                       "group relative flex min-h-[58px] shrink-0 items-center gap-3 rounded-xl px-5 py-3 text-sm font-black transition duration-300",
                       active
-                        ? "bg-gradient-to-r from-violet-600/25 via-fuchsia-500/12 to-cyan-500/10 text-violet-100 shadow-[0_0_32px_rgba(168,85,247,.18)] ring-1 ring-violet-400/30"
-                        : "text-slate-950/84 hover:bg-white/[.045] hover:text-slate-950",
+                        ? "bg-gradient-to-r from-violet-600/25 via-fuchsia-500/12 to-cyan-500/10 text-violet-800 shadow-[0_0_32px_rgba(168,85,247,.18)] ring-1 ring-violet-400/30"
+                        : "text-slate-950/84 hover:bg-white hover:text-slate-950",
                     )}
                   >
                     {active && <span className="absolute bottom-0 left-4 right-4 h-[3px] rounded-full bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-300 shadow-[0_0_18px_rgba(168,85,247,.75)]" />}
                     <span className={cn(
                       "grid h-8 w-8 place-items-center rounded-lg border transition",
-                      active ? "border-violet-300/35 bg-violet-500/20 text-violet-100" : "border-white/5 bg-white/[.035] text-slate-950/78 group-hover:border-cyan-300/25 group-hover:text-cyan-100",
+                      active ? "border-violet-200 bg-violet-50 text-violet-800" : "border-slate-200 bg-white text-slate-800 group-hover:border-cyan-300/25 group-hover:text-cyan-800",
                     )}>
                       <Icon className="h-4 w-4" />
                     </span>
@@ -472,20 +1407,20 @@ export default function ContentCommandCenter() {
           </nav>
 
           {actionMessage && (
-            <div className="mb-5 rounded-2xl border border-emerald-300/25 bg-emerald-500/15 px-5 py-4 text-sm font-black text-emerald-50 shadow-[0_0_34px_rgba(16,185,129,.16)]">
+            <div className="mb-5 rounded-2xl border border-emerald-300/25 bg-emerald-50 px-5 py-4 text-sm font-black text-emerald-800 shadow-[0_0_34px_rgba(16,185,129,.16)]">
               {actionMessage}
             </div>
           )}
 
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-500/10 px-5 py-4 text-xs font-black uppercase tracking-[.14em] text-cyan-100">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-50 px-5 py-4 text-xs font-black uppercase tracking-[.14em] text-cyan-800">
             <span>V67 Launch Safety Layer · V66 Storage Version Audit Layer · V65 Workflow Persistence Layer · V64 CRUD Persistence Layer · V63 Workspace Hydration Layer · Production API Trace Layer · {productionWorkspaceStats.syncState.toUpperCase()} · every workspace command is logged to activity API.</span>
             <button
               type="button"
               onClick={() => {
                 loadProductionWorkspaceStats()
-                runCommand("Production workspace stats refreshed")
+                void executeContentCommandAction("production.workspace.stats.refreshed", { label: "Production workspace stats refreshed" })
               }}
-              className="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-4 py-2 text-[10px] font-black text-cyan-100 hover:bg-cyan-500/20"
+              className="rounded-xl border border-cyan-300/20 bg-cyan-50 px-4 py-2 text-[10px] font-black text-cyan-800 hover:bg-cyan-50"
             >
               <RefreshCw className="mr-2 inline h-3 w-3" /> Refresh Sync
             </button>
@@ -609,22 +1544,22 @@ export default function ContentCommandCenter() {
             <div className="space-y-5">
               <div className="grid gap-5 xl:grid-cols-[minmax(360px,.95fr)_minmax(460px,1fr)]">
                 <Panel title="CONTENT EXPLORER" action={<Link href="/market-os/content-command-center/assets">View All</Link>}>
-                  <div className="mb-4 text-xs font-black uppercase tracking-[.14em] text-slate-950/82">Explore by content type</div>
+                  <div className="mb-4 text-xs font-black uppercase tracking-[.14em] text-slate-800">Explore by content type</div>
                   <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
                     {contentTypes.map(([label, value, Icon, tone]) => (
-                      <Link key={String(label)} href="/market-os/content-command-center/assets" className="group rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-3 transition hover:-translate-y-0.5 hover:border-violet-400/35 hover:bg-[#10223a]">
+                      <Link key={String(label)} href="/market-os/content-command-center/assets" className="group rounded-2xl border border-slate-200 bg-white p-3 transition hover:-translate-y-0.5 hover:border-violet-400/35 hover:bg-slate-50">
                         <div className="flex items-center gap-3">
                           <span className={cn("grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-slate-950 shadow-lg", toneClasses(tone as Tone).ring, toneClasses(tone as Tone).glow)}>
                             <Icon className="h-5 w-5" />
                           </span>
                           <span>
-                            <span className="block text-xs font-black text-slate-950/75">{label}</span>
+                            <span className="block text-xs font-black text-slate-800">{label}</span>
                             <span className="block text-lg font-black">{value}</span>
                           </span>
                         </div>
                       </Link>
                     ))}
-                    <Link href="/market-os/content-command-center/create" className="grid min-h-[72px] place-items-center rounded-2xl border border-dashed border-[#284864] bg-[#0b1a2b] text-center text-xs font-black text-slate-950/78 hover:border-violet-400/40 hover:text-slate-950">
+                    <Link href="/market-os/content-command-center/create" className="grid min-h-[72px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-white text-center text-xs font-black text-slate-800 hover:border-violet-400/40 hover:text-slate-950">
                       <Plus className="mb-1 h-5 w-5" /> Create Print & Offline Content Type
                     </Link>
                   </div>
@@ -641,18 +1576,18 @@ export default function ContentCommandCenter() {
                 >
                   <div className="space-y-3">
                     {recentContent.map((item, index) => (
-                      <div key={item.title} className="grid grid-cols-[24px_86px_1fr_auto_34px] items-center gap-3 rounded-2xl border border-white/5 bg-[#0b1a2b] p-2.5 hover:bg-[#10223a]">
+                      <div key={item.title} className="grid grid-cols-[24px_86px_1fr_auto_34px] items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2.5 hover:bg-slate-50">
                         <input type="checkbox" className="h-4 w-4 accent-violet-500" defaultChecked={index < 3} />
                         <div className="h-14 overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-slate-200 via-blue-100 to-slate-600">
                           <div className="grid h-full place-items-center text-[10px] font-black text-slate-800">PREVIEW</div>
                         </div>
                         <div className="min-w-0">
                           <div className="truncate text-sm font-black">{item.title}</div>
-                          <div className="truncate text-xs font-bold text-slate-950/72">{item.type}</div>
+                          <div className="truncate text-xs font-bold text-slate-800">{item.type}</div>
                           <div className="truncate text-xs font-bold text-slate-950/84">{item.date}</div>
                         </div>
-                        <span className={cn("rounded-lg px-3 py-2 text-xs font-black", item.tone === "emerald" ? "bg-emerald-500/20 text-emerald-200" : "bg-amber-500/20 text-amber-200")}>{item.status}</span>
-                        <button onClick={() => runCommand(`Asset actions: ${item.title}`)} className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/[.05] hover:border-violet-300/40 hover:bg-violet-500/15"><MoreVertical className="h-4 w-4" /></button>
+                        <span className={cn("rounded-lg px-3 py-2 text-xs font-black", item.tone === "emerald" ? "bg-emerald-50 text-emerald-700" : "bg-amber-500/20 text-amber-700")}>{item.status}</span>
+                        <button onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Asset actions: ${item.title}` })} className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/[.05] hover:border-violet-300/40 hover:bg-violet-50"><MoreVertical className="h-4 w-4" /></button>
                       </div>
                     ))}
                   </div>
@@ -673,30 +1608,30 @@ export default function ContentCommandCenter() {
                   <div className="mt-5 space-y-2">
                     <div className="text-sm font-black">My Tasks</div>
                     {taskRows.map(([task, type, owner, date, action], index) => (
-                      <div key={task} className="grid grid-cols-[24px_1fr_90px_90px_110px_90px] items-center gap-3 rounded-xl border border-white/5 bg-[#0b1a2b] px-3 py-3 text-xs">
+                      <div key={task} className="grid grid-cols-[24px_1fr_90px_90px_110px_90px] items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-3 text-xs">
                         <input type="checkbox" className="accent-violet-500" />
                         <span className="font-bold">{task}</span>
-                        <span className="text-slate-950/78">{type}</span>
+                        <span className="text-slate-800">{type}</span>
                         <span className="text-slate-950/80">{owner}</span>
-                        <span className="text-slate-950/78">{date}</span>
-                        <button onClick={() => runCommand(`${action}: ${task}`)} className={cn("rounded-lg px-3 py-1.5 font-black ring-1 ring-slate-200 hover:ring-cyan-300/35", index === 1 ? "bg-emerald-500/20 text-emerald-50" : index === 2 ? "bg-blue-500/20 text-blue-50" : "bg-violet-500/20 text-violet-50")}>{action}</button>
+                        <span className="text-slate-800">{date}</span>
+                        <button onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `${action}: ${task}` })} className={cn("rounded-lg px-3 py-1.5 font-black ring-1 ring-slate-200 hover:ring-cyan-300/35", index === 1 ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : index === 2 ? "bg-blue-500/20 text-blue-800" : "bg-violet-50 text-violet-800")}>{action}</button>
                       </div>
                     ))}
                   </div>
-                  <Link href="/market-os/content-command-center/tasks" className="mt-4 block text-center text-sm font-black text-violet-300">View All Tasks →</Link>
+                  <Link href="/market-os/content-command-center/tasks" className="mt-4 block text-center text-sm font-black text-violet-700">View All Tasks →</Link>
                 </Panel>
 
                 <Panel title="CONTENT LIFECYCLE">
                   <div className="grid items-center gap-5 md:grid-cols-[180px_1fr]">
                     <div className="grid h-44 w-44 place-items-center rounded-full bg-[conic-gradient(#10b981_0_34%,#3b82f6_34%_48%,#f59e0b_48%_79%,#64748b_79%_100%)]">
-                      <div className="grid h-28 w-28 place-items-center rounded-full bg-[#102033] text-center">
+                      <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center">
                         <div>
                           <div className="text-3xl font-black">3,247</div>
                           <div className="text-xs font-bold text-slate-950/74">Total Assets</div>
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-3 text-sm font-bold text-slate-950/70">
+                    <div className="space-y-3 text-sm font-bold text-slate-800">
                       <Legend color="bg-emerald-400" label="Published" value="1,089 (33%)" />
                       <Legend color="bg-blue-400" label="In Review" value="456 (14%)" />
                       <Legend color="bg-amber-400" label="Draft" value="1,012 (31%)" />
@@ -704,7 +1639,7 @@ export default function ContentCommandCenter() {
                       <Legend color="bg-rose-400" label="Expired" value="0 (0%)" />
                     </div>
                   </div>
-                  <Link href="/market-os/content-command-center/assets" className="mt-6 block text-center text-sm font-black text-violet-300">Manage Lifecycle →</Link>
+                  <Link href="/market-os/content-command-center/assets" className="mt-6 block text-center text-sm font-black text-violet-700">Manage Lifecycle →</Link>
                 </Panel>
               </div>
 
@@ -712,10 +1647,10 @@ export default function ContentCommandCenter() {
                 <Panel title="BRAND CENTER" action={<Link href="/market-os/content-command-center/brand-governance">View All</Link>}>
                   <div className="grid grid-cols-3 gap-3 lg:grid-cols-6">
                     {brandItems.map(([label, detail, Icon, tone]) => (
-                      <Link key={String(label)} href="/market-os/content-command-center/brand-governance" className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-3 text-center hover:border-violet-400/35">
+                      <Link key={String(label)} href="/market-os/content-command-center/brand-governance" className="rounded-2xl border border-slate-200 bg-white p-3 text-center hover:border-violet-400/35">
                         <Icon className={cn("mx-auto h-9 w-9", toneClasses(tone as Tone).text)} />
                         <div className="mt-3 text-xs font-black">{label}</div>
-                        <div className="text-[11px] font-bold text-slate-950/70">{detail}</div>
+                        <div className="text-[11px] font-bold text-slate-800">{detail}</div>
                       </Link>
                     ))}
                   </div>
@@ -724,7 +1659,7 @@ export default function ContentCommandCenter() {
                 <Panel title="POPULAR TAGS" action={<Link href="/market-os/content-command-center/assets">View All</Link>}>
                   <div className="flex flex-wrap gap-3">
                     {tags.map(([label, value, tone]) => (
-                      <button key={String(label)} onClick={() => runCommand(`Filter tag ${label}`)} className={cn("rounded-full px-4 py-2 text-sm font-black ring-1 ring-slate-200 hover:scale-[1.03] hover:ring-cyan-300/35", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>
+                      <button key={String(label)} onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Filter tag ${label}` })} className={cn("rounded-full px-4 py-2 text-sm font-black ring-1 ring-slate-200 hover:scale-[1.03] hover:ring-cyan-300/35", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>
                         {label} × {value}
                       </button>
                     ))}
@@ -734,12 +1669,12 @@ export default function ContentCommandCenter() {
                 <Panel title="DISTRIBUTION CHANNELS">
                   <div className="grid grid-cols-3 gap-3 xl:grid-cols-6">
                     {channels.map(([label, detail, Icon, tone]) => (
-                      <Link key={String(label)} href={selectedTab?.href || "/market-os/content-command-center"} className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4 text-center hover:border-cyan-400/30">
+                      <Link key={String(label)} href={selectedTab?.href || "/market-os/content-command-center"} className="rounded-2xl border border-slate-200 bg-white p-4 text-center hover:border-cyan-400/30">
                         <span className={cn("mx-auto grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}>
                           <Icon className="h-6 w-6" />
                         </span>
                         <div className="mt-3 text-sm font-black">{label}</div>
-                        <div className="text-xs font-bold text-slate-950/70">{detail}</div>
+                        <div className="text-xs font-bold text-slate-800">{detail}</div>
                       </Link>
                     ))}
                   </div>
@@ -756,13 +1691,13 @@ export default function ContentCommandCenter() {
                   ["Production routing", "Assign design, copy, review, translation and print tasks", "8 routed", Route, "blue"],
                   ["Publishing control", "Approve, schedule, distribute and measure every asset", "98% ready", BadgeCheck, "emerald"],
                 ] as const).map(([title, detail, stat, Icon, tone]) => (
-                  <Link key={title as string} href="/market-os/content-command-center/tasks" className={cn("grid grid-cols-[48px_1fr_auto] items-center gap-3 rounded-2xl border p-4 transition hover:-translate-y-0.5", toneClasses(tone as Tone).border, "bg-[#0b1a2b] hover:bg-[#10223a]")}>
+                  <Link key={title as string} href="/market-os/content-command-center/tasks" className={cn("grid grid-cols-[48px_1fr_auto] items-center gap-3 rounded-2xl border p-4 transition hover:-translate-y-0.5", toneClasses(tone as Tone).border, "bg-white hover:bg-slate-50")}>
                     <span className={cn("grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br shadow-lg", toneClasses(tone as Tone).ring)}>
                       <Icon className="h-6 w-6" />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-sm font-black">{title}</span>
-                      <span className="block text-xs font-bold text-slate-950/72">{detail}</span>
+                      <span className="block text-xs font-bold text-slate-800">{detail}</span>
                     </span>
                     <span className={cn("rounded-xl px-3 py-2 text-xs font-black", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>{stat}</span>
                   </Link>
@@ -778,32 +1713,32 @@ export default function ContentCommandCenter() {
                   ["Sales enablement", "284", "B2B decks and proof sheets", BriefcaseBusiness, "emerald"],
                   ["Internal academy", "73", "Formation guides and SOPs", GraduationCap, "violet"],
                 ] as const).map(([label, value, detail, Icon, tone]) => (
-                  <Link key={String(label)} href="/market-os/content-command-center/assets" className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4 hover:border-cyan-400/30 hover:bg-[#10223a]">
+                  <Link key={String(label)} href="/market-os/content-command-center/assets" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-cyan-400/30 hover:bg-slate-50">
                     <div className="flex items-center justify-between">
                       <Icon className={cn("h-7 w-7", toneClasses(tone as Tone).text)} />
-                      <span className="rounded-lg bg-white/5 px-2 py-1 text-[10px] font-black text-slate-950/70">SYNCED</span>
+                      <span className="rounded-lg bg-white/5 px-2 py-1 text-[10px] font-black text-slate-800">SYNCED</span>
                     </div>
                     <div className="mt-4 text-3xl font-black">{value}</div>
-                    <div className="text-sm font-black text-slate-950/78">{label}</div>
+                    <div className="text-sm font-black text-slate-800">{label}</div>
                     <div className="mt-1 text-xs font-bold text-slate-950/84">{detail}</div>
                   </Link>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl border border-emerald-400/15 bg-emerald-500/10 p-4">
-                <div className="text-xs font-black uppercase tracking-[.16em] text-emerald-200">Production readiness</div>
-                <div className="mt-2 h-3 rounded-full bg-white/10"><div className="h-full w-[87%] rounded-full bg-gradient-to-r from-emerald-400 to-cyan-300 shadow-[0_0_22px_rgba(45,212,191,.35)]" /></div>
-                <div className="mt-2 text-sm font-black text-slate-950/75">87% of active assets are reusable, tagged and channel-ready.</div>
+              <div className="mt-4 rounded-2xl border border-emerald-400/15 bg-emerald-50 p-4">
+                <div className="text-xs font-black uppercase tracking-[.16em] text-emerald-700">Production readiness</div>
+                <div className="mt-2 h-3 rounded-full bg-slate-200"><div className="h-full w-[87%] rounded-full bg-gradient-to-r from-emerald-400 to-cyan-300 shadow-[0_0_22px_rgba(45,212,191,.35)]" /></div>
+                <div className="mt-2 text-sm font-black text-slate-800">87% of active assets are reusable, tagged and channel-ready.</div>
               </div>
             </Panel>
 
             <Panel title="CONTENT GOVERNANCE RADAR" action={<Link href="/market-os/content-command-center/briefs">Open briefings</Link>}>
-              <div className="relative overflow-hidden rounded-3xl border border-violet-400/20 bg-[radial-gradient(circle_at_50%_50%,rgba(124,58,237,.28),transparent_20%),radial-gradient(circle_at_50%_50%,rgba(14,165,233,.14),transparent_42%),#0b1a2b] p-5">
+              <div className="relative overflow-hidden rounded-3xl border border-violet-400/20 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-5">
                 <div className="mx-auto grid h-64 w-64 place-items-center rounded-full border border-cyan-300/20">
                   <div className="grid h-48 w-48 place-items-center rounded-full border border-violet-300/20">
-                    <div className="grid h-28 w-28 place-items-center rounded-full bg-[#06101d] text-center shadow-[0_0_44px_rgba(124,58,237,.3)]">
+                    <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center shadow-[0_0_44px_rgba(124,58,237,.3)]">
                       <div>
                         <div className="text-3xl font-black">92</div>
-                        <div className="text-xs font-bold text-slate-950/70">Brand radar</div>
+                        <div className="text-xs font-bold text-slate-800">Brand radar</div>
                       </div>
                     </div>
                   </div>
@@ -816,7 +1751,7 @@ export default function ContentCommandCenter() {
                 ].map(([label, value, pos]) => (
                   <div key={String(label)} className={cn("absolute rounded-2xl border border-slate-200 bg-white/25 px-3 py-2 backdrop-blur", pos as string)}>
                     <div className="text-xs font-black">{label}</div>
-                    <div className="text-sm font-black text-cyan-200">{value}</div>
+                    <div className="text-sm font-black text-cyan-700">{value}</div>
                   </div>
                 ))}
               </div>
@@ -827,10 +1762,10 @@ export default function ContentCommandCenter() {
             <Panel title="CALENDAR & DISTRIBUTION CONTROL" action={<Link href="/market-os/content-command-center/calendar">Open calendar</Link>}>
               <div className="grid gap-3 md:grid-cols-4">
                 {["Today", "This Week", "This Month", "Campaign Lock"].map((label, index) => (
-                  <div key={String(label)} className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4">
-                    <div className="text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{label}</div>
+                  <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div className="text-xs font-black uppercase tracking-[.12em] text-slate-800">{label}</div>
                     <div className="mt-2 text-2xl font-black">{[9, 36, 142, 18][index]}</div>
-                    <div className="text-xs font-bold text-emerald-300">{["publishing slots", "active deadlines", "scheduled assets", "locked approvals"][index]}</div>
+                    <div className="text-xs font-bold text-emerald-700">{["publishing slots", "active deadlines", "scheduled assets", "locked approvals"][index]}</div>
                   </div>
                 ))}
               </div>
@@ -840,11 +1775,11 @@ export default function ContentCommandCenter() {
                   ["Flashcards WINWIN campaign carousel", "Instagram + LinkedIn", "May 18 · 12:00", "Scheduled"],
                   ["Academie interne module 01", "Internal training", "May 20 · 16:00", "Draft"],
                 ].map(([title, channel, date, status]) => (
-                  <div key={title} className="grid grid-cols-[1fr_160px_130px_105px] items-center gap-3 rounded-2xl border border-white/5 bg-[#0b1a2b] p-3 text-sm">
+                  <div key={title} className="grid grid-cols-[1fr_160px_130px_105px] items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 text-sm">
                     <div className="font-black">{title}</div>
-                    <div className="text-xs font-bold text-slate-950/70">{channel}</div>
-                    <div className="text-xs font-black text-cyan-200">{date}</div>
-                    <div className={cn("rounded-lg px-3 py-2 text-center text-xs font-black", status === "Approved" ? "bg-emerald-500/15 text-emerald-200" : status === "Scheduled" ? "bg-blue-500/15 text-blue-200" : "bg-amber-500/15 text-amber-200")}>{status}</div>
+                    <div className="text-xs font-bold text-slate-800">{channel}</div>
+                    <div className="text-xs font-black text-cyan-700">{date}</div>
+                    <div className={cn("rounded-lg px-3 py-2 text-center text-xs font-black", status === "Approved" ? "bg-emerald-50 text-emerald-700" : status === "Scheduled" ? "bg-blue-500/15 text-blue-700" : "bg-amber-50 text-amber-700")}>{status}</div>
                   </div>
                 ))}
               </div>
@@ -857,17 +1792,17 @@ export default function ContentCommandCenter() {
                   ["Content production SOP", "14 lessons", "72%", Workflow, "violet"],
                   ["B2B brochure execution", "7 lessons", "61%", LibraryBig, "blue"],
                 ] as const).map(([title, detail, progress, Icon, tone]) => (
-                  <Link key={title as string} href="/market-os/content-command-center/academy" className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4 hover:border-violet-400/30">
+                  <Link key={title as string} href="/market-os/content-command-center/academy" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-violet-400/30">
                     <Icon className={cn("h-8 w-8", toneClasses(tone as Tone).text)} />
                     <div className="mt-4 text-sm font-black">{title}</div>
-                    <div className="text-xs font-bold text-slate-950/70">{detail}</div>
-                    <div className="mt-4 h-2 rounded-full bg-white/10"><div className={cn("h-full rounded-full bg-gradient-to-r", toneClasses(tone as Tone).ring)} style={{ width: progress as string }} /></div>
+                    <div className="text-xs font-bold text-slate-800">{detail}</div>
+                    <div className="mt-4 h-2 rounded-full bg-slate-200"><div className={cn("h-full rounded-full bg-gradient-to-r", toneClasses(tone as Tone).ring)} style={{ width: progress as string }} /></div>
                     <div className="mt-2 text-xs font-black text-slate-950/80">{progress} complete</div>
                   </Link>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4">
-                <div className="text-sm font-black text-cyan-100">Training objective</div>
+              <div className="mt-4 rounded-2xl border border-cyan-400/15 bg-cyan-50 p-4">
+                <div className="text-sm font-black text-cyan-800">Training objective</div>
                 <p className="mt-1 text-sm font-bold text-slate-950/80">Standardize every AngelCare content operator on brand governance, B2B/B2C asset creation, approval control, publishing cadence and performance interpretation.</p>
               </div>
             </Panel>
@@ -1425,9 +2360,9 @@ function TemplatesManagementWorkspace({
       return (
         <div className="space-y-2">
           {selectedTemplate.rules.map((rule) => (
-            <div key={rule} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+            <div key={rule} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <span className="text-sm font-black text-slate-950">{rule}</span>
-              <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+              <CheckCircle2 className="h-4 w-4 text-emerald-700" />
             </div>
           ))}
           
@@ -1440,14 +2375,14 @@ function TemplatesManagementWorkspace({
                 <h3 className="mt-1 text-2xl font-black text-slate-950">
                   Fully Synced Content Intelligence Layer
                 </h3>
-                <p className="mt-2 max-w-3xl text-sm font-bold text-slate-950/70">
+                <p className="mt-2 max-w-3xl text-sm font-bold text-slate-800">
                   This preview is synced to the selected template and reflects its family, master category,
                   subcategory, modal scope, parameters and execution binding.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-3">
-                <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-50 px-4 py-3">
+                <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-700">
                   Sync State
                 </div>
                 <div className="mt-1 text-lg font-black text-slate-950">
@@ -1463,16 +2398,16 @@ function TemplatesManagementWorkspace({
                 ["Subcategory / service", selectedTemplate.subcategory],
                 ["Lifecycle status", selectedTemplate.status],
               ].map(([label, value]) => (
-                <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.045] p-4">
-                  <div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-950/55">{label}</div>
+                <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-600">{label}</div>
                   <div className="mt-2 text-sm font-black text-slate-950">{value}</div>
                 </div>
               ))}
             </div>
 
             <div className="mt-5 grid gap-4 xl:grid-cols-3">
-              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-500/10 p-4">
-                <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-200">
+              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-50 p-4">
+                <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-700">
                   Related AngelCare offers
                 </div>
 
@@ -1488,7 +2423,7 @@ function TemplatesManagementWorkspace({
                   ].map((item) => (
                     <span
                       key={item}
-                      className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-black text-cyan-100"
+                      className="rounded-full border border-cyan-300/20 bg-cyan-50 px-3 py-1 text-[10px] font-black text-cyan-800"
                     >
                       {item}
                     </span>
@@ -1496,8 +2431,8 @@ function TemplatesManagementWorkspace({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-violet-300/15 bg-violet-500/10 p-4">
-                <div className="text-[10px] font-black uppercase tracking-[.16em] text-violet-200">
+              <div className="rounded-2xl border border-violet-300/15 bg-violet-50 p-4">
+                <div className="text-[10px] font-black uppercase tracking-[.16em] text-violet-700">
                   Required modal parameters
                 </div>
 
@@ -1505,7 +2440,7 @@ function TemplatesManagementWorkspace({
                   {selectedTemplate.matchedParams.map((param) => (
                     <span
                       key={param}
-                      className="rounded-full border border-violet-300/20 bg-violet-500/10 px-3 py-1 text-[10px] font-black text-violet-100"
+                      className="rounded-full border border-violet-300/20 bg-violet-50 px-3 py-1 text-[10px] font-black text-violet-800"
                     >
                       {param}
                     </span>
@@ -1513,12 +2448,12 @@ function TemplatesManagementWorkspace({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-amber-300/15 bg-amber-500/10 p-4">
-                <div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-200">
+              <div className="rounded-2xl border border-amber-300/15 bg-amber-50 p-4">
+                <div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-700">
                   Execution binding
                 </div>
 
-                <div className="mt-3 space-y-2 text-xs font-bold text-slate-950/75">
+                <div className="mt-3 space-y-2 text-xs font-bold text-slate-800">
                   <div>• Connected to creation modal</div>
                   <div>• Connected to approval workflow</div>
                   <div>• Connected to distribution plan</div>
@@ -1530,11 +2465,11 @@ function TemplatesManagementWorkspace({
             </div>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-500/10 p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-200">Synced modal parameters</div>
+          <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-50 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-700">Synced modal parameters</div>
             <div className="mt-3 flex flex-wrap gap-2">
               {selectedTemplate.matchedParams.map((param) => (
-                <span key={param} className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-black text-cyan-100">{param}</span>
+                <span key={param} className="rounded-full border border-cyan-300/20 bg-cyan-50 px-3 py-1 text-[10px] font-black text-cyan-800">{param}</span>
               ))}
             </div>
           </div>
@@ -1555,7 +2490,7 @@ function TemplatesManagementWorkspace({
             ["Owner", selectedTemplate.owner],
             ["Last updated", selectedTemplate.lastUpdated],
           ].map(([label, value]) => (
-            <div key={label} className="grid grid-cols-[145px_1fr] gap-3 rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3 text-sm font-bold">
+            <div key={label} className="grid grid-cols-[145px_1fr] gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold">
               <span className="text-slate-950/58">{label}</span>
               <span className="text-slate-950">{value}</span>
             </div>
@@ -1573,7 +2508,7 @@ function TemplatesManagementWorkspace({
             ["Version compared", "Imane L.", "Today 10:20", "violet"],
             ["Production used", "Marketing team", "Yesterday", "amber"],
           ].map(([title, actor, time, tone]) => (
-            <div key={title} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4">
+            <div key={title} className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-sm font-black text-slate-950">{title}</div>
                 <span className={cn("rounded-full px-3 py-1 text-[10px] font-black uppercase", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>{time}</span>
@@ -1589,12 +2524,12 @@ function TemplatesManagementWorkspace({
       return (
         <div className="grid gap-3">
           {["v3.2 Current", "v3.1 Approved", "v2.9 Archived"].map((version, index) => (
-            <button key={version} type="button" onClick={() => runCommand(`Template version selected: ${version}`)} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3 text-left">
+            <button key={version} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Template version selected: ${version}` })} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left">
               <span>
                 <span className="block text-sm font-black text-slate-950">{version}</span>
-                <span className="block text-xs font-bold text-slate-950/60">{index === 0 ? "Production master" : "Previous controlled version"}</span>
+                <span className="block text-xs font-bold text-slate-700">{index === 0 ? "Production master" : "Previous controlled version"}</span>
               </span>
-              <span className="rounded-xl bg-violet-500/15 px-3 py-2 text-xs font-black text-violet-100">{index === 0 ? "Active" : "Compare"}</span>
+              <span className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-black text-violet-800">{index === 0 ? "Active" : "Compare"}</span>
             </button>
           ))}
         </div>
@@ -1609,12 +2544,12 @@ function TemplatesManagementWorkspace({
             ["Legal/compliance check", selectedTemplate.family === "Corporate Docs" ? "Required" : "Optional", "amber"],
             ["Publishing lock", selectedTemplate.status === "Locked" ? "Locked" : "Open", "violet"],
           ].map(([step, state, tone]) => (
-            <div key={step} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+            <div key={step} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <span className="text-sm font-black text-slate-950">{step}</span>
               <span className={cn("rounded-xl px-3 py-2 text-xs font-black", toneClasses(tone as Tone).bg, toneClasses(tone as Tone).text)}>{state}</span>
             </div>
           ))}
-          <button type="button" onClick={() => runCommand(`Approval workflow opened: ${selectedTemplate.name}`)} className="w-full rounded-2xl bg-emerald-500/15 px-5 py-4 text-sm font-black text-emerald-100">Open approval workflow</button>
+          <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Approval workflow opened: ${selectedTemplate.name}` })} className="w-full rounded-2xl bg-emerald-50 px-5 py-4 text-sm font-black text-emerald-800">Open approval workflow</button>
         </div>
       )
     }
@@ -1623,12 +2558,12 @@ function TemplatesManagementWorkspace({
       return (
         <div className="space-y-3">
           {selectedTemplate.channel.split("/").map((channel) => (
-            <div key={channel.trim()} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+            <div key={channel.trim()} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <span className="text-sm font-black text-slate-950">{channel.trim()}</span>
-              <SendHorizonal className="h-4 w-4 text-cyan-200" />
+              <SendHorizonal className="h-4 w-4 text-cyan-700" />
             </div>
           ))}
-          <button type="button" onClick={() => runCommand(`Distribution map opened: ${selectedTemplate.name}`)} className="w-full rounded-2xl border border-cyan-300/25 bg-cyan-500/10 px-5 py-4 text-sm font-black text-cyan-100">Open distribution map</button>
+          <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Distribution map opened: ${selectedTemplate.name}` })} className="w-full rounded-2xl border border-cyan-300/25 bg-cyan-50 px-5 py-4 text-sm font-black text-cyan-800">Open distribution map</button>
         </div>
       )
     }
@@ -1641,7 +2576,7 @@ function TemplatesManagementWorkspace({
             ["Auto-task routing", "Create production, review and approval tasks"],
             ["Auto-version lock", "Freeze approved master after validation"],
           ].map(([title, detail]) => (
-            <button key={title} type="button" onClick={() => runCommand(`${title}: ${selectedTemplate.name}`)} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4 text-left hover:border-violet-300/30">
+            <button key={title} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `${title}: ${selectedTemplate.name}` })} className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-violet-300/30">
               <div className="text-sm font-black text-slate-950">{title}</div>
               <div className="mt-1 text-xs font-bold text-slate-950/62">{detail}</div>
             </button>
@@ -1658,9 +2593,9 @@ function TemplatesManagementWorkspace({
             ["Brand drift risk", selectedTemplate.status === "Draft" ? "Medium" : "Low"],
             ["Outdated version risk", selectedTemplate.status === "Locked" ? "Low" : "Watch"],
           ].map(([risk, level]) => (
-            <div key={risk} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+            <div key={risk} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <span className="text-sm font-black text-slate-950">{risk}</span>
-              <span className={cn("rounded-xl px-3 py-2 text-xs font-black", level === "Low" ? "bg-emerald-500/15 text-emerald-100" : "bg-amber-500/15 text-amber-100")}>{level}</span>
+              <span className={cn("rounded-xl px-3 py-2 text-xs font-black", level === "Low" ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-800 border border-amber-200")}>{level}</span>
             </div>
           ))}
         </div>
@@ -1676,9 +2611,9 @@ function TemplatesManagementWorkspace({
             ["Approval confidence", `${selectedTemplate.readiness}%`],
             ["Launches", selectedTemplate.usage],
           ].map(([label, value]) => (
-            <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4">
+            <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="text-2xl font-black text-slate-950">{value}</div>
-              <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
+              <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-700">{label}</div>
             </div>
           ))}
         </div>
@@ -1693,9 +2628,9 @@ function TemplatesManagementWorkspace({
           "Brand validation checklist",
           "Lifecycle and archive policy",
         ].map((item) => (
-          <div key={item} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.035] px-4 py-3">
+          <div key={item} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
             <span className="text-sm font-black text-slate-950">{item}</span>
-            <ShieldCheck className="h-4 w-4 text-violet-200" />
+            <ShieldCheck className="h-4 w-4 text-violet-700" />
           </div>
         ))}
       </div>
@@ -1703,32 +2638,32 @@ function TemplatesManagementWorkspace({
   }
 
   function templateStatusClass(value: TemplateRecord["status"]) {
-    if (value === "Approved") return "bg-emerald-500/20 text-emerald-100"
-    if (value === "In Review") return "bg-amber-500/20 text-amber-100"
-    if (value === "Locked") return "bg-violet-500/20 text-violet-100"
+    if (value === "Approved") return "bg-emerald-50 text-emerald-800 border border-emerald-200"
+    if (value === "In Review") return "bg-amber-500/20 text-amber-800"
+    if (value === "Locked") return "bg-violet-50 text-violet-800"
     return "bg-slate-500/25 text-slate-900"
   }
 
   return (
     <section className="space-y-5">
-      <section className="overflow-hidden rounded-[34px] border border-violet-300/20 bg-[radial-gradient(circle_at_0%_0%,rgba(124,58,237,.28),transparent_32%),radial-gradient(circle_at_90%_10%,rgba(34,211,238,.16),transparent_30%),linear-gradient(135deg,#0b1a2b,#10133a)] p-5 shadow-[0_28px_90px_rgba(0,0,0,.34)]">
+      <section className="overflow-hidden rounded-[34px] border border-violet-300/20 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-5 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="flex flex-col gap-5 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <div>
-            <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-200">Template command ecosystem</div>
+            <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-700">Template command ecosystem</div>
             <h2 className="mt-1 text-4xl font-black text-slate-950">Templates Workspace · Master Systems + Rules Control</h2>
             <p className="mt-2 max-w-5xl text-sm font-bold leading-6 text-slate-950/76">
               Centralize every reusable AngelCare template across digital, print/offline, corporate documents and master workflow templates. Each master category follows the exact creation modal parameters, rules and approval structure.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-4 text-sm font-black text-slate-950 shadow-[0_18px_52px_rgba(124,58,237,.32)]">
+            <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-4 text-sm font-black text-white shadow-[0_18px_52px_rgba(124,58,237,.32)]">
               <Plus className="mr-2 inline h-4 w-4" /> Create Template
             </button>
             <button
               type="button"
               onClick={() => {
                 setTemplatePreviewTab("Governance")
-                runCommand("Template governance cockpit opened")
+                void executeContentCommandAction("template.governance.cockpit.opened", { label: "Template governance cockpit opened" })
               }}
               className="rounded-2xl border border-slate-200 bg-white/5 px-6 py-4 text-sm font-black text-slate-950 hover:bg-slate-50"
             >
@@ -1746,12 +2681,12 @@ function TemplatesManagementWorkspace({
 
         <div className="mt-6 grid gap-3 xl:grid-cols-[1fr_180px_190px_190px_160px_180px_120px]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-700" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search templates by family, category, subcategory, modal parameter, output, owner..."
-              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-950/60"
+              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-white pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-400"
             />
           </div>
           <SelectPill value={family} setValue={setFamily} options={templateFamilyOptions} />
@@ -1763,9 +2698,9 @@ function TemplatesManagementWorkspace({
             type="button"
             onClick={() => {
               setTemplatePreviewTab("Fields")
-              runCommand("Advanced template filters opened")
+              void executeContentCommandAction("advanced.template.filters.opened", { label: "Advanced template filters opened" })
             }}
-            className="rounded-2xl border border-slate-200 bg-white/5 px-4 text-xs font-black text-slate-950/78"
+            className="rounded-2xl border border-slate-200 bg-white/5 px-4 text-xs font-black text-slate-800"
           >
             <SlidersHorizontal className="mr-2 inline h-4 w-4" /> Filters
           </button>
@@ -1779,11 +2714,11 @@ function TemplatesManagementWorkspace({
             ["Usage Events", templates.reduce((sum, item) => sum + item.usage, 0), "template launches", Workflow, "amber"],
             ["Sync State", templateSyncStatus.toUpperCase(), "production API status", RefreshCw, templateSyncStatus === "live" ? "emerald" : templateSyncStatus === "saving" ? "amber" : "rose"],
           ] as const).map(([label, value, detail, Icon, tone]) => (
-            <div key={label as string} className="rounded-2xl border border-slate-200 bg-white/[.045] p-4">
+            <div key={label as string} className="rounded-2xl border border-slate-200 bg-white p-4">
               <Icon className={cn("h-6 w-6", toneClasses(tone as Tone).text)} />
               <div className="mt-3 text-2xl font-black text-slate-950">{value}</div>
-              <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
-              <div className="mt-1 text-xs font-bold text-slate-950/70">{detail}</div>
+              <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-700">{label}</div>
+              <div className="mt-1 text-xs font-bold text-slate-800">{detail}</div>
             </div>
           ))}
         </div>
@@ -1799,38 +2734,46 @@ function TemplatesManagementWorkspace({
               type="button"
               onClick={() => {
                 setFamily(item.label)
-                runCommand(`Template family selected: ${item.label}`)
+                void executeContentCommandAction("content.command.dynamic", { label: `Template family selected: ${item.label}` })
               }}
-              className={cn("group overflow-hidden rounded-[30px] border bg-[#0b1a2b] text-left transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", active ? "border-violet-300/55 shadow-[0_0_38px_rgba(124,58,237,.2)]" : "border-[#1d344d] hover:border-cyan-300/35")}
+              className={cn("group overflow-hidden rounded-[30px] border bg-white text-left transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", active ? "border-violet-300/55 shadow-[0_0_38px_rgba(124,58,237,.2)]" : "border-slate-200 hover:border-cyan-300/35")}
             >
               <div className={cn("relative h-36 bg-gradient-to-br", toneClasses(item.tone).ring)}>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,.36),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.02),rgba(0,0,0,.48))]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,.36),transparent_18%),linear-gradient(135deg,rgba(255,255,255,.12),rgba(15,23,42,.08))]" />
                 <div className="absolute inset-0 grid place-items-center">
-                  <div className="grid h-20 w-20 place-items-center rounded-[28px] border border-white/25 bg-white/15 shadow-[0_24px_70px_rgba(0,0,0,.26)] backdrop-blur-md transition group-hover:scale-105">
+                  <div className="grid h-20 w-20 place-items-center rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_70px_rgba(15,23,42,.10)] backdrop-blur-md transition group-hover:scale-105">
                     <Icon className="h-10 w-10 text-slate-950" />
                   </div>
                 </div>
               </div>
               <div className="p-5">
                 <div className="text-xl font-black text-slate-950">{item.label}</div>
-                <p className="mt-2 min-h-[48px] text-sm font-bold leading-6 text-slate-950/72">{item.description}</p>
+                <p className="mt-2 min-h-[48px] text-sm font-bold leading-6 text-slate-800">{item.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {item.outputs.slice(0, 3).map((entry) => (
-                    <span key={entry} className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black text-slate-950/70">{entry}</span>
+                    <span key={entry} className="rounded-full bg-slate-200 px-3 py-1 text-[10px] font-black text-slate-800">{entry}</span>
                   ))}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xs font-black text-cyan-200">{item.rules.length} rules synced</span>
-                  <button
-                    type="button"
+                  <span className="text-xs font-black text-cyan-700">{item.rules.length} rules synced</span>
+                  <span
+                    role="button"
+                    tabIndex={0}
                     onClick={(event) => {
                       event.stopPropagation()
                       onCreateByFamily(item.id)
                     }}
-                    className="rounded-xl border border-slate-200 bg-white/5 px-3 py-2 text-xs font-black text-slate-950 hover:bg-slate-50"
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        onCreateByFamily(item.id)
+                      }
+                    }}
+                    className="rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-xs font-black text-slate-950 shadow-sm transition hover:bg-slate-50"
                   >
                     Open modal
-                  </button>
+                  </span>
                 </div>
               </div>
             </button>
@@ -1843,19 +2786,19 @@ function TemplatesManagementWorkspace({
           title={`Template Results · ${filteredTemplates.length} matched · live`}
           action={
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-violet-300/40 bg-violet-500/20" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-violet-300/40 bg-violet-500/20" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-violet-300/40 bg-violet-50" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-violet-300/40 bg-violet-50" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
             </div>
           }
         >
           {filteredTemplates.length === 0 && (
-            <div className="rounded-[28px] border border-dashed border-cyan-300/25 bg-cyan-500/10 p-8 text-center">
-              <LayoutTemplate className="mx-auto h-10 w-10 text-cyan-200" />
+            <div className="rounded-[28px] border border-dashed border-cyan-300/25 bg-cyan-50 p-8 text-center">
+              <LayoutTemplate className="mx-auto h-10 w-10 text-cyan-700" />
               <h3 className="mt-4 text-xl font-black text-slate-950">No templates match this cockpit state</h3>
-              <p className="mt-2 text-sm font-bold text-slate-950/65">Adjust filters, reset the workspace, or create a new synced template.</p>
+              <p className="mt-2 text-sm font-bold text-slate-700">Adjust filters, reset the workspace, or create a new synced template.</p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
                 <button type="button" onClick={resetTemplateWorkspace} className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-xs font-black text-slate-950 hover:bg-slate-50">Reset workspace</button>
-                <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-xs font-black text-slate-950">Create template</button>
+                <button type="button" onClick={onCreateTemplate} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-xs font-black text-white">Create template</button>
               </div>
             </div>
           )}
@@ -1866,14 +2809,14 @@ function TemplatesManagementWorkspace({
               return (
                 <article
                   key={template.id}
-                  className={cn("rounded-[26px] border bg-[#0b1a2b] p-4 transition hover:-translate-y-1 hover:border-cyan-300/35 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", selectedTemplate.id === template.id ? "border-violet-300/55" : "border-[#1d344d]", viewMode === "list" && "grid grid-cols-[1fr_220px] gap-4")}
+                  className={cn("rounded-[26px] border bg-white p-4 transition hover:-translate-y-1 hover:border-cyan-300/35 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", selectedTemplate.id === template.id ? "border-violet-300/55" : "border-slate-200", viewMode === "list" && "grid grid-cols-[1fr_220px] gap-4")}
                 >
                   <button
                     type="button"
                     onClick={() => {
                       setSelectedTemplateId(template.id)
                       setTemplatePreviewTab("Rules")
-                      runCommand(`Template preview synced: ${template.name}`)
+                      void executeContentCommandAction("content.command.dynamic", { label: `Template preview synced: ${template.name}` })
                     }}
                     className="w-full text-left"
                   >
@@ -1884,14 +2827,14 @@ function TemplatesManagementWorkspace({
                       <span className={cn("rounded-xl px-3 py-2 text-[10px] font-black uppercase", templateStatusClass(template.status))}>{template.status}</span>
                     </div>
                     <h3 className="mt-4 text-lg font-black text-slate-950">{template.name}</h3>
-                    <div className="mt-1 text-sm font-bold text-slate-950/70">{template.family} · {template.category}</div>
-                    <div className="mt-2 text-xs font-black text-cyan-200">{template.subcategory}</div>
+                    <div className="mt-1 text-sm font-bold text-slate-800">{template.family} · {template.category}</div>
+                    <div className="mt-2 text-xs font-black text-cyan-700">{template.subcategory}</div>
                     <div className="mt-2 text-xs font-bold text-slate-950/62">{template.channel}</div>
-                    <div className="mt-2 rounded-lg border border-slate-200 bg-white/[.04] px-2 py-1 text-[10px] font-black uppercase tracking-[.1em] text-slate-950/55">{template.modalScope}</div>
-                    <div className="mt-4 h-2 rounded-full bg-white/10">
+                    <div className="mt-2 rounded-lg border border-slate-200 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-[.1em] text-slate-600">{template.modalScope}</div>
+                    <div className="mt-4 h-2 rounded-full bg-slate-200">
                       <div className={cn("h-full rounded-full bg-gradient-to-r", toneClasses(template.tone).ring)} style={{ width: `${template.readiness}%` }} />
                     </div>
-                    <div className="mt-2 flex items-center justify-between text-xs font-black text-slate-950/70">
+                    <div className="mt-2 flex items-center justify-between text-xs font-black text-slate-800">
                       <span>{template.readiness}% readiness</span>
                       <span>{template.usage} uses</span>
                     </div>
@@ -1913,12 +2856,12 @@ function TemplatesManagementWorkspace({
 
                           if (label === "View") {
                             setTemplatePreviewTab("Rules")
-                            runCommand(`Template preview synced: ${template.name}`)
+                            void executeContentCommandAction("content.command.dynamic", { label: `Template preview synced: ${template.name}` })
                             return
                           }
 
                           if (label === "Edit") {
-                            runCommand(`Edit template opened in matching modal: ${template.name}`)
+                            void executeContentCommandAction("content.command.dynamic", { label: `Edit template opened in matching modal: ${template.name}` })
                             editTemplate(template)
                             return
                           }
@@ -1936,13 +2879,13 @@ function TemplatesManagementWorkspace({
                             setTemplates((current) => [clone, ...current])
                             persistTemplateToProduction(clone).catch(() => setTemplateSyncStatus("offline"))
                             setSelectedTemplateId(clone.id)
-                            runCommand(`Clone template created live: ${template.name}`)
+                            void executeContentCommandAction("content.command.dynamic", { label: `Clone template created live: ${template.name}` })
                             return
                           }
 
                           deleteTemplate(template)
                         }}
-                        className="grid h-10 place-items-center rounded-xl border border-slate-200 bg-white/5 text-slate-950/72 hover:border-cyan-300/30 hover:bg-cyan-500/10"
+                        className="grid h-10 place-items-center rounded-xl border border-slate-200 bg-white/5 text-slate-800 hover:border-cyan-300/30 hover:bg-cyan-50"
                         title={String(label)}
                       >
                         <ActionIcon className="h-4 w-4" />
@@ -1955,11 +2898,11 @@ function TemplatesManagementWorkspace({
           </div>
         </Panel>
 
-        <Panel title="Template Control Preview" action={<button type="button" onClick={() => runCommand(`Expand template: ${selectedTemplate.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
+        <Panel title="Template Control Preview" action={<button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Expand template: ${selectedTemplate.name}` })} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
           <div className={cn("relative overflow-hidden rounded-3xl bg-gradient-to-br p-6", toneClasses(selectedTemplate.tone).ring)}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_16%,rgba(255,255,255,.36),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.05),rgba(0,0,0,.52))]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_16%,rgba(255,255,255,.36),transparent_18%),linear-gradient(135deg,rgba(255,255,255,.12),rgba(15,23,42,.08))]" />
             <div className="relative grid min-h-[220px] place-items-center text-center">
-              <div className="rounded-[30px] border border-slate-200 bg-white/15 p-7 backdrop-blur-md">
+              <div className="rounded-[30px] border border-slate-200 bg-white p-7 backdrop-blur-md">
                 <SelectedTemplateIcon className="mx-auto h-16 w-16 text-slate-950" />
                 <div className="mt-4 text-2xl font-black text-slate-950">{selectedTemplate.name}</div>
                 <div className="mt-2 text-sm font-black text-slate-950/80">{selectedTemplate.family}</div>
@@ -1970,9 +2913,9 @@ function TemplatesManagementWorkspace({
           <div className="mt-5 flex items-start justify-between gap-3">
             <div>
               <h3 className="text-xl font-black text-slate-950">{selectedTemplate.name}</h3>
-              <div className="mt-1 text-sm font-bold text-slate-950/65">{selectedTemplate.output} · {selectedTemplate.category}</div>
-              <div className="mt-1 text-xs font-black text-cyan-200">{selectedTemplate.subcategory}</div>
-              <div className="mt-2 inline-flex rounded-full border border-emerald-300/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.12em] text-emerald-100">
+              <div className="mt-1 text-sm font-bold text-slate-700">{selectedTemplate.output} · {selectedTemplate.category}</div>
+              <div className="mt-1 text-xs font-black text-cyan-700">{selectedTemplate.subcategory}</div>
+              <div className="mt-2 inline-flex rounded-full border border-emerald-300/20 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[.12em] text-emerald-800">
                 Preview synced with Template Results
               </div>
             </div>
@@ -1985,14 +2928,14 @@ function TemplatesManagementWorkspace({
               ["Readiness", `${selectedTemplate.readiness}%`],
               ["Rules", selectedTemplate.rules.length],
             ].map(([label, value]) => (
-              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-3 text-center">
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
                 <div className="text-xl font-black text-slate-950">{value}</div>
-                <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
+                <div className="text-[10px] font-black uppercase tracking-[.12em] text-slate-700">{label}</div>
               </div>
             ))}
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white/[.035]">
+          <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <div className="flex gap-1 overflow-x-auto p-2">
               {templateExecutionTabs.map((tab) => {
                 const TabIcon = tab.icon
@@ -2003,12 +2946,12 @@ function TemplatesManagementWorkspace({
                     type="button"
                     onClick={() => {
                       setTemplatePreviewTab(tab.label)
-                      runCommand(`Template execution layer: ${tab.label}`)
+                      void executeContentCommandAction("content.command.dynamic", { label: `Template execution layer: ${tab.label}` })
                     }}
                     className={cn(
                       "flex shrink-0 items-center gap-2 rounded-xl px-3 py-3 text-xs font-black transition",
                       active
-                        ? "bg-violet-500/25 text-violet-50 ring-1 ring-violet-300/35"
+                        ? "bg-violet-500/25 text-violet-800 ring-1 ring-violet-300/35"
                         : "text-slate-950/62 hover:bg-white/5 hover:text-slate-950",
                     )}
                   >
@@ -2025,11 +2968,11 @@ function TemplatesManagementWorkspace({
           </div>
 
           <div className="mt-5 grid gap-2">
-            <button type="button" onClick={() => editTemplate(selectedTemplate)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-4 text-sm font-black text-slate-950">
+            <button type="button" onClick={() => editTemplate(selectedTemplate)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-4 text-sm font-black text-white">
               Edit in matching modal + Save workflow
             </button>
             <div className="grid grid-cols-2 gap-2">
-              <button type="button" onClick={() => runCommand(`Template version control: ${selectedTemplate.name}`)} className="rounded-2xl border border-violet-300/35 bg-violet-500/10 px-4 py-3 text-xs font-black text-slate-950 hover:bg-violet-500/20">
+              <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Template version control: ${selectedTemplate.name}` })} className="rounded-2xl border border-violet-300/35 bg-violet-50 px-4 py-3 text-xs font-black text-slate-950 hover:bg-violet-50">
                 Version Control
               </button>
               <button
@@ -2047,9 +2990,9 @@ function TemplatesManagementWorkspace({
                   setTemplates((current) => [clone, ...current])
                   persistTemplateToProduction(clone).catch(() => setTemplateSyncStatus("offline"))
                   setSelectedTemplateId(clone.id)
-                  runCommand(`Template clone created live: ${selectedTemplate.name}`)
+                  void executeContentCommandAction("content.command.dynamic", { label: `Template clone created live: ${selectedTemplate.name}` })
                 }}
-                className="rounded-2xl border border-cyan-300/25 bg-cyan-500/10 px-4 py-3 text-xs font-black text-cyan-100 hover:bg-cyan-500/20"
+                className="rounded-2xl border border-cyan-300/25 bg-cyan-50 px-4 py-3 text-xs font-black text-cyan-800 hover:bg-cyan-50"
               >
                 Clone Template
               </button>
@@ -2064,9 +3007,9 @@ function TemplatesManagementWorkspace({
                     ),
                   )
                   setTemplatePreviewTab("Approval")
-                  runCommand(`Template approval requested live: ${selectedTemplate.name}`)
+                  void executeContentCommandAction("content.command.dynamic", { label: `Template approval requested live: ${selectedTemplate.name}` })
                 }}
-                className="rounded-2xl border border-emerald-300/25 bg-emerald-500/10 px-4 py-3 text-xs font-black text-emerald-100 hover:bg-emerald-500/20"
+                className="rounded-2xl border border-emerald-300/25 bg-emerald-50 px-4 py-3 text-xs font-black text-emerald-800 hover:bg-emerald-100"
               >
                 Request Approval
               </button>
@@ -2080,9 +3023,9 @@ function TemplatesManagementWorkspace({
                         : item,
                     ),
                   )
-                  runCommand(`Template archived live: ${selectedTemplate.name}`)
+                  void executeContentCommandAction("content.command.dynamic", { label: `Template archived live: ${selectedTemplate.name}` })
                 }}
-                className="rounded-2xl border border-rose-300/25 bg-rose-500/10 px-4 py-3 text-xs font-black text-rose-100 hover:bg-rose-500/20"
+                className="rounded-2xl border border-rose-300/25 bg-rose-50 px-4 py-3 text-xs font-black text-rose-800 hover:bg-rose-500/20"
               >
                 Archive
               </button>
@@ -2165,11 +3108,11 @@ function CorporateDocsWorkspace({
   const selectedDoc = filteredDocs.find((doc) => doc.id === selectedDocId) || filteredDocs[0] || docs[0]
 
   function docStatusClass(value: string) {
-    if (value === "Approved") return "bg-emerald-500/20 text-emerald-100"
-    if (value === "Published") return "bg-cyan-500/20 text-cyan-100"
-    if (value === "In Review") return "bg-amber-500/20 text-amber-100"
+    if (value === "Approved") return "bg-emerald-50 text-emerald-800 border border-emerald-200"
+    if (value === "Published") return "bg-cyan-50 text-cyan-800"
+    if (value === "In Review") return "bg-amber-500/20 text-amber-800"
     if (value === "Draft") return "bg-slate-500/25 text-slate-900"
-    return "bg-rose-500/20 text-rose-100"
+    return "bg-rose-500/20 text-rose-800"
   }
 
   return (
@@ -2183,73 +3126,80 @@ function CorporateDocsWorkspace({
           ["Manuals & Guides", "3,218", "↑ 7% vs last month", BookOpen, "amber"],
           ["Compliance Docs", "1,987", "↑ 22% vs last month", BadgeCheck, "emerald"],
         ] as const).map(([label, value, trend, Icon, tone]) => (
-          <div key={String(label)} className="rounded-3xl border border-slate-200 bg-[#0b1a2b] p-4">
+          <div key={String(label)} className="rounded-3xl border border-slate-200 bg-white p-4">
             <div className="flex items-center gap-3">
               <span className={cn("grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}><Icon className="h-5 w-5" /></span>
-              <div><div className="text-xs font-black text-slate-950/70">{label}</div><div className="text-2xl font-black text-slate-950">{value}</div><div className="text-[11px] font-bold text-emerald-300">{trend}</div></div>
+              <div><div className="text-xs font-black text-slate-800">{label}</div><div className="text-2xl font-black text-slate-950">{value}</div><div className="text-[11px] font-bold text-emerald-700">{trend}</div></div>
             </div>
           </div>
         ))}
-        <div className="rounded-3xl border border-slate-200 bg-[#0b1a2b] p-4">
-          <div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-[conic-gradient(#8b5cf6_0_68%,rgba(255,255,255,.1)_68%_100%)]"><div className="grid h-11 w-11 place-items-center rounded-full bg-[#0b1a2b]"><Sparkle className="h-5 w-5 text-violet-200" /></div></div><div><div className="text-xs font-black text-slate-950/70">Storage Used</div><div className="text-2xl font-black text-slate-950">68%</div><div className="text-[11px] font-bold text-slate-950/60">342 GB / 500 GB</div></div></div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-4">
+          <div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-[conic-gradient(#8b5cf6_0_68%,rgba(255,255,255,.1)_68%_100%)]"><div className="grid h-11 w-11 place-items-center rounded-full bg-white"><Sparkle className="h-5 w-5 text-violet-700" /></div></div><div><div className="text-xs font-black text-slate-800">Storage Used</div><div className="text-2xl font-black text-slate-950">68%</div><div className="text-[11px] font-bold text-slate-700">342 GB / 500 GB</div></div></div>
         </div>
       </section>
 
       <section className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-5">
-          <Panel title="Document Categories" action={<button type="button" onClick={() => runCommand("View all document categories")} className="text-sm font-black text-violet-200">View All Categories</button>}>
+          <Panel title="Document Categories" action={<button type="button" onClick={() => void executeContentCommandAction("view.all.document.categories", { label: "View all document categories" })} className="text-sm font-black text-violet-700">View All Categories</button>}>
             <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
               {docCategories.map(([label, count, Icon, tone]) => (
-                <button key={String(label)} type="button" onClick={() => { setCategory(label as string); runCommand(`Document category selected: ${label}`) }} className={cn("flex items-center gap-4 rounded-2xl border p-4 text-left transition hover:-translate-y-0.5", category === label ? "border-violet-300/55 bg-violet-500/15" : "border-[#1d344d] bg-[#0b1a2b] hover:border-cyan-300/30")}>
+                <button key={String(label)} type="button" onClick={() => { setCategory(label as string); void executeContentCommandAction("content.command.dynamic", { label: `Document category selected: ${label}` }) }} className={cn("flex items-center gap-4 rounded-2xl border p-4 text-left transition hover:-translate-y-0.5", category === label ? "border-violet-300/55 bg-violet-50" : "border-slate-200 bg-white hover:border-cyan-300/30")}>
                   <span className={cn("grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}><Icon className="h-5 w-5" /></span>
-                  <span><span className="block text-xs font-black text-slate-950">{label}</span><span className="mt-1 block text-sm font-bold text-slate-950/72">{count}</span></span>
+                  <span><span className="block text-xs font-black text-slate-950">{label}</span><span className="mt-1 block text-sm font-bold text-slate-800">{count}</span></span>
                 </button>
               ))}
-              <button type="button" onClick={onCreateDoc} className="grid min-h-[82px] place-items-center rounded-2xl border border-dashed border-violet-300/25 bg-violet-500/8 text-center text-sm font-black text-violet-100"><Plus className="mb-1 h-5 w-5" /> Add Category</button>
+              <button type="button" onClick={onCreateDoc} className="grid min-h-[82px] place-items-center rounded-2xl border border-dashed border-violet-300/25 bg-violet-500/8 text-center text-sm font-black text-violet-800"><Plus className="mb-1 h-5 w-5" /> Add Category</button>
             </div>
           </Panel>
 
           <Panel title="">
             <div className="mb-5 flex flex-wrap gap-6 border-b border-slate-200">
               {["All Documents", "Recently Added", "Favorites", "Expiring Soon", "Needs Review", "Archived"].map((tab) => (
-                <button key={tab} type="button" onClick={() => { setActiveListTab(tab); runCommand(`Document tab: ${tab}`) }} className={cn("border-b-2 px-1 pb-4 text-sm font-black", activeListTab === tab ? "border-violet-400 text-violet-100" : "border-transparent text-slate-950/62 hover:text-slate-950")}>{tab}</button>
+                <button key={tab} type="button" onClick={() => { setActiveListTab(tab); void executeContentCommandAction("content.command.dynamic", { label: `Document tab: ${tab}` }) }} className={cn("border-b-2 px-1 pb-4 text-sm font-black", activeListTab === tab ? "border-violet-400 text-violet-800" : "border-transparent text-slate-950/62 hover:text-slate-950")}>{tab}</button>
               ))}
             </div>
             <div className="mb-5 grid gap-3 xl:grid-cols-[1fr_150px_170px_170px_120px_120px]">
-              <div className="relative"><Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search documents..." className="h-12 w-full rounded-xl border border-cyan-300/20 bg-[#071426] pl-11 pr-4 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-950/55" /></div>
+              <div className="relative"><Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-700" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search documents..." className="h-12 w-full rounded-xl border border-cyan-300/20 bg-white pl-11 pr-4 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-400" /></div>
               <SelectPill value={category} setValue={setCategory} options={["All Categories", ...docCategories.map(([label]) => label as string)]} />
               <SelectPill value={subcategory} setValue={setSubcategory} options={["All Subcategories", "Employee Relations", "Corporate Policies", "Financial Reports", "Brand Identity", "Forms & Templates", "Security Policies", "Training Materials", "Contracts & Agreements"]} />
               <SelectPill value={docType} setValue={setDocType} options={["All Document Types", "Policy", "Presentation", "Guideline", "Form", "Guide", "Agreement"]} />
               <SelectPill value={status} setValue={setStatus} options={["All Status", "Approved", "Published", "In Review", "Draft"]} />
-              <button type="button" onClick={() => runCommand("Advanced document filters")} className="rounded-xl border border-slate-200 bg-white/5 px-4 text-xs font-black text-slate-950/75"><SlidersHorizontal className="mr-2 inline h-4 w-4" />More</button>
+              <button type="button" onClick={() => void executeContentCommandAction("advanced.document.filters", { label: "Advanced document filters" })} className="rounded-xl border border-slate-200 bg-white/5 px-4 text-xs font-black text-slate-800"><SlidersHorizontal className="mr-2 inline h-4 w-4" />More</button>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-[#1d344d]">
-              <div className="grid grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] gap-3 bg-white/[.035] px-4 py-3 text-xs font-black uppercase tracking-[.1em] text-slate-950/55"><span>Document Name</span><span>Category</span><span>Subcategory</span><span>Type</span><span>Version</span><span>Status</span><span>Owner</span><span>Modified</span><span>Actions</span></div>
+            <div className="overflow-hidden rounded-2xl border border-slate-200">
+              <div className="grid grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] gap-3 bg-white px-4 py-3 text-xs font-black uppercase tracking-[.1em] text-slate-600"><span>Document Name</span><span>Category</span><span>Subcategory</span><span>Type</span><span>Version</span><span>Status</span><span>Owner</span><span>Modified</span><span>Actions</span></div>
               {filteredDocs.map((doc) => (
-                <button key={doc.id} type="button" onClick={() => { setSelectedDocId(doc.id); runCommand(`Document selected: ${doc.name}`) }} className={cn("grid w-full grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] items-center gap-3 border-t border-white/5 px-4 py-4 text-left text-sm hover:bg-white/[.04]", selectedDoc.id === doc.id && "bg-violet-500/10")}>
-                  <span className="flex items-center gap-3"><span className={cn("grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br", toneClasses(doc.iconTone).ring)}><FileText className="h-4 w-4" /></span><span><span className="block font-black text-slate-950">{doc.name}</span><span className="block text-xs font-bold text-slate-950/55">{doc.file}</span></span></span>
-                  <span className="font-bold text-cyan-200">{doc.category}</span><span className="font-bold text-violet-200">{doc.subcategory}</span><span className="font-black text-amber-200">{doc.type}</span><span className="font-bold text-slate-950/75">{doc.version}</span><span className={cn("w-fit rounded-lg px-3 py-1.5 text-xs font-black", docStatusClass(doc.status))}>{doc.status}</span><span className="font-bold text-slate-950/75">{doc.owner}</span><span className="font-bold text-slate-950/60">{doc.modified}</span><span className="flex items-center gap-3 text-slate-950/70"><Eye className="h-4 w-4" /><Download className="h-4 w-4" /><MoreVertical className="h-4 w-4" /></span>
+                <button key={doc.id} type="button" onClick={() => { setSelectedDocId(doc.id); void executeContentCommandAction("content.command.dynamic", { label: `Document selected: ${doc.name}` }) }} className={cn("grid w-full grid-cols-[1.45fr_1fr_1fr_.75fr_.6fr_.75fr_.85fr_.8fr_.65fr] items-center gap-3 border-t border-slate-200 px-4 py-4 text-left text-sm hover:bg-slate-50", selectedDoc.id === doc.id && "bg-violet-50")}>
+                  <span className="flex items-center gap-3"><span className={cn("grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br", toneClasses(doc.iconTone).ring)}><FileText className="h-4 w-4" /></span><span><span className="block font-black text-slate-950">{doc.name}</span><span className="block text-xs font-bold text-slate-600">{doc.file}</span></span></span>
+                  <span className="font-bold text-cyan-700">{doc.category}</span><span className="font-bold text-violet-700">{doc.subcategory}</span><span className="font-black text-amber-700">{doc.type}</span><span className="font-bold text-slate-800">{doc.version}</span><span className={cn("w-fit rounded-lg px-3 py-1.5 text-xs font-black", docStatusClass(doc.status))}>{doc.status}</span><span className="font-bold text-slate-800">{doc.owner}</span><span className="font-bold text-slate-700">{doc.modified}</span><span className="flex items-center gap-3 text-slate-800"><Eye className="h-4 w-4" /><Download className="h-4 w-4" /><MoreVertical className="h-4 w-4" /></span>
                 </button>
               ))}
             </div>
-            <div className="mt-5 flex items-center justify-between text-sm font-bold text-slate-950/70"><span>Showing 1 to {filteredDocs.length} of 28,542 results</span><div className="flex items-center gap-2">{["‹", "1", "2", "3", "...", "357", "››"].map((page, index) => (<button key={index} type="button" onClick={() => runCommand(`Document page ${page}`)} className={cn("grid h-10 min-w-10 place-items-center rounded-xl border px-3", page === "1" ? "border-violet-300/40 bg-violet-500/20 text-violet-100" : "border-slate-200 bg-white/5")}>{page}</button>))}<button type="button" className="h-10 rounded-xl border border-slate-200 bg-white/5 px-3">20 / page</button></div></div>
+            <div className="mt-5 flex items-center justify-between text-sm font-bold text-slate-800"><span>Showing 1 to {filteredDocs.length} of 28,542 results</span><div className="flex items-center gap-2">{["‹", "1", "2", "3", "...", "357", "››"].map((page, index) => (<button key={index} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Document page ${page}` })} className={cn("grid h-10 min-w-10 place-items-center rounded-xl border px-3", page === "1" ? "border-violet-300/40 bg-violet-50 text-violet-800" : "border-slate-200 bg-white/5")}>{page}</button>))}<button
+                  type="button"
+                  onClick={() => void executeContentCommandAction("documents.page_size.selected", { pageSize: 20 })}
+                  className="h-10 rounded-xl border border-slate-200 bg-white/80 px-3 text-xs font-black text-slate-800 shadow-sm transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-800"
+                  aria-label="Set document page size to 20"
+                >
+                  20 / page
+                </button></div></div>
           </Panel>
         </div>
 
-        <Panel title="Document Preview" action={<button type="button" onClick={() => runCommand(`Expand document preview: ${selectedDoc.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-blue-950 to-amber-100 p-5"><div className="grid h-56 place-items-center rounded-xl bg-white/25 text-center"><div className="rounded-2xl border border-slate-200 bg-white/10 p-6 backdrop-blur"><FileText className="mx-auto h-14 w-14 text-slate-950" /><div className="mt-3 text-xl font-black text-slate-950">{selectedDoc.name}</div><div className="mt-1 text-sm font-black text-slate-950/80">{selectedDoc.version}</div></div></div><button type="button" onClick={() => runCommand("Previous document")} className="absolute left-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowLeft className="h-4 w-4" /></button><button type="button" onClick={() => runCommand("Next document")} className="absolute right-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowRight className="h-4 w-4" /></button></div>
-          <div className="mt-5 flex items-start justify-between gap-3"><div><h3 className="text-xl font-black text-slate-950">{selectedDoc.name}</h3><div className="mt-1 text-sm font-bold text-slate-950/65">{selectedDoc.type} · {selectedDoc.size} · A4</div></div><span className={cn("rounded-xl px-3 py-2 text-xs font-black", docStatusClass(selectedDoc.status))}>{selectedDoc.status}</span></div>
+        <Panel title="Document Preview" action={<button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Expand document preview: ${selectedDoc.name}` })} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 via-blue-950 to-amber-100 p-5"><div className="grid h-56 place-items-center rounded-xl bg-white/25 text-center"><div className="rounded-2xl border border-slate-200 bg-slate-200 p-6 backdrop-blur"><FileText className="mx-auto h-14 w-14 text-slate-950" /><div className="mt-3 text-xl font-black text-slate-950">{selectedDoc.name}</div><div className="mt-1 text-sm font-black text-slate-950/80">{selectedDoc.version}</div></div></div><button type="button" onClick={() => void executeContentCommandAction("previous.document", { label: "Previous document" })} className="absolute left-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowLeft className="h-4 w-4" /></button><button type="button" onClick={() => void executeContentCommandAction("next.document", { label: "Next document" })} className="absolute right-5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowRight className="h-4 w-4" /></button></div>
+          <div className="mt-5 flex items-start justify-between gap-3"><div><h3 className="text-xl font-black text-slate-950">{selectedDoc.name}</h3><div className="mt-1 text-sm font-bold text-slate-700">{selectedDoc.type} · {selectedDoc.size} · A4</div></div><span className={cn("rounded-xl px-3 py-2 text-xs font-black", docStatusClass(selectedDoc.status))}>{selectedDoc.status}</span></div>
           <div className="mt-5 grid grid-cols-4 gap-2">{([
               ["View", Eye],
               ["Download", Download],
               ["Share", UploadCloud],
               ["More", MoreVertical],
-            ] as const).map(([label, Icon]) => (<button key={String(label)} type="button" onClick={() => runCommand(`${label}: ${selectedDoc.name}`)} className="rounded-xl border border-slate-200 bg-white/5 px-3 py-3 text-xs font-black text-slate-950/78 hover:border-cyan-300/30"><Icon className="mx-auto mb-1 h-4 w-4" /> {String(label)}</button>))}</div>
-          <div className="mt-5 border-b border-slate-200"><div className="flex gap-7 text-sm font-black">{["Details", "Activity", "Versions", "Relations"].map((tab, index) => (<button key={tab} type="button" onClick={() => runCommand(`Document preview tab: ${tab}`)} className={cn("border-b-2 pb-4", index === 0 ? "border-violet-400 text-violet-100" : "border-transparent text-slate-950/62")}>{tab}</button>))}</div></div>
-          <div className="mt-5 space-y-3 text-sm font-bold">{[["Description", `Comprehensive ${selectedDoc.type.toLowerCase()} for ${selectedDoc.category.toLowerCase()} operations.`], ["Category", selectedDoc.category], ["Subcategory", selectedDoc.subcategory], ["Document Type", selectedDoc.type], ["Version", selectedDoc.version.replace("v", "")], ["Status", selectedDoc.status], ["Owner", selectedDoc.owner], ["Created On", "Apr 15, 2025 10:30 AM"], ["Modified On", `${selectedDoc.modified} 02:15 PM`]].map(([label, value]) => (<div key={String(label)} className="grid grid-cols-[120px_1fr] gap-3"><span className="text-slate-950/55">{label}</span><span className="text-slate-950/86">{value}</span></div>))}</div>
-          <div className="mt-5 flex flex-wrap gap-2">{selectedDoc.tags.map((tag) => (<span key={tag} className="rounded-lg bg-white/10 px-3 py-1 text-xs font-black text-slate-950/70">{tag}</span>))}</div>
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-white/[.035] p-4"><div className="text-sm font-black text-slate-950">Related Documents (12)</div><div className="mt-3 grid gap-2">{["Code of Conduct v1.7", "HR Policy Manual", "Benefits Overview 2025"].map((doc) => (<button key={doc} type="button" onClick={() => runCommand(`Related document opened: ${doc}`)} className="rounded-xl border border-slate-200 bg-white/[.04] px-3 py-2 text-left text-xs font-black text-slate-950/75">{doc}</button>))}</div></div>
-          <button type="button" onClick={onCreateDoc} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-500/10 px-5 py-4 text-sm font-black text-slate-950 hover:bg-violet-500/20">Edit Document</button>
+            ] as const).map(([label, Icon]) => (<button key={String(label)} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `${label}: ${selectedDoc.name}` })} className="rounded-xl border border-slate-200 bg-white/5 px-3 py-3 text-xs font-black text-slate-800 hover:border-cyan-300/30"><Icon className="mx-auto mb-1 h-4 w-4" /> {String(label)}</button>))}</div>
+          <div className="mt-5 border-b border-slate-200"><div className="flex gap-7 text-sm font-black">{["Details", "Activity", "Versions", "Relations"].map((tab, index) => (<button key={tab} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Document preview tab: ${tab}` })} className={cn("border-b-2 pb-4", index === 0 ? "border-violet-400 text-violet-800" : "border-transparent text-slate-950/62")}>{tab}</button>))}</div></div>
+          <div className="mt-5 space-y-3 text-sm font-bold">{[["Description", `Comprehensive ${selectedDoc.type.toLowerCase()} for ${selectedDoc.category.toLowerCase()} operations.`], ["Category", selectedDoc.category], ["Subcategory", selectedDoc.subcategory], ["Document Type", selectedDoc.type], ["Version", selectedDoc.version.replace("v", "")], ["Status", selectedDoc.status], ["Owner", selectedDoc.owner], ["Created On", "Apr 15, 2025 10:30 AM"], ["Modified On", `${selectedDoc.modified} 02:15 PM`]].map(([label, value]) => (<div key={String(label)} className="grid grid-cols-[120px_1fr] gap-3"><span className="text-slate-600">{label}</span><span className="text-slate-950/86">{value}</span></div>))}</div>
+          <div className="mt-5 flex flex-wrap gap-2">{selectedDoc.tags.map((tag) => (<span key={tag} className="rounded-lg bg-slate-200 px-3 py-1 text-xs font-black text-slate-800">{tag}</span>))}</div>
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4"><div className="text-sm font-black text-slate-950">Related Documents (12)</div><div className="mt-3 grid gap-2">{["Code of Conduct v1.7", "HR Policy Manual", "Benefits Overview 2025"].map((doc) => (<button key={doc} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Related document opened: ${doc}` })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-left text-xs font-black text-slate-800">{doc}</button>))}</div></div>
+          <button type="button" onClick={onCreateDoc} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-50 px-5 py-4 text-sm font-black text-slate-950 hover:bg-violet-50">Edit Document</button>
         </Panel>
       </section>
     </section>
@@ -2299,16 +3249,16 @@ function PrintOfflineWorkspace({
 
   const categories = [
     { label: "Brochures", count: 2142, gradient: "from-amber-900 to-slate-200", icon: BookOpen },
-    { label: "Catalogs", count: 1656, gradient: "from-slate-800 to-blue-200", icon: LibraryBig },
+    { label: "Catalogs", count: 1656, gradient: "from-slate-100 to-blue-200", icon: LibraryBig },
     { label: "Flyers", count: 1320, gradient: "from-orange-900 to-amber-200", icon: Megaphone },
     { label: "Prospectus", count: 1108, gradient: "from-slate-700 to-cyan-200", icon: FileText },
-    { label: "Business Cards", count: 856, gradient: "from-slate-800 to-white", icon: IdCard },
-    { label: "Posters", count: 732, gradient: "from-amber-800 to-slate-900", icon: PanelTop },
+    { label: "Business Cards", count: 856, gradient: "from-slate-100 to-white", icon: IdCard },
+    { label: "Posters", count: 732, gradient: "from-amber-800 to-white", icon: PanelTop },
     { label: "Packaging", count: 645, gradient: "from-orange-800 to-amber-100", icon: Box },
     { label: "Stationery", count: 612, gradient: "from-slate-700 to-white", icon: PenTool },
     { label: "Reports", count: 542, gradient: "from-orange-950 to-slate-700", icon: ScrollText },
     { label: "Banners & Rollups", count: 498, gradient: "from-blue-950 to-orange-200", icon: Flag },
-    { label: "Direct Mailers", count: 412, gradient: "from-slate-800 to-amber-200", icon: Mail },
+    { label: "Direct Mailers", count: 412, gradient: "from-slate-100 to-amber-200", icon: Mail },
     { label: "Packaging Inserts", count: 389, gradient: "from-amber-900 to-stone-200", icon: PackageOpen },
   ]
 
@@ -2482,25 +3432,25 @@ function PrintOfflineWorkspace({
   const review = assets.filter((asset) => asset.status === "In Review").length
 
   function printStatusClass(value: string) {
-    if (value === "Approved") return "bg-emerald-500/20 text-emerald-100"
-    if (value === "Published") return "bg-cyan-500/20 text-cyan-100"
-    if (value === "In Review") return "bg-amber-500/20 text-amber-100"
+    if (value === "Approved") return "bg-emerald-50 text-emerald-800 border border-emerald-200"
+    if (value === "Published") return "bg-cyan-50 text-cyan-800"
+    if (value === "In Review") return "bg-amber-500/20 text-amber-800"
     if (value === "In Production") return "bg-orange-500/20 text-orange-100"
-    if (value === "Scheduled") return "bg-blue-500/20 text-blue-100"
+    if (value === "Scheduled") return "bg-blue-500/20 text-blue-800"
     return "bg-slate-500/20 text-slate-900"
   }
 
   return (
     <section className="space-y-5">
-      <section className="overflow-hidden rounded-[34px] border border-cyan-300/20 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.16),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.16),transparent_32%),linear-gradient(180deg,#0a1c31,#071426)] p-5 shadow-[0_28px_90px_rgba(0,0,0,.38),inset_0_1px_0_rgba(255,255,255,.07)]">
+      <section className="overflow-hidden rounded-[34px] border border-cyan-300/20 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-5 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="mb-5 flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <div>
-            <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-200">Print & offline execution cockpit</div>
+            <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-700">Print & offline execution cockpit</div>
             <h2 className="mt-1 text-3xl font-black text-slate-950">Print & Offline Workspace · Live Output + Delivery Control</h2>
-            <p className="mt-2 max-w-4xl text-sm font-bold text-slate-950/78">Built on the Print & Offline Create modal parameters: output, purpose, format, size, audience, delivery mode, status and live result navigation.</p>
+            <p className="mt-2 max-w-4xl text-sm font-bold text-slate-800">Built on the Print & Offline Create modal parameters: output, purpose, format, size, audience, delivery mode, status and live result navigation.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onCreatePrint} className="inline-flex h-14 items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-500 px-7 text-sm font-black text-slate-950 shadow-[0_16px_42px_rgba(124,58,237,.28)]">
+            <button type="button" onClick={onCreatePrint} className="inline-flex h-14 items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-500 px-7 text-sm font-black text-white shadow-[0_16px_42px_rgba(124,58,237,.28)]">
               <Plus className="h-5 w-5" /> Create Print & Offline Content
             </button>
             <button
@@ -2518,7 +3468,7 @@ function PrintOfflineWorkspace({
                 setSize("All Sizes")
                 setLanguage("All Languages")
                 setPrintPage(1)
-                runCommand("Print cockpit reset")
+                void executeContentCommandAction("print.cockpit.reset", { label: "Print cockpit reset" })
               }}
               className="h-14 rounded-2xl border border-slate-200 bg-white/5 px-6 text-sm font-black text-slate-950 hover:bg-slate-50"
             >
@@ -2538,12 +3488,12 @@ function PrintOfflineWorkspace({
 
         <div className="mt-4 grid gap-3 xl:grid-cols-[1fr_620px]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-700" />
             <input
               value={query}
               onChange={(event) => { setQuery(event.target.value); setPrintPage(1) }}
               placeholder="Search print/offline assets by output, purpose, category, tags, owner, format..."
-              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-950/60"
+              className="h-14 w-full rounded-2xl border border-cyan-300/20 bg-white pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-400"
             />
           </div>
           <div className="grid grid-cols-4 gap-3">
@@ -2553,11 +3503,11 @@ function PrintOfflineWorkspace({
               ["Output", printOutput.replace("All Print Outputs", "All"), "selected output", FileText, "violet"],
               ["Delivery", printDelivery.replace("All Delivery Modes", "All"), "delivery mode", Package, "amber"],
             ] as const).map(([label, value, detail, Icon, tone]) => (
-              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.045] p-3">
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-3">
                 <Icon className={cn("h-5 w-5", toneClasses(tone as Tone).text)} />
                 <div className="mt-2 truncate text-xl font-black text-slate-950">{value}</div>
-                <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{label}</div>
-                <div className="mt-1 truncate text-[11px] font-bold text-slate-950/70">{detail}</div>
+                <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-slate-700">{label}</div>
+                <div className="mt-1 truncate text-[11px] font-bold text-slate-800">{detail}</div>
               </div>
             ))}
           </div>
@@ -2572,15 +3522,15 @@ function PrintOfflineWorkspace({
             ["Print Orders", "1,245", "active print ops", Package, "amber"],
             ["Storage Used", "68%", "342 GB / 500 GB", Palette, "rose"],
           ] as const).map(([label, value, detail, Icon, tone]) => (
-            <div key={String(label)} className="rounded-3xl border border-slate-200 bg-white/[.04] p-4">
+            <div key={String(label)} className="rounded-3xl border border-slate-200 bg-white p-4">
               <div className="flex items-center gap-3">
                 <span className={cn("grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br", toneClasses(tone as Tone).ring)}>
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <div className="text-xs font-black text-slate-950/70">{label}</div>
+                  <div className="text-xs font-black text-slate-800">{label}</div>
                   <div className="text-2xl font-black text-slate-950">{value}</div>
-                  <div className="text-[11px] font-bold text-emerald-300">{detail}</div>
+                  <div className="text-[11px] font-bold text-emerald-700">{detail}</div>
                 </div>
               </div>
             </div>
@@ -2589,7 +3539,7 @@ function PrintOfflineWorkspace({
       </section>
 
       <section className="grid gap-5 2xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1.15fr)_390px]">
-        <Panel title="Content Categories" action={<button type="button" onClick={() => runCommand("View all print categories")} className="text-sm font-black text-violet-200">View All</button>}>
+        <Panel title="Content Categories" action={<button type="button" onClick={() => void executeContentCommandAction("view.all.print.categories", { label: "View all print categories" })} className="text-sm font-black text-violet-700">View All</button>}>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
             {categories.map((category) => {
               const CategoryIcon = category.icon
@@ -2600,15 +3550,15 @@ function PrintOfflineWorkspace({
                 onClick={() => {
                   setSelectedCategory(category.label)
                   setSelectedSubcategory("All Subcategories")
-                  runCommand(`Print category selected: ${category.label}`)
+                  void executeContentCommandAction("content.command.dynamic", { label: `Print category selected: ${category.label}` })
                 }}
-                className={cn("group overflow-hidden rounded-[26px] border bg-[#0b1a2b] text-left transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", selectedCategory === category.label ? "border-violet-300/55 shadow-[0_0_34px_rgba(124,58,237,.18)]" : "border-[#1d344d] hover:border-cyan-300/30")}
+                className={cn("group overflow-hidden rounded-[26px] border bg-white text-left transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", selectedCategory === category.label ? "border-violet-300/55 shadow-[0_0_34px_rgba(124,58,237,.18)]" : "border-slate-200 hover:border-cyan-300/30")}
               >
                 <div className={cn("relative h-32 overflow-hidden bg-gradient-to-br", category.gradient)}>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,255,255,.38),transparent_24%),linear-gradient(135deg,rgba(0,0,0,.08),rgba(0,0,0,.46))]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,255,255,.38),transparent_24%),linear-gradient(135deg,rgba(255,255,255,.12),rgba(15,23,42,.08))]" />
                   <div className="absolute inset-0 grid place-items-center">
-                    <div className="grid h-20 w-20 place-items-center rounded-[28px] border border-white/25 bg-white/15 shadow-[0_24px_70px_rgba(0,0,0,.26),inset_0_1px_0_rgba(255,255,255,.25)] backdrop-blur-md transition group-hover:scale-105">
-                      <CategoryIcon className="h-10 w-10 text-slate-950 drop-shadow-[0_10px_22px_rgba(0,0,0,.35)]" />
+                    <div className="grid h-20 w-20 place-items-center rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_70px_rgba(15,23,42,.10)] backdrop-blur-md transition group-hover:scale-105">
+                      <CategoryIcon className="h-10 w-10 text-slate-950 drop-shadow-[0_22px_70px_rgba(15,23,42,.10)]" />
                     </div>
                   </div>
                   <div className="absolute left-4 top-4 rounded-full border border-slate-200 bg-white/30 px-3 py-1 text-[10px] font-black uppercase tracking-[.14em] text-slate-950/85">
@@ -2617,8 +3567,8 @@ function PrintOfflineWorkspace({
                 </div>
                 <div className="p-4">
                   <div className="text-lg font-black text-slate-950">{category.label}</div>
-                  <div className="mt-1 text-sm font-bold text-slate-950/72">{category.count.toLocaleString()} assets</div>
-                  <div className="mt-3 h-1.5 rounded-full bg-white/10">
+                  <div className="mt-1 text-sm font-bold text-slate-800">{category.count.toLocaleString()} assets</div>
+                  <div className="mt-3 h-1.5 rounded-full bg-slate-200">
                     <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-violet-400" style={{ width: `${Math.min(100, Math.round(category.count / 25))}%` }} />
                   </div>
                 </div>
@@ -2629,7 +3579,7 @@ function PrintOfflineWorkspace({
         </Panel>
 
         <Panel title="Recent Content">
-          <div className="grid grid-cols-[1fr_100px_95px_110px_30px] gap-3 border-b border-slate-200 px-2 pb-3 text-xs font-black uppercase tracking-[.12em] text-slate-950/55">
+          <div className="grid grid-cols-[1fr_100px_95px_110px_30px] gap-3 border-b border-slate-200 px-2 pb-3 text-xs font-black uppercase tracking-[.12em] text-slate-600">
             <span>Asset</span><span>Type</span><span>Status</span><span>Modified</span><span />
           </div>
           <div className="space-y-2 pt-2">
@@ -2639,21 +3589,21 @@ function PrintOfflineWorkspace({
                 type="button"
                 onClick={() => {
                   setSelectedAssetId(asset.id)
-                  runCommand(`Print content selected: ${asset.name}`)
+                  void executeContentCommandAction("content.command.dynamic", { label: `Print content selected: ${asset.name}` })
                 }}
-                className="grid w-full grid-cols-[1fr_100px_95px_110px_30px] items-center gap-3 rounded-2xl border border-transparent p-2 text-left hover:border-cyan-300/20 hover:bg-white/[.04]"
+                className="grid w-full grid-cols-[1fr_100px_95px_110px_30px] items-center gap-3 rounded-2xl border border-transparent p-2 text-left hover:border-cyan-300/20 hover:bg-slate-50"
               >
                 <span className="flex items-center gap-3">
                   <span className="grid h-12 w-14 place-items-center rounded-xl bg-gradient-to-br from-amber-900 to-slate-200 text-[9px] font-black text-slate-950">PRINT</span>
                   <span>
                     <span className="block text-sm font-black text-slate-950">{asset.name}</span>
-                    <span className="block text-xs font-bold text-slate-950/60">{asset.category}</span>
+                    <span className="block text-xs font-bold text-slate-700">{asset.category}</span>
                   </span>
                 </span>
-                <span className="text-xs font-black text-rose-200">{asset.brand}</span>
+                <span className="text-xs font-black text-rose-700">{asset.brand}</span>
                 <span className={cn("rounded-lg px-2 py-1 text-center text-[11px] font-black", printStatusClass(asset.status))}>{asset.status}</span>
                 <span className="text-xs font-bold text-slate-950/62">{asset.modifiedBy}</span>
-                <MoreVertical className="h-4 w-4 text-slate-950/50" />
+                <MoreVertical className="h-4 w-4 text-slate-600" />
               </button>
             ))}
           </div>
@@ -2661,14 +3611,14 @@ function PrintOfflineWorkspace({
 
         <Panel
           title="Content Preview"
-          action={<button type="button" onClick={() => runCommand(`Expand print preview: ${selectedAsset.name}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}
+          action={<button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Expand print preview: ${selectedAsset.name}` })} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5"><Maximize2 className="h-4 w-4" /></button>}
         >
           <div className="rounded-2xl bg-gradient-to-br from-slate-700 via-blue-900 to-amber-100 p-4">
-            <div className="grid h-56 place-items-center rounded-xl bg-white/20 text-center">
+            <div className="grid h-56 place-items-center rounded-xl bg-slate-100 text-center">
               <div>
                 <FileText className="mx-auto h-14 w-14 text-slate-950/90" />
                 <div className="mt-3 text-lg font-black text-slate-950">{selectedAsset.name}</div>
-                <div className="text-xs font-bold text-slate-950/72">{selectedAsset.format} · {selectedAsset.dimensions}</div>
+                <div className="text-xs font-bold text-slate-800">{selectedAsset.format} · {selectedAsset.dimensions}</div>
               </div>
             </div>
           </div>
@@ -2687,7 +3637,7 @@ function PrintOfflineWorkspace({
               ["Link", Link2],
               ["More", MoreVertical],
             ].map(([label, Icon]) => (
-              <button key={String(label)} type="button" onClick={() => runCommand(`${label}: ${selectedAsset.name}`)} className="grid h-12 place-items-center rounded-xl border border-slate-200 bg-white/5 hover:border-cyan-300/30">
+              <button key={String(label)} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `${label}: ${selectedAsset.name}` })} className="grid h-12 place-items-center rounded-xl border border-slate-200 bg-white/5 hover:border-cyan-300/30">
                 <Icon className="h-4 w-4" />
               </button>
             ))}
@@ -2710,14 +3660,14 @@ function PrintOfflineWorkspace({
               </div>
             ))}
           </div>
-          <button type="button" onClick={onCreatePrint} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-500/10 px-5 py-4 text-sm font-black text-slate-950 hover:bg-violet-500/20">
+          <button type="button" onClick={onCreatePrint} className="mt-6 w-full rounded-2xl border border-violet-300/35 bg-violet-50 px-5 py-4 text-sm font-black text-slate-950 hover:bg-violet-50">
             Edit Content
           </button>
         </Panel>
       </section>
 
       <section className="grid gap-5 2xl:grid-cols-[300px_minmax(0,1fr)]">
-        <Panel title="Browse by Subcategories" action={<button type="button" onClick={() => runCommand("View all print subcategories")} className="text-xs font-black text-violet-200">View All</button>}>
+        <Panel title="Browse by Subcategories" action={<button type="button" onClick={() => void executeContentCommandAction("view.all.print.subcategories", { label: "View all print subcategories" })} className="text-xs font-black text-violet-700">View All</button>}>
           <div className="space-y-2">
             {subcategories.map(([label, count]) => (
               <button
@@ -2725,15 +3675,15 @@ function PrintOfflineWorkspace({
                 type="button"
                 onClick={() => {
                   setSelectedSubcategory(label)
-                  runCommand(`Print subcategory selected: ${label}`)
+                  void executeContentCommandAction("content.command.dynamic", { label: `Print subcategory selected: ${label}` })
                 }}
-                className={cn("flex w-full items-center justify-between rounded-xl px-3 py-3 text-sm font-black transition", selectedSubcategory === label ? "bg-violet-500/25 text-slate-950" : "bg-white/[.03] text-slate-950/72 hover:bg-white/[.07]")}
+                className={cn("flex w-full items-center justify-between rounded-xl px-3 py-3 text-sm font-black transition", selectedSubcategory === label ? "bg-violet-500/25 text-slate-950" : "bg-white text-slate-800 hover:bg-white/[.07]")}
               >
                 <span>{label}</span>
                 <span>{count}</span>
               </button>
             ))}
-            <button type="button" onClick={() => runCommand("Add print subcategory")} className="mt-4 flex w-full items-center gap-2 rounded-xl border border-violet-300/20 bg-violet-500/10 px-4 py-3 text-sm font-black text-violet-100">
+            <button type="button" onClick={() => void executeContentCommandAction("add.print.subcategory", { label: "Add print subcategory" })} className="mt-4 flex w-full items-center gap-2 rounded-xl border border-violet-300/20 bg-violet-50 px-4 py-3 text-sm font-black text-violet-800">
               <Plus className="h-4 w-4" /> Add Subcategory
             </button>
           </div>
@@ -2743,24 +3693,24 @@ function PrintOfflineWorkspace({
           title={`Advanced Print Results · ${filteredAssets.length} matched`}
           action={
             <div className="flex flex-wrap items-center gap-2">
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
-              <button type="button" onClick={onCreatePrint} className="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-4 py-2 text-xs font-black text-cyan-100">Create matching print asset</button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-50" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-9 w-9 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-50" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={onCreatePrint} className="rounded-xl border border-cyan-300/20 bg-cyan-50 px-4 py-2 text-xs font-black text-cyan-800">Create matching print asset</button>
             </div>
           }
         >
-          <div className="mb-5 rounded-[28px] border border-cyan-300/15 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,.13),transparent_38%),#071426] p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Live print query</div>
+          <div className="mb-5 rounded-[28px] border border-cyan-300/15 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-700">Live print query</div>
             <div className="mt-1 text-lg font-black text-slate-950">{printOutput} → {selectedCategory} → {selectedSubcategory}</div>
-            <div className="mt-1 text-xs font-bold text-slate-950/72">Purpose: {printPurpose} · Format: {format} · Size: {size} · Status: {status} · Delivery: {printDelivery} · Search: {query.trim() || "No keyword"}</div>
+            <div className="mt-1 text-xs font-bold text-slate-800">Purpose: {printPurpose} · Format: {format} · Size: {size} · Status: {status} · Delivery: {printDelivery} · Search: {query.trim() || "No keyword"}</div>
           </div>
 
           {filteredAssets.length === 0 ? (
             <div className="rounded-[32px] border border-dashed border-cyan-300/25 bg-cyan-500/8 p-10 text-center">
-              <ScanSearch className="mx-auto h-12 w-12 text-cyan-200" />
+              <ScanSearch className="mx-auto h-12 w-12 text-cyan-700" />
               <div className="mt-4 text-2xl font-black text-slate-950">No print/offline content matches this command</div>
               <p className="mx-auto mt-2 max-w-3xl text-sm font-bold leading-6 text-slate-950/74">Adjust output, purpose, category, format, size, status, delivery or search keyword — or create a matching print/offline workflow.</p>
-              <button type="button" onClick={onCreatePrint} className="mt-6 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950">Create Print Content</button>
+              <button type="button" onClick={onCreatePrint} className="mt-6 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white">Create Print Content</button>
             </div>
           ) : (
             <>
@@ -2768,17 +3718,17 @@ function PrintOfflineWorkspace({
                 {visiblePrintAssets.map((asset) => (
                   <article
                     key={asset.id}
-                    className={cn("overflow-hidden rounded-[26px] border bg-[#0b1a2b] transition hover:-translate-y-1 hover:border-cyan-300/40 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", selectedAsset.id === asset.id ? "border-violet-300/55" : "border-[#1d344d]", viewMode === "list" && "grid grid-cols-[240px_1fr]")}
+                    className={cn("overflow-hidden rounded-[26px] border bg-white transition hover:-translate-y-1 hover:border-cyan-300/40 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]", selectedAsset.id === asset.id ? "border-violet-300/55" : "border-slate-200", viewMode === "list" && "grid grid-cols-[240px_1fr]")}
                   >
                     <button
                       type="button"
                       onClick={() => {
                         setSelectedAssetId(asset.id)
-                        runCommand(`Opened print asset: ${asset.name}`)
+                        void executeContentCommandAction("content.command.dynamic", { label: `Opened print asset: ${asset.name}` })
                       }}
                       className="relative h-32 w-full bg-gradient-to-br from-slate-700 via-blue-900 to-amber-200 text-left"
                     >
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,.35),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.08),rgba(0,0,0,.45))]" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,.35),transparent_18%),linear-gradient(135deg,rgba(255,255,255,.12),rgba(15,23,42,.08))]" />
                       <span className="absolute left-3 top-3 rounded-full bg-white/40 px-2 py-1 text-[10px] font-black text-slate-950">{asset.format}</span>
                       <span className={cn("absolute right-3 top-3 rounded-full px-2 py-1 text-[10px] font-black", printStatusClass(asset.status))}>{asset.status}</span>
                     </button>
@@ -2786,20 +3736,20 @@ function PrintOfflineWorkspace({
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="truncate text-base font-black text-slate-950">{asset.name}</div>
-                          <div className="mt-1 text-xs font-bold text-slate-950/70">{asset.category} · {asset.subcategory}</div>
+                          <div className="mt-1 text-xs font-bold text-slate-800">{asset.category} · {asset.subcategory}</div>
                         </div>
-                        <span className="rounded-full bg-violet-500/15 px-3 py-1 text-[10px] font-black text-violet-100">{asset.brand}</span>
+                        <span className="rounded-full bg-violet-50 px-3 py-1 text-[10px] font-black text-violet-800">{asset.brand}</span>
                       </div>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <span className="rounded-full bg-cyan-500/15 px-3 py-1.5 text-[10px] font-black text-cyan-100">{asset.size}</span>
-                        <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-slate-950/72">{asset.dimensions}</span>
-                        <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-slate-950/72">{asset.pages} pages</span>
+                        <span className="rounded-full bg-cyan-50 px-3 py-1.5 text-[10px] font-black text-cyan-800">{asset.size}</span>
+                        <span className="rounded-full bg-slate-200 px-3 py-1.5 text-[10px] font-black text-slate-800">{asset.dimensions}</span>
+                        <span className="rounded-full bg-slate-200 px-3 py-1.5 text-[10px] font-black text-slate-800">{asset.pages} pages</span>
                       </div>
                       <div className="mt-4 grid grid-cols-4 gap-2">
-                        <button type="button" onClick={() => { setSelectedAssetId(asset.id); runCommand(`View print content: ${asset.name}`) }} className="grid h-10 place-items-center rounded-xl border border-cyan-300/20 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/20" title="View"><Eye className="h-4 w-4" /></button>
-                        <button type="button" onClick={onCreatePrint} className="grid h-10 place-items-center rounded-xl border border-violet-300/20 bg-violet-500/10 text-violet-100 hover:bg-violet-500/20" title="Edit"><Edit3 className="h-4 w-4" /></button>
-                        <button type="button" onClick={() => runCommand(`Downloaded print asset: ${asset.name}`)} className="grid h-10 place-items-center rounded-xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/20" title="Download"><Download className="h-4 w-4" /></button>
-                        <button type="button" onClick={() => runCommand(`Delete requested for print asset: ${asset.name}`)} className="grid h-10 place-items-center rounded-xl border border-red-300/20 bg-red-500/10 text-red-100 hover:bg-red-500/20" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                        <button type="button" onClick={() => { setSelectedAssetId(asset.id); void executeContentCommandAction("content.command.dynamic", { label: `View print content: ${asset.name}` }) }} className="grid h-10 place-items-center rounded-xl border border-cyan-300/20 bg-cyan-50 text-cyan-800 hover:bg-cyan-50" title="View"><Eye className="h-4 w-4" /></button>
+                        <button type="button" onClick={onCreatePrint} className="grid h-10 place-items-center rounded-xl border border-violet-300/20 bg-violet-50 text-violet-800 hover:bg-violet-50" title="Edit"><Edit3 className="h-4 w-4" /></button>
+                        <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Downloaded print asset: ${asset.name}` })} className="grid h-10 place-items-center rounded-xl border border-emerald-300/20 bg-emerald-50 text-emerald-800 hover:bg-emerald-100" title="Download"><Download className="h-4 w-4" /></button>
+                        <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Delete requested for print asset: ${asset.name}` })} className="grid h-10 place-items-center rounded-xl border border-red-300/20 bg-red-500/10 text-red-100 hover:bg-red-500/20" title="Delete"><Trash2 className="h-4 w-4" /></button>
                       </div>
                     </div>
                   </article>
@@ -2807,13 +3757,13 @@ function PrintOfflineWorkspace({
               </div>
 
               <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 md:flex-row md:items-center md:justify-between">
-                <div className="text-sm font-bold text-slate-950/72">Showing page {printPage} of {printTotalPages} · {filteredAssets.length} result{filteredAssets.length === 1 ? "" : "s"}</div>
+                <div className="text-sm font-bold text-slate-800">Showing page {printPage} of {printTotalPages} · {filteredAssets.length} result{filteredAssets.length === 1 ? "" : "s"}</div>
                 <div className="flex items-center gap-2">
                   <button type="button" disabled={printPage <= 1} onClick={() => setPrintPage((page) => Math.max(1, page - 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 disabled:opacity-40">‹</button>
                   {Array.from({ length: printTotalPages }).slice(0, 5).map((_, index) => {
                     const page = index + 1
                     return (
-                      <button key={page} type="button" onClick={() => setPrintPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", printPage === page ? "border-cyan-300/40 bg-cyan-500/20 text-cyan-100" : "border-slate-200 bg-white/5 text-slate-950/70")}>{page}</button>
+                      <button key={page} type="button" onClick={() => setPrintPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", printPage === page ? "border-cyan-300/40 bg-cyan-50 text-cyan-800" : "border-slate-200 bg-white/5 text-slate-800")}>{page}</button>
                     )
                   })}
                   <button type="button" disabled={printPage >= printTotalPages} onClick={() => setPrintPage((page) => Math.min(printTotalPages, page + 1))} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 disabled:opacity-40">›</button>
@@ -2824,7 +3774,7 @@ function PrintOfflineWorkspace({
         </Panel>
       </section>
 
-      <Panel title="Content Calendar" action={<button type="button" onClick={() => runCommand("Add print calendar event")} className="text-sm font-black text-violet-200"><Plus className="mr-2 inline h-4 w-4" />Add Event</button>}>
+      <Panel title="Content Calendar" action={<button type="button" onClick={() => void executeContentCommandAction("add.print.calendar.event", { label: "Add print calendar event" })} className="text-sm font-black text-violet-700"><Plus className="mr-2 inline h-4 w-4" />Add Event</button>}>
         <div className="grid gap-4 lg:grid-cols-5">
           {[
             ["MON 12", "Brochure Launch", "Corporate Brochure 2025", "Published"],
@@ -2833,11 +3783,11 @@ function PrintOfflineWorkspace({
             ["THU 15", "Mailing Campaign", "Direct Mailer - Q2", "Scheduled"],
             ["FRI 16", "Report Publication", "Annual Report 2025", "Draft"],
           ].map(([day, title, detail, eventStatus]) => (
-            <div key={day} className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-4">
-              <div className="mb-4 text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{day}</div>
-              <button type="button" onClick={() => runCommand(`Calendar event opened: ${title}`)} className="w-full rounded-xl border border-slate-200 bg-white/[.04] p-3 text-left">
+            <div key={day} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="mb-4 text-xs font-black uppercase tracking-[.12em] text-slate-800">{day}</div>
+              <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Calendar event opened: ${title}` })} className="w-full rounded-xl border border-slate-200 bg-white p-3 text-left">
                 <div className="text-sm font-black text-slate-950">{title}</div>
-                <div className="text-xs font-bold text-slate-950/60">{detail}</div>
+                <div className="text-xs font-bold text-slate-700">{detail}</div>
                 <span className={cn("mt-3 inline-flex rounded-lg px-2 py-1 text-[10px] font-black", printStatusClass(eventStatus))}>{eventStatus}</span>
               </button>
             </div>
@@ -2895,7 +3845,7 @@ const DEFAULT_DIGITAL_CATEGORIES: DigitalCategoryRecord[] = [
     id: "publication-stories",
     label: "PUBLICATION STORIES",
     countLabel: "3,120 items",
-    gradient: "from-slate-800 to-blue-200",
+    gradient: "from-slate-100 to-blue-200",
     subcategories: [
       { id: "daily-stories", name: "DAILY STORIES", count: 92 },
       { id: "event-stories", name: "EVENT STORIES", count: 48 },
@@ -3155,9 +4105,9 @@ function DigitalAssetWorkspace({
   ] as const
 
   function digitalStatusClass(status: string) {
-    if (status === "Approved") return "bg-emerald-500/20 text-emerald-100"
-    if (status === "Published") return "bg-cyan-500/20 text-cyan-100"
-    if (status === "In Review") return "bg-amber-500/20 text-amber-100"
+    if (status === "Approved") return "bg-emerald-50 text-emerald-800 border border-emerald-200"
+    if (status === "Published") return "bg-cyan-50 text-cyan-800"
+    if (status === "In Review") return "bg-amber-500/20 text-amber-800"
     return "bg-slate-500/20 text-slate-900"
   }
 
@@ -3189,7 +4139,7 @@ function DigitalAssetWorkspace({
       service: DIGITAL_RELATED_SERVICES[index % DIGITAL_RELATED_SERVICES.length],
       channel: ["Instagram", "Facebook", "LinkedIn", "Website", "Email", "WhatsApp"][index % 6],
       readiness: [92, 84, 76, 98, 67, 89, 72, 58][index % 8],
-      owner: ["Imane L.", "Salma El Alami", "Omar K.", "Creative Team"][index % 4],
+      owner: ["Imane L.", CONTENT_COMMAND_FALLBACK_OPERATOR.name, "Omar K.", "Creative Team"][index % 4],
       category: categories[index % Math.max(categories.length, 1)]?.label || "Unassigned",
       subcategory:
         categories[index % Math.max(categories.length, 1)]?.subcategories?.[
@@ -3225,17 +4175,17 @@ function DigitalAssetWorkspace({
 
   return (
     <section className="space-y-5">
-      <section className="overflow-hidden rounded-[34px] border border-cyan-300/20 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.20),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.18),transparent_32%),linear-gradient(180deg,#0a1c31,#071426)] p-5 shadow-[0_28px_90px_rgba(0,0,0,.38),inset_0_1px_0_rgba(255,255,255,.07)]">
+      <section className="overflow-hidden rounded-[34px] border border-cyan-300/20 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-5 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="mb-5 flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <div>
-            <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-200">Digital content execution cockpit</div>
+            <div className="text-[11px] font-black uppercase tracking-[.22em] text-cyan-700">Digital content execution cockpit</div>
             <h2 className="mt-1 text-3xl font-black text-slate-950">Digital Workspace · Live Output + Service Control</h2>
-            <p className="mt-2 max-w-4xl text-sm font-bold text-slate-950/78">
+            <p className="mt-2 max-w-4xl text-sm font-bold text-slate-800">
               Built on the exact Digital Create modal parameters: primary output, related AngelCare service/product, channel, status, search, readiness and live execution navigation.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onCreateDigital} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.26)]">
+            <button type="button" onClick={onCreateDigital} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.26)]">
               <Plus className="h-4 w-4" /> Create Digital Content
             </button>
             <button type="button" onClick={() => updateDigitalWorkspace({ output: DIGITAL_OUTPUT_TYPES[0], service: DIGITAL_RELATED_SERVICES[0], status: "All Status", channel: "All Channels", query: "" })} className="rounded-2xl border border-slate-200 bg-white/[.05] px-5 py-3 text-sm font-black text-slate-950 hover:bg-slate-50">
@@ -3277,29 +4227,29 @@ function DigitalAssetWorkspace({
 
         <div className="mt-4 grid gap-3 xl:grid-cols-[1fr_auto]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-950/60" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-700" />
             <input
               value={digitalQuery}
               onChange={(event) => updateDigitalWorkspace({ query: event.target.value })}
               placeholder="Search digital assets by output, service, owner, channel..."
-              className="h-13 w-full rounded-2xl border border-cyan-300/20 bg-[#071426] pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-950/65"
+              className="h-13 w-full rounded-2xl border border-cyan-300/20 bg-white pl-12 pr-4 text-sm font-black text-slate-950 outline-none placeholder:text-slate-400"
             />
           </div>
           <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
             {digitalCommandCards.map((card) => {
               const Icon = card.icon
               return (
-                <div key={card.label} className="rounded-2xl border border-slate-200 bg-white/[.045] p-3">
+                <div key={card.label} className="rounded-2xl border border-slate-200 bg-white p-3">
                   <div className="flex items-center gap-2">
                     <span className={cn("grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br", toneClasses(card.tone).ring)}>
                       <Icon className="h-4 w-4 text-slate-950" />
                     </span>
                     <div className="min-w-0">
                       <div className="text-lg font-black text-slate-950">{card.value}</div>
-                      <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-slate-950/60">{card.label}</div>
+                      <div className="truncate text-[10px] font-black uppercase tracking-[.12em] text-slate-700">{card.label}</div>
                     </div>
                   </div>
-                  <div className="mt-2 truncate text-[11px] font-bold text-slate-950/70">{card.detail}</div>
+                  <div className="mt-2 truncate text-[11px] font-bold text-slate-800">{card.detail}</div>
                 </div>
               )
             })}
@@ -3307,7 +4257,7 @@ function DigitalAssetWorkspace({
         </div>
 
         <div className="mt-5">
-          <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-slate-950/70">Master digital output categories</div>
+          <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-slate-800">Master digital output categories</div>
           <div className="grid gap-3 lg:grid-cols-6">
             {DIGITAL_OUTPUT_TYPES.slice(0, 6).map((output) => (
               <button
@@ -3316,7 +4266,7 @@ function DigitalAssetWorkspace({
                 onClick={() => updateDigitalWorkspace({ output, service: "All AngelCare Services" })}
                 className={cn(
                   "rounded-2xl border px-3 py-3 text-left text-xs font-black transition hover:-translate-y-0.5",
-                  selectedOutput === output ? "border-cyan-300/45 bg-cyan-500/15 text-cyan-100" : "border-slate-200 bg-white/[.035] text-slate-950/75 hover:border-violet-300/30"
+                  selectedOutput === output ? "border-cyan-300/45 bg-cyan-50 text-cyan-800" : "border-slate-200 bg-white text-slate-800 hover:border-violet-300/30"
                 )}
               >
                 {output}
@@ -3348,17 +4298,17 @@ function DigitalAssetWorkspace({
         {kpis.map(([label, value, trend, Icon, tone]) => (
           <button
             key={String(label)}
-            onClick={() => runCommand(`Digital KPI opened: ${label}`)}
-            className="ultra-card group rounded-2xl border border-[#1d344d] bg-[#0b1a2b] p-5 text-left transition hover:-translate-y-0.5 hover:border-cyan-300/35"
+            onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Digital KPI opened: ${label}` })}
+            className="ultra-card group rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-cyan-300/35"
           >
             <div className="flex items-center gap-4">
               <span className={cn("grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br shadow-lg", toneClasses(tone as Tone).ring)}>
                 <Icon className="h-7 w-7" />
               </span>
               <span className="min-w-0">
-                <span className="block text-xs font-bold text-slate-950/72">{label}</span>
+                <span className="block text-xs font-bold text-slate-800">{label}</span>
                 <span className="block text-3xl font-black text-slate-950">{value}</span>
-                <span className="block text-xs font-black text-emerald-300">{trend}</span>
+                <span className="block text-xs font-black text-emerald-700">{trend}</span>
               </span>
             </div>
           </button>
@@ -3370,9 +4320,9 @@ function DigitalAssetWorkspace({
           title="ADVANCED DIGITAL CATEGORY NAVIGATION"
           action={
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => runCommand("Open category command center")} className="rounded-xl border border-cyan-300/25 bg-cyan-500/10 px-4 py-2 text-xs font-black text-cyan-100">Command view</button>
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/35 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/35 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={() => void executeContentCommandAction("open.category.command.center", { label: "Open category command center" })} className="rounded-xl border border-cyan-300/25 bg-cyan-50 px-4 py-2 text-xs font-black text-cyan-800">Command view</button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/35 bg-cyan-50" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/35 bg-cyan-50" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
             </div>
           }
         >
@@ -3383,11 +4333,11 @@ function DigitalAssetWorkspace({
               ["Service", selectedService.split(" ")[0], selectedService, BriefcaseBusiness, "amber"],
               ["Matched", syncedDigitalAssets.length, "live filtered results", ScanSearch, "emerald"],
             ] as const).map(([label, value, detail, Icon, tone]) => (
-              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-4">
+              <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4">
                 <Icon className={cn("h-6 w-6", toneClasses(tone as Tone).text)} />
                 <div className="mt-3 truncate text-2xl font-black text-slate-950">{value}</div>
-                <div className="text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{label}</div>
-                <div className="mt-1 truncate text-xs font-bold text-slate-950/70">{detail}</div>
+                <div className="text-xs font-black uppercase tracking-[.12em] text-slate-800">{label}</div>
+                <div className="mt-1 truncate text-xs font-bold text-slate-800">{detail}</div>
               </div>
             ))}
           </div>
@@ -3403,8 +4353,8 @@ function DigitalAssetWorkspace({
                 <div
                   key={category.id}
                   className={cn(
-                    "group overflow-hidden rounded-[26px] border bg-[#0b1a2b] transition hover:-translate-y-1 hover:border-cyan-300/40 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]",
-                    isActive ? "border-cyan-300/55 shadow-[0_0_38px_rgba(34,211,238,.16)]" : "border-[#1d344d]",
+                    "group overflow-hidden rounded-[26px] border bg-white transition hover:-translate-y-1 hover:border-cyan-300/40 hover:shadow-[0_24px_70px_rgba(34,211,238,.12)]",
+                    isActive ? "border-cyan-300/55 shadow-[0_0_38px_rgba(34,211,238,.16)]" : "border-slate-200",
                     viewMode === "list" && "grid grid-cols-[260px_1fr_auto] items-stretch",
                   )}
                 >
@@ -3414,11 +4364,11 @@ function DigitalAssetWorkspace({
                       setActiveCategoryId(category.id)
                       setDigitalCategoryFilter(category.label)
                       setDigitalSubcategoryFilter("All Subcategories")
-                      runCommand(`Category opened from advanced navigation: ${category.label}`)
+                      void executeContentCommandAction("content.command.dynamic", { label: `Category opened from advanced navigation: ${category.label}` })
                     }}
                     className={cn("relative block h-36 w-full bg-gradient-to-br text-left", category.gradient, viewMode === "list" && "h-full min-h-[180px]")}
                   >
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,.35),transparent_18%),linear-gradient(135deg,rgba(0,0,0,.08),rgba(0,0,0,.45))]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,.35),transparent_18%),linear-gradient(135deg,rgba(255,255,255,.12),rgba(15,23,42,.08))]" />
                     <div className="absolute left-3 top-3 flex flex-wrap gap-2">
                       {isActive && <span className="rounded-full bg-cyan-400 px-3 py-1 text-[10px] font-black text-slate-950">ACTIVE</span>}
                       <span className="rounded-full bg-white/40 px-3 py-1 text-[10px] font-black text-slate-950">{connectedCount} synced</span>
@@ -3436,9 +4386,9 @@ function DigitalAssetWorkspace({
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <div className="truncate text-base font-black text-slate-950">{category.label}</div>
-                        <div className="mt-1 text-xs font-bold text-slate-950/72">Connected to live output/service cockpit</div>
+                        <div className="mt-1 text-xs font-bold text-slate-800">Connected to live output/service cockpit</div>
                       </div>
-                      <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", isActive ? "bg-cyan-400 text-slate-950" : "bg-white/10 text-slate-950/70")}>
+                      <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", isActive ? "bg-cyan-400 text-slate-950" : "bg-slate-200 text-slate-800")}>
                         {isActive ? "ACTIVE" : "READY"}
                       </span>
                     </div>
@@ -3452,11 +4402,11 @@ function DigitalAssetWorkspace({
                             setActiveCategoryId(category.id)
                             setDigitalCategoryFilter(category.label)
                             setDigitalSubcategoryFilter(sub.name)
-                            runCommand(`Subcategory filtered: ${sub.name}`)
+                            void executeContentCommandAction("content.command.dynamic", { label: `Subcategory filtered: ${sub.name}` })
                           }}
                           className={cn(
                             "rounded-full px-3 py-1.5 text-[10px] font-black transition",
-                            digitalSubcategoryFilter === sub.name ? "bg-cyan-400 text-slate-950" : "bg-violet-500/15 text-violet-100 hover:bg-violet-500/25"
+                            digitalSubcategoryFilter === sub.name ? "bg-cyan-400 text-slate-950" : "bg-violet-50 text-violet-800 hover:bg-violet-500/25"
                           )}
                         >
                           {sub.name} · {sub.count}
@@ -3471,9 +4421,9 @@ function DigitalAssetWorkspace({
                           setActiveCategoryId(category.id)
                           setDigitalCategoryFilter(category.label)
                           setDigitalSubcategoryFilter("All Subcategories")
-                          runCommand(`Opened category: ${category.label}`)
+                          void executeContentCommandAction("content.command.dynamic", { label: `Opened category: ${category.label}` })
                         }}
-                        className="grid h-10 place-items-center rounded-xl border border-cyan-300/20 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/20"
+                        className="grid h-10 place-items-center rounded-xl border border-cyan-300/20 bg-cyan-50 text-cyan-800 hover:bg-cyan-50"
                         title="Open"
                       >
                         <Eye className="h-4 w-4" />
@@ -3484,15 +4434,15 @@ function DigitalAssetWorkspace({
                           setEditingCategory(category)
                           setModalOpen(true)
                         }}
-                        className="grid h-10 place-items-center rounded-xl border border-violet-300/20 bg-violet-500/10 text-violet-100 hover:bg-violet-500/20"
+                        className="grid h-10 place-items-center rounded-xl border border-violet-300/20 bg-violet-50 text-violet-800 hover:bg-violet-50"
                         title="Edit"
                       >
                         <Edit3 className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
-                        onClick={() => runCommand(`View category analytics: ${category.label}`)}
-                        className="grid h-10 place-items-center rounded-xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/20"
+                        onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `View category analytics: ${category.label}` })}
+                        className="grid h-10 place-items-center rounded-xl border border-emerald-300/20 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
                         title="View analytics"
                       >
                         <ScanSearch className="h-4 w-4" />
@@ -3507,12 +4457,12 @@ function DigitalAssetWorkspace({
                       </button>
                     </div>
 
-                    <div className="mt-4 rounded-2xl border border-slate-200 bg-white/[.035] p-3">
-                      <div className="flex items-center justify-between text-[11px] font-black text-slate-950/72">
+                    <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-3">
+                      <div className="flex items-center justify-between text-[11px] font-black text-slate-800">
                         <span>Live match coverage</span>
                         <span>{connectedCount}/{syncedDigitalAssets.length || 0}</span>
                       </div>
-                      <div className="mt-2 h-2 rounded-full bg-white/10">
+                      <div className="mt-2 h-2 rounded-full bg-slate-200">
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500"
                           style={{ width: `${syncedDigitalAssets.length ? Math.min(100, Math.round((connectedCount / syncedDigitalAssets.length) * 100)) : 0}%` }}
@@ -3527,12 +4477,12 @@ function DigitalAssetWorkspace({
             <button
               type="button"
               onClick={() => setModalOpen(true)}
-              className="grid min-h-[330px] place-items-center rounded-[26px] border border-dashed border-cyan-300/25 bg-cyan-500/5 p-6 text-center transition hover:border-cyan-300/45 hover:bg-cyan-500/10"
+              className="grid min-h-[330px] place-items-center rounded-[26px] border border-dashed border-cyan-300/25 bg-cyan-500/5 p-6 text-center transition hover:border-cyan-300/45 hover:bg-cyan-50"
             >
               <span>
-                <Plus className="mx-auto h-10 w-10 text-cyan-100" />
+                <Plus className="mx-auto h-10 w-10 text-cyan-800" />
                 <span className="mt-4 block text-base font-black text-slate-950">Add New Category</span>
-                <span className="mt-2 block text-xs font-bold text-slate-950/72">Create category, attach subcategories, and sync to the cockpit</span>
+                <span className="mt-2 block text-xs font-bold text-slate-800">Create category, attach subcategories, and sync to the cockpit</span>
               </span>
             </button>
           </div>
@@ -3540,26 +4490,26 @@ function DigitalAssetWorkspace({
 
         <Panel
           title="CONTENT PREVIEW"
-          action={<button type="button" onClick={() => runCommand("Open preview fullscreen")} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 hover:border-cyan-300/35"><Maximize2 className="h-4 w-4" /></button>}
+          action={<button type="button" onClick={() => void executeContentCommandAction("open.preview.fullscreen", { label: "Open preview fullscreen" })} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 hover:border-cyan-300/35"><Maximize2 className="h-4 w-4" /></button>}
         >
-          <div className="relative overflow-hidden rounded-2xl border border-[#1d344d] bg-gradient-to-br from-slate-800 via-blue-900 to-slate-900">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 via-blue-900 to-white">
             <div className="grid h-52 place-items-center">
-              <div className="rounded-3xl border border-slate-200 bg-white/10 px-8 py-6 text-center backdrop-blur">
-                <ImageIcon className="mx-auto h-14 w-14 text-cyan-100" />
+              <div className="rounded-3xl border border-slate-200 bg-slate-200 px-8 py-6 text-center backdrop-blur">
+                <ImageIcon className="mx-auto h-14 w-14 text-cyan-800" />
                 <div className="mt-3 text-sm font-black text-slate-950">{selectedAsset}</div>
-                <div className="mt-1 text-xs font-bold text-slate-950/72">Preview renderer active</div>
+                <div className="mt-1 text-xs font-bold text-slate-800">Preview renderer active</div>
               </div>
             </div>
-            <button type="button" onClick={() => runCommand("Previous preview")} className="absolute left-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowLeft className="h-4 w-4" /></button>
-            <button type="button" onClick={() => runCommand("Next preview")} className="absolute right-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowRight className="h-4 w-4" /></button>
+            <button type="button" onClick={() => void executeContentCommandAction("previous.preview", { label: "Previous preview" })} className="absolute left-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowLeft className="h-4 w-4" /></button>
+            <button type="button" onClick={() => void executeContentCommandAction("next.preview", { label: "Next preview" })} className="absolute right-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/35"><ArrowRight className="h-4 w-4" /></button>
           </div>
 
           <div className="mt-5 flex items-start justify-between gap-4">
             <div>
               <div className="text-base font-black text-slate-950">{selectedAsset}</div>
-              <div className="mt-1 text-xs font-bold text-slate-950/70">JPG Image · 2.4 MB · 1920x1080</div>
+              <div className="mt-1 text-xs font-bold text-slate-800">JPG Image · 2.4 MB · 1920x1080</div>
             </div>
-            <select value={assetStatus} onChange={(e) => { setAssetStatus(e.target.value); runCommand(`Status changed to ${e.target.value}`) }} className={cn("rounded-xl border border-slate-200 px-3 py-2 text-sm font-black", digitalStatusClass(assetStatus))}>
+            <select value={assetStatus} onChange={(e) => { setAssetStatus(e.target.value); void executeContentCommandAction("content.command.dynamic", { label: `Status changed to ${e.target.value}` }) }} className={cn("rounded-xl border border-slate-200 px-3 py-2 text-sm font-black", digitalStatusClass(assetStatus))}>
               {["Approved", "Published", "In Review", "Draft"].map((item) => <option key={item}>{item}</option>)}
             </select>
           </div>
@@ -3572,7 +4522,7 @@ function DigitalAssetWorkspace({
               ["Link", Link2],
               ["Archive", ClipboardCheck],
             ].map(([label, Icon]) => (
-              <button key={String(label)} type="button" onClick={() => runCommand(`${label} asset: ${selectedAsset}`)} className="grid h-10 place-items-center rounded-xl border border-slate-200 bg-white/[.04] hover:border-cyan-300/35 hover:bg-cyan-500/10">
+              <button key={String(label)} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `${label} asset: ${selectedAsset}` })} className="grid h-10 place-items-center rounded-xl border border-slate-200 bg-white hover:border-cyan-300/35 hover:bg-cyan-50">
                 <Icon className="h-4 w-4" />
               </button>
             ))}
@@ -3580,7 +4530,7 @@ function DigitalAssetWorkspace({
 
           <div className="mt-5 flex border-b border-slate-200 text-sm font-black">
             {["DETAILS", "METADATA", "ACTIVITY", "VERSIONS"].map((tab, index) => (
-              <button key={tab} type="button" onClick={() => runCommand(`Preview tab opened: ${tab}`)} className={cn("px-4 py-3", index === 0 ? "border-b-2 border-violet-400 text-violet-100" : "text-slate-950/68 hover:text-slate-950")}>{tab}</button>
+              <button key={tab} type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Preview tab opened: ${tab}` })} className={cn("px-4 py-3", index === 0 ? "border-b-2 border-violet-400 text-violet-800" : "text-slate-950/68 hover:text-slate-950")}>{tab}</button>
             ))}
           </div>
 
@@ -3602,7 +4552,7 @@ function DigitalAssetWorkspace({
             ))}
           </div>
 
-          <button type="button" onClick={() => runCommand(`Edit content: ${selectedAsset}`)} className="mt-5 w-full rounded-2xl border border-violet-400/35 bg-violet-500/10 px-4 py-4 text-sm font-black text-violet-100 hover:bg-violet-500/20">
+          <button type="button" onClick={() => void executeContentCommandAction("content.command.dynamic", { label: `Edit content: ${selectedAsset}` })} className="mt-5 w-full rounded-2xl border border-violet-400/35 bg-violet-50 px-4 py-4 text-sm font-black text-violet-800 hover:bg-violet-50">
             Edit Content
           </button>
         </Panel>
@@ -3620,16 +4570,16 @@ function DigitalAssetWorkspace({
                 setDigitalCategoryFilter("All Categories")
                 setDigitalSubcategoryFilter("All Subcategories")
               }}
-              className="text-xs font-black text-cyan-100"
+              className="text-xs font-black text-cyan-800"
             >
               Reset
             </button>
           }
         >
-          <div className="mb-4 rounded-3xl border border-cyan-300/15 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,.16),transparent_36%),#071426] p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Choose content family first</div>
+          <div className="mb-4 rounded-3xl border border-cyan-300/15 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-700">Choose content family first</div>
             <div className="mt-1 text-2xl font-black text-slate-950">{selectedOutput}</div>
-            <div className="mt-1 text-xs font-bold text-slate-950/72">Each output opens AngelCare service/product subcategories.</div>
+            <div className="mt-1 text-xs font-bold text-slate-800">Each output opens AngelCare service/product subcategories.</div>
           </div>
 
           <div className="space-y-3">
@@ -3642,14 +4592,14 @@ function DigitalAssetWorkspace({
                   onClick={() => updateDigitalWorkspace({ output, service: "All AngelCare Services" })}
                   className={cn(
                     "w-full rounded-2xl border p-3 text-left transition hover:-translate-y-0.5",
-                    selectedOutput === output ? "border-cyan-300/45 bg-cyan-500/15 shadow-[0_0_26px_rgba(34,211,238,.12)]" : "border-slate-200 bg-[#0b1a2b] hover:border-violet-300/30"
+                    selectedOutput === output ? "border-cyan-300/45 bg-cyan-50 shadow-[0_0_26px_rgba(34,211,238,.12)]" : "border-slate-200 bg-white hover:border-violet-300/30"
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm font-black text-slate-950">{output}</span>
-                    <span className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-black text-slate-950/70">{outputCount}</span>
+                    <span className="rounded-full bg-slate-200 px-2 py-1 text-[10px] font-black text-slate-800">{outputCount}</span>
                   </div>
-                  <div className="mt-2 text-[11px] font-bold text-slate-950/70">Open services → choose asset scope</div>
+                  <div className="mt-2 text-[11px] font-bold text-slate-800">Open services → choose asset scope</div>
                 </button>
               )
             })}
@@ -3658,12 +4608,12 @@ function DigitalAssetWorkspace({
 
         <Panel
           title="2. SERVICE / PRODUCT"
-          action={<span className="rounded-full bg-violet-500/15 px-3 py-1 text-[10px] font-black text-violet-100">{DIGITAL_RELATED_SERVICES.length} services</span>}
+          action={<span className="rounded-full bg-violet-50 px-3 py-1 text-[10px] font-black text-violet-800">{DIGITAL_RELATED_SERVICES.length} services</span>}
         >
-          <div className="mb-4 rounded-3xl border border-violet-300/15 bg-[radial-gradient(circle_at_0%_0%,rgba(168,85,247,.16),transparent_36%),#071426] p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">Subcategories for selected output</div>
+          <div className="mb-4 rounded-3xl border border-violet-300/15 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-700">Subcategories for selected output</div>
             <div className="mt-1 text-2xl font-black text-slate-950">{selectedService}</div>
-            <div className="mt-1 text-xs font-bold text-slate-950/72">Example: Publication Story → A.A AngelCare Academy → content grid.</div>
+            <div className="mt-1 text-xs font-bold text-slate-800">Example: Publication Story → A.A AngelCare Academy → content grid.</div>
           </div>
 
           <div className="space-y-3">
@@ -3676,14 +4626,14 @@ function DigitalAssetWorkspace({
                   onClick={() => updateDigitalWorkspace({ service })}
                   className={cn(
                     "w-full rounded-2xl border p-3 text-left transition hover:-translate-y-0.5",
-                    selectedService === service ? "border-violet-300/45 bg-violet-500/18 shadow-[0_0_26px_rgba(168,85,247,.14)]" : "border-slate-200 bg-[#0b1a2b] text-slate-950/82 hover:border-cyan-300/30"
+                    selectedService === service ? "border-violet-300/45 bg-violet-50 shadow-[0_0_26px_rgba(168,85,247,.14)]" : "border-slate-200 bg-white text-slate-800 hover:border-cyan-300/30"
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm font-black text-slate-950">{service}</span>
-                    <ChevronRight className="h-4 w-4 text-slate-950/70" />
+                    <ChevronRight className="h-4 w-4 text-slate-800" />
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-slate-950/70">
+                  <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-slate-800">
                     <span>Service-linked content scope</span>
                     <span>{serviceCount} assets</span>
                   </div>
@@ -3697,15 +4647,15 @@ function DigitalAssetWorkspace({
           title={`3. CONTENT RESULTS · ${selectedOutput} · ${selectedService}`}
           action={
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
-              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-500/15" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
-              <button type="button" onClick={onCreateDigital} className="rounded-xl border border-cyan-300/25 bg-cyan-500/10 px-4 py-2 text-xs font-black text-cyan-100">Create matching content</button>
+              <button type="button" onClick={() => setViewMode("grid")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "grid" ? "border-cyan-300/40 bg-cyan-50" : "border-slate-200 bg-white/5")}><Grid3X3 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setViewMode("list")} className={cn("grid h-10 w-10 place-items-center rounded-xl border", viewMode === "list" ? "border-cyan-300/40 bg-cyan-50" : "border-slate-200 bg-white/5")}><List className="h-4 w-4" /></button>
+              <button type="button" onClick={onCreateDigital} className="rounded-xl border border-cyan-300/25 bg-cyan-50 px-4 py-2 text-xs font-black text-cyan-800">Create matching content</button>
             </div>
           }
         >
           {!digitalServiceIsSelected ? (
             <div className="rounded-[32px] border border-dashed border-violet-300/30 bg-violet-500/8 p-10 text-center">
-              <BriefcaseBusiness className="mx-auto h-12 w-12 text-violet-100" />
+              <BriefcaseBusiness className="mx-auto h-12 w-12 text-violet-800" />
               <div className="mt-4 text-2xl font-black text-slate-950">Choose a service/product to show content</div>
               <p className="mx-auto mt-2 max-w-2xl text-sm font-bold leading-6 text-slate-950/74">
                 Select a master output on the left, then choose one AngelCare service/product in the middle. Results, grid/list view, pagination and actions will appear instantly.
@@ -3720,11 +4670,11 @@ function DigitalAssetWorkspace({
                   ["Service", selectedService.split(" ")[0], selectedService, BriefcaseBusiness, "amber"],
                   ["Readiness", `${digitalReadiness}%`, "filtered quality score", BadgeCheck, "emerald"],
                 ] as const).map(([label, value, detail, Icon, tone]) => (
-                  <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-4">
+                  <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4">
                     <Icon className={cn("h-6 w-6", toneClasses(tone as Tone).text)} />
                     <div className="mt-3 text-2xl font-black text-slate-950">{value}</div>
-                    <div className="text-xs font-black uppercase tracking-[.12em] text-slate-950/70">{label}</div>
-                    <div className="mt-1 truncate text-xs font-bold text-slate-950/70">{detail}</div>
+                    <div className="text-xs font-black uppercase tracking-[.12em] text-slate-800">{label}</div>
+                    <div className="mt-1 truncate text-xs font-bold text-slate-800">{detail}</div>
                   </div>
                 ))}
               </div>
@@ -3732,10 +4682,10 @@ function DigitalAssetWorkspace({
               <div className={cn("grid gap-4", viewMode === "grid" ? "md:grid-cols-2 xl:grid-cols-3" : "grid-cols-1")}>
                 {visibleDigitalAssets.length === 0 ? (
                   <div className="col-span-full rounded-[28px] border border-dashed border-cyan-300/25 bg-cyan-500/8 p-8 text-center">
-                    <ScanSearch className="mx-auto h-10 w-10 text-cyan-200" />
+                    <ScanSearch className="mx-auto h-10 w-10 text-cyan-700" />
                     <div className="mt-3 text-lg font-black text-slate-950">No content matches this output + service</div>
-                    <p className="mt-1 text-sm font-bold text-slate-950/72">Create a matching digital content workflow or adjust filters.</p>
-                    <button type="button" onClick={onCreateDigital} className="mt-5 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-slate-950">
+                    <p className="mt-1 text-sm font-bold text-slate-800">Create a matching digital content workflow or adjust filters.</p>
+                    <button type="button" onClick={onCreateDigital} className="mt-5 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-white">
                       Create matching digital content
                     </button>
                   </div>
@@ -3747,36 +4697,36 @@ function DigitalAssetWorkspace({
                       setSelectedAsset(asset.name)
                       setAssetStatus(asset.status)
                       updateDigitalWorkspace({ output: asset.output, service: asset.service, channel: asset.channel, status: asset.status })
-                      runCommand(`Asset selected: ${asset.name}`)
+                      void executeContentCommandAction("content.command.dynamic", { label: `Asset selected: ${asset.name}` })
                     }}
                     className={cn(
-                      "overflow-hidden rounded-2xl border bg-[#0b1a2b] text-left transition hover:-translate-y-0.5 hover:border-cyan-300/35",
-                      selectedAsset === asset.name ? "border-violet-300/55 shadow-[0_0_32px_rgba(124,58,237,.18)]" : "border-[#1d344d]",
+                      "overflow-hidden rounded-2xl border bg-white text-left transition hover:-translate-y-0.5 hover:border-cyan-300/35",
+                      selectedAsset === asset.name ? "border-violet-300/55 shadow-[0_0_32px_rgba(124,58,237,.18)]" : "border-slate-200",
                       viewMode === "list" && "grid grid-cols-[180px_1fr_auto] items-center",
                     )}
                   >
                     <div className="relative h-28 bg-gradient-to-br from-slate-700 via-blue-900 to-amber-200">
-                      <div className="absolute inset-0 bg-white/15" />
+                      <div className="absolute inset-0 bg-white" />
                       <span className="absolute left-3 top-3 rounded-full bg-white/35 px-2 py-1 text-[10px] font-black text-slate-950">{asset.readiness}% ready</span>
                       {(asset.type === "video" || asset.type === "image") && <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/35"><Eye className="h-4 w-4" /></span>}
                     </div>
                     <div className="p-3">
                       <div className="truncate text-xs font-black text-slate-950">{asset.name} ›</div>
-                      <div className="mt-1 text-[11px] font-bold text-slate-950/72">{asset.meta}</div>
+                      <div className="mt-1 text-[11px] font-bold text-slate-800">{asset.meta}</div>
                       <div className="mt-2 flex flex-wrap gap-1">
                         <span className={cn("inline-flex rounded-lg px-2 py-1 text-[10px] font-black", digitalStatusClass(asset.status))}>{asset.status}</span>
-                        <span className="rounded-lg bg-cyan-500/15 px-2 py-1 text-[10px] font-black text-cyan-100">{asset.output}</span>
+                        <span className="rounded-lg bg-cyan-50 px-2 py-1 text-[10px] font-black text-cyan-800">{asset.output}</span>
                       </div>
                       <div className="mt-2 truncate text-[11px] font-bold text-slate-950/68">{asset.service}</div>
-                      <div className="mt-1 text-[11px] font-black text-violet-200">{asset.channel} · {asset.owner}</div>
+                      <div className="mt-1 text-[11px] font-black text-violet-700">{asset.channel} · {asset.owner}</div>
                     </div>
-                    {viewMode === "list" && <MoreVertical className="mr-4 h-4 w-4 text-slate-950/60" />}
+                    {viewMode === "list" && <MoreVertical className="mr-4 h-4 w-4 text-slate-700" />}
                   </button>
                 ))}
               </div>
 
               <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 md:flex-row md:items-center md:justify-between">
-                <div className="text-sm font-bold text-slate-950/72">
+                <div className="text-sm font-bold text-slate-800">
                   Showing page {digitalPage} of {digitalTotalPages} · {syncedDigitalAssets.length} result{syncedDigitalAssets.length === 1 ? "" : "s"}
                 </div>
                 <div className="flex items-center gap-2">
@@ -3784,7 +4734,7 @@ function DigitalAssetWorkspace({
                   {Array.from({ length: digitalTotalPages }).slice(0, 5).map((_, index) => {
                     const page = index + 1
                     return (
-                      <button key={page} type="button" onClick={() => setDigitalPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", digitalPage === page ? "border-cyan-300/40 bg-cyan-500/20 text-cyan-100" : "border-slate-200 bg-white/5 text-slate-950/70")}>
+                      <button key={page} type="button" onClick={() => setDigitalPage(page)} className={cn("grid h-10 w-10 place-items-center rounded-xl border text-sm font-black", digitalPage === page ? "border-cyan-300/40 bg-cyan-50 text-cyan-800" : "border-slate-200 bg-white/5 text-slate-800")}>
                         {page}
                       </button>
                     )
@@ -3835,12 +4785,12 @@ function DigitalCategoryModal({
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white/70 p-4 backdrop-blur-md">
-      <div className="w-full max-w-4xl rounded-[32px] border border-cyan-300/20 bg-[#071426] p-6 shadow-[0_30px_90px_rgba(0,0,0,.72)]">
+      <div className="w-full max-w-4xl rounded-[32px] border border-cyan-300/20 bg-white p-6 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Digital taxonomy builder</div>
+            <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-700">Digital taxonomy builder</div>
             <h2 className="mt-1 text-3xl font-black text-slate-950">{editingCategory ? "Edit Category + Subcategories" : "Create Category + Subcategories"}</h2>
-            <p className="mt-1 text-sm font-bold text-slate-950/70">Creates a live in-page category, immediately filters subcategories, and persists the taxonomy in browser storage.</p>
+            <p className="mt-1 text-sm font-bold text-slate-800">Creates a live in-page category, immediately filters subcategories, and persists the taxonomy in browser storage.</p>
           </div>
           <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 bg-white/5 px-4 py-2 text-sm font-black text-slate-950 hover:bg-slate-50">Close</button>
         </div>
@@ -3848,46 +4798,46 @@ function DigitalCategoryModal({
         <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
           <div className="space-y-4">
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Category name</span>
-              <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Example: PUBLICATIONS CAROUSELS" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
+              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Category name</span>
+              <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Example: PUBLICATIONS CAROUSELS" className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
             </label>
 
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Count label</span>
-              <input value={countLabel} onChange={(e) => setCountLabel(e.target.value)} placeholder="Example: 450 items" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
+              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Count label</span>
+              <input value={countLabel} onChange={(e) => setCountLabel(e.target.value)} placeholder="Example: 450 items" className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
             </label>
 
             <label className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Visual gradient</span>
-              <select value={gradient} onChange={(e) => setGradient(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none">
+              <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Visual gradient</span>
+              <select value={gradient} onChange={(e) => setGradient(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none">
                 <option value="from-violet-900 to-cyan-300">Violet / Cyan</option>
                 <option value="from-amber-900 to-slate-200">Amber / Slate</option>
                 <option value="from-blue-900 to-emerald-300">Blue / Emerald</option>
                 <option value="from-rose-900 to-orange-300">Rose / Orange</option>
-                <option value="from-slate-800 to-blue-200">Slate / Blue</option>
+                <option value="from-slate-100 to-blue-200">Slate / Blue</option>
               </select>
             </label>
           </div>
 
           <label className="grid gap-2">
-            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Subcategories — one per line: name, count</span>
-            <textarea value={subInput} onChange={(e) => setSubInput(e.target.value)} className="min-h-[226px] rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] p-4 text-sm font-black text-slate-950 outline-none" />
+            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Subcategories — one per line: name, count</span>
+            <textarea value={subInput} onChange={(e) => setSubInput(e.target.value)} className="min-h-[226px] rounded-2xl border border-cyan-300/20 bg-white p-4 text-sm font-black text-slate-950 outline-none" />
           </label>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-200 bg-white/[.03] p-4">
-          <div className="mb-3 text-xs font-black uppercase tracking-[.14em] text-cyan-200">Live preview</div>
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="mb-3 text-xs font-black uppercase tracking-[.14em] text-cyan-700">Live preview</div>
           <div className="grid gap-4 md:grid-cols-[260px_1fr]">
-            <div className="overflow-hidden rounded-2xl border border-violet-300/30 bg-[#0b1a2b]">
+            <div className="overflow-hidden rounded-2xl border border-violet-300/30 bg-white">
               <div className={cn("h-28 bg-gradient-to-br", gradient)} />
               <div className="p-4">
                 <div className="text-sm font-black text-slate-950">{label || "NEW CATEGORY"}</div>
-                <div className="mt-1 text-sm font-bold text-slate-950/70">{countLabel}</div>
+                <div className="mt-1 text-sm font-bold text-slate-800">{countLabel}</div>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {subcategories.map((sub) => (
-                <span key={sub.id} className="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-3 py-2 text-xs font-black text-cyan-100">
+                <span key={sub.id} className="rounded-xl border border-cyan-300/20 bg-cyan-50 px-3 py-2 text-xs font-black text-cyan-800">
                   {sub.name} · {sub.count}
                 </span>
               ))}
@@ -3901,7 +4851,7 @@ function DigitalCategoryModal({
             type="button"
             disabled={!label.trim()}
             onClick={() => onSave({ id: editingCategory?.id, label, countLabel, gradient, subcategories })}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Save className="h-4 w-4" /> {editingCategory ? "Save Category Changes" : "Create Live Category"}
           </button>
@@ -3926,12 +4876,12 @@ function DigitalSubcategoryModal({
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white/70 p-4 backdrop-blur-md">
-      <div className="w-full max-w-xl rounded-[28px] border border-cyan-300/20 bg-[#071426] p-6 shadow-[0_30px_90px_rgba(0,0,0,.72)]">
+      <div className="w-full max-w-xl rounded-[28px] border border-cyan-300/20 bg-white p-6 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Subcategory manager</div>
+            <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-700">Subcategory manager</div>
             <h2 className="mt-1 text-2xl font-black text-slate-950">{subcategory ? "Edit Subcategory" : "Add Subcategory"}</h2>
-            <p className="mt-1 text-sm font-bold text-slate-950/70">Manage the active category’s subcategory list and sync instantly in-page.</p>
+            <p className="mt-1 text-sm font-bold text-slate-800">Manage the active category’s subcategory list and sync instantly in-page.</p>
           </div>
           <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5 text-slate-950 hover:bg-slate-50">
             <X className="h-4 w-4" />
@@ -3940,13 +4890,13 @@ function DigitalSubcategoryModal({
 
         <div className="grid gap-4">
           <label className="grid gap-2">
-            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Subcategory name</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Example: ACADEMY" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
+            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Subcategory name</span>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Example: ACADEMY" className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
           </label>
 
           <label className="grid gap-2">
-            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Content count</span>
-            <input value={count} onChange={(e) => setCount(e.target.value)} type="number" min="0" className="h-12 rounded-2xl border border-cyan-300/20 bg-[#0b1a2b] px-4 text-sm font-black text-slate-950 outline-none" />
+            <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Content count</span>
+            <input value={count} onChange={(e) => setCount(e.target.value)} type="number" min="0" className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
           </label>
         </div>
 
@@ -3956,7 +4906,7 @@ function DigitalSubcategoryModal({
             type="button"
             disabled={!name.trim()}
             onClick={() => onSave({ id: subcategory?.id, name, count: Number(count || 0) })}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.26)] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Save className="h-4 w-4" /> Save Subcategory
           </button>
@@ -4348,7 +5298,7 @@ function AdvancedCreateContentModal({
   }, [templateEditFamily, templateEditCategory, templateEditSubcategory])
   const [scenario, setScenario] = useState(record.scenarios[0])
   const [priority, setPriority] = useState("High")
-  const [owner, setOwner] = useState(editPayload?.owner || "Marketing Director")
+  const [owner, setOwner] = useState(editPayload?.owner || CONTENT_COMMAND_FALLBACK_OPERATOR.title)
   const [deadline, setDeadline] = useState("")
   const [language, setLanguage] = useState("French + Arabic + English ready")
   const [brandControl, setBrandControl] = useState(true)
@@ -4412,8 +5362,8 @@ function AdvancedCreateContentModal({
     if (!clean) return
     const next: ContentComment = {
       id: `comment-${Date.now()}`,
-      author: "Salma El Alami",
-      role: "Marketing Director",
+      author: CONTENT_COMMAND_FALLBACK_OPERATOR.name,
+      role: CONTENT_COMMAND_FALLBACK_OPERATOR.title,
       audience: commentAudience,
       message: clean,
       sentiment: clean.includes("?") ? "question" : clean.toLowerCase().includes("approve") ? "approval" : "coordination",
@@ -4472,21 +5422,21 @@ function AdvancedCreateContentModal({
         />
       )}
 
-      <div className="mx-auto w-full max-w-[1720px] rounded-[38px] border border-cyan-300/25 bg-[radial-gradient(circle_at_18%_0%,rgba(124,58,237,.18),transparent_32%),radial-gradient(circle_at_88%_0%,rgba(6,182,212,.16),transparent_30%),linear-gradient(180deg,#071426,#06111f)] p-6 shadow-[0_40px_130px_rgba(0,0,0,.82),inset_0_1px_0_rgba(255,255,255,.08)]">
+      <div className="mx-auto w-full max-w-[1720px] rounded-[38px] border border-cyan-300/25 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-6 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex gap-4">
             <div className={cn("grid h-16 w-16 place-items-center rounded-3xl bg-gradient-to-br shadow-xl", toneClasses(record.tone).ring)}>
               <Icon className="h-8 w-8 text-slate-950" />
             </div>
             <div>
-              <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Advanced content creation studio</div>
+              <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-700">Advanced content creation studio</div>
               <h2 className="mt-1 text-4xl font-black text-slate-950">{record.label}</h2>
-              <p className="mt-2 max-w-4xl text-sm font-bold text-slate-950/72">{record.short}</p>
+              <p className="mt-2 max-w-4xl text-sm font-bold text-slate-800">{record.short}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-3">
-              <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200">Brief readiness</div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-50 px-4 py-3">
+              <div className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-700">Brief readiness</div>
               <div className="text-2xl font-black text-slate-950">{completion}%</div>
             </div>
             <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black text-slate-950 hover:bg-slate-50">Cancel</button>
@@ -4503,7 +5453,7 @@ function AdvancedCreateContentModal({
             }
             onSubmit(title || `${record.label} content`)
           }}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-slate-950 shadow-[0_18px_44px_rgba(124,58,237,.3)]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-black text-white shadow-[0_18px_44px_rgba(124,58,237,.3)]"
             >
               <Save className="h-4 w-4" /> {editPayload ? "Save Template Changes" : record.id === "templates" ? "Create Template Workflow" : record.id === "print-offline" ? "Create Print Workflow" : "Create Workflow"}
             </button>
@@ -4517,8 +5467,8 @@ function AdvancedCreateContentModal({
             ["Channel", channel],
             ["Output", output],
           ].map(([label, value]) => (
-            <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.035] p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-950/72">{label}</div>
+            <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-800">{label}</div>
               <div className="mt-2 text-sm font-black text-slate-950">{value}</div>
             </div>
           ))}
@@ -4526,12 +5476,12 @@ function AdvancedCreateContentModal({
 
         <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.12fr)_minmax(520px,.88fr)]">
           <section className="space-y-5">
-            <div className="rounded-3xl border border-slate-200 bg-white/[.035] p-5">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5">
               <h3 className="mb-4 text-lg font-black text-slate-950">1. Strategic Brief</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="grid gap-2 md:col-span-2">
-                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Content title</span>
-                  <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={`Example: AngelCare ${record.label} for preschool partnership activation`} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none" />
+                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Content title</span>
+                  <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={`Example: AngelCare ${record.label} for preschool partnership activation`} className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
                 </label>
                 <FormSelect label="Audience" value={audience} setValue={setAudience} options={["B2B kindergarten / preschool", "Parents / B2C families", "Internal staff", "Corporate partners", "Event attendees", "Executive direction"]} />
                 <FormSelect label="Objective" value={objective} setValue={setObjective} options={["Lead generation and market activation", "Brand awareness", "Sales conversion", "Training and enablement", "Retention and loyalty", "Operational alignment"]} />
@@ -4545,20 +5495,20 @@ function AdvancedCreateContentModal({
                   </>
                 )}
                 {record.id === "templates" && (
-                  <div className="md:col-span-2 rounded-[28px] border border-violet-300/20 bg-violet-500/10 p-5">
+                  <div className="md:col-span-2 rounded-[28px] border border-violet-300/20 bg-violet-50 p-5">
                     <div className="mb-4 flex items-start justify-between gap-4">
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">
+                        <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-700">
                           Synced Template Parameters
                         </div>
                         <h3 className="mt-1 text-2xl font-black text-slate-950">
                           {editPayload ? "Edit Template Parameters" : "Create Template Parameters"}
                         </h3>
-                        <p className="mt-2 text-sm font-bold text-slate-950/70">
+                        <p className="mt-2 text-sm font-bold text-slate-800">
                           Select the exact family, output, subcategory/service and lifecycle status this template should follow.
                         </p>
                       </div>
-                      <span className="rounded-2xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-[.14em] text-emerald-100">
+                      <span className="rounded-2xl border border-emerald-300/20 bg-emerald-50 px-4 py-3 text-[10px] font-black uppercase tracking-[.14em] text-emerald-800">
                         Synced
                       </span>
                     </div>
@@ -4570,13 +5520,13 @@ function AdvancedCreateContentModal({
                       <FormSelect label="Lifecycle status" value={templateEditStatus} setValue={setTemplateEditStatus} options={["Approved", "In Review", "Draft", "Locked"]} />
                     </div>
 
-                    <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-500/10 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-200">
+                    <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-50 p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-700">
                         Required modal parameters
                       </div>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {templateEditParams.map((param) => (
-                          <span key={param} className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-black text-cyan-100">
+                          <span key={param} className="rounded-full border border-cyan-300/20 bg-cyan-50 px-3 py-1 text-[10px] font-black text-cyan-800">
                             {param}
                           </span>
                         ))}
@@ -4585,14 +5535,14 @@ function AdvancedCreateContentModal({
                   </div>
                 )}
                 {record.id === "templates" && (
-                  <div className="md:col-span-2 rounded-[26px] border border-violet-300/20 bg-violet-500/10 p-4">
+                  <div className="md:col-span-2 rounded-[26px] border border-violet-300/20 bg-violet-50 p-4">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">{editPayload ? "Template edit cockpit" : "Template creation cockpit"}</div>
+                        <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-700">{editPayload ? "Template edit cockpit" : "Template creation cockpit"}</div>
                         <h3 className="mt-1 text-xl font-black text-slate-950">Synced Template Parameters</h3>
-                        <p className="mt-1 text-xs font-bold text-slate-950/65">Edit the exact template ecosystem: family, category, subcategory, modal scope, status and matched modal parameters.</p>
+                        <p className="mt-1 text-xs font-bold text-slate-700">Edit the exact template ecosystem: family, category, subcategory, modal scope, status and matched modal parameters.</p>
                       </div>
-                      <span className="rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-[10px] font-black uppercase text-emerald-100">Live synced</span>
+                      <span className="rounded-xl border border-emerald-300/20 bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase text-emerald-800">Live synced</span>
                     </div>
                     <div className="grid gap-3 md:grid-cols-2">
                       <FormSelect label="Template family" value={templateEditFamily} setValue={setTemplateEditFamily} options={TEMPLATE_EDIT_FAMILIES} />
@@ -4600,11 +5550,11 @@ function AdvancedCreateContentModal({
                       <FormSelect label="Master category / output" value={templateEditCategory} setValue={setTemplateEditCategory} options={templateEditCategoryOptions} />
                       <FormSelect label="Subcategory / service / department" value={templateEditSubcategory} setValue={setTemplateEditSubcategory} options={templateEditSubcategoryOptions} />
                     </div>
-                    <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-500/10 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-200">Matched modal parameters</div>
+                    <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-50 p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[.16em] text-cyan-700">Matched modal parameters</div>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {templateEditParams.map((param) => (
-                          <span key={param} className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-black text-cyan-100">{param}</span>
+                          <span key={param} className="rounded-full border border-cyan-300/20 bg-cyan-50 px-3 py-1 text-[10px] font-black text-cyan-800">{param}</span>
                         ))}
                       </div>
                     </div>
@@ -4622,17 +5572,17 @@ function AdvancedCreateContentModal({
                 <FormSelect label="Scenario" value={scenario} setValue={setScenario} options={record.scenarios} />
                 <FormSelect label="Priority" value={priority} setValue={setPriority} options={["Critical", "High", "Medium", "Low"]} />
                 <label className="grid gap-2">
-                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Owner</span>
-                  <input value={owner} onChange={(e) => setOwner(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none" />
+                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Owner</span>
+                  <input value={owner} onChange={(e) => setOwner(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
                 </label>
                 <label className="grid gap-2">
-                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">Deadline</span>
-                  <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none" />
+                  <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">Deadline</span>
+                  <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none" />
                 </label>
               </div>
             </div>
 
-            <div className="rounded-3xl border border-violet-300/15 bg-[#0b1a2b] p-5">
+            <div className="rounded-3xl border border-violet-300/15 bg-white p-5">
               <h3 className="mb-4 text-lg font-black text-slate-950">2. Deliverables & Requirements</h3>
               <div className="grid gap-3 md:grid-cols-4">
                 {record.outputs.map((item) => (
@@ -4643,8 +5593,8 @@ function AdvancedCreateContentModal({
                     className={cn(
                       "rounded-2xl border p-4 text-left text-sm font-black transition",
                       deliverables.includes(item)
-                        ? "border-violet-300/45 bg-violet-500/20 text-slate-950"
-                        : "border-slate-200 bg-white/[.03] text-slate-950/72 hover:border-cyan-300/30"
+                        ? "border-violet-300/45 bg-violet-50 text-slate-950"
+                        : "border-slate-200 bg-white text-slate-800 hover:border-cyan-300/30"
                     )}
                   >
                     {item}
@@ -4659,13 +5609,13 @@ function AdvancedCreateContentModal({
               </div>
             </div>
 
-            <div className="rounded-3xl border border-emerald-300/15 bg-[#0b1a2b] p-5">
+            <div className="rounded-3xl border border-emerald-300/15 bg-white p-5">
               <h3 className="mb-4 text-lg font-black text-slate-950">3. Creative Direction & Execution Notes</h3>
               <textarea
                 value={brief}
                 onChange={(e) => setBrief(e.target.value)}
                 placeholder="Describe the offer, message, visual direction, target emotion, CTA, proof points, legal constraints, versions needed, language adaptation, and execution notes..."
-                className="min-h-[190px] w-full rounded-2xl border border-cyan-300/20 bg-[#071426] p-4 text-sm font-bold text-slate-950 outline-none"
+                className="min-h-[190px] w-full rounded-2xl border border-cyan-300/20 bg-white p-4 text-sm font-bold text-slate-950 outline-none"
               />
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <FormSelect label="Language / localization" value={language} setValue={setLanguage} options={["French + Arabic + English ready", "French only", "Arabic only", "English only", "French + Arabic", "French + English"]} />
@@ -4675,19 +5625,19 @@ function AdvancedCreateContentModal({
           </section>
 
           <aside className="space-y-5 2xl:sticky 2xl:top-5 2xl:self-start">
-            <div className="overflow-hidden rounded-[32px] border border-cyan-300/25 bg-[radial-gradient(circle_at_18%_0%,rgba(34,211,238,.18),transparent_28%),radial-gradient(circle_at_88%_10%,rgba(168,85,247,.18),transparent_34%),linear-gradient(180deg,#0d2238,#071426)] p-4 shadow-[0_28px_90px_rgba(0,0,0,.45),inset_0_1px_0_rgba(255,255,255,.08)]">
+            <div className="overflow-hidden rounded-[32px] border border-cyan-300/25 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] p-4 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 shadow-[0_0_34px_rgba(34,211,238,.28)]">
                     <PanelRightOpen className="h-6 w-6 text-slate-950" />
                   </div>
                   <div>
-                    <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">Live execution rail</div>
+                    <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-700">Live execution rail</div>
                     <div className="text-xl font-black text-slate-950">Tasks + Team Coordination</div>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-right">
-                  <div className="text-[10px] font-black text-emerald-200">SYNCED</div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-50 px-3 py-2 text-right">
+                  <div className="text-[10px] font-black text-emerald-700">SYNCED</div>
                   <div className="text-sm font-black text-slate-950">Live</div>
                 </div>
               </div>
@@ -4712,17 +5662,17 @@ function AdvancedCreateContentModal({
               </div>
             </div>
 
-            <div className="rounded-[32px] border border-slate-200 bg-[#081624]/85 p-4 shadow-[0_18px_60px_rgba(0,0,0,.28)]">
+            <div className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
               <div className="mb-4 flex items-center gap-3">
-                <Radar className="h-5 w-5 text-violet-200" />
+                <Radar className="h-5 w-5 text-violet-700" />
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-950/70">Lower execution intelligence</div>
+                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-800">Lower execution intelligence</div>
                   <h3 className="text-lg font-black text-slate-950">Coverage + Scenario + Next Actions</h3>
                 </div>
               </div>
 
               <div className="space-y-5">
-                <div className="rounded-3xl border border-cyan-300/15 bg-[#0b1a2b] p-5">
+                <div className="rounded-3xl border border-cyan-300/15 bg-white p-5">
               <h3 className="text-lg font-black text-slate-950">Execution Coverage</h3>
               <div className="mt-4 space-y-3">
                 {[
@@ -4735,14 +5685,14 @@ function AdvancedCreateContentModal({
                   ["Brand", brandControl ? "Controlled" : "Flexible"],
                   ["Distribution", distributionRequired ? "Planned" : "Not required"],
                 ].map(([label, value]) => (
-                  <div key={String(label)} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/[.03] px-4 py-3">
-                    <span className="text-sm font-bold text-slate-950/70">{label}</span>
+                  <div key={String(label)} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                    <span className="text-sm font-bold text-slate-800">{label}</span>
                     <span className="text-sm font-black text-slate-950">{value}</span>
                   </div>
                 ))}
               </div>
             </div>
-                <div className="rounded-3xl border border-violet-300/15 bg-[#0b1a2b] p-5">
+                <div className="rounded-3xl border border-violet-300/15 bg-white p-5">
               <h3 className="text-lg font-black text-slate-950">AngelCare Scenario Library</h3>
               <div className="mt-4 grid gap-2">
                 {record.scenarios.map((item) => (
@@ -4752,7 +5702,7 @@ function AdvancedCreateContentModal({
                     onClick={() => setScenario(item)}
                     className={cn(
                       "rounded-2xl border px-4 py-3 text-left text-sm font-black transition",
-                      scenario === item ? "border-violet-300/45 bg-violet-500/20" : "border-slate-200 bg-white/[.03] hover:border-cyan-300/30"
+                      scenario === item ? "border-violet-300/45 bg-violet-50" : "border-slate-200 bg-white hover:border-cyan-300/30"
                     )}
                   >
                     {item}
@@ -4760,13 +5710,13 @@ function AdvancedCreateContentModal({
                 ))}
               </div>
             </div>
-                <div className="rounded-3xl border border-emerald-300/15 bg-[#0b1a2b] p-5">
+                <div className="rounded-3xl border border-emerald-300/15 bg-white p-5">
               <h3 className="text-lg font-black text-slate-950">Next Actions Created</h3>
-              <div className="mt-4 space-y-3 text-sm font-bold text-slate-950/72">
-                <div className="rounded-2xl bg-white/[.035] p-3">Create content task in Market OS</div>
-                <div className="rounded-2xl bg-white/[.035] p-3">Attach asset requirements and owner</div>
-                <div className="rounded-2xl bg-white/[.035] p-3">Send to review / approval pipeline</div>
-                <div className="rounded-2xl bg-white/[.035] p-3">Prepare distribution and KPI tracking</div>
+              <div className="mt-4 space-y-3 text-sm font-bold text-slate-800">
+                <div className="rounded-2xl bg-white p-3">Create content task in Market OS</div>
+                <div className="rounded-2xl bg-white p-3">Attach asset requirements and owner</div>
+                <div className="rounded-2xl bg-white p-3">Send to review / approval pipeline</div>
+                <div className="rounded-2xl bg-white p-3">Prepare distribution and KPI tracking</div>
               </div>
             </div>
               </div>
@@ -4796,12 +5746,12 @@ function ContentTasksCard({
   const done = tasks.filter((task) => task.status === "done").length
 
   return (
-    <section className="rounded-[28px] border border-violet-300/25 bg-[#0b1a2b] p-5">
+    <section className="rounded-[28px] border border-violet-300/25 bg-white p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-200">Smart execution tasks</div>
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-700">Smart execution tasks</div>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Related Tasks</h3>
-          <p className="mt-1 text-xs font-bold text-slate-950/72">Create, open, view and edit production, approval and publishing tasks.</p>
+          <p className="mt-1 text-xs font-bold text-slate-800">Create, open, view and edit production, approval and publishing tasks.</p>
         </div>
         <button type="button" onClick={onCreate} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-slate-950">
           <Plus className="mr-2 inline h-4 w-4" /> Add
@@ -4814,20 +5764,20 @@ function ContentTasksCard({
           ["Review", review],
           ["Done", done],
         ].map(([label, value]) => (
-          <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white/[.04] p-3 text-center">
+          <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
             <div className="text-xl font-black text-slate-950">{value}</div>
-            <div className="text-[10px] font-black uppercase text-slate-950/70">{label}</div>
+            <div className="text-[10px] font-black uppercase text-slate-800">{label}</div>
           </div>
         ))}
       </div>
       <div className="mt-4 space-y-2">
         {tasks.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-950/60">No related tasks yet.</div>
+          <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-700">No related tasks yet.</div>
         ) : tasks.map((task) => (
-          <button key={task.id} type="button" onClick={() => onOpen(task)} className={cn("w-full rounded-2xl border p-3 text-left", activeTaskId === task.id ? "border-cyan-300/40 bg-cyan-500/10" : "border-slate-200 bg-white/[.03]")}>
+          <button key={task.id} type="button" onClick={() => onOpen(task)} className={cn("w-full rounded-2xl border p-3 text-left", activeTaskId === task.id ? "border-cyan-300/40 bg-cyan-50" : "border-slate-200 bg-white")}>
             <div className="flex items-center justify-between gap-3">
               <div className="font-black text-slate-950">{task.title}</div>
-              <select value={task.status} onChange={(event) => onStatus(task.id, event.target.value as ContentRelatedTask["status"])} className="rounded-xl border border-slate-200 bg-[#071426] px-3 py-2 text-xs font-black text-slate-950">
+              <select value={task.status} onChange={(event) => onStatus(task.id, event.target.value as ContentRelatedTask["status"])} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-950">
                 <option value="active">active</option>
                 <option value="review">review</option>
                 <option value="done">done</option>
@@ -4857,14 +5807,14 @@ function ContentCommentsCard({
   onAdd: () => void
 }) {
   return (
-    <section className="rounded-[28px] border border-cyan-300/20 bg-[#0b1a2b] p-5">
+    <section className="rounded-[28px] border border-cyan-300/20 bg-white p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Team coordination</div>
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-700">Team coordination</div>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Comments</h3>
-          <p className="mt-1 text-xs font-bold text-slate-950/72">Internal coordination notes linked to this content workflow.</p>
+          <p className="mt-1 text-xs font-bold text-slate-800">Internal coordination notes linked to this content workflow.</p>
         </div>
-        <select value={commentAudience} onChange={(event) => setCommentAudience(event.target.value)} className="rounded-xl border border-slate-200 bg-[#071426] px-3 py-2 text-xs font-black text-slate-950">
+        <select value={commentAudience} onChange={(event) => setCommentAudience(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-950">
           <option>Internal team</option>
           <option>Design</option>
           <option>Management</option>
@@ -4872,17 +5822,17 @@ function ContentCommentsCard({
         </select>
       </div>
       <div className="mt-4 flex gap-2">
-        <input value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add internal comment..." className="h-12 flex-1 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-bold text-slate-950 outline-none" />
+        <input value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add internal comment..." className="h-12 flex-1 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-bold text-slate-950 outline-none" />
         <button type="button" onClick={onAdd} className="rounded-2xl bg-cyan-600 px-5 text-sm font-black text-slate-950">Add</button>
       </div>
       <div className="mt-4 space-y-2">
         {comments.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-950/60">No comments yet.</div>
+          <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-700">No comments yet.</div>
         ) : comments.map((comment) => (
-          <div key={comment.id} className="rounded-2xl border border-slate-200 bg-white/[.03] p-3">
+          <div key={comment.id} className="rounded-2xl border border-slate-200 bg-white p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm font-black text-slate-950">{comment.author}</div>
-              <div className="text-[10px] font-black uppercase text-cyan-200">{comment.audience}</div>
+              <div className="text-[10px] font-black uppercase text-cyan-700">{comment.audience}</div>
             </div>
             <div className="mt-1 text-sm font-bold text-slate-950/76">{comment.message}</div>
           </div>
@@ -4906,10 +5856,10 @@ function ContentTaskEditorModal({
 
   return (
     <div className="fixed inset-0 z-[100000] grid place-items-center bg-white/70 p-4 backdrop-blur-md">
-      <div className="w-full max-w-2xl rounded-[32px] border border-cyan-300/25 bg-[#071426] p-6 shadow-[0_30px_120px_rgba(0,0,0,.75)]">
+      <div className="w-full max-w-2xl rounded-[32px] border border-cyan-300/25 bg-white p-6 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">Task editor</div>
+            <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-700">Task editor</div>
             <h3 className="mt-1 text-2xl font-black text-slate-950">Edit related task</h3>
           </div>
           <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white/5">
@@ -4918,45 +5868,45 @@ function ContentTaskEditorModal({
         </div>
 
         <div className="grid gap-4">
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
+          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-800">
             Title
             <input
               value={draft.title}
               onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
-              className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
+              className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-bold text-slate-950 outline-none"
             />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
+          <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-800">
             Description
             <textarea
               value={draft.description}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))}
-              className="min-h-28 rounded-2xl border border-cyan-300/20 bg-[#06111f] p-4 text-sm font-bold text-slate-950 outline-none"
+              className="min-h-28 rounded-2xl border border-cyan-300/20 bg-white p-4 text-sm font-bold text-slate-950 outline-none"
             />
           </label>
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-800">
               Owner
               <input
                 value={draft.owner}
                 onChange={(event) => setDraft((current) => ({ ...current, owner: event.target.value }))}
-                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
+                className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-bold text-slate-950 outline-none"
               />
             </label>
-            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-800">
               Due date
               <input
                 value={draft.dueDate}
                 onChange={(event) => setDraft((current) => ({ ...current, dueDate: event.target.value }))}
-                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
+                className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-bold text-slate-950 outline-none"
               />
             </label>
-            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-950/70">
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.14em] text-slate-800">
               Status
               <select
                 value={draft.status}
                 onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as ContentRelatedTask["status"] }))}
-                className="h-12 rounded-2xl border border-cyan-300/20 bg-[#06111f] px-4 text-sm font-bold text-slate-950 outline-none"
+                className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-bold text-slate-950 outline-none"
               >
                 <option value="active">active</option>
                 <option value="review">review</option>
@@ -4970,7 +5920,7 @@ function ContentTaskEditorModal({
           <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white/5 px-5 py-3 text-sm font-black text-slate-950">
             Cancel
           </button>
-          <button type="button" onClick={() => onSave(draft)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-slate-950">
+          <button type="button" onClick={() => onSave(draft)} className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-3 text-sm font-black text-white">
             Save Task
           </button>
         </div>
@@ -4983,8 +5933,8 @@ function ContentTaskEditorModal({
 function FormSelect({ label, value, setValue, options }: { label: string; value: string; setValue: (value: string) => void; options: string[] }) {
   return (
     <label className="grid gap-2">
-      <span className="text-xs font-black uppercase tracking-[.14em] text-slate-950/72">{label}</span>
-      <select value={value} onChange={(e) => setValue(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-[#071426] px-4 text-sm font-black text-slate-950 outline-none">
+      <span className="text-xs font-black uppercase tracking-[.14em] text-slate-800">{label}</span>
+      <select value={value} onChange={(e) => setValue(e.target.value)} className="h-12 rounded-2xl border border-cyan-300/20 bg-white px-4 text-sm font-black text-slate-950 outline-none">
         {options.map((option) => <option key={option}>{option}</option>)}
       </select>
     </label>
@@ -4998,14 +5948,14 @@ function ToggleCard({ label, detail, value, setValue }: { label: string; detail:
       onClick={() => setValue(!value)}
       className={cn(
         "rounded-2xl border p-4 text-left transition",
-        value ? "border-emerald-300/35 bg-emerald-500/15" : "border-slate-200 bg-white/[.03]"
+        value ? "border-emerald-300/35 bg-emerald-50" : "border-slate-200 bg-white"
       )}
     >
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-black text-slate-950">{label}</span>
-        <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", value ? "bg-emerald-400 text-slate-950" : "bg-white/10 text-slate-950")}>{value ? "ON" : "OFF"}</span>
+        <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", value ? "bg-emerald-400 text-slate-950" : "bg-slate-200 text-slate-950")}>{value ? "ON" : "OFF"}</span>
       </div>
-      <div className="mt-2 text-xs font-bold text-slate-950/78">{detail}</div>
+      <div className="mt-2 text-xs font-bold text-slate-800">{detail}</div>
     </button>
   )
 }
@@ -5014,15 +5964,15 @@ function ToggleCard({ label, detail, value, setValue }: { label: string; detail:
 function MetricCard({ label, value, trend, tone, icon: Icon }: { label: string; value: string; trend: string; tone: Tone; icon: any }) {
   const t = toneClasses(tone)
   return (
-    <div className="rounded-2xl border border-[#1d344d] bg-[#0b1a2b]/95 p-5 shadow-[0_18px_48px_rgba(0,0,0,.25)]">
+    <div className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
       <div className="flex items-center gap-4">
         <span className={cn("grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br shadow-lg", t.ring, t.glow)}>
           <Icon className="h-7 w-7" />
         </span>
         <div>
-          <div className="text-xs font-bold text-slate-950/72">{label}</div>
+          <div className="text-xs font-bold text-slate-800">{label}</div>
           <div className="text-3xl font-black">{value}</div>
-          <div className={cn("text-xs font-black", trend.startsWith("↓") ? "text-red-400" : "text-emerald-300")}>{trend}</div>
+          <div className={cn("text-xs font-black", trend.startsWith("↓") ? "text-red-400" : "text-emerald-700")}>{trend}</div>
         </div>
       </div>
     </div>
@@ -5031,10 +5981,10 @@ function MetricCard({ label, value, trend, tone, icon: Icon }: { label: string; 
 
 function Panel({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section className="ultra-card rounded-2xl border border-[#1d344d] bg-[#0a1828]/95 p-5 shadow-[0_20px_58px_rgba(0,0,0,.28)]">
+    <section className="ultra-card rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_22px_70px_rgba(15,23,42,.10)]">
       <div className="mb-4 flex items-center justify-between gap-4">
         <h2 className="text-lg font-black uppercase tracking-tight text-slate-950/90">{title}</h2>
-        <div className="text-sm font-black text-violet-300">{action}</div>
+        <div className="text-sm font-black text-violet-700">{action}</div>
       </div>
       {children}
     </section>
@@ -5043,7 +5993,7 @@ function Panel({ title, action, children }: { title: string; action?: ReactNode;
 
 function SelectPill({ value, setValue, options }: { value: string; setValue: (value: string) => void; options: string[] }) {
   return (
-    <select value={value} onChange={(e) => setValue(e.target.value)} className="h-9 rounded-xl border border-[#1d344d] bg-[#081827] px-3 text-xs font-black text-slate-950 outline-none">
+    <select value={value} onChange={(e) => setValue(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-950 outline-none">
       {options.map((option) => <option key={option}>{option}</option>)}
     </select>
   )
@@ -5053,7 +6003,7 @@ function ScoreLine({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <div className="mb-1 flex justify-between text-xs font-black text-slate-950/84"><span>{label}</span><span>{value}/100</span></div>
-      <div className="h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{ width: `${value}%` }} /></div>
+      <div className="h-2 rounded-full bg-slate-200"><div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{ width: `${value}%` }} /></div>
     </div>
   )
 }

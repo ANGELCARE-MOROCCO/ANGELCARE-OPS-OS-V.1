@@ -84,7 +84,14 @@ export default function AmbassadorProgramExecutiveCommandCenter() {
   }), [query, selectedStatus, selectedProgram])
 
   const totals = useMemo(() => {
-    const base = filtered.reduce((acc, item) => {
+    const base = filtered.reduce<{
+      leads: number
+      qualified: number
+      conversions: number
+      revenue: number
+      payouts: number
+      compliance: number
+    }>((acc, item) => {
       acc.leads += item.leads
       acc.qualified += item.qualifiedLeads
       acc.conversions += item.conversions

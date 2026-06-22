@@ -37,7 +37,7 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
 
@@ -52,27 +52,27 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
 
         <div className="mt-6 grid gap-4 md:grid-cols-6">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Rec Confidence</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Rec Confidence</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{recommendationConfidence}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Simulation</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Simulation</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{simulationConfidence}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">High Risk Recs</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">High Risk Recs</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{highRiskRecommendations.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Human Routes</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Human Routes</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{approvalRoutes.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Conflicts</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Conflicts</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{highConflicts.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Briefings</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Briefings</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{decisionBriefings.length}</p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">
+                    <p className="mt-1 text-xs text-slate-500">
                       {item.type} · confidence {item.confidence}%
                     </p>
                     <p className="mt-3 text-sm text-slate-600">{item.rationale}</p>
@@ -112,7 +112,7 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{route.decision}</p>
-                      <p className="mt-1 text-xs text-slate-9500">Route to: {route.routedTo}</p>
+                      <p className="mt-1 text-xs text-slate-500">Route to: {route.routedTo}</p>
                       <p className="mt-3 text-sm text-slate-600">{route.reason}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -134,7 +134,7 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
                     <div>
                       <p className="text-sm font-bold text-slate-950">{briefing.headline}</p>
                       <p className="mt-2 text-sm text-slate-600">{briefing.summary}</p>
-                      <p className="mt-2 text-xs text-slate-9500">Owner: {briefing.owner}</p>
+                      <p className="mt-2 text-xs text-slate-500">Owner: {briefing.owner}</p>
                     </div>
                     <Badge>{briefing.decisionNeeded ? 'Decision' : 'Monitor'}</Badge>
                   </div>
@@ -152,7 +152,7 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
             {phase36WorkloadRedistributions.map((item) => (
               <article key={item.id} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{item.taskTitle}</p>
-                <p className="mt-1 text-xs text-slate-9500">{item.fromOwner} → {item.toOwner}</p>
+                <p className="mt-1 text-xs text-slate-500">{item.fromOwner} → {item.toOwner}</p>
                 <p className="mt-3 text-sm text-slate-600">{item.expectedImpact}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge>{item.risk}</Badge>
@@ -184,7 +184,7 @@ export function ContentCommandPhase36CoordinationWorkspace(): React.ReactElement
             {phase36CoordinationConflicts.map((conflict) => (
               <article key={conflict.id} className="rounded-2xl border border-slate-100 p-4">
                 <p className="text-sm font-bold text-slate-950">{conflict.conflict}</p>
-                <p className="mt-1 text-xs text-slate-9500">{conflict.affectedArea}</p>
+                <p className="mt-1 text-xs text-slate-500">{conflict.affectedArea}</p>
                 <p className="mt-3 text-sm text-slate-600">{conflict.resolutionProposal}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge>{conflict.severity}</Badge>

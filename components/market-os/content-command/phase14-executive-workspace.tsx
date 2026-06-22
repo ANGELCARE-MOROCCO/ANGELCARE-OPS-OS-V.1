@@ -19,7 +19,7 @@ export function ContentCommandPhase14ExecutiveWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
 
@@ -35,7 +35,7 @@ export function ContentCommandPhase14ExecutiveWorkspace(): React.ReactElement {
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {phase14ExecutiveKpis.map((item) => (
             <article key={item.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-9500">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 {item.label}
               </p>
 
@@ -58,7 +58,7 @@ export function ContentCommandPhase14ExecutiveWorkspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{risk.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">Owner: {risk.owner}</p>
+                    <p className="mt-1 text-xs text-slate-500">Owner: {risk.owner}</p>
                     <p className="mt-3 text-sm text-slate-600">{risk.recommendation}</p>
                   </div>
 
@@ -78,7 +78,7 @@ export function ContentCommandPhase14ExecutiveWorkspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{item.area}</p>
+                    <p className="mt-1 text-xs text-slate-500">{item.area}</p>
                   </div>
 
                   <div className="flex gap-2">

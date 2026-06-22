@@ -1,19 +1,25 @@
-export function parseCsv(text: string): Record<string, string>[] {
-  const lines = text.split("\n").filter(Boolean)
+export type CsvRow = Record<string, string>
+export type CsvParseResult = CsvRow[]
 
-  if (lines.length < 2) return []
+export function parseCsv(text: string): CsvParseResult {
+  const lines = String(text || "").split(/\r?\n/).filter(Boolean)
+  const headers = (lines.shift() || "").split(",").map((item) => item.trim()).filter(Boolean)
 
-  const headers = lines[0].split(",").map((header) => header.trim())
+  if (!headers.length) return []
 
-  return lines.slice(1).map((line) => {
+  return lines.map((line) => {
     const values = line.split(",")
-
-    const row: Record<string, string> = {}
-
-    headers.forEach((header, index) => {
-      row[header] = values[index]?.trim() ?? ""
-    })
-
-    return row
+    return headers.reduce<CsvRow>((acc, header, index) => {
+      acc[header] = values[index] || ""
+      return acc
+    }, {})
   })
 }
+
+export function parseCsvDetailed(text: string) {
+  const rows = parseCsv(text)
+  const headers = rows.length ? Object.keys(rows[0] || {}) : []
+  return { headers, rows, errors: [] as string[] }
+}
+
+export default parseCsv

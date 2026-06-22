@@ -14,7 +14,7 @@ import { getPriorityLabel, getProgressLabel, getStatusLabel } from './phase8-ui-
 function SectionHeader(props: { eyebrow: string; title: string; description: string }): React.ReactElement {
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">{props.eyebrow}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{props.eyebrow}</p>
       <h2 className="text-xl font-bold text-slate-950">{props.title}</h2>
       <p className="max-w-3xl text-sm text-slate-600">{props.description}</p>
     </div>
@@ -42,7 +42,7 @@ export function ContentCommandPhase8Workspace(): React.ReactElement {
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {phase8Kpis.map((kpi) => (
             <div key={kpi.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-9500">{kpi.label}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{kpi.label}</p>
               <p className="mt-2 text-3xl font-bold text-slate-950">{kpi.value}</p>
               <p className="mt-1 text-sm text-slate-600">{kpi.detail}</p>
             </div>
@@ -63,7 +63,7 @@ export function ContentCommandPhase8Workspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-950">{item.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">Owner: {item.owner} · Due: {item.dueDate}</p>
+                    <p className="mt-1 text-xs text-slate-500">Owner: {item.owner} · Due: {item.dueDate}</p>
                   </div>
                   <div className="flex gap-2">
                     <StatusBadge label={getStatusLabel(item.status)} />
@@ -87,7 +87,7 @@ export function ContentCommandPhase8Workspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-950">{asset.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">
+                    <p className="mt-1 text-xs text-slate-500">
                       {asset.format.toUpperCase()} · {asset.campaign} · {asset.language.toUpperCase()}
                     </p>
                   </div>
@@ -111,12 +111,12 @@ export function ContentCommandPhase8Workspace(): React.ReactElement {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold text-slate-950">{item.deliverable}</p>
-                  <p className="mt-1 text-xs text-slate-9500">{item.campaign} · Owner: {item.owner}</p>
+                  <p className="mt-1 text-xs text-slate-500">{item.campaign} · Owner: {item.owner}</p>
                 </div>
                 <StatusBadge label={getStatusLabel(item.status)} />
               </div>
               <div className="mt-4">
-                <div className="flex items-center justify-between text-xs text-slate-9500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>{getProgressLabel(item.readiness)}</span>
                   <span>{item.readiness}%</span>
                 </div>
@@ -142,11 +142,11 @@ export function ContentCommandPhase8Workspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-950">{sheet.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{sheet.category}</p>
+                    <p className="mt-1 text-xs text-slate-500">{sheet.category}</p>
                   </div>
                   <StatusBadge label={getStatusLabel(sheet.status)} />
                 </div>
-                <p className="mt-3 text-xs text-slate-9500">
+                <p className="mt-3 text-xs text-slate-500">
                   SEO: {sheet.seoScore}% · Completeness: {sheet.completeness}%
                 </p>
               </div>
@@ -166,7 +166,7 @@ export function ContentCommandPhase8Workspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-950">{brand.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{brand.type.toUpperCase()} · {brand.notes}</p>
+                    <p className="mt-1 text-xs text-slate-500">{brand.type.toUpperCase()} · {brand.notes}</p>
                   </div>
                   <StatusBadge label={brand.approved ? 'Approved' : 'Review'} />
                 </div>

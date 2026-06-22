@@ -102,7 +102,9 @@ type PageConfig = {
 }
 
 const emptySnapshot: AmbassadorWorkspaceSnapshot = {
+  records: [],
   ambassadors: [],
+  archivedRecords: [],
   territories: [],
   missions: [],
   recruitment: [],
@@ -111,9 +113,13 @@ const emptySnapshot: AmbassadorWorkspaceSnapshot = {
   goals: [],
   incentives: [],
   reports: [],
-  settings: null,
+  settings: {},
+  stats: {},
+  kpis: {},
+  activity: [],
   audit: [],
   diagnostics: [],
+  updatedAt: new Date().toISOString(),
 }
 
 const pageConfig: Record<AmbassadorWorkspaceMode, PageConfig> = {
@@ -679,7 +685,11 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
     else setLoading(true)
     const response = await loadAmbassadorSnapshot()
     if (response.data) setSnapshot(response.data)
-    setError(response.ok ? null : response.error || "Ambassador workspace failed to load")
+    setError(
+      (response as any)?.ok === false
+        ? ((response as any)?.error || "Ambassador workspace failed to load")
+        : null,
+    )
     setLoading(false)
     setRefreshing(false)
   }, [])
@@ -884,7 +894,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         assigned_owner: item?.assigned_owner || "",
         due_date: item?.due_date?.slice(0, 10) || "",
         notes: item?.notes || "",
-        checklist: item?.checklist?.map((step) => step.label).join("\n") || "Profile verified\nFiles collected\nOrientation completed\nTraining assigned\nTerritory confirmed",
+        checklist: item?.checklist?.map((step: AmbassadorChecklistItem) => step.label).join("\n") || "Profile verified\nFiles collected\nOrientation completed\nTraining assigned\nTerritory confirmed",
       }
     }
     if (kind === "training") {
@@ -1672,7 +1682,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   }
 
   function checklistForm(record: AmbassadorOnboardingRecord) {
-    return <section className="grid gap-3">{record.checklist.length ? record.checklist.map((step) => <button type="button" key={step.id} disabled={saving} onClick={() => void completeOnboardingStep(record, step)} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold hover:border-violet-300"><span>{step.label}</span><StatusBadge status={step.done ? "completed" : "pending"} /></button>) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-9500">No checklist items yet. Edit this onboarding plan to add checklist items.</div>}</section>
+    return <section className="grid gap-3">{record.checklist.length ? record.checklist.map((step: AmbassadorChecklistItem) => <button type="button" key={step.id} disabled={saving} onClick={() => void completeOnboardingStep(record, step)} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold hover:border-violet-300"><span>{step.label}</span><StatusBadge status={step.done ? "completed" : "pending"} /></button>) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-9500">No checklist items yet. Edit this onboarding plan to add checklist items.</div>}</section>
   }
 
   function trainingForm() {

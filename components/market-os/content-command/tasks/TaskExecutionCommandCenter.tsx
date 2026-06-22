@@ -116,7 +116,7 @@ export function TaskExecutionCommandCenter() {
                     <Badge kind="priority">{task.priority}</Badge>
                   </div>
                   <h3 className="mt-4 text-lg font-black text-slate-950">{task.title}</h3>
-                  <p className="mt-2 text-xs font-bold text-slate-9500">
+                  <p className="mt-2 text-xs font-bold text-slate-500">
                     {task.id} · {task.owner} · Due: {task.dueDate || "--"}
                   </p>
                   <div className="mt-4 grid grid-cols-2 gap-2">

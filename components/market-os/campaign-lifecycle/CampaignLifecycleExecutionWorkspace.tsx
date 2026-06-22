@@ -24,41 +24,7 @@ type SidebarKey = "command" | "execution" | "management" | "create" | "launch" |
 
 type Campaign = {
   id: string
-  lifecycleStatus?: "active" | "paused" | "archived"
-  name: string
-  objective: string
-  campaignType: string
-  targetAudience: string
-  marketSegment: string
-  businessAxis: string
-  channelMix: string
-  geography: string
-  offer: string
-  landingOrLocation: string
-  owner: string
-  team: string
-  channel: string
-  stage: Stage
-  risk: Risk
-  startDate: string
-  launchDate: string
-  endDate: string
-  budgetMad: number
-  spentMad: number
-  revenueMad: number
-  leads: number
-  readiness: number
-  primaryKpi: string
-  secondaryKpi: string
-  trackingPlan: string
-  approvalNeed: string
-  assetNeed: string
-  complianceNotes: string
-  notes: string
-  commandNotes: string
-  nextDecision: string
-  createdAt: string
-  updatedAt: string
+  [key: string]: any
 }
 
 type Task = {
@@ -109,6 +75,7 @@ type WorkspaceState = {
   risks: RiskRecord[]
   logs: Log[]
   selectedId: string | null
+  selectedTaskId: string | null
 }
 
 type ModalMode = "create" | "edit"
@@ -369,6 +336,7 @@ const emptyState: WorkspaceState = {
   risks: [],
   logs: [],
   selectedId: null,
+  selectedTaskId: null,
 }
 
 function emptyCampaignDraft(): Campaign {
@@ -432,6 +400,7 @@ function parseState(raw: string | null): WorkspaceState {
       risks: Array.isArray(parsed.risks) ? parsed.risks : [],
       logs: Array.isArray(parsed.logs) ? parsed.logs : [],
       selectedId: typeof parsed.selectedId === "string" ? parsed.selectedId : null,
+      selectedTaskId: typeof parsed.selectedTaskId === "string" ? parsed.selectedTaskId : null,
     }
   } catch {
     return emptyState
@@ -529,6 +498,13 @@ export default function CampaignLifecycleExecutionWorkspace() {
   const [taskOpsMonth, setTaskOpsMonth] = useState(() => isoToday().slice(0, 7))
   const [taskOpsDate, setTaskOpsDate] = useState(() => isoToday())
   const [selectedTaskOpsId, setSelectedTaskOpsId] = useState<string | null>(null)
+  const [taskViewMode, setTaskViewMode] = useState<"grid" | "row">("grid")
+  const [taskImportOpen, setTaskImportOpen] = useState(false)
+  const [campaignImportOpen, setCampaignImportOpen] = useState(false)
+  const [campaignCsvText, setCampaignCsvText] = useState("")
+  const [campaignImportReport, setCampaignImportReport] = useState<{ ok: number; rejected: number; message: string } | null>(null)
+  const [taskCsvText, setTaskCsvText] = useState("")
+  const [taskImportReport, setTaskImportReport] = useState<{ ok: number; rejected: number; message: string } | null>(null)
   const [selectedDatesCampaignId, setSelectedDatesCampaignId] = useState<string | null>(null)
   const [managementQuery, setManagementQuery] = useState("")
   const [managementStage, setManagementStage] = useState<"all" | Campaign["stage"]>("all")
@@ -748,6 +724,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
     if (!campaignId) return
     const campaign = state.campaigns.find((item) => item.id === campaignId)
     const nextCampaigns = state.campaigns.filter((item) => item.id !== campaignId)
+    if (selectedDatesCampaignId === campaignId) setSelectedDatesCampaignId(null)
     commit(
       {
         campaigns: nextCampaigns,
@@ -756,6 +733,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
         risks: state.risks.filter((item) => item.campaignId !== campaignId),
         logs: state.logs.filter((item) => item.campaignId !== campaignId),
         selectedId: nextCampaigns[0]?.id || null,
+        selectedTaskId: state.selectedTaskId,
       },
       "Campaign permanently deleted",
       campaign?.name || "Deleted campaign",
@@ -1049,7 +1027,362 @@ export default function CampaignLifecycleExecutionWorkspace() {
     )
   })
 
-  const selectedTaskOps = filteredTaskOps.find((task) => task.id === selectedTaskOpsId) || filteredTaskOps[0] || null
+  
+  
+  const CAMPAIGN_CSV_HEADERS = [
+    "name",
+    "objective",
+    "owner",
+    "team",
+    "channel",
+    "channelMix",
+    "type",
+    "audience",
+    "stage",
+    "status",
+    "risk",
+    "lifecycleStatus",
+    "budgetMad",
+    "spentMad",
+    "revenueMad",
+    "leads",
+    "readiness",
+    "startDate",
+    "endDate"
+  ]
+
+  function parseCampaignCsvRows(text: string) {
+    const lines = text
+      .replace(/\r/g, "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    if (!lines.length) return []
+
+    const splitLine = (line: string) => {
+      const cells: string[] = []
+      let current = ""
+      let quoted = false
+
+      for (let i = 0; i < line.length; i += 1) {
+        const char = line[i]
+        const next = line[i + 1]
+
+        if (char === '"' && quoted && next === '"') {
+          current += '"'
+          i += 1
+          continue
+        }
+
+        if (char === '"') {
+          quoted = !quoted
+          continue
+        }
+
+        if (char === "," && !quoted) {
+          cells.push(current.trim())
+          current = ""
+          continue
+        }
+
+        current += char
+      }
+
+      cells.push(current.trim())
+      return cells
+    }
+
+    const headers = splitLine(lines[0]).map((h) => h.trim())
+    const hasHeader = headers.some((h) => CAMPAIGN_CSV_HEADERS.includes(h))
+    const finalHeaders = hasHeader ? headers : CAMPAIGN_CSV_HEADERS
+    const dataLines = hasHeader ? lines.slice(1) : lines
+
+    return dataLines.map((line, index) => {
+      const cells = splitLine(line)
+      const row: Record<string, string> = { _row: String(index + 2) }
+      finalHeaders.forEach((header, cellIndex) => {
+        row[header] = cells[cellIndex] || ""
+      })
+      return row
+    })
+  }
+
+  function downloadCampaignCsvTemplate() {
+    const sample = [
+      "B2B Crèches Premium — Diagnostic Confiance 30 jours",
+      "Obtenir des rendez-vous qualifiés avec crèches, maternelles et préscolaires privés pour vendre un diagnostic AngelCare puis un pilote 30 jours.",
+      "Direction Stratégie & Partenariats",
+      "Market-OS",
+      "WhatsApp",
+      "WhatsApp + appels B2B",
+      "Acquisition B2B",
+      "B2B",
+      "planning",
+      "active",
+      "medium",
+      "active",
+      "300",
+      "0",
+      "0",
+      "0",
+      "45",
+      "2026-06-28",
+      "2026-07-30"
+    ]
+
+    const csv = [
+      CAMPAIGN_CSV_HEADERS.join(","),
+      sample.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(",")
+    ].join("\n")
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "angelcare-market-os-campaign-import-template.csv"
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function importCampaignCsvText() {
+    const rows = parseCampaignCsvRows(campaignCsvText)
+    const now = new Date().toISOString()
+    const imported: Campaign[] = []
+    let rejected = 0
+
+    rows.forEach((row, index) => {
+      const name = (row.name || row.title || "").trim()
+      if (!name) {
+        rejected += 1
+        return
+      }
+
+      const budgetMad = Number(row.budgetMad || row.budget || 0) || 0
+      const spentMad = Number(row.spentMad || row.spend || 0) || 0
+      const revenueMad = Number(row.revenueMad || row.revenue || 0) || 0
+      const leads = Number(row.leads || 0) || 0
+      const readiness = Number(row.readiness || row.ready || 0) || 0
+
+      imported.push({
+        id: `campaign_csv_${Date.now()}_${index}`,
+        name,
+        title: name,
+        objective: row.objective || "",
+        owner: row.owner || "Market-OS",
+        team: row.team || "ANGELCARE",
+        channel: row.channel || "WhatsApp",
+        channelMix: row.channelMix || row.channel || "WhatsApp",
+        type: row.type || "Acquisition B2B",
+        audience: row.audience || "B2B",
+        stage: row.stage || "planning",
+        status: row.status || "active",
+        risk: row.risk || "medium",
+        lifecycleStatus: row.lifecycleStatus || row.status || "active",
+        budgetMad,
+        spentMad,
+        revenueMad,
+        leads,
+        readiness,
+        startDate: row.startDate || "",
+        endDate: row.endDate || "",
+        createdAt: now,
+        updatedAt: now
+      } as Campaign)
+    })
+
+    if (!imported.length) {
+      setCampaignImportReport({ ok: 0, rejected, message: "No valid campaign rows found. Each row needs at least a name." })
+      return
+    }
+
+    commit(
+      {
+        ...state,
+        campaigns: [...imported, ...state.campaigns],
+        selectedId: imported[0]?.id || state.selectedId
+      } as WorkspaceState,
+      "Campaigns imported from CSV",
+      `${imported.length} imported · ${rejected} rejected`,
+      imported[0]?.id
+    )
+
+    setCampaignImportReport({ ok: imported.length, rejected, message: `${imported.length} campaigns imported successfully.` })
+    setCampaignCsvText("")
+    setCampaignImportOpen(false)
+  }
+
+const TASK_CSV_HEADERS = [
+    "title",
+    "description",
+    "campaign",
+    "owner",
+    "workstream",
+    "status",
+    "priority",
+    "startDateTime",
+    "endDateTime",
+    "dueDate"
+  ]
+
+  function parseTaskCsvRows(text: string) {
+    const lines = text
+      .replace(/\r/g, "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    if (!lines.length) return []
+
+    const splitLine = (line: string) => {
+      const cells: string[] = []
+      let current = ""
+      let quoted = false
+
+      for (let i = 0; i < line.length; i += 1) {
+        const char = line[i]
+        const next = line[i + 1]
+
+        if (char === '"' && quoted && next === '"') {
+          current += '"'
+          i += 1
+          continue
+        }
+
+        if (char === '"') {
+          quoted = !quoted
+          continue
+        }
+
+        if (char === "," && !quoted) {
+          cells.push(current.trim())
+          current = ""
+          continue
+        }
+
+        current += char
+      }
+
+      cells.push(current.trim())
+      return cells
+    }
+
+    const headers = splitLine(lines[0]).map((h) => h.trim())
+    const hasHeader = headers.some((h) => TASK_CSV_HEADERS.includes(h))
+
+    const finalHeaders = hasHeader ? headers : TASK_CSV_HEADERS
+    const dataLines = hasHeader ? lines.slice(1) : lines
+
+    return dataLines.map((line, index) => {
+      const cells = splitLine(line)
+      const row: Record<string, string> = { _row: String(index + 2) }
+      finalHeaders.forEach((header, cellIndex) => {
+        row[header] = cells[cellIndex] || ""
+      })
+      return row
+    })
+  }
+
+  function downloadTaskCsvTemplate() {
+    const rows = [
+      TASK_CSV_HEADERS.join(","),
+      [
+        "Cartographier 40 crèches premium Rabat-Salé",
+        "Créer une liste priorisée de crèches, maternelles et préscolaires privés avec contacts et notes d'approche.",
+        state.campaigns[0]?.name || "B2B Crèches Premium — Diagnostic Confiance 30 jours",
+        "Market-OS",
+        "Prospection",
+        "todo",
+        "high",
+        "2026-06-22T10:30",
+        "2026-06-22T12:00",
+        "2026-06-22"
+      ].map((value) => `"${String(value).replace(/"/g, '""')}"`).join(",")
+    ].join("\n")
+
+    const blob = new Blob([rows], { type: "text/csv;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "angelcare-market-os-task-import-template.csv"
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function importTaskCsvText() {
+    const rows = parseTaskCsvRows(taskCsvText)
+    const now = new Date().toISOString()
+    const imported: Task[] = []
+    let rejected = 0
+
+    rows.forEach((row, index) => {
+      const title = (row.title || "").trim()
+      if (!title) {
+        rejected += 1
+        return
+      }
+
+      const campaignName = (row.campaign || "").trim()
+      const matchedCampaign = campaignName
+        ? state.campaigns.find((campaign) =>
+            [campaign.id, campaign.name, campaign.title].filter(Boolean).some((value) =>
+              String(value).toLowerCase() === campaignName.toLowerCase()
+            )
+          )
+        : state.campaigns[0]
+
+      const startDateTime = (row.startDateTime || row.start_date_time || row.start || "").trim()
+      const endDateTime = (row.endDateTime || row.end_date_time || row.end || "").trim()
+      const dueDate = (row.dueDate || row.due_date || endDateTime || startDateTime || "").slice(0, 10)
+
+      imported.push({
+        id: `task_csv_${Date.now()}_${index}`,
+        campaignId: matchedCampaign?.id || state.campaigns[0]?.id || "",
+        title,
+        description: row.description || "",
+        owner: row.owner || "Market-OS",
+        workstream: row.workstream || "Execution",
+        status: (["todo", "doing", "done", "blocked"].includes((row.status || "").toLowerCase())
+          ? (row.status || "todo").toLowerCase()
+          : "todo") as TaskStatus,
+        priority: (["low", "medium", "high"].includes((row.priority || "").toLowerCase())
+          ? (row.priority || "medium").toLowerCase()
+          : "medium") as Task["priority"],
+        dueDate,
+        startDateTime,
+        endDateTime,
+        createdAt: now,
+        updatedAt: now
+      } as Task)
+    })
+
+    if (!imported.length) {
+      setTaskImportReport({ ok: 0, rejected, message: "No valid task rows found. Each row needs at least a title." })
+      return
+    }
+
+    commit(
+      {
+        ...state,
+        selectedId: imported[0]?.campaignId || state.selectedId,
+        tasks: [...imported, ...state.tasks],
+        selectedTaskId: imported[0]?.id || state.selectedTaskId
+      } as WorkspaceState,
+      "Tasks imported from CSV",
+      `${imported.length} imported · ${rejected} rejected`,
+      imported[0]?.campaignId
+    )
+
+    setTaskImportReport({ ok: imported.length, rejected, message: `${imported.length} tasks imported successfully.` })
+    setTaskCsvText("")
+    setTaskImportOpen(false)
+  }
+
+const selectedTaskOps = filteredTaskOps.find((task) => task.id === selectedTaskOpsId) || filteredTaskOps[0] || null
   const selectedDatesCampaign =
     state.campaigns.find((campaign) => campaign.id === selectedDatesCampaignId) ||
     selected ||
@@ -1576,6 +1909,52 @@ export default function CampaignLifecycleExecutionWorkspace() {
     ? `${Math.floor(taskOpsAvgDurationMinutes / 60)}h ${taskOpsAvgDurationMinutes % 60}m`
     : "—"
 
+  function campaignTimelineDaysLeft(campaign: any) {
+    return remainingCampaignDays(campaign as Campaign)
+  }
+
+  function campaignTimelineProgress(campaign: any) {
+    return campaignElapsedPct(campaign as Campaign)
+  }
+
+  function timelineRowTone(daysLeft: number, progress: number) {
+    if (daysLeft <= 0) return {
+      shell: "border-rose-200 bg-gradient-to-r from-rose-50 via-white to-rose-50",
+      icon: "bg-rose-50 text-rose-700 border-rose-200",
+      badge: "border-rose-200 bg-rose-50 text-rose-700",
+      bar: "bg-rose-500",
+      dot: "bg-rose-500",
+      label: "Expired"
+    }
+
+    if (progress >= 80 || daysLeft <= 7) return {
+      shell: "border-rose-200 bg-gradient-to-r from-rose-50 via-white to-orange-50",
+      icon: "bg-rose-50 text-rose-700 border-rose-200",
+      badge: "border-rose-200 bg-rose-50 text-rose-700",
+      bar: "bg-rose-500",
+      dot: "bg-rose-500",
+      label: "Expiring soon"
+    }
+
+    if (progress >= 50 || daysLeft <= 20) return {
+      shell: "border-orange-200 bg-gradient-to-r from-orange-50 via-white to-amber-50",
+      icon: "bg-orange-50 text-orange-700 border-orange-200",
+      badge: "border-orange-200 bg-orange-50 text-orange-700",
+      bar: "bg-orange-500",
+      dot: "bg-orange-500",
+      label: "Watch timing"
+    }
+
+    return {
+      shell: "border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-cyan-50",
+      icon: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      badge: "border-emerald-200 bg-emerald-50 text-emerald-700",
+      bar: "bg-emerald-500",
+      dot: "bg-emerald-500",
+      label: "Healthy timing"
+    }
+  }
+
   function exportWorkspace() {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" })
     const url = URL.createObjectURL(blob)
@@ -2100,7 +2479,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                     </button>
 
                     <div className="flex gap-2">
-                      <button type="button" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm">Import</button>
+                      <button type="button" className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm" onClick={() => setCampaignImportOpen(true)}>Import</button>
                       <button type="button" onClick={exportWorkspace} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm">Export</button>
                     </div>
                   </div>
@@ -2278,8 +2657,8 @@ export default function CampaignLifecycleExecutionWorkspace() {
                                     <td className="px-4 py-4 align-middle text-xs font-black text-slate-700">{campaign.owner || "Unassigned"}</td>
 
                                     <td className="px-4 py-4 align-middle">
-                                      <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(stageLabel[campaign.stage])}`}>
-                                        {stageLabel[campaign.stage]}
+                                      <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(stageLabel[campaign.stage as Stage])}`}>
+                                        {stageLabel[campaign.stage as Stage]}
                                       </span>
                                     </td>
 
@@ -2291,8 +2670,8 @@ export default function CampaignLifecycleExecutionWorkspace() {
 
                                     <td className="px-4 py-4 align-middle">
                                       <div className="flex flex-col gap-1.5">
-                                        <span className={`inline-flex w-fit rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(riskLabel[campaign.risk])}`}>
-                                          {riskLabel[campaign.risk]}
+                                        <span className={`inline-flex w-fit rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(riskLabel[campaign.risk as Risk])}`}>
+                                          {riskLabel[campaign.risk as Risk]}
                                         </span>
                                         <span className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-[10px] font-black ${expiry.badge}`}>
                                           {expiry.label}
@@ -2374,9 +2753,9 @@ export default function CampaignLifecycleExecutionWorkspace() {
                                 </div>
 
                                 <div className="mt-4 flex flex-wrap gap-2">
-                                  <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(stageLabel[campaign.stage])}`}>{stageLabel[campaign.stage]}</span>
+                                  <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(stageLabel[campaign.stage as Stage])}`}>{stageLabel[campaign.stage as Stage]}</span>
                                   <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(status)}`}>{status}</span>
-                                  <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(riskLabel[campaign.risk])}`}>{riskLabel[campaign.risk]}</span>
+                                  <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${directoryChipClass(riskLabel[campaign.risk as Risk])}`}>{riskLabel[campaign.risk as Risk]}</span>
                                 </div>
 
                                 <div className="mt-5 grid grid-cols-2 gap-3">
@@ -2460,7 +2839,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                                 <Pill tone="blue">{managementChannelName(selectedManagementCampaign)}</Pill>
                                 <Pill tone="violet">{selectedManagementCampaign.campaignType || "Campaign"}</Pill>
                                 <Pill tone="slate">{managementAudienceType(selectedManagementCampaign)}</Pill>
-                                <Pill tone={riskTone(selectedManagementCampaign.risk) as any}>{riskLabel[selectedManagementCampaign.risk]}</Pill>
+                                <Pill tone={riskTone(selectedManagementCampaign.risk) as any}>{riskLabel[selectedManagementCampaign.risk as Risk]}</Pill>
                               </div>
                             </div>
 
@@ -3344,7 +3723,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                               <div key={campaign.id} className="grid gap-3 rounded-[22px] border border-slate-200 bg-white p-3 shadow-sm md:grid-cols-[1fr_95px_95px_95px_auto]">
                                 <div>
                                   <p className="text-sm font-black text-slate-950">{campaign.name}</p>
-                                  <p className="text-xs font-bold text-slate-500">{stageLabel[campaign.stage]} • {campaign.owner || "Unassigned"}</p>
+                                  <p className="text-xs font-bold text-slate-500">{stageLabel[campaign.stage as Stage]} • {campaign.owner || "Unassigned"}</p>
                                 </div>
                                 <div>
                                   <p className="text-[10px] font-black uppercase text-slate-400">Leads</p>
@@ -3466,6 +3845,40 @@ export default function CampaignLifecycleExecutionWorkspace() {
                           <div className="flex items-center justify-between gap-3">
                             <div>
                               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">Live Date</p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <div className="rounded-[18px] border border-slate-200 bg-white p-1 shadow-sm">
+                        <button
+                          type="button"
+                          onClick={() => setTaskViewMode("grid")}
+                          className={`rounded-[14px] px-4 py-2 text-xs font-black transition ${taskViewMode === "grid" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          Grid view
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTaskViewMode("row")}
+                          className={`rounded-[14px] px-4 py-2 text-xs font-black transition ${taskViewMode === "row" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          Row view
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setTaskImportOpen(true)}
+                        className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-black text-emerald-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                      >
+                        Import CSV tasks
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={downloadTaskCsvTemplate}
+                        className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                      >
+                        Download task template
+                      </button>
+                    </div>
                               <p className="mt-1 text-sm font-black text-slate-950">{prettyTaskDate(taskOpsDate)}</p>
                             </div>
                             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-50 text-lg font-black text-blue-700">▦</span>
@@ -3514,7 +3927,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                       </div>
                     </div>
 
-                    <div className="grid gap-4 p-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+                    <div className="grid items-start gap-4 p-5 xl:grid-cols-[minmax(0,1fr)_460px]">
                       <div className="max-h-[620px] overflow-auto pr-2">
                         <div className="w-full min-w-[1280px] space-y-5">
                           {filteredTaskOps.length ? filteredTaskOps.map((task) => {
@@ -3529,9 +3942,11 @@ export default function CampaignLifecycleExecutionWorkspace() {
                                   : "border-emerald-200 bg-emerald-50 text-emerald-700"
 
                             return (
-                              <div role="button" tabIndex={0}
+                              <div
+                                role="button"
+                                tabIndex={0}
                                 key={task.id}
-                                 data-task-ops-row="true"
+                                data-task-ops-row="true"
                                 data-task-ops-row-force="true"
                                 onClick={() => setSelectedTaskOpsId(task.id)}
                                 onKeyDown={(event) => {
@@ -3539,41 +3954,132 @@ export default function CampaignLifecycleExecutionWorkspace() {
                                     setSelectedTaskOpsId(task.id)
                                   }
                                 }}
-                                className={`grid w-full grid-cols-1 gap-5 rounded-[30px] border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg xl:grid-cols-[minmax(380px,2fr)_minmax(190px,1fr)_minmax(190px,1fr)_minmax(190px,1fr)_minmax(150px,.8fr)_minmax(150px,.8fr)] lg:grid-cols-3 md:grid-cols-2 ${
-                                  isSelected ? "border-blue-300 bg-blue-50/50 ring-4 ring-blue-50" : "border-slate-200 bg-white"
+                                className={`group relative grid w-full cursor-pointer grid-cols-1 gap-5 overflow-hidden rounded-[34px] border p-6 text-left transition duration-200 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(15,23,42,0.13)] 2xl:grid-cols-[minmax(390px,2.05fr)_minmax(220px,1fr)_minmax(220px,1fr)_minmax(220px,1fr)_minmax(170px,.82fr)_minmax(170px,.82fr)_48px] xl:grid-cols-[minmax(340px,1.7fr)_minmax(190px,1fr)_minmax(190px,1fr)_minmax(190px,1fr)_minmax(150px,.82fr)_minmax(150px,.82fr)_44px] lg:grid-cols-3 md:grid-cols-2 ${
+                                  isSelected
+                                    ? "border-blue-300 bg-blue-50/60 ring-4 ring-blue-50 shadow-[0_26px_70px_rgba(37,99,235,0.16)]"
+                                    : "border-slate-200 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.07)]"
                                 }`}
                               >
-                                <div className="min-w-0">
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    <span className="grid h-9 w-9 place-items-center rounded-2xl bg-blue-50 text-sm font-black text-blue-700">□</span>
-                                    <p className="truncate text-sm font-black text-slate-950">{task.title}</p>
+                                <div className={`pointer-events-none absolute inset-y-0 left-0 w-1.5 ${
+                                  task.status === "done" ? "bg-emerald-500" :
+                                  task.status === "doing" ? "bg-blue-500" :
+                                  task.status === "blocked" ? "bg-rose-500" :
+                                  "bg-sky-500"
+                                }`} />
+
+                                <div className="pointer-events-none absolute -right-20 -top-24 h-52 w-52 rounded-full bg-blue-100/50 blur-3xl transition group-hover:scale-125" />
+                                <div className="pointer-events-none absolute -bottom-24 left-1/4 h-44 w-44 rounded-full bg-emerald-100/50 blur-3xl" />
+
+                                <div className="relative grid grid-cols-[72px_minmax(0,1fr)] items-center gap-5">
+                                  <div className={`grid h-[72px] w-[72px] place-items-center rounded-[26px] text-3xl shadow-[0_18px_42px_rgba(15,23,42,0.10)] ${
+                                    task.status === "done" ? "bg-emerald-50 text-emerald-700" :
+                                    task.status === "doing" ? "bg-blue-50 text-blue-700" :
+                                    task.status === "blocked" ? "bg-rose-50 text-rose-700" :
+                                    "bg-sky-50 text-sky-700"
+                                  }`}>
+                                    {task.status === "done" ? "✓" : task.status === "doing" ? "↻" : task.status === "blocked" ? "!" : "▣"}
                                   </div>
-                                  <p className="mt-1 truncate text-xs font-bold text-slate-500">{campaign?.name || "No campaign"} • {task.workstream || "Execution"}</p>
-                                  {task.description ? (
-                                    <p className="mt-1 line-clamp-2 text-xs font-semibold text-slate-400">{task.description}</p>
-                                  ) : null}
+
+                                  <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <h4 className="truncate text-xl font-black tracking-[-0.04em] text-slate-950">
+                                        {task.title}
+                                      </h4>
+                                      {task.status === "blocked" ? (
+                                        <span className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-rose-700">
+                                          Blocked
+                                        </span>
+                                      ) : null}
+                                    </div>
+
+                                    <p className="mt-2 text-sm font-extrabold text-slate-500">
+                                      {campaign?.name || "No campaign"} <span className="text-slate-300">•</span> {task.workstream || "Execution"}
+                                    </p>
+
+                                    {task.description ? (
+                                      <p className="mt-2 line-clamp-2 text-xs font-bold leading-5 text-slate-400">
+                                        {task.description}
+                                      </p>
+                                    ) : (
+                                      <p className="mt-2 text-xs font-bold leading-5 text-slate-400">
+                                        No description written yet.
+                                      </p>
+                                    )}
+                                  </div>
                                 </div>
 
-                                <div>
-                                  <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Owner</p>
-                                  <p className="mt-1 truncate text-xs font-black text-slate-700">{task.owner || "Unassigned"}</p>
+                                <div className="relative rounded-[24px] border border-slate-200 bg-slate-50/80 p-4 shadow-sm">
+                                  <p className="text-[10px] font-black uppercase tracking-[0.20em] text-slate-400">Owner</p>
+                                  <div className="mt-3 flex items-center gap-3">
+                                    <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 text-xs font-black text-white shadow-[0_14px_32px_rgba(37,99,235,0.22)]">
+                                      {(task.owner || "MO").slice(0, 2).toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-black text-slate-950">{task.owner || "Unassigned"}</p>
+                                      <p className="text-xs font-bold text-slate-400">Campaign operator</p>
+                                    </div>
+                                  </div>
                                 </div>
 
-                                <div>
-                                  <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Start</p>
-                                  <p className="mt-1 text-xs font-black text-slate-700">{formatDateTime(taskStartDateTime(task))}</p>
+                                <div className="relative rounded-[24px] border border-blue-100 bg-blue-50/70 p-4 shadow-sm">
+                                  <p className="text-[10px] font-black uppercase tracking-[0.20em] text-blue-500">Start</p>
+                                  <div className="mt-3 flex items-center gap-3">
+                                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-lg font-black text-blue-700 shadow-sm">▦</span>
+                                    <div>
+                                      <p className="text-sm font-black text-slate-950">
+                                        {new Date(task.startDateTime || `${task.dueDate || isoToday()}T09:00`).toLocaleString([], { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                                      </p>
+                                      <p className="text-xs font-bold text-slate-400">Start window</p>
+                                    </div>
+                                  </div>
                                 </div>
 
-                                <div>
-                                  <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">End</p>
-                                  <p className="mt-1 text-xs font-black text-slate-700">{formatDateTime(taskEndDateTime(task))}</p>
+                                <div className="relative rounded-[24px] border border-violet-100 bg-violet-50/60 p-4 shadow-sm">
+                                  <p className="text-[10px] font-black uppercase tracking-[0.20em] text-violet-500">End</p>
+                                  <div className="mt-3 flex items-center gap-3">
+                                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-lg font-black text-violet-700 shadow-sm">▣</span>
+                                    <div>
+                                      <p className="text-sm font-black text-slate-950">
+                                        {new Date(task.endDateTime || `${task.dueDate || isoToday()}T17:00`).toLocaleString([], { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                                      </p>
+                                      <p className="text-xs font-bold text-slate-400">Target close</p>
+                                    </div>
+                                  </div>
                                 </div>
 
-                                <Pill tone={(statusTone) as "blue" | "emerald" | "rose" | "amber" | "violet" | "slate"}>{task.status}</Pill>
+                                <div className="relative flex flex-col justify-center rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                                  <p className="text-[10px] font-black uppercase tracking-[0.20em] text-slate-400">Status</p>
+                                  <span className={`mt-3 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-[11px] font-black uppercase tracking-[0.13em] ${
+                                    task.status === "done" ? "border-emerald-200 bg-emerald-50 text-emerald-700" :
+                                    task.status === "doing" ? "border-blue-200 bg-blue-50 text-blue-700" :
+                                    task.status === "blocked" ? "border-rose-200 bg-rose-50 text-rose-700" :
+                                    "border-slate-200 bg-slate-50 text-slate-700"
+                                  }`}>
+                                    <span className={`h-2 w-2 rounded-full ${
+                                      task.status === "done" ? "bg-emerald-500" :
+                                      task.status === "doing" ? "animate-pulse bg-blue-500" :
+                                      task.status === "blocked" ? "animate-pulse bg-rose-500" :
+                                      "bg-slate-400"
+                                    }`} />
+                                    {task.status}
+                                  </span>
+                                </div>
 
-                                <span className={`rounded-full border px-3 py-1 text-center text-[10px] font-black uppercase tracking-[0.12em] ${priorityClass}`}>
-                                  {task.priority}
-                                </span>
+                                <div className="relative flex flex-col justify-center rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                                  <p className="text-[10px] font-black uppercase tracking-[0.20em] text-slate-400">Priority</p>
+                                  <span className={`mt-3 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-[11px] font-black uppercase tracking-[0.13em] ${
+                                    task.priority === "high" ? "border-rose-200 bg-rose-50 text-rose-700" :
+                                    task.priority === "medium" ? "border-amber-200 bg-amber-50 text-amber-700" :
+                                    "border-blue-200 bg-blue-50 text-blue-700"
+                                  }`}>
+                                    {task.priority === "high" ? "↑" : task.priority === "medium" ? "◆" : "↓"}
+                                    {task.priority}
+                                  </span>
+                                </div>
+
+                                <div className="relative grid place-items-center rounded-[22px] border border-slate-200 bg-white shadow-sm">
+                                  <span className="text-2xl font-black text-slate-400">⋮</span>
+                                </div>
                               </div>
                             )
                           }) : (
@@ -3586,9 +4092,13 @@ export default function CampaignLifecycleExecutionWorkspace() {
                       </div>
 
                       <div className="rounded-[28px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm">
+                        <div className="mb-4 border-b border-slate-100 pb-4">
                         <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">Selected Task</p>
+                        <h4 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950">Task control panel</h4>
+                        <p className="mt-1 text-xs font-bold leading-5 text-slate-500">Edit task content, owner, status, priority and execution timing.</p>
+                      </div>
                         {selectedTaskOps ? (
-                          <div className="mt-4 grid gap-3">
+                          <div className={taskViewMode === "row" ? "mt-5 max-h-[620px] overflow-auto rounded-[28px] border border-slate-200 bg-white" : "mt-5 grid max-h-[620px] grid-cols-1 gap-4 overflow-y-auto pr-2 xl:grid-cols-2"}>
                             <Field label="Task title">
                               <Input value={selectedTaskOps.title} onChange={(event) => updateTask(selectedTaskOps.id, { title: event.target.value })} />
                             </Field>
@@ -3597,7 +4107,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                               <textarea
                                 value={selectedTaskOps.description || ""}
                                 onChange={(event) => updateTask(selectedTaskOps.id, { description: event.target.value })}
-                                className="min-h-[110px] w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50"
+                                className="min-h-[150px] w-full min-w-0 resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-700 shadow-sm outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-50"
                                 placeholder="Describe task objective, expected output, dependencies, instructions and acceptance criteria..."
                               />
                             </Field>
@@ -3610,7 +4120,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                               <Input value={selectedTaskOps.workstream || ""} onChange={(event) => updateTask(selectedTaskOps.id, { workstream: event.target.value })} />
                             </Field>
 
-                            <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="grid gap-3">
                               <Field label="Status">
                                 <Select value={selectedTaskOps.status} onChange={(event) => updateTask(selectedTaskOps.id, { status: event.target.value as TaskStatus })}>
                                   <option value="todo">Todo</option>
@@ -3640,13 +4150,13 @@ export default function CampaignLifecycleExecutionWorkspace() {
                             <button
                               type="button"
                               onClick={() => deleteTask(selectedTaskOps.id)}
-                              className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-black text-white shadow-[0_14px_30px_rgba(225,29,72,0.22)]"
+                              className="w-full rounded-2xl bg-rose-600 px-4 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(225,29,72,0.22)] transition hover:-translate-y-0.5 hover:bg-rose-700"
                             >
                               Delete task
                             </button>
                           </div>
                         ) : (
-                          <div className="mt-4 rounded-[22px] border border-dashed border-slate-200 bg-white p-5 text-sm font-bold text-slate-500">
+                          <div className="rounded-[22px] border border-dashed border-slate-200 bg-white p-5 text-sm font-bold text-slate-500">
                             Select a task row to edit status, owner, priority, dates and time.
                           </div>
                         )}
@@ -3654,7 +4164,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                     </div>
                   </Card>
 
-                  <Card className="overflow-hidden p-0">
+                  <Card className="overflow-hidden p-0" data-campaign-timeline-control="true">
                     <div className="border-b border-slate-100 bg-gradient-to-br from-white via-emerald-50/40 to-white p-5">
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">Campaign Timeline Control</p>
@@ -3663,13 +4173,12 @@ export default function CampaignLifecycleExecutionWorkspace() {
                       </div>
                     </div>
 
-                    <div className="grid gap-4 p-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-                      <div className="max-h-[620px] overflow-auto pr-2">
-                        <div className="space-y-3">
+                    <div className="grid items-start gap-4 p-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+                      <div className="max-h-[74vh] overflow-y-auto pr-2">
+                        <div className="grid grid-cols-1 gap-5 2xl:grid-cols-2">
                           {state.campaigns.length ? state.campaigns.map((campaign) => {
                             const tone = campaignExpiryTone(campaign)
                             const remaining = remainingCampaignDays(campaign)
-                            const progress = campaignElapsedPct(campaign)
                             const selectedRow = selectedDatesCampaign?.id === campaign.id
 
                             return (
@@ -3680,39 +4189,95 @@ export default function CampaignLifecycleExecutionWorkspace() {
                                   setSelectedDatesCampaignId(campaign.id)
                                   setState({ ...state, selectedId: campaign.id })
                                 }}
-                                className={`w-full rounded-[26px] border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg ${
-                                  selectedRow ? "border-emerald-300 bg-emerald-50/50 ring-4 ring-emerald-50" : "border-slate-200 bg-white"
+                                className={`w-full rounded-[18px] text-left transition hover:-translate-y-0.5 ${
+                                  selectedRow ? "ring-4 ring-emerald-50" : ""
                                 }`}
                               >
-                                <div className="flex items-start justify-between gap-3">
-                                  <div className="min-w-0">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      <Pill tone={(campaign.lifecycleStatus === "paused" ? "amber" : campaign.lifecycleStatus === "archived" ? "slate" : "emerald") as "blue" | "emerald" | "rose" | "amber" | "violet" | "slate"}>
-                                        {campaign.lifecycleStatus || "active"}
-                                      </Pill>
-                                      <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${tone.className}`}>
-                                        {tone.label}
-                                      </span>
-                                    </div>
-                                    <p className="mt-3 truncate text-lg font-black text-slate-950">{campaign.name}</p>
-                                    <p className="mt-1 text-xs font-bold text-slate-500">{campaign.startDate || "—"} → {campaign.endDate || "—"}</p>
-                                  </div>
+                                <div
+                          role="button"
+                          tabIndex={0}
+                          data-timeline-square-card="true"
+                          onClick={() => setSelectedDatesCampaignId(campaign.id)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              setSelectedDatesCampaignId(campaign.id)
+                            }
+                          }}
+                          className={`group relative grid aspect-square w-full cursor-pointer grid-cols-1 content-between gap-3 overflow-y-auto rounded-[18px] border p-4 text-left shadow-[0_18px_50px_rgba(15,23,42,0.08)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(15,23,42,0.13)] ${
+                            timelineRowTone(campaignTimelineDaysLeft(campaign), campaignTimelineProgress(campaign)).shell
+                          } min-h-0`}
+                        >
+                          <div className="pointer-events-none absolute -right-20 -top-20 h-44 w-44 rounded-full bg-emerald-200/40 blur-3xl" />
+                          <div className="pointer-events-none absolute -bottom-24 left-1/3 h-44 w-44 rounded-full bg-cyan-200/30 blur-3xl" />
 
-                                  <div className="text-right">
-                                    <p className="text-3xl font-black text-slate-950">{remaining}</p>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">days left</p>
-                                  </div>
-                                </div>
+                          <div className={`relative grid h-[52px] w-[52px] place-items-center rounded-[18px] border text-xl shadow-[0_18px_42px_rgba(15,23,42,0.10)] ${
+                            timelineRowTone(campaignTimelineDaysLeft(campaign), campaignTimelineProgress(campaign)).icon
+                          }`}>
+                            ▣
+                          </div>
 
-                                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
-                                  <div className={`h-full rounded-full ${tone.bar}`} style={{ width: `${progress}%` }} />
-                                </div>
+                          <div className="relative min-w-0">
+                            <h4 className="line-clamp-2 text-lg font-black tracking-[-0.05em] text-slate-950">
+                              {campaign.name}
+                            </h4>
+                            <p className="mt-1 text-xs font-extrabold text-slate-500">
+                              {campaign.startDate || "No start date"} → {campaign.endDate || "No end date"}
+                            </p>
+                          </div>
+
+                          <div className="relative flex flex-wrap items-center gap-2">
+                            <span className="rounded-full border border-emerald-200 bg-white/80 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700 shadow-sm">
+                              {(campaign.lifecycleStatus || campaign.status || "active").toString()}
+                            </span>
+                            <span className={`rounded-full border px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] shadow-sm ${
+                              timelineRowTone(campaignTimelineDaysLeft(campaign), campaignTimelineProgress(campaign)).badge
+                            }`}>
+                              {timelineRowTone(campaignTimelineDaysLeft(campaign), campaignTimelineProgress(campaign)).label}
+                            </span>
+                          </div>
+
+                          <div className="relative rounded-[18px] border border-white/70 bg-white/65 p-3 shadow-sm backdrop-blur">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="text-[10px] font-black uppercase tracking-[0.20em] text-slate-400">
+                                Campaign window progress
+                              </p>
+                              <p className="text-xs font-black text-slate-600">{campaignTimelineProgress(campaign)}%</p>
+                            </div>
+                            <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200">
+                              <div
+                                className={`h-full rounded-full ${timelineRowTone(campaignTimelineDaysLeft(campaign), campaignTimelineProgress(campaign)).bar}`}
+                                style={{ width: `${Math.max(0, Math.min(100, campaignTimelineProgress(campaign)))}%` }}
+                              />
+                            </div>
+                            <div className="mt-3 flex items-center justify-between text-[11px] font-black text-slate-500">
+                              <span>{campaign.startDate || "Start"}</span>
+                              <span>{campaignTimelineProgress(campaign)}% elapsed</span>
+                              <span>{campaign.endDate || "End"}</span>
+                            </div>
+                          </div>
+
+                          <div className="relative flex items-center justify-center gap-2 rounded-[18px] border border-white/70 bg-white/70 p-3 shadow-sm backdrop-blur">
+                            <span className={`h-3 w-3 rounded-full ${timelineRowTone(campaignTimelineDaysLeft(campaign), campaignTimelineProgress(campaign)).dot} ${campaignTimelineDaysLeft(campaign) <= 20 ? "animate-pulse" : ""}`} />
+                            <div>
+                              <p className="text-3xl font-black tracking-[-0.08em] text-slate-950">
+                                {campaignTimelineDaysLeft(campaign)}
+                              </p>
+                              <p className="text-[10px] font-black uppercase tracking-[0.20em] text-slate-400">
+                                Days left
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="relative grid h-10 w-10 place-items-center rounded-[16px] border border-white/80 bg-white/80 text-lg font-black text-slate-500 shadow-sm">
+                            ⋯
+                          </div>
+                        </div>
                               </button>
                             )
                           }) : (
-                            <div className="rounded-[26px] border border-dashed border-emerald-200 bg-emerald-50/40 p-8 text-center">
+                            <div className="rounded-[18px] border border-dashed border-emerald-200 bg-emerald-50/40 p-8 text-center">
                               <p className="text-xl font-black text-slate-950">No campaigns available</p>
-                              <p className="mt-2 text-sm font-bold text-slate-500">Create campaigns to activate date control.</p>
+                              <p className="mt-1 text-xs font-bold text-slate-500">Create campaigns to activate date control.</p>
                             </div>
                           )}
                         </div>
@@ -3751,7 +4316,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                             <div className="grid gap-2">
                               <button
                                 type="button"
-                                onClick={() => updateCampaign(selectedDatesCampaign.id, { lifecycleStatus: "paused" }, "Campaign paused")}
+                                onClick={() => updateCampaign(selectedDatesCampaign.id, { lifecycleStatus: "paused", status: "paused" }, "Campaign paused")}
                                 className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm font-black text-orange-700"
                               >
                                 Pause
@@ -3759,7 +4324,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
 
                               <button
                                 type="button"
-                                onClick={() => updateCampaign(selectedDatesCampaign.id, { lifecycleStatus: "active" }, "Campaign resumed")}
+                                onClick={() => updateCampaign(selectedDatesCampaign.id, { lifecycleStatus: "active", status: "active" }, "Campaign resumed")}
                                 className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700"
                               >
                                 Resume
@@ -3767,7 +4332,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
 
                               <button
                                 type="button"
-                                onClick={() => updateCampaign(selectedDatesCampaign.id, { lifecycleStatus: "archived", stage: "optimization" }, "Campaign validated and archived")}
+                                onClick={() => updateCampaign(selectedDatesCampaign.id, { lifecycleStatus: "archived", status: "archived", stage: "optimization" }, "Campaign validated and archived")}
                                 className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700"
                               >
                                 Validate and archive
@@ -3851,7 +4416,7 @@ export default function CampaignLifecycleExecutionWorkspace() {
                           <span className="text-sm font-black">{campaign.name}</span>
                           <span className="text-xs font-bold text-slate-500">{mad(campaign.spentMad)}</span>
                           <span className="text-xs font-black text-emerald-700">{roas(campaign)}x</span>
-                          <Pill tone={riskTone(campaign.risk) as any}>{riskLabel[campaign.risk]}</Pill>
+                          <Pill tone={riskTone(campaign.risk) as any}>{riskLabel[campaign.risk as Risk]}</Pill>
                         </button>
                       )) : (
                         <div className="rounded-[26px] border border-dashed border-blue-200 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-8 text-center shadow-inner">
@@ -3940,8 +4505,8 @@ export default function CampaignLifecycleExecutionWorkspace() {
                             <div className="flex flex-wrap items-start justify-between gap-4">
                               <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <Pill tone="blue">{stageLabel[campaign.stage]}</Pill>
-                                  <Pill tone={riskTone(campaign.risk) as any}>{riskLabel[campaign.risk]}</Pill>
+                                  <Pill tone="blue">{stageLabel[campaign.stage as Stage]}</Pill>
+                                  <Pill tone={riskTone(campaign.risk) as any}>{riskLabel[campaign.risk as Risk]}</Pill>
                                   <Pill tone="slate">{campaign.campaignType}</Pill>
                                 </div>
 
@@ -4764,6 +5329,184 @@ export default function CampaignLifecycleExecutionWorkspace() {
           }
         }
 
+      
+        /* Premium execution task rows */
+        [data-task-ops-center="true"] [data-task-ops-row-force="true"] {
+          isolation: isolate !important;
+        }
+
+        [data-task-ops-center="true"] [data-task-ops-row-force="true"] * {
+          box-sizing: border-box !important;
+        }
+
+        [data-task-ops-center="true"] [data-task-ops-row-force="true"] h4,
+        [data-task-ops-center="true"] [data-task-ops-row-force="true"] p {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        [data-task-ops-center="true"] [data-task-ops-row-force="true"]:focus-visible {
+          outline: 4px solid rgba(37, 99, 235, 0.18) !important;
+          outline-offset: 3px !important;
+        }
+
+        @media (max-width: 1536px) {
+          [data-task-ops-center="true"] [data-task-ops-row-force="true"] {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          }
+        }
+
+        @media (max-width: 980px) {
+          [data-task-ops-center="true"] [data-task-ops-row-force="true"] {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          [data-task-ops-center="true"] [data-task-ops-row-force="true"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+      
+        /* Premium campaign timeline rows */
+        [data-campaign-timeline-control="true"] [role="button"] {
+          box-sizing: border-box !important;
+        }
+
+        [data-campaign-timeline-control="true"] [role="button"] * {
+          box-sizing: border-box !important;
+        }
+
+        [data-campaign-timeline-control="true"] [role="button"]:focus-visible {
+          outline: 4px solid rgba(16, 185, 129, 0.20) !important;
+          outline-offset: 3px !important;
+        }
+
+        @media (max-width: 1280px) {
+          [data-campaign-timeline-control="true"] [role="button"] {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+
+        @media (max-width: 760px) {
+          [data-campaign-timeline-control="true"] [role="button"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+      
+        /* Timeline square campaign cards: 2 per row + internal scroll */
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] {
+          display: inline-grid !important;
+          width: calc(50% - 14px) !important;
+          min-width: 420px !important;
+          min-height: 520px !important;
+          vertical-align: top !important;
+          margin: 0 14px 22px 0 !important;
+          grid-template-columns: 1fr !important;
+          grid-auto-rows: auto !important;
+          align-content: space-between !important;
+          justify-content: stretch !important;
+          justify-items: stretch !important;
+          padding: 30px !important;
+          border-radius: 36px !important;
+          overflow: hidden !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] > * {
+          width: 100% !important;
+          max-width: none !important;
+          min-width: 0 !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] > div:first-of-type {
+          margin-bottom: 6px !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] h4 {
+          font-size: clamp(2rem, 2.5vw, 3.6rem) !important;
+          line-height: 0.95 !important;
+          letter-spacing: -0.075em !important;
+          white-space: normal !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] [class*="h-[72px]"] {
+          height: 86px !important;
+          width: 86px !important;
+          border-radius: 30px !important;
+          font-size: 2.25rem !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] [class*="Campaign window progress"],
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] p {
+          white-space: normal !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] > div:nth-last-child(3) {
+          min-height: 150px !important;
+          border-radius: 28px !important;
+          padding: 22px !important;
+          background: rgba(255, 255, 255, 0.78) !important;
+          box-shadow: 0 18px 44px rgba(15,23,42,.08) !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] > div:nth-last-child(2) {
+          min-height: 132px !important;
+          border-radius: 28px !important;
+          background: rgba(255, 255, 255, 0.72) !important;
+          box-shadow: 0 18px 44px rgba(15,23,42,.08) !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] > div:nth-last-child(2) p:first-of-type {
+          font-size: clamp(3.5rem, 5vw, 5.5rem) !important;
+          line-height: 0.9 !important;
+        }
+
+        [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] > div:last-child {
+          position: absolute !important;
+          top: 28px !important;
+          right: 28px !important;
+          width: 58px !important;
+          height: 58px !important;
+          border-radius: 22px !important;
+        }
+
+        [data-campaign-timeline-control="true"] {
+          overflow: hidden !important;
+        }
+
+        [data-campaign-timeline-control="true"] section,
+        [data-campaign-timeline-control="true"] div {
+          scrollbar-width: thin;
+        }
+
+        [data-campaign-timeline-control="true"] div:has(> [data-timeline-square-card="true"]) {
+          max-height: 720px !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          padding: 8px 8px 18px 8px !important;
+          scroll-behavior: smooth !important;
+        }
+
+        @media (max-width: 1500px) {
+          [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 500px !important;
+            margin-right: 0 !important;
+          }
+        }
+
+        @media (max-width: 760px) {
+          [data-campaign-timeline-control="true"] [data-timeline-square-card="true"] {
+            min-height: 460px !important;
+            padding: 22px !important;
+          }
+        }
+
       `}</style>
 
 <div className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-6 py-5 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl">
@@ -5159,6 +5902,160 @@ export default function CampaignLifecycleExecutionWorkspace() {
           </form>
         </div>
       ) : null}
-    </main>
+    
+      
+      {campaignImportOpen ? (
+        <div className="fixed inset-0 z-[9999] overflow-y-auto bg-slate-950/45 p-4 pt-24 backdrop-blur-sm">
+          <section className="mx-auto mb-8 max-w-[1180px] overflow-hidden rounded-[36px] border border-white/70 bg-white shadow-[0_50px_160px_rgba(15,23,42,0.34)]">
+            <div className="border-b border-slate-100 bg-white p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">Campaign CSV Import Center</p>
+                  <h2 className="mt-2 text-4xl font-black tracking-[-0.06em]" style={{ color: "#020617", WebkitTextFillColor: "#020617" }}>
+                    Bulk import campaigns
+                  </h2>
+                  <p className="mt-2 max-w-4xl text-sm font-bold leading-6 text-slate-500">
+                    Import campaign rows using operational fields: name, objective, owner, channel, type, budget, dates, readiness and lifecycle status.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setCampaignImportOpen(false)}
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            <div className="grid gap-5 p-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="space-y-4">
+                <textarea
+                  value={campaignCsvText}
+                  onChange={(event) => setCampaignCsvText(event.target.value)}
+                  className="min-h-[360px] w-full rounded-[28px] border border-slate-200 bg-white p-4 font-mono text-xs font-bold text-slate-700 shadow-inner outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-50"
+                  placeholder="Paste campaign CSV here..."
+                />
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={downloadCampaignCsvTemplate}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm"
+                  >
+                    Download campaign template
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={importCampaignCsvText}
+                    className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-[0_14px_32px_rgba(5,150,105,0.22)]"
+                  >
+                    Import campaigns
+                  </button>
+                </div>
+
+                {campaignImportReport ? (
+                  <div className="rounded-[22px] border border-emerald-200 bg-emerald-50 p-4 text-sm font-black text-emerald-800">
+                    {campaignImportReport.message} · Imported: {campaignImportReport.ok} · Rejected: {campaignImportReport.rejected}
+                  </div>
+                ) : null}
+              </div>
+
+              <aside className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Required columns</p>
+                <div className="mt-4 grid gap-2">
+                  {CAMPAIGN_CSV_HEADERS.map((header) => (
+                    <div key={header} className="rounded-2xl border border-white bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-sm">
+                      {header}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs font-bold leading-5 text-slate-500">
+                  Minimum required field: name. Budget values are MAD.
+                </p>
+              </aside>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+{taskImportOpen ? (
+        <div className="fixed inset-0 z-[9999] overflow-y-auto bg-slate-950/45 p-4 pt-24 backdrop-blur-sm">
+          <section className="mx-auto mb-8 max-w-[1180px] overflow-hidden rounded-[36px] border border-white/70 bg-white shadow-[0_50px_160px_rgba(15,23,42,0.34)]">
+            <div className="border-b border-slate-100 bg-white p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">Execution task CSV Import Center</p>
+                  <h2 className="mt-2 text-4xl font-black tracking-[-0.06em] text-black text-black" style={{ color: "#020617", WebkitTextFillColor: "#020617" }}>Bulk import execution tasks</h2>
+                  <p className="mt-2 max-w-4xl text-sm font-bold leading-6 text-slate-500">
+                    Import task rows using the same fields as the task editor: title, description, campaign, owner, workstream, status, priority, start and end date-time.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setTaskImportOpen(false)}
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            <div className="grid gap-5 p-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="space-y-4">
+                <textarea
+                  value={taskCsvText}
+                  onChange={(event) => setTaskCsvText(event.target.value)}
+                  className="min-h-[360px] w-full rounded-[28px] border border-slate-200 bg-white p-4 font-mono text-xs font-bold text-slate-700 shadow-inner outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-50"
+                  placeholder="Paste CSV here..."
+                />
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={downloadTaskCsvTemplate}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm"
+                  >
+                    Download task template
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={importTaskCsvText}
+                    className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-[0_14px_32px_rgba(5,150,105,0.22)]"
+                  >
+                    Import CSV tasks
+                  </button>
+                </div>
+
+                {taskImportReport ? (
+                  <div className="rounded-[22px] border border-emerald-200 bg-emerald-50 p-4 text-sm font-black text-emerald-800">
+                    {taskImportReport.message} · Imported: {taskImportReport.ok} · Rejected: {taskImportReport.rejected}
+                  </div>
+                ) : null}
+              </div>
+
+              <aside className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Required columns</p>
+                <div className="mt-4 grid gap-2">
+                  {TASK_CSV_HEADERS.map((header) => (
+                    <div key={header} className="rounded-2xl border border-white bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-sm">
+                      {header}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs font-bold leading-5 text-slate-500">
+                  Valid statuses: todo, doing, done, blocked. Valid priorities: low, medium, high.
+                </p>
+              </aside>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+</main>
   )
 }

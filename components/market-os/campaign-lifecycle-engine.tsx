@@ -179,7 +179,7 @@ export default function CampaignLifecycleEngine() {
               <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
                 <p className="text-xs font-bold uppercase text-amber-700">Missing Before Launch</p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {campaign.missingItems.map((item) => (
+                  {campaign.missingItems.map((item: any) => (
                     <span key={item} className="rounded-full border border-amber-200 bg-white px-3 py-1 text-xs font-bold text-amber-700">
                       {item}
                     </span>

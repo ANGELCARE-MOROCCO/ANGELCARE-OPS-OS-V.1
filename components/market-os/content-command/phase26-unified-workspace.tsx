@@ -56,7 +56,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -69,19 +69,19 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Overall Readiness</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Overall Readiness</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{readiness}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Workspaces</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Workspaces</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{phase26WorkspaceTabs.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Blockers</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Blockers</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{blockers}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Production State</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Production State</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{productionLabel}</p>
           </div>
         </div>
@@ -98,7 +98,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
               className="rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <p className="text-sm font-bold text-slate-950">{action.label}</p>
-              <p className="mt-1 text-xs text-slate-9500">{action.workspace}</p>
+              <p className="mt-1 text-xs text-slate-500">{action.workspace}</p>
               <p className="mt-3 text-sm text-slate-600">{action.description}</p>
             </button>
           ))}
@@ -111,7 +111,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
 
           <div className="mt-5 space-y-4">
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Search</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Search</span>
               <input
                 value={filter.search}
                 onChange={(event) => setFilter((current) => ({ ...current, search: event.target.value }))}
@@ -121,7 +121,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
             </label>
 
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Workspace</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Workspace</span>
               <select
                 value={filter.workspace}
                 onChange={(event) => setFilter((current) => ({ ...current, workspace: event.target.value as Phase26WorkspaceKey | 'all' }))}
@@ -134,7 +134,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
             </label>
 
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Status</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</span>
               <select
                 value={filter.status}
                 onChange={(event) => setFilter((current) => ({ ...current, status: event.target.value as Phase26WorkspaceStatus | 'all' }))}
@@ -158,7 +158,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
                     <div>
                       <p className="text-sm font-bold text-slate-950">{tab.label}</p>
                       <p className="mt-2 text-sm text-slate-600">{tab.description}</p>
-                      <p className="mt-2 text-xs text-slate-9500">Component: {tab.recommendedComponent}</p>
+                      <p className="mt-2 text-xs text-slate-500">Component: {tab.recommendedComponent}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Badge>{tab.status}</Badge>
@@ -188,7 +188,7 @@ export function ContentCommandPhase26UnifiedWorkspace(): React.ReactElement {
                 </div>
                 <Badge>{item.readiness}%</Badge>
               </div>
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-9500">
+              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Blockers: {item.blockers}
               </p>
             </article>

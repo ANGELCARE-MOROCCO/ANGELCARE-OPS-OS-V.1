@@ -16,7 +16,7 @@ export default function MarketOsSidebar() {
           <p className="text-xs uppercase text-slate-500 mb-2">{group.group}</p>
 
           <div className="flex flex-col gap-1">
-            {group.items.map((item) => {
+            {group.items.map((item: any) => {
               const active = pathname === item.href
 
               return (

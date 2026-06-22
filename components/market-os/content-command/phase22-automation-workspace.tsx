@@ -32,7 +32,7 @@ export function ContentCommandPhase22AutomationWorkspace(): React.ReactElement {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{rule.title}</p>
-                      <p className="mt-1 text-xs text-slate-9500">
+                      <p className="mt-1 text-xs text-slate-500">
                         {rule.trigger} → {rule.action}
                       </p>
                     </div>
@@ -53,7 +53,7 @@ export function ContentCommandPhase22AutomationWorkspace(): React.ReactElement {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{log.notes}</p>
-                      <p className="mt-1 text-xs text-slate-9500">
+                      <p className="mt-1 text-xs text-slate-500">
                         {log.ruleId} · {log.executedAt}
                       </p>
                     </div>

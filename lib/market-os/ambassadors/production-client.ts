@@ -1,3 +1,0 @@
-export type AmbassadorOpsTable = 'market_os_ambassadors'|'market_os_ambassador_missions'|'market_os_ambassador_leads'|'market_os_ambassador_proofs'|'market_os_ambassador_payouts'|'market_os_ambassador_training'|'market_os_ambassador_compliance'
-export async function loadAmbassadorOperationsProduction() { const res = await fetch('/api/market-os/ambassadors/operations', { cache:'no-store' }); return res.json(); }
-export async function saveAmbassadorOperationsRow(table: AmbassadorOpsTable, row: Record<string, any>, action='ambassador_operations_upsert') { const res = await fetch('/api/market-os/ambassadors/operations', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ table, row, action }) }); return res.json(); }

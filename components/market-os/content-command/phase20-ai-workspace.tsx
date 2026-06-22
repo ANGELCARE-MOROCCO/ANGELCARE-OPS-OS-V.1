@@ -33,7 +33,7 @@ export function ContentCommandPhase20AiExecutionWorkspace(): React.ReactElement 
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
 
@@ -48,19 +48,19 @@ export function ContentCommandPhase20AiExecutionWorkspace(): React.ReactElement 
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">AI Tasks</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">AI Tasks</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{phase20AiTasks.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Needs Review</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Needs Review</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{reviewTasks.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">High Risk</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">High Risk</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{highRiskTasks.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Avg Quality</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Avg Quality</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{averageQuality}%</p>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function ContentCommandPhase20AiExecutionWorkspace(): React.ReactElement 
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{task.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">
+                    <p className="mt-1 text-xs text-slate-500">
                       {task.action} · {task.language.toUpperCase()} · Owner: {task.owner} · {task.createdAt}
                     </p>
                   </div>
@@ -98,7 +98,7 @@ export function ContentCommandPhase20AiExecutionWorkspace(): React.ReactElement 
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{template.title}</p>
-                      <p className="mt-1 text-xs text-slate-9500">
+                      <p className="mt-1 text-xs text-slate-500">
                         {template.action} · {template.language.toUpperCase()}
                       </p>
                       <p className="mt-3 text-sm text-slate-600">{template.systemInstruction}</p>
@@ -141,7 +141,7 @@ export function ContentCommandPhase20AiExecutionWorkspace(): React.ReactElement 
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{output.summary}</p>
-                    <p className="mt-1 text-xs text-slate-9500">
+                    <p className="mt-1 text-xs text-slate-500">
                       Task: {output.taskId}
                     </p>
                   </div>

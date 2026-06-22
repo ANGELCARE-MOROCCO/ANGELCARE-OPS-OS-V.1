@@ -1,11 +1,28 @@
-export const marketOsSidebarItems = [
+export type MarketOSSidebarItem = {
+  label: string
+  href: string
+  icon?: string
+  permissions?: string[]
+}
+
+export type MarketOSSidebarGroup = {
+  label: string
+  items: MarketOSSidebarItem[]
+}
+
+export const marketOSSidebarItems: MarketOSSidebarGroup[] = [
   {
-    group: 'Approved Market-OS Workspaces',
+    label: "Market OS",
     items: [
-      { title: 'Campaign Lifecycle', href: '/market-os/campaign-lifecycle' },
-      { title: 'Content Command', href: '/market-os/content-command-center' },
-      { title: 'SEO & Blog', href: '/market-os/seo-blog-workspace' },
-      { title: 'Ambassadors', href: '/market-os/ambassadors' },
+      { label: "Command Center", href: "/market-os" },
+      { label: "Content Command", href: "/market-os/content-command-center" },
+      { label: "Campaign Lifecycle", href: "/market-os/campaign-lifecycle" },
+      { label: "Ambassadors", href: "/market-os/ambassadors" },
     ],
   },
 ]
+
+export default marketOSSidebarItems
+
+export const marketOsSidebarItems: any[] = []
+

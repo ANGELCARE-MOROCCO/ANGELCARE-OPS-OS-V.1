@@ -42,6 +42,12 @@ function getUserPermissions(user: any): string[] {
   return Array.isArray(user?.permissions) ? user.permissions.map(String) : []
 }
 
+function hasFullApplicationAccess(user: any) {
+  const role = normalizeRole(user)
+  const permissions = getUserPermissions(user)
+  return ['ceo', 'owner', 'super_admin'].includes(role) || permissions.includes('*')
+}
+
 function isRouteAllowed(route: AppRoute, permissions: string[]) {
   return (
     permissions.includes(route.permissionKey) ||
@@ -58,9 +64,7 @@ export async function GET() {
       return NextResponse.json({ routes: [] })
     }
 
-    const role = normalizeRole(user)
-
-    if (role === 'ceo') {
+    if (hasFullApplicationAccess(user)) {
       return NextResponse.json({ routes: ROUTES })
     }
 

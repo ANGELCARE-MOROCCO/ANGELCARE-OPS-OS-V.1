@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
-import { getMarketingDeepOperationalSnapshot } from '@/lib/market-os/marketing-deep-sync-engine'
+import { getMarketingDeepOperationalSnapshot } from '../../../../lib/market-os/marketing-deep-sync-engine'
 
 export const dynamic = 'force-dynamic'
 

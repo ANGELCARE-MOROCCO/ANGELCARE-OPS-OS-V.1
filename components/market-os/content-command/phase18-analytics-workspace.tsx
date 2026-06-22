@@ -29,7 +29,7 @@ export function ContentCommandPhase18AnalyticsWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -42,15 +42,15 @@ export function ContentCommandPhase18AnalyticsWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Attributed Revenue</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Attributed Revenue</p>
             <p className="mt-2 text-2xl font-bold text-slate-950">{formatPhase18Mad(summary.totalRevenueMad)}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Leads</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Leads</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{summary.totalLeads}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Conversion Rate</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Conversion Rate</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{summary.estimatedRoiPercent}%</p>
           </div>
         </div>
@@ -65,7 +65,7 @@ export function ContentCommandPhase18AnalyticsWorkspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{item.assetTitle}</p>
-                    <p className="mt-1 text-xs text-slate-9500">
+                    <p className="mt-1 text-xs text-slate-500">
                       {item.format} · {item.channel} · {formatPhase18Mad(item.revenueMad)}
                     </p>
                   </div>
@@ -91,7 +91,7 @@ export function ContentCommandPhase18AnalyticsWorkspace(): React.ReactElement {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{stage.label}</p>
-                      <p className="mt-1 text-xs text-slate-9500">{stage.count.toLocaleString('fr-MA')} records</p>
+                      <p className="mt-1 text-xs text-slate-500">{stage.count.toLocaleString('fr-MA')} records</p>
                     </div>
                     <Badge>{stage.conversionRate}%</Badge>
                   </div>
@@ -108,7 +108,7 @@ export function ContentCommandPhase18AnalyticsWorkspace(): React.ReactElement {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-slate-950">{item.campaign}</p>
-                      <p className="mt-1 text-xs text-slate-9500">
+                      <p className="mt-1 text-xs text-slate-500">
                         {item.sourceChannel} · {item.influencedLeads} leads · {item.influencedConversions} conversions
                       </p>
                     </div>
@@ -131,7 +131,7 @@ export function ContentCommandPhase18AnalyticsWorkspace(): React.ReactElement {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{row.channel}</p>
-                    <p className="mt-1 text-xs text-slate-9500">
+                    <p className="mt-1 text-xs text-slate-500">
                       Assets: {row.assets} · Reach: {row.reach.toLocaleString('fr-MA')}
                     </p>
                   </div>

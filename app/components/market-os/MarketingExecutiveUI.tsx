@@ -73,7 +73,12 @@ import Link from 'next/link'
 type KPIItem = [string, string, string, string, string, string]
 type NavItem = [string, string, string, string]
 type ActivityItem = { title: string; channel?: string; region?: string; tag?: string; time?: string; href: string }
-type SyncItem = { module: string; href: string; count?: number; ok?: boolean }
+type SyncItem = {
+  label?: string
+  title?: string
+  name?: string
+  [key: string]: any
+ module: string; href: string; count?: number; ok?: boolean }
 type ExpansionItem = { title: string; status?: string; owner?: string; metric?: string; href: string }
 type MarketingExpansionSync = {
   ok: boolean
@@ -581,8 +586,8 @@ export default function MarketingExecutiveUI() {
 
         <div style={syncDock}>
           <b>ANGELCARE Sync Status</b>
-          {sync.slice(0, 7).map((item) => (
-            <Link href={String(item.href)} key={String(item.module)}>
+          {sync.slice(0, 7).map((item, idx) => (
+            <Link href={String(item.href || "#")} key={`${String(item.module || item.label || item.href || "sync")}-${idx}`}>
               {item.module}<span>✓</span>
             </Link>
           ))}

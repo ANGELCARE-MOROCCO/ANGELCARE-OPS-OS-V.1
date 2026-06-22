@@ -123,6 +123,113 @@ async function fetchJson(path: string) {
   return payload
 }
 
+
+const CSV_HEADERS = [
+  'title',
+  'prospect_name',
+  'assignee_name',
+  'status',
+  'priority',
+  'start_at',
+  'due_at',
+  'objective',
+  'next_action',
+  'notes',
+  'task_type',
+]
+
+const CSV_TEMPLATE = [
+  CSV_HEADERS.join(','),
+  [
+    'Call directeur pédagogique',
+    'École privée Rabat Centre',
+    'Business Developer Intern',
+    'planned',
+    'high',
+    '2026-06-24 09:00',
+    '2026-06-24 10:00',
+    'Qualifier le besoin partenariat B2B',
+    'Envoyer proposition après appel',
+    'Importer depuis CSV tasks B2B',
+    'Call',
+  ].map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','),
+].join('\n')
+
+function parseCsv(text: string) {
+  const source = text.replace(/^\uFEFF/, '').trim()
+  if (!source) return []
+
+  const firstLine = source.split(/\r?\n/)[0] || ''
+  const commaCount = (firstLine.match(/,/g) || []).length
+  const semiCount = (firstLine.match(/;/g) || []).length
+  const delimiter = semiCount > commaCount ? ';' : ','
+
+  const rows: string[][] = []
+  let current = ''
+  let row: string[] = []
+  let quoted = false
+
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index]
+    const next = source[index + 1]
+
+    if (char === '"' && quoted && next === '"') {
+      current += '"'
+      index += 1
+      continue
+    }
+
+    if (char === '"') {
+      quoted = !quoted
+      continue
+    }
+
+    if (char === delimiter && !quoted) {
+      row.push(current.trim())
+      current = ''
+      continue
+    }
+
+    if ((char === '\n' || char === '\r') && !quoted) {
+      if (char === '\r' && next === '\n') index += 1
+      row.push(current.trim())
+      if (row.some(Boolean)) rows.push(row)
+      row = []
+      current = ''
+      continue
+    }
+
+    current += char
+  }
+
+  row.push(current.trim())
+  if (row.some(Boolean)) rows.push(row)
+
+  const headers = (rows.shift() || []).map((header) =>
+    header.trim().toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_')
+  )
+
+  return rows.map((values) => {
+    const item: AnyRow = {}
+    headers.forEach((header, index) => {
+      item[header] = values[index] || ''
+    })
+    return item
+  })
+}
+
+function downloadCsvTemplate() {
+  const blob = new Blob([CSV_TEMPLATE], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'angelcare-b2b-tasks-import-template.csv'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
 const STATUS_LANES = [
   { key: 'todo', label: 'À faire', icon: '📌' },
   { key: 'planned', label: 'Planifiée', icon: '🗓️' },
@@ -153,6 +260,11 @@ export default function B2BTasksPremiumWorkspace() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [importOpen, setImportOpen] = useState(false)
+  const [csvText, setCsvText] = useState(CSV_TEMPLATE)
+  const [csvReport, setCsvReport] = useState<AnyRow | null>(null)
+  const [importing, setImporting] = useState(false)
+
 
   async function load() {
     setLoading(true)
@@ -346,6 +458,49 @@ export default function B2BTasksPremiumWorkspace() {
     }
   }
 
+
+  async function importCsvTasks() {
+    const rows = parseCsv(csvText)
+
+    if (!rows.length) {
+      setCsvReport({ ok: false, error: 'No valid CSV rows detected.' })
+      return
+    }
+
+    setImporting(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/b2b-partnerships/tasks/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows }),
+      })
+
+      const payload = await response.json().catch(() => null)
+
+      if (!response.ok || payload?.ok === false) {
+        throw new Error(payload?.error || 'Unable to import CSV tasks.')
+      }
+
+      setCsvReport(payload)
+      await load()
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unable to import CSV tasks.'
+      setCsvReport({ ok: false, error: message })
+      setError(message)
+    } finally {
+      setImporting(false)
+    }
+  }
+
+  function handleCsvFile(file?: File | null) {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => setCsvText(String(reader.result || ''))
+    reader.readAsText(file)
+  }
+
   return (
     <main className={styles.workspace}>
       <section className={styles.hero}>
@@ -361,6 +516,7 @@ export default function B2BTasksPremiumWorkspace() {
           <input type="date" value={toInputDate(selectedDate)} onChange={(e) => setSelectedDate(startOfDay(new Date(e.target.value)))} />
           <button type="button" onClick={load} disabled={loading}>{loading ? 'Syncing…' : 'Sync live'}</button>
           <button type="button" className={styles.createTaskButton} onClick={() => openCreateTask()}>+ Create task</button>
+          <button type="button" className={styles.importTaskButton} onClick={() => { setCsvReport(null); setCsvText(CSV_TEMPLATE); setImportOpen(true) }}>⇪ Import CSV tasks</button>
         </aside>
       </section>
 
@@ -575,6 +731,81 @@ export default function B2BTasksPremiumWorkspace() {
           </div>
         </aside>
       </section>
+
+
+      {importOpen && (
+        <div className={styles.modalBackdrop}>
+          <section className={`${styles.taskModal} ${styles.importModal}`}>
+            <div className={styles.modalHeader}>
+              <div>
+                <span>CSV Import Center</span>
+                <h2>Bulk import B2B execution tasks</h2>
+                <p>Import tasks using the same fields as the new task modal: title, prospect, owner, status, priority, dates, objective, next action and notes.</p>
+              </div>
+              <button type="button" onClick={() => { setImportOpen(false); setCsvReport(null) }}>×</button>
+            </div>
+
+            <div className={styles.importGrid}>
+              <article className={styles.importGuide}>
+                <span>Required structure</span>
+                <h3>Accepted CSV headers</h3>
+                <p>Use these headers exactly or close equivalents. The importer validates title as required and maps due_at into the task due date.</p>
+                <div className={styles.headerChips}>
+                  {CSV_HEADERS.map((header) => <strong key={header}>{header}</strong>)}
+                </div>
+
+                <div className={styles.importActions}>
+                  <button type="button" onClick={downloadCsvTemplate}>Download template</button>
+                  <label>
+                    Upload CSV
+                    <input type="file" accept=".csv,text/csv" onChange={(event) => handleCsvFile(event.target.files?.[0])} />
+                  </label>
+                </div>
+
+                <div className={styles.importRules}>
+                  <article><b>Title</b><p>Required. Empty title rows are rejected.</p></article>
+                  <article><b>Prospect</b><p>prospect_name is matched to existing B2B prospects when possible.</p></article>
+                  <article><b>Dates</b><p>Use YYYY-MM-DD HH:mm or ISO dates for start_at and due_at.</p></article>
+                  <article><b>Status</b><p>Supports todo, planned, in_progress, waiting, done and blocked.</p></article>
+                </div>
+              </article>
+
+              <article className={styles.importEditor}>
+                <label>
+                  Paste or review CSV content
+                  <textarea value={csvText} onChange={(event) => setCsvText(event.target.value)} spellCheck={false} />
+                </label>
+              </article>
+            </div>
+
+            {csvReport && (
+              <div className={csvReport.ok === false ? styles.importError : styles.importReport}>
+                <strong>{csvReport.ok === false ? 'Import failed' : 'Import completed'}</strong>
+                <p>
+                  {csvReport.ok === false
+                    ? csvReport.error
+                    : `${csvReport.createdCount || 0} tasks created · ${csvReport.failedCount || 0} rows failed`}
+                </p>
+
+                {Array.isArray(csvReport.report) && csvReport.report.length > 0 && (
+                  <div className={styles.importReportRows}>
+                    {csvReport.report.slice(0, 12).map((row: AnyRow) => (
+                      <span key={`${row.row}-${row.title || row.error}`} className={row.ok ? styles.importOk : styles.importBad}>
+                        Row {row.row}: {row.ok ? `Created ${row.title}` : row.error}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className={styles.modalActions}>
+              <button type="button" className={styles.secondaryButton} onClick={() => { setImportOpen(false); setCsvReport(null) }}>Close</button>
+              <button type="button" disabled={importing} onClick={importCsvTasks}>{importing ? 'Importing…' : 'Import CSV tasks'}</button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {modalMode && (
         <div className={styles.modalBackdrop}>

@@ -1,3 +1,0 @@
-export type CampaignLifecycleTable = 'market_os_campaigns'|'market_os_campaign_tasks'|'market_os_campaign_budget_entries'|'market_os_campaign_calendar_items'|'market_os_campaign_approvals'|'market_os_campaign_assets'|'market_os_campaign_risks'
-export async function loadCampaignLifecycleProduction() { const res = await fetch('/api/market-os/campaign-lifecycle', { cache: 'no-store' }); return res.json(); }
-export async function saveCampaignLifecycleRow(table: CampaignLifecycleTable, row: Record<string, any>, action = 'campaign_lifecycle_upsert') { const res = await fetch('/api/market-os/campaign-lifecycle', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ table, row, action }) }); return res.json(); }

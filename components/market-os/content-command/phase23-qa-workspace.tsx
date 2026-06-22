@@ -31,7 +31,7 @@ export function ContentCommandPhase23QaWorkspace(): React.ReactElement {
   return (
     <section className="w-full space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-9500">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Content Command Center
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
@@ -44,19 +44,19 @@ export function ContentCommandPhase23QaWorkspace(): React.ReactElement {
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Readiness</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Readiness</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{readiness}%</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Failed Gates</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Failed Gates</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{failedGates.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Missing Fallbacks</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Missing Fallbacks</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{missingFallbacks.length}</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-9500">Failed Audits</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Failed Audits</p>
             <p className="mt-2 text-3xl font-bold text-slate-950">{failedAudits.length}</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export function ContentCommandPhase23QaWorkspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{gate.title}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{gate.area} · {gate.severity}</p>
+                    <p className="mt-1 text-xs text-slate-500">{gate.area} · {gate.severity}</p>
                     <p className="mt-3 text-sm text-slate-600">{gate.recommendation}</p>
                   </div>
                   <Badge>{gate.passed ? 'Passed' : 'Failed'}</Badge>
@@ -89,7 +89,7 @@ export function ContentCommandPhase23QaWorkspace(): React.ReactElement {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-slate-950">{fallback.component}</p>
-                    <p className="mt-1 text-xs text-slate-9500">{fallback.fallbackType}</p>
+                    <p className="mt-1 text-xs text-slate-500">{fallback.fallbackType}</p>
                   </div>
                   <Badge>{fallback.implemented ? 'Implemented' : 'Needed'}</Badge>
                 </div>
