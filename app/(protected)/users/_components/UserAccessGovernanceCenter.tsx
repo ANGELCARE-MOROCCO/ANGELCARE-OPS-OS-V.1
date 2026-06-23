@@ -371,175 +371,6 @@ export default function UserAccessGovernanceCenter({
   const scanHeadline = scanPayload?.latestScanAt || latestScan?.created_at || null
   const scanModules = scanPayload?.modules || []
   const scanRoutes = scanPayload?.routes || []
-
-
-
-  async function saveAuthorizedAbsence() {
-    setAuthorizedSaving(true)
-    setAuthorizedMessage('')
-
-    try {
-      const response = await fetch('/api/users/attendance-authorized-absences', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          staffId: user.staffId,
-          employeeEmail: user.email,
-          employeeName: user.fullName,
-          absenceType,
-          startDate: authorizedStartDate,
-          endDate: authorizedEndDate,
-          reason: authorizedReason,
-        }),
-      })
-
-      const json = await response.json().catch(() => ({}))
-
-      if (!response.ok || !json.ok) {
-        throw new Error(json.error || 'Unable to save authorized absence')
-      }
-
-      setAuthorizedMessage('Authorized absence saved. Refresh to reload the monthly ledger.')
-    } catch (error) {
-      setAuthorizedMessage(error instanceof Error ? error.message : 'Unable to save authorized absence')
-    } finally {
-      setAuthorizedSaving(false)
-    }
-  }
-
-  function printAttendanceMonth() {
-    const docRef = docRefForAttendanceMonth(user, selectedMonth)
-    const monthTitle = monthLabelFromIso(selectedMonth)
-    const generatedAt = new Date().toLocaleString('fr-FR')
-    const rowsHtml = monthRows.length
-      ? monthRows.map((row, index) => {
-          const rowDate = rowDateIso(row)
-          const inAt = attendanceTimeValue(row, 'in')
-          const outAt = attendanceTimeValue(row, 'out')
-          const pauseAt = timeShort((row as Record<string, unknown>).break_start_at || (row as Record<string, unknown>).lunch_start)
-          const retourAt = timeShort((row as Record<string, unknown>).break_end_at || (row as Record<string, unknown>).lunch_end)
-          const flag = attendanceRowFlag(normalizeAttendanceDisplayRow(row), shiftStart, shiftEnd, graceMinutes)
-          return `
-            <section class="day-card">
-              <div class="day-card-head">
-                <div>
-                  <div class="day-title">Jour ${index + 1}</div>
-                  <div class="day-date">${rowDate}</div>
-                </div>
-                <div class="flag flag-${flag.status}">${flag.label}</div>
-              </div>
-              <div class="four-grid">
-                <div class="metric in"><div class="k">IN</div><div class="v">${inAt}</div></div>
-                <div class="metric out"><div class="k">OUT</div><div class="v">${outAt}</div></div>
-                <div class="metric pause"><div class="k">PAUSE</div><div class="v">${pauseAt}</div></div>
-                <div class="metric retour"><div class="k">RETOUR</div><div class="v">${retourAt}</div></div>
-              </div>
-              <div class="meta">Statut: ${String((row as Record<string, unknown>).status || '—')} · Source: HR attendance records</div>
-            </section>
-          `
-        }).join('')
-      : `<div class="empty">Aucune donnée trouvée pour ce mois.</div>`
-
-    const html = `
-      <!doctype html>
-      <html>
-      <head>
-        <meta charset="utf-8" />
-        <title>${docRef}</title>
-        <style>
-          @page { size: A4; margin: 14mm; }
-          * { box-sizing: border-box; }
-          body { font-family: Inter, Arial, sans-serif; margin: 0; color: #0f172a; background: #f8fafc; }
-          .page { width: 100%; }
-          .header {
-            border: 1px solid #dbeafe; background: linear-gradient(180deg,#ffffff,#eff6ff);
-            border-radius: 16px; padding: 18px 20px; margin-bottom: 14px;
-          }
-          .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .14em; color: #1d4ed8; text-transform: uppercase; }
-          .title { font-size: 24px; font-weight: 800; margin-top: 6px; }
-          .sub { font-size: 12px; color: #475569; margin-top: 6px; }
-          .meta-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px;
-          }
-          .meta-card {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px;
-          }
-          .meta-card .k { font-size: 10px; font-weight: 800; letter-spacing: .12em; color: #64748b; text-transform: uppercase; }
-          .meta-card .v { font-size: 14px; font-weight: 700; margin-top: 6px; }
-          .cards { display: grid; gap: 12px; }
-          .day-card {
-            background: #fff; border: 1px solid #dbeafe; border-radius: 14px; padding: 12px 14px; break-inside: avoid;
-          }
-          .day-card-head {
-            display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px;
-          }
-          .day-title { font-size: 13px; font-weight: 800; color: #0f172a; }
-          .day-date { font-size: 12px; color: #475569; margin-top: 2px; }
-          .flag {
-            padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 800;
-          }
-          .flag-normal { background: #dcfce7; color: #166534; }
-          .flag-delay { background: #fef3c7; color: #92400e; }
-          .flag-early { background: #ffedd5; color: #9a3412; }
-          .flag-critical { background: #ffe4e6; color: #9f1239; }
-          .flag-overtime { background: #dbeafe; color: #1d4ed8; }
-          .flag-absence { background: #fee2e2; color: #991b1b; }
-          .four-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-          .metric { border-radius: 12px; padding: 10px 12px; border: 1px solid #e2e8f0; }
-          .metric .k { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-          .metric .v { font-size: 18px; font-weight: 800; margin-top: 6px; }
-          .metric.in { background: #f0fdf4; border-color: #bbf7d0; }
-          .metric.out { background: #fef2f2; border-color: #fecaca; }
-          .metric.pause { background: #fffbeb; border-color: #fde68a; }
-          .metric.retour { background: #eff6ff; border-color: #bfdbfe; }
-          .meta { margin-top: 10px; font-size: 11px; color: #475569; }
-          .empty {
-            background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 18px; color: #64748b;
-          }
-          .footer {
-            margin-top: 14px; font-size: 11px; color: #64748b; text-align: right;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="page">
-          <div class="header">
-            <div class="eyebrow">AngelCare · Attendance Monthly Record</div>
-            <div class="title">Monthly Attendance History</div>
-            <div class="sub">Referenced A4 attendance document generated from the live users attendance command center.</div>
-            <div class="meta-grid">
-              <div class="meta-card"><div class="k">Document Ref</div><div class="v">${docRef}</div></div>
-              <div class="meta-card"><div class="k">Employee</div><div class="v">${user.fullName}</div></div>
-              <div class="meta-card"><div class="k">Month</div><div class="v">${monthTitle}</div></div>
-              <div class="meta-card"><div class="k">Generated</div><div class="v">${generatedAt}</div></div>
-              <div class="meta-card"><div class="k">Department</div><div class="v">${user.department || '—'}</div></div>
-              <div class="meta-card"><div class="k">Role</div><div class="v">${user.role || '—'}</div></div>
-              <div class="meta-card"><div class="k">Shift</div><div class="v">${shiftStart} → ${shiftEnd}</div></div>
-              <div class="meta-card"><div class="k">Grace</div><div class="v">${graceMinutes} min</div></div>
-            </div>
-          </div>
-
-          <div class="cards">${rowsHtml}</div>
-
-          <div class="footer">
-            Generated by AngelCare OpsOS · Users Attendance Monitoring · ${docRef}
-          </div>
-        </div>
-      </body>
-      </html>
-    `
-    const w = window.open('', '_blank', 'width=1100,height=900')
-    if (!w) return
-    w.document.open()
-    w.document.write(html)
-    w.document.close()
-    w.focus()
-    setTimeout(() => {
-      w.print()
-    }, 350)
-  }
-
   return (
     <div style={rootStyle}>
       <ActionProgressPanel progress={actionProgress.progress} onClose={actionProgress.closeProgress} />
@@ -1590,7 +1421,7 @@ function UsersAttendanceInPage({ users, canOpenProfile }: { users: UserStaffReco
   )
 }
 
-type AttendanceTone = 'green' | 'amber' | 'red' | 'blue' | 'slate'
+type AttendanceTone = 'green' | 'amber' | 'red' | 'blue' | 'slate' | 'authorized' | 'absence' | 'critical' | 'delay' | 'early' | 'overtime' | 'normal'
 type AttendanceHistoryRow = Record<string, unknown>
 
 
@@ -1708,7 +1539,7 @@ function shiftMinuteValue(value: string, fallback: string) {
   return minutesFromTimeLike(value) ?? minutesFromTimeLike(fallback) ?? 0
 }
 
-function attendanceRowFlag(row: AttendanceHistoryRow, shiftStart: string, shiftEnd: string, graceMinutes: number) {
+function attendanceRowFlag(row: AttendanceHistoryRow, shiftStart: string, shiftEnd: string, graceMinutes: number): { tone: AttendanceTone; label: string; details: string } {
   const record = row as Record<string, unknown>
   const status = String(record.status || record.attendance_status || '').toLowerCase()
 
@@ -2052,15 +1883,19 @@ function attendanceRiskForLedgerRow(
     return { tone: 'blue', label: 'Authorized absence' }
   }
 
-  const inValue =
+  const inValue = String(
     normalizedRow.punchInAt ||
     normalizedRow.check_in ||
-    normalizedRow.punch_in_at
+    normalizedRow.punch_in_at ||
+    ''
+  )
 
-  const outValue =
+  const outValue = String(
     normalizedRow.punchOutAt ||
     normalizedRow.check_out ||
-    normalizedRow.punch_out_at
+    normalizedRow.punch_out_at ||
+    ''
+  )
 
   const hasNoTimes =
     !String(inValue || '').trim() ||
@@ -2144,6 +1979,7 @@ function AttendanceHistoryModal({
 }) {
   const history = attendanceHistoryForUser(user)
   const storedShiftRule = attendanceShiftRuleForUser(user)
+  const todayIso = new Date().toISOString().slice(0, 10)
   const [ruleSaving, setRuleSaving] = useState(false)
   const [ruleMessage, setRuleMessage] = useState('')
   const [selectedMonth, setSelectedMonth] = useState((attendanceDate || todayIso).slice(0, 7))
@@ -2173,7 +2009,7 @@ function AttendanceHistoryModal({
     normalizeAttendanceDisplayRow(latestAttendanceFromUser(user))
   const selectedRowFlag = attendanceRowFlag(selectedDisplayRow, shiftStart, shiftEnd, graceMinutes)
   const currentRisk = {
-    status: selectedRowFlag.tone,
+    tone: selectedRowFlag.tone,
     label: selectedRowFlag.label,
     detail: selectedRowFlag.details,
   }
@@ -2278,7 +2114,7 @@ function AttendanceHistoryModal({
                   <div class="day-title">Day ${index + 1}</div>
                   <div class="day-date">${rowDate || '—'}</div>
                 </div>
-                <div class="flag flag-${flag.status}">${flag.label}</div>
+                <div class="flag flag-${flag.tone}">${flag.label}</div>
               </div>
               <div class="four-grid">
                 <div class="metric in"><div class="k">IN</div><div class="v">${inAt}</div></div>
@@ -2674,6 +2510,8 @@ const modalSectionDetailStyle: CSSProperties = { marginTop: 5, fontSize: 12, col
 const modalShiftControlsStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10 }
 const modalLabelStyle: CSSProperties = { display: 'grid', gap: 6, fontSize: 10, fontWeight: 950, color: '#475569', textTransform: 'uppercase', letterSpacing: '.08em' }
 const modalInputStyle: CSSProperties = { height: 42, borderRadius: 14, border: '1px solid #bfdbfe', background: '#fff', padding: '0 10px', fontWeight: 900, color: '#0f172a' }
+const modalFlagChipStyle: CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 999, padding: '7px 10px', fontSize: 11, fontWeight: 950 }
+const modalHistoryCardStyle: CSSProperties = { border: '1px solid #e2e8f0', borderRadius: 22, background: '#fff', padding: 14, boxShadow: '0 14px 34px rgba(15,23,42,.06)' }
 const attendanceModalKpiRowStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 12, marginBottom: 14 }
 const attendanceHistoryListStyle: CSSProperties = { display: 'grid', gap: 12 }
 const attendanceHistoryRowStyle: CSSProperties = { border: '1px solid #e2e8f0', borderRadius: 22, background: '#fff', padding: 14, boxShadow: '0 14px 34px rgba(15,23,42,.06)' }

@@ -75,6 +75,76 @@ async function fetchJson(path: string) {
   return payload
 }
 
+function readStoredArray(key: string) {
+  try {
+    const raw = window.localStorage.getItem(key)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function clearStoredArray(keys: string[]) {
+  try {
+    for (const key of keys) window.localStorage.removeItem(key)
+  } catch {}
+}
+
+function normalizePremiumReport(row: AnyRow): ReportRecord | null {
+  if (!row || typeof row !== 'object') return null
+  if (!row.purpose && !row.generatedAt && !row.executiveSummary && !Array.isArray(row.alerts) && !Array.isArray(row.congratulations)) return null
+  return {
+    id: String(row.id || `report-${Date.now()}`),
+    reference: String(row.reference || row.reference_code || row.reference_number || ''),
+    purpose: (row.purpose || row.report_type || 'executive') as ReportPurpose,
+    sector: (row.sector || 'all') as SectorKey,
+    title: String(row.title || row.name || `${purposeLabel((row.purpose || 'executive') as ReportPurpose)} — ${sectorLabel((row.sector || 'all') as SectorKey)}`),
+    period: String(row.period || row.period_start || row.period_end || ''),
+    status: String(row.status || 'Generated'),
+    generatedAt: String(row.generatedAt || row.generated_at || row.created_at || new Date().toISOString()),
+    owner: String(row.owner || row.owner_id || 'ANGELCARE Controller Agent'),
+    executiveSummary: String(row.executiveSummary || row.executive_summary || row.summary || ''),
+    alerts: Array.isArray(row.alerts) ? row.alerts.map(String) : [],
+    congratulations: Array.isArray(row.congratulations) ? row.congratulations.map(String) : [],
+    coaching: Array.isArray(row.coaching) ? row.coaching.map(String) : [],
+    revenueMoves: Array.isArray(row.revenueMoves) ? row.revenueMoves.map(String) : [],
+    reminders: Array.isArray(row.reminders) ? row.reminders.map(String) : [],
+    marketInsights: Array.isArray(row.marketInsights) ? row.marketInsights.map(String) : [],
+    kpis: Array.isArray(row.kpis)
+      ? row.kpis.map((item: any) => ({
+          label: String(item?.label || ''),
+          value: String(item?.value || ''),
+          interpretation: String(item?.interpretation || ''),
+        }))
+      : [],
+    actionPlan: Array.isArray(row.actionPlan) ? row.actionPlan.map(String) : [],
+  }
+}
+
+async function postReport(report: ReportRecord, method: 'POST' | 'PATCH' | 'DELETE' = 'POST') {
+  const response = await fetch('/api/b2b-partnerships/reports?kind=premium', {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(report),
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to persist B2B report.')
+  return normalizePremiumReport(payload?.data || report)
+}
+
+async function postProgram(program: AnyRow, method: 'POST' | 'PATCH' | 'DELETE' = 'POST') {
+  const response = await fetch('/api/b2b-partnerships/partner-programs', {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(program),
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to persist partner programs.')
+  return payload?.data || null
+}
+
 function refFor(purpose: ReportPurpose, sector: SectorKey) {
   const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, '')
   const time = String(Date.now()).slice(-5)
@@ -533,70 +603,122 @@ export default function B2BReportsPremiumWorkspace() {
   const [proposals, setProposals] = useState<AnyRow[]>([])
   const [programs, setPrograms] = useState<AnyRow[]>([])
   const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('angelcare:b2b-reports')
-      if (saved) setReports(JSON.parse(saved))
-      const savedPrograms = localStorage.getItem('angelcare:b2b-programs')
-      if (savedPrograms) setPrograms(JSON.parse(savedPrograms))
-    } catch {}
-    load()
-  }, [])
-
-  function persist(next: ReportRecord[]) {
-    setReports(next)
-    try { localStorage.setItem('angelcare:b2b-reports', JSON.stringify(next)) } catch {}
-  }
-
-  async function load() {
+  async function syncWorkspace() {
     setLoading(true)
     setError('')
+
     try {
-      const results = await Promise.allSettled([
+      const [prospectResult, taskResult, meetingResult, proposalResult, reportResult, programResult] = await Promise.allSettled([
         fetchJson('/api/b2b-partnerships/prospects?limit=220'),
         fetchJson('/api/b2b-partnerships/tasks'),
         fetchJson('/api/b2b-partnerships/meetings'),
         fetchJson('/api/b2b-partnerships/proposals'),
+        fetchJson('/api/b2b-partnerships/reports?kind=premium'),
+        fetchJson('/api/b2b-partnerships/partner-programs'),
       ])
 
-      if (results[0].status === 'fulfilled') setProspects(normalizeArray(results[0].value))
-      if (results[1].status === 'fulfilled') setTasks(normalizeArray(results[1].value))
-      if (results[2].status === 'fulfilled') setMeetings(normalizeArray(results[2].value))
-      if (results[3].status === 'fulfilled') setProposals(normalizeArray(results[3].value))
+      if (prospectResult.status === 'fulfilled') setProspects(normalizeArray(prospectResult.value))
+      if (taskResult.status === 'fulfilled') setTasks(normalizeArray(taskResult.value))
+      if (meetingResult.status === 'fulfilled') setMeetings(normalizeArray(meetingResult.value))
+      if (proposalResult.status === 'fulfilled') setProposals(normalizeArray(proposalResult.value))
 
-      const failures = results.filter((r) => r.status === 'rejected').map((r: any) => r.reason?.message).filter(Boolean)
+      const serverReports = reportResult.status === 'fulfilled'
+        ? (normalizeArray(reportResult.value).map(normalizePremiumReport).filter(Boolean) as ReportRecord[])
+        : []
+      if (serverReports.length) {
+        setReports(serverReports)
+        clearStoredArray(['angelcare:b2b-reports'])
+      } else {
+        const fallbackReports = readStoredArray('angelcare:b2b-reports').map(normalizePremiumReport).filter(Boolean) as ReportRecord[]
+        if (fallbackReports.length) {
+          setReports(fallbackReports)
+          for (const report of fallbackReports) {
+            await postReport(report, 'POST')
+          }
+          clearStoredArray(['angelcare:b2b-reports'])
+        }
+      }
+
+      const serverPrograms = programResult.status === 'fulfilled' ? normalizeArray(programResult.value) : []
+      if (serverPrograms.length) {
+        setPrograms(serverPrograms)
+        clearStoredArray(['angelcare:b2b-programs'])
+      } else {
+        const fallbackPrograms = readStoredArray('angelcare:b2b-programs')
+        if (fallbackPrograms.length) {
+          setPrograms(fallbackPrograms)
+          for (const program of fallbackPrograms) {
+            await postProgram(program, 'POST')
+          }
+          clearStoredArray(['angelcare:b2b-programs'])
+        }
+      }
+
+      const failures = [prospectResult, taskResult, meetingResult, proposalResult, reportResult, programResult]
+        .filter((result) => result.status === 'rejected')
+        .map((result: any) => result.reason?.message)
+        .filter(Boolean)
       if (failures.length) setError(failures.slice(0, 2).join(' · '))
     } catch (e) {
+      const cachedReports = readStoredArray('angelcare:b2b-reports').map(normalizePremiumReport).filter(Boolean) as ReportRecord[]
+      const cachedPrograms = readStoredArray('angelcare:b2b-programs')
+      if (cachedReports.length) setReports(cachedReports)
+      if (cachedPrograms.length) setPrograms(cachedPrograms)
       setError(e instanceof Error ? e.message : 'Unable to sync report engine.')
     } finally {
       setLoading(false)
     }
   }
 
-  function createReport(selectedPurpose = purpose, selectedSector = sector) {
-    const report = generateReport({
-      purpose: selectedPurpose,
-      sector: selectedSector,
-      prospects,
-      tasks,
-      meetings,
-      proposals,
-      programs,
-    })
+  useEffect(() => {
+    void syncWorkspace()
+  }, [])
 
-    const next = [report, ...reports]
-    persist(next)
-    setSelectedReport(report)
-    setModalMode('view')
+  async function createReport(selectedPurpose = purpose, selectedSector = sector) {
+    setSaving(true)
+    try {
+      const report = generateReport({
+        purpose: selectedPurpose,
+        sector: selectedSector,
+        prospects,
+        tasks,
+        meetings,
+        proposals,
+        programs,
+      })
+
+      const saved = await postReport(report, 'POST')
+      if (!saved) throw new Error('Unable to persist generated report.')
+      const next = [saved, ...reports.filter((item) => item.id !== saved.id)]
+      setReports(next)
+      clearStoredArray(['angelcare:b2b-reports'])
+      setSelectedReport(saved)
+      setModalMode('view')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to persist generated report.')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function deleteReport(report: ReportRecord) {
+  async function deleteReport(report: ReportRecord) {
     if (!window.confirm('Delete this generated report?')) return
-    persist(reports.filter((r) => r.id !== report.id))
-    setSelectedReport(null)
-    setModalMode(null)
+    setSaving(true)
+    try {
+      await postReport(report, 'DELETE')
+      const next = reports.filter((r) => r.id !== report.id)
+      setReports(next)
+      clearStoredArray(['angelcare:b2b-reports'])
+      setSelectedReport(null)
+      setModalMode(null)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to delete generated report.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   function openReport(report: ReportRecord) {
@@ -709,7 +831,7 @@ li { margin-bottom:2px; }
         <aside className={styles.heroCommand}>
           <span>System controller</span>
           <strong>{loading ? 'Scanning…' : 'Ready to generate'}</strong>
-          <button type="button" onClick={load} disabled={loading}>{loading ? 'Syncing…' : 'Sync live data'}</button>
+          <button type="button" onClick={() => void syncWorkspace()} disabled={loading}>{loading ? 'Syncing…' : 'Sync live data'}</button>
           <button type="button" className={styles.createButton} onClick={() => createReport()}>Generate report</button>
         </aside>
       </section>

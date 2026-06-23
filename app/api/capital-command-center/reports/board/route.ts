@@ -50,6 +50,10 @@ function clean(body: AnyRecord) {
   return payload
 }
 
+function json(data: AnyRecord, status = 200) {
+  return NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } })
+}
+
 export async function GET() {
   try {
     const supabase = await createClient()
@@ -60,12 +64,12 @@ export async function GET() {
       .limit(250)
 
     if (error) {
-      return NextResponse.json({ ok: false, error: error.message, data: { reports: [] } }, { status: 200 })
+      return json({ ok: false, error: error.message, data: { reports: [] } })
     }
 
-    return NextResponse.json({ ok: true, data: { reports: Array.isArray(data) ? data : [] } })
+    return json({ ok: true, data: { reports: Array.isArray(data) ? data : [] } })
   } catch (error: any) {
-    return NextResponse.json({ ok: false, error: error?.message || 'Unable to load board reports', data: { reports: [] } }, { status: 200 })
+    return json({ ok: false, error: error?.message || 'Unable to load board reports', data: { reports: [] } })
   }
 }
 
@@ -83,8 +87,8 @@ export async function POST(req: NextRequest) {
         .select('*')
         .single()
 
-      if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
-      return NextResponse.json({ ok: true, data: { report: data } })
+      if (error) return json({ ok: false, error: error.message, data: { report: null } }, 400)
+      return json({ ok: true, data: { report: data } })
     }
 
     const { data, error } = await supabase
@@ -93,9 +97,9 @@ export async function POST(req: NextRequest) {
       .select('*')
       .single()
 
-    if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
-    return NextResponse.json({ ok: true, data: { report: data } })
+    if (error) return json({ ok: false, error: error.message, data: { report: null } }, 400)
+    return json({ ok: true, data: { report: data } })
   } catch (error: any) {
-    return NextResponse.json({ ok: false, error: error?.message || 'Unable to save board report' }, { status: 500 })
+    return json({ ok: false, error: error?.message || 'Unable to save board report', data: { report: null } }, 500)
   }
 }

@@ -664,6 +664,36 @@ function normalizeBoardReport(row: AnyRecord): BoardReportRecord {
   }
 }
 
+const BOARD_STORAGE_KEY = 'angelcare-board-reports'
+
+function readStoredBoardReports() {
+  try {
+    const raw = window.localStorage.getItem(BOARD_STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.map(normalizeBoardReport) : []
+  } catch {
+    return []
+  }
+}
+
+function clearStoredBoardReports() {
+  try {
+    window.localStorage.removeItem(BOARD_STORAGE_KEY)
+  } catch {}
+}
+
+async function upsertBoardReport(report: BoardReportRecord, method: 'POST' | 'PATCH' | 'DELETE' = 'POST') {
+  const response = await fetch('/api/capital-command-center/reports/board', {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(report),
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to save board report.')
+  return normalizeBoardReport(payload?.data?.report || payload?.data || report)
+}
+
 function ReportsWorkspace({ data, ctx }: { data: AnyRecord; ctx: AnyRecord }) {
   const stats = data.stats || {}
   const [tab, setTab] = useState<'overview' | 'workspace' | 'templates' | 'preview' | 'saved' | 'approval' | 'archive' | 'settings'>('overview')
@@ -697,12 +727,25 @@ function ReportsWorkspace({ data, ctx }: { data: AnyRecord; ctx: AnyRecord }) {
         const payload = await res.json().catch(() => null)
         const rows = payload?.ok && Array.isArray(payload.data?.reports) ? payload.data.reports.map(normalizeBoardReport) : []
         if (!alive) return
-        const localRows = rows.length ? rows : JSON.parse(window.localStorage.getItem('angelcare-board-reports') || '[]').map(normalizeBoardReport)
-        setReports(localRows)
-        if (localRows[0]) setCurrent(localRows[0])
+        if (rows.length) {
+          setReports(rows)
+          if (rows[0]) setCurrent(rows[0])
+          clearStoredBoardReports()
+          return
+        }
+
+        const localRows = readStoredBoardReports()
+        if (localRows.length) {
+          setReports(localRows)
+          if (localRows[0]) setCurrent(localRows[0])
+          for (const row of localRows) {
+            await upsertBoardReport(row, 'POST')
+          }
+          clearStoredBoardReports()
+        }
       } catch (error: any) {
         if (!alive) return
-        const localRows = JSON.parse(window.localStorage.getItem('angelcare-board-reports') || '[]').map(normalizeBoardReport)
+        const localRows = readStoredBoardReports()
         setReports(localRows)
         if (localRows[0]) setCurrent(localRows[0])
         setReportError(error?.message || 'Reports API unavailable; local fallback loaded.')
@@ -753,24 +796,13 @@ function ReportsWorkspace({ data, ctx }: { data: AnyRecord; ctx: AnyRecord }) {
       reportToSave.approved_by = reportToSave.approved_by || 'Capital Command'
     }
     try {
-      const res = await fetch('/api/capital-command-center/reports/board', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reportToSave),
-      })
-      const payload = await res.json().catch(() => null)
-      const saved = payload?.ok && payload.data?.report ? normalizeBoardReport(payload.data.report) : { ...reportToSave, id: reportToSave.id || `local-${Date.now()}`, updated_at: new Date().toISOString() }
+      const saved = await upsertBoardReport(reportToSave, 'POST')
       const nextReports = [saved, ...reports.filter((report) => report.id !== saved.id && report.reference_code !== saved.reference_code)]
       setReports(nextReports)
       setCurrent(saved)
-      window.localStorage.setItem('angelcare-board-reports', JSON.stringify(nextReports))
+      clearStoredBoardReports()
     } catch (error: any) {
-      const saved = { ...reportToSave, id: reportToSave.id || `local-${Date.now()}`, updated_at: new Date().toISOString() }
-      const nextReports = [saved, ...reports.filter((report) => report.id !== saved.id && report.reference_code !== saved.reference_code)]
-      setReports(nextReports)
-      setCurrent(saved)
-      window.localStorage.setItem('angelcare-board-reports', JSON.stringify(nextReports))
-      setReportError(error?.message || 'Saved locally because the reports API did not respond.')
+      setReportError(error?.message || 'Unable to save board report.')
     } finally {
       setSavingReport(false)
     }

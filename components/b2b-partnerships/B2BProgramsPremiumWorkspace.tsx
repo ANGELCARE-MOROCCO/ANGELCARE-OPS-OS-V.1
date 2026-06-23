@@ -6,6 +6,7 @@ import styles from './B2BProgramsPremiumWorkspace.module.css'
 type SectorKey = 'hospitality' | 'healthcare' | 'education' | 'corporate' | 'events'
 type ViewMode = 'command' | 'library' | 'pipeline' | 'dossiers' | 'activation'
 type ModalMode = 'create' | 'view' | 'edit' | null
+type AnyRecord = Record<string, unknown>
 
 type ProgramRecord = {
   id: string
@@ -229,6 +230,76 @@ function programReference(program: ProgramRecord) {
   return `ANG-PROG-${program.sector.toUpperCase()}-${program.priority}-${program.id.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10)}`
 }
 
+function readStoredPrograms() {
+  try {
+    const raw = window.localStorage.getItem('angelcare:b2b-programs')
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function clearStoredPrograms() {
+  try {
+    window.localStorage.removeItem('angelcare:b2b-programs')
+  } catch {}
+}
+
+function normalizeProgramRow(row: AnyRecord): ProgramRecord {
+  const sector = (row.sector || 'hospitality') as SectorKey
+  const config = SECTORS.find((item) => item.key === sector) || SECTORS[0]
+  return {
+    id: String(row.id || `custom-${Date.now()}`),
+    sector,
+    name: String(row.name || ''),
+    status: String(row.status || 'Draft'),
+    category: String(row.category || row.sector_focus || config.label),
+    icon: String(row.icon || config.icon),
+    targetPartners: Array.isArray(row.targetPartners) ? row.targetPartners.map(String) : Array.isArray(row.target_partners) ? row.target_partners.map(String) : [],
+    positioning: String(row.positioning || ''),
+    executivePitch: String(row.executivePitch || row.executive_pitch || row.description || ''),
+    valueProposition: Array.isArray(row.valueProposition) ? row.valueProposition.map(String).join(' ') : Array.isArray(row.value_proposition) ? row.value_proposition.map(String).join(' ') : String(row.valueProposition || row.value_proposition || ''),
+    services: Array.isArray(row.services) ? row.services.map(String) : [],
+    advantages: Array.isArray(row.advantages) ? row.advantages.map(String) : [],
+    operatingModel: Array.isArray(row.operatingModel) ? row.operatingModel.map(String) : [],
+    commercialModel: String(row.commercialModel || row.commercial_model || ''),
+    rollout: Array.isArray(row.rollout) ? row.rollout.map(String) : [],
+    kpis: Array.isArray(row.kpis) ? row.kpis.map(String) : [],
+    activationAssets: Array.isArray(row.activationAssets) ? row.activationAssets.map(String) : [],
+    riskControls: Array.isArray(row.riskControls) ? row.riskControls.map(String) : [],
+    nextAction: String(row.nextAction || row.next_action || ''),
+    owner: String(row.owner || 'B2B Partnerships'),
+    priority: String(row.priority || 'B'),
+    createdAt: String(row.createdAt || row.created_at || new Date().toISOString()),
+  }
+}
+
+function mergePrograms(base: ProgramRecord[], rows: AnyRecord[]) {
+  const merged = new Map(base.map((program) => [program.id, program]))
+  for (const row of rows) {
+    const normalized = normalizeProgramRow(row)
+    if (row?.deletedAt || row?.deleted_at || row?.is_deleted || normalized.status === 'Archived') {
+      merged.delete(normalized.id)
+      continue
+    }
+    merged.set(normalized.id, normalized)
+  }
+  return Array.from(merged.values())
+}
+
+async function postProgram(program: AnyRecord, method: 'POST' | 'PATCH' | 'DELETE' = 'POST') {
+  const response = await fetch('/api/b2b-partnerships/partner-programs', {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(program),
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to persist partner program.')
+  return payload?.data ? normalizeProgramRow(payload.data) : normalizeProgramRow(program)
+}
+
 export default function B2BProgramsPremiumWorkspace() {
   const [sector, setSector] = useState<SectorKey>('hospitality')
   const [view, setView] = useState<ViewMode>('command')
@@ -238,16 +309,53 @@ export default function B2BProgramsPremiumWorkspace() {
   const [form, setForm] = useState<ProgramRecord>(emptyProgram('hospitality'))
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('angelcare:b2b-programs')
-      if (saved) setPrograms(JSON.parse(saved))
-    } catch {}
-  }, [])
+    let alive = true
 
-  function persist(next: ProgramRecord[]) {
-    setPrograms(next)
-    try { localStorage.setItem('angelcare:b2b-programs', JSON.stringify(next)) } catch {}
-  }
+    async function bootstrap() {
+      try {
+        const response = await fetch('/api/b2b-partnerships/partner-programs?include_deleted=1', { cache: 'no-store' })
+        const payload = await response.json().catch(() => null)
+        if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to load partner programs.')
+
+        const serverRows = Array.isArray(payload?.data) ? payload.data : []
+        if (!alive) return
+
+        if (serverRows.length) {
+          const next = mergePrograms(SEED_PROGRAMS, serverRows)
+          setPrograms(next)
+          clearStoredPrograms()
+          return
+        }
+
+        const stored = readStoredPrograms()
+        if (stored.length) {
+          const normalizedStored = stored.map(normalizeProgramRow)
+          for (const program of normalizedStored) {
+            await postProgram(program, 'POST')
+          }
+          if (!alive) return
+          setPrograms(mergePrograms(SEED_PROGRAMS, normalizedStored))
+          clearStoredPrograms()
+          return
+        }
+
+        setPrograms(SEED_PROGRAMS)
+      } catch {
+        const stored = readStoredPrograms()
+        if (stored.length) {
+          setPrograms(mergePrograms(SEED_PROGRAMS, stored.map(normalizeProgramRow)))
+        } else {
+          setPrograms(SEED_PROGRAMS)
+        }
+      }
+    }
+
+    bootstrap()
+
+    return () => {
+      alive = false
+    }
+  }, [])
 
   const sectorPrograms = useMemo(() => programs.filter((program) => program.sector === sector), [programs, sector])
   const currentSector = SECTORS.find((s) => s.key === sector)!
@@ -278,7 +386,7 @@ export default function B2BProgramsPremiumWorkspace() {
     setModalMode('edit')
   }
 
-  function saveProgram() {
+  async function saveProgram() {
     const clean: ProgramRecord = {
       ...form,
       id: form.id || `custom-${Date.now()}`,
@@ -287,20 +395,31 @@ export default function B2BProgramsPremiumWorkspace() {
       createdAt: form.createdAt || new Date().toISOString(),
     }
 
-    const exists = programs.some((program) => program.id === clean.id)
-    const next = exists ? programs.map((program) => program.id === clean.id ? clean : program) : [clean, ...programs]
-    persist(next)
-    setSelectedProgram(clean)
-    setModalMode('view')
+    try {
+      const saved = await postProgram(clean, programs.some((program) => program.id === clean.id) ? 'PATCH' : 'POST')
+      const next = mergePrograms(programs, [saved])
+      setPrograms(next)
+      clearStoredPrograms()
+      setSelectedProgram(saved)
+      setModalMode('view')
+    } catch (error: any) {
+      window.alert(error?.message || 'Unable to save program.')
+    }
   }
 
-  function deleteProgram() {
+  async function deleteProgram() {
     if (!selectedProgram) return
     if (!window.confirm('Delete this program dossier?')) return
 
-    persist(programs.filter((program) => program.id !== selectedProgram.id))
-    setSelectedProgram(null)
-    setModalMode(null)
+    try {
+      const deleted = await postProgram({ id: selectedProgram.id }, 'DELETE')
+      setPrograms(mergePrograms(programs, [deleted]))
+      clearStoredPrograms()
+      setSelectedProgram(null)
+      setModalMode(null)
+    } catch (error: any) {
+      window.alert(error?.message || 'Unable to delete program.')
+    }
   }
 
   function printProgramDossier() {

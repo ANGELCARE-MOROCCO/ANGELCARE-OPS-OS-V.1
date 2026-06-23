@@ -99,8 +99,9 @@ function makeRule(
   severity: AutomationRule['severity'],
   channels: string[],
 ): AutomationRule {
+  const id = `rule-${sector}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   return {
-    id: `rule-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    id,
     name,
     status: 'Active',
     sector,
@@ -134,6 +135,104 @@ function blankRule(sector: SectorKey): AutomationRule {
     expectedImpact: '',
     createdAt: new Date().toISOString(),
   }
+}
+
+function readStoredJson(key: string) {
+  try {
+    const raw = window.localStorage.getItem(key)
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+function clearStoredJson(keys: string[]) {
+  try {
+    for (const key of keys) window.localStorage.removeItem(key)
+  } catch {}
+}
+
+function normalizeSettings(next: any): SettingsState {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...(next && typeof next === 'object' ? next : {}),
+    scoringWeights: {
+      ...DEFAULT_SETTINGS.scoringWeights,
+      ...(next?.scoringWeights && typeof next.scoringWeights === 'object' ? next.scoringWeights : {}),
+    },
+    activeChannels: Array.isArray(next?.activeChannels) ? next.activeChannels.filter((value: any) => typeof value === 'string') : DEFAULT_SETTINGS.activeChannels,
+  }
+}
+
+function normalizeRule(next: any): AutomationRule {
+  const channels = Array.isArray(next?.channels) ? next.channels.filter((value: any) => typeof value === 'string') : ['Task']
+  const sector = (next?.sector || 'all') as SectorKey
+  const statusValue = String(next?.status || (next?.is_active === false ? 'Paused' : 'Active'))
+  const status = (['Active', 'Paused', 'Draft'].includes(statusValue) ? statusValue : (next?.is_active === false ? 'Paused' : 'Active')) as AutomationRule['status']
+  return {
+    id: String(next?.id || `custom-${Date.now()}`),
+    name: String(next?.name || ''),
+    status,
+    sector,
+    trigger: String(next?.trigger || next?.trigger_key || ''),
+    condition: String(next?.condition || next?.conditions?.condition || ''),
+    action: String(next?.action || next?.actions?.[0]?.title || next?.actions?.[0]?.action || ''),
+    cadence: String(next?.cadence || 'Immediate'),
+    owner: String(next?.owner || 'B2B Partnerships Manager'),
+    severity: (next?.severity || 'Medium') as AutomationRule['severity'],
+    channels,
+    aiBrief: String(next?.aiBrief || next?.ai_brief || next?.description || ''),
+    expectedImpact: String(next?.expectedImpact || next?.expected_impact || ''),
+    createdAt: String(next?.createdAt || next?.created_at || new Date().toISOString()),
+  }
+}
+
+function ruleSignature(rule: Pick<AutomationRule, 'name' | 'sector' | 'trigger'>) {
+  return [rule.sector, rule.name, rule.trigger].map((value) => String(value || '').toLowerCase().trim()).join('::')
+}
+
+function mergeRules(base: AutomationRule[], rows: any[]) {
+  const merged = new Map(base.map((rule) => [rule.id, rule]))
+  const seedBySignature = new Map(base.map((rule) => [ruleSignature(rule), rule.id]))
+  const seedByName = new Map(base.map((rule) => [rule.name.toLowerCase().trim(), rule.id]))
+
+  for (const row of rows) {
+    const normalized = normalizeRule(row)
+    if (row?.deleted_at || row?.is_deleted) {
+      merged.delete(normalized.id)
+      continue
+    }
+
+    const existingSeedId = seedBySignature.get(ruleSignature(normalized)) || seedByName.get(normalized.name.toLowerCase().trim())
+    merged.set(existingSeedId || normalized.id, existingSeedId ? { ...normalized, id: existingSeedId } : normalized)
+  }
+
+  return Array.from(merged.values())
+}
+
+async function syncSettings(next: SettingsState) {
+  const response = await fetch('/api/b2b-partnerships/settings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ settings: next }),
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to save settings.')
+  clearStoredJson(['angelcare:b2b-settings'])
+  return normalizeSettings(payload?.data?.settings || next)
+}
+
+async function syncRule(next: AutomationRule, method: 'POST' | 'PATCH' | 'DELETE' = 'POST') {
+  const response = await fetch('/api/b2b-partnerships/automation-rules', {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(next),
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || 'Unable to save automation rule.')
+  clearStoredJson(['angelcare:b2b-automation-rules'])
+  return normalizeRule(payload?.data || next)
 }
 
 function severityScore(severity: AutomationRule['severity']) {
@@ -232,24 +331,76 @@ export default function B2BSettingsAutomationWorkspace() {
   const [form, setForm] = useState<AutomationRule>(blankRule('all'))
   const [goal, setGoal] = useState('')
   const [copied, setCopied] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem('angelcare:b2b-settings')
-      const savedRules = localStorage.getItem('angelcare:b2b-automation-rules')
-      if (savedSettings) setSettings(JSON.parse(savedSettings))
-      if (savedRules) setRules(JSON.parse(savedRules))
-    } catch {}
+    let alive = true
+
+    async function bootstrap() {
+      try {
+        const [settingsResponse, rulesResponse] = await Promise.all([
+          fetch('/api/b2b-partnerships/settings', { cache: 'no-store' }),
+          fetch('/api/b2b-partnerships/automation-rules?include_deleted=1', { cache: 'no-store' }),
+        ])
+
+        const settingsPayload = await settingsResponse.json().catch(() => null)
+        const rulesPayload = await rulesResponse.json().catch(() => null)
+
+        if (!settingsResponse.ok || settingsPayload?.ok === false) throw new Error(settingsPayload?.error || 'Unable to load settings.')
+        if (!rulesResponse.ok || rulesPayload?.ok === false) throw new Error(rulesPayload?.error || 'Unable to load automation rules.')
+        if (!alive) return
+
+        const serverSettingsSource = settingsPayload?.data?.settings
+        const hasServerSettings = serverSettingsSource && typeof serverSettingsSource === 'object' && Object.keys(serverSettingsSource).length > 0
+        const serverSettings = normalizeSettings(serverSettingsSource)
+        setSettings(serverSettings)
+        if (hasServerSettings) clearStoredJson(['angelcare:b2b-settings'])
+
+        const serverRules = Array.isArray(rulesPayload?.data) ? rulesPayload.data : []
+        const storedSettings = readStoredJson('angelcare:b2b-settings')
+        const storedRules = readStoredJson('angelcare:b2b-automation-rules')
+
+        if (!hasServerSettings && storedSettings) {
+          const syncedSettings = await syncSettings(normalizeSettings(storedSettings))
+          if (!alive) return
+          setSettings(syncedSettings)
+        }
+
+        if (serverRules.length) {
+          setRules(mergeRules(DEFAULT_RULES, serverRules))
+          clearStoredJson(['angelcare:b2b-automation-rules'])
+        } else {
+          if (Array.isArray(storedRules) && storedRules.length) {
+            const normalizedStored = storedRules.map(normalizeRule)
+            for (const rule of normalizedStored) {
+              await syncRule(rule, rule.id.startsWith('custom-') ? 'POST' : 'PATCH')
+            }
+            if (!alive) return
+            setRules(mergeRules(DEFAULT_RULES, normalizedStored))
+            clearStoredJson(['angelcare:b2b-automation-rules'])
+          }
+        }
+      } catch {
+        const storedSettings = readStoredJson('angelcare:b2b-settings')
+        const storedRules = readStoredJson('angelcare:b2b-automation-rules')
+        if (storedSettings) setSettings(normalizeSettings(storedSettings))
+        if (Array.isArray(storedRules) && storedRules.length) setRules(mergeRules(DEFAULT_RULES, storedRules.map(normalizeRule)))
+      }
+    }
+
+    bootstrap()
+
+    return () => {
+      alive = false
+    }
   }, [])
 
   function persistSettings(next: SettingsState) {
     setSettings(next)
-    try { localStorage.setItem('angelcare:b2b-settings', JSON.stringify(next)) } catch {}
-  }
-
-  function persistRules(next: AutomationRule[]) {
-    setRules(next)
-    try { localStorage.setItem('angelcare:b2b-automation-rules', JSON.stringify(next)) } catch {}
+    setError('')
+    void syncSettings(next).catch((error) => {
+      setError(error instanceof Error ? error.message : 'Unable to save settings.')
+    })
   }
 
   const filteredRules = useMemo(() => {
@@ -294,26 +445,39 @@ export default function B2BSettingsAutomationWorkspace() {
     setModalMode('edit')
   }
 
-  function saveRule() {
+  async function saveRule() {
+    setError('')
     const clean: AutomationRule = {
       ...form,
       id: form.id || `custom-${Date.now()}`,
       createdAt: form.createdAt || new Date().toISOString(),
     }
 
-    const exists = rules.some((rule) => rule.id === clean.id)
-    const next = exists ? rules.map((rule) => rule.id === clean.id ? clean : rule) : [clean, ...rules]
-    persistRules(next)
-    setSelectedRule(clean)
-    setModalMode('view')
+    try {
+      const saved = await syncRule(clean, rules.some((rule) => rule.id === clean.id) ? 'PATCH' : 'POST')
+      const next = mergeRules(rules, [saved])
+      setRules(next)
+      clearStoredJson(['angelcare:b2b-automation-rules'])
+      setSelectedRule(saved)
+      setModalMode('view')
+    } catch (error: any) {
+      setError(error?.message || 'Unable to save automation rule.')
+    }
   }
 
-  function deleteRule() {
+  async function deleteRule() {
     if (!selectedRule) return
     if (!window.confirm('Delete this automation rule?')) return
-    persistRules(rules.filter((rule) => rule.id !== selectedRule.id))
-    setSelectedRule(null)
-    setModalMode(null)
+    setError('')
+    try {
+      const deleted = await syncRule(selectedRule, 'DELETE')
+      setRules(mergeRules(rules, [deleted]))
+      clearStoredJson(['angelcare:b2b-automation-rules'])
+      setSelectedRule(null)
+      setModalMode(null)
+    } catch (error: any) {
+      setError(error?.message || 'Unable to delete automation rule.')
+    }
   }
 
   function smartGenerate() {
@@ -369,10 +533,22 @@ export default function B2BSettingsAutomationWorkspace() {
     }
   }
 
-  function resetDefaults() {
+  async function resetDefaults() {
     if (!window.confirm('Reset settings and automation rules to default templates?')) return
-    persistSettings(DEFAULT_SETTINGS)
-    persistRules(DEFAULT_RULES)
+    setError('')
+    try {
+      setSettings(DEFAULT_SETTINGS)
+      await syncSettings(DEFAULT_SETTINGS)
+      const defaultIds = new Set(DEFAULT_RULES.map((rule) => rule.id))
+      const customRules = rules.filter((rule) => !defaultIds.has(rule.id))
+      await Promise.all(customRules.map((rule) => syncRule(rule, 'DELETE')))
+      const savedRules = await Promise.all(DEFAULT_RULES.map((rule) => syncRule(rule, rules.some((existing) => existing.id === rule.id) ? 'PATCH' : 'POST')))
+      const nextRules = mergeRules(DEFAULT_RULES, savedRules)
+      setRules(nextRules)
+      clearStoredJson(['angelcare:b2b-automation-rules'])
+    } catch (error: any) {
+      setError(error?.message || 'Unable to reset settings and automation rules.')
+    }
   }
 
   return (
@@ -391,6 +567,12 @@ export default function B2BSettingsAutomationWorkspace() {
           <button type="button" onClick={openCreate}>Create rule manually</button>
         </aside>
       </section>
+
+      {error && (
+        <div style={{ margin: '0 0 16px', padding: '12px 14px', borderRadius: '14px', border: '1px solid rgba(239,68,68,.35)', background: 'rgba(254,242,242,.95)', color: '#991b1b' }}>
+          {error}
+        </div>
+      )}
 
       <section className={styles.metrics}>
         {metrics.map((metric) => (
