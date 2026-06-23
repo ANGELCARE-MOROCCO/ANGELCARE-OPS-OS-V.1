@@ -75,21 +75,61 @@ function normalizeStatus(value: string) {
   return map[raw] || 'todo'
 }
 
-function normalizePriority(value: string) {
-  const raw = value.toLowerCase().trim()
-  const map: Record<string, string> = {
-    low: 'low',
-    basse: 'low',
-    normal: 'normal',
-    medium: 'normal',
-    moyenne: 'normal',
-    high: 'high',
-    haute: 'high',
-    urgent: 'urgent',
-    urgente: 'urgent',
+function normalizePriority(value: unknown): 'Low' | 'Medium' | 'High' | 'Urgent' {
+  const raw = String(value ?? '').trim()
+
+  if (!raw) return 'Medium'
+
+  const normalized = raw
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[_\-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (
+    ['urgent', 'urgente', 'critical', 'critique', 'immediate', 'immediat', 'immediate action', 'prioritaire', 'priority', 'p0', 'p1', '1'].includes(normalized) ||
+    normalized.includes('urgent') ||
+    normalized.includes('critique') ||
+    normalized.includes('critical') ||
+    normalized.includes('prioritaire')
+  ) {
+    return 'Urgent'
   }
 
-  return map[raw] || 'normal'
+  if (
+    ['high', 'haute', 'elevee', 'elevée', 'forte', 'important', 'importante', 'p2', '2'].includes(normalized) ||
+    normalized.includes('high') ||
+    normalized.includes('haute') ||
+    normalized.includes('elevee') ||
+    normalized.includes('important')
+  ) {
+    return 'High'
+  }
+
+  if (
+    ['low', 'basse', 'faible', 'minor', 'mineure', 'p4', '4'].includes(normalized) ||
+    normalized.includes('low') ||
+    normalized.includes('basse') ||
+    normalized.includes('faible') ||
+    normalized.includes('minor')
+  ) {
+    return 'Low'
+  }
+
+  if (
+    ['medium', 'normal', 'moyen', 'moyenne', 'standard', 'regular', 'default', 'p3', '3'].includes(normalized) ||
+    normalized.includes('medium') ||
+    normalized.includes('normal') ||
+    normalized.includes('moyen') ||
+    normalized.includes('standard')
+  ) {
+    return 'Medium'
+  }
+
+  // Never fail CSV import because of priority.
+  return 'Medium'
 }
 
 function toIsoOrNull(value: string) {

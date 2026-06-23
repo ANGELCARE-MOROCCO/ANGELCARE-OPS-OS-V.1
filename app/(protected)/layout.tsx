@@ -4,6 +4,7 @@ import VoicePhoneWidgetGate from '@/app/components/VoicePhoneWidgetGate'
 import AngelCareConnect from '@/app/components/connect/AngelCareConnect'
 import OverheadPanel from '@/app/components/erp/OverheadPanel'
 import AppShell from '@/app/components/erp/AppShell'
+import UserActivityTracker from '@/components/users/UserActivityTracker'
 import { MODULE_ACCESS_LINKS } from '@/lib/auth/permissions'
 
 export default async function ProtectedLayout({
@@ -26,6 +27,8 @@ export default async function ProtectedLayout({
 
   return (
     <>
+      <UserActivityTracker />
+
       {/* Global overhead navigation panel */}
       <OverheadPanel />
 

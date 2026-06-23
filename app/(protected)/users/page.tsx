@@ -70,6 +70,62 @@ function countRelated(rows: Row[], staff: Row | undefined, user: Row) {
   }).length
 }
 
+
+function matchingAttendanceRecords(rows: Row[], staff: Row | undefined, user: Row) {
+  const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
+  const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
+  const email = key(pick(user, ['email']))
+  return rows
+    .filter((row) => {
+      const rowStaff = key(pick(row, ['staff_id', 'employee_id', 'profile_id', 'user_id']))
+      const rowEmail = key(pick(row, ['email', 'staff_email', 'employee_email']))
+      return (staffId && rowStaff === staffId) || (userId && rowStaff === userId) || (email && rowEmail === email)
+    })
+    .sort((a, b) => String(pick(b, ['work_date', 'created_at', 'punch_in_at'], '')).localeCompare(String(pick(a, ['work_date', 'created_at', 'punch_in_at'], ''))))
+}
+
+
+function attendanceHistory(rows: Row[], staff: Row | undefined, user: Row) {
+  const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
+  const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
+  const email = key(pick(user, ['email']))
+
+  return rows
+    .filter((row) => {
+      const rowStaff = key(pick(row, ['staff_id', 'staff_profile_id', 'employee_id', 'profile_id', 'user_id']))
+      const rowEmail = key(pick(row, ['email', 'staff_email', 'employee_email']))
+      return (staffId && rowStaff === staffId) || (userId && rowStaff === userId) || (email && rowEmail === email)
+    })
+    .sort((a, b) => String(pick(b, ['work_date', 'attendance_date', 'date', 'day', 'updated_at', 'created_at', 'punch_in_at', 'check_in'], '')).localeCompare(String(pick(a, ['work_date', 'attendance_date', 'date', 'day', 'updated_at', 'created_at', 'punch_in_at', 'check_in'], ''))))
+}
+
+
+function attendanceAuthorizedAbsences(rows: Row[], staff: Row | undefined, user: Row) {
+  const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
+  const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
+  const email = key(pick(user, ['email']))
+
+  return rows.filter((row) => {
+    const rowStaff = key(pick(row, ['staff_id', 'staff_profile_id']))
+    const rowUser = key(pick(row, ['user_id']))
+    const rowEmail = key(pick(row, ['employee_email', 'email']))
+    return (userId && rowUser === userId) || (staffId && rowStaff === staffId) || (email && rowEmail === email)
+  })
+}
+
+function attendanceShiftRule(rows: Row[], staff: Row | undefined, user: Row) {
+  const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
+  const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
+  const email = key(pick(user, ['email']))
+
+  return rows.find((row) => {
+    const rowStaff = key(pick(row, ['staff_id']))
+    const rowUser = key(pick(row, ['user_id']))
+    const rowEmail = key(pick(row, ['employee_email', 'email']))
+    return (userId && rowUser === userId) || (staffId && rowStaff === staffId) || (email && rowEmail === email)
+  })
+}
+
 function latestAttendance(rows: Row[], staff: Row | undefined, user: Row) {
   const staffId = key(pick(staff, ['id', 'staff_id', 'profile_id']))
   const userId = key(pick(user, ['id', 'user_id', 'profile_id']))
@@ -99,16 +155,19 @@ function readiness(record: UserStaffRecord) {
 export default async function UsersPage() {
   const actor = await requireRole(['ceo', 'manager', 'admin', 'hr_admin', 'hr_manager', 'operations_manager'])
 
-  const [usersRaw, staffRaw, attendance, documents, contracts, training, rosters, payroll, leave] = await Promise.all([
+  const [usersRaw, staffRaw, attendance, documents, contracts, training, rosters, payroll, leave, shiftRules, authorizedAbsences, systemActivity] = await Promise.all([
     readTable('app_users'),
     readTable('hr_staff_profiles'),
-    readTable('hr_attendance_records'),
+    readTable('hr_attendance_records', '*', 5000),
     readTable('hr_documents'),
     readTable('hr_contracts'),
     readTable('hr_training_records'),
     readTable('hr_roster_assignments'),
     readTable('hr_payroll_inputs'),
     readTable('hr_leave_requests'),
+    readTable('hr_attendance_shift_rules', '*', 1000),
+    readTable('hr_attendance_authorized_absences', '*', 5000),
+    readTable('app_user_activity_events', '*', 1000),
   ])
 
   const staffByEmail = new Map<string, Row>(
@@ -128,7 +187,10 @@ export default async function UsersPage() {
     const department = String(pick(user, ['department', 'department_name'], pick(staff, ['department', 'department_name'], '—')))
     const position = String(pick(user, ['position', 'job_title', 'role_title'], pick(staff, ['position', 'job_title', 'title'], '—')))
     const status = normalizeStatus(pick(user, ['status'], pick(staff, ['status'], 'active')))
-    const attendanceRow = latestAttendance(attendance, staff, user)
+    const userAttendanceRows = matchingAttendanceRecords(attendance, staff, user)
+    const attendanceRow = userAttendanceRows[0] || latestAttendance(attendance, staff, user)
+    const userShiftRule = attendanceShiftRule(shiftRules || [], staff, user)
+    const userAuthorizedAbsences = attendanceAuthorizedAbsences(authorizedAbsences || [], staff, user)
     const record: UserStaffRecord = {
       id: String(pick(user, ['id', 'user_id', 'profile_id'])),
       staffId: staff ? String(pick(staff, ['id', 'staff_id', 'profile_id'])) : null,
@@ -148,8 +210,8 @@ export default async function UsersPage() {
       lastLoginAt: String(pick(user, ['last_login_at'], '') || ''),
       createdAt: String(pick(user, ['created_at'], '') || ''),
       attendanceStatus: String(pick(attendanceRow, ['status'], 'not_pointed')),
-      punchInAt: String(pick(attendanceRow, ['punch_in_at'], '') || ''),
-      punchOutAt: String(pick(attendanceRow, ['punch_out_at'], '') || ''),
+      punchInAt: String(pick(attendanceRow, ['punch_in_at', 'check_in', 'check_in_at', 'clock_in_at', 'started_at', 'start_time', 'in_at'], '') || ''),
+      punchOutAt: String(pick(attendanceRow, ['punch_out_at', 'check_out', 'check_out_at', 'clock_out_at', 'ended_at', 'end_time', 'out_at'], '') || ''),
       coverage: {
         attendance: countRelated(attendance, staff, user),
         documents: countRelated(documents, staff, user),
@@ -159,7 +221,7 @@ export default async function UsersPage() {
         payroll: countRelated(payroll, staff, user),
         leave: countRelated(leave, staff, user),
       },
-      rawUser: user,
+      rawUser: { ...user, __attendanceHistory: userAttendanceRows || [], __authorizedAbsences: userAuthorizedAbsences || [], __shiftRule: userShiftRule || null },
       rawStaff: staff || null,
       readiness: 0,
       risk: 0,
@@ -206,7 +268,20 @@ export default async function UsersPage() {
       canPreviewGovernance={canViewAccessGovernance(actor as GovernanceUserRow)}
       registry={registry}
       registryError={registryError}
-      events={eventsResult.ok ? eventsResult.events : []}
+      events={[
+        ...(eventsResult.ok ? eventsResult.events : []),
+        ...systemActivity.map((event) => ({
+          id: String(pick(event, ['id'])),
+          event_type: String(pick(event, ['event_type'], 'page_view')),
+          module_key: String(pick(event, ['module_key'], '') || '') || null,
+          route_href: String(pick(event, ['route_href'], '') || '') || null,
+          actor_user_id: String(pick(event, ['user_id'], '') || '') || null,
+          actor_email: String(pick(event, ['email'], '') || '') || null,
+          message: `${String(pick(event, ['event_type'], 'page_view')).replaceAll('_', ' ')} · ${String(pick(event, ['route_href'], ''))}`,
+          payload: event,
+          created_at: String(pick(event, ['created_at'], new Date().toISOString())),
+        })),
+      ].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))}
       scans={eventsResult.ok ? eventsResult.scans : []}
       loadedAt={new Date().toISOString()}
     />

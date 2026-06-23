@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
+
+function b2bTasksJson(payload: unknown, status = 200) {
+  return NextResponse.json(payload, {
+    status,
+    headers: {
+      'Cache-Control': 'no-store',
+    },
+  })
+}
+
 async function guard(action: 'read' | 'create' | 'update' = 'read') {
   const db = await getServerB2BDatabaseClient()
   const actor = await getCurrentB2BAppUser()
