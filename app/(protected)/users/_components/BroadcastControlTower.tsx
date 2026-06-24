@@ -143,15 +143,15 @@ function readRecord(raw: unknown, index: number): BroadcastRecord {
 }
 
 function extractRecords(payload: BroadcastApiPayload): BroadcastRecord[] {
-  const data = payload?.data && typeof payload.data === 'object' ? payload.data as Record<string, unknown> : payload
+  const data = payload?.data && typeof payload.data === 'object' ? (payload.data as Record<string, unknown>) : null
   const candidates = [
     payload?.broadcasts,
     payload?.memos,
     payload?.items,
-    data?.broadcasts,
-    data?.memos,
-    data?.items,
-    data?.records,
+    data?.['broadcasts'],
+    data?.['memos'],
+    data?.['items'],
+    data?.['records'],
   ]
 
   const firstArray = candidates.find((item) => Array.isArray(item))
@@ -1207,4 +1207,3 @@ const workspaceSignalDotStyle: CSSProperties = {
   color: 'transparent',
   display: 'block',
 }
-

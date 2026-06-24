@@ -28,11 +28,15 @@ export type UserStaffRecord = {
   staffId: string | null
   initials: string
   fullName: string
+  full_name?: string
+  name?: string
   email: string
   username: string
   role: string
   department: string
+  departmentName?: string
   position: string
+  jobTitle?: string
   city: string
   status: string
   language: string
@@ -41,6 +45,11 @@ export type UserStaffRecord = {
   phone: string
   lastLoginAt: string
   createdAt: string
+  updatedAt?: string
+  updated_at?: string
+  lastUpdated?: string
+  last_updated?: string
+  created_at?: string
   attendanceStatus: string
   punchInAt: string
   punchOutAt: string

@@ -229,6 +229,7 @@ export default function AppShell({
   links,
 }: {
   children: React.ReactNode
+  hideSidebar?: boolean
   title?: string
   subtitle?: string
   breadcrumbs?: { label: string; href?: string }[]
