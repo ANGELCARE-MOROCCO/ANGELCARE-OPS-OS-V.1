@@ -1,8 +1,8 @@
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { requireAccess } from '@/lib/auth/requireAccess'
-
 export const dynamic = 'force-dynamic'
 
 type AnyRow = Record<string, any>
@@ -135,7 +135,7 @@ export async function bulkTodayAttendanceAction(fd: FormData) {
 
 function AcademySidebar() {
   return <aside style={{ position: 'sticky', top: 0, alignSelf: 'start', minHeight: '100vh', width: 292, background: '#fff', borderRight: '1px solid #e7ecf4', padding: '28px 18px', boxShadow: '18px 0 45px rgba(15,23,42,.035)' }}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 30 }}><div style={{ width: 54, height: 54, borderRadius: 18, background: 'linear-gradient(135deg,#355df6,#7c3aed)', display: 'grid', placeItems: 'center', color: '#fff', fontSize: 27 }}>🎓</div><div><h2 style={{ margin: 0, fontSize: 21, letterSpacing: '-.04em' }}>Academy OS</h2><p style={{ margin: '6px 0 0', color: '#64748b', fontWeight: 800 }}>Attendance Command</p></div></div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 30 }}><div style={{ width: 54, height: 54, borderRadius: 18, background: "#fff", display: "grid", placeItems: "center", overflow: "hidden", boxShadow: "0 14px 34px rgba(15,23,42,.10)" }}><AngelCareLogo size="sm" /></div><div><h2 style={{ margin: 0, fontSize: 21, letterSpacing: '-.04em' }}>Academy OS</h2><p style={{ margin: '6px 0 0', color: '#64748b', fontWeight: 800 }}>Attendance Command</p></div></div>
     <p style={{ margin: '0 0 12px', color: '#355df6', fontSize: 12, fontWeight: 950, letterSpacing: '.24em' }}>ACADEMY</p>
     <nav style={{ display: 'grid', gap: 6 }}>{sidebarItems.filter((i: SidebarItem) => i.group === 'academy').map((item: SidebarItem) => <Link key={item.href} href={item.href} style={{ minHeight: 46, display: 'flex', alignItems: 'center', gap: 13, padding: '0 14px', borderRadius: 14, background: item.href === '/academy/attendance' ? '#eef2ff' : 'transparent', color: item.href === '/academy/attendance' ? '#355df6' : '#334155', textDecoration: 'none', fontWeight: 950, fontSize: 15 }}><span style={{ width: 23, textAlign: 'center', fontSize: 14 }}>{item.icon}</span>{item.label}</Link>)}</nav>
     <p style={{ margin: '30px 0 12px', color: '#64748b', fontSize: 12, fontWeight: 950, letterSpacing: '.24em' }}>SYSTEM</p>

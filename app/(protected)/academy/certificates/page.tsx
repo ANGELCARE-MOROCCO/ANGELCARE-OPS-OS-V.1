@@ -1,3 +1,4 @@
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -5,7 +6,6 @@ import QRCode from 'qrcode'
 import { createClient } from '@/lib/supabase/server'
 import { requireAccess } from '@/lib/auth/requireAccess'
 import CertificateCreateWizardClient, { type OptionRow } from './_components/CertificateCreateWizardClient'
-
 export const dynamic = 'force-dynamic'
 
 type AnyRow = Record<string, any>
@@ -118,7 +118,7 @@ async function createCertificateAction(formData: FormData) {
 }
 
 function Sidebar() {
-  return <aside className="sidebar"><div className="brand"><div>🎓</div><section><strong>Academy OS</strong><span>Certificates Command</span></section></div><p>ACADEMY</p><nav>{academyNav.map(([icon, label, href]) => <Link key={href} href={href} className={href === '/academy/certificates' ? 'active' : ''}><span>{icon}</span>{label}</Link>)}</nav><p>SYSTEM</p><nav>{systemNav.map(([icon, label, href]) => <Link key={href} href={href}><span>{icon}</span>{label}</Link>)}</nav><div className="system"><b>Academy OS</b><small>Live certificate sync</small><em>● Online</em></div></aside>
+  return <aside className="sidebar"><div className="brand"><div className="officialLogo"><AngelCareLogo size="sm" /></div><section><strong>Academy OS</strong><span>Certificates Command</span></section></div><p>ACADEMY</p><nav>{academyNav.map(([icon, label, href]) => <Link key={href} href={href} className={href === '/academy/certificates' ? 'active' : ''}><span>{icon}</span>{label}</Link>)}</nav><p>SYSTEM</p><nav>{systemNav.map(([icon, label, href]) => <Link key={href} href={href}><span>{icon}</span>{label}</Link>)}</nav><div className="system"><b>Academy OS</b><small>Live certificate sync</small><em>● Online</em></div></aside>
 }
 function Kpi({ label, value, sub, tone }: { label: string; value: string; sub: string; tone: Tone }) { return <section className="kpi"><i className={tone}>◎</i><div><span>{label}</span><strong>{value}</strong><small>{sub}</small></div></section> }
 function Badge({ text, tone }: { text: string; tone: Tone }) { return <span className={`badge ${tone}`}>{text}</span> }

@@ -173,6 +173,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params
+
+  const confirm = request.nextUrl.searchParams.get('confirm') || request.nextUrl.searchParams.get('confirmation')
+  if (confirm !== 'DELETE') {
+    return NextResponse.redirect(new URL(`/users/${id}?error=delete_requires_confirmation`, request.url))
+  }
   return NextResponse.redirect(new URL(`/users/${id}?error=delete_requires_confirmation`, request.url))
 }
 

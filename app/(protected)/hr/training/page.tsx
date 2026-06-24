@@ -1,3 +1,4 @@
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { revalidatePath } from 'next/cache'
@@ -420,7 +421,7 @@ function positionRecommendations(position: string) {
 
 function SideBar() {
   return <aside className="sticky top-0 flex h-screen min-h-0 w-[290px] shrink-0 flex-col border-r border-slate-200/80 bg-white/95 px-3 py-4 shadow-[24px_0_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-    <div className="mb-5 flex items-center gap-3 px-2"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-500 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div><div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div></div>
+    <div className="mb-5 flex items-center gap-3 px-2"><div className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl bg-white shadow-xl shadow-violet-100 ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div><div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div></div>
     <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
       {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item, index) => { const Icon = item.icon; return <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.active ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><Icon className="h-4 w-4" />{item.label}</Link> })}</div></div>)}
 export const dynamic = "force-dynamic";

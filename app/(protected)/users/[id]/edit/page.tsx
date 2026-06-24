@@ -89,6 +89,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
 
   return (
     <AppShell
+      hideSidebar
       title={`Modifier ${user.full_name}`}
       subtitle="Gestion du rôle, statut, permissions métier et pages visibles."
       breadcrumbs={[
@@ -98,7 +99,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
       ]}
       actions={<PageAction href={`/users/${user.id}`} variant="light">Retour profil</PageAction>}
     >
-      <form action={updateUser} style={pageStyle}>
+<form action={updateUser} style={pageStyle}>
         <main>
           <section style={panelStyle}>
             <h2 style={titleStyle}>Identité</h2>
@@ -189,3 +190,6 @@ const hintStyle: React.CSSProperties = { margin: '14px 0 0', color: '#475569', f
 const sidePanelStyle: React.CSSProperties = { position: 'sticky', top: 104, background: 'linear-gradient(180deg,#0f172a 0%,#1e293b 100%)', borderRadius: 24, padding: 22, color: '#fff', boxShadow: '0 24px 50px rgba(15,23,42,.22)' }
 const badgeStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 11px', borderRadius: 999, background: 'rgba(255,255,255,.1)', color: '#dbeafe', fontWeight: 950, fontSize: 12, marginBottom: 14 }
 const buttonStyle: React.CSSProperties = { width: '100%', border: 'none', borderRadius: 14, background: '#fff', color: '#0f172a', padding: '14px 16px', fontWeight: 950, cursor: 'pointer', marginTop: 18 }
+
+
+

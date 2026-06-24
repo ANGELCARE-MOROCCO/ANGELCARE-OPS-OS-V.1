@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 type ProgramLibraryCategory =
   | 'training_workbook'
   | 'training_presentation'
@@ -170,7 +171,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="academy-page">
       <aside className="academy-sidebar">
-        <div className="brand"><span className="brandMark">◆</span><div><b>Academy OS</b><small>Command Center</small></div></div>
+        <div className="brand"><span className="brandMark officialLogo"><AngelCareLogo size="sm" /></span><div><b>Academy OS</b><small>Command Center</small></div></div>
         <p className="navTitle">ACADEMY</p>
         {sidebar.slice(0, 13).map(([label, href]) => <Link key={href} className={href === '/academy/courses' ? 'nav active' : 'nav'} href={href}>{label}</Link>)}
         <p className="navTitle">SYSTEM</p>

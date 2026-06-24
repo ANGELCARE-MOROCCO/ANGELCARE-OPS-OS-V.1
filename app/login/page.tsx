@@ -1,3 +1,4 @@
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
@@ -107,7 +108,7 @@ export default function LoginPage() {
 
         <section style={cardStyle}>
           <div style={brandRowStyle}>
-            <div style={brandMarkStyle}>AC</div>
+            <AngelCareLogo size="lg" showText />
             <div>
               <div style={brandStyle}>AngelCare OpsOS</div>
               <div style={brandSubStyle}>Secure Team Gateway</div>
@@ -251,18 +252,6 @@ const brandRowStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: 12,
   marginBottom: 22,
-}
-
-const brandMarkStyle: React.CSSProperties = {
-  width: 48,
-  height: 48,
-  borderRadius: 18,
-  background: 'linear-gradient(135deg,#0f172a,#1d4ed8)',
-  color: '#fff',
-  display: 'grid',
-  placeItems: 'center',
-  fontWeight: 950,
-  boxShadow: '0 16px 34px rgba(29,78,216,.28)',
 }
 
 const brandStyle: React.CSSProperties = {

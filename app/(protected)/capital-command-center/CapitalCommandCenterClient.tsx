@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import { getInvestorCommunicationTemplate, INVESTOR_COMMUNICATION_TEMPLATE_COUNT } from '@/lib/capital-command-center/investor-communication-templates'
 import TasksCommandWorkspace from '@/components/capital-command/TasksCommandWorkspace'
 
@@ -395,7 +396,7 @@ export default function CapitalCommandCenterClient() {
 
 function CapitalSidebar({ view, setView }: { view: ViewKey; setView: (v: ViewKey) => void }) {
   return <aside className="capital-sidebar">
-    <div className="brand"><div className="brand-mark">C</div><div><strong>Capital</strong><span>Command Center</span></div></div>
+    <div className="brand"><div className="brand-mark officialLogo"><AngelCareLogo size="sm" /></div><div><strong>Capital</strong><span>Command Center</span></div></div>
     <nav>{NAV.map((item) => <button key={item.key} onClick={() => setView(item.key)} className={view === item.key ? 'active' : ''}><span>{item.icon}</span><b>{item.label}</b><small>{item.sub}</small></button>)}</nav>
     <div className="operator-card"><b>Capital OS</b><span>● Live workspace</span><small>Investor relations, fundraising, diligence, payments and board reporting are managed from a single governed command layer.</small></div>
   </aside>

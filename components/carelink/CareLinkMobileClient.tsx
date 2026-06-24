@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { useMemo, useState, type ReactNode } from 'react'
 import {
@@ -123,7 +124,7 @@ function AppHeader({ dashboard, compact = false }: { dashboard: CareLinkDashboar
     <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/85 px-5 py-3 backdrop-blur-xl">
       <div className="mx-auto flex max-w-md items-center justify-between">
         <Link href="/carelink" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-emerald-400 text-sm font-black text-white shadow-lg shadow-sky-100">AC</div>
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-sky-100 ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-sky-600">CareLink</p>
             <p className="text-sm font-black text-slate-950">{compact ? 'PORTAIL TERRAIN' : String((dashboard.agent as any)?.name || (dashboard.agent as any)?.full_name || 'ANGELCARE FIELD AGENT')}</p>

@@ -1,6 +1,6 @@
 'use client'
 
-
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import { resolvedMissionCode } from '@/lib/missions/mission-codes'
 type AnyRecord = Record<string, any>
 
@@ -1200,7 +1200,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
                   <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search missions, agents, clients, incidents…" className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none ring-blue-200 transition focus:bg-white focus:ring-4" />
                 </div>
                 <button onClick={() => runAction('open_notifications')} className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white font-black shadow-sm">◇</button>
-                <button onClick={() => setModal({ type: 'command', title: 'CareLink Ops Lead', detail: 'User profile, permissions, dispatch authority, and operational accountability panel.' })} className="flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 shadow-sm"><span className="grid h-8 w-8 place-items-center rounded-full bg-sky-500 text-xs font-black text-white">AC</span><span className="text-left text-xs font-black leading-tight">AngelCare Ops<br /><span className="text-slate-500">Operations Lead</span></span></button>
+                <button onClick={() => setModal({ type: 'command', title: 'CareLink Ops Lead', detail: 'User profile, permissions, dispatch authority, and operational accountability panel.' })} className="flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 shadow-sm"><span className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-white ring-1 ring-slate-100"><AngelCareLogo size="sm" /></span><span className="text-left text-xs font-black leading-tight">AngelCare Ops<br /><span className="text-slate-500">Operations Lead</span></span></button>
               </div>
             </div>
             <div className="mt-3 flex justify-end gap-3 text-xs font-bold text-slate-500">

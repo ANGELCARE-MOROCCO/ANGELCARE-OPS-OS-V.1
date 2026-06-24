@@ -1,3 +1,4 @@
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import {
   Activity,
@@ -124,7 +125,7 @@ function MetricCard({
   confidence = "live",
 }: {
   title: string;
-  value: string;
+value: string;
   detail: string;
   icon: any;
   tone?: "amber" | "blue" | "green" | "cyan" | "violet" | "rose";
@@ -169,7 +170,6 @@ function MetricCard({
     </div>
   );
 }
-
 
 type HRWorkforceGraphRow = Record<string, any>
 
@@ -434,7 +434,6 @@ function HRWorkforceGraphDeck({
   )
 }
 
-
 type HRLiveInsightRow = Record<string, any>
 
 function hrLisRows(value: unknown): HRLiveInsightRow[] {
@@ -673,7 +672,6 @@ function HRLiveInsightStrip({ data, metrics }: { data: any; metrics: any }) {
     </div>
   )
 }
-
 
 type HRMiniRow = Record<string, any>
 
@@ -1045,7 +1043,6 @@ function HRPerformanceOverviewPanel({ data, activeStaff }: { data: any; activeSt
   )
 }
 
-
 function Panel({
   title,
   subtitle,
@@ -1138,7 +1135,6 @@ export default async function Page() {
     ['Roster Conflict', `${rosterConflicts} schedule conflicts detected`, '5h ago'],
   ]
 
-
   const hrRecentActivityItems = [
     ...((Array.isArray((data as any).tasks) ? (data as any).tasks : []).slice(0, 10).map((row: any, index: number) => ({
       id: String(row.id || `task-${index}`),
@@ -1198,7 +1194,7 @@ export default async function Page() {
       <div className="grid h-full grid-cols-[250px_1fr]">
         <aside className="flex min-h-0 flex-col border-r border-slate-200/80 bg-white/95 px-3 py-4 shadow-[24px_0_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
           <div className="mb-5 flex items-center gap-3 px-2">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-500 to-indigo-600 text-white shadow-xl shadow-violet-200"><Sparkles className="h-5 w-5" /></div>
+            <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl bg-white shadow-xl shadow-violet-100 ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
             <div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div>
           </div>
           <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">

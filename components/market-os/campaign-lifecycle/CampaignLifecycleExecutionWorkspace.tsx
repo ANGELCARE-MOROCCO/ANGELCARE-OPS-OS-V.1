@@ -1,5 +1,6 @@
-"use client"
+'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from "next/link"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 
@@ -2273,7 +2274,7 @@ const selectedTaskOps = filteredTaskOps.find((task) => task.id === selectedTaskO
       <div className="grid min-h-screen xl:grid-cols-[292px_minmax(0,1fr)]">
         <aside className="border-r border-slate-200 bg-white p-5">
           <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-black text-white">AC</div>
+            <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-blue-100 ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
             <div>
               <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">ANGELCARE</p>
               <h2 className="text-lg font-black">Market-OS</h2>

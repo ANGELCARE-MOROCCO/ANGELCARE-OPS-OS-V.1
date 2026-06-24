@@ -1,4 +1,5 @@
 'use client'
+import OperationCompletionEngine from '@/components/operation-completion/OperationCompletionEngine'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -219,6 +220,7 @@ function isActive(pathname: string, href: string) {
 }
 
 export default function AppShell({
+  hideSidebar = false,
   children,
   title = 'AngelCare OpsOS',
   subtitle = 'Premium ERP command system',
@@ -269,8 +271,9 @@ export default function AppShell({
   }
 
   return (
-    <div style={shellStyle}>
-      <aside style={{ ...sidebarStyle, width: collapsed ? 92 : 330, minWidth: collapsed ? 92 : 330 }}>
+    <div data-hide-sidebar={hideSidebar ? "true" : "false"} style={shellStyle}>
+      {!hideSidebar && (
+<aside style={{ ...sidebarStyle, width: collapsed ? 92 : 330, minWidth: collapsed ? 92 : 330 }}>
         <div style={brandBlockStyle}>
           <Link href="/" style={brandStyle} aria-label="Go to AngelCare dashboard">
             <div style={logoWrapperStyle}>
@@ -368,6 +371,7 @@ export default function AppShell({
           })}
         </div>
       </aside>
+)}
 
       <div style={mainShellStyle}>
         <header style={topbarStyle}>
@@ -451,7 +455,8 @@ export default function AppShell({
           <div style={pageActionsStyle}>{actions}</div>
         </section>
 
-        <main style={contentStyle}>{children}</main>
+        <main style={contentStyle}>{children}
+      <OperationCompletionEngine /></main>
       </div>
     </div>
   )

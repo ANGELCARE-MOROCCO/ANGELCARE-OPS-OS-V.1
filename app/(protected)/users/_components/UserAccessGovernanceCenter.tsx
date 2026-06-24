@@ -1,5 +1,6 @@
 'use client'
 
+import { OperationCompletionManagerButton } from '@/components/operation-completion/OperationCompletionEngine'
 import Link from 'next/link'
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import type { UserStaffRecord } from './UsersEmployeeCommandClient'
@@ -387,7 +388,7 @@ export default function UserAccessGovernanceCenter({
             <MetaChip tone={healthTone} label="Registry health" value={healthLabel} />
             <MetaChip tone="slate" label="Current role" value={currentUserRole || '—'} />
           </div>
-        </div>
+</div>
 
         <div style={actionsStyle}>
           <ActionButton onClick={runScan} disabled={!canManageGovernance || scanBusy} tone="primary" reason={canRender(canManageGovernance, 'Requires CEO, Admin, Manager, or users.manage.')}>
@@ -417,6 +418,7 @@ export default function UserAccessGovernanceCenter({
         </div>
         <div style={modeButtonRowStyle}>
           <button type="button" onClick={() => setActiveUsersPage('governance')} style={activeUsersPage === 'governance' ? modeButtonActiveStyle : modeButtonStyle}>Access Control</button>
+          <OperationCompletionManagerButton />
           <button type="button" onClick={() => setActiveUsersPage('activities')} style={activeUsersPage === 'activities' ? modeButtonActiveStyle : modeButtonStyle}>User's Activities</button>
           <button type="button" onClick={() => setActiveUsersPage('attendance')} style={activeUsersPage === 'attendance' ? modeButtonActiveStyle : modeButtonStyle}>Attendance</button>
         </div>
@@ -482,59 +484,17 @@ export default function UserAccessGovernanceCenter({
 
         <div className="desktop-only">
           <div style={tableShellStyle}>
-            <table style={tableStyle}>
-              <thead>
-                <tr>
-                  <Th>User</Th>
-                  <Th>Username</Th>
-                  <Th>Role</Th>
-                  <Th>Status</Th>
-                  <Th>Department</Th>
-                  <Th>Permissions</Th>
-                  <Th>Module coverage</Th>
-                  <Th>Last updated</Th>
-                  <Th>Actions</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user) => {
-                  const permissions = userPermissions(user)
-                  const coverage = coverageForUser(user, registry.routes)
-                  const updatedAt = String(user.rawUser?.updated_at || user.createdAt || user.startDate || '')
-                  const isCurrent = user.id === currentUserId
-                  return (
-                    <tr key={user.id} style={isCurrent ? currentUserRowStyle : undefined}>
-                      <Td>
-                        <div style={userCellStyle}>
-                          <div style={avatarStyle}>{user.initials}</div>
-                          <div style={{ minWidth: 0 }}>
-                            <div style={userNameStyle}>{user.fullName}{isCurrent ? <span style={selfBadgeStyle}>You</span> : null}</div>
-                            <div style={userSubStyle}>{user.email || '—'}</div>
-                          </div>
-                        </div>
-                      </Td>
-                      <Td>{user.username || '—'}</Td>
-                      <Td><Badge tone={statusTone(user.role)}>{user.role || '—'}</Badge></Td>
-                      <Td><Badge tone={statusTone(user.status)}>{user.status || '—'}</Badge></Td>
-                      <Td>{user.department || '—'}</Td>
-                      <Td>{permissions.length}</Td>
-                      <Td>{coverage.moduleCount}/{coverage.moduleTotal}</Td>
-                      <Td>{formatShortDate(updatedAt)}</Td>
-                      <Td>
-                        <div style={actionGroupStyle}>
-                          <ActionButton onClick={() => openPreview(user)} disabled={!canPreviewGovernance || previewBusy} tone="ghost" reason={canRender(canPreviewGovernance, 'Requires users.view or users.manage.')}>
-                            Access Preview
-                          </ActionButton>
-                          {canEditUser ? <Link href={`/users/${user.id}/edit`} style={miniLinkStyle}>Edit</Link> : <button type="button" style={miniDisabledButtonStyle} disabled title="Requires CEO or Manager.">Edit</button>}
-                          {canOpenProfile ? <Link href={`/users/${user.id}`} style={miniLinkStyle}>Profile</Link> : <button type="button" style={miniDisabledButtonStyle} disabled title="Requires CEO or Manager.">Profile</button>}
-                          {canDeleteUsers ? <Link href={`/users/${user.id}/delete`} style={miniDangerLinkStyle}>Delete</Link> : <button type="button" style={miniDisabledButtonStyle} disabled title="Requires delete permission or protected admin access.">Delete</button>}
-                        </div>
-                      </Td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <div style={premiumUsersCardScrollShellStyle}>
+              <div style={premiumUsersCardGridStyle}>
+                {filteredUsers.map((user) => (
+                  <PremiumUsersDirectoryCard
+                    key={user.id || user.email || user.username || user.fullName || user.full_name}
+                    user={user}
+                    canOpenProfile={canOpenProfile}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2092,211 +2052,740 @@ function AttendanceHistoryModal({
   }
 
   function printAttendanceMonth() {
-    const docRef = docRefForAttendanceMonth(user, selectedMonth)
-    const monthTitle = monthLabelFromIso(selectedMonth)
-    const generatedAt = new Date().toLocaleString('fr-FR')
-    const printRows = Array.isArray(displayRows) ? displayRows : []
+    const monthIso = selectedMonth || (attendanceDate || todayIso).slice(0, 7)
+    const [yearText, monthText] = monthIso.split('-')
+    const year = Number(yearText)
+    const monthIndex = Number(monthText) - 1
+    const daysInMonth = Number.isFinite(year) && Number.isFinite(monthIndex)
+      ? new Date(year, monthIndex + 1, 0).getDate()
+      : 31
 
-    const rowsHtml = printRows.length
-      ? printRows.map((row, index) => {
-          const record = row as Record<string, unknown>
-          const rowDate = rowDateIso(row)
-          const inAt = String(record.punchInAt || record.check_in || record.punch_in_at || '—')
-          const outAt = String(record.punchOutAt || record.check_out || record.punch_out_at || '—')
-          const pauseAt = String(record.pauseAt || record.lunch_start || record.break_start_at || '—')
-          const retourAt = String(record.retourAt || record.lunch_end || record.break_end_at || '—')
-          const flag = attendanceRowFlag(normalizeAttendanceDisplayRow(row), shiftStart, shiftEnd, graceMinutes)
+    const monthDates = Array.from({ length: daysInMonth }, (_, index) => {
+      const day = index + 1
+      return `${monthIso}-${String(day).padStart(2, '0')}`
+    })
 
-          return `
-            <section class="day-card">
-              <div class="day-card-head">
-                <div>
-                  <div class="day-title">Day ${index + 1}</div>
-                  <div class="day-date">${rowDate || '—'}</div>
-                </div>
-                <div class="flag flag-${flag.tone}">${flag.label}</div>
-              </div>
-              <div class="four-grid">
-                <div class="metric in"><div class="k">IN</div><div class="v">${inAt}</div></div>
-                <div class="metric out"><div class="k">OUT</div><div class="v">${outAt}</div></div>
-                <div class="metric pause"><div class="k">PAUSE</div><div class="v">${pauseAt}</div></div>
-                <div class="metric retour"><div class="k">RETOUR</div><div class="v">${retourAt}</div></div>
-              </div>
-              <div class="meta">Status: ${String(record.status || '—')} · Source: HR attendance records</div>
-            </section>
-          `
-        }).join('')
-      : `<div class="empty">No attendance data found for this selected month.</div>`
+    const rowsForPrint = monthDates.map((dateIso) => {
+      const existing = monthRows.find((row) => rowDateIso(row) === dateIso)
+      return normalizeAttendanceDisplayRow(
+        existing || attendanceLedgerRowForDate(dateIso, history, authorizedAbsences)
+      )
+    })
+
+    const printDate = new Date()
+    const userName = String(user.fullName || user.name || user.email || 'USER').trim()
+    const safeUserCode = userName
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 22) || 'USER'
+
+    const reference = `AC-ATT-${safeUserCode}-${monthIso}`
+    const hrRouteReference = `HR-ROUTE-ATT-${safeUserCode}-${monthIso}-${printDate.getFullYear()}${String(printDate.getMonth() + 1).padStart(2, '0')}${String(printDate.getDate()).padStart(2, '0')}-${String(printDate.getHours()).padStart(2, '0')}${String(printDate.getMinutes()).padStart(2, '0')}`
+    const generatedAt = printDate.toLocaleString('fr-FR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+
+    const monthLabel = new Date(`${monthIso}-01T12:00:00`).toLocaleDateString('fr-FR', {
+      month: 'long',
+      year: 'numeric',
+    })
+
+    const escapeHtml = (value: unknown) =>
+      String(value ?? '—')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;')
+
+    const minutesOfDay = (value: string) => {
+      const match = String(value || '').match(/^(\d{1,2}):(\d{2})/)
+      if (!match) return null
+      return Number(match[1]) * 60 + Number(match[2])
+    }
+
+    const workedMinutes = (row: AttendanceHistoryRow) => {
+      const inValue = attendanceTimeValue(row, 'in')
+      const outValue = attendanceTimeValue(row, 'out')
+      const pauseValue = attendanceTimeValue(row, 'pause')
+      const retourValue = attendanceTimeValue(row, 'retour')
+      const inMin = minutesOfDay(inValue)
+      const outMin = minutesOfDay(outValue)
+      if (inMin === null || outMin === null || outMin <= inMin) return 0
+      let pauseMinutes = 0
+      const pauseMin = minutesOfDay(pauseValue)
+      const retourMin = minutesOfDay(retourValue)
+      if (pauseMin !== null && retourMin !== null && retourMin > pauseMin) pauseMinutes = retourMin - pauseMin
+      return Math.max(0, outMin - inMin - pauseMinutes)
+    }
+
+    const formatWorked = (minutes: number) => {
+      if (!minutes) return '—'
+      const h = Math.floor(minutes / 60)
+      const m = minutes % 60
+      return `${h}:${String(m).padStart(2, '0')}`
+    }
+
+    const toneClass = (tone: AttendanceTone) => {
+      if (tone === 'authorized') return 'authorized'
+      if (tone === 'absence' || tone === 'critical' || tone === 'red') return 'red'
+      if (tone === 'delay' || tone === 'amber') return 'amber'
+      if (tone === 'early') return 'early'
+      if (tone === 'overtime' || tone === 'blue') return 'blue'
+      if (tone === 'slate') return 'slate'
+      return 'green'
+    }
+
+    const iconForTone = (tone: AttendanceTone) => {
+      if (tone === 'authorized') return '🛡'
+      if (tone === 'absence' || tone === 'critical' || tone === 'red') return '✖'
+      if (tone === 'delay' || tone === 'amber') return '⚠'
+      if (tone === 'early') return '↘'
+      if (tone === 'overtime' || tone === 'blue') return '★'
+      if (tone === 'slate') return '●'
+      return '✓'
+    }
+
+    let presentDays = 0
+    let authorizedDays = 0
+    let absentDays = 0
+    let delayDays = 0
+    let earlyDays = 0
+    let overtimeDays = 0
+    let totalWorkedMinutes = 0
+
+    const tableRows = rowsForPrint.map((row, index) => {
+      const dateIso = rowDateIso(row) || monthDates[index]
+      const date = new Date(`${dateIso}T12:00:00`)
+      const weekday = Number.isNaN(date.getTime())
+        ? '—'
+        : date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')
+      const dayText = Number.isNaN(date.getTime())
+        ? String(index + 1)
+        : date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }).replace('.', '')
+
+      const flag = attendanceRowFlag(row, shiftStart, shiftEnd, graceMinutes)
+      const cls = toneClass(flag.tone)
+      const icon = iconForTone(flag.tone)
+      const worked = workedMinutes(row)
+      totalWorkedMinutes += worked
+
+      if (cls === 'green') presentDays += 1
+      if (cls === 'authorized') authorizedDays += 1
+      if (cls === 'red') absentDays += 1
+      if (cls === 'amber') delayDays += 1
+      if (cls === 'early') earlyDays += 1
+      if (cls === 'blue') overtimeDays += 1
+
+      const authorized = authorizedAbsenceForDate(authorizedAbsences, dateIso)
+      const authorizedLabel = authorized
+        ? String(
+            authorized.reason ||
+            authorized.absence_reason ||
+            authorized.type ||
+            authorized.absence_type ||
+            'Absence autorisée'
+          )
+        : '—'
+
+      const notes = flag.details || row.notes || row.note || row.source || '—'
+
+      return `
+        <tr>
+          <td class="day-cell">
+            <strong>${index + 1}</strong>
+            <span>${escapeHtml(weekday)}</span>
+            <em>${escapeHtml(dayText)}</em>
+          </td>
+          <td>${escapeHtml(attendanceTimeValue(row, 'in') || '—')}</td>
+          <td>${escapeHtml(attendanceTimeValue(row, 'out') || '—')}</td>
+          <td>${escapeHtml(attendanceTimeValue(row, 'pause') || '—')}</td>
+          <td>${escapeHtml(attendanceTimeValue(row, 'retour') || '—')}</td>
+          <td><strong>${escapeHtml(formatWorked(worked))}</strong></td>
+          <td><span class="status ${cls}"><span>${icon}</span>${escapeHtml(flag.label)}</span></td>
+          <td>${escapeHtml(flag.details || '—')}</td>
+          <td>${escapeHtml(authorizedLabel)}</td>
+          <td>${escapeHtml(notes)}</td>
+        </tr>
+      `
+    }).join('')
+
+    const totalWorked = formatWorked(totalWorkedMinutes)
+    const logoHtml = `<img src="/logo.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" /><strong class="logo-fallback">ANGELCARE</strong>`
 
     const html = `
-      <!doctype html>
-      <html>
-      <head>
-        <meta charset="utf-8" />
-        <title>${docRef}</title>
-        <style>
-          @page { size: A4; margin: 14mm; }
-          * { box-sizing: border-box; }
-          body { font-family: Inter, Arial, sans-serif; margin: 0; color: #0f172a; background: #f8fafc; }
-          .page { width: 100%; }
-          .header {
-            border: 1px solid #dbeafe;
-            background: linear-gradient(180deg,#ffffff,#eff6ff);
-            border-radius: 16px;
-            padding: 18px 20px;
-            margin-bottom: 14px;
-          }
-          .eyebrow {
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .14em;
-            color: #1d4ed8;
-            text-transform: uppercase;
-          }
-          .title {
-            font-size: 24px;
-            font-weight: 900;
-            margin-top: 6px;
-          }
-          .sub {
-            font-size: 12px;
-            color: #475569;
-            margin-top: 6px;
-          }
-          .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 14px;
-          }
-          .meta-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 10px 12px;
-          }
-          .meta-card .k {
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .12em;
-            color: #64748b;
-            text-transform: uppercase;
-          }
-          .meta-card .v {
-            font-size: 13px;
-            font-weight: 800;
-            margin-top: 6px;
-          }
-          .cards { display: grid; gap: 12px; }
-          .day-card {
-            background: #fff;
-            border: 1px solid #dbeafe;
-            border-radius: 14px;
-            padding: 12px 14px;
-            break-inside: avoid;
-          }
-          .day-card-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-          }
-          .day-title { font-size: 13px; font-weight: 900; }
-          .day-date { font-size: 12px; color: #475569; margin-top: 2px; }
-          .flag {
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 900;
-          }
-          .flag-normal { background: #dcfce7; color: #166534; }
-          .flag-delay { background: #fef3c7; color: #92400e; }
-          .flag-early { background: #ffedd5; color: #9a3412; }
-          .flag-critical { background: #ffe4e6; color: #9f1239; }
-          .flag-overtime { background: #dbeafe; color: #1d4ed8; }
-          .flag-absence { background: #fee2e2; color: #991b1b; }
-          .four-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-          }
-          .metric {
-            border-radius: 12px;
-            padding: 10px 12px;
-            border: 1px solid #e2e8f0;
-          }
-          .metric .k {
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-          }
-          .metric .v {
-            font-size: 18px;
-            font-weight: 900;
-            margin-top: 6px;
-          }
-          .metric.in { background: #f0fdf4; border-color: #bbf7d0; }
-          .metric.out { background: #fef2f2; border-color: #fecaca; }
-          .metric.pause { background: #fffbeb; border-color: #fde68a; }
-          .metric.retour { background: #eff6ff; border-color: #bfdbfe; }
-          .meta { margin-top: 10px; font-size: 11px; color: #475569; }
-          .empty {
-            background: #fff;
-            border: 1px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 18px;
-            color: #64748b;
-          }
-          .footer {
-            margin-top: 14px;
-            font-size: 11px;
-            color: #64748b;
-            text-align: right;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="page">
-          <div class="header">
-            <div class="eyebrow">AngelCare · Attendance Monthly Record</div>
-            <div class="title">Monthly Attendance History</div>
-            <div class="sub">Referenced A4 attendance document generated from the live users attendance command center.</div>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>${escapeHtml(reference)}</title>
+  <style>
+    @page { size: A4 portrait; margin: 8mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #eef2f7;
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+      color: #071631;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .sheet {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #fff;
+      padding: 6mm 6mm 5mm;
+      border: 1px solid #d8e2f0;
+      box-shadow: 0 18px 50px rgba(15,23,42,.16);
+    }
+    .header {
+      display: grid;
+      grid-template-columns: 55mm 1fr 45mm;
+      gap: 5mm;
+      align-items: start;
+      border-bottom: 2px solid #173f82;
+      padding-bottom: 3mm;
+    }
+    .brand img {
+      width: 49mm;
+      max-height: 18mm;
+      object-fit: contain;
+      object-position: left center;
+      display: block;
+    }
+    .logo-fallback {
+      display: none;
+      font-size: 26px;
+      letter-spacing: .04em;
+      color: #123f87;
+      font-weight: 900;
+    }
+    .brand small {
+      display: block;
+      margin-top: .5mm;
+      color: #0b2d66;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-align: center;
+    }
+    .title-block { text-align: center; }
+    .title-block h1 {
+      margin: 0;
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+      color: #071631;
+      border-bottom: 2px solid #173f82;
+      padding-bottom: 3mm;
+    }
+    .ref {
+      margin-top: 3mm;
+      color: #1261d6;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+    }
+    .doc-meta {
+      display: grid;
+      gap: 1.3mm;
+      font-size: 8px;
+      color: #071631;
+      font-weight: 800;
+    }
+    .doc-meta div {
+      display: grid;
+      grid-template-columns: 16px 1fr auto;
+      gap: 5px;
+      align-items: center;
+    }
+    .pill-final {
+      background: #047857;
+      color: #fff;
+      border-radius: 8px;
+      padding: 2px 7px;
+      font-weight: 900;
+    }
+    .box {
+      border: 1.5px solid #173f82;
+      border-radius: 8px;
+      padding: 2.5mm 3mm 2mm;
+      margin-top: 4mm;
+    }
+    .box-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: -7mm 0 2mm;
+      background: #08275c;
+      color: #fff;
+      border-radius: 7px 7px 7px 0;
+      padding: 1.4mm 3.2mm;
+      font-size: 8.4px;
+      font-weight: 900;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+    .user-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .95fr .95fr 1fr;
+      gap: 4mm;
+    }
+    .field {
+      display: grid;
+      grid-template-columns: 13px 22mm 1fr;
+      gap: 1.4mm;
+      align-items: center;
+      padding: .75mm 0;
+      border-bottom: 0;
+      font-size: 7.7px;
+    }
+    .field strong { color: #071631; font-weight: 900; }
+    .active-badge {
+      display: inline-flex;
+      background: #047857;
+      color: #fff;
+      padding: 1mm 2.5mm;
+      border-radius: 7px;
+      font-weight: 900;
+      width: max-content;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 3mm;
+      margin-top: 4mm;
+    }
+    .kpi {
+      min-height: 14mm;
+      border-radius: 7px;
+      padding: 2mm;
+      display: grid;
+      grid-template-columns: 9mm 1fr;
+      gap: 2mm;
+      align-items: center;
+      border: 1.3px solid #dbe5f2;
+      background: #fff;
+    }
+    .kpi .icon {
+      width: 8mm;
+      height: 8mm;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .kpi small {
+      display: block;
+      font-size: 6.3px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .025em;
+      line-height: 1.08;
+    }
+    .kpi strong {
+      display: block;
+      margin-top: .6mm;
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 900;
+    }
+    .kpi.green { border-color: #86efac; color: #047857; }
+    .kpi.green .icon { background: #dcfce7; }
+    .kpi.amber { border-color: #fde68a; color: #b45309; }
+    .kpi.amber .icon { background: #fffbeb; }
+    .kpi.red { border-color: #fecaca; color: #dc2626; }
+    .kpi.red .icon { background: #fef2f2; }
+    .kpi.blue { border-color: #bfdbfe; color: #1d4ed8; }
+    .kpi.blue .icon { background: #eff6ff; }
+    .ledger {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 3.8mm;
+      overflow: hidden;
+      border: 1px solid #cfd9e8;
+      border-radius: 6px;
+      font-size: 6.4px;
+    }
+    .ledger th {
+      background: #08275c;
+      color: #fff;
+      padding: 1mm .55mm;
+      text-align: center;
+      font-size: 6.1px;
+      font-weight: 900;
+      text-transform: uppercase;
+      border-right: 1px solid rgba(255,255,255,.25);
+      line-height: 1.05;
+    }
+    .ledger td {
+      padding: .72mm .45mm;
+      text-align: center;
+      border-right: 1px solid #dbe3ee;
+      border-bottom: 1px solid #e4ebf4;
+      vertical-align: middle;
+      line-height: 1.05;
+    }
+    .ledger tr:nth-child(even) td { background: #fbfdff; }
+    .day-cell {
+      display: grid;
+      grid-template-columns: 11px 20px 1fr;
+      gap: 2px;
+      align-items: center;
+      text-align: left !important;
+      white-space: nowrap;
+    }
+    .day-cell strong { color: #071631; font-weight: 900; }
+    .day-cell span { color: #123f87; font-weight: 800; }
+    .day-cell em { color: #334155; font-style: normal; font-weight: 700; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5px;
+      min-width: 19mm;
+      border-radius: 999px;
+      padding: .5mm 1mm;
+      font-weight: 900;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .status.green { color: #047857; background: #ecfdf5; border-color: #bbf7d0; }
+    .status.amber { color: #b45309; background: #fffbeb; border-color: #fde68a; }
+    .status.red, .status.early { color: #dc2626; background: #fef2f2; border-color: #fecaca; }
+    .status.blue { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .status.authorized { color: #ea580c; background: #fff7ed; border-color: #fed7aa; }
+    .status.slate { color: #64748b; background: #f8fafc; border-color: #e2e8f0; }
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 1.2mm;
+      margin-top: 2.8mm;
+      border: 1px solid #dbe3ee;
+      border-radius: 7px;
+      padding: 1.4mm;
+    }
+    .legend div {
+      display: grid;
+      gap: .55mm;
+      text-align: center;
+      font-size: 5.7px;
+      font-weight: 800;
+      color: #334155;
+    }
+    .legend strong { font-size: 6.4px; }
+    .footer-panels {
+      display: grid;
+      grid-template-columns: 1.08fr 1.05fr .95fr 31mm;
+      gap: 3mm;
+      margin-top: 3mm;
+      border: 1px solid #dbe3ee;
+      border-radius: 8px;
+      padding: 2mm;
+    }
+    .footer-panels h3 {
+      margin: 0 0 1.4mm;
+      font-size: 8px;
+      color: #08275c;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .035em;
+    }
+    .footer-panels p, .footer-panels li {
+      margin: .8mm 0;
+      font-size: 6.2px;
+      color: #334155;
+      line-height: 1.22;
+      font-weight: 700;
+    }
+    .sign-line {
+      display: grid;
+      grid-template-columns: 23mm 1fr;
+      gap: 2mm;
+      align-items: center;
+      font-size: 6.2px;
+      margin: 2mm 0;
+      color: #334155;
+      font-weight: 800;
+    }
+    .sign-line span:last-child {
+      height: 1px;
+      background: #a8b6cb;
+    }
+    .stamp-sign {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      display: grid;
+      gap: 1.4mm;
+      padding: 1.7mm;
+      color: #08275c;
+      font-weight: 900;
+      min-height: 30mm;
+    }
+    .stamp-sign h3 {
+      margin: 0;
+      font-size: 7.4px;
+      color: #08275c;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .035em;
+    }
+    .stamp-box {
+      min-height: 15mm;
+      border: 1.4px dashed #173f82;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #173f82;
+      background: linear-gradient(135deg,#ffffff,#f8fbff);
+    }
+    .stamp-box span {
+      font-size: 12px;
+      letter-spacing: .18em;
+      font-weight: 900;
+      opacity: .72;
+    }
+    .stamp-box small {
+      display: block;
+      margin-top: -3mm;
+      font-size: 5.7px;
+      color: #64748b;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    .signature-line {
+      border-top: 1px solid #94a3b8;
+      padding-top: 1mm;
+      font-size: 6.2px;
+      color: #334155;
+      text-align: center;
+      font-weight: 800;
+    }
+    /* compact one-page attendance print */
+    .user-grid .field span:first-child { font-size: 8px; }
+    .ledger th:nth-child(8),
+    .ledger td:nth-child(8),
+    .ledger th:nth-child(10),
+    .ledger td:nth-child(10) {
+      max-width: 19mm;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ledger th:nth-child(7),
+    .ledger td:nth-child(7) {
+      max-width: 24mm;
+      white-space: nowrap;
+    }
+    .footer-panels {
+      margin-top: 2mm;
+      gap: 2mm;
+      padding: 1.6mm;
+    }
 
-            <div class="meta-grid">
-              <div class="meta-card"><div class="k">Document Ref</div><div class="v">${docRef}</div></div>
-              <div class="meta-card"><div class="k">Employee</div><div class="v">${user.fullName}</div></div>
-              <div class="meta-card"><div class="k">Month</div><div class="v">${monthTitle}</div></div>
-              <div class="meta-card"><div class="k">Generated</div><div class="v">${generatedAt}</div></div>
-              <div class="meta-card"><div class="k">Department</div><div class="v">${user.department || '—'}</div></div>
-              <div class="meta-card"><div class="k">Role</div><div class="v">${user.role || '—'}</div></div>
-              <div class="meta-card"><div class="k">Shift</div><div class="v">${shiftStart} → ${shiftEnd}</div></div>
-              <div class="meta-card"><div class="k">Grace</div><div class="v">${graceMinutes} min</div></div>
-            </div>
-          </div>
 
-          <div class="cards">${rowsHtml}</div>
+    .hr-route-footer {
+      display: grid;
+      grid-template-columns: 1.25fr 1.15fr 1fr 1.35fr;
+      gap: 2mm;
+      margin-top: 2.4mm;
+      padding: 2mm 2.4mm;
+      border: 1.4px solid #173f82;
+      border-radius: 8px;
+      background: linear-gradient(135deg,#ffffff,#f8fbff);
+      color: #08275c;
+    }
+    .hr-route-footer div {
+      display: grid;
+      gap: .8mm;
+      min-width: 0;
+      padding-right: 2mm;
+      border-right: 1px solid #dbe3ee;
+    }
+    .hr-route-footer div:last-child {
+      border-right: 0;
+      padding-right: 0;
+    }
+    .hr-route-footer strong {
+      font-size: 6px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #173f82;
+      white-space: nowrap;
+    }
+    .hr-route-footer span {
+      font-size: 6.4px;
+      font-weight: 850;
+      color: #071631;
+      line-height: 1.2;
+      word-break: break-word;
+    }
 
-          <div class="footer">
-            Generated by AngelCare OpsOS · Users Attendance Monitoring · ${docRef}
-          </div>
+    @media print {
+      body { background: #fff; }
+      .sheet { box-shadow: none; border: 0; width: auto; min-height: auto; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header class="header">
+      <div class="brand">
+        ${logoHtml}
+        <small>Care beyond service</small>
+      </div>
+      <div class="title-block">
+        <h1>RAPPORT MENSUEL DE PRÉSENCE</h1>
+        <div class="ref">${escapeHtml(reference)}</div>
+      </div>
+      <div class="doc-meta">
+        <div><span>☑</span><span>Version</span><strong>1.0</strong></div>
+        <div><span>●</span><span>Statut</span><strong class="pill-final">FINAL</strong></div>
+        <div><span>📅</span><span>Généré le</span><strong>${escapeHtml(generatedAt)}</strong></div>
+      </div>
+    </header>
+
+    <section class="box">
+      <div class="box-title">👤 Informations utilisateur</div>
+      <div class="user-grid">
+        <div>
+          <div class="field"><span>👤</span><span>Nom complet</span><strong>${escapeHtml(userName)}</strong></div>
+          <div class="field"><span>🔐</span><span>Utilisateur</span><strong>${escapeHtml(user.username || user.email || '—')}</strong></div>
+          <div class="field"><span>🏢</span><span>Département</span><strong>${escapeHtml(user.department || '—')}</strong></div>
         </div>
-      </body>
-      </html>
-    `
+        <div>
+          <div class="field"><span>💼</span><span>Poste</span><strong>${escapeHtml(user.jobTitle || user.position || user.role || '—')}</strong></div>
+          <div class="field"><span>🧭</span><span>Rôle</span><strong>${escapeHtml(user.role || '—')}</strong></div>
+          <div class="field"><span>✅</span><span>Statut</span><strong class="active-badge">${escapeHtml(user.status || 'active')}</strong></div>
+        </div>
+        <div>
+          <div class="field"><span>🌐</span><span>Langue</span><strong>${escapeHtml(user.language || 'fr')}</strong></div>
+          <div class="field"><span>🕘</span><span>Horaire</span><strong>${escapeHtml(shiftStart)} – ${escapeHtml(shiftEnd)}</strong></div>
+          <div class="field"><span>⌛</span><span>Grâce</span><strong>${escapeHtml(graceMinutes)} min</strong></div>
+        </div>
+        <div>
+          <div class="field"><span>📆</span><span>Mois</span><strong>${escapeHtml(monthLabel)}</strong></div>
+          <div class="field"><span>🧾</span><span>Jours totaux</span><strong>${daysInMonth}</strong></div>
+          <div class="field"><span>🧩</span><span>Référence</span><strong>${escapeHtml(reference)}</strong></div>
+        </div>
+      </div>
+    </section>
 
-    const printWindow = window.open('', '_blank', 'width=1100,height=900')
+    <section class="kpis">
+      <div class="kpi green"><div class="icon">✓</div><div><small>Jours présents</small><strong>${presentDays}</strong></div></div>
+      <div class="kpi amber"><div class="icon">🛡</div><div><small>Absences autorisées</small><strong>${authorizedDays}</strong></div></div>
+      <div class="kpi amber"><div class="icon">⏱</div><div><small>Retards</small><strong>${delayDays}</strong></div></div>
+      <div class="kpi red"><div class="icon">↘</div><div><small>Départs anticipés</small><strong>${earlyDays}</strong></div></div>
+      <div class="kpi blue"><div class="icon">↗</div><div><small>Heures supplémentaires</small><strong>${overtimeDays}</strong></div></div>
+      <div class="kpi blue"><div class="icon">◷</div><div><small>Heures totales</small><strong>${totalWorked}</strong></div></div>
+    </section>
+
+    <table class="ledger">
+      <thead>
+        <tr>
+          <th>Jour / Date</th>
+          <th>IN</th>
+          <th>OUT</th>
+          <th>Pause</th>
+          <th>Retour</th>
+          <th>Heures<br/>travaillées</th>
+          <th>Statut de présence</th>
+          <th>Risque / Drapeau</th>
+          <th>Absence<br/>autorisée</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+
+    <section class="legend">
+      <div><strong style="color:#047857">✓ Présent</strong><span>Selon horaire</span></div>
+      <div><strong style="color:#b45309">⚠ Retard</strong><span>Arrivée tardive</span></div>
+      <div><strong style="color:#dc2626">↘ Départ anticipé</strong><span>Sortie en avance</span></div>
+      <div><strong style="color:#1d4ed8">★ Heures supp.</strong><span>Temps additionnel</span></div>
+      <div><strong style="color:#ea580c">🛡 Absence autorisée</strong><span>Congé approuvé</span></div>
+      <div><strong style="color:#dc2626">✖ Absent</strong><span>Sans autorisation</span></div>
+      <div><strong style="color:#1d4ed8">⌛ En session</strong><span>En cours</span></div>
+      <div><strong style="color:#64748b">● Week-end</strong><span>Jour non ouvré</span></div>
+      <div><strong style="color:#1d4ed8">ℹ Info</strong><span>À surveiller</span></div>
+    </section>
+
+    <section class="footer-panels">
+      <div>
+        <h3>📝 Notes</h3>
+        <p>• Les heures travaillées sont calculées hors durée de pause.</p>
+        <p>• Grâce accordée : ${escapeHtml(graceMinutes)} minutes, appliquée au check-in.</p>
+        <p>• Toute divergence doit être signalée au manager.</p>
+      </div>
+      <div>
+        <h3>⚙ Généré par le système</h3>
+        <p>Ce rapport est généré automatiquement depuis les données de présence synchronisées.</p>
+        <p><strong>Référence route RH :</strong> ${escapeHtml(hrRouteReference)}</p>
+        <p>Document valide après cachet et signature manager.</p>
+      </div>
+      <div>
+        <h3>👤 Approbation</h3>
+        <div class="sign-line"><span>Approuvé par</span><span></span></div>
+        <div class="sign-line"><span>Poste</span><span></span></div>
+        <div class="sign-line"><span>Date</span><span></span></div>
+      </div>
+      <div class="stamp-sign">
+        <h3>🖋 Cachet & signature</h3>
+        <div class="stamp-box">
+          <span>STAMP</span>
+          <small>Manager / HR validation</small>
+        </div>
+        <div class="signature-line">Signature manager</div>
+      </div>
+    </section>
+    <footer class="hr-route-footer">
+      <div>
+        <strong>HR DOCUMENT ROUTE REFERENCE</strong>
+        <span>${escapeHtml(hrRouteReference)}</span>
+      </div>
+      <div>
+        <strong>ATTENDANCE DOCUMENT REFERENCE</strong>
+        <span>${escapeHtml(reference)}</span>
+      </div>
+      <div>
+        <strong>MONTHLY REPORT STATUS</strong>
+        <span>FINAL · MANAGER STAMP & SIGNATURE REQUIRED</span>
+      </div>
+      <div>
+        <strong>GENERATED BY</strong>
+        <span>ANGELCARE HR ATTENDANCE SYSTEM · ${escapeHtml(generatedAt)}</span>
+      </div>
+    </footer>
+
+  </main>
+  <script>
+    window.onload = () => {
+      window.focus()
+      window.print()
+    }
+  </script>
+</body>
+</html>`
+
+    const printWindow = window.open('', '_blank', 'width=1000,height=1400')
     if (!printWindow) return
-
     printWindow.document.open()
     printWindow.document.write(html)
     printWindow.document.close()
-    printWindow.focus()
-
-    setTimeout(() => {
-      printWindow.print()
-    }, 350)
   }
 
   return (
@@ -2566,6 +3055,437 @@ function ActionButton({
     </button>
   )
 }
+
+
+function PremiumUsersDirectoryCard({
+  user,
+  canOpenProfile,
+}: {
+  user: UserStaffRecord
+  canOpenProfile: boolean
+}) {
+  const fullName = String(user.fullName || user.name || user.email || 'Utilisateur').trim()
+  const username = String(user.username || user.email || '—').trim()
+  const email = String(user.email || '—').trim()
+  const role = String(user.role || 'staff').trim()
+  const status = String(user.status || 'active').trim()
+  const department = String(user.department || user.departmentName || '—').trim()
+  const permissions = directoryPermissionCountForUser(user)
+  const moduleCoverageText = moduleCoverageLabelForUser(user)
+  const moduleCoverageScore = moduleCoverageScoreForUser(user)
+  const updatedAt = formatDirectoryCardDate(user.updatedAt || user.updated_at || user.lastUpdated || user.last_updated || user.createdAt || user.created_at)
+  const tone = directoryStatusTone(status)
+  const roleTone = directoryRoleTone(role)
+  const signalTone = moduleCoverageScore >= 75 ? 'green' : moduleCoverageScore >= 35 ? 'amber' : 'red'
+
+  return (
+    <article style={premiumUserCardStyle}>
+      <div style={premiumUserCardTopStyle}>
+        <div style={premiumUserIdentityStyle}>
+          <div style={premiumUserAvatarStyle}>{directoryInitials(fullName)}</div>
+          <div style={{ minWidth: 0 }}>
+            <h3 style={premiumUserNameStyle}>{fullName}</h3>
+            <p style={premiumUserEmailStyle}>{email}</p>
+          </div>
+        </div>
+
+        <div style={premiumSignalStackStyle}>
+          <span style={directorySignalBarsStyle(signalTone)}>
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+          <span style={directoryStatusPillStyle(tone)}>● {status}</span>
+        </div>
+      </div>
+
+      <div style={premiumUserChipRowStyle}>
+        <span style={directoryRolePillStyle(roleTone)}>{role}</span>
+        <span style={premiumSoftPillStyle}>@ {username}</span>
+      </div>
+
+      <div style={premiumUserDataGridStyle}>
+        <PremiumUserData label="Département" value={department} icon="🏢" />
+        <PremiumUserData label="Permissions" value={String(permissions)} icon="🔐" />
+        <PremiumUserData label="Couverture modules" value={moduleCoverageText} icon="🧩" />
+        <PremiumUserData label="Dernière mise à jour" value={updatedAt} icon="📅" />
+      </div>
+
+      <div style={premiumCoverageBlockStyle}>
+        <div style={premiumCoverageHeaderStyle}>
+          <span>Module coverage</span>
+          <strong>{moduleCoverageScore}%</strong>
+        </div>
+        <div style={premiumCoverageTrackStyle}>
+          <div style={{ ...premiumCoverageFillStyle, width: `${moduleCoverageScore}%`, background: directoryToneSolid(signalTone) }} />
+        </div>
+      </div>
+
+      <div style={premiumUserActionRowStyle}>
+        {canOpenProfile ? (
+          <a href={`/users/${user.id}`} style={premiumUserActionPrimaryStyle}>Profile</a>
+        ) : (
+          <span style={premiumUserActionDisabledStyle}>Profile</span>
+        )}
+        <a href={`/users/${user.id}/edit`} style={premiumUserActionStyle}>Edit</a>
+        <a href={`/users/${user.id}`} style={premiumUserActionStyle}>Access preview</a>
+        <a href={`/users/${user.id}/delete`} style={premiumUserDeleteActionStyle}>Delete</a>
+      </div>
+    </article>
+  )
+}
+
+function PremiumUserData({ icon, label, value }: { icon: string; label: string; value: string }) {
+  return (
+    <div style={premiumUserDataStyle}>
+      <span>{icon}</span>
+      <small>{label}</small>
+      <strong>{value || '—'}</strong>
+    </div>
+  )
+}
+
+function directoryInitials(value: string) {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('') || 'U'
+}
+
+function formatDirectoryCardDate(value: unknown) {
+  const text = String(value || '').trim()
+  if (!text) return '—'
+  const date = new Date(text)
+  if (Number.isNaN(date.getTime())) return text
+  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function directoryExtractPermissionValue(item: unknown): string {
+  if (typeof item === 'string') return item.trim()
+
+  if (item && typeof item === 'object') {
+    const row = item as Record<string, unknown>
+    const keys = [
+      'permission',
+      'permission_key',
+      'permissionKey',
+      'key',
+      'code',
+      'slug',
+      'href',
+      'path',
+      'route',
+      'page',
+      'module',
+      'module_key',
+      'moduleKey',
+      'name',
+      'label',
+    ]
+
+    for (const key of keys) {
+      const value = row[key]
+      if (value !== undefined && value !== null && String(value).trim()) return String(value).trim()
+    }
+  }
+
+  return ''
+}
+
+function directoryArrayValues(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value.map(directoryExtractPermissionValue).map((item) => item.trim()).filter(Boolean)
+}
+
+function directoryPermissionListForUser(user: UserStaffRecord): string[] {
+  const source = user as any
+  const coverage = source.coverage && typeof source.coverage === 'object' ? source.coverage : {}
+
+  const directCandidates = [
+    source.permissions,
+    source.permission_keys,
+    source.permissionKeys,
+    source.access_permissions,
+    source.accessPermissions,
+    source.visible_permissions,
+    source.visiblePermissions,
+    source.effective_permissions,
+    source.effectivePermissions,
+    source.selected_permissions,
+    source.selectedPermissions,
+    source.allowed_permissions,
+    source.allowedPermissions,
+    source.granted_permissions,
+    source.grantedPermissions,
+    source.permission_catalog,
+    source.permissionCatalog,
+    source.routes,
+    source.allowed_routes,
+    source.allowedRoutes,
+    source.visible_routes,
+    source.visibleRoutes,
+    source.pages,
+    source.allowed_pages,
+    source.allowedPages,
+    source.modules,
+    source.allowed_modules,
+    source.allowedModules,
+    source.module_permissions,
+    source.modulePermissions,
+    coverage.permissions,
+    coverage.permission_keys,
+    coverage.permissionKeys,
+    coverage.routes,
+    coverage.pages,
+    coverage.modules,
+  ]
+
+  const values: string[] = []
+
+  for (const candidate of directCandidates) {
+    values.push(...directoryArrayValues(candidate))
+  }
+
+  // Generic fallback: scan any user field that looks like synced access data.
+  for (const [key, value] of Object.entries(source)) {
+    const normalizedKey = key.toLowerCase()
+    const looksLikeAccessField =
+      normalizedKey.includes('permission') ||
+      normalizedKey.includes('route') ||
+      normalizedKey.includes('page') ||
+      normalizedKey.includes('module') ||
+      normalizedKey.includes('access')
+
+    if (looksLikeAccessField) values.push(...directoryArrayValues(value))
+  }
+
+  for (const [key, value] of Object.entries(coverage as Record<string, unknown>)) {
+    const normalizedKey = key.toLowerCase()
+    const looksLikeAccessField =
+      normalizedKey.includes('permission') ||
+      normalizedKey.includes('route') ||
+      normalizedKey.includes('page') ||
+      normalizedKey.includes('module') ||
+      normalizedKey.includes('access')
+
+    if (looksLikeAccessField) values.push(...directoryArrayValues(value))
+  }
+
+  return Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)))
+}
+
+function directoryNumericFallbackForUser(user: UserStaffRecord, kind: 'permissions' | 'modules') {
+  const source = user as any
+  const coverage = source.coverage && typeof source.coverage === 'object' ? source.coverage : {}
+
+  const permissionCandidates = [
+    source.permissionsCount,
+    source.permissionCount,
+    source.permissions_count,
+    source.permission_count,
+    source.accessCount,
+    source.access_count,
+    source.totalPermissions,
+    source.total_permissions,
+    source.selectedPermissionsCount,
+    source.selected_permissions_count,
+    source.visiblePermissionsCount,
+    source.visible_permissions_count,
+    coverage.permissions,
+    coverage.permissionCount,
+    coverage.permissionsCount,
+    coverage.permissions_count,
+    coverage.accessCount,
+    coverage.access_count,
+  ]
+
+  const moduleCandidates = [
+    source.modulesCount,
+    source.moduleCount,
+    source.modules_count,
+    source.module_count,
+    source.coveredModules,
+    source.covered_modules,
+    source.moduleCoverage,
+    source.module_coverage,
+    source.visibleModules,
+    source.visible_modules,
+    source.allowedModulesCount,
+    source.allowed_modules_count,
+    coverage.modules,
+    coverage.moduleCount,
+    coverage.modulesCount,
+    coverage.modules_count,
+    coverage.coveredModules,
+    coverage.covered_modules,
+    coverage.moduleCoverage,
+    coverage.module_coverage,
+  ]
+
+  const candidates = kind === 'permissions' ? permissionCandidates : moduleCandidates
+
+  for (const value of candidates) {
+    const n = Number(value)
+    if (Number.isFinite(n) && n >= 0) return n
+  }
+
+  return null
+}
+
+function directoryPermissionCountForUser(user: UserStaffRecord) {
+  const list = directoryPermissionListForUser(user)
+  if (list.length) return list.length
+
+  const fallback = directoryNumericFallbackForUser(user, 'permissions')
+  return fallback ?? 0
+}
+
+function directoryModuleKeyFromPermission(permission: string) {
+  const raw = String(permission || '').trim()
+  if (!raw) return ''
+
+  const normalized = raw
+    .replace(/^page:\//, '')
+    .replace(/^route:\//, '')
+    .replace(/^permission:\//, '')
+    .replace(/^\/+/, '')
+
+  if (!normalized) return ''
+
+  if (normalized.includes('/')) {
+    const parts = normalized.split('/').filter(Boolean)
+    if (!parts.length) return ''
+    return parts[0]
+  }
+
+  if (normalized.includes('.')) {
+    const [first] = normalized.split('.')
+    return first || ''
+  }
+
+  if (normalized.includes(':')) {
+    const parts = normalized.split(':').filter(Boolean)
+    return parts[0] || ''
+  }
+
+  return normalized
+}
+
+function directoryModuleTotalForUser(user: UserStaffRecord) {
+  const source = user as any
+  const coverage = source.coverage && typeof source.coverage === 'object' ? source.coverage : {}
+
+  const candidates = [
+    coverage.totalModules,
+    coverage.modulesTotal,
+    coverage.total_modules,
+    coverage.registryModules,
+    coverage.registry_modules,
+    source.totalModules,
+    source.modulesTotal,
+    source.total_modules,
+    source.registryModuleTotal,
+    source.registry_module_total,
+    source.moduleRegistryTotal,
+    source.module_registry_total,
+  ]
+
+  for (const value of candidates) {
+    const n = Number(value)
+    if (Number.isFinite(n) && n > 0) return n
+  }
+
+  return 61
+}
+
+function moduleCoverageLabelForUser(user: UserStaffRecord) {
+  const directCovered = directoryNumericFallbackForUser(user, 'modules')
+
+  let covered: number
+
+  if (directCovered !== null) {
+    covered = directCovered
+  } else {
+    const permissions = directoryPermissionListForUser(user)
+    const moduleKeys = new Set(
+      permissions
+        .map(directoryModuleKeyFromPermission)
+        .map((value) => value.trim())
+        .filter(Boolean)
+    )
+    covered = moduleKeys.size
+  }
+
+  const total = directoryModuleTotalForUser(user)
+  return `${Math.max(0, covered)}/${Math.max(1, total)}`
+}
+
+function moduleCoverageScoreForUser(user: UserStaffRecord) {
+  const label = moduleCoverageLabelForUser(user)
+  const [left, right] = label.split('/').map((value) => Number(value))
+  if (!Number.isFinite(left) || !Number.isFinite(right) || right <= 0) return 0
+  return Math.max(0, Math.min(100, Math.round((left / right) * 100)))
+}
+
+function directoryStatusTone(status: string): 'green' | 'amber' | 'red' | 'slate' {
+  const clean = status.toLowerCase()
+  if (clean.includes('active') || clean.includes('actif')) return 'green'
+  if (clean.includes('pending') || clean.includes('review')) return 'amber'
+  if (clean.includes('inactive') || clean.includes('suspend') || clean.includes('blocked')) return 'red'
+  return 'slate'
+}
+
+function directoryRoleTone(role: string): 'blue' | 'purple' | 'green' | 'slate' {
+  const clean = role.toLowerCase()
+  if (clean.includes('ceo') || clean.includes('admin')) return 'purple'
+  if (clean.includes('marketing')) return 'blue'
+  if (clean.includes('manager') || clean.includes('lead')) return 'green'
+  return 'slate'
+}
+
+function directoryToneSolid(tone: 'green' | 'amber' | 'red' | 'blue' | 'purple' | 'slate') {
+  if (tone === 'green') return '#22c55e'
+  if (tone === 'amber') return '#f59e0b'
+  if (tone === 'red') return '#ef4444'
+  if (tone === 'purple') return '#8b5cf6'
+  if (tone === 'blue') return '#2563eb'
+  return '#64748b'
+}
+
+function directoryStatusPillStyle(tone: 'green' | 'amber' | 'red' | 'slate'): CSSProperties {
+  const map = {
+    green: { background: '#ecfdf5', color: '#047857', border: '#bbf7d0' },
+    amber: { background: '#fffbeb', color: '#b45309', border: '#fde68a' },
+    red: { background: '#fef2f2', color: '#dc2626', border: '#fecaca' },
+    slate: { background: '#f8fafc', color: '#475569', border: '#e2e8f0' },
+  }[tone]
+  return { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, padding: '7px 10px', background: map.background, color: map.color, border: `1px solid ${map.border}`, fontSize: 11, fontWeight: 1000, whiteSpace: 'nowrap' }
+}
+
+function directoryRolePillStyle(tone: 'blue' | 'purple' | 'green' | 'slate'): CSSProperties {
+  const map = {
+    blue: { background: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
+    purple: { background: '#f5f3ff', color: '#7c3aed', border: '#ddd6fe' },
+    green: { background: '#ecfdf5', color: '#047857', border: '#bbf7d0' },
+    slate: { background: '#f8fafc', color: '#475569', border: '#e2e8f0' },
+  }[tone]
+  return { display: 'inline-flex', alignItems: 'center', width: 'max-content', borderRadius: 999, padding: '7px 10px', background: map.background, color: map.color, border: `1px solid ${map.border}`, fontSize: 11, fontWeight: 1000 }
+}
+
+function directorySignalBarsStyle(tone: 'green' | 'amber' | 'red'): CSSProperties {
+  return {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4,4px)',
+    alignItems: 'end',
+    gap: 3,
+    height: 24,
+    color: directoryToneSolid(tone),
+  }
+}
+
 
 function SectionHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle: string }) {
   return (
@@ -2842,3 +3762,213 @@ const toneBadgeStyles: Record<StatusTone, CSSProperties> = {
   blue: { background: '#dbeafe', color: '#1d4ed8' },
   slate: { background: '#e2e8f0', color: '#334155' },
 }
+
+const premiumUsersCardScrollShellStyle: CSSProperties = {
+  marginTop: 14,
+  maxHeight: 'min(760px, calc(100vh - 340px))',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  padding: '4px 10px 10px 4px',
+  borderRadius: 26,
+  border: '1px solid #dbeafe',
+  background: 'linear-gradient(135deg,#ffffff,#f8fbff)',
+  boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.65)',
+  scrollbarWidth: 'thin',
+}
+
+const premiumUsersCardGridStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+  gap: 14,
+  alignItems: 'stretch',
+}
+
+const premiumUserCardStyle: CSSProperties = {
+  display: 'grid',
+  gap: 13,
+  minHeight: 230,
+  padding: 16,
+  borderRadius: 24,
+  border: '1px solid #dbeafe',
+  background: 'linear-gradient(135deg,#ffffff 0%,#fbfdff 100%)',
+  boxShadow: '0 18px 44px rgba(15,23,42,.055)',
+  minWidth: 0,
+}
+
+const premiumUserCardTopStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 12,
+  alignItems: 'flex-start',
+}
+
+const premiumUserIdentityStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '44px minmax(0,1fr)',
+  gap: 12,
+  alignItems: 'center',
+  minWidth: 0,
+}
+
+const premiumUserAvatarStyle: CSSProperties = {
+  width: 44,
+  height: 44,
+  borderRadius: 16,
+  display: 'grid',
+  placeItems: 'center',
+  background: 'linear-gradient(135deg,#2563eb,#0f172a)',
+  color: '#fff',
+  fontSize: 14,
+  fontWeight: 1000,
+  boxShadow: '0 16px 30px rgba(37,99,235,.18)',
+}
+
+const premiumUserNameStyle: CSSProperties = {
+  margin: 0,
+  color: '#0f172a',
+  fontSize: 14,
+  lineHeight: 1.2,
+  fontWeight: 1000,
+  letterSpacing: '-.02em',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}
+
+const premiumUserEmailStyle: CSSProperties = {
+  margin: '4px 0 0',
+  color: '#64748b',
+  fontSize: 11,
+  fontWeight: 760,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}
+
+const premiumSignalStackStyle: CSSProperties = {
+  display: 'grid',
+  justifyItems: 'end',
+  gap: 8,
+  flexShrink: 0,
+}
+
+const premiumUserChipRowStyle: CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 8,
+}
+
+const premiumSoftPillStyle: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  width: 'max-content',
+  maxWidth: '100%',
+  borderRadius: 999,
+  padding: '7px 10px',
+  background: '#f8fafc',
+  color: '#475569',
+  border: '1px solid #e2e8f0',
+  fontSize: 11,
+  fontWeight: 900,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}
+
+const premiumUserDataGridStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2,minmax(0,1fr))',
+  gap: 8,
+}
+
+const premiumUserDataStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '18px minmax(0,1fr)',
+  gridTemplateRows: 'auto auto',
+  columnGap: 7,
+  rowGap: 2,
+  padding: 10,
+  borderRadius: 16,
+  border: '1px solid #e2e8f0',
+  background: '#f8fafc',
+  minWidth: 0,
+}
+
+const premiumCoverageBlockStyle: CSSProperties = {
+  display: 'grid',
+  gap: 7,
+  padding: 10,
+  borderRadius: 17,
+  border: '1px solid #dbeafe',
+  background: '#eff6ff',
+}
+
+const premiumCoverageHeaderStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 10,
+  color: '#1e3a8a',
+  fontSize: 11,
+  fontWeight: 950,
+}
+
+const premiumCoverageTrackStyle: CSSProperties = {
+  height: 8,
+  borderRadius: 999,
+  overflow: 'hidden',
+  background: '#dbeafe',
+}
+
+const premiumCoverageFillStyle: CSSProperties = {
+  height: '100%',
+  borderRadius: 999,
+}
+
+const premiumUserActionRowStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '1.1fr .8fr 1fr .8fr',
+  gap: 8,
+  marginTop: 2,
+}
+
+const premiumUserActionPrimaryStyle: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: 34,
+  borderRadius: 13,
+  background: 'linear-gradient(135deg,#2563eb,#0f172a)',
+  color: '#fff',
+  textDecoration: 'none',
+  fontSize: 11,
+  fontWeight: 1000,
+}
+
+const premiumUserActionStyle: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: 34,
+  borderRadius: 13,
+  background: '#fff',
+  color: '#0f172a',
+  border: '1px solid #dbe3ee',
+  textDecoration: 'none',
+  fontSize: 11,
+  fontWeight: 950,
+}
+
+const premiumUserDeleteActionStyle: CSSProperties = {
+  ...premiumUserActionStyle,
+  background: '#fef2f2',
+  color: '#dc2626',
+  border: '1px solid #fecaca',
+}
+
+const premiumUserActionDisabledStyle: CSSProperties = {
+  ...premiumUserActionStyle,
+  color: '#94a3b8',
+  background: '#f8fafc',
+}
+
+

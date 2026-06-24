@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import {
   useCallback,
   useEffect,
@@ -930,7 +931,7 @@ function CareLinkMissionControlCenter({ activeView, initialRecords = [] }: Missi
               <button type="button" className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700"><MessageSquare size={17} /></button>
               <div className="hidden items-center gap-3 border-l border-slate-200 pl-3 xl:flex">
                 <div className="text-right"><p className="text-sm font-black text-slate-900">CareLink Ops</p><p className="text-xs font-semibold text-slate-500">Operations Director</p></div>
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-slate-900 text-xs font-black text-white">AC</div>
+                <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
               </div>
             </div>
           </div>

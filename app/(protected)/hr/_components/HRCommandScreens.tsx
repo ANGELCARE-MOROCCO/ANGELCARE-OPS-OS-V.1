@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState, useTransition } from 'react'
@@ -114,7 +115,7 @@ function HRModuleShell({ variant, children }: { variant: Variant; children: any 
   const dark = false
   return <div className="min-h-screen bg-slate-50 text-slate-950 flex">
     <aside className={`sticky top-0 hidden h-screen w-[283px] shrink-0 overflow-y-auto border-r bg-white px-4 py-6 xl:block ${dark ? 'border-slate-200 bg-white' : 'border-slate-200 bg-white'}`}>
-      <Link href="/hr" className="mb-7 flex items-center gap-3 rounded-2xl px-2"><div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white"><Sparkles className="h-5 w-5" /></div><div><div className="text-sm font-black">AngelCare HR OS</div><div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Live workspace</div></div></Link>
+      <Link href="/hr" className="mb-7 flex items-center gap-3 rounded-2xl px-2"><div className="grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div><div><div className="text-sm font-black">AngelCare HR OS</div><div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Live workspace</div></div></Link>
       <div className="space-y-7">{sidebarGroups.map((g) => <div key={g.label}><div className="mb-2 px-3 text-[10px] font-black uppercase tracking-[.30em] text-slate-800">{g.label}</div><div className="space-y-1">{g.items.map((item) => { const Icon = item.icon; const active = path === item.href || path.startsWith(item.href + '/'); return <Link key={item.href + item.label} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-black transition ${active ? dark ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-500/25' : 'bg-violet-50 text-violet-700 ring-1 ring-violet-200' : dark ? 'text-slate-500 hover:bg-slate-50 hover:text-slate-950' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><Icon className="h-4 w-4" />{item.label}</Link> })}</div></div>)}</div>
     </aside>
     <main className="min-w-0 flex-1 p-4 lg:p-6">

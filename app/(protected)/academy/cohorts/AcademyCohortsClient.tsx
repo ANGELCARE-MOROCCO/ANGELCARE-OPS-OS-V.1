@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import type { AcademyCohortPayload, AcademyCohortRecord, AcademyCohortsDashboard } from '@/lib/academy-cohorts/types'
@@ -47,7 +48,7 @@ async function safeJson(res: Response) {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="academy-page"><aside className="academy-sidebar"><div className="brand"><span className="brandMark">◆</span><div><b>Academy OS</b><small>Live Groups</small></div></div><p className="navTitle">ACADEMY</p>{sidebar.slice(0, 13).map(([label, href]) => <Link key={href} className={href === '/academy/cohorts' ? 'nav active' : 'nav'} href={href}>{label}</Link>)}<p className="navTitle">SYSTEM</p>{sidebar.slice(13).map(([label, href]) => <Link key={href} className="nav" href={href}>{label}</Link>)}<div className="systemCard"><b>Academy OS</b><span>Enterprise Edition</span><em>● Online</em><button>View System Status</button></div></aside><main className="academy-main">{children}</main></div>
+  return <div className="academy-page"><aside className="academy-sidebar"><div className="brand"><span className="brandMark officialLogo"><AngelCareLogo size="sm" /></span><div><b>Academy OS</b><small>Live Groups</small></div></div><p className="navTitle">ACADEMY</p>{sidebar.slice(0, 13).map(([label, href]) => <Link key={href} className={href === '/academy/cohorts' ? 'nav active' : 'nav'} href={href}>{label}</Link>)}<p className="navTitle">SYSTEM</p>{sidebar.slice(13).map(([label, href]) => <Link key={href} className="nav" href={href}>{label}</Link>)}<div className="systemCard"><b>Academy OS</b><span>Enterprise Edition</span><em>● Online</em><button>View System Status</button></div></aside><main className="academy-main">{children}</main></div>
 }
 
 

@@ -1,4 +1,6 @@
 'use client'
+
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import {
   BadgeCheck,
   CheckCircle2,
@@ -1534,7 +1536,7 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
                 </div>
                 <button onClick={refresh} className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm hover:bg-slate-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
                 <button onClick={() => setModal({ type: 'action', title: 'Filters', body: 'Use the filter row below the command bar. Advanced saved filters can be connected to user preferences and dispatch roles.' })} className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm">Filters</button>
-                <div className="grid h-11 w-11 place-items-center rounded-full bg-blue-600 text-sm font-black text-white">AC</div>
+                <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
               </div>
             </div>
 

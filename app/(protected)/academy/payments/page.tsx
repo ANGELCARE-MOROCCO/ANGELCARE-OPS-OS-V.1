@@ -1,3 +1,4 @@
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import type React from 'react'
 import { revalidatePath } from 'next/cache'
@@ -5,7 +6,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireAccess } from '@/lib/auth/requireAccess'
 import { buildAcademyPaymentsMetrics, type AnyRow, type PaymentWorkspaceMode } from '@/lib/academy/payments-live-metrics'
-
 export const dynamic = 'force-dynamic'
 
 type Tone = 'purple' | 'blue' | 'green' | 'orange' | 'red' | 'slate'
@@ -135,7 +135,7 @@ async function refundAction(formData: FormData) {
 }
 
 function Sidebar() {
-  return <aside className="academy-sidebar"><div className="brand"><div className="brandIcon">🎓</div><div><strong>Academy OS</strong><span>Payment Command</span></div></div><p className="sideLabel">ACADEMY</p><nav>{nav.map(([icon, label, href]) => <Link key={href} href={href} className={href === '/academy/payments' ? 'sideItem active' : 'sideItem'}><span>{icon}</span>{label}</Link>)}</nav><p className="sideLabel system">SYSTEM</p><nav>{systemNav.map(([icon, label, href]) => <Link key={href} href={href} className="sideItem"><span>{icon}</span>{label}</Link>)}</nav><div className="systemCard"><b>Academy OS</b><small>Live payment sync</small><span>● Online</span><button>View System Status</button></div></aside>
+  return <aside className="academy-sidebar"><div className="brand"><div className="brandIcon officialLogo"><AngelCareLogo size="sm" /></div><div><strong>Academy OS</strong><span>Payment Command</span></div></div><p className="sideLabel">ACADEMY</p><nav>{nav.map(([icon, label, href]) => <Link key={href} href={href} className={href === '/academy/payments' ? 'sideItem active' : 'sideItem'}><span>{icon}</span>{label}</Link>)}</nav><p className="sideLabel system">SYSTEM</p><nav>{systemNav.map(([icon, label, href]) => <Link key={href} href={href} className="sideItem"><span>{icon}</span>{label}</Link>)}</nav><div className="systemCard"><b>Academy OS</b><small>Live payment sync</small><span>● Online</span><button>View System Status</button></div></aside>
 }
 function Spark({ tone, values }: { tone: Tone; values: number[] }) { const max = Math.max(1, ...values); return <div className={`spark ${tone}`}>{values.slice(-10).map((v, i) => <i key={i} style={{ height: Math.max(8, Math.round((v / max) * 44)) }} />)}</div> }
 function Kpi({ title, value, sub, tone, icon, values }: { title: string; value: string; sub: string; tone: Tone; icon: string; values: number[] }) { return <section className="kpi"><div className="kpiTop"><span className={`icon ${tone}`}>{icon}</span><div><p>{title}</p><strong>{value}</strong><em className={sub.includes('↓') ? 'down' : 'up'}>{sub}</em></div></div><Spark tone={tone} values={values} /></section> }

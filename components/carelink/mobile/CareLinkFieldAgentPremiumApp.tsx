@@ -1,5 +1,6 @@
 'use client'
 
+import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
@@ -363,7 +364,7 @@ function TopBar({ records, queuePending, syncing, online }: { records: MissionCo
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 px-5 py-4 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-400 text-sm font-black text-white shadow-lg shadow-blue-100">AC</div>
+          <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white shadow-lg shadow-blue-100 ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
           <div>
             <p className="text-xs font-black tracking-tight text-slate-950">Bonjour</p>
             <p className="text-[11px] font-semibold text-slate-500">{todayCount} mission{todayCount > 1 ? 's' : ''} aujourd’hui</p>
