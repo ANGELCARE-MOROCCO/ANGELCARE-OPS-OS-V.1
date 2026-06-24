@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import {
+
+
   Activity,
   AlertTriangle,
   BadgeCheck,
@@ -26,6 +28,33 @@ import {
   X,
 } from 'lucide-react'
 
+function formatStageDocumentDateFr(value: unknown): string {
+  if (!value) return ""
+
+  const raw = String(value).trim()
+  if (!raw) return ""
+
+  const iso = raw.match(/^(\d{4})[-/](\d{2})[-/](\d{2})(?:[T\s].*)?$/)
+  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`
+
+  const fr = raw.match(/^(\d{2})[-/](\d{2})[-/](\d{4})(?:[T\s].*)?$/)
+  if (fr) return `${fr[1]}/${fr[2]}/${fr[3]}`
+
+  const parsed = new Date(raw)
+  if (!Number.isNaN(parsed.getTime())) {
+    return new Intl.DateTimeFormat("fr-MA", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(parsed)
+  }
+
+  return raw
+}
+
+function normalizeStageDocumentDatesFr(value: string): string {
+  return String(value || "").replace(/\b(\d{4})[-/](\d{2})[-/](\d{2})\b/g, "$3/$2/$1")
+}
 type EmployeeRecord = Record<string, any>
 
 function value(row: EmployeeRecord | null | undefined, fields: string[], fallback = '') {
@@ -1004,7 +1033,7 @@ article {
       demeurant <b>${a.attestation_employee_address || 'adresse non renseignée'}</b>,
       a effectué un stage dans notre entreprise en qualité de
       <b>${a.attestation_role || 'stagiaire'}</b>, pour une période: du
-      <b>${startDate}</b> jusqu’au <b>${endDate}</b>.
+      <b>${formatStageDocumentDateFr(startDate)}</b> jusqu’au <b>${formatStageDocumentDateFr(endDate)}</b>.
     </p>
 
     <p>${a.attestation_quality_text}</p>
@@ -1029,7 +1058,7 @@ article {
         return
       }
       win.document.open()
-      win.document.write(html)
+      win.document.write(normalizeStageDocumentDatesFr(html))
       win.document.close()
       win.focus()
       return
@@ -1159,7 +1188,7 @@ b, strong { font-weight: 900; }
         return
       }
       win.document.open()
-      win.document.write(html)
+      win.document.write(normalizeStageDocumentDatesFr(html))
       win.document.close()
       win.focus()
       return
@@ -1240,7 +1269,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
 </html>`
     const win = window.open('', '_blank', 'noopener,noreferrer,width=760,height=900')
     if (!win) return
-    win.document.write(html)
+    win.document.write(normalizeStageDocumentDatesFr(html))
     win.document.close()
   }
 
