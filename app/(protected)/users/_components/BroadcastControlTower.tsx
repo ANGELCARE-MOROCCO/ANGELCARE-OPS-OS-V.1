@@ -1,6 +1,7 @@
 'use client'
 
 import { CSSProperties, FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import BroadcastWorkflowLegacyModal from './BroadcastWorkflowLegacyModal'
 
 type Tone = 'blue' | 'green' | 'red' | 'amber' | 'purple' | 'slate'
 type Priority = 'high' | 'medium' | 'low' | 'info'
@@ -573,62 +574,7 @@ export default function BroadcastControlTower() {
         </div>
       )}
 
-      {modalOpen ? (
-        <div style={modalOverlayStyle}>
-          <form onSubmit={createBroadcast} style={modalStyle}>
-            <div style={modalHeaderStyle}>
-              <div>
-                <div style={tagLineStyle}>Broadcast execution</div>
-                <h3 style={modalTitleStyle}>Create synced broadcast message</h3>
-                <p style={subtitleStyle}>This writes through the server API. No local storage is used.</p>
-              </div>
-              <button type="button" onClick={() => setModalOpen(false)} style={closeButtonStyle}>×</button>
-            </div>
-
-            <label style={fieldStyle}>
-              <span>Broadcast title</span>
-              <input name="title" required placeholder="System Maintenance Alert" style={inputStyle} />
-            </label>
-
-            <label style={fieldStyle}>
-              <span>Message</span>
-              <textarea name="message" required placeholder="Write the broadcast message..." style={{ ...inputStyle, minHeight: 120, resize: 'vertical' }} />
-            </label>
-
-            <div style={modalGridStyle}>
-              <label style={fieldStyle}>
-                <span>Priority</span>
-                <select name="priority" defaultValue="medium" style={inputStyle}>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                  <option value="info">Info</option>
-                </select>
-              </label>
-
-              <label style={fieldStyle}>
-                <span>Owner team</span>
-                <input name="team" defaultValue="Operations" style={inputStyle} />
-              </label>
-
-              <label style={fieldStyle}>
-                <span>Target scope</span>
-                <select name="target_scope" defaultValue="all_users" style={inputStyle}>
-                  <option value="all_users">All users</option>
-                  <option value="active_users">Active users</option>
-                  <option value="managers">Managers</option>
-                  <option value="field_ops">Field operations</option>
-                </select>
-              </label>
-            </div>
-
-            <div style={modalActionsStyle}>
-              <button type="button" onClick={() => setModalOpen(false)} style={lightButtonStyle}>Cancel</button>
-              <button type="submit" disabled={actionBusy} style={blueButtonStyle}>{actionBusy ? 'Sending...' : 'Send broadcast'}</button>
-            </div>
-          </form>
-        </div>
-      ) : null}
+      {modalOpen ? <BroadcastWorkflowLegacyModal onClose={() => setModalOpen(false)} /> : null}
     </section>
   )
 }
