@@ -18,6 +18,7 @@ export const CARELINK_MOBILE_TABLES = {
   routeExecutionLogs: 'carelink_mission_route_execution_logs',
   reportCorrections: 'carelink_mission_report_corrections',
   presenceProofs: 'carelink_mission_presence_proofs',
+  sosEvents: 'carelink_mobile_sos_events',
 } as const
 
 export type CareLinkDispatchMessage = {
@@ -160,11 +161,46 @@ export type CareLinkPaymentDisputeRow = {
   missionId: number | null
   caregiverId: number
   amountClaimed: number | null
+  amountExpected: number | null
+  amountPaid: number | null
+  disputeType: string
+  targetLineId: string | null
+  targetLineKind: string | null
+  evidenceUrl: string | null
+  agentNote: string | null
+  opsReviewStatus: string
+  reviewedBy: string | null
+  reviewedAt: string | null
+  reviewNote: string | null
   reason: string
   status: string
   createdAt: string
   resolvedAt: string | null
   metadata: Record<string, unknown>
+}
+
+export type CareLinkMobileSosEventRow = {
+  id: string
+  caregiverId: number
+  missionId: number | null
+  authUserId: string | null
+  emergencyType: string
+  severity: string
+  status: string
+  note: string | null
+  callbackRequested: boolean
+  replacementRequested: boolean
+  locationSnapshot: Record<string, unknown>
+  deviceSnapshot: Record<string, unknown>
+  alertId: string | null
+  escalationId: string | null
+  dispatchThreadKey: string | null
+  source: string
+  metadata: Record<string, unknown>
+  acknowledgedAt: string | null
+  resolvedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 export type CareLinkAgentDocumentRow = {
@@ -379,11 +415,48 @@ function normalizeDispute(row: AnyRow): CareLinkPaymentDisputeRow {
     missionId: row.mission_id == null ? null : asNumber(row.mission_id),
     caregiverId: asNumber(row.caregiver_id),
     amountClaimed: row.amount_claimed == null ? null : asNumber(row.amount_claimed),
+    amountExpected: row.amount_expected == null ? null : asNumber(row.amount_expected),
+    amountPaid: row.amount_paid == null ? null : asNumber(row.amount_paid),
+    disputeType: asString(row.dispute_type, asString(asRecord(row.metadata).dispute_type, 'payment_correction')),
+    targetLineId: row.target_line_id == null ? null : String(row.target_line_id),
+    targetLineKind: row.target_line_kind == null ? null : String(row.target_line_kind),
+    evidenceUrl: row.evidence_url == null ? null : String(row.evidence_url),
+    agentNote: row.agent_note == null ? null : String(row.agent_note),
+    opsReviewStatus: asString(row.ops_review_status, 'pending_ops_review'),
+    reviewedBy: row.reviewed_by == null ? null : String(row.reviewed_by),
+    reviewedAt: row.reviewed_at == null ? null : String(row.reviewed_at),
+    reviewNote: row.review_note == null ? null : String(row.review_note),
     reason: asString(row.reason, ''),
     status: asString(row.status, 'pending'),
     createdAt: asString(row.created_at, new Date().toISOString()),
     resolvedAt: row.resolved_at == null ? null : String(row.resolved_at),
     metadata: asRecord(row.metadata),
+  }
+}
+
+function normalizeSosEvent(row: AnyRow): CareLinkMobileSosEventRow {
+  return {
+    id: String(row.id),
+    caregiverId: asNumber(row.caregiver_id),
+    missionId: row.mission_id == null ? null : asNumber(row.mission_id),
+    authUserId: row.auth_user_id == null ? null : String(row.auth_user_id),
+    emergencyType: asString(row.emergency_type, 'sos'),
+    severity: asString(row.severity, 'critical'),
+    status: asString(row.status, 'open'),
+    note: row.note == null ? null : String(row.note),
+    callbackRequested: Boolean(row.callback_requested),
+    replacementRequested: Boolean(row.replacement_requested),
+    locationSnapshot: asRecord(row.location_snapshot),
+    deviceSnapshot: asRecord(row.device_snapshot),
+    alertId: row.alert_id == null ? null : String(row.alert_id),
+    escalationId: row.escalation_id == null ? null : String(row.escalation_id),
+    dispatchThreadKey: row.dispatch_thread_key == null ? null : String(row.dispatch_thread_key),
+    source: asString(row.source, 'carelink_mobile'),
+    metadata: asRecord(row.metadata),
+    acknowledgedAt: row.acknowledged_at == null ? null : String(row.acknowledged_at),
+    resolvedAt: row.resolved_at == null ? null : String(row.resolved_at),
+    createdAt: asString(row.created_at, new Date().toISOString()),
+    updatedAt: asString(row.updated_at, new Date().toISOString()),
   }
 }
 
@@ -1065,6 +1138,13 @@ export async function createPaymentDispute(input: {
   caregiverId: number
   missionId?: number | null
   amountClaimed?: number | null
+  amountExpected?: number | null
+  amountPaid?: number | null
+  disputeType?: string | null
+  targetLineId?: string | null
+  targetLineKind?: string | null
+  evidenceUrl?: string | null
+  agentNote?: string | null
   reason: string
   status?: string
   metadata?: Record<string, unknown>
@@ -1074,9 +1154,18 @@ export async function createPaymentDispute(input: {
     mission_id: input.missionId ?? null,
     caregiver_id: input.caregiverId,
     amount_claimed: input.amountClaimed ?? null,
+    amount_expected: input.amountExpected ?? null,
+    amount_paid: input.amountPaid ?? null,
+    dispute_type: input.disputeType || 'payment_correction',
+    target_line_id: input.targetLineId || null,
+    target_line_kind: input.targetLineKind || null,
+    evidence_url: input.evidenceUrl || null,
+    agent_note: input.agentNote || null,
     reason: input.reason,
     status: input.status || 'pending',
+    ops_review_status: 'pending_ops_review',
     metadata: input.metadata || {},
+    updated_at: new Date().toISOString(),
   }
   const { data, error } = await supabase.from(CARELINK_MOBILE_TABLES.disputes).insert([payload]).select('*').maybeSingle()
   if (error) throw new Error(error.message)
@@ -1085,11 +1174,79 @@ export async function createPaymentDispute(input: {
       missionId: input.missionId,
       eventType: 'payment_correction_requested',
       content: input.reason,
-      metadata: { amount_claimed: input.amountClaimed ?? null, dispute_status: input.status || 'pending' },
+      metadata: {
+        amount_claimed: input.amountClaimed ?? null,
+        amount_expected: input.amountExpected ?? null,
+        amount_paid: input.amountPaid ?? null,
+        dispute_type: input.disputeType || 'payment_correction',
+        dispute_status: input.status || 'pending',
+      },
       source: 'carelink_mobile',
     })
   }
   return data ? normalizeDispute(data as AnyRow) : null
+}
+
+export async function loadMobileSosEvents(filters: { caregiverId?: number | null; missionIds?: number[] } = {}) {
+  const rows = await queryRows(CARELINK_MOBILE_TABLES.sosEvents, (query) => query.select('*').order('created_at', { ascending: false }).limit(250))
+  return rows
+    .filter((row) => {
+      if (filters.caregiverId && asNumber(row.caregiver_id) !== filters.caregiverId) return false
+      if (filters.missionIds?.length) return row.mission_id == null || filters.missionIds.includes(asNumber(row.mission_id))
+      return true
+    })
+    .map(normalizeSosEvent)
+}
+
+export async function saveMobileSosEvent(input: {
+  caregiverId: number
+  missionId?: number | null
+  authUserId?: string | null
+  emergencyType: string
+  severity?: string
+  status?: string
+  note?: string | null
+  callbackRequested?: boolean
+  replacementRequested?: boolean
+  locationSnapshot?: Record<string, unknown> | null
+  deviceSnapshot?: Record<string, unknown> | null
+  alertId?: string | null
+  escalationId?: string | null
+  dispatchThreadKey?: string | null
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const payload = {
+    caregiver_id: input.caregiverId,
+    mission_id: input.missionId ?? null,
+    auth_user_id: input.authUserId || null,
+    emergency_type: input.emergencyType,
+    severity: input.severity || 'critical',
+    status: input.status || 'open',
+    note: input.note || null,
+    callback_requested: Boolean(input.callbackRequested),
+    replacement_requested: Boolean(input.replacementRequested),
+    location_snapshot: input.locationSnapshot || {},
+    device_snapshot: input.deviceSnapshot || {},
+    alert_id: input.alertId || null,
+    escalation_id: input.escalationId || null,
+    dispatch_thread_key: input.dispatchThreadKey || null,
+    source: 'carelink_mobile',
+    metadata: input.metadata || {},
+    updated_at: new Date().toISOString(),
+  }
+  const { data, error } = await supabase.from(CARELINK_MOBILE_TABLES.sosEvents).insert([payload]).select('*').maybeSingle()
+  if (error) throw new Error(error.message)
+  if (input.missionId) {
+    await recordMissionEvent({
+      missionId: input.missionId,
+      eventType: `mobile_sos_${input.emergencyType}`,
+      content: input.note || `Alerte ${input.emergencyType} envoyée depuis CareLink mobile`,
+      metadata: { severity: payload.severity, callback_requested: payload.callback_requested, replacement_requested: payload.replacement_requested },
+      source: 'carelink_mobile',
+    })
+  }
+  return data ? normalizeSosEvent(data as AnyRow) : null
 }
 
 export async function loadAgentDocuments(caregiverId?: number | null) {
@@ -1147,6 +1304,7 @@ export async function loadCareLinkOperationalAudit(missionIds: number[] = []) {
   const reports = missionIds.length ? await Promise.all(missionIds.map(async (missionId) => loadMissionReport(missionId))) : []
   const reportCorrections = missionIds.length ? (await Promise.all(missionIds.map(async (missionId) => loadMissionReportCorrections(missionId).catch(() => [])))).flat() : []
   const presenceProofs = missionIds.length ? (await Promise.all(missionIds.map(async (missionId) => loadMissionPresenceProofs(missionId).catch(() => [])))).flat() : []
+  const sosEvents = await loadMobileSosEvents({ missionIds })
   const disputes = await loadPaymentDisputes({ missionIds })
   const documents = await loadAgentDocuments()
   return {
@@ -1157,6 +1315,7 @@ export async function loadCareLinkOperationalAudit(missionIds: number[] = []) {
     reports: reports.filter(Boolean),
     reportCorrections,
     presenceProofs,
+    sosEvents,
     disputes,
     documents,
     generatedAt: new Date().toISOString(),

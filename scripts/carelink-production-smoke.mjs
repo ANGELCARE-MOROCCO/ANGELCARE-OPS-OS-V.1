@@ -98,6 +98,9 @@ const pMigrations = [
   'supabase/migrations/20260627_carelink_mobile_p11_dynamic_service_checklists.sql',
   'supabase/migrations/20260627_carelink_mobile_p12_report_correction_validation.sql',
   'supabase/migrations/20260627_carelink_mobile_p13_attendance_presence_proof.sql',
+  'supabase/migrations/20260627_carelink_mobile_p14_availability_roster_cockpit.sql',
+  'supabase/migrations/20260627_carelink_mobile_p17_payments_honoraires_disputes.sql',
+  'supabase/migrations/20260627_carelink_mobile_p18_sos_incident_escalation.sql',
 ]
 for (const file of pMigrations) {
   expectNotIncludes(file, ['create policy if not exists', 'CREATE POLICY IF NOT EXISTS'], file)
@@ -114,6 +117,7 @@ expectIncludes(pMigrations[8], ['carelink_mission_route_execution_logs', 'careli
 expectIncludes(pMigrations[9], ['service_type text', 'service_family text', 'evidence_required boolean', 'carelink_mission_checklist_items_service_idx'], 'P11 migration')
 expectIncludes(pMigrations[10], ['carelink_mission_report_corrections', 'correction_status text', 'carelink_report_corrections_mission_idx'], 'P12 migration')
 expectIncludes(pMigrations[11], ['carelink_mission_presence_proofs', 'risk_flag text', 'carelink_presence_proofs_mission_idx'], 'P13 migration')
+expectIncludes(pMigrations[12], ['carelink_agent_availability_updates', 'availability_type text', 'weekend_available boolean', 'carelink_availability_updates_blackout_idx'], 'P14 migration')
 
 const carelinkMigrationFiles = listFiles('supabase/migrations', (file) => /carelink/i.test(file) && file.endsWith('.sql'))
 for (const file of carelinkMigrationFiles) {
@@ -438,6 +442,61 @@ for (const expected of ['missionPresenceProofReadyForCompletion', 'carelink_pres
 }
 
 
+
+const p14AvailabilityRoute = read('app/api/carelink/availability/route.ts')
+for (const expected of ['normalizeAvailabilityType', 'recordCareLinkAgentActivity', 'availability_type', 'weekend_available', 'transport_ready']) {
+  if (!p14AvailabilityRoute.includes(expected)) failures.push(`P14 availability api missing ${expected}`)
+}
+
+const p14ScheduleScreen = read('components/carelink/mobile/CareLinkAgentEnterpriseScreens.tsx')
+for (const expected of ['Disponibilité & roster', 'blackoutDate', 'weekendAvailable', 'nightAvailable', 'emergencyAvailable', 'transportReady', 'conflictLevel']) {
+  if (!p14ScheduleScreen.includes(expected)) failures.push(`P14 availability roster UIX missing ${expected}`)
+}
+
+const p14Adapter = read('lib/carelink/mobile-adapter.ts')
+for (const expected of ['latestAvailabilityType', 'activeBlackouts', 'conflictWarnings', 'transportReady']) {
+  if (!p14Adapter.includes(expected)) failures.push(`P14 mobile adapter missing ${expected}`)
+}
+
+
+const p17Migration = read('supabase/migrations/20260627_carelink_mobile_p17_payments_honoraires_disputes.sql')
+for (const expected of ['carelink_payment_disputes', 'dispute_type text', 'ops_review_status text', 'carelink_payment_disputes_status_idx']) {
+  if (!p17Migration.includes(expected)) failures.push(`P17 migration missing ${expected}`)
+}
+if (/create\s+policy\s+if\s+not\s+exists/i.test(p17Migration)) failures.push('P17 migration uses invalid CREATE POLICY IF NOT EXISTS syntax')
+
+const p18Migration = read('supabase/migrations/20260627_carelink_mobile_p18_sos_incident_escalation.sql')
+for (const expected of ['carelink_mobile_sos_events', 'emergency_type text', 'callback_requested boolean', 'carelink_mobile_sos_events_status_idx']) {
+  if (!p18Migration.includes(expected)) failures.push(`P18 migration missing ${expected}`)
+}
+if (/create\s+policy\s+if\s+not\s+exists/i.test(p18Migration)) failures.push('P18 migration uses invalid CREATE POLICY IF NOT EXISTS syntax')
+
+const p17PaymentsRoute = read('app/api/carelink/payments/disputes/route.ts')
+for (const expected of ['createPaymentDispute', 'payment-honoraires-dispute', 'createDispatchMessage', 'recordCareLinkAgentActivity']) {
+  if (!p17PaymentsRoute.includes(expected)) failures.push(`P17 payment dispute api missing ${expected}`)
+}
+
+const p18SosRoute = read('app/api/carelink/sos/route.ts')
+for (const expected of ['saveMobileSosEvent', 'sos-incident-real-time-escalation', 'createCareLinkOperationalEscalation', 'callbackRequested', 'replacementRequested']) {
+  if (!p18SosRoute.includes(expected)) failures.push(`P18 SOS api missing ${expected}`)
+}
+
+const p17p18Persistence = read('lib/carelink/mobile-persistence.ts')
+for (const expected of ['loadMobileSosEvents', 'saveMobileSosEvent', 'amountExpected', 'opsReviewStatus', 'carelink_mobile_sos_events']) {
+  if (!p17p18Persistence.includes(expected)) failures.push(`P17/P18 mobile persistence missing ${expected}`)
+}
+
+const p17p18Screens = read('components/carelink/mobile/CareLinkAgentEnterpriseScreens.tsx')
+for (const expected of ['Litige honoraires', 'Décompte honoraires', 'Événements SOS', 'Escalade temps réel', 'carelink_mobile_p18_sos_incident']) {
+  if (!p17p18Screens.includes(expected)) failures.push(`P17/P18 mobile UIX missing ${expected}`)
+}
+
+const p17p18Adapter = read('lib/carelink/mobile-adapter.ts')
+for (const expected of ['loadMobileSosEvents', 'sosEvents']) {
+  if (!p17p18Adapter.includes(expected)) failures.push(`P17/P18 mobile adapter missing ${expected}`)
+}
+
+
 if (failures.length) {
   console.error('CareLink production smoke failed:')
   for (const failure of failures) console.error(`- ${failure}`)
@@ -448,7 +507,7 @@ if (failures.length) {
   process.exit(1)
 }
 
-console.log('✅ CareLink P13 production smoke passed')
+console.log('✅ CareLink P17 + P18 production smoke passed')
 if (warnings.length) {
   console.log('Warnings:')
   for (const warning of warnings) console.log(`- ${warning}`)

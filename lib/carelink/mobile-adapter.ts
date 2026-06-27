@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getMissionDossier, listMissionControlRecords } from '@/lib/missions/repository'
 import type { MissionControlRecord, MissionDossier } from '@/lib/missions/types'
-import { loadAlerts, loadAgentDocuments, loadDispatchMessages, loadMissionBriefAcknowledgement, loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionPresenceProofs, loadMissionRouteExecutionLogs, loadNotifications, loadPaymentDisputes } from './mobile-persistence'
+import { loadAlerts, loadAgentDocuments, loadDispatchMessages, loadMissionBriefAcknowledgement, loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionPresenceProofs, loadMissionReportCorrections, loadMissionRouteExecutionLogs, loadNotifications, loadMobileSosEvents, loadPaymentDisputes } from './mobile-persistence'
 import { requireCareLinkMobileAgent, requireCareLinkMobileMissionAccess } from './mobile-auth'
 
 type AnyRecord = Record<string, any>
@@ -106,6 +106,7 @@ export type CareLinkMobileWorkspace = {
   routeExecutionLogs?: Array<Record<string, unknown>>
   presenceProofs?: Array<Record<string, unknown>>
   reportCorrections?: Array<Record<string, unknown>>
+  sosEvents?: Array<Record<string, unknown>>
 }
 
 function asNumber(value: unknown) {
@@ -618,9 +619,14 @@ function deriveEnterpriseDossier(input: {
       maxWeeklyHours: agent.max_weekly_hours || null,
       preferredZones: asList(agent.preferred_zones || agent.zones || zones),
       excludedZones: asList(agent.excluded_zones),
-      weekendAcceptance: Boolean(agent.weekend_acceptance || agent.accepts_weekends),
-      emergencyReplacement: Boolean(agent.emergency_replacement || agent.accepts_emergency_replacement),
+      emergencyReplacement: Boolean(agent.emergency_replacement || agent.accepts_emergency_replacement || input.availabilityUpdates.some((item) => item.emergency_available === true || item.availability_status === 'emergency_backup')),
+      weekendAcceptance: Boolean(agent.weekend_acceptance || agent.accepts_weekends || input.availabilityUpdates.some((item) => item.weekend_available === true)),
+      nightAcceptance: Boolean(agent.night_acceptance || agent.accepts_night || input.availabilityUpdates.some((item) => item.night_available === true)),
+      transportReady: input.availabilityUpdates[0]?.transport_ready ?? null,
       transportRequired: Boolean(agent.transport_required),
+      latestAvailabilityType: input.availabilityUpdates[0]?.availability_type || 'status_update',
+      activeBlackouts: input.availabilityUpdates.filter((item) => ['blackout_date', 'day_off_request'].includes(String(item.availability_type || '').toLowerCase()) || ['blackout', 'day_off'].includes(String(item.availability_status || '').toLowerCase())).length,
+      conflictWarnings: input.availabilityUpdates.filter((item) => Boolean(item.conflict_level)).length,
     },
     documents: {
       total: input.documents.length,
@@ -687,6 +693,7 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
   const notificationsFeed = await loadNotifications({ caregiverId, missionIds }).catch(() => [])
   const alertsFeed = await loadAlerts({ caregiverId, missionIds }).catch(() => [])
   const disputesFeed = await loadPaymentDisputes({ caregiverId, missionIds }).catch(() => [])
+  const sosEventsFeed = await loadMobileSosEvents({ caregiverId, missionIds }).catch(() => [])
   const documentsFeed = await loadAgentDocuments(caregiverId).catch(() => [])
   const profileRequests = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_profile_requests').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(40)) : []
   const policyAcknowledgements = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_policy_acknowledgements').select('*').eq('caregiver_id', caregiverId).order('acknowledged_at', { ascending: false }).limit(40)) : []
@@ -846,7 +853,8 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
     briefAcknowledgements: briefAcknowledgements.map((item) => ({ ...item })),
     routeExecutionLogs: routeExecutionLogs.map((item) => ({ ...item })),
     presenceProofs: presenceProofs.map((item) => ({ ...item })),
-    reportCorrections: reportCorrections.map((item) => ({ ...item })),
+    reportCorrections: reportCorrections.map((item: Record<string, unknown>) => ({ ...item })),
+    sosEvents: sosEventsFeed.map((item: Record<string, unknown>) => ({ ...item })),
   }
 }
 
