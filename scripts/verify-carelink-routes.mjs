@@ -35,6 +35,8 @@ const requiredFiles = [
   'supabase/migrations/20260627_carelink_mobile_p9_mission_brief_acknowledgement.sql',
   'supabase/migrations/20260627_carelink_mobile_p10_route_transport_execution.sql',
   'supabase/migrations/20260627_carelink_mobile_p11_dynamic_service_checklists.sql',
+  'supabase/migrations/20260627_carelink_mobile_p12_report_correction_validation.sql',
+  'supabase/migrations/20260627_carelink_mobile_p13_attendance_presence_proof.sql',
 ]
 
 const protectedMobileApiFiles = [
@@ -51,6 +53,7 @@ const protectedMobileApiFiles = [
   'app/api/carelink/missions/[id]/program-activity/route.ts',
   'app/api/carelink/missions/[id]/brief-acknowledge/route.ts',
   'app/api/carelink/missions/[id]/route-execution/route.ts',
+  'app/api/carelink/missions/[id]/presence-proof/route.ts',
   'app/api/carelink/missions/[id]/incident/route.ts',
   'app/api/carelink/messages/route.ts',
   'app/api/carelink/messages/[id]/read/route.ts',
@@ -164,7 +167,7 @@ if (scripts['carelink:deploy-gate'] && !scripts['carelink:deploy-gate'].includes
 if (scripts['carelink:deploy-gate'] && !scripts['carelink:deploy-gate'].includes('carelink:production-smoke')) failures.push('carelink:deploy-gate does not include carelink:production-smoke')
 
 const p5Smoke = read('scripts/carelink-production-smoke.mjs')
-for (const expected of ['CareLink P11 production smoke passed', 'create policy if not exists', 'mobile write route appears to trust client caregiverId', 'carelink:deploy-gate']) {
+for (const expected of ['CareLink P13 production smoke passed', 'create policy if not exists', 'mobile write route appears to trust client caregiverId', 'carelink:deploy-gate']) {
   if (!p5Smoke.includes(expected)) failures.push(`P5 production smoke missing ${expected}`)
 }
 
@@ -319,10 +322,70 @@ for (const expected of ['DynamicServiceChecklistSection', 'Checklist service dyn
   if (!p11MobileMission.includes(expected)) failures.push(`P11 mobile checklist UIX missing ${expected}`)
 }
 
+
+
+const p12ReportCorrectionRoute = read('app/api/carelink/missions/[id]/report-correction/route.ts')
+for (const expected of ['requireCareLinkMobileMissionAccess', 'markMissionReportCorrectionResubmitted', 'createDispatchMessage', 'recordCareLinkMissionTimelineAudit']) {
+  if (!p12ReportCorrectionRoute.includes(expected)) failures.push(`P12 report correction route missing ${expected}`)
+}
+
+const p12Persistence = read('lib/carelink/mobile-persistence.ts')
+for (const expected of ['carelink_mission_report_corrections', 'loadMissionReportCorrections', 'saveMissionReportCorrectionRequest', 'markMissionReportCorrectionResubmitted', 'markMissionReportValidated', 'missionReportValidationReadyForCompletion']) {
+  if (!p12Persistence.includes(expected)) failures.push(`P12 persistence missing ${expected}`)
+}
+
+const p12OpsCorrection = read('app/api/carelink/ops/reports/[id]/request-correction/route.ts')
+for (const expected of ['saveMissionReportCorrectionRequest', 'createNotification', 'report_correction_requested']) {
+  if (!p12OpsCorrection.includes(expected)) failures.push(`P12 OPS correction endpoint missing ${expected}`)
+}
+
+const p12OpsValidate = read('app/api/carelink/ops/reports/[id]/validate/route.ts')
+for (const expected of ['markMissionReportValidated', 'report.validated_via_api']) {
+  if (!p12OpsValidate.includes(expected)) failures.push(`P12 OPS validate endpoint missing ${expected}`)
+}
+
+const p12Completion = read('lib/carelink/mobile-completion-gates.ts')
+for (const expected of ['missionReportValidationReadyForCompletion', 'carelink_report_correction_required', 'carelink_report_validation_required']) {
+  if (!p12Completion.includes(expected)) failures.push(`P12 completion gates missing ${expected}`)
+}
+
+const p12MobileMission = read('components/carelink/mobile/CareLinkFieldAgentPremiumApp.tsx')
+for (const expected of ['ReportCorrectionValidationSection', 'Validation rapport OPS', 'report-correction', 'Renvoyer correction à OPS']) {
+  if (!p12MobileMission.includes(expected)) failures.push(`P12 mobile report validation UIX missing ${expected}`)
+}
+
+
+const p13Migration = read('supabase/migrations/20260627_carelink_mobile_p13_attendance_presence_proof.sql')
+for (const expected of ['carelink_mission_presence_proofs', 'carelink_presence_proofs_mission_idx', 'risk_flag text']) {
+  if (!p13Migration.includes(expected)) failures.push(`P13 migration missing ${expected}`)
+}
+if (/create\s+policy\s+if\s+not\s+exists/i.test(p13Migration)) failures.push('P13 migration uses invalid CREATE POLICY IF NOT EXISTS syntax')
+
+const p13PresenceRoute = read('app/api/carelink/missions/[id]/presence-proof/route.ts')
+for (const expected of ['requireCareLinkMobileMissionAccess', 'saveMissionPresenceProof', 'recordCareLinkMissionTimelineAudit', 'createDispatchMessage']) {
+  if (!p13PresenceRoute.includes(expected)) failures.push(`P13 presence proof api missing ${expected}`)
+}
+
+const p13Persistence = read('lib/carelink/mobile-persistence.ts')
+for (const expected of ['carelink_mission_presence_proofs', 'loadMissionPresenceProofs', 'saveMissionPresenceProof', 'missionPresenceProofReadyForCompletion']) {
+  if (!p13Persistence.includes(expected)) failures.push(`P13 mobile persistence missing ${expected}`)
+}
+
+const p13MobileMission = read('components/carelink/mobile/CareLinkFieldAgentPremiumApp.tsx')
+for (const expected of ['AttendancePresenceProofSection', 'Présence et pointage', 'presence-proof', 'normalizePresenceProofLog']) {
+  if (!p13MobileMission.includes(expected)) failures.push(`P13 mobile presence UIX missing ${expected}`)
+}
+
+const p13CompletionGates = read('lib/carelink/mobile-completion-gates.ts')
+for (const expected of ['missionPresenceProofReadyForCompletion', 'carelink_presence_proof_required']) {
+  if (!p13CompletionGates.includes(expected)) failures.push(`P13 completion gates missing ${expected}`)
+}
+
+
 if (failures.length) {
   console.error('CareLink verification failed:')
   for (const failure of failures) console.error(`- ${failure}`)
   process.exit(1)
 }
 
-console.log('✅ CareLink P0 + P1 + P2 + P3 + P4 + P5 + P6 + P7 + P8 + P9 + P10 + P11 production verification passed')
+console.log('✅ CareLink P0 + P1 + P2 + P3 + P4 + P5 + P6 + P7 + P8 + P9 + P10 + P11 + P12 + P13 production verification passed')

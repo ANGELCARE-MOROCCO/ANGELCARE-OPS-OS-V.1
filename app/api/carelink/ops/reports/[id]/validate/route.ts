@@ -1,4 +1,5 @@
 import { loadCareLinkOpsSnapshot, validateOpsReport, recordOpsAuditEvent } from '@/lib/carelink/ops-enterprise'
+import { markMissionReportValidated } from '@/lib/carelink/mobile-persistence'
 import { opsError, opsJson, readJsonBody } from '../../../_helpers'
 
 export const dynamic = 'force-dynamic'
@@ -24,6 +25,13 @@ export async function POST(request: Request, context: Context) {
       service_type: body?.service_type || report.serviceType,
       status: 'validated',
       validation_status: 'validated',
+    })
+    await markMissionReportValidated({
+      missionId: report.missionId,
+      reportId,
+      validatedBy: 'carelink_ops',
+      note: typeof body?.note === 'string' ? body.note : null,
+      metadata: { report_id: reportId, p12: true },
     })
     await recordOpsAuditEvent({
       entityType: 'report',

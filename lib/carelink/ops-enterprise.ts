@@ -250,6 +250,7 @@ export type OpsReportCard = {
   id: string
   missionId: number
   missionCode: string
+  caregiverId: number | null
   serviceType: string
   status: string
   validationStatus: string
@@ -750,6 +751,7 @@ function buildReports(rows: AnyRecord[], missions: Map<string, OpsMissionCard>) 
       id: String(row.id),
       missionId: Number(row.mission_id),
       missionCode: mission?.code || asString(row.mission_code, `Mission #${row.mission_id}`),
+      caregiverId: row.caregiver_id == null ? mission?.caregiverId ?? null : Number(row.caregiver_id),
       serviceType: asString(row.service_type || mission?.serviceType || 'Service AngelCare'),
       status: asString(row.status, 'draft'),
       validationStatus: asString(row.validation_status, 'pending'),
@@ -1284,8 +1286,14 @@ export async function validateOpsReport(missionId: number, payload: Record<strin
     status: asString(payload.status || 'validated'),
     submitted_at: payload.submitted_at || now,
     validation_status: asString(payload.validation_status || payload.validationStatus || 'validated'),
+    correction_status: 'validated',
+    correction_required: false,
+    correction_resolved_at: now,
+    validated_at: now,
+    validated_by: asString(payload.validated_by || payload.validatedBy || 'carelink_ops'),
+    ops_feedback: asString(payload.note || payload.ops_feedback || ''),
     updated_at: now,
-    metadata: asRecord(payload.metadata),
+    metadata: { ...asRecord(payload.metadata), p12_report_validation_loop: true },
   }], { onConflict: 'mission_id' }).select('*').maybeSingle()
   if (error) throw new Error(error.message)
   await patchMission(missionId, {

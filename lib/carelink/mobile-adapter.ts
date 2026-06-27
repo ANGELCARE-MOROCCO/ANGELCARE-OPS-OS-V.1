@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getMissionDossier, listMissionControlRecords } from '@/lib/missions/repository'
 import type { MissionControlRecord, MissionDossier } from '@/lib/missions/types'
-import { loadAlerts, loadAgentDocuments, loadDispatchMessages, loadMissionBriefAcknowledgement, loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionRouteExecutionLogs, loadNotifications, loadPaymentDisputes } from './mobile-persistence'
+import { loadAlerts, loadAgentDocuments, loadDispatchMessages, loadMissionBriefAcknowledgement, loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionPresenceProofs, loadMissionRouteExecutionLogs, loadNotifications, loadPaymentDisputes } from './mobile-persistence'
 import { requireCareLinkMobileAgent, requireCareLinkMobileMissionAccess } from './mobile-auth'
 
 type AnyRecord = Record<string, any>
@@ -104,6 +104,8 @@ export type CareLinkMobileWorkspace = {
   programActivityLogs?: Array<Record<string, unknown>>
   briefAcknowledgements?: Array<Record<string, unknown>>
   routeExecutionLogs?: Array<Record<string, unknown>>
+  presenceProofs?: Array<Record<string, unknown>>
+  reportCorrections?: Array<Record<string, unknown>>
 }
 
 function asNumber(value: unknown) {
@@ -702,6 +704,12 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
   const routeExecutionLogs = caregiverId
     ? (await Promise.all(missionIds.map((missionId) => loadMissionRouteExecutionLogs(Number(missionId), caregiverId).catch(() => [])))).flat()
     : []
+  const reportCorrections = caregiverId
+    ? (await Promise.all(missionIds.map((missionId) => loadMissionReportCorrections(Number(missionId), caregiverId).catch(() => [])))).flat()
+    : []
+  const presenceProofs = caregiverId
+    ? (await Promise.all(missionIds.map((missionId) => loadMissionPresenceProofs(Number(missionId), caregiverId).catch(() => [])))).flat()
+    : []
 
   const readiness = deriveReadiness(records, agent)
   const stats = deriveStats(records)
@@ -837,6 +845,8 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
     programActivityLogs: programActivityLogs.map((item) => ({ ...item })),
     briefAcknowledgements: briefAcknowledgements.map((item) => ({ ...item })),
     routeExecutionLogs: routeExecutionLogs.map((item) => ({ ...item })),
+    presenceProofs: presenceProofs.map((item) => ({ ...item })),
+    reportCorrections: reportCorrections.map((item) => ({ ...item })),
   }
 }
 
@@ -851,6 +861,8 @@ export async function loadCarelinkMobileMissionContext(id: string | number) {
   const programActivityLogs = (workspace.programActivityLogs || []).filter((log) => String(log.missionId || log.mission_id || '') === String(selected.id))
   const briefAcknowledgements = (workspace.briefAcknowledgements || []).filter((ack) => String(ack.missionId || ack.mission_id || '') === String(selected.id))
   const routeExecutionLogs = (workspace.routeExecutionLogs || []).filter((log) => String(log.missionId || log.mission_id || '') === String(selected.id))
+  const reportCorrections = (workspace.reportCorrections || []).filter((row) => String(row.missionId || row.mission_id || '') === String(selected.id))
+  const presenceProofs = (workspace.presenceProofs || []).filter((row) => String(row.missionId || row.mission_id || '') === String(selected.id))
   const checklistItems = dossier
     ? await loadMissionChecklist(
         Number(selected.id),
@@ -859,6 +871,6 @@ export async function loadCarelinkMobileMissionContext(id: string | number) {
         dossier.raw as Record<string, unknown>,
       ).catch(() => dossier.checklistItems || [])
     : []
-  const enhancedDossier = dossier ? ({ ...dossier, checklistItems, programActivityLogs, briefAcknowledgements, routeExecutionLogs } as MissionDossier & { programActivityLogs?: Array<Record<string, unknown>>; briefAcknowledgements?: Array<Record<string, unknown>>; routeExecutionLogs?: Array<Record<string, unknown>> }) : dossier
+  const enhancedDossier = dossier ? ({ ...dossier, checklistItems, programActivityLogs, briefAcknowledgements, routeExecutionLogs, reportCorrections, presenceProofs } as MissionDossier & { programActivityLogs?: Array<Record<string, unknown>>; briefAcknowledgements?: Array<Record<string, unknown>>; routeExecutionLogs?: Array<Record<string, unknown>>; reportCorrections?: Array<Record<string, unknown>>; presenceProofs?: Array<Record<string, unknown>> }) : dossier
   return { selected, dossier: enhancedDossier, records: workspace.records, workspace }
 }

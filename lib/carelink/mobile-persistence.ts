@@ -16,6 +16,8 @@ export const CARELINK_MOBILE_TABLES = {
   programActivityLogs: 'carelink_mission_program_activity_logs',
   briefAcknowledgements: 'carelink_mission_brief_acknowledgements',
   routeExecutionLogs: 'carelink_mission_route_execution_logs',
+  reportCorrections: 'carelink_mission_report_corrections',
+  presenceProofs: 'carelink_mission_presence_proofs',
 } as const
 
 export type CareLinkDispatchMessage = {
@@ -102,6 +104,52 @@ export type CareLinkMissionReportRow = {
   status: string
   submittedAt: string | null
   validationStatus: string
+  correctionStatus: string
+  correctionRequired: boolean
+  correctionRound: number
+  correctionNotes: string | null
+  opsFeedback: string | null
+  validatedAt: string | null
+  correctedAt: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+export type CareLinkMissionReportCorrectionRow = {
+  id: string
+  missionId: number
+  caregiverId: number | null
+  reportId: string | null
+  status: string
+  requestedBy: string | null
+  requestedAt: string | null
+  dueAt: string | null
+  resolvedAt: string | null
+  requiredChanges: string[]
+  opsNote: string | null
+  agentResponse: string | null
+  resubmittedAt: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+export type CareLinkMissionPresenceProofRow = {
+  id: string
+  missionId: number
+  caregiverId: number
+  authUserId: string | null
+  action: string
+  status: string
+  proofType: string
+  occurredAt: string
+  locationSnapshot: Record<string, unknown>
+  deviceSnapshot: Record<string, unknown>
+  reason: string | null
+  note: string | null
+  riskFlag: string | null
+  source: string
   metadata: Record<string, unknown>
   createdAt: string
   updatedAt: string
@@ -291,6 +339,34 @@ function normalizeReport(row: AnyRow): CareLinkMissionReportRow {
     status: asString(row.status, 'draft'),
     submittedAt: row.submitted_at == null ? null : String(row.submitted_at),
     validationStatus: asString(row.validation_status, 'pending'),
+    correctionStatus: asString(row.correction_status, asString(asRecord(row.metadata).correction_status, 'none')),
+    correctionRequired: Boolean(row.correction_required ?? asRecord(row.metadata).correction_required),
+    correctionRound: asNumber(row.correction_round ?? asRecord(row.metadata).correction_round),
+    correctionNotes: row.correction_notes == null ? null : String(row.correction_notes),
+    opsFeedback: row.ops_feedback == null ? null : String(row.ops_feedback),
+    validatedAt: row.validated_at == null ? null : String(row.validated_at),
+    correctedAt: row.corrected_at == null ? null : String(row.corrected_at),
+    metadata: asRecord(row.metadata),
+    createdAt: asString(row.created_at, new Date().toISOString()),
+    updatedAt: asString(row.updated_at, new Date().toISOString()),
+  }
+}
+
+function normalizeReportCorrection(row: AnyRow): CareLinkMissionReportCorrectionRow {
+  return {
+    id: String(row.id),
+    missionId: asNumber(row.mission_id),
+    caregiverId: row.caregiver_id == null ? null : asNumber(row.caregiver_id),
+    reportId: row.report_id == null ? null : String(row.report_id),
+    status: asString(row.status, 'correction_requested'),
+    requestedBy: row.requested_by == null ? null : String(row.requested_by),
+    requestedAt: row.requested_at == null ? null : String(row.requested_at),
+    dueAt: row.due_at == null ? null : String(row.due_at),
+    resolvedAt: row.resolved_at == null ? null : String(row.resolved_at),
+    requiredChanges: asArray(row.required_changes).map((item) => String(item)).filter(Boolean),
+    opsNote: row.ops_note == null ? null : String(row.ops_note),
+    agentResponse: row.agent_response == null ? null : String(row.agent_response),
+    resubmittedAt: row.resubmitted_at == null ? null : String(row.resubmitted_at),
     metadata: asRecord(row.metadata),
     createdAt: asString(row.created_at, new Date().toISOString()),
     updatedAt: asString(row.updated_at, new Date().toISOString()),
@@ -348,6 +424,29 @@ function normalizeBriefAcknowledgement(row: AnyRow): CareLinkMissionBriefAcknowl
   }
 }
 
+
+
+function normalizePresenceProof(row: AnyRow): CareLinkMissionPresenceProofRow {
+  return {
+    id: asString(row.id),
+    missionId: asNumber(row.mission_id),
+    caregiverId: asNumber(row.caregiver_id),
+    authUserId: row.auth_user_id ? asString(row.auth_user_id) : null,
+    action: asString(row.action, 'presence_update'),
+    status: asString(row.status, 'recorded'),
+    proofType: asString(row.proof_type, 'timestamp'),
+    occurredAt: asString(row.occurred_at || row.created_at),
+    locationSnapshot: asRecord(row.location_snapshot),
+    deviceSnapshot: asRecord(row.device_snapshot),
+    reason: row.reason ? asString(row.reason) : null,
+    note: row.note ? asString(row.note) : null,
+    riskFlag: row.risk_flag ? asString(row.risk_flag) : null,
+    source: asString(row.source, 'carelink_mobile'),
+    metadata: asRecord(row.metadata),
+    createdAt: asString(row.created_at),
+    updatedAt: asString(row.updated_at || row.created_at),
+  }
+}
 
 function normalizeRouteExecutionLog(row: AnyRow): CareLinkMissionRouteExecutionLogRow {
   return {
@@ -784,6 +883,10 @@ export async function saveMissionReport(input: {
   recommendations?: string | null
   status?: string
   validationStatus?: string
+  correctionStatus?: string
+  correctionRequired?: boolean
+  correctionNotes?: string | null
+  opsFeedback?: string | null
   metadata?: Record<string, unknown>
 }) {
   const supabase = await createClient()
@@ -800,6 +903,11 @@ export async function saveMissionReport(input: {
     status: input.status || 'submitted',
     submitted_at: new Date().toISOString(),
     validation_status: input.validationStatus || 'ready',
+    correction_status: input.correctionStatus || 'none',
+    correction_required: Boolean(input.correctionRequired),
+    correction_notes: input.correctionNotes ?? null,
+    ops_feedback: input.opsFeedback ?? null,
+    corrected_at: input.correctionStatus === 'resubmitted' ? new Date().toISOString() : null,
     metadata: input.metadata || {},
     updated_at: new Date().toISOString(),
   }
@@ -813,6 +921,133 @@ export async function saveMissionReport(input: {
     source: 'carelink_mobile',
   })
   return data ? normalizeReport(data as AnyRow) : null
+}
+
+export async function loadMissionReportCorrections(missionId: number, caregiverId?: number | null) {
+  const rows = await queryRows(CARELINK_MOBILE_TABLES.reportCorrections, (query) => {
+    let next = query.select('*').eq('mission_id', missionId).order('created_at', { ascending: false }).limit(100)
+    if (caregiverId != null) next = next.eq('caregiver_id', caregiverId)
+    return next
+  })
+  return rows.map(normalizeReportCorrection)
+}
+
+export async function saveMissionReportCorrectionRequest(input: {
+  missionId: number
+  caregiverId?: number | null
+  reportId?: string | null
+  requestedBy?: string | null
+  requiredChanges?: string[]
+  opsNote?: string | null
+  dueAt?: string | null
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  const payload = {
+    mission_id: input.missionId,
+    caregiver_id: input.caregiverId ?? null,
+    report_id: input.reportId ?? null,
+    status: 'correction_requested',
+    requested_by: input.requestedBy ?? 'carelink_ops',
+    requested_at: now,
+    due_at: input.dueAt ?? null,
+    required_changes: input.requiredChanges || [],
+    ops_note: input.opsNote ?? null,
+    metadata: input.metadata || {},
+    updated_at: now,
+  }
+  const { data, error } = await supabase.from(CARELINK_MOBILE_TABLES.reportCorrections).insert([payload]).select('*').maybeSingle()
+  if (error) throw new Error(error.message)
+  await supabase.from(CARELINK_MOBILE_TABLES.reports).update({
+    validation_status: 'correction_requested',
+    correction_status: 'correction_requested',
+    correction_required: true,
+    correction_requested_at: now,
+    correction_notes: input.opsNote ?? null,
+    ops_feedback: input.opsNote ?? null,
+    updated_at: now,
+  }).eq('mission_id', input.missionId)
+  await recordMissionEvent({
+    missionId: input.missionId,
+    eventType: 'ops_report_correction_requested',
+    content: input.opsNote || 'Correction de rapport demandée par CareLink OPS',
+    metadata: { report_id: input.reportId ?? null, required_changes: input.requiredChanges || [], correction_id: data?.id || null, ...input.metadata },
+    source: 'carelink_ops',
+  })
+  return data ? normalizeReportCorrection(data as AnyRow) : null
+}
+
+export async function markMissionReportCorrectionResubmitted(input: {
+  missionId: number
+  caregiverId: number
+  reportId?: string | null
+  agentResponse?: string | null
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  const activeRows = await loadMissionReportCorrections(input.missionId, input.caregiverId)
+  const active = activeRows.find((row) => ['correction_requested', 'needs_correction', 'open'].includes(asString(row.status).toLowerCase())) || activeRows[0] || null
+  if (active?.id) {
+    await supabase.from(CARELINK_MOBILE_TABLES.reportCorrections).update({
+      status: 'resubmitted',
+      agent_response: input.agentResponse ?? null,
+      resubmitted_at: now,
+      metadata: { ...(active.metadata || {}), ...(input.metadata || {}) },
+      updated_at: now,
+    }).eq('id', active.id)
+  }
+  await supabase.from(CARELINK_MOBILE_TABLES.reports).update({
+    validation_status: 'ready',
+    correction_status: 'resubmitted',
+    correction_required: false,
+    corrected_at: now,
+    updated_at: now,
+  }).eq('mission_id', input.missionId)
+  await recordMissionEvent({
+    missionId: input.missionId,
+    eventType: 'mobile_report_correction_resubmitted',
+    content: input.agentResponse || 'Correction de rapport resoumise depuis CareLink mobile',
+    metadata: { report_id: input.reportId ?? null, correction_id: active?.id || null, ...input.metadata },
+    source: 'carelink_mobile',
+  })
+  return active ? { ...active, status: 'resubmitted', agentResponse: input.agentResponse ?? null, resubmittedAt: now, updatedAt: now } : null
+}
+
+export async function markMissionReportValidated(input: { missionId: number; reportId?: string | null; validatedBy?: string | null; note?: string | null; metadata?: Record<string, unknown> }) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  await supabase.from(CARELINK_MOBILE_TABLES.reportCorrections).update({
+    status: 'validated',
+    resolved_at: now,
+    metadata: input.metadata || {},
+    updated_at: now,
+  }).eq('mission_id', input.missionId).in('status', ['correction_requested', 'needs_correction', 'resubmitted', 'open'])
+  await supabase.from(CARELINK_MOBILE_TABLES.reports).update({
+    validation_status: 'validated',
+    correction_status: 'validated',
+    correction_required: false,
+    correction_resolved_at: now,
+    validated_at: now,
+    validated_by: input.validatedBy ?? 'carelink_ops',
+    ops_feedback: input.note ?? null,
+    updated_at: now,
+  }).eq('mission_id', input.missionId)
+}
+
+export function missionReportValidationReadyForCompletion(report: CareLinkMissionReportRow | null, corrections: CareLinkMissionReportCorrectionRow[] = [], mission?: Record<string, any> | null) {
+  const validationRequired = Boolean(mission?.report_validation_required || mission?.validation_required || report?.metadata?.validation_required)
+  const validationStatus = asString(report?.validationStatus || '', '').toLowerCase()
+  const correctionStatus = asString(report?.correctionStatus || '', '').toLowerCase()
+  const activeCorrection = corrections.find((row) => ['correction_requested', 'needs_correction', 'open'].includes(asString(row.status).toLowerCase()))
+  if (activeCorrection || correctionStatus === 'correction_requested' || report?.correctionRequired) {
+    return { ready: false, code: 'carelink_report_correction_required', message: 'Une correction de rapport demandée par OPS doit être resoumise avant la clôture.', activeCorrection }
+  }
+  if (validationRequired && validationStatus !== 'validated') {
+    return { ready: false, code: 'carelink_report_validation_required', message: 'La validation OPS du rapport est requise avant la clôture.', activeCorrection: null }
+  }
+  return { ready: true, code: 'carelink_report_validation_ready', message: 'Rapport prêt pour clôture.', activeCorrection: null }
 }
 
 export async function loadPaymentDisputes(filters: { caregiverId?: number | null; missionIds?: number[] } = {}) {
@@ -910,6 +1145,8 @@ export async function loadCareLinkOperationalAudit(missionIds: number[] = []) {
   const notifications = await loadNotifications({ missionIds })
   const alerts = await loadAlerts({ missionIds })
   const reports = missionIds.length ? await Promise.all(missionIds.map(async (missionId) => loadMissionReport(missionId))) : []
+  const reportCorrections = missionIds.length ? (await Promise.all(missionIds.map(async (missionId) => loadMissionReportCorrections(missionId).catch(() => [])))).flat() : []
+  const presenceProofs = missionIds.length ? (await Promise.all(missionIds.map(async (missionId) => loadMissionPresenceProofs(missionId).catch(() => [])))).flat() : []
   const disputes = await loadPaymentDisputes({ missionIds })
   const documents = await loadAgentDocuments()
   return {
@@ -918,6 +1155,8 @@ export async function loadCareLinkOperationalAudit(missionIds: number[] = []) {
     notifications,
     alerts,
     reports: reports.filter(Boolean),
+    reportCorrections,
+    presenceProofs,
     disputes,
     documents,
     generatedAt: new Date().toISOString(),
@@ -925,6 +1164,89 @@ export async function loadCareLinkOperationalAudit(missionIds: number[] = []) {
   }
 }
 
+
+
+
+export async function loadMissionPresenceProofs(missionId: number, caregiverId?: number | null) {
+  const rows = await queryRows(CARELINK_MOBILE_TABLES.presenceProofs, (query) => {
+    let next = query.select('*').eq('mission_id', missionId).order('occurred_at', { ascending: false }).limit(120)
+    if (caregiverId != null) next = next.eq('caregiver_id', caregiverId)
+    return next
+  })
+  return rows.map(normalizePresenceProof)
+}
+
+export async function saveMissionPresenceProof(input: {
+  missionId: number
+  caregiverId: number
+  authUserId?: string | null
+  action: string
+  status?: string | null
+  proofType?: string | null
+  occurredAt?: string | null
+  locationSnapshot?: Record<string, unknown> | null
+  deviceSnapshot?: Record<string, unknown> | null
+  reason?: string | null
+  note?: string | null
+  riskFlag?: string | null
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  const payload = {
+    mission_id: input.missionId,
+    caregiver_id: input.caregiverId,
+    auth_user_id: input.authUserId || null,
+    action: asString(input.action, 'presence_update'),
+    status: asString(input.status, 'recorded'),
+    proof_type: asString(input.proofType, 'timestamp'),
+    occurred_at: input.occurredAt || now,
+    location_snapshot: input.locationSnapshot || {},
+    device_snapshot: input.deviceSnapshot || {},
+    reason: input.reason || null,
+    note: input.note || null,
+    risk_flag: input.riskFlag || null,
+    source: 'carelink_mobile',
+    metadata: input.metadata || {},
+    updated_at: now,
+  }
+
+  const { data, error } = await supabase
+    .from(CARELINK_MOBILE_TABLES.presenceProofs)
+    .insert(payload)
+    .select('*')
+    .single()
+
+  if (error) throw error
+
+  await recordMissionEvent({
+    missionId: input.missionId,
+    eventType: `mobile_presence_${payload.action}`,
+    content: `Présence mobile · ${payload.action}${input.note ? ` · ${input.note}` : ''}`,
+    metadata: {
+      caregiver_id: input.caregiverId,
+      risk_flag: input.riskFlag || null,
+      proof_type: payload.proof_type,
+      ...(input.metadata || {}),
+    },
+    source: 'carelink_mobile',
+  })
+
+  return normalizePresenceProof(data)
+}
+
+export async function missionPresenceProofReadyForCompletion(missionId: number, caregiverId: number) {
+  const proofs = await loadMissionPresenceProofs(missionId, caregiverId)
+  const actions = new Set(proofs.map((proof) => proof.action))
+  const hasCheckIn = actions.has('mission_check_in') || actions.has('arrival_check_in') || actions.has('day_started')
+  const hasCheckOut = actions.has('mission_check_out') || actions.has('day_ended')
+  return {
+    ready: hasCheckIn && hasCheckOut,
+    hasCheckIn,
+    hasCheckOut,
+    proofs,
+  }
+}
 
 
 export async function loadMissionRouteExecutionLogs(missionId: number, caregiverId?: number | null) {

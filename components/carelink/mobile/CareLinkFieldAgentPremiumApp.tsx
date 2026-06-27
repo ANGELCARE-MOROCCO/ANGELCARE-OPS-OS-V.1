@@ -378,6 +378,40 @@ function programStatusTone(status: string) {
   return 'bg-slate-100 text-slate-600 ring-slate-200'
 }
 
+function latestReportCorrection(corrections: Array<Record<string, any>>) {
+  return [...corrections]
+    .sort((a, b) => String(b.updatedAt || b.updated_at || b.requestedAt || b.requested_at || b.createdAt || b.created_at || '').localeCompare(String(a.updatedAt || a.updated_at || a.requestedAt || a.requested_at || a.createdAt || a.created_at || '')))[0] || null
+}
+
+function reportValidationLabel(status: string) {
+  const labels: Record<string, string> = {
+    draft: 'Brouillon',
+    pending: 'En attente',
+    ready: 'Prêt validation',
+    submitted: 'Soumis',
+    resubmitted: 'Resoumis',
+    correction_requested: 'Correction demandée',
+    needs_correction: 'Correction demandée',
+    rejected: 'Rejeté',
+    validated: 'Validé OPS',
+  }
+  return labels[status] || status.replaceAll('_', ' ')
+}
+
+function reportValidationTone(status: string) {
+  if (['validated'].includes(status)) return 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+  if (['ready', 'submitted', 'resubmitted'].includes(status)) return 'bg-blue-50 text-blue-700 ring-blue-100'
+  if (['correction_requested', 'needs_correction', 'rejected'].includes(status)) return 'bg-rose-50 text-rose-700 ring-rose-100'
+  return 'bg-amber-50 text-amber-700 ring-amber-100'
+}
+
+function reportCorrectionChanges(row: Record<string, any> | null) {
+  const value = row?.requiredChanges || row?.required_changes || row?.metadata?.required_changes || row?.metadata?.requiredChanges
+  if (Array.isArray(value)) return value.map((item) => String(item || '').trim()).filter(Boolean)
+  if (typeof value === 'string') return value.split(/[;|\n]/).map((item) => item.trim()).filter(Boolean)
+  return []
+}
+
 type MissionBriefSection = {
   key: string
   label: string
@@ -1019,6 +1053,10 @@ function MissionDetailScreen({
     .filter((ack) => String(ack.missionId || ack.mission_id || '') === String(mission.id))
   const routeExecutionLogs = (((dossier as any)?.routeExecutionLogs || workspace?.routeExecutionLogs || []) as Array<Record<string, any>>)
     .filter((log) => String(log.missionId || log.mission_id || '') === String(mission.id))
+  const reportCorrections = (((dossier as any)?.reportCorrections || workspace?.reportCorrections || []) as Array<Record<string, any>>)
+    .filter((row) => String(row.missionId || row.mission_id || '') === String(mission.id))
+  const presenceProofs = (((dossier as any)?.presenceProofs || workspace?.presenceProofs || []) as Array<Record<string, any>>)
+    .filter((row) => String(row.missionId || row.mission_id || '') === String(mission.id))
   const notifications = (dossier?.notifications || []) as Array<Record<string, any>>
   const alerts = (dossier?.alerts || []) as Array<Record<string, any>>
   const disputes = (dossier?.paymentDisputes || []) as Array<Record<string, any>>
@@ -1154,12 +1192,36 @@ function MissionDetailScreen({
           busy={busy}
         />
 
+        <AttendancePresenceProofSection
+          mission={mission}
+          proofs={presenceProofs}
+          runAction={runAction}
+          busy={busy}
+        />
+
         <DynamicServiceChecklistSection
           mission={mission}
           checklistItems={checklistItems}
           definition={serviceChecklistDefinition}
           runAction={runAction}
           busy={busy}
+        />
+
+        <ReportCorrectionValidationSection
+          mission={mission}
+          reportData={reportData as Record<string, any> | null}
+          corrections={reportCorrections}
+          busy={busy}
+          onResubmit={(agentResponse) => runAction(mission, 'report-correction', {
+            summary: summary || reportData?.summary || '',
+            observations: observations || reportData?.observations || '',
+            activities: activities.split(',').map((item) => item.trim()).filter(Boolean).map((item) => ({ label: item })),
+            checklistSnapshot: checklistItems.map((item) => ({ id: item.id, label: item.label || item.title || item.code, completed: Boolean(item.completed), required: Boolean(item.required) })),
+            incidentFlag,
+            recommendations: recommendations || reportData?.recommendations || '',
+            agentResponse,
+            metadata: { correction_resubmitted_from: 'carelink_mobile_p12' },
+          })}
         />
 
         <DetailCard title="Rapport structuré">
@@ -1268,6 +1330,70 @@ function MissionDetailScreen({
         </DetailCard>
       </div>
     </section>
+  )
+}
+
+function ReportCorrectionValidationSection({
+  mission,
+  reportData,
+  corrections,
+  busy,
+  onResubmit,
+}: {
+  mission: MissionControlRecord
+  reportData: Record<string, any> | null
+  corrections: Array<Record<string, any>>
+  busy: string | null
+  onResubmit: (agentResponse: string) => void
+}) {
+  const [agentResponse, setAgentResponse] = useState('')
+  const latest = latestReportCorrection(corrections)
+  const validationStatus = String(reportData?.validationStatus || reportData?.validation_status || 'pending').toLowerCase()
+  const correctionStatus = String(reportData?.correctionStatus || reportData?.correction_status || latest?.status || 'none').toLowerCase()
+  const activeCorrection = latest && ['correction_requested', 'needs_correction', 'open', 'rejected'].includes(String(latest.status || '').toLowerCase()) ? latest : null
+  const changes = reportCorrectionChanges(activeCorrection || latest)
+  const statusForTone = activeCorrection ? 'correction_requested' : validationStatus === 'validated' ? 'validated' : correctionStatus === 'resubmitted' ? 'resubmitted' : validationStatus
+  const isBusy = busy === `${mission.id}:report-correction`
+
+  return (
+    <DetailCard title="Validation rapport OPS">
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Statut validation</p>
+            <p className="mt-1 text-base font-black text-slate-950">{reportValidationLabel(statusForTone)}</p>
+            <p className="mt-1 text-xs font-bold leading-5 text-slate-500">{activeCorrection ? 'OPS demande une correction avant validation finale.' : validationStatus === 'validated' ? 'Rapport validé par OPS.' : 'Rapport en attente de revue OPS.'}</p>
+          </div>
+          <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1', reportValidationTone(statusForTone))}>{reportValidationLabel(statusForTone)}</span>
+        </div>
+
+        {activeCorrection ? (
+          <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4">
+            <p className="text-sm font-black text-rose-800">Correction demandée</p>
+            <p className="mt-2 text-sm font-semibold leading-6 text-rose-700">{String(activeCorrection.opsNote || activeCorrection.ops_note || activeCorrection.metadata?.note || 'Merci de corriger le rapport et de le resoumettre pour validation OPS.')}</p>
+            {changes.length ? (
+              <ul className="mt-3 space-y-2">
+                {changes.map((change) => <li key={change} className="rounded-xl bg-white/80 px-3 py-2 text-xs font-bold text-rose-700">{change}</li>)}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
+
+        <textarea
+          value={agentResponse}
+          onChange={(event) => setAgentResponse(event.target.value)}
+          className="min-h-24 w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none focus:border-blue-400"
+          placeholder="Réponse à OPS / précision de correction"
+        />
+        <button
+          disabled={isBusy || !activeCorrection}
+          onClick={() => onResubmit(agentResponse || 'Correction rapport resoumise pour validation OPS.')}
+          className="w-full rounded-2xl bg-slate-950 px-4 py-4 text-sm font-black text-white disabled:opacity-40"
+        >
+          Renvoyer correction à OPS
+        </button>
+      </div>
+    </DetailCard>
   )
 }
 
@@ -2606,6 +2732,166 @@ function DynamicServiceChecklistSection({
     </DetailCard>
   )
 }
+
+
+type PresenceProofLog = {
+  id: string
+  missionId: number
+  caregiverId: number
+  action: string
+  status: string
+  proofType: string
+  occurredAt: string
+  reason: string
+  note: string
+  riskFlag: string
+}
+
+function normalizePresenceProofLog(row: Record<string, any>): PresenceProofLog {
+  return {
+    id: String(row.id || row.created_at || row.createdAt || Math.random()),
+    missionId: Number(row.missionId || row.mission_id || 0),
+    caregiverId: Number(row.caregiverId || row.caregiver_id || 0),
+    action: String(row.action || row.eventType || row.event_type || 'presence_update'),
+    status: String(row.status || 'recorded'),
+    proofType: String(row.proofType || row.proof_type || 'timestamp'),
+    occurredAt: String(row.occurredAt || row.occurred_at || row.createdAt || row.created_at || new Date().toISOString()),
+    reason: String(row.reason || ''),
+    note: String(row.note || ''),
+    riskFlag: String(row.riskFlag || row.risk_flag || ''),
+  }
+}
+
+function presenceActionLabel(action: string) {
+  const labels: Record<string, string> = {
+    day_started: 'Début journée',
+    day_ended: 'Fin journée',
+    mission_check_in: 'Check-in mission',
+    mission_check_out: 'Check-out mission',
+    pause_started: 'Pause',
+    pause_resumed: 'Retour pause',
+    late_reason: 'Retard justifié',
+    early_departure_reason: 'Départ anticipé',
+    location_proof: 'Preuve localisation',
+    presence_update: 'Présence',
+  }
+  return labels[action] || action.replaceAll('_', ' ')
+}
+
+function AttendancePresenceProofSection({
+  mission,
+  proofs,
+  runAction,
+  busy,
+}: {
+  mission: MissionControlRecord
+  proofs: Array<Record<string, any>>
+  runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void
+  busy: string | null
+}) {
+  const [note, setNote] = useState('')
+  const [reason, setReason] = useState('')
+  const [optimisticProofs, setOptimisticProofs] = useState<PresenceProofLog[]>([])
+  const logs = [...optimisticProofs, ...proofs.map(normalizePresenceProofLog)]
+    .filter((proof) => String(proof.missionId || '') === String(mission.id) || !proof.missionId)
+    .sort((a, b) => String(b.occurredAt).localeCompare(String(a.occurredAt)))
+  const actions = new Set(logs.map((log) => log.action))
+  const hasCheckIn = actions.has('mission_check_in') || actions.has('arrival_check_in') || actions.has('day_started')
+  const hasCheckOut = actions.has('mission_check_out') || actions.has('day_ended')
+  const isBusy = busy === `${mission.id}:presence-proof`
+  const progress = hasCheckIn && hasCheckOut ? 100 : hasCheckIn ? 50 : 0
+
+  function pushPresenceAction(action: string, riskFlag?: string) {
+    const payload = {
+      action,
+      status: 'recorded',
+      proofType: 'timestamp_device',
+      reason: reason || null,
+      note: note || null,
+      riskFlag: riskFlag || null,
+      metadata: { source: 'carelink_mobile_p13', missionCode: mission.code },
+    }
+    setOptimisticProofs((current) => [{
+      id: `local-presence-${Date.now()}`,
+      missionId: Number(mission.id),
+      caregiverId: Number(mission.caregiverId || 0),
+      action,
+      status: 'recorded',
+      proofType: 'timestamp_device',
+      occurredAt: new Date().toISOString(),
+      reason: reason || '',
+      note: note || '',
+      riskFlag: riskFlag || '',
+    }, ...current])
+    runAction(mission, 'presence-proof', payload)
+    if (!['late_reason', 'early_departure_reason'].includes(action)) setNote('')
+    if (action !== 'late_reason' && action !== 'early_departure_reason') setReason('')
+  }
+
+  return (
+    <DetailCard title="Présence et pointage" icon={<Clock3 size={18} />}>
+      <div className="space-y-4">
+        <div className="rounded-[1.5rem] border border-indigo-100 bg-indigo-50/70 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-indigo-700">Preuve terrain</p>
+              <h3 className="mt-2 text-lg font-black text-slate-950">Check-in / check-out mission</h3>
+              <p className="mt-1 text-sm font-bold leading-6 text-slate-600">Pointage horodaté, appareil, justification retard ou départ anticipé.</p>
+            </div>
+            <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] ring-1', hasCheckIn && hasCheckOut ? 'bg-emerald-50 text-emerald-700 ring-emerald-100' : hasCheckIn ? 'bg-blue-50 text-blue-700 ring-blue-100' : 'bg-amber-50 text-amber-700 ring-amber-100')}>
+              {hasCheckIn && hasCheckOut ? 'Complet' : hasCheckIn ? 'En mission' : 'À pointer'}
+            </span>
+          </div>
+          <div className="mt-4 h-2 rounded-full bg-white">
+            <div className="h-2 rounded-full bg-indigo-600 transition-all" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button disabled={isBusy || hasCheckIn} onClick={() => pushPresenceAction('mission_check_in')} className="rounded-2xl bg-slate-950 px-3 py-4 text-xs font-black text-white disabled:opacity-40">
+            Check-in mission
+          </button>
+          <button disabled={isBusy || !hasCheckIn || hasCheckOut} onClick={() => pushPresenceAction('mission_check_out')} className="rounded-2xl bg-emerald-600 px-3 py-4 text-xs font-black text-white disabled:opacity-40">
+            Check-out mission
+          </button>
+          <button disabled={isBusy} onClick={() => pushPresenceAction('pause_started')} className="rounded-2xl bg-slate-100 px-3 py-4 text-xs font-black text-slate-700 disabled:opacity-40">
+            Pause
+          </button>
+          <button disabled={isBusy} onClick={() => pushPresenceAction('pause_resumed')} className="rounded-2xl bg-slate-100 px-3 py-4 text-xs font-black text-slate-700 disabled:opacity-40">
+            Retour pause
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          <textarea value={reason} onChange={(event) => setReason(event.target.value)} className="min-h-20 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-indigo-400" placeholder="Motif retard / départ anticipé si nécessaire" />
+          <textarea value={note} onChange={(event) => setNote(event.target.value)} className="min-h-20 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-indigo-400" placeholder="Note présence / pointage" />
+          <div className="grid grid-cols-2 gap-2">
+            <button disabled={isBusy || !reason.trim()} onClick={() => pushPresenceAction('late_reason', 'late_arrival')} className="rounded-2xl bg-amber-500 px-3 py-4 text-xs font-black text-white disabled:opacity-40">
+              Justifier retard
+            </button>
+            <button disabled={isBusy || !reason.trim()} onClick={() => pushPresenceAction('early_departure_reason', 'early_departure')} className="rounded-2xl bg-rose-600 px-3 py-4 text-xs font-black text-white disabled:opacity-40">
+              Départ anticipé
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {logs.slice(0, 6).map((log) => (
+            <div key={log.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-black text-slate-950">{presenceActionLabel(log.action)}</p>
+                <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{formatHour(log.occurredAt)}</span>
+              </div>
+              {log.reason || log.note ? <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">{log.reason || log.note}</p> : null}
+            </div>
+          ))}
+          {!logs.length ? <p className="rounded-2xl bg-slate-50 p-3 text-sm font-semibold text-slate-500">Aucun pointage mission enregistré.</p> : null}
+        </div>
+      </div>
+    </DetailCard>
+  )
+}
+
 
 function RouteTransportExecutionSection({
   mission,

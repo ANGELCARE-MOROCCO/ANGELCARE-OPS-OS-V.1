@@ -1,5 +1,8 @@
-import { loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionReport } from '@/lib/carelink/mobile-persistence'
+import { loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionReport, loadMissionReportCorrections, missionPresenceProofReadyForCompletion, missionReportValidationReadyForCompletion } from '@/lib/carelink/mobile-persistence'
 import { getMissionDossier } from '@/lib/missions/repository'
+
+const CARELINK_REPORT_CORRECTION_REQUIRED_CODE = 'carelink_report_correction_required'
+const CARELINK_REPORT_VALIDATION_REQUIRED_CODE = 'carelink_report_validation_required'
 
 type CompletionGateInput = {
   missionId: number
@@ -22,6 +25,9 @@ export type CareLinkCompletionGateResult = {
     exists: boolean
     status: string
     ready: boolean
+    validationStatus: string
+    correctionStatus: string
+    correctionRequired: boolean
   }
   program: {
     total: number
@@ -29,6 +35,12 @@ export type CareLinkCompletionGateResult = {
     completed: number
     missingRequired: unknown[]
     progress: number
+  }
+  presence: {
+    ready: boolean
+    hasCheckIn: boolean
+    hasCheckOut: boolean
+    proofCount: number
   }
   blockers: Array<{ code: string; message: string; details?: unknown }>
 }
@@ -58,8 +70,12 @@ export async function evaluateCareLinkCompletionGates(input: CompletionGateInput
   const completed = checklist.filter((item) => item.completed)
   const missingRequired = required.filter((item) => !item.completed)
   const report = await loadMissionReport(input.missionId)
+  const reportCorrections = await loadMissionReportCorrections(input.missionId, input.caregiverId)
   const reportStatus = normalizeLower(input.mission?.report_status || report?.status || '')
-  const reportReady = ['submitted', 'validated', 'ready'].includes(reportStatus)
+  const reportValidationStatus = normalizeLower(report?.validationStatus || input.mission?.validation_status || '')
+  const reportCorrectionStatus = normalizeLower(report?.correctionStatus || '')
+  const reportReady = ['submitted', 'validated', 'ready', 'resubmitted'].includes(reportStatus) || ['ready', 'validated'].includes(reportValidationStatus)
+  const validationGate = missionReportValidationReadyForCompletion(report, reportCorrections, input.mission)
   const programLines = (dossier?.programLines || []) as Array<Record<string, any>>
   const requiredProgramLines = programLines
     .map((line, index) => ({ ...line, __activityId: programLineId(line, index) }))
@@ -69,6 +85,7 @@ export async function evaluateCareLinkCompletionGates(input: CompletionGateInput
     .filter((log) => ['completed', 'done', 'validated'].includes(normalizeLower(log.status)))
     .map((log) => String(log.activityId)))
   const missingRequiredProgram = requiredProgramLines.filter((line) => !completedProgramIds.has(String(line.__activityId)))
+  const presenceGate = await missionPresenceProofReadyForCompletion(input.missionId, input.caregiverId)
   const blockers: CareLinkCompletionGateResult['blockers'] = []
 
   if (missingRequired.length) {
@@ -87,11 +104,33 @@ export async function evaluateCareLinkCompletionGates(input: CompletionGateInput
     })
   }
 
+
+  if (!presenceGate.ready) {
+    blockers.push({
+      code: 'carelink_presence_proof_required',
+      message: 'Le check-in et le check-out présence doivent être enregistrés avant la clôture.',
+      details: { hasCheckIn: presenceGate.hasCheckIn, hasCheckOut: presenceGate.hasCheckOut },
+    })
+  }
+
   if (!reportReady) {
     blockers.push({
       code: 'carelink_report_required_before_completion',
       message: 'Le rapport de mission doit être soumis avant la clôture.',
       details: { reportStatus: reportStatus || 'missing' },
+    })
+  }
+
+  if (!validationGate.ready) {
+    const validationBlockerCode = validationGate.code === CARELINK_REPORT_CORRECTION_REQUIRED_CODE
+      ? CARELINK_REPORT_CORRECTION_REQUIRED_CODE
+      : validationGate.code === CARELINK_REPORT_VALIDATION_REQUIRED_CODE
+        ? CARELINK_REPORT_VALIDATION_REQUIRED_CODE
+        : validationGate.code
+    blockers.push({
+      code: validationBlockerCode,
+      message: validationGate.message,
+      details: { reportStatus: reportStatus || 'missing', validationStatus: reportValidationStatus || 'pending', correctionStatus: reportCorrectionStatus || 'none', activeCorrection: validationGate.activeCorrection || null },
     })
   }
 
@@ -108,7 +147,10 @@ export async function evaluateCareLinkCompletionGates(input: CompletionGateInput
     report: {
       exists: Boolean(report),
       status: reportStatus || 'missing',
-      ready: reportReady,
+      ready: reportReady && validationGate.ready,
+      validationStatus: reportValidationStatus || 'pending',
+      correctionStatus: reportCorrectionStatus || 'none',
+      correctionRequired: Boolean(report?.correctionRequired),
     },
     program: {
       total: programLines.length,
@@ -116,6 +158,12 @@ export async function evaluateCareLinkCompletionGates(input: CompletionGateInput
       completed: completedProgramIds.size,
       missingRequired: missingRequiredProgram,
       progress: programLines.length ? Math.round((programLogs.filter((log) => ['completed', 'done', 'validated'].includes(normalizeLower(log.status))).length / programLines.length) * 100) : 0,
+    },
+    presence: {
+      ready: presenceGate.ready,
+      hasCheckIn: presenceGate.hasCheckIn,
+      hasCheckOut: presenceGate.hasCheckOut,
+      proofCount: presenceGate.proofs.length,
     },
     blockers,
   }
