@@ -38,12 +38,11 @@ export default async function StaffHomePage() {
     { label: 'Memos', href: '/staff-memos', tone: 'red' as const },
     { label: 'Team', href: '/team-command', tone: 'purple' as const },
     { label: 'Intelligence', href: '/staff-portal-intelligence', tone: 'cyan' as const },
-    { label: 'Mega QA', href: '/staff-portal-mega-qa', tone: 'amber' as const },
     ...data.routeDensity.slice(0, 8).map((route) => ({ label: `${route.label} · ${route.count}`, href: route.href, tone: 'slate' as const })),
   ]
 
   return (
-    <AppShell title="Staff Portal OS" subtitle="Mega enterprise staff command portal" breadcrumbs={[{ label: 'Staff Portal', href: '/staff-home' }]} actions={<PageAction href="/staff-portal-command" variant="light">Command Center</PageAction>}>
+    <AppShell title="Staff Portal OS" subtitle="Mega enterprise staff command portal" breadcrumbs={[{ label: 'Staff Portal', href: '/staff-home' }]} actions={<PageAction href="/staff-home" variant="light">Staff Home</PageAction>}>
       <EnterprisePageShell>
         <EnterpriseNavStrip items={navItems} />
         <EnterpriseHero

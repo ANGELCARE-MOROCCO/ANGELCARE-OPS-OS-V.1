@@ -1,10 +1,19 @@
 import 'leaflet/dist/leaflet.css'
+import { redirect } from 'next/navigation'
+import { CareLinkMobileAccessError, requireCareLinkOpsActor } from '@/lib/carelink/mobile-auth'
 import { CareLinkOpsApprovedSidebar } from '@/components/carelink/ops/CareLinkOpsApprovedSidebar'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default function CareLinkOpsLayout({ children }: { children: React.ReactNode }) {
+export default async function CareLinkOpsLayout({ children }: { children: React.ReactNode }) {
+  try {
+    await requireCareLinkOpsActor()
+  } catch (error) {
+    if (error instanceof CareLinkMobileAccessError && error.status === 401) redirect('/login')
+    redirect('/unauthorized')
+  }
+
   return (
     <main className="min-h-screen bg-[#f7f9fc] text-slate-950">
       <CareLinkOpsApprovedSidebar />

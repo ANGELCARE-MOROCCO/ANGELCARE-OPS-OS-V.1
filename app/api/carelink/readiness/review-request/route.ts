@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { loadCarelinkMobileWorkspace } from '@/lib/carelink/mobile-adapter'
 import { requestDocumentReview } from '@/lib/carelink/mobile-persistence'
 import { recordMissionEvent } from '@/lib/missions/events'
+import { carelinkMobileErrorResponse, requireCareLinkMobileAgent, requireCareLinkMobileMissionAccess } from '@/lib/carelink/mobile-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,11 +13,11 @@ export async function POST(request: Request) {
       metadata?: Record<string, unknown>
       missionId?: number | null
     }
-    const workspace = await loadCarelinkMobileWorkspace()
-    const caregiverId = workspace.agent?.id ? Number(workspace.agent.id) : null
-    if (!caregiverId) return NextResponse.json({ ok: false, error: 'Profil agent introuvable.' }, { status: 400 })
+    const session = body.missionId
+      ? await requireCareLinkMobileMissionAccess(Number(body.missionId), 'can_view_missions')
+      : await requireCareLinkMobileAgent('can_view_missions')
 
-    const document = await requestDocumentReview(caregiverId, { documentType: body.documentType || null, note: body.note || null, metadata: body.metadata || {} }).catch(() => null)
+    const document = await requestDocumentReview(session.caregiverId, { documentType: body.documentType || null, note: body.note || null, metadata: body.metadata || {} }).catch(() => null)
 
     if (body.missionId) {
       await recordMissionEvent({
@@ -31,6 +31,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, data: { document } })
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Readiness review request failed' }, { status: 500 })
+    return carelinkMobileErrorResponse(error, 'Readiness review request failed')
   }
 }

@@ -90,51 +90,7 @@ export const WORKSPACE_FILTER_CHIPS: { key: WorkspaceFilterKey; label: string }[
 ]
 
 export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
-  {
-    id: 'executive-strategy',
-    order: 1,
-    title: 'Executive & Strategy',
-    description: 'Strategic oversight, analytics, reporting, executive planning.',
-    href: '/executive-cockpit',
-    icon: 'shield',
-    accent: 'teal',
-    categories: ['admin'],
-    requiresElevated: true,
-    modules: [
-      {
-        id: 'executive-overview',
-        title: 'Executive Overview',
-        href: '/executive-cockpit',
-        icon: 'shield',
-        categories: ['admin'],
-        requiresElevated: true,
-      },
-      {
-        id: 'analytics',
-        title: 'Analytics',
-        href: '/revenue-command-center/revenue-analytics',
-        icon: 'barChart',
-        categories: ['revenue'],
-        permissions: ['revenue.view', 'reports.view'],
-      },
-      {
-        id: 'reports',
-        title: 'Reports',
-        href: '/reports',
-        icon: 'fileText',
-        categories: ['admin', 'operations', 'hr', 'revenue', 'sales', 'marketing'],
-        permissions: ['reports.view'],
-      },
-      {
-        id: 'strategy-okrs',
-        title: 'Strategy & OKRs',
-        href: '/enterprise-command',
-        icon: 'target',
-        categories: ['admin'],
-        requiresElevated: true,
-      },
-    ],
-  },
+  
   {
     id: 'revenue-sales-crm',
     order: 2,
@@ -529,70 +485,7 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
       },
     ],
   },
-  {
-    id: 'platform-admin-saas-factory',
-    order: 7,
-    title: 'Platform, Admin & SaaS Factory',
-    description: 'System administration, access control and platform management.',
-    href: '/saas-factory-command',
-    icon: 'shield',
-    accent: 'sky',
-    categories: ['admin'],
-    requiresElevated: true,
-    wide: true,
-    modules: [
-      {
-        id: 'users',
-        title: 'Users',
-        href: '/users',
-        icon: 'users',
-        categories: ['admin'],
-        permissions: ['users.view'],
-      },
-      {
-        id: 'locations',
-        title: 'Locations',
-        href: '/locations',
-        icon: 'mapPin',
-        categories: ['admin'],
-        permissions: ['locations.view'],
-      },
-      {
-        id: 'roles-permissions',
-        title: 'Roles & Permissions',
-        href: '/saas-factory-command/permissions',
-        icon: 'lock',
-        categories: ['admin'],
-        permissions: ['users.view', 'admin.view'],
-      },
-      {
-        id: 'integrations',
-        title: 'Integrations',
-        href: '/saas-factory-command/apis',
-        icon: 'link',
-        categories: ['admin'],
-        permissions: ['admin.view'],
-        requiresElevated: true,
-      },
-      {
-        id: 'saas-factory',
-        title: 'SaaS Factory',
-        href: '/saas-factory-command',
-        icon: 'boxes',
-        categories: ['admin'],
-        requiresElevated: true,
-      },
-      {
-        id: 'system-settings',
-        title: 'System Settings',
-        href: '/saas-factory-command/configuration',
-        icon: 'settings',
-        categories: ['admin'],
-        permissions: ['admin.view'],
-        requiresElevated: true,
-      },
-    ],
-  },
+  
 ]
 
 function normalizeRole(user: any) {

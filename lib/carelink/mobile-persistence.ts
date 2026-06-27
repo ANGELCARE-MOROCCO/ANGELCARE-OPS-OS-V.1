@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getServiceCharacteristic } from '@/lib/missions/service-characteristics'
+import { buildCareLinkDynamicServiceChecklist, checklistItemMetadata } from '@/lib/carelink/mobile-service-checklists'
 import { recordMissionEvent } from '@/lib/missions/events'
 
 type AnyRow = Record<string, any>
@@ -12,6 +13,9 @@ export const CARELINK_MOBILE_TABLES = {
   reports: 'carelink_mission_reports',
   disputes: 'carelink_payment_disputes',
   documents: 'carelink_agent_documents',
+  programActivityLogs: 'carelink_mission_program_activity_logs',
+  briefAcknowledgements: 'carelink_mission_brief_acknowledgements',
+  routeExecutionLogs: 'carelink_mission_route_execution_logs',
 } as const
 
 export type CareLinkDispatchMessage = {
@@ -67,6 +71,12 @@ export type CareLinkChecklistItemRow = {
   label: string
   description: string | null
   category: string
+  serviceType: string | null
+  serviceFamily: string | null
+  itemKey: string | null
+  checkGroup: string | null
+  evidenceRequired: boolean
+  severity: string
   required: boolean
   completed: boolean
   completedAt: string | null
@@ -120,6 +130,63 @@ export type CareLinkAgentDocumentRow = {
   createdAt: string
   updatedAt: string
   metadata: Record<string, unknown>
+}
+
+
+export type CareLinkMissionBriefAcknowledgementRow = {
+  id: string
+  missionId: number
+  caregiverId: number
+  status: string
+  briefVersion: string
+  sections: Record<string, unknown>
+  briefSnapshot: Record<string, unknown>
+  parentInstructionsAcknowledged: boolean
+  serviceScopeAcknowledged: boolean
+  locationAcknowledged: boolean
+  emergencyAcknowledged: boolean
+  confidentialityAcknowledged: boolean
+  acknowledgedAt: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+
+export type CareLinkMissionRouteExecutionLogRow = {
+  id: string
+  missionId: number
+  caregiverId: number
+  routeId: string
+  routeCode: string | null
+  action: string
+  status: string
+  transportMode: string | null
+  eta: string | null
+  locationSnapshot: Record<string, unknown>
+  routeSnapshot: Record<string, unknown>
+  allowanceClaim: Record<string, unknown>
+  notes: string | null
+  issueSeverity: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+export type CareLinkProgramActivityLogRow = {
+  id: string
+  missionId: number
+  caregiverId: number
+  activityId: string
+  activityLabel: string
+  status: string
+  notes: string | null
+  issueSeverity: string | null
+  startedAt: string | null
+  completedAt: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
 }
 
 function asString(value: unknown, fallback = '') {
@@ -191,6 +258,12 @@ function normalizeChecklist(row: AnyRow): CareLinkChecklistItemRow {
     label: asString(row.label, ''),
     description: row.description == null ? null : String(row.description),
     category: asString(row.category, 'general'),
+    serviceType: row.service_type == null ? asString(asRecord(row.metadata).service_type, '') || null : String(row.service_type),
+    serviceFamily: row.service_family == null ? asString(asRecord(row.metadata).service_family, '') || null : String(row.service_family),
+    itemKey: row.item_key == null ? asString(asRecord(row.metadata).template_key, '') || null : String(row.item_key),
+    checkGroup: row.check_group == null ? asString(asRecord(row.metadata).checklist_group, '') || null : String(row.check_group),
+    evidenceRequired: Boolean(row.evidence_required ?? asRecord(row.metadata).evidence_required),
+    severity: asString(row.severity, asString(asRecord(row.metadata).severity, 'standard')),
     required: Boolean(row.required),
     completed: Boolean(row.completed),
     completedAt: row.completed_at == null ? null : String(row.completed_at),
@@ -253,6 +326,69 @@ function normalizeDocument(row: AnyRow): CareLinkAgentDocumentRow {
   }
 }
 
+
+function normalizeBriefAcknowledgement(row: AnyRow): CareLinkMissionBriefAcknowledgementRow {
+  return {
+    id: String(row.id),
+    missionId: asNumber(row.mission_id),
+    caregiverId: asNumber(row.caregiver_id),
+    status: asString(row.status, 'acknowledged'),
+    briefVersion: asString(row.brief_version, 'carelink-mobile-brief-v1'),
+    sections: asRecord(row.sections),
+    briefSnapshot: asRecord(row.brief_snapshot),
+    parentInstructionsAcknowledged: Boolean(row.parent_instructions_acknowledged),
+    serviceScopeAcknowledged: Boolean(row.service_scope_acknowledged),
+    locationAcknowledged: Boolean(row.location_acknowledged),
+    emergencyAcknowledged: Boolean(row.emergency_acknowledged),
+    confidentialityAcknowledged: Boolean(row.confidentiality_acknowledged),
+    acknowledgedAt: row.acknowledged_at == null ? null : String(row.acknowledged_at),
+    metadata: asRecord(row.metadata),
+    createdAt: asString(row.created_at, new Date().toISOString()),
+    updatedAt: asString(row.updated_at, new Date().toISOString()),
+  }
+}
+
+
+function normalizeRouteExecutionLog(row: AnyRow): CareLinkMissionRouteExecutionLogRow {
+  return {
+    id: String(row.id),
+    missionId: asNumber(row.mission_id),
+    caregiverId: asNumber(row.caregiver_id),
+    routeId: asString(row.route_id, 'primary-route'),
+    routeCode: row.route_code == null ? null : String(row.route_code),
+    action: asString(row.action, 'route_update'),
+    status: asString(row.status, 'recorded'),
+    transportMode: row.transport_mode == null ? null : String(row.transport_mode),
+    eta: row.eta == null ? null : String(row.eta),
+    locationSnapshot: asRecord(row.location_snapshot),
+    routeSnapshot: asRecord(row.route_snapshot),
+    allowanceClaim: asRecord(row.allowance_claim),
+    notes: row.notes == null ? null : String(row.notes),
+    issueSeverity: row.issue_severity == null ? null : String(row.issue_severity),
+    metadata: asRecord(row.metadata),
+    createdAt: asString(row.created_at, new Date().toISOString()),
+    updatedAt: asString(row.updated_at, new Date().toISOString()),
+  }
+}
+
+function normalizeProgramActivityLog(row: AnyRow): CareLinkProgramActivityLogRow {
+  return {
+    id: String(row.id),
+    missionId: asNumber(row.mission_id),
+    caregiverId: asNumber(row.caregiver_id),
+    activityId: asString(row.activity_id, ''),
+    activityLabel: asString(row.activity_label, 'Activité'),
+    status: asString(row.status, 'pending'),
+    notes: row.notes == null ? null : String(row.notes),
+    issueSeverity: row.issue_severity == null ? null : String(row.issue_severity),
+    startedAt: row.started_at == null ? null : String(row.started_at),
+    completedAt: row.completed_at == null ? null : String(row.completed_at),
+    metadata: asRecord(row.metadata),
+    createdAt: asString(row.created_at, new Date().toISOString()),
+    updatedAt: asString(row.updated_at, new Date().toISOString()),
+  }
+}
+
 async function queryRows(table: string, build: (query: any) => any): Promise<AnyRow[]> {
   try {
     const supabase = await createClient()
@@ -308,21 +444,34 @@ function humanizeChecklistLabel(key: string) {
   return labels[key] || key.replaceAll('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
-function buildChecklistTemplate(serviceType: string, caregiverId: number | null, missionId: number) {
+export function buildChecklistTemplate(serviceType: string, caregiverId: number | null, missionId: number, mission?: Record<string, unknown> | null) {
   const service = getServiceCharacteristic(serviceType)
-  return service.defaultChecklist.map((item, index) => ({
+  const definition = buildCareLinkDynamicServiceChecklist({
+    serviceType,
+    serviceFamily: service.serviceFamily,
+    missionScope: String(mission?.mission_scope || mission?.scope || ''),
+    riskLevel: String(mission?.risk_level || mission?.riskLevel || ''),
+  })
+
+  return definition.items.map((item, index) => ({
     mission_id: missionId,
     caregiver_id: caregiverId,
-    label: humanizeChecklistLabel(item),
-    description: item,
-    category: service.serviceFamily,
-    required: true,
+    label: item.label || humanizeChecklistLabel(item.key),
+    description: item.description,
+    category: item.category,
+    service_type: definition.serviceType,
+    service_family: definition.serviceFamily,
+    item_key: item.key,
+    check_group: item.groupLabel,
+    evidence_required: item.evidenceRequired,
+    severity: item.severity,
+    required: item.required,
     completed: false,
     completed_at: null,
     completed_by: null,
     notes: null,
-    sort_order: index,
-    metadata: { template_key: item, service_type: serviceType },
+    sort_order: item.sortOrder || index,
+    metadata: checklistItemMetadata(item, definition),
   }))
 }
 
@@ -536,11 +685,11 @@ export async function createAlert(input: {
   return data ? normalizeAlert(data as AnyRow) : null
 }
 
-export async function loadMissionChecklist(missionId: number, serviceType?: string | null, caregiverId?: number | null) {
+export async function loadMissionChecklist(missionId: number, serviceType?: string | null, caregiverId?: number | null, mission?: Record<string, unknown> | null) {
   let rows = await queryRows(CARELINK_MOBILE_TABLES.checklist, (query) => query.select('*').eq('mission_id', missionId).order('sort_order', { ascending: true }).order('created_at', { ascending: true }))
   if (!rows.length && serviceType) {
     const supabase = await createClient()
-    const template = buildChecklistTemplate(serviceType, caregiverId ?? null, missionId)
+    const template = buildChecklistTemplate(serviceType, caregiverId ?? null, missionId, mission)
     const { data, error } = await supabase.from(CARELINK_MOBILE_TABLES.checklist).insert(template).select('*').order('sort_order', { ascending: true })
     if (!error && Array.isArray(data)) rows = data as AnyRow[]
   }
@@ -554,7 +703,16 @@ export async function updateMissionChecklistItem(itemId: string, patch: Partial<
   if (patch.completedAt !== undefined) payload.completed_at = patch.completedAt
   if (patch.completedBy !== undefined) payload.completed_by = patch.completedBy
   if (patch.notes !== undefined) payload.notes = patch.notes
-  if (patch.metadata !== undefined) payload.metadata = patch.metadata
+  if (patch.metadata !== undefined) {
+    payload.metadata = patch.metadata
+    const metadata = patch.metadata as Record<string, unknown>
+    if (metadata.service_type) payload.service_type = metadata.service_type
+    if (metadata.service_family) payload.service_family = metadata.service_family
+    if (metadata.template_key) payload.item_key = metadata.template_key
+    if (metadata.checklist_group) payload.check_group = metadata.checklist_group
+    if (metadata.evidence_required !== undefined) payload.evidence_required = metadata.evidence_required
+    if (metadata.severity) payload.severity = metadata.severity
+  }
   const { data, error } = await supabase.from(CARELINK_MOBILE_TABLES.checklist).update(payload).eq('id', itemId).select('*').maybeSingle()
   if (error) throw new Error(error.message)
   return data ? normalizeChecklist(data as AnyRow) : null
@@ -581,6 +739,12 @@ export async function completeMissionChecklist(missionId: number, input: { itemI
       label: item.label,
       description: item.description,
       category: item.category,
+      service_type: item.serviceType,
+      service_family: item.serviceFamily,
+      item_key: item.itemKey,
+      check_group: item.checkGroup,
+      evidence_required: item.evidenceRequired,
+      severity: item.severity,
       required: item.required,
       completed: item.completed,
       completed_at: item.completedAt,
@@ -759,4 +923,198 @@ export async function loadCareLinkOperationalAudit(missionIds: number[] = []) {
     generatedAt: new Date().toISOString(),
     dbConnected: Boolean(supabase),
   }
+}
+
+
+
+export async function loadMissionRouteExecutionLogs(missionId: number, caregiverId?: number | null) {
+  const rows = await queryRows(CARELINK_MOBILE_TABLES.routeExecutionLogs, (query) => {
+    let next = query.select('*').eq('mission_id', missionId).order('created_at', { ascending: false }).limit(120)
+    if (caregiverId != null) next = next.eq('caregiver_id', caregiverId)
+    return next
+  })
+  return rows.map(normalizeRouteExecutionLog)
+}
+
+export async function saveMissionRouteExecutionLog(input: {
+  missionId: number
+  caregiverId: number
+  routeId?: string | null
+  routeCode?: string | null
+  action: string
+  status?: string | null
+  transportMode?: string | null
+  eta?: string | null
+  locationSnapshot?: Record<string, unknown> | null
+  routeSnapshot?: Record<string, unknown> | null
+  allowanceClaim?: Record<string, unknown> | null
+  notes?: string | null
+  issueSeverity?: string | null
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  const payload = {
+    mission_id: input.missionId,
+    caregiver_id: input.caregiverId,
+    route_id: input.routeId || 'primary-route',
+    route_code: input.routeCode || null,
+    action: asString(input.action, 'route_update'),
+    status: asString(input.status, 'recorded'),
+    transport_mode: input.transportMode || null,
+    eta: input.eta || null,
+    location_snapshot: input.locationSnapshot || {},
+    route_snapshot: input.routeSnapshot || {},
+    allowance_claim: input.allowanceClaim || {},
+    notes: input.notes || null,
+    issue_severity: input.issueSeverity || null,
+    metadata: input.metadata || {},
+    updated_at: now,
+  }
+
+  const { data, error } = await supabase
+    .from(CARELINK_MOBILE_TABLES.routeExecutionLogs)
+    .insert(payload)
+    .select('*')
+    .single()
+
+  if (error) throw error
+
+  await recordMissionEvent({
+    missionId: input.missionId,
+    eventType: `mobile_route_${payload.action}`,
+    content: `Route mobile · ${payload.action}${input.notes ? ` · ${input.notes}` : ''}`,
+    metadata: {
+      caregiver_id: input.caregiverId,
+      route_id: payload.route_id,
+      route_code: payload.route_code,
+      transport_mode: payload.transport_mode,
+      eta: payload.eta,
+      issue_severity: payload.issue_severity,
+      ...(input.metadata || {}),
+    },
+    source: 'carelink_mobile',
+  })
+
+  return normalizeRouteExecutionLog(data)
+}
+
+export async function loadMissionProgramActivityLogs(missionId: number, caregiverId?: number | null) {
+  const rows = await queryRows(CARELINK_MOBILE_TABLES.programActivityLogs, (query) => {
+    let next = query.select('*').eq('mission_id', missionId).order('updated_at', { ascending: false }).limit(200)
+    if (caregiverId != null) next = next.eq('caregiver_id', caregiverId)
+    return next
+  })
+  return rows.map(normalizeProgramActivityLog)
+}
+
+export async function saveMissionProgramActivityLog(input: {
+  missionId: number
+  caregiverId: number
+  activityId: string
+  activityLabel: string
+  status: string
+  notes?: string | null
+  issueSeverity?: string | null
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  const status = asString(input.status, 'completed')
+  const row = {
+    mission_id: input.missionId,
+    caregiver_id: input.caregiverId,
+    activity_id: input.activityId,
+    activity_label: input.activityLabel,
+    status,
+    notes: input.notes || null,
+    issue_severity: input.issueSeverity || null,
+    started_at: status === 'started' ? now : null,
+    completed_at: ['completed', 'done', 'validated'].includes(status) ? now : null,
+    metadata: input.metadata || {},
+    updated_at: now,
+  }
+
+  const { data, error } = await supabase
+    .from(CARELINK_MOBILE_TABLES.programActivityLogs)
+    .upsert(row, { onConflict: 'mission_id,caregiver_id,activity_id' })
+    .select('*')
+    .single()
+
+  if (error) throw error
+  return normalizeProgramActivityLog(data)
+}
+
+
+export async function loadMissionBriefAcknowledgement(missionId: number, caregiverId?: number | null) {
+  const rows = await queryRows(CARELINK_MOBILE_TABLES.briefAcknowledgements, (query) => {
+    let next = query.select('*').eq('mission_id', missionId).order('acknowledged_at', { ascending: false }).order('updated_at', { ascending: false }).limit(10)
+    if (caregiverId != null) next = next.eq('caregiver_id', caregiverId)
+    return next
+  })
+  return rows.map(normalizeBriefAcknowledgement)
+}
+
+export async function saveMissionBriefAcknowledgement(input: {
+  missionId: number
+  caregiverId: number
+  briefVersion?: string | null
+  sections?: Record<string, unknown>
+  briefSnapshot?: Record<string, unknown>
+  parentInstructionsAcknowledged?: boolean
+  serviceScopeAcknowledged?: boolean
+  locationAcknowledged?: boolean
+  emergencyAcknowledged?: boolean
+  confidentialityAcknowledged?: boolean
+  metadata?: Record<string, unknown>
+}) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+  const payload = {
+    mission_id: input.missionId,
+    caregiver_id: input.caregiverId,
+    status: 'acknowledged',
+    brief_version: input.briefVersion || 'carelink-mobile-brief-v1',
+    sections: input.sections || {},
+    brief_snapshot: input.briefSnapshot || {},
+    parent_instructions_acknowledged: input.parentInstructionsAcknowledged !== false,
+    service_scope_acknowledged: input.serviceScopeAcknowledged !== false,
+    location_acknowledged: input.locationAcknowledged !== false,
+    emergency_acknowledged: input.emergencyAcknowledged !== false,
+    confidentiality_acknowledged: input.confidentialityAcknowledged !== false,
+    acknowledged_at: now,
+    metadata: input.metadata || {},
+    updated_at: now,
+  }
+
+  const { data, error } = await supabase
+    .from(CARELINK_MOBILE_TABLES.briefAcknowledgements)
+    .upsert(payload, { onConflict: 'mission_id,caregiver_id' })
+    .select('*')
+    .single()
+
+  if (error) throw error
+  await recordMissionEvent({
+    missionId: input.missionId,
+    eventType: 'mobile_mission_brief_acknowledged',
+    content: 'Brief mission et consignes parent reconnus depuis CareLink mobile',
+    metadata: { caregiver_id: input.caregiverId, brief_version: payload.brief_version, sections: payload.sections, ...(input.metadata || {}) },
+    source: 'carelink_mobile',
+  })
+  return normalizeBriefAcknowledgement(data)
+}
+
+export async function missionBriefAcknowledgementIsComplete(missionId: number, caregiverId: number) {
+  const rows = await loadMissionBriefAcknowledgement(missionId, caregiverId)
+  const latest = rows[0]
+  return Boolean(
+    latest &&
+    latest.status === 'acknowledged' &&
+    latest.parentInstructionsAcknowledged &&
+    latest.serviceScopeAcknowledged &&
+    latest.locationAcknowledged &&
+    latest.emergencyAcknowledged &&
+    latest.confidentialityAcknowledged &&
+    latest.acknowledgedAt,
+  )
 }

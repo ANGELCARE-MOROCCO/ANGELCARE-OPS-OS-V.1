@@ -439,6 +439,22 @@ function CreateModal({ candidates }: { candidates: Row[] }) {
               </span>
             </span>
           </Link>
+          <Link
+            href="/hr/recruitment/questionnaires"
+            className="flex items-center gap-3 rounded-2xl p-3 transition hover:bg-fuchsia-50"
+          >
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-fuchsia-100 text-fuchsia-700">
+              <FileText className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-black text-slate-950">
+                Interview questionnaires
+              </span>
+              <span className="block text-xs font-bold text-slate-500">
+                Create questionnaire workflow and public HTML assessment pages.
+              </span>
+            </span>
+          </Link>
         </div>
       </details>
     </div>
@@ -1194,6 +1210,12 @@ export default async function Page({
                   className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-violet-700"
                 >
                   Interviews
+                </Link>
+                <Link
+                  href="/hr/recruitment/questionnaires"
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700"
+                >
+                  Interview Questionnaires
                 </Link>
                 <CreateModal candidates={candidates} />
               </div>

@@ -34,7 +34,7 @@ export async function createAutomationBriefing(formData: FormData) {
     severity: s(formData, 'severity', 'medium'),
     summary: s(formData, 'summary'),
     recommendation: s(formData, 'recommendation'),
-    route: s(formData, 'route', '/enterprise-command'),
+    route: s(formData, 'route', '/executive-cockpit'),
     status: 'open',
   }
   const { error } = await supabase.from('opsos_intelligence_briefings').insert([payload])

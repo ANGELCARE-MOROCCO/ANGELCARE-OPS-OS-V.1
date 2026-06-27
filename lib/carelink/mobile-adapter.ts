@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { getMissionDossier, listMissionControlRecords } from '@/lib/missions/repository'
 import type { MissionControlRecord, MissionDossier } from '@/lib/missions/types'
-import { loadAlerts, loadAgentDocuments, loadDispatchMessages, loadNotifications, loadPaymentDisputes } from './mobile-persistence'
+import { loadAlerts, loadAgentDocuments, loadDispatchMessages, loadMissionBriefAcknowledgement, loadMissionChecklist, loadMissionProgramActivityLogs, loadMissionRouteExecutionLogs, loadNotifications, loadPaymentDisputes } from './mobile-persistence'
+import { requireCareLinkMobileAgent, requireCareLinkMobileMissionAccess } from './mobile-auth'
 
 type AnyRecord = Record<string, any>
 
@@ -92,6 +93,17 @@ export type CareLinkMobileWorkspace = {
   reports?: Array<Record<string, unknown>>
   paymentDisputes?: Array<Record<string, unknown>>
   documents?: Array<Record<string, unknown>>
+  enterpriseDossier?: Record<string, unknown>
+  profileRequests?: Array<Record<string, unknown>>
+  policyAcknowledgements?: Array<Record<string, unknown>>
+  availabilityUpdates?: Array<Record<string, unknown>>
+  presenceEvents?: Array<Record<string, unknown>>
+  documentSubmissions?: Array<Record<string, unknown>>
+  deviceSessions?: Array<Record<string, unknown>>
+  securityEvents?: Array<Record<string, unknown>>
+  programActivityLogs?: Array<Record<string, unknown>>
+  briefAcknowledgements?: Array<Record<string, unknown>>
+  routeExecutionLogs?: Array<Record<string, unknown>>
 }
 
 function asNumber(value: unknown) {
@@ -105,6 +117,63 @@ function asString(value: unknown, fallback = '') {
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10)
+}
+
+
+function __carelinkMobileRecordDateKey(record: any) {
+  const value = String(
+    record?.dateLabel ||
+    record?.missionDate ||
+    record?.mission_date ||
+    record?.scheduledStart ||
+    record?.scheduled_start ||
+    record?.raw?.mission_date ||
+    ''
+  ).slice(0, 10)
+
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : ''
+}
+
+function __carelinkMobileRecordStatusText(record: any) {
+  return [
+    record?.status,
+    record?.lifecycleStage,
+    record?.lifecycle_stage,
+    record?.dossierStatus,
+    record?.dossier_status,
+    record?.dispatchStatus,
+    record?.dispatch_status,
+    record?.raw?.status,
+    record?.raw?.lifecycle_stage,
+    record?.raw?.dossier_status,
+  ].filter(Boolean).join(' ').toLowerCase()
+}
+
+function __carelinkMobileRecordVisible(record: any) {
+  if (!record) return false
+  const status = __carelinkMobileRecordStatusText(record)
+  const archived = record?.is_archived === true || record?.isArchived === true || record?.raw?.is_archived === true
+  const dateKey = __carelinkMobileRecordDateKey(record)
+
+  if (archived) return false
+  if (dateKey === '0001-01-01') return false
+  if (/(^|[\s_-])(deleted|archive|archived|cancelled|canceled)([\s_-]|$)/.test(status)) return false
+
+  return true
+}
+
+function __carelinkMobileOperationalRecord(record: any) {
+  if (!__carelinkMobileRecordVisible(record)) return false
+
+  const status = __carelinkMobileRecordStatusText(record)
+  const dateKey = __carelinkMobileRecordDateKey(record)
+  const today = todayKey()
+
+  if (!dateKey) return false
+  if (dateKey < today) return false
+  if (/(^|[\s_-])(completed|closed|report_submitted|done)([\s_-]|$)/.test(status)) return false
+
+  return true
 }
 
 function toneFromStatus(status: string | null | undefined, risk: string | null | undefined) {
@@ -164,8 +233,7 @@ async function resolveAgentProfile(supabase: Awaited<ReturnType<typeof createCli
     if (byEmail) return byEmail
   }
 
-  const fallbackRows = await safeMany(supabase.from('caregivers').select('*').order('updated_at', { ascending: false }).limit(1))
-  return fallbackRows[0] || null
+  return null
 }
 
 function deriveReadiness(records: MissionControlRecord[], agent: AnyRecord | null) {
@@ -486,14 +554,118 @@ function deriveSafety(records: MissionControlRecord[]) {
   ]
 }
 
+function asList(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map((item) => String(item || '').trim()).filter(Boolean)
+  if (typeof value === 'string' && value.trim()) return value.split(/[;,|]/).map((item) => item.trim()).filter(Boolean)
+  return []
+}
+
+function deriveEnterpriseDossier(input: {
+  agent: AnyRecord | null
+  records: MissionControlRecord[]
+  documents: Array<Record<string, unknown>>
+  readiness: CareLinkMobileWorkspace['readiness']
+  stats: CareLinkMobileWorkspace['stats']
+  payments: CareLinkMobileWorkspace['payments']
+  profileRequests: AnyRecord[]
+  policyAcknowledgements: AnyRecord[]
+  availabilityUpdates: AnyRecord[]
+  presenceEvents: AnyRecord[]
+  documentSubmissions: AnyRecord[]
+  deviceSessions: AnyRecord[]
+  securityEvents: AnyRecord[]
+}) {
+  const agent = input.agent || {}
+  const services = Array.from(new Set(input.records.map((record) => record.serviceType).filter(Boolean)))
+  const zones = Array.from(new Set(input.records.map((record) => record.zone || record.city).filter(Boolean)))
+  const languages = asList(agent.languages || agent.language_skills || agent.spoken_languages)
+  const skills = asList(agent.skills || agent.skill_tags || agent.competencies)
+  const missingIdentity = ['full_name', 'phone', 'email', 'city'].filter((key) => !agent[key])
+  const profileScore = Math.max(0, Math.min(100, 100 - (missingIdentity.length * 12) - (input.documents.length ? 0 : 10) - (languages.length ? 0 : 8) - (skills.length ? 0 : 8)))
+  const expiredDocuments = input.documents.filter((document) => {
+    const expiresAt = document.expiresAt || document.expires_at
+    return String(document.status || document.reviewStatus || '').toLowerCase().includes('expired') || (expiresAt ? new Date(String(expiresAt)).getTime() < Date.now() : false)
+  })
+
+  return {
+    identity: {
+      id: agent.id || null,
+      name: agent.full_name || agent.name || agent.display_name || 'CareLink Agent',
+      phone: agent.phone || agent.mobile_phone || null,
+      email: agent.email || agent.work_email || null,
+      city: agent.city || null,
+      zone: agent.zone || agent.preferred_zone || null,
+      role: agent.role || agent.agent_role || agent.caregiver_type || 'field_agent',
+      languages,
+      skills,
+      profileScore,
+      missingFields: missingIdentity,
+    },
+    access: {
+      mobileStatus: agent.mobile_enabled === false ? 'disabled' : 'active',
+      readinessStatus: agent.readiness_status || input.readiness.status,
+      availabilityStatus: agent.availability_status || input.availabilityUpdates[0]?.availability_status || 'not_declared',
+      activeDeviceSessions: input.deviceSessions.length,
+      securityEvents: input.securityEvents.length,
+    },
+    roster: {
+      preferredDays: asList(agent.preferred_days || agent.roster_days),
+      startTime: agent.shift_start || agent.start_time || agent.preferred_start_time || null,
+      endTime: agent.shift_end || agent.end_time || agent.preferred_end_time || null,
+      maxDailyHours: agent.max_daily_hours || null,
+      maxWeeklyHours: agent.max_weekly_hours || null,
+      preferredZones: asList(agent.preferred_zones || agent.zones || zones),
+      excludedZones: asList(agent.excluded_zones),
+      weekendAcceptance: Boolean(agent.weekend_acceptance || agent.accepts_weekends),
+      emergencyReplacement: Boolean(agent.emergency_replacement || agent.accepts_emergency_replacement),
+      transportRequired: Boolean(agent.transport_required),
+    },
+    documents: {
+      total: input.documents.length,
+      expired: expiredDocuments.length,
+      pendingSubmissions: input.documentSubmissions.filter((item) => ['submitted', 'pending', 'in_review'].includes(String(item.status || '').toLowerCase())).length,
+    },
+    policies: {
+      required: ['mission_execution', 'confidentiality', 'emergency_protocol', 'mobile_security'],
+      acknowledged: input.policyAcknowledgements.length,
+    },
+    academy: {
+      certificationStatus: agent.certification_status || agent.academy_status || 'not_synced',
+      training: asList(agent.training_modules || agent.academy_modules).map((module, index) => ({ id: `${module}-${index}`, title: module, status: 'assigned' })),
+    },
+    payment: {
+      currency: input.payments.currency,
+      earned: input.payments.earned,
+      pendingValidation: input.payments.pendingValidation,
+      paid: input.payments.paid,
+      transport: input.payments.transport,
+    },
+    performance: {
+      reliabilityScore: input.stats.reliabilityScore,
+      performanceScore: input.stats.performanceScore,
+      completedCount: input.stats.completedCount,
+      pendingReports: input.stats.pendingReports,
+      noShowCount: input.stats.noShowCount,
+      cancellationCount: input.stats.cancellationCount,
+    },
+    offline: {
+      lastGeneratedAt: new Date().toISOString(),
+      deviceSessions: input.deviceSessions.length,
+      securityEvents: input.securityEvents.length,
+    },
+  }
+}
+
 export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorkspace> {
-  const supabase = await createClient()
-  const agent = await resolveAgentProfile(supabase)
-  const allRecords = (await listMissionControlRecords().catch(() => [])) || []
-  const agentRecords = agent?.id ? allRecords.filter((record) => String(record.caregiverId || '') === String(agent.id)) : allRecords
-  const records = agentRecords.length ? agentRecords : allRecords
+  const mobileSession = await requireCareLinkMobileAgent('can_view_missions')
+  const supabase = mobileSession.supabase
+  const agent = mobileSession.caregiver
+  const allRecordsRaw = (await listMissionControlRecords().catch(() => [])) || []
+  const allRecords = allRecordsRaw.filter(__carelinkMobileRecordVisible)
+  const historyRecords = allRecords.filter((record) => String(record.caregiverId || '') === String(mobileSession.caregiverId))
+  const records = historyRecords.filter(__carelinkMobileOperationalRecord)
   const today = todayKey()
-  const todayMissions = records.filter((record) => record.dateLabel === today || String(record.dateLabel || '').includes(today))
+  const todayMissions = records.filter((record) => __carelinkMobileRecordDateKey(record) === today)
   const upcomingMissions = [...records].filter((record) => !['completed', 'cancelled', 'closed'].includes(record.status))
   const activeMission = records.find((record) => ['in_progress', 'confirmed', 'arrival_confirmed', 'assigned'].includes(record.status)) || null
   const nextMission = activeMission || upcomingMissions[0] || records[0] || null
@@ -506,14 +678,30 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
   const dossierMap = new Map<string, MissionDossier>(dossierEntries.filter((entry): entry is readonly [string, MissionDossier] => Boolean(entry[1])))
 
   const events = await safeMany<AnyRecord>(supabase.from('mission_events').select('*').in('mission_id', missionIds.length ? missionIds : [0]).order('created_at', { ascending: false }).limit(120))
-  const incidents = await safeMany<AnyRecord>(supabase.from('incidents').select('*').order('created_at', { ascending: false }).limit(80))
-  const allowanceRows = await safeMany<AnyRecord>(supabase.from('mission_allowances').select('*').order('created_at', { ascending: false }).limit(120))
+  const incidents = await safeMany<AnyRecord>(supabase.from('incidents').select('*').in('mission_id', missionIds.length ? missionIds : [0]).order('created_at', { ascending: false }).limit(80))
+  const allowanceRows = await safeMany<AnyRecord>(supabase.from('mission_allowances').select('*').in('mission_id', missionIds.length ? missionIds : [0]).order('created_at', { ascending: false }).limit(120))
   const caregiverId = agent?.id == null ? null : Number(agent.id)
   const dispatchFeed = await loadDispatchMessages({ caregiverId, missionIds }).catch(() => ({ messages: [], threads: [], unreadCount: 0 }))
   const notificationsFeed = await loadNotifications({ caregiverId, missionIds }).catch(() => [])
   const alertsFeed = await loadAlerts({ caregiverId, missionIds }).catch(() => [])
   const disputesFeed = await loadPaymentDisputes({ caregiverId, missionIds }).catch(() => [])
   const documentsFeed = await loadAgentDocuments(caregiverId).catch(() => [])
+  const profileRequests = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_profile_requests').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(40)) : []
+  const policyAcknowledgements = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_policy_acknowledgements').select('*').eq('caregiver_id', caregiverId).order('acknowledged_at', { ascending: false }).limit(40)) : []
+  const availabilityUpdates = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_availability_updates').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(40)) : []
+  const presenceEvents = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_presence_events').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(60)) : []
+  const documentSubmissions = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_agent_document_submissions').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(40)) : []
+  const deviceSessions = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_mobile_device_sessions').select('*').eq('caregiver_id', caregiverId).order('updated_at', { ascending: false }).limit(20)) : []
+  const securityEvents = caregiverId ? await safeMany<AnyRecord>(supabase.from('carelink_mobile_security_events').select('*').eq('caregiver_id', caregiverId).order('created_at', { ascending: false }).limit(40)) : []
+  const programActivityLogs = caregiverId
+    ? (await Promise.all(missionIds.map((missionId) => loadMissionProgramActivityLogs(Number(missionId), caregiverId).catch(() => [])))).flat()
+    : []
+  const briefAcknowledgements = caregiverId
+    ? (await Promise.all(missionIds.map((missionId) => loadMissionBriefAcknowledgement(Number(missionId), caregiverId).catch(() => [])))).flat()
+    : []
+  const routeExecutionLogs = caregiverId
+    ? (await Promise.all(missionIds.map((missionId) => loadMissionRouteExecutionLogs(Number(missionId), caregiverId).catch(() => [])))).flat()
+    : []
 
   const readiness = deriveReadiness(records, agent)
   const stats = deriveStats(records)
@@ -550,7 +738,7 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
         createdAt: message.createdAt,
       }))
     : deriveMessages(records, events)
-  const history = deriveHistory(records, events)
+  const history = deriveHistory(historyRecords, events)
     .concat(disputesFeed.map((dispute) => ({
       id: `dispute-${dispute.id}`,
       title: 'Correction paiement demandée',
@@ -596,6 +784,21 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
   }
   stats.unreadMessages = messages.filter((message) => message.unread).length
   stats.criticalAlerts = alerts.filter((alert) => alert.tone === 'red').length
+  const enterpriseDossier = deriveEnterpriseDossier({
+    agent,
+    records,
+    documents: documentsFeed.map((item) => ({ ...item })),
+    readiness,
+    stats,
+    payments,
+    profileRequests,
+    policyAcknowledgements,
+    availabilityUpdates,
+    presenceEvents,
+    documentSubmissions,
+    deviceSessions,
+    securityEvents,
+  })
 
   return {
     source: records.length ? 'live-db' : 'live-empty',
@@ -623,13 +826,39 @@ export async function loadCarelinkMobileWorkspace(): Promise<CareLinkMobileWorks
     reports,
     paymentDisputes: disputesFeed.map((item) => ({ ...item })),
     documents: documentsFeed.map((item) => ({ ...item })),
+    enterpriseDossier,
+    profileRequests: profileRequests.map((item) => ({ ...item })),
+    policyAcknowledgements: policyAcknowledgements.map((item) => ({ ...item })),
+    availabilityUpdates: availabilityUpdates.map((item) => ({ ...item })),
+    presenceEvents: presenceEvents.map((item) => ({ ...item })),
+    documentSubmissions: documentSubmissions.map((item) => ({ ...item })),
+    deviceSessions: deviceSessions.map((item) => ({ ...item })),
+    securityEvents: securityEvents.map((item) => ({ ...item })),
+    programActivityLogs: programActivityLogs.map((item) => ({ ...item })),
+    briefAcknowledgements: briefAcknowledgements.map((item) => ({ ...item })),
+    routeExecutionLogs: routeExecutionLogs.map((item) => ({ ...item })),
   }
 }
 
 export async function loadCarelinkMobileMissionContext(id: string | number) {
-  const records = await listMissionControlRecords().catch(() => [])
-  const selected = records.find((record) => String(record.id) === String(id) || String(record.code) === String(id)) || null
-  const dossier = selected ? await getMissionDossier(Number(selected.id)).catch(() => null) : null
   const workspace = await loadCarelinkMobileWorkspace()
-  return { selected, dossier, records, workspace }
+  const selected = workspace.records.find((record) => String(record.id) === String(id) || String(record.code) === String(id)) || null
+  if (!selected) {
+    return { selected: null, dossier: null, records: workspace.records, workspace }
+  }
+  const session = await requireCareLinkMobileMissionAccess(Number(selected.id), 'can_view_missions')
+  const dossier = await getMissionDossier(Number(selected.id)).catch(() => null)
+  const programActivityLogs = (workspace.programActivityLogs || []).filter((log) => String(log.missionId || log.mission_id || '') === String(selected.id))
+  const briefAcknowledgements = (workspace.briefAcknowledgements || []).filter((ack) => String(ack.missionId || ack.mission_id || '') === String(selected.id))
+  const routeExecutionLogs = (workspace.routeExecutionLogs || []).filter((log) => String(log.missionId || log.mission_id || '') === String(selected.id))
+  const checklistItems = dossier
+    ? await loadMissionChecklist(
+        Number(selected.id),
+        dossier.raw.service_type || dossier.mission.serviceType,
+        session.caregiverId,
+        dossier.raw as Record<string, unknown>,
+      ).catch(() => dossier.checklistItems || [])
+    : []
+  const enhancedDossier = dossier ? ({ ...dossier, checklistItems, programActivityLogs, briefAcknowledgements, routeExecutionLogs } as MissionDossier & { programActivityLogs?: Array<Record<string, unknown>>; briefAcknowledgements?: Array<Record<string, unknown>>; routeExecutionLogs?: Array<Record<string, unknown>> }) : dossier
+  return { selected, dossier: enhancedDossier, records: workspace.records, workspace }
 }

@@ -1173,7 +1173,7 @@ const CARELINK_OPS_SIDE_NAV = [
   { label: 'Overview', href: '/carelink-ops' },
   { label: 'Dispatch', href: '/carelink-ops/dispatch' },
   { label: 'Missions', href: '/carelink-ops/missions' },
-  { label: 'Agents', href: '/carelink-ops/agents' },
+  { label: 'Agents', href: '/caregivers' },
   { label: 'Schedule', href: '/carelink-ops/schedule' },
   { label: 'Incidents', href: '/carelink-ops/incidents' },
   { label: 'Reports', href: '/carelink-ops/reports' },
@@ -1309,6 +1309,64 @@ function sanitizeCareLinkDispatchPayloadForVisibleLiveMissions(payload: any) {
 }
 
 
+
+function __dispatchIsVisibleOperationalMission(row: any): boolean {
+  const source = row?.raw || row || {}
+  const statusText = [
+    row?.status,
+    row?.lifecycle_stage,
+    row?.lifecycleStage,
+    row?.dossier_status,
+    row?.dossierStatus,
+    source?.status,
+    source?.lifecycle_stage,
+    source?.lifecycleStage,
+    source?.dossier_status,
+    source?.dossierStatus,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+
+  const archived =
+    source?.is_archived === true ||
+    source?.isArchived === true ||
+    row?.is_archived === true ||
+    row?.isArchived === true ||
+    Boolean(source?.archived_at || source?.archivedAt || row?.archived_at || row?.archivedAt)
+
+  const deleted = /(^|[\s_-])(deleted|archive|archived)([\s_-]|$)/.test(statusText)
+  const dateValue = String(row?.mission_date || row?.missionDate || source?.mission_date || source?.missionDate || '')
+  const invalidDate = dateValue.startsWith('0001-') || dateValue.startsWith('0000-')
+
+  return !archived && !deleted && !invalidDate
+}
+
+function __dispatchCleanVisiblePayload(input: DispatchPayload): DispatchPayload {
+  const clone: any = { ...(input || {}) }
+  const cleanRows = (rows: any) => Array.isArray(rows) ? rows.filter(__dispatchIsVisibleOperationalMission) : []
+
+  ;['missions', 'records', 'dossiers', 'items', 'queue'].forEach((key) => {
+    if (Array.isArray(clone[key])) clone[key] = cleanRows(clone[key])
+  })
+
+  if (Array.isArray(clone.lanes)) {
+    clone.lanes = clone.lanes.map((lane: any) => {
+      const next: any = { ...(lane || {}) }
+      ;['missions', 'records', 'items', 'queue'].forEach((key) => {
+        if (Array.isArray(next[key])) next[key] = cleanRows(next[key])
+      })
+      if (typeof next.count === 'number') {
+        const firstRows = next.missions || next.records || next.items || next.queue
+        if (Array.isArray(firstRows)) next.count = firstRows.length
+      }
+      return next
+    })
+  }
+
+  return normalizePayload(clone)
+}
+
 function normalizePayload(payload?: Partial<DispatchPayload> | null): DispatchPayload {
   return {
     ...EMPTY_PAYLOAD,
@@ -1370,6 +1428,93 @@ function initials(name?: string | null) {
   return (parts[0]?.[0] || 'A') + (parts[1]?.[0] || 'C')
 }
 
+
+function __mergeDispatchCommandPayload(currentPayload: any, commandPayload: any): DispatchPayload {
+  const current = normalizePayload(currentPayload || {})
+  const source = commandPayload || {}
+  const data = source.data || source.payload || source.live || source.dashboard || source.bridge || source
+  const records = data.records || source.records || {}
+
+  const missions = Array.isArray(records.missions)
+    ? records.missions
+    : Array.isArray(data.missions)
+      ? data.missions
+      : Array.isArray(source.missions)
+        ? source.missions
+        : current.missions
+
+  const agents = Array.isArray(records.agents)
+    ? records.agents
+    : Array.isArray(data.agents)
+      ? data.agents
+      : Array.isArray(data.caregivers)
+        ? data.caregivers
+        : current.agents
+
+  const assignments = Array.isArray(records.assignments)
+    ? records.assignments
+    : Array.isArray(data.assignments)
+      ? data.assignments
+      : []
+
+  const summary = data.summary || source.summary || {}
+  const generatedAt = data.generatedAt || source.generatedAt || current.generatedAt || new Date().toISOString()
+
+  const mergedMissions = Array.isArray(missions)
+    ? missions.map((mission: any) => {
+        const missionId = String(mission?.id || mission?.mission_id || mission?.raw_id || '')
+        const assignment = assignments.find((row: any) => String(row?.mission_id || row?.source_id || row?.raw_id || '') === missionId)
+        return assignment
+          ? {
+              ...mission,
+              caregiver_id: assignment.caregiver_id ?? mission.caregiver_id,
+              caregiver_name: assignment.caregiver_name ?? mission.caregiver_name,
+              backup_caregiver_id: assignment.backup_caregiver_id ?? mission.backup_caregiver_id,
+              backup_caregiver_name: assignment.backup_caregiver_name ?? mission.backup_caregiver_name,
+              dispatch_status: assignment.dispatch_status ?? mission.dispatch_status,
+              assignment_status: assignment.assignment_status ?? mission.assignment_status,
+              route_from: assignment.route_from ?? mission.route_from,
+              route_to: assignment.route_to ?? mission.route_to,
+              transport_mode: assignment.transport_mode ?? mission.transport_mode,
+              risk_level: assignment.risk_level ?? mission.risk_level,
+              validation_notes: assignment.validation_notes ?? mission.validation_notes,
+              canonical_bridge_status: assignment.canonical_bridge_status ?? mission.canonical_bridge_status,
+            }
+          : mission
+      })
+    : current.missions
+
+  const nextKpis = Array.isArray(current.kpis)
+    ? current.kpis.map((kpi: any) => {
+        const key = String(kpi?.key || kpi?.label || '').toLowerCase()
+        if (key.includes('load') || key.includes('mission')) return { ...kpi, value: Number(summary.missions ?? mergedMissions.length ?? kpi.value ?? 0) }
+        if (key.includes('assign')) return { ...kpi, value: Number(summary.assigned ?? summary.dispatchAssignments ?? kpi.value ?? 0) }
+        if (key.includes('route')) return { ...kpi, value: Number(summary.routeGaps ?? kpi.value ?? 0) }
+        if (key.includes('risk') || key.includes('sla')) return { ...kpi, value: Number(summary.highRisk ?? summary.slaRisks ?? kpi.value ?? 0) }
+        return kpi
+      })
+    : current.kpis
+
+  return normalizePayload({
+    ...current,
+    ...data,
+    generatedAt,
+    missions: mergedMissions,
+    agents: Array.isArray(agents) ? agents : current.agents,
+    kpis: nextKpis,
+    metadata: {
+      ...(current.metadata || {}),
+      ...(data.metadata || {}),
+      hardenedDispatchBridge: {
+        ok: Boolean(source.ok),
+        generatedAt,
+        assignments: assignments.length,
+        missions: Array.isArray(mergedMissions) ? mergedMissions.length : 0,
+      },
+    },
+  })
+}
+
 export function CareLinkDispatchControlCenter({ initialPayload }: { initialPayload?: any }) {
   const [payload, setPayload] = useState<DispatchPayload>
       (() => normalizePayload(initialPayload))
@@ -1387,9 +1532,42 @@ export function CareLinkDispatchControlCenter({ initialPayload }: { initialPaylo
   const [actionBusy, setActionBusy] = useState(false)
   const [log, setLog] = useState<string[]>([])
 
-  const safePayload = useMemo(() => sanitizeCareLinkDispatchPayloadForVisibleLiveMissions(normalizePayload(payload)), [payload])
+  const safePayload = useMemo(() => __dispatchCleanVisiblePayload(sanitizeCareLinkDispatchPayloadForVisibleLiveMissions(normalizePayload(payload))), [payload])
 
-  const filteredMissions = useMemo(() => {
+  
+
+  // dispatch-command hidden bridge: backend hardening only, no UI replacement.
+  useEffect(() => {
+    let alive = true
+    let timer: number | null = null
+
+    const loadDispatchCommandBridge = async () => {
+      try {
+        const res = await fetch('/api/carelink/ops/dispatch-command', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        })
+
+        if (!res.ok) return
+
+        const json = await res.json()
+        if (!alive || !json?.ok) return
+
+        setPayload((current: any) => __mergeDispatchCommandPayload(current, json))
+      } catch {
+        // Keep restored UI untouched if the backend bridge is unavailable.
+      }
+    }
+
+    void loadDispatchCommandBridge()
+    timer = window.setInterval(loadDispatchCommandBridge, 45000)
+
+    return () => {
+      alive = false
+      if (timer) window.clearInterval(timer)
+    }
+  }, [])
+const filteredMissions = useMemo(() => {
     const q = query.trim().toLowerCase()
     return safePayload.missions.filter((mission: DispatchMission) => {
       const text = [mission.mission_code, mission.service_type, mission.client_name, mission.beneficiary_name, mission.city, mission.zone, mission.assigned_agent_name]

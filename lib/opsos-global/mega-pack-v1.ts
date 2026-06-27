@@ -63,7 +63,7 @@ export const OPSOS_MODULES: OpsosModule[] = [
 ]
 
 export const OPSOS_GLOBAL_ROUTES = [
-  '/enterprise-command',
+  '/executive-cockpit',
   '/executive-cockpit',
   '/module-specialization',
   '/operations-war-room',

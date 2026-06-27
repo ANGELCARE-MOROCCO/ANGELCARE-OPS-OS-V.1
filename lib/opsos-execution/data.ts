@@ -73,7 +73,7 @@ export async function getOpsosExecutionData() {
     action_type: s(item.action_type, 'execute'),
     status: s(item.status, 'open'),
     priority: s(item.priority, 'medium'),
-    route: s(item.route, '/enterprise-command'),
+    route: s(item.route, '/executive-cockpit'),
     payload: item.payload || {},
     created_at: s(item.created_at, new Date().toISOString()),
   }))

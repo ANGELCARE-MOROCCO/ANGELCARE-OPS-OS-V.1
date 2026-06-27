@@ -4,7 +4,7 @@ import { GlobalButton, GlobalHero, GlobalMetric, GlobalNavStrip, GlobalPanel, Gl
 
 export default function Page() {
   const nav = [
-    { label: 'Enterprise Command', href: '/enterprise-command', tone: 'blue' as const },
+    { label: 'Enterprise Command', href: '/executive-cockpit', tone: 'blue' as const },
     { label: 'Executive Cockpit', href: '/executive-cockpit', tone: 'purple' as const },
     { label: 'Module Specialization', href: '/module-specialization', tone: 'cyan' as const },
     { label: 'Ops War Room', href: '/operations-war-room', tone: 'red' as const },
@@ -15,7 +15,7 @@ export default function Page() {
   ]
 
   return (
-    <AppShell title="Executive Cockpit" subtitle="CEO / director command surface" breadcrumbs={[{ label: 'OPS OS', href: '/enterprise-command' }, { label: 'Executive Cockpit' }]} actions={<PageAction href="/opsos-final-qa" variant="light">Final QA</PageAction>}>
+    <AppShell title="Executive Cockpit" subtitle="CEO / director command surface" breadcrumbs={[{ label: 'OPS OS', href: '/executive-cockpit' }, { label: 'Executive Cockpit' }]} actions={<PageAction href="/opsos-final-qa" variant="light">Final QA</PageAction>}>
       <GlobalShell>
         <GlobalNavStrip items={nav} />
         <GlobalHero

@@ -58,8 +58,14 @@ export async function requireUser() {
 
 export async function requireRole(allowedRoles: string[]) {
   const user = await requireUser()
+  const role = String((user as any).role || '').trim().toLowerCase()
+  const normalizedAllowedRoles = allowedRoles.map((item) => String(item).trim().toLowerCase())
 
-  if (!allowedRoles.includes(user.role)) {
+  if (role === 'ceo' || role === 'owner' || role === 'super_admin') {
+    return user
+  }
+
+  if (!normalizedAllowedRoles.includes(role)) {
     redirect('/unauthorized')
   }
 

@@ -31,8 +31,17 @@ import type { CareLinkMobileAlert, CareLinkMobileNotification, CareLinkMobilePay
 import { useCareLinkOfflineQueue } from '@/lib/carelink/offline-queue'
 import { useCareLinkRealtime } from '@/lib/carelink/realtime'
 import type { MissionControlRecord, MissionDossier } from '@/lib/missions/types'
+import { buildCareLinkDynamicServiceChecklist, type CareLinkDynamicChecklistDefinition } from '@/lib/carelink/mobile-service-checklists'
+import {
+  EnterpriseAgentProfileScreen,
+  EnterpriseOfflineScreen,
+  EnterprisePaymentsScreen,
+  EnterpriseReadinessScreen,
+  EnterpriseSafetyScreen,
+  EnterpriseScheduleScreen,
+} from './CareLinkAgentEnterpriseScreens'
 
-type CareLinkMobileView = 'home' | 'missions' | 'mission' | 'schedule' | 'calendar' | 'notifications' | 'alerts' | 'history' | 'payments' | 'readiness' | 'support' | 'messages' | 'profile' | 'safety'
+type CareLinkMobileView = 'home' | 'missions' | 'mission' | 'schedule' | 'calendar' | 'notifications' | 'alerts' | 'history' | 'payments' | 'readiness' | 'support' | 'messages' | 'profile' | 'safety' | 'offline'
 
 type Props = {
   records: MissionControlRecord[]
@@ -147,6 +156,314 @@ function safeArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? value as T[] : []
 }
 
+type ProgramActivity = {
+  id: string
+  title: string
+  description: string
+  objective: string
+  instructions: string
+  materials: string
+  safety: string
+  timeLabel: string
+  dayLabel: string
+  category: string
+  required: boolean
+  sortOrder: number
+  raw: Record<string, any>
+}
+
+type MissionRoutePlan = {
+  id: string
+  code: string
+  from: string
+  fromZone: string
+  fromTime: string
+  to: string
+  toZone: string
+  toTime: string
+  transportMode: string
+  transportDetails: string
+  backupTransport: string
+  distanceLabel: string
+  durationLabel: string
+  costMad: string
+  status: string
+  transits: Array<Record<string, any>>
+  raw: Record<string, any>
+}
+
+type MissionRouteExecutionLog = {
+  id: string
+  missionId: number
+  caregiverId: number
+  routeId: string
+  routeCode: string | null
+  action: string
+  status: string
+  transportMode: string | null
+  eta: string | null
+  notes: string | null
+  issueSeverity: string | null
+  createdAt: string
+  metadata: Record<string, unknown>
+}
+
+function readRouteObject(value: unknown): Record<string, any> {
+  if (!value) return {}
+  if (typeof value === 'object' && !Array.isArray(value)) return value as Record<string, any>
+  try {
+    const parsed = JSON.parse(String(value))
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+function firstRouteText(row: Record<string, any>, keys: string[], fallback = '') {
+  for (const key of keys) {
+    const value = row[key]
+    if (Array.isArray(value) && value.length) return value.map((item) => String(item)).join(' · ')
+    if (typeof value === 'string' && value.trim()) return value
+    if (typeof value === 'number' && Number.isFinite(value)) return String(value)
+  }
+  return fallback
+}
+
+function normalizeMissionRoutes(mission: MissionControlRecord, routeRows: Array<Record<string, any>>, transport: Record<string, unknown> | null | undefined): MissionRoutePlan[] {
+  const sourceRows = routeRows.length ? routeRows : [{
+    id: 'primary-route',
+    route_code: firstRouteText(mission as any, ['routeCode', 'route_code'], `RT-${mission.code || mission.id}`),
+    departureName: firstRouteText(mission as any, ['routeFrom', 'route_from', 'city'], mission.city || 'Départ'),
+    arrivalName: firstRouteText(mission as any, ['routeTo', 'route_to', 'zone'], mission.zone || 'Arrivée'),
+    transport_mode: firstRouteText(transport || {}, ['mode', 'label', 'transport_mode'], firstRouteText(mission as any, ['transportMode', 'transport_mode'], 'Transport non précisé')),
+  }]
+
+  return sourceRows.map((row, index) => {
+    const meta = readRouteObject(row.notes || row.metadata)
+    const departure = readRouteObject(row.outbound_departure || row.departure || row.from_details)
+    const arrival = readRouteObject(row.outbound_arrival || row.arrival || row.to_details)
+    const transportMeta = readRouteObject(row.return_departure || row.transport || transport || {})
+    const backup = readRouteObject(row.return_arrival || row.backup || {})
+    const transits = Array.isArray(meta.transits) ? meta.transits : Array.isArray(transportMeta.transits) ? transportMeta.transits : Array.isArray(row.transits) ? row.transits : []
+    return {
+      id: firstRouteText(row, ['id', 'localId', 'route_id'], `route-${index + 1}`),
+      code: firstRouteText(meta, ['routeCode'], firstRouteText(row, ['route_code', 'routeCode', 'code'], `RT-${mission.code || mission.id}-${index + 1}`)),
+      from: firstRouteText(meta, ['departureName'], firstRouteText(departure, ['name', 'label'], firstRouteText(row, ['from', 'origin', 'route_from', 'departure_name'], mission.city || 'Départ'))),
+      fromZone: firstRouteText(meta, ['departureZone'], firstRouteText(departure, ['zone'], firstRouteText(row, ['departure_zone', 'route_from_zone'], mission.zone || '—'))),
+      fromTime: firstRouteText(meta, ['departureTime'], firstRouteText(departure, ['time'], firstRouteText(row, ['departure_time', 'start_time', 'planned_start'], mission.timeLabel || '—'))),
+      to: firstRouteText(meta, ['arrivalName'], firstRouteText(arrival, ['name', 'label'], firstRouteText(row, ['to', 'destination', 'route_to', 'arrival_name'], mission.zone || 'Arrivée'))),
+      toZone: firstRouteText(meta, ['arrivalZone'], firstRouteText(arrival, ['zone'], firstRouteText(row, ['arrival_zone', 'route_to_zone'], mission.zone || '—'))),
+      toTime: firstRouteText(meta, ['arrivalTime'], firstRouteText(arrival, ['time'], firstRouteText(row, ['arrival_time', 'planned_arrival'], '—'))),
+      transportMode: firstRouteText(meta, ['primaryTransport'], firstRouteText(transportMeta, ['primaryTransport', 'mode', 'transport_mode', 'label'], firstRouteText(row, ['transport_mode', 'mode'], 'Transport non précisé'))),
+      transportDetails: firstRouteText(meta, ['transportDetails'], firstRouteText(transportMeta, ['transportDetails', 'details'], firstRouteText(row, ['transport_details', 'details'], 'Détails transport non précisés'))),
+      backupTransport: firstRouteText(meta, ['backupTransport'], Array.isArray(backup.backupTransports) ? backup.backupTransports.join(' · ') : firstRouteText(row, ['backup_transport', 'backup'], 'Backup non précisé')),
+      distanceLabel: firstRouteText(row, ['distance_label', 'distanceLabel'], firstRouteText(meta, ['distanceLabel'], 'Distance à confirmer')),
+      durationLabel: firstRouteText(row, ['duration_label', 'durationLabel'], firstRouteText(meta, ['durationLabel'], 'Durée à confirmer')),
+      costMad: firstRouteText(row, ['cost_mad', 'costMad'], firstRouteText(meta, ['costMad'], '0')),
+      status: firstRouteText(meta, ['status'], firstRouteText(row, ['status'], 'planning')),
+      transits,
+      raw: row,
+    }
+  })
+}
+
+function normalizeRouteExecutionLog(row: Record<string, any>): MissionRouteExecutionLog {
+  return {
+    id: String(row.id || `route-log-${Date.now()}`),
+    missionId: Number(row.missionId || row.mission_id || 0),
+    caregiverId: Number(row.caregiverId || row.caregiver_id || 0),
+    routeId: String(row.routeId || row.route_id || 'primary-route'),
+    routeCode: row.routeCode || row.route_code || null,
+    action: String(row.action || 'route_update'),
+    status: String(row.status || 'recorded'),
+    transportMode: row.transportMode || row.transport_mode || null,
+    eta: row.eta || null,
+    notes: row.notes || null,
+    issueSeverity: row.issueSeverity || row.issue_severity || null,
+    createdAt: String(row.createdAt || row.created_at || new Date().toISOString()),
+    metadata: readRouteObject(row.metadata),
+  }
+}
+
+function routeActionLabel(action: string) {
+  const labels: Record<string, string> = {
+    departure_confirmed: 'Départ confirmé',
+    eta_updated: 'ETA transmis',
+    delay_reported: 'Retard signalé',
+    issue_reported: 'Incident trajet',
+    route_completed: 'Trajet terminé',
+    allowance_claimed: 'Frais transport déclarés',
+    location_shared: 'Position transmise',
+    route_update: 'Mise à jour trajet',
+  }
+  return labels[action] || action.replaceAll('_', ' ')
+}
+
+function firstProgramText(line: Record<string, any>, keys: string[], fallback = '—') {
+  for (const key of keys) {
+    const value = line[key]
+    if (Array.isArray(value) && value.length) return value.map((item) => String(item)).join(' · ')
+    if (typeof value === 'string' && value.trim()) return value
+    if (typeof value === 'number' && Number.isFinite(value)) return String(value)
+  }
+  return fallback
+}
+
+function programActivityId(line: Record<string, any>, index: number) {
+  return String(line.id || line.activity_id || line.program_line_id || line.code || line.reference || `program-line-${index + 1}`)
+}
+
+function isProgramActivityRequired(line: Record<string, any>) {
+  const raw = String(line.required || line.is_required || line.mandatory || line.requirement || line.priority || '').toLowerCase()
+  return line.required === true || line.is_required === true || line.mandatory === true || ['required', 'mandatory', 'obligatoire', 'must'].some((word) => raw.includes(word))
+}
+
+function normalizeProgramActivities(programLines: Array<Record<string, any>>, parameterDays: Array<Record<string, any>>): ProgramActivity[] {
+  return programLines.map((line, index) => {
+    const dayIndex = Number(line.day_index || line.day || line.parameter_day_index || 0)
+    const linkedDay = Number.isFinite(dayIndex) ? parameterDays[Math.max(0, dayIndex - 1)] || parameterDays[dayIndex] : null
+    const start = firstProgramText(line, ['start_time', 'planned_start', 'from', 'hour', 'time'], '')
+    const end = firstProgramText(line, ['end_time', 'planned_end', 'to'], '')
+    const duration = firstProgramText(line, ['duration', 'duration_minutes', 'estimated_duration'], '')
+    const timeLabel = start && end ? `${start} → ${end}` : start || duration || 'Horaire non précisé'
+
+    return {
+      id: programActivityId(line, index),
+      title: firstProgramText(line, ['label', 'title', 'name', 'activity', 'activity_title', 'program_title'], `Activité ${index + 1}`),
+      description: firstProgramText(line, ['description', 'note', 'details', 'value', 'summary'], 'Aucune description ajoutée dans le dossier.'),
+      objective: firstProgramText(line, ['objective', 'goal', 'purpose', 'learning_objective'], 'Objectif non précisé.'),
+      instructions: firstProgramText(line, ['instructions', 'agent_instructions', 'execution_notes', 'ops_instructions'], 'Suivre les consignes du dossier et de la liaison opérationnelle.'),
+      materials: firstProgramText(line, ['materials', 'material', 'required_material', 'equipment', 'kit'], 'Aucun matériel spécifique renseigné.'),
+      safety: firstProgramText(line, ['safety', 'safety_notes', 'risk_notes', 'precautions'], 'Appliquer les règles de sécurité AngelCare.'),
+      timeLabel,
+      dayLabel: firstProgramText(line, ['day_label', 'date_label', 'mission_day'], firstProgramText(linkedDay || {}, ['label', 'date', 'day_label'], 'Programme mission')),
+      category: firstProgramText(line, ['category', 'service_family', 'type'], 'Programme'),
+      required: isProgramActivityRequired(line),
+      sortOrder: Number(line.sort_order || line.order || index),
+      raw: line,
+    }
+  }).sort((a, b) => a.sortOrder - b.sortOrder)
+}
+
+function latestProgramActivityLogMap(logs: Array<Record<string, any>>) {
+  const map = new Map<string, Record<string, any>>()
+  for (const log of logs) {
+    const activityId = String(log.activityId || log.activity_id || '')
+    if (!activityId || map.has(activityId)) continue
+    map.set(activityId, log)
+  }
+  return map
+}
+
+function programStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    pending: 'À faire',
+    started: 'Démarrée',
+    in_progress: 'En cours',
+    completed: 'Terminée',
+    done: 'Terminée',
+    validated: 'Validée',
+    issue: 'Point à signaler',
+    blocked: 'Bloquée',
+    skipped: 'Non réalisée',
+  }
+  return labels[status] || status.replaceAll('_', ' ')
+}
+
+function programStatusTone(status: string) {
+  if (['completed', 'done', 'validated'].includes(status)) return 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+  if (['started', 'in_progress'].includes(status)) return 'bg-blue-50 text-blue-700 ring-blue-100'
+  if (['issue', 'blocked'].includes(status)) return 'bg-rose-50 text-rose-700 ring-rose-100'
+  if (['skipped'].includes(status)) return 'bg-amber-50 text-amber-700 ring-amber-100'
+  return 'bg-slate-100 text-slate-600 ring-slate-200'
+}
+
+type MissionBriefSection = {
+  key: string
+  label: string
+  value: string
+  required: boolean
+}
+
+function rowText(row: Record<string, any> | null | undefined, keys: string[], fallback = '') {
+  if (!row) return fallback
+  for (const key of keys) {
+    const value = row[key]
+    if (Array.isArray(value) && value.length) return value.map((item) => String(item)).filter(Boolean).join(' · ')
+    if (value && typeof value === 'object') {
+      const nested = Object.values(value).find((item) => typeof item === 'string' && item.trim())
+      if (nested) return String(nested)
+    }
+    if (typeof value === 'string' && value.trim()) return value
+    if (typeof value === 'number' && Number.isFinite(value)) return String(value)
+  }
+  return fallback
+}
+
+function buildMissionBriefSections(mission: MissionControlRecord, dossier: MissionDossier | null, serviceNotes: string[]): MissionBriefSection[] {
+  const raw = (dossier?.raw || {}) as Record<string, any>
+  const family = (raw.families || {}) as Record<string, any>
+  const contract = (raw.contracts || {}) as Record<string, any>
+  const parameters = (dossier?.parameters || {}) as Record<string, any>
+  const location = [rowText(raw, ['address', 'full_address', 'location', 'pickup_address'], ''), mission.zone, mission.city].filter(Boolean).join(' · ')
+  const emergency = rowText(raw, ['emergency_contact', 'emergency_phone', 'parent_phone', 'contact_phone'], '') || rowText(family, ['phone', 'mobile_phone', 'emergency_phone'], '') || 'Contact urgence non renseigné dans le dossier.'
+  const parentInstructions =
+    rowText(raw, ['parent_instructions', 'family_instructions', 'instructions_parent', 'client_instructions', 'notes'], '') ||
+    rowText(parameters, ['parent_instructions', 'instructions', 'care_instructions', 'special_notes'], '') ||
+    rowText(contract, ['instructions', 'notes'], '') ||
+    mission.title ||
+    'Aucune consigne parent spécifique publiée. Appliquer les standards AngelCare et contacter OPS en cas de doute.'
+
+  return [
+    {
+      key: 'parent_instructions',
+      label: 'Consignes parent',
+      value: parentInstructions,
+      required: true,
+    },
+    {
+      key: 'service_scope',
+      label: 'Périmètre de service',
+      value: rowText(raw, ['mission_scope', 'service_scope', 'scope'], '') || `${mission.serviceType} · ${mission.serviceFamily}`,
+      required: true,
+    },
+    {
+      key: 'location',
+      label: 'Lieu et accès',
+      value: location || 'Lieu non détaillé. Se référer à la zone mission et à la liaison opérationnelle.',
+      required: true,
+    },
+    {
+      key: 'emergency_contact',
+      label: 'Contact urgence',
+      value: emergency,
+      required: true,
+    },
+    {
+      key: 'safety_confidentiality',
+      label: 'Sécurité et confidentialité',
+      value: rowText(raw, ['safety_notes', 'risk_notes', 'confidentiality_notes', 'ops_notes'], '') || serviceNotes[0] || 'Respect strict de la confidentialité famille/enfant, sécurité terrain et remontée immédiate de toute anomalie à OPS.',
+      required: true,
+    },
+  ]
+}
+
+function latestMissionBriefAcknowledgement(acks: Array<Record<string, any>>) {
+  return [...acks].sort((a, b) => String(b.acknowledgedAt || b.acknowledged_at || b.updatedAt || b.updated_at || '').localeCompare(String(a.acknowledgedAt || a.acknowledged_at || a.updatedAt || a.updated_at || '')))[0] || null
+}
+
+function missionBriefAcknowledgementComplete(ack: Record<string, any> | null | undefined) {
+  if (!ack) return false
+  const status = String(ack.status || '').toLowerCase()
+  return status === 'acknowledged' && Boolean(
+    (ack.parentInstructionsAcknowledged ?? ack.parent_instructions_acknowledged) &&
+    (ack.serviceScopeAcknowledged ?? ack.service_scope_acknowledged) &&
+    (ack.locationAcknowledged ?? ack.location_acknowledged) &&
+    (ack.emergencyAcknowledged ?? ack.emergency_acknowledged) &&
+    (ack.confidentialityAcknowledged ?? ack.confidentiality_acknowledged),
+  )
+}
+
 function routeMeta(view: CareLinkMobileView, workspace: CareLinkMobileWorkspace | null) {
   const unread = safeArray<{ unread?: boolean }>(workspace?.messages).filter((message) => Boolean(message.unread)).length
   const criticalAlerts = safeArray<{ tone?: string }>(workspace?.alerts).filter((alert) => alert.tone === 'red').length
@@ -238,6 +555,12 @@ function routeMeta(view: CareLinkMobileView, workspace: CareLinkMobileWorkspace 
       title: 'Centre SOS',
       description: 'Urgence, liaison opérationnelle, secours, incident et protocole terrain.',
       chips: ['SOS', 'Incident', 'Localisation'],
+    },
+    offline: {
+      eyebrow: 'Synchronisation',
+      title: 'Centre offline et appareil',
+      description: 'État réseau, file locale, audit appareil, sessions et synchronisation anti-doublon.',
+      chips: ['Offline', 'Device', 'Audit'],
     },
   }
 
@@ -340,17 +663,18 @@ export function CareLinkFieldAgentPremiumApp({ records, view = 'home', selectedI
         {view === 'home' ? <HomeScreen records={localRecords} workspace={activeWorkspace} runAction={runAction} busy={busy} queuePending={pendingCount} syncing={syncing} online={isOnline} /> : null}
         {view === 'missions' ? <MissionsScreen records={localRecords} workspace={activeWorkspace} activeTab={activeTab} setActiveTab={setActiveTab} runAction={runAction} busy={busy} /> : null}
         {view === 'mission' ? <MissionDetailScreen mission={selected} dossier={dossier} workspace={activeWorkspace} runAction={runAction} busy={busy} /> : null}
-        {view === 'schedule' ? <ScheduleScreen records={localRecords} /> : null}
+        {view === 'schedule' ? <EnterpriseScheduleScreen records={localRecords} workspace={activeWorkspace} runCareLinkAction={runCareLinkAction} /> : null}
         {view === 'calendar' ? <CalendarScreen workspace={activeWorkspace} records={localRecords} /> : null}
         {view === 'notifications' ? <NotificationsScreen workspace={activeWorkspace} records={localRecords} notifications={notificationFeed} runCareLinkAction={runCareLinkAction} /> : null}
         {view === 'alerts' ? <AlertsScreen workspace={activeWorkspace} records={localRecords} alerts={alertFeed} runCareLinkAction={runCareLinkAction} /> : null}
         {view === 'history' ? <HistoryScreen workspace={activeWorkspace} records={localRecords} /> : null}
-        {view === 'payments' ? <PaymentsScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} /> : null}
-        {view === 'readiness' ? <ReadinessScreen workspace={activeWorkspace} records={localRecords} /> : null}
+        {view === 'payments' ? <EnterprisePaymentsScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} /> : null}
+        {view === 'readiness' ? <EnterpriseReadinessScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} /> : null}
         {view === 'support' ? <SupportScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} /> : null}
         {view === 'messages' ? <MessagesScreen records={localRecords} workspace={activeWorkspace} messages={messageFeed} runCareLinkAction={runCareLinkAction} /> : null}
-        {view === 'profile' ? <ProfileScreen records={localRecords} workspace={activeWorkspace} runCareLinkAction={runCareLinkAction} /> : null}
-        {view === 'safety' ? <SafetyScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} /> : null}
+        {view === 'profile' ? <EnterpriseAgentProfileScreen records={localRecords} workspace={activeWorkspace} runCareLinkAction={runCareLinkAction} /> : null}
+        {view === 'safety' ? <EnterpriseSafetyScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} /> : null}
+        {view === 'offline' ? <EnterpriseOfflineScreen workspace={activeWorkspace} records={localRecords} runCareLinkAction={runCareLinkAction} pendingCount={pendingCount} syncing={syncing} online={isOnline} /> : null}
         {toast ? <ToastMessage toast={toast} /> : null}
         <BottomNav active={view === 'mission' ? 'missions' : view} />
       </div>
@@ -511,7 +835,7 @@ function HomeScreen({
           <EnterpriseMiniModule href="/carelink/support" label="Assistance" value={`${support.length} demandes`} />
           <EnterpriseMiniModule href="/carelink/history" label="Audit" value={`${history.length} lignes`} />
           <EnterpriseMiniModule href="/carelink/safety" label="Sécurité" value={alertsFeed.length ? `${alertsFeed.length} alertes` : 'Stabilité'} />
-          <EnterpriseMiniModule href="/carelink" label="Synchronisation" value={online ? 'En direct' : 'File locale'} />
+          <EnterpriseMiniModule href="/carelink/offline" label="Synchronisation" value={online ? 'En direct' : 'File locale'} />
         </div>
       </section>
 
@@ -659,6 +983,7 @@ function MissionDetailScreen({
   const [recommendations, setRecommendations] = useState('')
   const [activities, setActivities] = useState('')
   const [incidentFlag, setIncidentFlag] = useState(false)
+  const [briefAcknowledgedOverride, setBriefAcknowledgedOverride] = useState(false)
 
   if (!mission) {
     return (
@@ -688,6 +1013,12 @@ function MissionDetailScreen({
   const allowances = dossier?.allowances || null
   const programLines = (dossier?.programLines || []) as Array<Record<string, any>>
   const parameterDays = (dossier?.parameterDays || []) as Array<Record<string, any>>
+  const programActivityLogs = (((dossier as any)?.programActivityLogs || workspace?.programActivityLogs || []) as Array<Record<string, any>>)
+    .filter((log) => String(log.missionId || log.mission_id || '') === String(mission.id))
+  const briefAcknowledgements = (((dossier as any)?.briefAcknowledgements || workspace?.briefAcknowledgements || []) as Array<Record<string, any>>)
+    .filter((ack) => String(ack.missionId || ack.mission_id || '') === String(mission.id))
+  const routeExecutionLogs = (((dossier as any)?.routeExecutionLogs || workspace?.routeExecutionLogs || []) as Array<Record<string, any>>)
+    .filter((log) => String(log.missionId || log.mission_id || '') === String(mission.id))
   const notifications = (dossier?.notifications || []) as Array<Record<string, any>>
   const alerts = (dossier?.alerts || []) as Array<Record<string, any>>
   const disputes = (dossier?.paymentDisputes || []) as Array<Record<string, any>>
@@ -709,6 +1040,15 @@ function MissionDetailScreen({
   const beneficiaryContext = firstText((dossier?.raw as any)?.beneficiary_name, (dossier?.raw as any)?.beneficiaries?.full_name, mission.familyName, 'Bénéficiaire')
   const familyContext = firstText((dossier?.raw as any)?.families?.full_name, mission.familyName, 'Famille')
   const serviceNotes = (dossier?.parameters ? Object.entries(dossier.parameters).map(([key, value]) => `${key}: ${String(value)}`) : []).slice(0, 4)
+  const missionBriefSections = buildMissionBriefSections(mission, dossier, serviceNotes)
+  const latestBriefAck = latestMissionBriefAcknowledgement(briefAcknowledgements)
+  const briefAcknowledged = briefAcknowledgedOverride || missionBriefAcknowledgementComplete(latestBriefAck)
+  const serviceChecklistDefinition = buildCareLinkDynamicServiceChecklist({
+    serviceType: mission.serviceType || (dossier?.raw as any)?.service_type,
+    serviceFamily: mission.serviceFamily || (dossier?.raw as any)?.service_family,
+    missionScope: (dossier?.raw as any)?.mission_scope,
+    riskLevel: mission.riskLevel || (dossier?.raw as any)?.risk_level,
+  })
 
   return (
     <section className="pb-28">
@@ -758,7 +1098,17 @@ function MissionDetailScreen({
           <InfoRow icon={<Navigation size={18} />} label="Prochaine action" value={nextAction} />
         </DetailCard>
 
-        <ActionGrid mission={mission} runAction={runAction} busyAction={busy} />
+        <MissionBriefAcknowledgementSection
+          mission={mission}
+          sections={missionBriefSections}
+          acknowledged={briefAcknowledged}
+          latestAcknowledgement={latestBriefAck}
+          runAction={runAction}
+          busy={busy}
+          onAcknowledged={() => setBriefAcknowledgedOverride(true)}
+        />
+
+        <ActionGrid mission={mission} runAction={runAction} busyAction={busy} blockedActions={briefAcknowledged ? undefined : { start: 'Brief requis' }} />
 
         <DetailCard title="Lifecycle de mission">
           <div className="space-y-3">
@@ -786,55 +1136,31 @@ function MissionDetailScreen({
           </ul>
         </DetailCard>
 
-        <DetailCard title="Service et programme">
-          <div className="space-y-3 text-sm leading-6 text-slate-700">
-            <InfoRow icon={<ClipboardCheck size={18} />} label="Type de service" value={`${mission.serviceType} · ${mission.serviceFamily}`} />
-            <InfoRow icon={<Star size={18} />} label="Caractéristiques" value={`Préparation ${mission.readinessStatus} · Validation ${mission.validationStatus} · Risque ${mission.riskLevel}`} />
-            <InfoRow icon={<Clock3 size={18} />} label="Séquence" value={`${parameterDays.length || 0} jour(s) paramétrés · ${programLines.length || 0} ligne(s) programme`} />
-            <div className="space-y-2">
-              {programLines.slice(0, 4).map((line, index) => (
-                <div key={String(line.id || index)} className="rounded-2xl bg-slate-50 p-3">
-                  <p className="text-sm font-black text-slate-950">{String(line.label || line.title || line.name || `Ligne ${index + 1}`)}</p>
-                  <p className="mt-1 text-xs text-slate-500">{String(line.description || line.note || line.value || 'Programme opérationnel')}</p>
-                </div>
-              ))}
-              {!programLines.length ? <p className="text-sm text-slate-500">Aucune ligne programme enregistrée.</p> : null}
-            </div>
-          </div>
-        </DetailCard>
+        <ProgramExecutionSection
+          mission={mission}
+          programLines={programLines}
+          parameterDays={parameterDays}
+          activityLogs={programActivityLogs}
+          runAction={runAction}
+          busy={busy}
+        />
 
-        <DetailCard title="Transport et itinéraire">
-          <div className="space-y-2">
-            {routeRows.slice(0, 3).map((row, index) => (
-              <p key={index} className="rounded-2xl bg-slate-50 p-3 text-sm font-semibold text-slate-700">
-                {String((row as any).from || (row as any).origin || 'Départ')} → {String((row as any).to || (row as any).destination || 'Arrivée')}
-              </p>
-            ))}
-            {!routeRows.length ? <p className="text-sm text-slate-500">Aucune donnée d’itinéraire pour cette mission.</p> : null}
-            <InfoRow icon={<Navigation size={18} />} label="Transport" value={String(dossier?.transport ? (dossier.transport as any).mode || (dossier.transport as any).label || 'Disponible' : 'Non précisé')} />
-            <InfoRow icon={<Route size={18} />} label="Circuit" value={String(dossier?.raw?.mission_scope || dossier?.raw?.service_family || mission.serviceFamily)} />
-          </div>
-        </DetailCard>
+        <RouteTransportExecutionSection
+          mission={mission}
+          routeRows={routeRows as Array<Record<string, any>>}
+          transport={dossier?.transport || null}
+          executionLogs={routeExecutionLogs}
+          runAction={runAction}
+          busy={busy}
+        />
 
-        <DetailCard title="Liste de contrôle opérationnelle">
-          <div className="space-y-3">
-            {checklistItems.length ? checklistItems.map((item) => (
-              <label key={String(item.id)} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-                <input
-                  type="checkbox"
-                  checked={Boolean(item.completed)}
-                  onChange={(event) => runAction(mission, 'checklist', { itemId: String(item.id), completed: event.target.checked, notes: `Contrôle ${String(item.label || item.title || item.code || 'terrain')}` })}
-                  className="mt-1 h-4 w-4 accent-blue-600"
-                />
-                <span className="min-w-0">
-                  <p className="font-black text-slate-950">{String(item.label || item.title || item.code || item.serviceType || 'Tâche')}</p>
-                  <p className="mt-1 text-xs text-slate-500">{String(item.description || item.category || 'Contrôle opérationnel')}</p>
-                </span>
-                <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-500">{item.required ? 'Requis' : 'Optionnel'}</span>
-              </label>
-            )) : <p className="text-sm font-semibold text-slate-500">Aucune sous-mission disponible.</p>}
-          </div>
-        </DetailCard>
+        <DynamicServiceChecklistSection
+          mission={mission}
+          checklistItems={checklistItems}
+          definition={serviceChecklistDefinition}
+          runAction={runAction}
+          busy={busy}
+        />
 
         <DetailCard title="Rapport structuré">
           <div className="space-y-3">
@@ -856,6 +1182,12 @@ function MissionDetailScreen({
                 checklistSnapshot: checklistItems.map((item) => ({ id: item.id, label: item.label || item.title || item.code, completed: Boolean(item.completed), required: Boolean(item.required) })),
                 incidentFlag,
                 recommendations: recommendations || reportData?.recommendations || '',
+                metadata: {
+                  programActivitySnapshot: normalizeProgramActivities(programLines, parameterDays).map((activity) => {
+                    const log = latestProgramActivityLogMap(programActivityLogs).get(activity.id)
+                    return { activityId: activity.id, title: activity.title, required: activity.required, status: String(log?.status || 'pending') }
+                  }),
+                },
               })}
               className="w-full rounded-2xl bg-[#06285e] px-4 py-4 text-sm font-black text-white disabled:opacity-50"
             >
@@ -1975,6 +2307,618 @@ function MiniStat({ label, value, tone }: { label: string; value: string | numbe
   )
 }
 
+
+
+function MissionBriefAcknowledgementSection({
+  mission,
+  sections,
+  acknowledged,
+  latestAcknowledgement,
+  runAction,
+  busy,
+  onAcknowledged,
+}: {
+  mission: MissionControlRecord
+  sections: MissionBriefSection[]
+  acknowledged: boolean
+  latestAcknowledgement: Record<string, any> | null
+  runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void
+  busy: string | null
+  onAcknowledged: () => void
+}) {
+  const [checked, setChecked] = useState<Record<string, boolean>>(() => ({
+    parent_instructions: acknowledged,
+    service_scope: acknowledged,
+    location: acknowledged,
+    emergency_contact: acknowledged,
+    safety_confidentiality: acknowledged,
+  }))
+  const [note, setNote] = useState('')
+
+  useEffect(() => {
+    if (acknowledged) {
+      setChecked({
+        parent_instructions: true,
+        service_scope: true,
+        location: true,
+        emergency_contact: true,
+        safety_confidentiality: true,
+      })
+    }
+  }, [acknowledged])
+
+  const requiredKeys = sections.filter((section) => section.required).map((section) => section.key)
+  const missing = requiredKeys.filter((key) => !checked[key])
+  const isBusy = busy === `${mission.id}:brief-acknowledge`
+  const acknowledgedAt = String(latestAcknowledgement?.acknowledgedAt || latestAcknowledgement?.acknowledged_at || '')
+
+  function acknowledgeBrief() {
+    if (missing.length) return
+    const snapshot = sections.reduce<Record<string, unknown>>((acc, section) => {
+      acc[section.key] = { label: section.label, value: section.value, required: section.required }
+      return acc
+    }, {})
+    onAcknowledged()
+    runAction(mission, 'brief-acknowledge', {
+      briefVersion: 'carelink-mobile-brief-v1',
+      parentInstructionsAcknowledged: true,
+      serviceScopeAcknowledged: true,
+      locationAcknowledged: true,
+      emergencyAcknowledged: true,
+      confidentialityAcknowledged: true,
+      sections: snapshot,
+      briefSnapshot: { missionCode: mission.code, serviceType: mission.serviceType, familyName: mission.familyName, city: mission.city, zone: mission.zone },
+      metadata: { note: note || null, source: 'carelink_mobile_mission_detail' },
+    })
+  }
+
+  return (
+    <DetailCard title="Brief mission" icon={<ShieldCheck size={18} />}>
+      <div className="space-y-4">
+        <div className={cx('rounded-[1.75rem] p-4 ring-1', acknowledged ? 'bg-emerald-50 text-emerald-950 ring-emerald-100' : 'bg-amber-50 text-amber-950 ring-amber-100')}>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.26em] opacity-70">Consignes parent</p>
+              <h3 className="mt-2 text-lg font-black">{acknowledged ? 'Brief reconnu' : 'Reconnaissance requise avant démarrage'}</h3>
+              <p className="mt-2 text-xs font-bold leading-5 opacity-75">
+                {acknowledged ? `Confirmé${acknowledgedAt ? ` · ${acknowledgedAt.slice(0, 16).replace('T', ' ')}` : ''}` : 'Lire les consignes, confirmer les points requis, puis démarrer la mission.'}
+              </p>
+            </div>
+            <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1', acknowledged ? 'bg-white text-emerald-700 ring-emerald-100' : 'bg-white text-amber-700 ring-amber-100')}>
+              {acknowledged ? 'OK' : `${missing.length} requis`}
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {sections.map((section) => (
+            <label key={section.key} className="flex items-start gap-3 rounded-[1.35rem] border border-slate-200 bg-white p-3 shadow-sm">
+              <input
+                type="checkbox"
+                checked={Boolean(checked[section.key])}
+                disabled={acknowledged}
+                onChange={(event) => setChecked((current) => ({ ...current, [section.key]: event.target.checked }))}
+                className="mt-1 h-4 w-4 accent-blue-600"
+              />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-black text-slate-950">{section.label}</span>
+                <span className="mt-1 block text-xs font-semibold leading-5 text-slate-600">{section.value}</span>
+              </span>
+              {section.required ? <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-500">Requis</span> : null}
+            </label>
+          ))}
+        </div>
+
+        {!acknowledged ? (
+          <>
+            <textarea
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+              placeholder="Note courte si un point doit être signalé à OPS avant démarrage"
+              className="min-h-20 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-blue-400"
+            />
+            <button
+              disabled={Boolean(missing.length) || isBusy}
+              onClick={acknowledgeBrief}
+              className="w-full rounded-2xl bg-slate-950 px-4 py-4 text-sm font-black text-white shadow-lg shadow-slate-200 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
+            >
+              {isBusy ? 'Synchronisation...' : 'Confirmer le brief'}
+            </button>
+          </>
+        ) : null}
+      </div>
+    </DetailCard>
+  )
+}
+
+
+type DynamicChecklistDisplayItem = {
+  id: string
+  label: string
+  description: string
+  category: string
+  groupLabel: string
+  required: boolean
+  completed: boolean
+  evidenceRequired: boolean
+  severity: string
+  itemKey: string
+  notes: string
+  metadata: Record<string, any>
+}
+
+function recordMetadata(row: Record<string, any>) {
+  return (row.metadata && typeof row.metadata === 'object' && !Array.isArray(row.metadata) ? row.metadata : {}) as Record<string, any>
+}
+
+function normalizeDynamicChecklistItem(row: Record<string, any>, definition: CareLinkDynamicChecklistDefinition, index: number): DynamicChecklistDisplayItem {
+  const metadata = recordMetadata(row)
+  const itemKey = String(row.itemKey || row.item_key || metadata.template_key || row.code || row.id || `check-${index + 1}`)
+  const template = definition.items.find((item) => item.key === itemKey)
+  return {
+    id: String(row.id || itemKey),
+    label: String(row.label || row.title || template?.label || itemKey.replaceAll('_', ' ')),
+    description: String(row.description || template?.description || row.category || 'Contrôle service terrain'),
+    category: String(row.category || metadata.check_category || template?.category || 'general'),
+    groupLabel: String(row.checkGroup || row.check_group || metadata.checklist_group || template?.groupLabel || 'Contrôles'),
+    required: Boolean(row.required ?? template?.required),
+    completed: Boolean(row.completed),
+    evidenceRequired: Boolean(row.evidenceRequired ?? row.evidence_required ?? metadata.evidence_required ?? template?.evidenceRequired),
+    severity: String(row.severity || metadata.severity || template?.severity || 'standard'),
+    itemKey,
+    notes: String(row.notes || ''),
+    metadata: { ...metadata, template_key: itemKey, service_type: metadata.service_type || definition.serviceType, service_family: metadata.service_family || definition.serviceFamily },
+  }
+}
+
+function checklistSeverityTone(severity: string) {
+  const value = String(severity || '').toLowerCase()
+  if (['critical', 'high'].includes(value)) return 'bg-rose-50 text-rose-700 ring-rose-100'
+  if (['important', 'elevated', 'watch'].includes(value)) return 'bg-amber-50 text-amber-700 ring-amber-100'
+  return 'bg-slate-100 text-slate-600 ring-slate-200'
+}
+
+function DynamicServiceChecklistSection({
+  mission,
+  checklistItems,
+  definition,
+  runAction,
+  busy,
+}: {
+  mission: MissionControlRecord
+  checklistItems: Array<Record<string, any>>
+  definition: CareLinkDynamicChecklistDefinition
+  runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void
+  busy: string | null
+}) {
+  const items = useMemo(() => checklistItems.map((item, index) => normalizeDynamicChecklistItem(item, definition, index)), [checklistItems, definition])
+  const [notesById, setNotesById] = useState<Record<string, string>>({})
+  const completed = items.filter((item) => item.completed).length
+  const required = items.filter((item) => item.required).length
+  const missingRequired = items.filter((item) => item.required && !item.completed).length
+  const evidenceRequired = items.filter((item) => item.evidenceRequired).length
+  const criticalOpen = items.filter((item) => item.required && !item.completed && ['critical', 'high'].includes(String(item.severity).toLowerCase())).length
+  const progress = items.length ? Math.round((completed / items.length) * 100) : 0
+  const groups = Array.from(new Set(items.map((item) => item.groupLabel)))
+  const isBusy = busy === `${mission.id}:checklist`
+
+  function updateChecklistItem(item: DynamicChecklistDisplayItem, completedValue: boolean, action: 'checked' | 'unchecked' | 'issue_reported') {
+    const note = notesById[item.id] || item.notes || ''
+    runAction(mission, 'checklist', {
+      itemId: item.id,
+      completed: completedValue,
+      notes: note || `${item.label} · ${completedValue ? 'validé' : 'à revoir'}`,
+      metadata: {
+        ...item.metadata,
+        checklist_group: item.groupLabel,
+        check_category: item.category,
+        evidence_required: item.evidenceRequired,
+        severity: item.severity,
+        mobile_checklist_action: action,
+        source: 'carelink_mobile_p11_dynamic_service_checklists',
+      },
+    })
+  }
+
+  return (
+    <DetailCard title="Checklist service dynamique" icon={<ClipboardCheck size={18} />}>
+      <div className="space-y-4">
+        <div className="rounded-[1.75rem] bg-slate-950 p-4 text-white shadow-xl shadow-slate-200">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-200">{definition.serviceFamily}</p>
+              <h3 className="mt-2 text-xl font-black">{definition.title}</h3>
+              <p className="mt-2 text-xs font-semibold leading-5 text-slate-300">{definition.summary}</p>
+            </div>
+            <span className={cx('rounded-full px-3 py-2 text-[11px] font-black ring-1', missingRequired ? 'bg-amber-50 text-amber-700 ring-amber-100' : 'bg-emerald-50 text-emerald-700 ring-emerald-100')}>
+              {missingRequired ? `${missingRequired} requis` : 'Prête'}
+            </span>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/15">
+            <div className="h-full rounded-full bg-white transition-all" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2">
+          <MiniStat label="Progression" value={`${progress}%`} tone="bg-sky-50 text-sky-700 ring-sky-100" />
+          <MiniStat label="Requis" value={required} tone="bg-amber-50 text-amber-700 ring-amber-100" />
+          <MiniStat label="Preuves" value={evidenceRequired} tone="bg-indigo-50 text-indigo-700 ring-indigo-100" />
+          <MiniStat label="Critiques" value={criticalOpen} tone={criticalOpen ? 'bg-rose-50 text-rose-700 ring-rose-100' : 'bg-emerald-50 text-emerald-700 ring-emerald-100'} />
+        </div>
+
+        {items.length ? groups.map((group) => {
+          const groupItems = items.filter((item) => item.groupLabel === group)
+          const groupCompleted = groupItems.filter((item) => item.completed).length
+          return (
+            <div key={group} className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Bloc contrôle</p>
+                  <h4 className="mt-1 text-base font-black text-slate-950">{group}</h4>
+                </div>
+                <span className="rounded-full bg-slate-100 px-3 py-2 text-[10px] font-black text-slate-600">{groupCompleted}/{groupItems.length}</span>
+              </div>
+
+              <div className="space-y-3">
+                {groupItems.map((item) => (
+                  <div key={item.id} className={cx('rounded-2xl border p-3', item.completed ? 'border-emerald-100 bg-emerald-50/50' : 'border-slate-200 bg-slate-50')}>
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={item.completed}
+                        onChange={(event) => updateChecklistItem(item, event.target.checked, event.target.checked ? 'checked' : 'unchecked')}
+                        className="mt-1 h-4 w-4 accent-blue-600"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {item.required ? <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-700 ring-1 ring-amber-100">Requis</span> : <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Optionnel</span>}
+                          <span className={cx('rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ring-1', checklistSeverityTone(item.severity))}>{item.severity}</span>
+                          {item.evidenceRequired ? <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-indigo-700 ring-1 ring-indigo-100">Preuve</span> : null}
+                        </div>
+                        <p className="mt-2 text-sm font-black leading-5 text-slate-950">{item.label}</p>
+                        <p className="mt-1 text-xs font-semibold leading-5 text-slate-600">{item.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 grid gap-2">
+                      <textarea
+                        value={notesById[item.id] ?? item.notes}
+                        onChange={(event) => setNotesById((current) => ({ ...current, [item.id]: event.target.value }))}
+                        placeholder="Note terrain courte si nécessaire"
+                        className="min-h-16 w-full rounded-2xl border border-slate-200 bg-white p-3 text-xs font-semibold outline-none focus:border-blue-400"
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <button disabled={isBusy} onClick={() => updateChecklistItem(item, true, 'checked')} className="rounded-2xl bg-emerald-50 px-3 py-3 text-[11px] font-black text-emerald-700 disabled:opacity-50">Valider</button>
+                        <button disabled={isBusy} onClick={() => updateChecklistItem(item, false, 'issue_reported')} className="rounded-2xl bg-rose-50 px-3 py-3 text-[11px] font-black text-rose-700 disabled:opacity-50">À signaler</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }) : (
+          <div className="rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50 p-5 text-sm font-semibold leading-6 text-slate-500">
+            Aucune checklist dynamique n’est encore disponible. La checklist sera générée automatiquement depuis le type de service OPS dès chargement mission.
+          </div>
+        )}
+      </div>
+    </DetailCard>
+  )
+}
+
+function RouteTransportExecutionSection({
+  mission,
+  routeRows,
+  transport,
+  executionLogs,
+  runAction,
+  busy,
+}: {
+  mission: MissionControlRecord
+  routeRows: Array<Record<string, any>>
+  transport: Record<string, unknown> | null
+  executionLogs: Array<Record<string, any>>
+  runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void
+  busy: string | null
+}) {
+  const routes = useMemo(() => normalizeMissionRoutes(mission, routeRows, transport), [mission, routeRows, transport])
+  const [selectedRouteId, setSelectedRouteId] = useState(routes[0]?.id || 'primary-route')
+  const [eta, setEta] = useState('')
+  const [note, setNote] = useState('')
+  const [claimAmount, setClaimAmount] = useState('')
+  const [optimisticLogs, setOptimisticLogs] = useState<MissionRouteExecutionLog[]>([])
+  const selectedRoute = routes.find((route) => route.id === selectedRouteId) || routes[0]
+  const logs = [...optimisticLogs, ...executionLogs.map(normalizeRouteExecutionLog)]
+    .filter((log) => !selectedRoute || log.routeId === selectedRoute.id || log.routeCode === selectedRoute.code || log.routeId === 'primary-route')
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+  const isBusy = busy === `${mission.id}:route-execution`
+  const confirmedDeparture = logs.some((log) => log.action === 'departure_confirmed')
+  const completedRoute = logs.some((log) => log.action === 'route_completed')
+  const activeIssue = logs.find((log) => ['delay_reported', 'issue_reported'].includes(log.action))
+
+  useEffect(() => {
+    if (routes.length && !routes.some((route) => route.id === selectedRouteId)) setSelectedRouteId(routes[0].id)
+  }, [routes, selectedRouteId])
+
+  function pushRouteAction(action: string, status: string, issueSeverity?: string | null) {
+    if (!selectedRoute) return
+    const payload = {
+      routeId: selectedRoute.id,
+      routeCode: selectedRoute.code,
+      action,
+      status,
+      transportMode: selectedRoute.transportMode,
+      eta: eta || null,
+      notes: note || null,
+      issueSeverity: issueSeverity || null,
+      routeSnapshot: selectedRoute,
+      allowanceClaim: action === 'allowance_claimed' ? { amountMad: Number(claimAmount || 0), currency: 'MAD', note: note || null } : {},
+      metadata: { source: 'carelink_mobile_p10', missionCode: mission.code },
+    }
+    setOptimisticLogs((current) => [{
+      id: `local-route-${Date.now()}`,
+      missionId: Number(mission.id),
+      caregiverId: Number(mission.caregiverId || 0),
+      routeId: selectedRoute.id,
+      routeCode: selectedRoute.code,
+      action,
+      status,
+      transportMode: selectedRoute.transportMode,
+      eta: eta || null,
+      notes: note || null,
+      issueSeverity: issueSeverity || null,
+      createdAt: new Date().toISOString(),
+      metadata: payload.metadata,
+    }, ...current])
+    runAction(mission, 'route-execution', payload)
+    if (action !== 'eta_updated') setNote('')
+    if (action === 'allowance_claimed') setClaimAmount('')
+  }
+
+  return (
+    <DetailCard title="Route et transport" icon={<Route size={18} />}>
+      <div className="space-y-4">
+        <div className="rounded-[1.5rem] border border-blue-100 bg-blue-50/70 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">Exécution trajet</p>
+              <h3 className="mt-2 text-lg font-black text-slate-950">{selectedRoute?.code || `RT-${mission.code}`}</h3>
+              <p className="mt-1 text-sm font-bold leading-6 text-slate-600">
+                {selectedRoute?.from || mission.city} → {selectedRoute?.to || mission.zone}
+              </p>
+            </div>
+            <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] ring-1', completedRoute ? 'bg-emerald-50 text-emerald-700 ring-emerald-100' : confirmedDeparture ? 'bg-blue-50 text-blue-700 ring-blue-100' : 'bg-amber-50 text-amber-700 ring-amber-100')}>
+              {completedRoute ? 'Terminé' : confirmedDeparture ? 'En cours' : 'À confirmer'}
+            </span>
+          </div>
+
+          {routes.length > 1 ? (
+            <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+              {routes.map((route) => (
+                <button
+                  key={route.id}
+                  onClick={() => setSelectedRouteId(route.id)}
+                  className={cx('shrink-0 rounded-full px-3 py-2 text-[11px] font-black transition', route.id === selectedRoute?.id ? 'bg-slate-950 text-white' : 'bg-white text-slate-600')}
+                >
+                  {route.code}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        {selectedRoute ? (
+          <div className="grid grid-cols-2 gap-3">
+            <MiniStat label="Départ" value={selectedRoute.fromTime || '—'} tone="bg-sky-50 text-sky-700 ring-sky-100" />
+            <MiniStat label="Arrivée" value={selectedRoute.toTime || '—'} tone="bg-emerald-50 text-emerald-700 ring-emerald-100" />
+            <MiniStat label="Durée" value={selectedRoute.durationLabel || '—'} tone="bg-slate-50 text-slate-700 ring-slate-200" />
+            <MiniStat label="Coût" value={`${selectedRoute.costMad || '0'} DH`} tone="bg-amber-50 text-amber-700 ring-amber-100" />
+          </div>
+        ) : null}
+
+        {selectedRoute ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+            <InfoRow icon={<MapPin size={18} />} label="Départ" value={`${selectedRoute.from} · ${selectedRoute.fromZone}`} />
+            <InfoRow icon={<Navigation size={18} />} label="Arrivée" value={`${selectedRoute.to} · ${selectedRoute.toZone}`} />
+            <InfoRow icon={<Route size={18} />} label="Transport" value={selectedRoute.transportMode} />
+            <InfoRow icon={<LifeBuoy size={18} />} label="Backup" value={selectedRoute.backupTransport} />
+            {selectedRoute.transits.length ? <InfoRow icon={<ChevronRight size={18} />} label="Transits" value={`${selectedRoute.transits.length} point(s) intermédiaire(s)`} /> : null}
+          </div>
+        ) : null}
+
+        <div className="grid gap-3">
+          <input
+            value={eta}
+            onChange={(event) => setEta(event.target.value)}
+            placeholder="ETA / heure prévue d’arrivée"
+            className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-300 focus:bg-white focus:ring-4 focus:ring-blue-100"
+          />
+          <textarea
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="Note trajet, retard, incident, point de repère ou commentaire transport"
+            className="min-h-20 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-300 focus:bg-white focus:ring-4 focus:ring-blue-100"
+          />
+          <input
+            value={claimAmount}
+            onChange={(event) => setClaimAmount(event.target.value)}
+            inputMode="decimal"
+            placeholder="Frais transport à déclarer en DH, si applicable"
+            className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-300 focus:bg-white focus:ring-4 focus:ring-blue-100"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button disabled={isBusy || !selectedRoute} onClick={() => pushRouteAction('departure_confirmed', 'started')} className="rounded-2xl bg-slate-950 px-3 py-3 text-xs font-black text-white disabled:opacity-50">Départ confirmé</button>
+          <button disabled={isBusy || !selectedRoute} onClick={() => pushRouteAction('eta_updated', 'recorded')} className="rounded-2xl bg-blue-50 px-3 py-3 text-xs font-black text-blue-700 disabled:opacity-50">Envoyer ETA</button>
+          <button disabled={isBusy || !selectedRoute} onClick={() => pushRouteAction('delay_reported', 'attention_required', 'high')} className="rounded-2xl bg-amber-50 px-3 py-3 text-xs font-black text-amber-700 disabled:opacity-50">Retard trajet</button>
+          <button disabled={isBusy || !selectedRoute} onClick={() => pushRouteAction('issue_reported', 'attention_required', 'high')} className="rounded-2xl bg-rose-50 px-3 py-3 text-xs font-black text-rose-700 disabled:opacity-50">Incident trajet</button>
+          <button disabled={isBusy || !selectedRoute} onClick={() => pushRouteAction('route_completed', 'completed')} className="rounded-2xl bg-emerald-50 px-3 py-3 text-xs font-black text-emerald-700 disabled:opacity-50">Trajet terminé</button>
+          <button disabled={isBusy || !selectedRoute} onClick={() => pushRouteAction('allowance_claimed', 'submitted')} className="rounded-2xl bg-slate-100 px-3 py-3 text-xs font-black text-slate-700 disabled:opacity-50">Déclarer frais</button>
+        </div>
+
+        {activeIssue ? (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm font-bold leading-6 text-amber-800">
+            Dernier signalement trajet: {routeActionLabel(activeIssue.action)} · {activeIssue.notes || activeIssue.eta || 'En attente liaison opérationnelle'}
+          </div>
+        ) : null}
+
+        <div className="space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Journal trajet</p>
+          {logs.slice(0, 5).map((log) => (
+            <div key={log.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-950">{routeActionLabel(log.action)}</p>
+                  <p className="mt-1 text-xs font-bold leading-5 text-slate-500">{log.notes || log.eta || log.transportMode || 'Synchronisé CareLink Mobile'}</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black text-slate-500">{formatHour(log.createdAt)}</span>
+              </div>
+            </div>
+          ))}
+          {!logs.length ? <p className="text-sm font-semibold text-slate-500">Aucune exécution trajet enregistrée pour le moment.</p> : null}
+        </div>
+      </div>
+    </DetailCard>
+  )
+}
+
+function ProgramExecutionSection({
+  mission,
+  programLines,
+  parameterDays,
+  activityLogs,
+  runAction,
+  busy,
+}: {
+  mission: MissionControlRecord
+  programLines: Array<Record<string, any>>
+  parameterDays: Array<Record<string, any>>
+  activityLogs: Array<Record<string, any>>
+  runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void
+  busy: string | null
+}) {
+  const activities = useMemo(() => normalizeProgramActivities(programLines, parameterDays), [programLines, parameterDays])
+  const latestLogs = useMemo(() => latestProgramActivityLogMap(activityLogs), [activityLogs])
+  const [statusById, setStatusById] = useState<Record<string, string>>({})
+  const [notesById, setNotesById] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    const next: Record<string, string> = {}
+    for (const activity of activities) {
+      const log = latestLogs.get(activity.id)
+      next[activity.id] = String(log?.status || statusById[activity.id] || 'pending')
+    }
+    setStatusById(next)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activityLogs.length, activities.length])
+
+  const completedCount = activities.filter((activity) => ['completed', 'done', 'validated'].includes(String(statusById[activity.id] || latestLogs.get(activity.id)?.status || 'pending'))).length
+  const issueCount = activities.filter((activity) => ['issue', 'blocked'].includes(String(statusById[activity.id] || latestLogs.get(activity.id)?.status || 'pending'))).length
+  const requiredCount = activities.filter((activity) => activity.required).length
+  const missingRequired = activities.filter((activity) => activity.required && !['completed', 'done', 'validated'].includes(String(statusById[activity.id] || latestLogs.get(activity.id)?.status || 'pending'))).length
+  const progress = activities.length ? Math.round((completedCount / activities.length) * 100) : 0
+
+  function updateActivity(activity: ProgramActivity, status: string) {
+    const note = notesById[activity.id] || String(latestLogs.get(activity.id)?.notes || '')
+    setStatusById((current) => ({ ...current, [activity.id]: status }))
+    runAction(mission, 'program-activity', {
+      activityId: activity.id,
+      activityLabel: activity.title,
+      status,
+      notes: note || null,
+      issueSeverity: status === 'issue' || status === 'blocked' ? 'high' : null,
+      line: activity.raw,
+      metadata: {
+        source: 'carelink_mobile_program_execution',
+        required: activity.required,
+        category: activity.category,
+        timeLabel: activity.timeLabel,
+        dayLabel: activity.dayLabel,
+      },
+    })
+  }
+
+  return (
+    <DetailCard title="Programme et activités" icon={<ClipboardCheck size={18} />}>
+      <div className="space-y-4">
+        <div className="rounded-[1.75rem] bg-slate-950 p-4 text-white shadow-xl shadow-slate-200">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-200">Exécution programme</p>
+              <h3 className="mt-2 text-xl font-black">{activities.length ? `${completedCount}/${activities.length} activités réalisées` : 'Aucun programme publié'}</h3>
+              <p className="mt-2 text-xs font-semibold leading-5 text-slate-300">
+                {requiredCount ? `${missingRequired} activité(s) obligatoire(s) restante(s)` : 'Les activités obligatoires seront contrôlées si elles sont marquées requises dans OPS.'}
+              </p>
+            </div>
+            <span className={cx('rounded-full px-3 py-2 text-[11px] font-black ring-1', issueCount ? 'bg-rose-50 text-rose-700 ring-rose-100' : 'bg-emerald-50 text-emerald-700 ring-emerald-100')}>{issueCount ? `${issueCount} alerte(s)` : `${progress}%`}</span>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/15">
+            <div className="h-full rounded-full bg-white transition-all" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <MiniStat label="Activités" value={activities.length} tone="bg-sky-50 text-sky-700 ring-sky-100" />
+          <MiniStat label="Requises" value={requiredCount} tone="bg-amber-50 text-amber-700 ring-amber-100" />
+          <MiniStat label="Alertes" value={issueCount} tone={issueCount ? 'bg-rose-50 text-rose-700 ring-rose-100' : 'bg-emerald-50 text-emerald-700 ring-emerald-100'} />
+        </div>
+
+        {activities.length ? (
+          <div className="space-y-3">
+            {activities.map((activity, index) => {
+              const log = latestLogs.get(activity.id)
+              const status = String(statusById[activity.id] || log?.status || 'pending')
+              const isBusy = busy === `${mission.id}:program-activity`
+              return (
+                <article key={activity.id} className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-sm font-black text-blue-700 ring-1 ring-blue-100">{index + 1}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{activity.timeLabel}</span>
+                        <span className={cx('rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] ring-1', programStatusTone(status))}>{programStatusLabel(status)}</span>
+                        {activity.required ? <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-amber-700 ring-1 ring-amber-100">Requis</span> : null}
+                      </div>
+                      <h4 className="mt-3 text-base font-black leading-tight text-slate-950">{activity.title}</h4>
+                      <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{activity.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-2 text-xs font-semibold leading-5 text-slate-600">
+                    <div className="rounded-2xl bg-slate-50 p-3"><span className="font-black text-slate-950">Objectif · </span>{activity.objective}</div>
+                    <div className="rounded-2xl bg-slate-50 p-3"><span className="font-black text-slate-950">Consignes · </span>{activity.instructions}</div>
+                    <div className="rounded-2xl bg-slate-50 p-3"><span className="font-black text-slate-950">Matériel · </span>{activity.materials}</div>
+                    <div className="rounded-2xl bg-slate-50 p-3"><span className="font-black text-slate-950">Sécurité · </span>{activity.safety}</div>
+                  </div>
+
+                  <textarea
+                    value={notesById[activity.id] ?? String(log?.notes || '')}
+                    onChange={(event) => setNotesById((current) => ({ ...current, [activity.id]: event.target.value }))}
+                    placeholder="Note terrain courte pour cette activité"
+                    className="mt-3 min-h-20 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-blue-400"
+                  />
+
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    <button disabled={isBusy} onClick={() => updateActivity(activity, 'started')} className="rounded-2xl bg-blue-50 px-3 py-3 text-[11px] font-black text-blue-700 disabled:opacity-50">Démarrer</button>
+                    <button disabled={isBusy} onClick={() => updateActivity(activity, 'completed')} className="rounded-2xl bg-emerald-50 px-3 py-3 text-[11px] font-black text-emerald-700 disabled:opacity-50">Terminer</button>
+                    <button disabled={isBusy} onClick={() => updateActivity(activity, 'issue')} className="rounded-2xl bg-rose-50 px-3 py-3 text-[11px] font-black text-rose-700 disabled:opacity-50">Alerte</button>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50 p-5 text-sm font-semibold leading-6 text-slate-500">
+            Aucun programme ou activité n’est encore publié dans le dossier de mission. Dès que CARELINK-OPS ajoute des lignes programme, elles apparaîtront ici en mode exécution terrain.
+          </div>
+        )}
+      </div>
+    </DetailCard>
+  )
+}
+
 function DetailCard({ title, children, icon }: { title: string; children: ReactNode; icon?: ReactNode }) {
   return (
     <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
@@ -1995,7 +2939,7 @@ function EmptyState({ title, body }: { title: string; body: string }) {
   return <div className="rounded-[2rem] border border-dashed border-slate-300 bg-white p-8 text-center"><h3 className="text-lg font-black text-slate-950">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{body}</p></div>
 }
 
-function ActionGrid({ mission, runAction, busyAction, compact = false }: { mission: MissionControlRecord; runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void; busyAction: string | null; compact?: boolean }) {
+function ActionGrid({ mission, runAction, busyAction, compact = false, blockedActions = {} }: { mission: MissionControlRecord; runAction: (mission: MissionControlRecord, action: string, payload?: Record<string, any> | string) => void; busyAction: string | null; compact?: boolean; blockedActions?: Record<string, string> }) {
   const actions = compact
     ? [{ key: 'accept', label: 'Accepter', primary: true }, { key: 'decline', label: 'Refuser', primary: false }]
     : [
@@ -2015,20 +2959,26 @@ function ActionGrid({ mission, runAction, busyAction, compact = false }: { missi
 
   return (
     <div className={cx('mt-4 grid gap-2', 'grid-cols-2')}>
-      {actions.map((action) => (
-        <button
-          key={action.key}
-          disabled={busyAction === `${mission.id}:${action.key}`}
-          onClick={() => runAction(mission, action.key, { source: 'carelink_mobile' })}
-          className={cx(
-            'rounded-2xl px-3 py-3 text-xs font-black transition active:scale-[0.99]',
-            action.primary ? 'bg-slate-950 text-white shadow-lg shadow-slate-200' : 'bg-slate-100 text-slate-700',
-            busyAction === `${mission.id}:${action.key}` && 'opacity-60',
-          )}
-        >
-          {busyAction === `${mission.id}:${action.key}` ? 'Synchronisation...' : action.label}
-        </button>
-      ))}
+      {actions.map((action) => {
+        const blockedReason = blockedActions[action.key]
+        const disabled = Boolean(blockedReason) || busyAction === `${mission.id}:${action.key}`
+        return (
+          <button
+            key={action.key}
+            disabled={disabled}
+            title={blockedReason || undefined}
+            onClick={() => runAction(mission, action.key, { source: 'carelink_mobile' })}
+            className={cx(
+              'rounded-2xl px-3 py-3 text-xs font-black transition active:scale-[0.99]',
+              action.primary ? 'bg-slate-950 text-white shadow-lg shadow-slate-200' : 'bg-slate-100 text-slate-700',
+              disabled && 'opacity-60',
+              blockedReason && 'bg-slate-200 text-slate-500 shadow-none',
+            )}
+          >
+            {busyAction === `${mission.id}:${action.key}` ? 'Synchronisation...' : blockedReason || action.label}
+          </button>
+        )
+      })}
     </div>
   )
 }

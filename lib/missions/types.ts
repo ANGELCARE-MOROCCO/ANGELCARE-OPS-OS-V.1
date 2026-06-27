@@ -131,6 +131,9 @@ export type MissionDossier = {
   alerts?: Record<string, unknown>[]
   paymentDisputes?: Record<string, unknown>[]
   documents?: Record<string, unknown>[]
+  programActivityLogs?: Record<string, unknown>[]
+  briefAcknowledgements?: Record<string, unknown>[]
+  routeExecutionLogs?: Record<string, unknown>[]
 }
 
 export type ServiceCharacteristic = {

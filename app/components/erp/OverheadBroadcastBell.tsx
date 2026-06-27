@@ -1,74 +1,74 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from "next/link"
+import { useEffect, useMemo, useState } from "react"
 
-type NotificationItem = {
-  id: string
-  title: string
-  body: string
-  situation: string
-  priority: string
-  createdAt: string
-  memoId: string
-  targetId: string | null
+type BroadcastNotification = {
+  id?: string
+  memoId?: string
+  targetId?: string | null
+  title?: string
+  body?: string
+  message?: string
+  description?: string
+  situation?: string
+  type?: string
+  source_type?: string
+  priority?: string
+  createdAt?: string
+  created_at?: string
+  linkUrl?: string | null
+  href?: string | null
+  url?: string | null
+  actionUrl?: string | null
+  action_url?: string | null
+  route?: string | null
+  cta_href?: string | null
 }
 
-function priorityTone(priority: string) {
-  const value = priority.toLowerCase()
-  if (value.includes('urgent') || value.includes('critical') || value.includes('high')) {
-    return {
-      bg: 'rgba(239,68,68,.14)',
-      border: 'rgba(248,113,113,.34)',
-      text: '#fecaca',
-      dot: '#fb7185',
-      label: 'Urgent',
-    }
-  }
-
-  if (value.includes('warning') || value.includes('medium') || value.includes('delayed')) {
-    return {
-      bg: 'rgba(245,158,11,.14)',
-      border: 'rgba(251,191,36,.34)',
-      text: '#fde68a',
-      dot: '#f59e0b',
-      label: 'Important',
-    }
-  }
-
-  return {
-    bg: 'rgba(34,197,94,.13)',
-    border: 'rgba(74,222,128,.30)',
-    text: '#bbf7d0',
-    dot: '#22c55e',
-    label: 'Active',
-  }
+function itemId(item: BroadcastNotification, index: number) {
+  return String(item.id || item.memoId || item.targetId || `broadcast-${index}`)
 }
 
-function formatDate(value: string) {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'Now'
+function itemBody(item: BroadcastNotification) {
+  return String(item.body || item.message || item.description || "")
+    .replace(/COURSE_LINK:\s*\/[^\s]+/gi, "")
+    .replace(/OPEN_URL:\s*\/[^\s]+/gi, "")
+    .replace(/ACTION_URL:\s*\/[^\s]+/gi, "")
+    .trim()
+}
 
-  return new Intl.DateTimeFormat('fr-MA', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
+function itemHref(item: BroadcastNotification) {
+  return (
+    item.linkUrl ||
+    item.href ||
+    item.url ||
+    item.actionUrl ||
+    item.action_url ||
+    item.route ||
+    item.cta_href ||
+    "/dashboard#broadcast-board"
+  )
 }
 
 export default function OverheadBroadcastBell() {
   const [open, setOpen] = useState(false)
-  const [items, setItems] = useState<NotificationItem[]>([])
+  const [items, setItems] = useState<BroadcastNotification[]>([])
   const [loading, setLoading] = useState(false)
-  const wrapperRef = useRef<HTMLDivElement | null>(null)
 
   async function loadNotifications() {
-    setLoading(true)
     try {
-      const response = await fetch('/api/dashboard/broadcast-notifications', { cache: 'no-store' })
+      setLoading(true)
+      const response = await fetch("/api/dashboard/broadcast-notifications", { cache: "no-store" })
       const payload = await response.json().catch(() => ({}))
-      setItems(Array.isArray(payload?.data) ? payload.data : [])
+
+      const nextItems = Array.isArray(payload?.data)
+        ? payload.data
+        : Array.isArray(payload?.notifications)
+          ? payload.notifications
+          : []
+
+      setItems(nextItems.slice(0, 12))
     } catch {
       setItems([])
     } finally {
@@ -78,209 +78,103 @@ export default function OverheadBroadcastBell() {
 
   useEffect(() => {
     void loadNotifications()
-    const timer = window.setInterval(() => void loadNotifications(), 60000)
-    return () => window.clearInterval(timer)
+
+    const timer = window.setInterval(() => void loadNotifications(), 15000)
+    const onFocus = () => void loadNotifications()
+
+    window.addEventListener("focus", onFocus)
+
+    return () => {
+      window.clearInterval(timer)
+      window.removeEventListener("focus", onFocus)
+    }
   }, [])
 
-  useEffect(() => {
-    if (!open) return
+  const unreadCount = useMemo(() => items.length, [items])
 
-    const onPointerDown = (event: MouseEvent) => {
-      if (!wrapperRef.current) return
-      if (!wrapperRef.current.contains(event.target as Node)) setOpen(false)
-    }
+  async function markRead(item: BroadcastNotification) {
+    try {
+      await fetch("/api/dashboard/broadcast-notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: item.id,
+          memoId: item.memoId,
+          targetId: item.targetId,
+        }),
+      })
+    } catch {}
 
-    window.addEventListener('mousedown', onPointerDown)
-    return () => window.removeEventListener('mousedown', onPointerDown)
-  }, [open])
-
-  const unreadCount = items.length
-  const previewText = useMemo(() => {
-    if (loading) return 'Syncing memos'
-    if (unreadCount === 0) return 'No new memos'
-    if (unreadCount === 1) return '1 active memo'
-    return `${unreadCount} active memos`
-  }, [loading, unreadCount])
-
-  async function markRead(item: NotificationItem) {
-    setItems((current) => current.filter((row) => row.id !== item.id))
-
-    fetch('/api/dashboard/broadcast-notifications', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ memoId: item.memoId, targetId: item.targetId }),
-    }).catch(() => undefined)
+    setItems((current) => current.filter((entry, index) => itemId(entry, index) !== itemId(item, 0)))
   }
 
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', display: 'inline-flex' }}>
+    <div className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
+        className="relative grid h-12 w-12 place-items-center rounded-2xl border border-rose-300/50 bg-rose-950/70 text-xl text-yellow-300 shadow-lg shadow-rose-950/20 transition hover:bg-rose-900"
         aria-label="Broadcast notifications"
-        title={previewText}
-        style={{
-          position: 'relative',
-          width: 44,
-          height: 44,
-          borderRadius: 16,
-          border: open ? '1px solid rgba(251,191,36,.62)' : '1px solid rgba(148,163,184,.24)',
-          background: open
-            ? 'linear-gradient(135deg, rgba(251,191,36,.28), rgba(15,23,42,.92))'
-            : 'rgba(15,23,42,.72)',
-          color: '#fff',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: open ? '0 14px 34px rgba(245,158,11,.22)' : 'inset 0 1px 0 rgba(255,255,255,.08)',
-          fontSize: 17,
-        }}
       >
         🔔
-        {unreadCount > 0 ? (
-          <span
-            style={{
-              position: 'absolute',
-              top: -7,
-              right: -7,
-              minWidth: 20,
-              height: 20,
-              padding: '0 6px',
-              borderRadius: 999,
-              background: '#ef4444',
-              color: '#fff',
-              fontSize: 10,
-              fontWeight: 950,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 18px rgba(239,68,68,.35)',
-            }}
-          >
-            {unreadCount > 9 ? '9+' : unreadCount}
+        {unreadCount ? (
+          <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-black text-white">
+            {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         ) : null}
       </button>
 
       {open ? (
-        <div
-          style={{
-            position: 'absolute',
-            top: 54,
-            right: 0,
-            width: 390,
-            maxWidth: 'calc(100vw - 24px)',
-            borderRadius: 24,
-            background: 'rgba(255,255,255,.98)',
-            color: '#0f172a',
-            border: '1px solid rgba(226,232,240,.95)',
-            boxShadow: '0 30px 80px rgba(15,23,42,.28)',
-            padding: 14,
-            zIndex: 5000,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div className="absolute right-0 top-14 z-[80] w-[360px] overflow-hidden rounded-[26px] border border-slate-700 bg-slate-950 text-white shadow-[0_24px_80px_rgba(15,23,42,0.45)]">
+          <div className="flex items-start justify-between gap-3 border-b border-white/10 p-4">
             <div>
-              <div style={{ fontSize: 10, fontWeight: 950, letterSpacing: 2.2, textTransform: 'uppercase', color: '#64748b' }}>
-                Broadcast notifications
-              </div>
-              <div style={{ marginTop: 3, fontSize: 18, fontWeight: 950, color: '#020617' }}>{previewText}</div>
+              <p className="text-sm font-black">Broadcast notifications</p>
+              <p className="text-xs font-bold text-slate-300">
+                HR memos, personal commands and operational pushes
+              </p>
             </div>
-
             <button
               type="button"
-              onClick={() => void loadNotifications()}
-              style={{
-                border: '1px solid rgba(226,232,240,.95)',
-                background: '#f8fafc',
-                color: '#0f172a',
-                borderRadius: 14,
-                height: 36,
-                padding: '0 12px',
-                fontSize: 12,
-                fontWeight: 850,
-                cursor: 'pointer',
-              }}
+              onClick={() => setItems([])}
+              className="rounded-full bg-white/10 px-3 py-1 text-xs font-black text-white hover:bg-white/15"
             >
-              Refresh
+              Clear
             </button>
           </div>
 
-          <div style={{ display: 'grid', gap: 10, marginTop: 14 }}>
-            {items.length === 0 ? (
-              <div
-                style={{
-                  borderRadius: 18,
-                  border: '1px dashed rgba(148,163,184,.45)',
-                  background: '#f8fafc',
-                  padding: 16,
-                  color: '#64748b',
-                  fontSize: 13,
-                  fontWeight: 750,
-                }}
-              >
-                No active new broadcast memo for your account.
+          <div className="max-h-[520px] space-y-2 overflow-y-auto p-3">
+            {loading && !items.length ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm font-bold text-slate-300">
+                Loading notifications...
               </div>
-            ) : (
-              items.map((item) => {
-                const tone = priorityTone(item.priority)
-                const brief = item.body.length > 96 ? `${item.body.slice(0, 96)}...` : item.body
+            ) : null}
 
-                return (
-                  <Link
-                    key={item.id}
-                    href="/dashboard#broadcast-board"
-                    onClick={() => void markRead(item)}
-                    style={{
-                      display: 'grid',
-                      gap: 8,
-                      padding: 13,
-                      borderRadius: 18,
-                      border: `1px solid ${tone.border}`,
-                      background: `linear-gradient(135deg, ${tone.bg}, rgba(255,255,255,.98))`,
-                      textDecoration: 'none',
-                      color: '#0f172a',
-                      boxShadow: '0 14px 32px rgba(15,23,42,.08)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 7,
-                          borderRadius: 999,
-                          background: tone.bg,
-                          border: `1px solid ${tone.border}`,
-                          color: tone.text,
-                          padding: '5px 9px',
-                          fontSize: 10,
-                          fontWeight: 950,
-                          letterSpacing: 1.4,
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        <span style={{ width: 7, height: 7, borderRadius: 999, background: tone.dot }} />
-                        {tone.label}
-                      </span>
+            {!loading && !items.length ? (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-white/5 p-4 text-sm font-bold text-slate-300">
+                No broadcast notification is currently pending.
+              </div>
+            ) : null}
 
-                      <span style={{ fontSize: 11, color: '#64748b', fontWeight: 850 }}>{formatDate(item.createdAt)}</span>
-                    </div>
+            {items.map((item, index) => (
+              <Link
+                key={itemId(item, index)}
+                href={itemHref(item)}
+                onClick={() => void markRead(item)}
+                className="block rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:bg-white/10"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="rounded-full bg-cyan-400/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-cyan-200">
+                    {item.type || item.source_type || item.situation || "Memo"}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    {String(item.createdAt || item.created_at || "").slice(11, 16)}
+                  </span>
+                </div>
 
-                    <div style={{ fontSize: 14, fontWeight: 950, color: '#020617', lineHeight: 1.25 }}>{item.title}</div>
-                    <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.45 }}>{brief || item.situation}</div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
-                      <span style={{ fontSize: 10, fontWeight: 950, color: '#2563eb', letterSpacing: 1.4, textTransform: 'uppercase' }}>
-                        Open in My Space
-                      </span>
-                      <span style={{ fontSize: 16 }}>→</span>
-                    </div>
-                  </Link>
-                )
-              })
-            )}
+                <p className="mt-2 text-sm font-black text-white">{item.title || "Personal command alert"}</p>
+                <p className="mt-1 line-clamp-3 text-xs font-bold leading-5 text-slate-300">{itemBody(item)}</p>
+              </Link>
+            ))}
           </div>
         </div>
       ) : null}

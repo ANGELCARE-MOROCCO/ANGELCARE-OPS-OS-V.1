@@ -926,15 +926,7 @@ export const APP_ROUTES = [
     "permissionKey": "page:/email-os/team-collaboration",
     "modulePermissionKey": "email-os.view"
   },
-  {
-    "label": "Enterprise Command",
-    "shortLabel": "Enterprise Command",
-    "href": "/enterprise-command",
-    "module": "enterprise-command",
-    "moduleLabel": "Enterprise Command",
-    "permissionKey": "page:/enterprise-command",
-    "modulePermissionKey": "enterprise-command.view"
-  },
+  
   {
     "label": "Execution Engine",
     "shortLabel": "Execution Engine",
@@ -4328,186 +4320,26 @@ export const APP_ROUTES = [
     "permissionKey": "page:/revenue-war-room",
     "modulePermissionKey": "revenue-war-room.view"
   },
-  {
-    "label": "Saas Factory Command",
-    "shortLabel": "Saas Factory Command",
-    "href": "/saas-factory-command",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Actions",
-    "shortLabel": "Actions",
-    "href": "/saas-factory-command/actions",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/actions",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Adoption",
-    "shortLabel": "Adoption",
-    "href": "/saas-factory-command/adoption",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/adoption",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Apis",
-    "shortLabel": "Apis",
-    "href": "/saas-factory-command/apis",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/apis",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Audit",
-    "shortLabel": "Audit",
-    "href": "/saas-factory-command/audit",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/audit",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Configuration",
-    "shortLabel": "Configuration",
-    "href": "/saas-factory-command/configuration",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/configuration",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Data Sources",
-    "shortLabel": "Data Sources",
-    "href": "/saas-factory-command/data-sources",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/data-sources",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Deployment",
-    "shortLabel": "Deployment",
-    "href": "/saas-factory-command/deployment",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/deployment",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Feature Flags",
-    "shortLabel": "Feature Flags",
-    "href": "/saas-factory-command/feature-flags",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/feature-flags",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Incidents",
-    "shortLabel": "Incidents",
-    "href": "/saas-factory-command/incidents",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/incidents",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Modules",
-    "shortLabel": "Modules",
-    "href": "/saas-factory-command/modules",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/modules",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Observatory",
-    "shortLabel": "Observatory",
-    "href": "/saas-factory-command/observatory",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/observatory",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Ops",
-    "shortLabel": "Ops",
-    "href": "/saas-factory-command/ops",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/ops",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Options",
-    "shortLabel": "Options",
-    "href": "/saas-factory-command/options",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/options",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Permissions",
-    "shortLabel": "Permissions",
-    "href": "/saas-factory-command/permissions",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/permissions",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Queues",
-    "shortLabel": "Queues",
-    "href": "/saas-factory-command/queues",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/queues",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Realtime",
-    "shortLabel": "Realtime",
-    "href": "/saas-factory-command/realtime",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/realtime",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Rules",
-    "shortLabel": "Rules",
-    "href": "/saas-factory-command/rules",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/rules",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Supabase",
-    "shortLabel": "Supabase",
-    "href": "/saas-factory-command/supabase",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/supabase",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
-  {
-    "label": "Saas Factory Command / Tenants",
-    "shortLabel": "Tenants",
-    "href": "/saas-factory-command/tenants",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "permissionKey": "page:/saas-factory-command/tenants",
-    "modulePermissionKey": "saas-factory-command.view"
-  },
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   {
     "label": "Sales",
     "shortLabel": "Sales",
@@ -5691,13 +5523,7 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Email Os",
     "href": "/email-os/team-collaboration"
   },
-  {
-    "value": "page:/enterprise-command",
-    "label": "Enterprise Command",
-    "module": "enterprise-command",
-    "moduleLabel": "Enterprise Command",
-    "href": "/enterprise-command"
-  },
+  
   {
     "value": "page:/execution-engine",
     "label": "Execution Engine",
@@ -8337,146 +8163,26 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Revenue War Room",
     "href": "/revenue-war-room"
   },
-  {
-    "value": "page:/saas-factory-command",
-    "label": "Saas Factory Command",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command"
-  },
-  {
-    "value": "page:/saas-factory-command/actions",
-    "label": "Saas Factory Command / Actions",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/actions"
-  },
-  {
-    "value": "page:/saas-factory-command/adoption",
-    "label": "Saas Factory Command / Adoption",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/adoption"
-  },
-  {
-    "value": "page:/saas-factory-command/apis",
-    "label": "Saas Factory Command / Apis",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/apis"
-  },
-  {
-    "value": "page:/saas-factory-command/audit",
-    "label": "Saas Factory Command / Audit",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/audit"
-  },
-  {
-    "value": "page:/saas-factory-command/configuration",
-    "label": "Saas Factory Command / Configuration",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/configuration"
-  },
-  {
-    "value": "page:/saas-factory-command/data-sources",
-    "label": "Saas Factory Command / Data Sources",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/data-sources"
-  },
-  {
-    "value": "page:/saas-factory-command/deployment",
-    "label": "Saas Factory Command / Deployment",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/deployment"
-  },
-  {
-    "value": "page:/saas-factory-command/feature-flags",
-    "label": "Saas Factory Command / Feature Flags",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/feature-flags"
-  },
-  {
-    "value": "page:/saas-factory-command/incidents",
-    "label": "Saas Factory Command / Incidents",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/incidents"
-  },
-  {
-    "value": "page:/saas-factory-command/modules",
-    "label": "Saas Factory Command / Modules",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/modules"
-  },
-  {
-    "value": "page:/saas-factory-command/observatory",
-    "label": "Saas Factory Command / Observatory",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/observatory"
-  },
-  {
-    "value": "page:/saas-factory-command/ops",
-    "label": "Saas Factory Command / Ops",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/ops"
-  },
-  {
-    "value": "page:/saas-factory-command/options",
-    "label": "Saas Factory Command / Options",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/options"
-  },
-  {
-    "value": "page:/saas-factory-command/permissions",
-    "label": "Saas Factory Command / Permissions",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/permissions"
-  },
-  {
-    "value": "page:/saas-factory-command/queues",
-    "label": "Saas Factory Command / Queues",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/queues"
-  },
-  {
-    "value": "page:/saas-factory-command/realtime",
-    "label": "Saas Factory Command / Realtime",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/realtime"
-  },
-  {
-    "value": "page:/saas-factory-command/rules",
-    "label": "Saas Factory Command / Rules",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/rules"
-  },
-  {
-    "value": "page:/saas-factory-command/supabase",
-    "label": "Saas Factory Command / Supabase",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/supabase"
-  },
-  {
-    "value": "page:/saas-factory-command/tenants",
-    "label": "Saas Factory Command / Tenants",
-    "module": "saas-factory-command",
-    "moduleLabel": "Saas Factory Command",
-    "href": "/saas-factory-command/tenants"
-  },
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   {
     "value": "page:/sales",
     "label": "Sales",

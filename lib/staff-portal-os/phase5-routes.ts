@@ -72,22 +72,8 @@ export const STAFF_PORTAL_ROUTES: StaffPortalRoute[] = [
     description: 'Manager-oriented staff portal variant and team signals.',
     criticality: 'medium',
   },
-  {
-    href: '/staff-portal-navigation',
-    label: 'Staff Portal Navigation',
-    area: 'Support',
-    permission: 'staff_portal.view',
-    description: 'Navigation hub for all Staff Portal OS routes.',
-    criticality: 'support',
-  },
-  {
-    href: '/staff-portal-route-audit',
-    label: 'Staff Portal Route Audit',
-    area: 'Support',
-    permission: 'staff_portal.admin',
-    description: 'Final route manifest and access audit surface.',
-    criticality: 'support',
-  },
+  
+  
 ]
 
 export const STAFF_PORTAL_AREAS = Array.from(new Set(STAFF_PORTAL_ROUTES.map((route) => route.area)))

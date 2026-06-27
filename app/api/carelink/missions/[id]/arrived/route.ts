@@ -1,27 +1,21 @@
 import { NextResponse } from 'next/server'
-import { patchMission } from '@/lib/missions/repository'
-import { recordMissionEvent } from '@/lib/missions/events'
+import { carelinkMobileErrorResponse } from '@/lib/carelink/mobile-auth'
+import { executeCareLinkMobileMissionAction, parseCareLinkMobileActionBody } from '@/lib/carelink/mobile-action-engine'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
-    const body = await request.json().catch(() => ({})) as { note?: string }
-    const mission = await patchMission(Number(id), {
-      status: 'arrival_confirmed',
-      lifecycle_stage: 'arrival_confirmed',
-      confirmed_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    await recordMissionEvent({
+    const body = await parseCareLinkMobileActionBody(request)
+    const result = await executeCareLinkMobileMissionAction({
+      request,
       missionId: Number(id),
-      eventType: 'mobile_arrival_confirmed',
-      content: body.note || 'Arrivée confirmée depuis CareLink mobile',
-      source: 'carelink_mobile',
+      action: 'arrive',
+      body,
     })
-    return NextResponse.json({ ok: true, data: mission })
+    return NextResponse.json({ ok: true, ...result })
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Arrival confirmation failed' }, { status: 500 })
+    return carelinkMobileErrorResponse(error, 'Arrival confirmation failed')
   }
 }

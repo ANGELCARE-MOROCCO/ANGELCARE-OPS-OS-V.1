@@ -1,73 +1,56 @@
 import { NextResponse } from 'next/server'
-import { getMissionDossier, patchMission } from '@/lib/missions/repository'
-import { loadMissionChecklist, loadMissionReport, saveMissionReport, createNotification } from '@/lib/carelink/mobile-persistence'
+import { carelinkMobileErrorResponse, requireCareLinkMobileMissionAccess } from '@/lib/carelink/mobile-auth'
+import { executeCareLinkMobileMissionAction, parseCareLinkMobileActionBody } from '@/lib/carelink/mobile-action-engine'
+import { getMissionDossier } from '@/lib/missions/repository'
+import { loadMissionChecklist, loadMissionReport, saveMissionReport } from '@/lib/carelink/mobile-persistence'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
+    await requireCareLinkMobileMissionAccess(Number(id), 'can_submit_reports')
     const report = await loadMissionReport(Number(id))
     return NextResponse.json({ ok: true, data: report })
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Mission report load failed' }, { status: 500 })
+    return carelinkMobileErrorResponse(error, 'Mission report load failed')
   }
 }
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
-    const body = await request.json().catch(() => ({})) as {
-      note?: string
-      summary?: string
-      observations?: string
-      activities?: Record<string, unknown>[]
-      checklistSnapshot?: Record<string, unknown>[]
-      incidentFlag?: boolean
-      recommendations?: string
-      validationStatus?: string
-      metadata?: Record<string, unknown>
-    }
     const missionId = Number(id)
+    const session = await requireCareLinkMobileMissionAccess(missionId, 'can_submit_reports')
+    const body = await parseCareLinkMobileActionBody(request)
     const dossier = await getMissionDossier(missionId)
     if (!dossier) {
       return NextResponse.json({ ok: false, error: 'Mission not found' }, { status: 404 })
     }
-    const checklist = await loadMissionChecklist(missionId, dossier.raw.service_type || dossier.mission.serviceType, dossier.raw.caregiver_id ? Number(dossier.raw.caregiver_id) : null)
+    const checklist = await loadMissionChecklist(missionId, dossier.raw.service_type || dossier.mission.serviceType, session.caregiverId)
     const report = await saveMissionReport({
       missionId,
-      caregiverId: dossier.raw.caregiver_id ? Number(dossier.raw.caregiver_id) : null,
+      caregiverId: session.caregiverId,
       serviceType: dossier.raw.service_type || dossier.mission.serviceType,
-      summary: body.summary || body.note || null,
-      observations: body.observations || null,
-      activities: body.activities || [],
-      checklistSnapshot: body.checklistSnapshot || checklist,
+      summary: typeof body.summary === 'string' ? body.summary : typeof body.note === 'string' ? body.note : null,
+      observations: typeof body.observations === 'string' ? body.observations : null,
+      activities: Array.isArray(body.activities) ? body.activities.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object' && !Array.isArray(item)) : [],
+      checklistSnapshot: Array.isArray(body.checklistSnapshot) ? body.checklistSnapshot.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object' && !Array.isArray(item)) : checklist,
       incidentFlag: Boolean(body.incidentFlag),
-      recommendations: body.recommendations || null,
+      recommendations: typeof body.recommendations === 'string' ? body.recommendations : null,
       status: 'submitted',
-      validationStatus: body.validationStatus || 'ready',
-      metadata: body.metadata || {},
+      validationStatus: typeof body.validationStatus === 'string' ? body.validationStatus : 'ready',
+      metadata: body.metadata && typeof body.metadata === 'object' && !Array.isArray(body.metadata) ? body.metadata : {},
     })
-    await createNotification({
-      type: 'mission_update',
-      title: 'Rapport soumis',
-      body: body.summary || body.note || `Le rapport de la mission ${String(missionId)} a été soumis.`,
-      priority: 'high',
+
+    const result = await executeCareLinkMobileMissionAction({
+      request,
       missionId,
-      caregiverId: dossier.raw.caregiver_id ? Number(dossier.raw.caregiver_id) : null,
-      linkedEntityType: 'mission',
-      linkedEntityId: String(missionId),
-      metadata: { report_status: 'submitted', validation_status: body.validationStatus || 'ready' },
-    }).catch(() => null)
-    const mission = await patchMission(missionId, {
-      report_status: 'submitted',
-      validation_status: 'ready',
-      lifecycle_stage: 'report_submitted',
-      report_submitted_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      action: 'report_submit',
+      body: { ...body, summary: typeof body.summary === 'string' ? body.summary : typeof body.note === 'string' ? body.note : null },
     })
-    return NextResponse.json({ ok: true, data: { mission, report } })
+    return NextResponse.json({ ok: true, ...result, report })
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Report submission failed' }, { status: 500 })
+    return carelinkMobileErrorResponse(error, 'Report submission failed')
   }
 }

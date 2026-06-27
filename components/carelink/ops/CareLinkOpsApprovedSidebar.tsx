@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const NAV = [
+const CARELINK_OPS_MENU = [
   { label: 'Overview', href: '/carelink-ops' },
   { label: 'Dispatch', href: '/carelink-ops/dispatch' },
   { label: 'Missions', href: '/carelink-ops/missions' },
@@ -26,27 +26,52 @@ const NAV = [
   { label: 'Settings', href: '/carelink-ops/settings' },
 ]
 
+function isActive(pathname: string, href: string) {
+  if (href === '/carelink-ops') return pathname === '/carelink-ops'
+  if (href === '/caregivers') return pathname.startsWith('/caregivers')
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
 export function CareLinkOpsApprovedSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname() || ''
 
   return (
-    <aside data-carelink-global-sidebar className="fixed inset-y-0 left-0 z-[999] w-[220px] overflow-y-auto border-r border-slate-200 bg-white p-3">
-      <Link href="/carelink-ops" className="mb-5 block rounded-[1.5rem] bg-blue-600 p-5 text-white shadow-xl shadow-blue-100">
-        <p className="text-[10px] font-black uppercase tracking-[0.32em] text-blue-100">AngelCare</p>
-        <h1 className="mt-2 text-2xl font-black leading-tight">CareLink Ops</h1>
-        <p className="mt-2 text-xs font-semibold text-blue-100">Enterprise operations backbone</p>
-      </Link>
+    <aside
+      data-carelink-global-sidebar
+      className="fixed inset-y-0 left-0 z-[999] w-[220px] overflow-y-auto border-r border-slate-200 bg-white px-0 py-4 shadow-[12px_0_30px_rgba(15,23,42,0.03)]"
+    >
+      <div className="px-0">
+        <div className="mx-0 rounded-[28px] bg-blue-600 px-6 py-6 text-slate-950 shadow-[0_18px_45px_rgba(37,99,235,0.24)]">
+          <div className="text-[10px] font-black uppercase tracking-[0.45em] text-slate-900/55">
+            AngelCare
+          </div>
+          <div className="mt-2 text-[26px] font-black leading-[0.98] tracking-[-0.04em] text-black">
+            CareLink
+            <br />
+            Ops
+          </div>
+          <div className="mt-5 text-[12px] font-bold leading-5 text-slate-900/55">
+            Enterprise operations
+            <br />
+            backbone
+          </div>
+        </div>
+      </div>
 
-      <nav className="space-y-1 pb-6">
-        {NAV.map((item) => {
-          const active = pathname === item.href || (item.href !== '/carelink-ops' && pathname.startsWith(item.href + '/'))
+      <nav className="mt-8 space-y-2 px-0">
+        {CARELINK_OPS_MENU.map((item) => {
+          const active = isActive(pathname, item.href)
+
           return (
             <Link
-              key={item.href}
+              key={`${item.label}-${item.href}`}
               href={item.href}
-              className={`block rounded-2xl px-4 py-3 text-sm font-black transition ${
-                active ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100' : 'text-slate-950 hover:bg-slate-50'
-              }`}
+              className={[
+                'block w-full px-5 py-3 text-[15px] font-black tracking-[-0.02em] transition',
+                active
+                  ? 'rounded-r-[22px] border border-blue-100 bg-blue-50 text-blue-700 shadow-sm'
+                  : 'text-slate-950 hover:rounded-r-[22px] hover:bg-slate-50 hover:text-blue-700',
+              ].join(' ')}
             >
               {item.label}
             </Link>
@@ -54,11 +79,19 @@ export function CareLinkOpsApprovedSidebar() {
         })}
       </nav>
 
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-[10px] font-black uppercase tracking-[0.26em] text-slate-500">Live Sync</p>
-        <p className="mt-2 text-xs font-black text-slate-700">Synchronisation active</p>
-        <p className="mt-1 text-[11px] font-semibold text-slate-400">CareLink Ops API ready</p>
+      <div className="mx-0 mb-5 mt-10 rounded-[22px] border border-slate-200 bg-white px-5 py-5 shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
+        <div className="text-[10px] font-black uppercase tracking-[0.38em] text-slate-500">
+          Live Sync
+        </div>
+        <div className="mt-4 text-sm font-black text-slate-600">
+          Synchronisation active
+        </div>
+        <div className="mt-2 text-xs font-black text-slate-500">
+          CareLink Ops API ready
+        </div>
       </div>
     </aside>
   )
 }
+
+export default CareLinkOpsApprovedSidebar

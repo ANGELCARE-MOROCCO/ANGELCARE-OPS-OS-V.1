@@ -34,6 +34,8 @@ export const MODULE_PERMISSIONS = {
     'hr.dashboard',
     'hr.recruitment.view',
     'hr.recruitment.manage',
+    'hr.recruitment.questionnaires.view',
+    'hr.recruitment.questionnaires.manage',
     'hr.staff.view',
     'hr.staff.manage',
     'hr.onboarding.manage',
@@ -120,7 +122,7 @@ export const ROLE_HOME_ROUTES: Record<string, string> = {
   academy_trainer: '/dashboard',
 
   staff: '/dashboard',
-  caregiver: '/dashboard',
+  caregiver: '/carelink',
   employee: '/dashboard',
 }
 
@@ -196,6 +198,8 @@ export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
     'hr.dashboard',
     'hr.recruitment.view',
     'hr.recruitment.manage',
+    'hr.recruitment.questionnaires.view',
+    'hr.recruitment.questionnaires.manage',
     'hr.staff.view',
     'hr.staff.manage',
     'hr.onboarding.manage',
@@ -347,6 +351,7 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'HR Operations', href: '/hr/operations-console', permission: 'hr.view', group: 'Workforce & HR', icon: '🧭', order: 71 },
   { label: 'HR Boardroom', href: '/hr/boardroom', permission: 'hr.executive.view', group: 'Workforce & HR', icon: '🏛️', order: 72 },
   { label: 'Recruitment', href: '/hr/recruitment', permission: 'hr.recruitment.view', group: 'Workforce & HR', icon: '🧲', order: 73 },
+  { label: 'Interview Questionnaires', href: '/hr/recruitment/questionnaires', permission: 'hr.recruitment.questionnaires.view', group: 'Workforce & HR', icon: '🧾', order: 73.1 },
   { label: 'Employees', href: '/hr/employees', permission: 'hr.staff.view', group: 'Workforce & HR', icon: '🪪', order: 74 },
   { label: 'Intervenantes', href: '/caregivers', permission: 'caregivers.view', group: 'Workforce & HR', icon: '👩‍👧', order: 75 },
   { label: 'Workforce', href: '/caregivers/workforce', permission: 'caregivers.view', group: 'Workforce & HR', icon: '📋', order: 76 },
@@ -365,8 +370,6 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Staff Memos', href: '/staff-memos', permission: 'staff_memos.admin', group: 'Staff Portal', icon: '📝', order: 103 },
   { label: 'Team Command', href: '/team-command', permission: 'staff_portal.manager', group: 'Staff Portal', icon: '🧑‍💼', order: 104 },
   { label: 'Staff Portal Intelligence', href: '/staff-portal-intelligence', permission: 'staff_portal.intelligence', group: 'Staff Portal', icon: '🧠', order: 105 },
-  { label: 'Staff Portal Final QA', href: '/staff-portal-final-qa', permission: 'staff_portal.admin', group: 'Staff Portal', icon: '✅', order: 106 },
-  { label: 'Staff Portal Access Check', href: '/staff-portal-access-check', permission: 'staff_portal.admin', group: 'Staff Portal', icon: '🔎', order: 107 },
 
   { label: 'Administration', href: '/users', permission: 'users.view', group: 'Administration', icon: '🔐', order: 120 },
   { label: 'Locations', href: '/locations', permission: 'locations.view', group: 'Administration', icon: '📍', order: 121 },

@@ -40,6 +40,9 @@ type UserAlert = {
   source: "HR" | "Memo" | "System" | "Connect"
   createdAt: string
   urgent?: boolean
+  href?: string
+  memoId?: string
+  priority?: string
 }
 
 const PUNCHES: {
@@ -179,11 +182,212 @@ export default function OverheadPanel() {
       body: alert.body,
       source: alert.source,
       urgent: alert.urgent,
+      href: alert.href,
+      memoId: alert.memoId,
+      priority: alert.priority,
     }
 
     setUserAlerts((current) => [nextAlert, ...current].slice(0, 8))
   }
 
+
+
+  function overheadAlertLinkFromNotice(notice: any) {
+    const direct = String(
+      notice?.linkUrl ||
+      notice?.href ||
+      notice?.url ||
+      notice?.actionUrl ||
+      notice?.action_url ||
+      notice?.route ||
+      notice?.cta_href ||
+      "",
+    ).trim()
+
+    if (direct) return direct
+
+    const text = String(notice?.body || notice?.message || notice?.description || notice?.content || "")
+    const match = text.match(/(?:COURSE_LINK|OPEN_URL|ACTION_URL):\s*(\/[^\s]+)/i)
+    return match?.[1] || ""
+  }
+
+  function overheadAlertBodyFromNotice(notice: any) {
+    return String(
+      notice?.body ||
+      notice?.message ||
+      notice?.description ||
+      notice?.content ||
+      "Open this assigned memo for details.",
+    )
+      .replace(/COURSE_LINK:\s*\/[^\s]+/gi, "")
+      .replace(/OPEN_URL:\s*\/[^\s]+/gi, "")
+      .replace(/ACTION_URL:\s*\/[^\s]+/gi, "")
+      .trim()
+  }
+
+
+  function isOverheadPersonalCommandNotice(notice: any) {
+    const sourceText = String(notice?.source_type || notice?.type || notice?.situation || "").toLowerCase()
+    const title = String(notice?.title || "").toLowerCase()
+    const body = String(notice?.body || notice?.message || notice?.description || notice?.content || "").toLowerCase()
+    const href = overheadAlertLinkFromNotice(notice)
+
+    const isTraining =
+      sourceText.includes("hr_training") ||
+      sourceText.includes("training") ||
+      title.includes("formation assignée") ||
+      body.includes("/hr/training/online/") ||
+      body.includes("course_link:")
+
+    const isBroadcastMemo =
+      sourceText.includes("broadcast") ||
+      sourceText.includes("memo") ||
+      sourceText.includes("hr") ||
+      sourceText.includes("operational") ||
+      sourceText.includes("command")
+
+    const isConnectChatNoise =
+      title.startsWith("new connect message") ||
+      sourceText === "message" ||
+      sourceText === "chat" ||
+      sourceText.includes("conversation")
+
+    if (isTraining) return true
+    if (isConnectChatNoise) return false
+    if (href && href.includes("/hr/training/online/")) return true
+
+    return isBroadcastMemo
+  }
+
+  function normalizeOverheadAlertNotice(notice: any): UserAlert | null {
+    if (!notice) return null
+    if (!isOverheadPersonalCommandNotice(notice)) return null
+
+    const href = overheadAlertLinkFromNotice(notice)
+    const rawTitle = String(notice?.title || notice?.subject || notice?.label || "Personal command alert").trim()
+    const body = overheadAlertBodyFromNotice(notice)
+    const id = String(notice?.id || notice?.notification_id || notice?.memoId || notice?.targetId || `${rawTitle}-${body}`).trim()
+
+    if (!id || (!rawTitle && !body)) return null
+
+    const sourceText = String(notice?.source_type || notice?.type || notice?.situation || "").toLowerCase()
+    const isTraining = sourceText.includes("training") || rawTitle.toLowerCase().includes("formation") || body.toLowerCase().includes("formation")
+
+    return {
+      id: `server-${id}`,
+      memoId: String(notice?.memoId || notice?.source_id || notice?.targetId || "").trim(),
+      title: rawTitle,
+      body,
+      source: isTraining ? "HR" : sourceText.includes("connect") ? "Connect" : "Memo",
+      createdAt: String(notice?.createdAt || notice?.created_at || new Date().toISOString()),
+      urgent: Boolean(notice?.urgent || notice?.priority === "urgent" || notice?.priority === "high" || isTraining),
+      priority: String(notice?.priority || "normal"),
+      href,
+    }
+  }
+
+  async function refreshPersonalCommandAlerts() {
+    try {
+      const endpoints = ["/api/dashboard/broadcast-notifications"]
+      const responses = await Promise.allSettled(
+        endpoints.map(async (endpoint) => {
+          const response = await fetch(endpoint, { cache: "no-store" })
+          return response.json().catch(() => null)
+        }),
+      )
+
+      const rawItems = responses.flatMap((result) => {
+        if (result.status !== "fulfilled") return []
+        const payload = result.value as any
+        if (Array.isArray(payload?.data)) return payload.data
+        if (Array.isArray(payload?.notifications)) return payload.notifications
+        if (Array.isArray(payload?.data?.notifications)) return payload.data.notifications
+        return []
+      })
+
+      const nextAlerts = rawItems
+        .map((notice) => normalizeOverheadAlertNotice(notice))
+        .filter((notice): notice is UserAlert => Boolean(notice))
+
+      setUserAlerts((current) => {
+        const manualAlerts = current.filter((alert) => !alert.id.startsWith("server-"))
+        const merged = [...nextAlerts, ...manualAlerts]
+        const unique = new Map<string, UserAlert>()
+
+        for (const alert of merged) {
+          const key = alert.memoId || alert.href || alert.id
+          if (!unique.has(key)) unique.set(key, alert)
+        }
+
+        return Array.from(unique.values()).slice(0, 10)
+      })
+
+      if (nextAlerts.length) {
+        setConnectState("message")
+        setTerminalMessage(`PERSONAL COMMAND ALERTS • ${nextAlerts.length} pending memo(s)`)
+      }
+    } catch {
+      // Keep overhead stable if notification bridge is temporarily unavailable.
+    }
+  }
+
+  useEffect(() => {
+    let alive = true
+
+    const refresh = () => {
+      if (!alive) return
+      void refreshPersonalCommandAlerts()
+    }
+
+    refresh()
+
+    const timer = window.setInterval(refresh, safeUiInterval(12000))
+    const onFocus = () => refresh()
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") refresh()
+    }
+
+    window.addEventListener("focus", onFocus)
+    document.addEventListener("visibilitychange", onVisibilityChange)
+
+    return () => {
+      alive = false
+      window.clearInterval(timer)
+      window.removeEventListener("focus", onFocus)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!alertsOpen) return
+
+    const node = alertsRef.current
+    if (!node) return
+
+    const onClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target : null
+      const clickable = target?.closest("a,button,article,div")
+      if (!clickable) return
+
+      const text = (clickable.textContent || "").trim()
+      const lowerText = text.toLowerCase()
+
+      if (lowerText === "clear" || lowerText.includes("open incidents")) return
+
+      const alert = userAlerts.find((item) => {
+        if (!item.href) return false
+        return text.includes(item.title) || (!!item.body && text.includes(item.body.slice(0, 32)))
+      })
+
+      if (!alert?.href) return
+
+      event.preventDefault()
+      window.location.href = alert.href
+    }
+
+    node.addEventListener("click", onClick)
+    return () => node.removeEventListener("click", onClick)
+  }, [alertsOpen, userAlerts])
 
   function safeCanPunchFor(nextStatus: AttendanceStatus, server?: Partial<PunchAvailability>): PunchAvailability {
     const derived: PunchAvailability = {

@@ -45,6 +45,55 @@ async function getRuntimeActorFromRequest(request: NextRequest) {
   }
 }
 
+
+function isCareLinkOpsProtectedPath(pathname: string) {
+  return pathname === '/carelink-ops' || pathname.startsWith('/carelink-ops/') || pathname.startsWith('/api/carelink/ops') || pathname.startsWith('/api/carelink-ops')
+}
+
+function isCareLinkMobilePublicPath(pathname: string) {
+  return pathname === '/carelink/login' || pathname.startsWith('/carelink/login/') || pathname === '/api/carelink/health'
+}
+
+function isCareLinkMobileProtectedPath(pathname: string) {
+  if (isCareLinkMobilePublicPath(pathname)) return false
+  if (pathname === '/carelink' || pathname.startsWith('/carelink/')) return true
+  if (pathname.startsWith('/api/carelink/') && !pathname.startsWith('/api/carelink/ops')) return true
+  return false
+}
+
+function isCareLinkOpsAuthorizedActor(actor: Awaited<ReturnType<typeof getRuntimeActorFromRequest>>) {
+  if (!actor) return false
+  const role = String(actor.role || '').trim().toLowerCase()
+  const permissions = Array.isArray(actor.permissions) ? actor.permissions.map(String) : []
+  if (['ceo', 'owner', 'super_admin', 'direction', 'admin', 'operations', 'session_leader'].includes(role)) return true
+  if (permissions.includes('*')) return true
+  return [
+    'operations.view',
+    'operations.manage',
+    'interventions.dispatch',
+    'interventions.manage',
+    'missions.view',
+    'missions.assign',
+    'caregivers.view',
+  ].some((permission) => permissions.includes(permission))
+}
+
+function buildCareLinkAccessDeniedResponse(request: NextRequest, reason: string, status = 403) {
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.json({ ok: false, error: reason, code: 'carelink_ops_access_denied' }, { status })
+  }
+  return NextResponse.redirect(new URL(status === 401 ? '/login' : '/unauthorized', request.url))
+}
+
+function buildCareLinkMobileLoginRequiredResponse(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.json({ ok: false, error: 'CareLink Mobile login required.', code: 'carelink_mobile_login_required' }, { status: 401 })
+  }
+  const loginUrl = new URL('/carelink/login', request.url)
+  loginUrl.searchParams.set('next', request.nextUrl.pathname)
+  return NextResponse.redirect(loginUrl)
+}
+
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
@@ -74,6 +123,18 @@ export async function proxy(request: NextRequest) {
   const env = getSupabaseEnv()
   if (!env.url || !env.serviceRoleKey) {
     return NextResponse.next()
+  }
+
+
+  if (isCareLinkOpsProtectedPath(pathname)) {
+    const actor = await getRuntimeActorFromRequest(request)
+    if (!actor) return buildCareLinkAccessDeniedResponse(request, 'CareLink OPS login required.', 401)
+    if (!isCareLinkOpsAuthorizedActor(actor)) return buildCareLinkAccessDeniedResponse(request, 'CareLink OPS access denied.', 403)
+  }
+
+  if (isCareLinkMobileProtectedPath(pathname)) {
+    const actor = await getRuntimeActorFromRequest(request)
+    if (!actor) return buildCareLinkMobileLoginRequiredResponse(request)
   }
 
   const supabase = getSupabaseRuntimeClientFromRequest(request)

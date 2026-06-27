@@ -1,211 +1,238 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js'
+import { getCurrentAppUser } from '@/lib/auth/session'
+import { createClient as createSupabaseServerClient } from '@/lib/supabase/server'
 
-type BroadcastNotification = {
-  id: string
-  title: string
-  body: string
-  situation: string
-  priority: string
-  createdAt: string
-  memoId: string
-  targetId: string | null
+type Row = Record<string, any>
+
+function normalize(value: unknown) {
+  return String(value || '').trim()
 }
 
-function supabaseAdmin() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.SUPABASE_SERVICE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!url || !key) return null
-  return createClient(url, key, { auth: { persistSession: false } })
+function lower(value: unknown) {
+  return normalize(value).toLowerCase()
 }
 
-function readUserIdentity(request: Request) {
-  const cookie = request.headers.get('cookie') || ''
-  const headerEmail =
-    request.headers.get('x-user-email') ||
-    request.headers.get('x-angelcare-user-email') ||
-    ''
-
-  const emailFromCookie =
-    cookie.match(/(?:userEmail|user_email|email)=([^;]+)/i)?.[1] ||
-    cookie.match(/(?:angelcare_user_email)=([^;]+)/i)?.[1] ||
-    ''
-
-  return decodeURIComponent(headerEmail || emailFromCookie || '').trim().toLowerCase()
+function asArray(value: unknown) {
+  return Array.isArray(value) ? value.map((item) => normalize(item)).filter(Boolean) : []
 }
 
-function memoToNotification(row: any, target: any | null): BroadcastNotification {
-  const memo = target?.memo || target?.workspace_broadcast_memos || row
+function extractLine(message: unknown, key: string) {
+  const text = normalize(message)
+  const prefix = `${key.toLowerCase()}:`
+  const line = text.split('\n').find((entry) => entry.trim().toLowerCase().startsWith(prefix))
+  return line ? line.split(':').slice(1).join(':').trim() : ''
+}
+
+function extractLink(message: unknown) {
+  const text = normalize(message)
+  const match = text.match(/(?:COURSE_LINK|OPEN_URL|ACTION_URL):\s*(\/[^\s]+)/i)
+  return match?.[1] || null
+}
+
+function isTrainingMemo(memo: Row) {
+  const title = lower(memo.title)
+  const message = lower(memo.message)
+
+  return (
+    lower(memo.memo_type) === 'hr_training_assignment' ||
+    title.includes('formation assignée') ||
+    message.includes('/hr/training/online/') ||
+    message.includes('course_link:') ||
+    message.includes('resource_id:')
+  )
+}
+
+function memoTargetsCurrentUser(memo: Row, userId: string, userEmail: string) {
+  const targetUserIds = asArray(memo.target_user_ids)
+  const message = normalize(memo.message)
+  const memoEmail = lower(extractLine(message, 'EMAIL') || extractLine(message, 'EMPLOYEE_EMAIL'))
+
+  if (targetUserIds.length && userId && targetUserIds.includes(userId)) return true
+  if (memoEmail && userEmail && memoEmail === userEmail) return true
+
+  // Personal red-bell rule:
+  // no target_user_ids and no EMAIL/EMPLOYEE_EMAIL means it is not personal.
+  // Global/internal broadcast noise must not appear in every user's red bell.
+  return false
+}
+
+function memoToNotification(memo: Row) {
+  const memoId = normalize(memo.id)
+  const createdAt = normalize(memo.created_at) || new Date().toISOString()
+  const message = normalize(memo.message)
+  const linkUrl = extractLink(message)
 
   return {
-    id: String(target?.id || memo?.id || row?.id),
-    memoId: String(memo?.id || row?.memo_id || row?.id),
-    targetId: target?.id ? String(target.id) : null,
-    title: String(memo?.title || memo?.subject || memo?.situation || 'Broadcast memo'),
-    body: String(memo?.body || memo?.message || memo?.content || memo?.description || ''),
-    situation: String(memo?.situation || memo?.category || 'Internal memo'),
-    priority: String(memo?.priority || memo?.level || 'normal'),
-    createdAt: String(memo?.created_at || memo?.createdAt || row?.created_at || new Date().toISOString()),
+    id: `broadcast-${memoId}`,
+    memoId,
+    targetId: memoId,
+    title: normalize(memo.title) || 'Personal command alert',
+    body: message,
+    message,
+    description: message,
+    situation: isTrainingMemo(memo) ? 'HR Training' : normalize(memo.memo_type || 'Broadcast memo'),
+    type: isTrainingMemo(memo) ? 'hr_training_assignment' : normalize(memo.memo_type || 'broadcast'),
+    source_type: isTrainingMemo(memo) ? 'hr_training_assignment' : normalize(memo.memo_type || 'broadcast'),
+    priority: normalize(memo.priority) || 'normal',
+    status: 'unread',
+    read: false,
+    unread: true,
+    is_read: false,
+    createdAt,
+    created_at: createdAt,
+    linkUrl,
+    href: linkUrl,
+    url: linkUrl,
+    actionUrl: linkUrl,
+    action_url: linkUrl,
+    route: linkUrl,
+    cta_href: linkUrl,
+    cta_label: linkUrl ? 'Open training course' : 'Open memo',
   }
 }
 
-export async function GET(request: Request) {
-  const supabase = supabaseAdmin()
-  if (!supabase) {
-    return NextResponse.json({ ok: true, data: [], source: 'not_configured' })
+async function supabaseForRoute() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY
+
+  if (url && serviceKey) {
+    return createSupabaseAdminClient(url, serviceKey, { auth: { persistSession: false } })
   }
 
-  const userEmail = readUserIdentity(request)
+  return await createSupabaseServerClient()
+}
 
-  try {
-    let userIds: string[] = []
+async function currentUserIdentity(supabase: any) {
+  const user = await getCurrentAppUser().catch(() => null)
+  const userId = normalize((user as Row | null)?.id)
+  let userEmail = lower((user as Row | null)?.email || (user as Row | null)?.user_email || (user as Row | null)?.username)
 
-    if (userEmail) {
-      const { data: users } = await supabase
+  if (userId && !userEmail) {
+    try {
+      const { data } = await supabase
         .from('app_users')
-        .select('id,email,username')
-        .or(`email.eq.${userEmail},username.eq.${userEmail}`)
-        .limit(5)
+        .select('email,username,user_email')
+        .eq('id', userId)
+        .maybeSingle()
 
-      userIds = Array.isArray(users) ? users.map((u: any) => String(u.id)).filter(Boolean) : []
+      userEmail = lower(data?.email || data?.user_email || data?.username)
+    } catch {}
+  }
+
+  return { user, userId, userEmail }
+}
+
+export async function GET() {
+  try {
+    const supabase = await supabaseForRoute()
+    const { userId, userEmail } = await currentUserIdentity(supabase)
+
+    if (!userId && !userEmail) {
+      return NextResponse.json({
+        ok: true,
+        data: [],
+        notifications: [],
+        unreadCount: 0,
+        source: 'no_current_user',
+      })
     }
 
-    const notifications: BroadcastNotification[] = []
+    let readMemoIds = new Set<string>()
 
-    // Preferred normalized target table.
-    const targetQuery = supabase
-      .from('workspace_broadcast_memo_targets')
-      .select(`
-        id,
-        memo_id,
-        user_id,
-        user_email,
-        read_at,
-        acknowledged_at,
-        closed_at,
-        status,
-        workspace_broadcast_memos:memo_id (
-          id,
-          title,
-          subject,
-          situation,
-          category,
-          priority,
-          level,
-          body,
-          message,
-          content,
-          description,
-          status,
-          created_at
-        )
-      `)
-      .is('read_at', null)
-      .is('closed_at', null)
-      .limit(20)
+    if (userId) {
+      try {
+        const { data: receipts } = await supabase
+          .from('workspace_broadcast_memo_receipts')
+          .select('memo_id,user_id,acknowledged_at,closed_at')
+          .eq('user_id', userId)
+          .limit(1000)
 
-    if (userIds.length > 0 || userEmail) {
-      const filters = [
-        ...userIds.map((id) => `user_id.eq.${id}`),
-        userEmail ? `user_email.eq.${userEmail}` : '',
-      ].filter(Boolean)
-
-      if (filters.length > 0) targetQuery.or(filters.join(','))
+        readMemoIds = new Set((receipts || []).map((receipt: Row) => normalize(receipt.memo_id)).filter(Boolean))
+      } catch {}
     }
 
-    const { data: targetRows, error: targetError } = await targetQuery
+    const { data: memos, error } = await supabase
+      .from('workspace_broadcast_memos')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(120)
 
-    if (!targetError && Array.isArray(targetRows)) {
-      for (const target of targetRows) {
-        const memo = (target as any).workspace_broadcast_memos
-        if (!memo) continue
-        if (memo.status && !['active', 'open', 'sent', 'broadcasted', 'published'].includes(String(memo.status).toLowerCase())) continue
-        notifications.push(memoToNotification(memo, { ...target, memo }))
-      }
+    if (error) {
+      return NextResponse.json({
+        ok: false,
+        data: [],
+        notifications: [],
+        unreadCount: 0,
+        error: error.message,
+      })
     }
 
-    // Fallback for less normalized memo table.
-    if (notifications.length === 0) {
-      const { data: memoRows } = await supabase
-        .from('workspace_broadcast_memos')
-        .select('id,title,subject,situation,category,priority,level,body,message,content,description,status,created_at,target_user_ids,target_user_emails,read_by,closed_by')
-        .in('status', ['active', 'open', 'sent', 'broadcasted', 'published'])
-        .order('created_at', { ascending: false })
-        .limit(20)
+    const now = Date.now()
 
-      for (const memo of memoRows || []) {
-        const targetUserIds = Array.isArray((memo as any).target_user_ids) ? (memo as any).target_user_ids.map(String) : []
-        const targetEmails = Array.isArray((memo as any).target_user_emails) ? (memo as any).target_user_emails.map((x: any) => String(x).toLowerCase()) : []
-        const readBy = Array.isArray((memo as any).read_by) ? (memo as any).read_by.map(String) : []
-        const closedBy = Array.isArray((memo as any).closed_by) ? (memo as any).closed_by.map(String) : []
+    const notifications = (memos || [])
+      .filter((memo: Row) => {
+        const status = lower(memo.status || 'active')
+        if (!['active', 'open', 'sent', 'broadcasted', 'published'].includes(status)) return false
 
-        const targeted =
-          targetUserIds.length === 0 && targetEmails.length === 0
-            ? true
-            : userIds.some((id) => targetUserIds.includes(id)) || (!!userEmail && targetEmails.includes(userEmail))
+        const startsAt = memo.starts_at ? new Date(memo.starts_at).getTime() : 0
+        const expiresAt = memo.expires_at ? new Date(memo.expires_at).getTime() : 0
 
-        const alreadyRead = userIds.some((id) => readBy.includes(id)) || (!!userEmail && readBy.includes(userEmail))
-        const alreadyClosed = userIds.some((id) => closedBy.includes(id)) || (!!userEmail && closedBy.includes(userEmail))
+        if (startsAt && startsAt > now) return false
+        if (expiresAt && expiresAt < now) return false
+        if (readMemoIds.has(normalize(memo.id))) return false
 
-        if (targeted && !alreadyRead && !alreadyClosed) {
-          notifications.push(memoToNotification(memo, null))
-        }
-      }
-    }
+        return memoTargetsCurrentUser(memo, userId, userEmail)
+      })
+      .map(memoToNotification)
+      .slice(0, 20)
 
     return NextResponse.json({
       ok: true,
-      data: notifications.slice(0, 12),
-      source: notifications.length ? 'broadcast_registry' : 'empty',
+      data: notifications,
+      notifications,
+      unreadCount: notifications.length,
+      source: notifications.length ? 'workspace_broadcast_memos' : 'empty',
     })
   } catch (error) {
     return NextResponse.json({
       ok: true,
       data: [],
+      notifications: [],
+      unreadCount: 0,
       source: 'safe_empty',
-      message: error instanceof Error ? error.message : 'Broadcast notifications unavailable',
+      error: error instanceof Error ? error.message : 'Broadcast notifications unavailable',
     })
   }
 }
 
 export async function POST(request: Request) {
-  const supabase = supabaseAdmin()
-  if (!supabase) return NextResponse.json({ ok: true })
-
-  const body = await request.json().catch(() => ({}))
-  const memoId = String(body.memoId || '')
-  const targetId = body.targetId ? String(body.targetId) : null
-  const userEmail = readUserIdentity(request)
-  const now = new Date().toISOString()
-
   try {
-    if (targetId) {
-      await supabase
-        .from('workspace_broadcast_memo_targets')
-        .update({ read_at: now, status: 'read' })
-        .eq('id', targetId)
+    const supabase = await supabaseForRoute()
+    const { userId } = await currentUserIdentity(supabase)
 
-      return NextResponse.json({ ok: true })
-    }
+    const body = await request.json().catch(() => ({}))
+    const rawId = normalize(body.memoId || body.targetId || body.id || body.notificationId)
+    const memoId = rawId.replace(/^broadcast-/, '').replace(/^hr-training-/, '')
+    const now = new Date().toISOString()
 
-    if (memoId) {
-      const { data: memo } = await supabase
-        .from('workspace_broadcast_memos')
-        .select('read_by')
-        .eq('id', memoId)
-        .maybeSingle()
-
-      const readBy = Array.isArray((memo as any)?.read_by) ? (memo as any).read_by : []
-      const nextReadBy = Array.from(new Set([...readBy, userEmail].filter(Boolean)))
-
-      await supabase
-        .from('workspace_broadcast_memos')
-        .update({ read_by: nextReadBy })
-        .eq('id', memoId)
+    if (memoId && userId) {
+      try {
+        await supabase
+          .from('workspace_broadcast_memo_receipts')
+          .upsert(
+            {
+              memo_id: memoId,
+              user_id: userId,
+              acknowledged_at: now,
+              created_at: now,
+              updated_at: now,
+            },
+            { onConflict: 'memo_id,user_id' },
+          )
+      } catch {}
     }
 
     return NextResponse.json({ ok: true })

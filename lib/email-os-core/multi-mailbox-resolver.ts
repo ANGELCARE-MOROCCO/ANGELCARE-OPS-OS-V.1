@@ -34,7 +34,7 @@ const MAILBOXES = [
   ["IT_SUPPORT", "IT Support", ["IT_SUPPORT"]],
   ["HOMESERVICE", "Homeservice", ["HOMESERVICE", "HOME_SERVICE"]],
   ["EVENTS", "Events", ["EVENTS"]],
-  ["EXURSIONS", "Exursions", ["EXURSIONS", "EXCURSIONS"]],
+  ["EXCURSIONS", "Exursions", ["EXCURSIONS", "EXCURSIONS"]],
   ["B2B", "B2B", ["B2B"]],
   ["PARTENAIRES", "Partenaires", ["PARTENAIRES", "PARTNERS"]]
 ] as const

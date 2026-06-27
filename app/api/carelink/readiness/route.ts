@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { carelinkMobileErrorResponse } from '@/lib/carelink/mobile-auth'
 import { loadCarelinkMobileWorkspace } from '@/lib/carelink/mobile-adapter'
 
 export const dynamic = 'force-dynamic'
@@ -8,6 +9,6 @@ export async function GET() {
     const workspace = await loadCarelinkMobileWorkspace()
     return NextResponse.json({ ok: true, data: workspace.readiness })
   } catch (error) {
-    return NextResponse.json({ ok: false, data: null, error: error instanceof Error ? error.message : 'Load CareLink readiness failed' }, { status: 500 })
+    return carelinkMobileErrorResponse(error, 'Load CareLink readiness failed')
   }
 }

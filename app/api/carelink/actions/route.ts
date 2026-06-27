@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { carelinkMobileErrorResponse, requireCareLinkMobileAgent, requireCareLinkMobileMissionAccess } from '@/lib/carelink/mobile-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,26 +8,18 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}))
     const action = typeof body?.action === 'string' ? body.action : 'unknown_action'
     const entityId = typeof body?.entityId === 'string' ? body.entityId : null
+    if (body?.missionId) await requireCareLinkMobileMissionAccess(Number(body.missionId), 'can_view_missions')
+    else await requireCareLinkMobileAgent('can_view_missions')
 
     return NextResponse.json({
       ok: true,
       action,
       entityId,
       status: 'recorded',
-      audit: {
-        event: `carelink.ops.${action}`,
-        entityId,
-        createdAt: new Date().toISOString(),
-      },
-      message: 'CareLink Ops action recorded. Connect this route to Supabase repository persistence when live tables are ready.',
+      audit: { event: `carelink.mobile.${action}`, entityId, createdAt: new Date().toISOString() },
+      message: 'CareLink mobile action accepted by authenticated agent guard.',
     })
   } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : 'Unknown CareLink Ops action error',
-      },
-      { status: 500 },
-    )
+    return carelinkMobileErrorResponse(error, 'Unknown CareLink mobile action error')
   }
 }

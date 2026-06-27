@@ -34,7 +34,6 @@ export function getMegaStaffPortalData(user: StaffPortalUser | null, data: Staff
       { title: 'Memo Broadcasts', detail: 'ATC memos and acknowledgements.', href: '/staff-memos', tone: 'red' as const },
       { title: 'Team Command', detail: 'Manager/team control page.', href: '/team-command', tone: 'purple' as const },
       { title: 'Portal Intelligence', detail: 'Department and persona logic.', href: '/staff-portal-intelligence', tone: 'cyan' as const },
-      { title: 'Mega QA', detail: 'Validation and smoke test.', href: '/staff-portal-mega-qa', tone: 'amber' as const },
     ],
   }
 }

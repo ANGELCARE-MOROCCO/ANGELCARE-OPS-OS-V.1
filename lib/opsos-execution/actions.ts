@@ -32,7 +32,7 @@ export async function createOpsosWorkflow(formData: FormData) {
     owner: user?.id || null,
     current_step: s(formData, 'current_step', 'created'),
     progress: n(formData, 'progress', 5),
-    source_route: s(formData, 'source_route', '/enterprise-command'),
+    source_route: s(formData, 'source_route', '/executive-cockpit'),
     target_route: s(formData, 'target_route', '/execution-engine'),
     notes: s(formData, 'notes'),
   }
@@ -68,7 +68,7 @@ export async function createOpsosCommandAction(formData: FormData) {
     action_type: s(formData, 'action_type', 'execute'),
     status: s(formData, 'status', 'open'),
     priority: s(formData, 'priority', 'medium'),
-    route: s(formData, 'route', '/enterprise-command'),
+    route: s(formData, 'route', '/executive-cockpit'),
     payload: { notes: s(formData, 'notes') },
   }
 

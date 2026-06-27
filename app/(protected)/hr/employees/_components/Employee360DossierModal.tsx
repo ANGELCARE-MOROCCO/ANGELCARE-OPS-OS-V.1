@@ -230,6 +230,12 @@ function SectionCard({
 
 
 type EmployeeHRAction = {
+  production_status?: string
+  validation_status?: string
+  saved_at?: string
+  validated_at?: string
+  validator?: string
+
   id: string
   category: string
   title: string
@@ -241,7 +247,6 @@ type EmployeeHRAction = {
   notes: string
   case_type?: string
   workflow_status?: string
-  validation_status?: string
   payment_method?: string
   period?: string
   reference?: string
@@ -250,7 +255,6 @@ type EmployeeHRAction = {
   end_date?: string
   duration?: string
   impact?: string
-  validator?: string
   printed_at?: string
   contract_kind?: string
   contract_city?: string
@@ -688,6 +692,25 @@ function EmployeeMegaHRWorkspace({
     }
   }
 
+
+  async function saveSelectedActionToProduction(action: EmployeeHRAction, message = 'Cas RH sauvegardé') {
+    const now = new Date().toISOString()
+    const safeAction = {
+      ...action,
+      updated_at: now,
+      saved_at: now,
+      production_status: action.production_status || 'saved',
+    }
+
+    const nextActions = actions.map((item) => item.id === safeAction.id ? safeAction : item)
+
+    setActions(nextActions)
+    setSelectedActionId(safeAction.id)
+    setWorkspaceMessage(message)
+
+    await saveToProduction(nextActions)
+  }
+
   function isAttestationAction(action?: Partial<EmployeeHRAction> | null) {
     return String(action?.case_type || action?.title || '').toLowerCase().includes('attestation')
   }
@@ -763,19 +786,25 @@ function EmployeeMegaHRWorkspace({
     setSelectedActionId(copy.id)
   }
 
-  function validateAction(action: EmployeeHRAction) {
-    const next = actions.map((item) =>
-      item.id === action.id
-        ? {
-            ...item,
-            status: 'Validé',
-            workflow_status: activeCategory.key === 'payments' ? 'Validé' : 'Validé',
-            validation_status: 'Validé RH',
-            validator: item.validator || 'Manager RH',
-          }
-        : item,
-    )
-    persist(next, 'Opération validée. Sauvegardez pour confirmer en production.')
+  async function validateAction(action: EmployeeHRAction) {
+    const now = new Date().toISOString()
+    const validatedAction = {
+      ...action,
+      status: 'validated',
+      validation_status: 'validated',
+      production_status: 'validated',
+      validated_at: now,
+      updated_at: now,
+      validator: action.validator || 'Direction RH',
+    }
+
+    const nextActions = actions.map((item) => item.id === validatedAction.id ? validatedAction : item)
+
+    setActions(nextActions)
+    setSelectedActionId(validatedAction.id)
+    setWorkspaceMessage(`${validatedAction.title || validatedAction.case_type || 'Cas RH'} validé et sauvegardé.`)
+
+    await saveToProduction(nextActions)
   }
 
   function deleteAction(actionId: string) {
@@ -1587,9 +1616,9 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
               ) : null}
 
               <div className="grid grid-cols-2 gap-2">
-                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-3 py-2 text-xs font-black text-white">Valider</button>
+                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-3 py-2 text-xs font-black text-white">Valider & sauvegarder</button>
                 <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-3 py-2 text-xs font-black text-white">{activeCategory.key === 'contracts' ? 'Print A4' : 'Print A5'}</button>
-                <button type="button" onClick={() => saveToProduction(actions)} className="rounded-2xl bg-violet-600 px-3 py-2 text-xs font-black text-white">Save</button>
+                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-3 py-2 text-xs font-black text-white">Save</button>
                 <button type="button" onClick={() => duplicateAction(selectedAction)} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700">Duplicate</button>
                 <button type="button" onClick={() => deleteAction(selectedAction.id)} className="col-span-2 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-700">Delete permanently</button>
               </div>
@@ -1614,8 +1643,8 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Valider attestation</button>
-                <button type="button" onClick={() => saveToProduction(actions)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save</button>
+                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Valider & sauvegarder attestation</button>
+                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save</button>
                 <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white">Print A4</button>
                 <button type="button" onClick={() => { deleteAction(selectedAction.id); setAttestationModalOpen(false) }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">Delete permanently</button>
                 <button type="button" onClick={() => setAttestationModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Fermer</button>
@@ -1692,8 +1721,8 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Valider contrat</button>
-                <button type="button" onClick={() => saveToProduction(actions)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save</button>
+                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Valider & sauvegarder contrat</button>
+                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save</button>
                 <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white">Print A4</button>
                 <button type="button" onClick={() => { deleteAction(selectedAction.id); setContractModalOpen(false) }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">Delete permanently</button>
                 <button type="button" onClick={() => setContractModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Fermer</button>

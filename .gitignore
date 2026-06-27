@@ -17,3 +17,14 @@ coverage
 *.broken-jsx-current
 *.before-*
 *.tsbuildinfo
+.vercel
+.env*
+
+# Local/generated/backup artifacts
+.vercel/
+.angelcare_backups/
+.patch-backups-*/
+.rollback-*/
+carelink-p*.patch
+tsconfig.tsbuildinfo
+*.backup-*

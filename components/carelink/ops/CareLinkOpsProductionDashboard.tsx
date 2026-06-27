@@ -955,6 +955,217 @@ function formatMissionMapRangeLabel(date: Date, range: "day" | "week") {
 }
 
 
+
+function __carelinkMergeOverviewCommandPayload(currentPayload: any, commandPayload: any) {
+  const current = __carelinkHydrateOpsDashboardPayload(currentPayload || {})
+  const source = commandPayload || {}
+  const summary = source.summary || source.metrics || {}
+  const records = source.records || {}
+  const missions = Array.isArray(records.missions)
+    ? records.missions
+    : Array.isArray(source.missions)
+      ? source.missions
+      : Array.isArray(current.missions)
+        ? current.missions
+        : []
+
+  const activeMissions = Array.isArray(records.activeMissions)
+    ? records.activeMissions
+    : missions.filter((mission: any) => {
+        const status = String(mission?.status || '').toLowerCase()
+        const lifecycle = String(mission?.lifecycle_stage || '').toLowerCase()
+        const dossierStatus = String(mission?.dossier_status || '').toLowerCase()
+        const archived = mission?.is_archived === true
+        const invalidDate = String(mission?.mission_date || '').startsWith('0001-')
+        return !archived && !invalidDate && !['deleted', 'archived', 'cancelled', 'completed'].includes(status) && lifecycle !== 'deleted' && dossierStatus !== 'deleted'
+      })
+
+  const nextSummary = {
+    ...(current.summary || {}),
+    ...summary,
+    missions: Number(summary.missions ?? missions.length ?? current.summary?.missions ?? 0),
+    activeMissions: Number(summary.activeMissions ?? activeMissions.length ?? current.summary?.activeMissions ?? 0),
+    completedMissions: Number(summary.completedMissions ?? current.summary?.completedMissions ?? 0),
+    pendingValidation: Number(summary.pendingValidation ?? current.summary?.pendingValidation ?? 0),
+    unassigned: Number(summary.unassigned ?? current.summary?.unassigned ?? 0),
+    routeGaps: Number(summary.routeGaps ?? current.summary?.routeGaps ?? 0),
+    queuedNotifications: Number(summary.queuedNotifications ?? current.summary?.queuedNotifications ?? 0),
+    healthScore: Number(summary.healthScore ?? current.summary?.healthScore ?? 0),
+  }
+
+  const nextKpis = Array.isArray(current.kpis)
+    ? current.kpis.map((kpi: any) => {
+        const key = String(kpi?.key || kpi?.label || '').toLowerCase()
+        if (key.includes('mission')) return { ...kpi, value: nextSummary.missions }
+        if (key.includes('active')) return { ...kpi, value: nextSummary.activeMissions }
+        if (key.includes('validation')) return { ...kpi, value: nextSummary.pendingValidation }
+        if (key.includes('route')) return { ...kpi, value: nextSummary.routeGaps }
+        return kpi
+      })
+    : current.kpis
+
+  return __carelinkHydrateOpsDashboardPayload({
+    ...current,
+    summary: nextSummary,
+    metrics: {
+      ...(current.metrics || {}),
+      ...summary,
+    },
+    missions: missions.length ? missions : current.missions,
+    records: missions.length ? missions : current.records,
+    kpis: nextKpis,
+    __hardenedOverviewBridge: {
+      ok: Boolean(source.ok),
+      generatedAt: source.generatedAt || new Date().toISOString(),
+      summary: nextSummary,
+    },
+  })
+}
+
+
+function __carelinkIsVisibleOperationalMission(row: any): boolean {
+  const source = row?.raw || row || {}
+  const statusText = [
+    row?.status,
+    row?.lifecycle_stage,
+    row?.lifecycleStage,
+    row?.dossier_status,
+    row?.dossierStatus,
+    source?.status,
+    source?.lifecycle_stage,
+    source?.lifecycleStage,
+    source?.dossier_status,
+    source?.dossierStatus,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+
+  const archived =
+    source?.is_archived === true ||
+    source?.isArchived === true ||
+    row?.is_archived === true ||
+    row?.isArchived === true ||
+    Boolean(source?.archived_at || source?.archivedAt || row?.archived_at || row?.archivedAt)
+
+  const deleted = /(^|[\s_-])(deleted|archive|archived)([\s_-]|$)/.test(statusText)
+  const dateValue = String(row?.mission_date || row?.missionDate || source?.mission_date || source?.missionDate || '')
+  const invalidDate = dateValue.startsWith('0001-') || dateValue.startsWith('0000-')
+
+  return !archived && !deleted && !invalidDate
+}
+
+function __carelinkCleanVisibleOpsPayload(input: any): any {
+  if (!input || typeof input !== 'object') return input
+
+  const cleanRows = (rows: any) => Array.isArray(rows) ? rows.filter(__carelinkIsVisibleOperationalMission) : rows
+  const clone: any = { ...input }
+
+  ;['missions', 'records', 'dossiers', 'items', 'queue', 'missionRows', 'liveRows'].forEach((key) => {
+    if (Array.isArray(clone[key])) clone[key] = cleanRows(clone[key])
+  })
+
+  if (Array.isArray(clone.lanes)) {
+    clone.lanes = clone.lanes.map((lane: any) => {
+      const next: any = { ...(lane || {}) }
+      ;['missions', 'records', 'items', 'queue'].forEach((key) => {
+        if (Array.isArray(next[key])) next[key] = cleanRows(next[key])
+      })
+      if (typeof next.count === 'number') {
+        const firstRows = next.missions || next.records || next.items || next.queue
+        if (Array.isArray(firstRows)) next.count = firstRows.length
+      }
+      return next
+    })
+  }
+
+  const visibleMissions = Array.isArray(clone.missions)
+    ? clone.missions
+    : Array.isArray(clone.records)
+      ? clone.records
+      : []
+
+  const today = new Date()
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+
+  const readMission = (row: any, key: string) => row?.[key] ?? row?.raw?.[key] ?? ''
+  const missionDateKey = (row: any) => String(readMission(row, 'mission_date') || readMission(row, 'date') || readMission(row, 'start_date') || '').slice(0, 10)
+  const statusText = (row: any) =>
+    [
+      readMission(row, 'status'),
+      readMission(row, 'lifecycle_stage'),
+      readMission(row, 'dossier_status'),
+      readMission(row, 'dispatch_status'),
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+
+  const operationalMissions = visibleMissions.filter((mission: any) => {
+    const status = statusText(mission)
+    const dateKey = missionDateKey(mission)
+    const archived = mission?.is_archived === true || mission?.raw?.is_archived === true
+
+    if (archived) return false
+    if (!dateKey || dateKey === '0001-01-01') return false
+    if (dateKey < todayKey) return false
+    if (/(^|[\\s_-])(deleted|archive|archived|cancelled|canceled|completed|closed)([\\s_-]|$)/.test(status)) return false
+
+    return true
+  })
+
+  const todayMissions = operationalMissions.filter((mission: any) => missionDateKey(mission) === todayKey)
+  const assignedMissions = operationalMissions.filter((mission: any) => Number(readMission(mission, 'caregiver_id') || readMission(mission, 'staff_id') || 0) > 0)
+  const activeMissions = operationalMissions.filter((mission: any) => {
+    const status = statusText(mission)
+    return /(^|[\\s_-])(active|started|in_progress|assigned)([\\s_-]|$)/.test(status)
+  })
+  const pendingValidationMissions = operationalMissions.filter((mission: any) => String(readMission(mission, 'validation_status')).toLowerCase().includes('pending'))
+  const unassignedMissions = operationalMissions.filter((mission: any) => Number(readMission(mission, 'caregiver_id') || readMission(mission, 'staff_id') || 0) <= 0)
+
+  clone.summary = {
+    ...(clone.summary || {}),
+    total: operationalMissions.length,
+    missions: operationalMissions.length,
+    totalMissions: operationalMissions.length,
+    visibleOperationalMissions: operationalMissions.length,
+    today: todayMissions.length,
+    assigned: assignedMissions.length,
+    active: activeMissions.length,
+    pendingValidation: pendingValidationMissions.length,
+    unassigned: unassignedMissions.length,
+  }
+
+  clone.metrics = {
+    ...(clone.metrics || {}),
+    total: operationalMissions.length,
+    missions: operationalMissions.length,
+    totalMissions: operationalMissions.length,
+    today: todayMissions.length,
+    assigned: assignedMissions.length,
+    active: activeMissions.length,
+    pendingValidation: pendingValidationMissions.length,
+    unassigned: unassignedMissions.length,
+  }
+
+  if (Array.isArray(clone.kpis)) {
+    clone.kpis = clone.kpis.map((kpi: any) => {
+      const key = String(kpi?.key || kpi?.label || kpi?.title || '').toLowerCase()
+
+      if (key.includes('total') || key.includes('registry')) return { ...kpi, value: operationalMissions.length }
+      if (key.includes('today')) return { ...kpi, value: todayMissions.length }
+      if (key.includes('assigned') || key.includes('dispatch')) return { ...kpi, value: assignedMissions.length }
+      if (key.includes('active') || key.includes('live')) return { ...kpi, value: activeMissions.length }
+      if (key.includes('review') || key.includes('validation') || key.includes('pending')) return { ...kpi, value: pendingValidationMissions.length }
+      if (key.includes('unassigned')) return { ...kpi, value: unassignedMissions.length }
+
+      return kpi
+    })
+  }
+
+  return clone
+}
+
 export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayload?: any }) {
   // CARELINK_OPS_MAIN_SIDEBAR_NAV_FIX: make the left CareLink Ops sidebar real navigation on the overview page.
   useEffect(() => {
@@ -962,7 +1173,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
       overview: '/carelink-ops',
       dispatch: '/carelink-ops/dispatch',
       missions: '/carelink-ops/missions',
-      agents: '/carelink-ops/agents',
+      agents: '/caregivers',
       schedule: '/carelink-ops/schedule',
       incidents: '/carelink-ops/incidents',
       reports: '/carelink-ops/reports',
@@ -982,6 +1193,14 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
       if (!sidebar) return
 
       const label = normalize(clickable.textContent || '')
+
+      // CARELINK_OPS_AGENTS_TO_CAREGIVERS_CLICK_FIX
+      const clickableTextForAgents = (clickable.textContent || '').trim().toLowerCase()
+      if (clickableTextForAgents === 'agents' || clickableTextForAgents.includes('agents')) {
+        event.preventDefault()
+        window.location.href = '/caregivers'
+        return
+      }
       const match = Object.entries(routes).find(([key]) => label === key || label.includes(key))
       if (!match) return
 
@@ -998,8 +1217,41 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
        document.removeEventListener('click', handleSidebarClick, true)
   }, [])
 
-  const [payload, setPayload] = useState<OpsDashboardPayload>(() => __carelinkHydrateOpsDashboardPayload(initialPayload))
-  const [loading, setLoading] = useState(false)
+  const [payload, setPayload] = useState<OpsDashboardPayload>(() => __carelinkHydrateOpsDashboardPayload(__carelinkCleanVisibleOpsPayload(initialPayload)))
+  
+
+  // overview-command hidden bridge: backend hardening only, no UI replacement.
+  useEffect(() => {
+    let alive = true
+    let timer: number | null = null
+
+    const loadOverviewCommandBridge = async () => {
+      try {
+        const res = await fetch('/api/carelink/ops/overview-command', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        })
+
+        if (!res.ok) return
+
+        const json = await res.json()
+        if (!alive || !json?.ok) return
+
+        setPayload((current: any) => __carelinkMergeOverviewCommandPayload(current, json))
+      } catch {
+        // Keep restored UI untouched if the backend bridge is unavailable.
+      }
+    }
+
+    void loadOverviewCommandBridge()
+    timer = window.setInterval(loadOverviewCommandBridge, 60000)
+
+    return () => {
+      alive = false
+      if (timer) window.clearInterval(timer)
+    }
+  }, [])
+const [loading, setLoading] = useState(false)
   const [lastUpdated, setLastUpdated] = useState('')
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState<ModalState>({ type: 'none' })
@@ -1022,7 +1274,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
     try {
       const res = await fetch('/api/carelink/ops/live-missions', { cache: 'no-store' })
       const json = await res.json()
-      setPayload(__carelinkHydrateOpsDashboardPayload(json))
+      setPayload(__carelinkHydrateOpsDashboardPayload(__carelinkCleanVisibleOpsPayload(json)))
       setLastUpdated(new Date().toLocaleTimeString('fr-FR'))
     } catch (error) {
       setLogs((current) => [`Dashboard refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}`, ...current].slice(0, 5))
@@ -1049,7 +1301,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
     try {
       const response = await fetch('/api/carelink/ops/dashboard', { cache: 'no-store' })
       const json = await response.json()
-      setPayload(__carelinkHydrateOpsDashboardPayload(json))
+      setPayload(__carelinkHydrateOpsDashboardPayload(__carelinkCleanVisibleOpsPayload(json)))
       setLastUpdated(new Date().toLocaleTimeString())
     } catch {
       setLastUpdated(new Date().toLocaleTimeString())
@@ -1075,7 +1327,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
     }
   }, [])
 
-  const visiblePayload = useMemo(() => __carelinkHydrateOpsDashboardPayload(payload), [payload])
+  const visiblePayload = useMemo(() => __carelinkHydrateOpsDashboardPayload(__carelinkCleanVisibleOpsPayload(payload)), [payload])
 
   const [selectedOpsDay, setSelectedOpsDay] = useState(() => new Date().toISOString().slice(0, 10))
 
@@ -1323,7 +1575,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
             <div className="mt-3 text-2xl font-black tracking-[-0.03em] text-white"><span style={{ color: "#ffffff" }}><span className="!text-white" style={{ color: "#ffffff" }}>Operational shortcuts</span></span></div>
             <p className="mt-1 text-sm font-medium text-slate-200"><span style={{ color: "#e2e8f0" }}><span className="!text-white" style={{ color: "#ffffff" }}>Premium jump actions across the CareLink operational chain.</span></span></p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              <a href="/carelink-ops/agents" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Workforce command</span></span></a>
+              <a href="/caregivers" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Workforce command</span></span></a>
               <a href="/carelink-ops/schedule" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Schedule & coverage</span></span></a>
               <a href="/carelink-ops/reports" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Reports validation</span></span></a>
               <a href="/carelink-ops/incidents" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Incidents & alerts</span></span></a>

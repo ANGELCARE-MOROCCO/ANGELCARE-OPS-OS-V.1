@@ -1,39 +1,21 @@
 import { NextResponse } from 'next/server'
-import { patchMission } from '@/lib/missions/repository'
-import { recordMissionEvent } from '@/lib/missions/events'
-import { createNotification } from '@/lib/carelink/mobile-persistence'
+import { carelinkMobileErrorResponse } from '@/lib/carelink/mobile-auth'
+import { executeCareLinkMobileMissionAction, parseCareLinkMobileActionBody } from '@/lib/carelink/mobile-action-engine'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
-    const body = await request.json().catch(() => ({})) as { note?: string }
-    const mission = await patchMission(Number(id), {
-      status: 'mission_started',
-      lifecycle_stage: 'mission_started',
-      started_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    await recordMissionEvent({
+    const body = await parseCareLinkMobileActionBody(request)
+    const result = await executeCareLinkMobileMissionAction({
+      request,
       missionId: Number(id),
-      eventType: 'mobile_started',
-      content: body.note || 'Mission démarrée depuis CareLink mobile',
-      source: 'carelink_mobile',
+      action: 'start',
+      body,
     })
-    await createNotification({
-      type: 'mission_update',
-      title: 'Mission démarrée',
-      body: body.note || `La mission ${String(mission.id)} est désormais en cours.`,
-      priority: 'normal',
-      missionId: Number(id),
-      caregiverId: mission.caregiver_id ? Number(mission.caregiver_id) : null,
-      linkedEntityType: 'mission',
-      linkedEntityId: String(mission.id),
-      metadata: { status: mission.status, lifecycle_stage: mission.lifecycle_stage },
-    }).catch(() => null)
-    return NextResponse.json({ ok: true, data: mission })
+    return NextResponse.json({ ok: true, ...result })
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Start failed' }, { status: 500 })
+    return carelinkMobileErrorResponse(error, 'Start failed')
   }
 }

@@ -1,12 +1,8 @@
-import { CareLinkOpsEnterpriseRoutePage } from '@/components/carelink/ops/enterprise/CareLinkOpsEnterpriseRoutePage'
+import CareLinkScheduleCommandCenter from '@/components/carelink/ops/schedule/CareLinkScheduleCommandCenter'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-export default async function Page() {
-  return await CareLinkOpsEnterpriseRoutePage({
-    view: 'schedule',
-    title: 'Schedule Control',
-    subtitle: 'Planning opérationnel, densité, conflits, disponibilités et remplacements.',
-    apiPath: '/api/carelink/ops/schedule',
-  })
+export default function CareLinkOpsSchedulePage() {
+  return <CareLinkScheduleCommandCenter />
 }

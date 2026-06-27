@@ -3,84 +3,19 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { nowIso } from "@/lib/email-os-core/schema"
 
 const accounts = [
-  {
-    "email": "supports@angelcare.ma",
-    "password": "60dkz2hg",
-    "name": "Support Inbox",
-    "owner": "support"
-  },
-  {
-    "email": "ops@angelcare.ma",
-    "password": "ei7qkh5t",
-    "name": "Operations Inbox",
-    "owner": "operations"
-  },
-  {
-    "email": "rh@angelcare.ma",
-    "password": "a4cuxrxz",
-    "name": "HR Inbox",
-    "owner": "hr"
-  },
-  {
-    "email": "Commercial@angelcare.ma",
-    "password": "h4zut7hh",
-    "name": "Commercial Inbox",
-    "owner": "commercial"
-  },
-  {
-    "email": "Academy@angelcare.ma",
-    "password": "a3kd5p3c",
-    "name": "Academy Inbox",
-    "owner": "academy"
-  },
-  {
-    "email": "montessori@angelcare.ma",
-    "password": "nrgaiojx",
-    "name": "Montessori Inbox",
-    "owner": "academy"
-  },
-  {
-    "email": "flashcartes@angelcare.ma",
-    "password": "8c2blnqf",
-    "name": "Flashcartes Inbox",
-    "owner": "academy"
-  },
-  {
-    "email": "it.support@angelcare.ma",
-    "password": "ltd5yx0j",
-    "name": "IT Support Inbox",
-    "owner": "it"
-  },
-  {
-    "email": "Homeservice@angelcare.ma",
-    "password": "sjp6eddv",
-    "name": "Home Service Inbox",
-    "owner": "operations"
-  },
-  {
-    "email": "events@angelcare.ma",
-    "password": "362u4p3z",
-    "name": "Events Inbox",
-    "owner": "events"
-  },
-  {
-    "email": "exursions@angelcare.ma",
-    "password": "dvtwqqrk",
-    "name": "Excursions Inbox",
-    "owner": "events"
-  },
-  {
-    "email": "b2b@angelcare.ma",
-    "password": "igaloqjz",
-    "name": "B2B Inbox",
-    "owner": "sales"
-  },
-  {
-    "email": "partenaires@angelcare.ma",
-    "password": "2sj50qtg",
-    "name": "Partners Inbox",
-    "owner": "partnerships"
-  }
+  { email: process.env.SUPPORTS_EMAIL || "supports@angelcarehub.ma", password: process.env.SUPPORTS_PASSWORD || "", name: "Support Inbox", owner: "support" },
+  { email: process.env.OPS_EMAIL || "ops@angelcarehub.ma", password: process.env.OPS_PASSWORD || "", name: "Operations Inbox", owner: "operations" },
+  { email: process.env.RH_EMAIL || "rh@angelcarehub.ma", password: process.env.RH_PASSWORD || "", name: "HR Inbox", owner: "hr" },
+  { email: process.env.COMMERCIAL_EMAIL || "commercial@angelcarehub.ma", password: process.env.COMMERCIAL_PASSWORD || "", name: "Commercial Inbox", owner: "commercial" },
+  { email: process.env.ACADEMY_EMAIL || "academy@angelcarehub.ma", password: process.env.ACADEMY_PASSWORD || "", name: "Academy Inbox", owner: "academy" },
+  { email: process.env.MONTESSORI_EMAIL || "montessori@angelcarehub.ma", password: process.env.MONTESSORI_PASSWORD || "", name: "Montessori Inbox", owner: "academy" },
+  { email: process.env.FLASHCARTES_EMAIL || "flashcartes@angelcarehub.ma", password: process.env.FLASHCARTES_PASSWORD || "", name: "Flashcartes Inbox", owner: "academy" },
+  { email: process.env.IT_SUPPORT_EMAIL || "it.support@angelcarehub.ma", password: process.env.IT_SUPPORT_PASSWORD || "", name: "IT Support Inbox", owner: "it" },
+  { email: process.env.HOMESERVICE_EMAIL || "homeservice@angelcarehub.ma", password: process.env.HOMESERVICE_PASSWORD || "", name: "Home Service Inbox", owner: "operations" },
+  { email: process.env.EVENTS_EMAIL || "events@angelcarehub.ma", password: process.env.EVENTS_PASSWORD || "", name: "Events Inbox", owner: "events" },
+  { email: process.env.EXCURSIONS_EMAIL || "excursions@angelcarehub.ma", password: process.env.EXCURSIONS_PASSWORD || "", name: "Excursions Inbox", owner: "events" },
+  { email: process.env.B2B_EMAIL || "b2b@angelcarehub.ma", password: process.env.B2B_PASSWORD || "", name: "B2B Inbox", owner: "sales" },
+  { email: process.env.PARTENAIRES_EMAIL || "partenaires@angelcarehub.ma", password: process.env.PARTENAIRES_PASSWORD || "", name: "Partners Inbox", owner: "partnerships" }
 ]
 
 function mailboxId(email: string) {
@@ -134,12 +69,12 @@ export async function POST() {
       name: "Menara Maroc Telecom",
       provider_key: "menara",
       provider_mode: "smtp_imap",
-      smtp_host: "smtp-auth.menara.ma",
-      smtp_port: 587,
-      smtp_secure: false,
-      imap_host: "imap.menara.ma",
-      imap_port: 993,
-      imap_secure: true,
+      smtp_host: process.env.GLOBAL_SMTP_HOST || "smtp-out9.menara.ma",
+      smtp_port: Number(process.env.GLOBAL_SMTP_PORT || 587),
+      smtp_secure: String(process.env.GLOBAL_SMTP_SECURE || "false").toLowerCase() === "true",
+      imap_host: process.env.GLOBAL_POP_HOST || process.env.EMAIL_OS_POP_HOST || "pop.menara.ma",
+      imap_port: Number(process.env.GLOBAL_POP_PORT || process.env.EMAIL_OS_POP_PORT || 110),
+      imap_secure: String(process.env.GLOBAL_POP_SECURE || process.env.EMAIL_OS_POP_SECURE || "false").toLowerCase() === "true",
       status: "active",
       created_at: nowIso(),
       updated_at: nowIso()

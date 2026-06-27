@@ -795,3 +795,31 @@ body:has([data-market-os-root]) {
   border-color: #e2e8f0;
 }
 
+
+/* ANGELCARE HR TRAINING MODAL TITLES — readable modal headers */
+[data-hr-training-modal-title="true"],
+[data-hr-training-modal-title="true"] * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background-image: none !important;
+  text-shadow: none !important;
+}
+
+
+/* ANGELCARE HR TRAINING — course/resource titles on white cards must be black */
+[data-hr-training-course-title="true"],
+[data-hr-training-course-title="true"] * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  user-select: none !important;
+}
+
+[data-hr-training-course-title="true"]::selection,
+[data-hr-training-course-title="true"] *::selection {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background: transparent !important;
+}
+
