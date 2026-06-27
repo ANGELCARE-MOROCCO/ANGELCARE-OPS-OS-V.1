@@ -1,0 +1,66 @@
+diff --git a/lib/carelink/mobile-login-session.ts b/lib/carelink/mobile-login-session.ts
+index ac3b8a0..b61a36e 100644
+--- a/lib/carelink/mobile-login-session.ts
++++ b/lib/carelink/mobile-login-session.ts
+@@ -163,11 +163,24 @@ async function findExistingMobileAppUser(supabase: SupabaseClient, authUserId: s
+ }
+ 
+ async function saveAppUserWithFallback(supabase: SupabaseClient, existing: AnyRecord | null, fullRow: AnyRecord) {
++  let lastError = ''
++
+   const save = async (row: AnyRecord) => {
+-    if (existing?.id) {
+-      return safeMutation<AnyRecord>(supabase.from('app_users').update(row).eq('id', existing.id).select('*').single())
++    try {
++      const query = existing?.id
++        ? supabase.from('app_users').update(row).eq('id', existing.id).select('*').single()
++        : supabase.from('app_users').insert(row).select('*').single()
++
++      const { data, error } = await query
++      if (error) {
++        lastError = error.message || 'unknown app_users mutation error'
++        return null
++      }
++      return data || null
++    } catch (error) {
++      lastError = error instanceof Error ? error.message : 'unknown app_users mutation error'
++      return null
+     }
+-    return safeMutation<AnyRecord>(supabase.from('app_users').insert(row).select('*').single())
+   }
+ 
+   const fullSave = await save(fullRow)
+@@ -192,7 +205,32 @@ async function saveAppUserWithFallback(supabase: SupabaseClient, existing: AnyRe
+   const fallbackSave = await save(fallback)
+   if (fallbackSave) return fallbackSave
+ 
+-  throw new CareLinkMobileLoginError('Unable to sync CareLink Mobile app user.', 'carelink_mobile_app_user_sync_failed', 500)
++  if (!existing?.id) {
++    const fallbackWithoutForcedId = { ...fallback }
++    delete fallbackWithoutForcedId.id
++
++    const fallbackWithoutForcedIdSave = await save(fallbackWithoutForcedId)
++    if (fallbackWithoutForcedIdSave) return fallbackWithoutForcedIdSave
++
++    const minimalWithoutForcedId = compact({
++      full_name: fullRow.full_name || fullRow.email || 'CareLink Agent',
++      username: fullRow.username || fullRow.email,
++      password_hash: fullRow.password_hash,
++      role: fullRow.role || 'caregiver',
++      status: fullRow.status || 'active',
++      email: fullRow.email,
++      updated_at: fullRow.updated_at,
++    })
++
++    const minimalWithoutForcedIdSave = await save(minimalWithoutForcedId)
++    if (minimalWithoutForcedIdSave) return minimalWithoutForcedIdSave
++  }
++
++  throw new CareLinkMobileLoginError(
++    `Unable to sync CareLink Mobile app user${lastError ? `: ${lastError}` : '.'}`,
++    'carelink_mobile_app_user_sync_failed',
++    500,
++  )
+ }
+ 
+ async function safeLinkCaregiverToAppUser(supabase: SupabaseClient, caregiverId: unknown, appUserId: string, authUserId: string) {
