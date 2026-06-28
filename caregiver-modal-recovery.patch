@@ -1,0 +1,974 @@
+diff --git a/app/api/carelink/ops/agents/[id]/profile/route.ts b/app/api/carelink/ops/agents/[id]/profile/route.ts
+index d325f07..fd8b132 100644
+--- a/app/api/carelink/ops/agents/[id]/profile/route.ts
++++ b/app/api/carelink/ops/agents/[id]/profile/route.ts
+@@ -17,10 +17,12 @@ function bool(value: unknown) {
+ 
+ function list(value: unknown) {
+   if (Array.isArray(value)) return value.map((x) => text(x)).filter(Boolean)
+-  return text(value)
+-    .split(',')
+-    .map((x) => x.trim())
+-    .filter(Boolean)
++  return text(value).split(',').map((x) => x.trim()).filter(Boolean)
++}
++
++function num(value: unknown, fallback = 0) {
++  const parsed = Number(value)
++  return Number.isFinite(parsed) ? parsed : fallback
+ }
+ 
+ function compact(row: AnyRecord) {
+@@ -31,6 +33,57 @@ function compact(row: AnyRecord) {
+   return out
+ }
+ 
++function buildCaregiverPatch(body: AnyRecord) {
++  const fullName = text(body.full_name || body.fullName || body.name)
++  const phone = text(body.phone || body.mobile || body.mobile_phone)
++  const email = text(body.email || body.work_email || body.mobile_email || body.login_email)
++  const city = text(body.city, 'Rabat')
++  const zone = text(body.zone)
++  const status = text(body.status || body.current_status, 'available')
++  const role = text(body.role || body.agent_role || body.caregiver_type, 'Caregiver')
++  const skills = list(body.skills || body.skill_tags || body.competencies)
++  const languages = list(body.languages || body.language_tags || body.spoken_languages)
++  const missionTypes = list(body.mission_types || body.missionTypes || body.service_types)
++  const readiness = num(body.readiness_score || body.readinessScore, 0)
++  const reliability = num(body.reliability_score || body.reliabilityScore || readiness, readiness)
++  const summary = text(body.summary || body.notes) || `Updated from CareLink Agent Command Console on ${new Date().toLocaleString()}`
++
++  const payload = {
++    source: 'carelink_ops_agents_profile_update',
++    captured_at: new Date().toISOString(),
++    identity: { full_name: fullName, phone, email, city, zone, status, role, skills, languages, mission_types: missionTypes },
++    raw: body,
++  }
++
++  return compact({
++    full_name: fullName,
++    name: fullName,
++    display_name: fullName,
++    phone,
++    mobile: phone,
++    email,
++    city,
++    zone,
++    current_status: status,
++    status,
++    availability_status: status,
++    role,
++    skills_summary: skills.join(', '),
++    skill_tags: skills,
++    languages,
++    language_tags: languages,
++    mission_types: missionTypes,
++    academy_certified: bool(body.academy_certified || body.academyCertified),
++    special_needs_capable: bool(body.special_needs_capable || body.specialNeedsCapable),
++    readiness_score: readiness,
++    reliability_score: reliability,
++    summary,
++    notes: summary,
++    carelink_ops_payload: payload,
++    updated_at: new Date().toISOString(),
++  })
++}
++
+ export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+   try {
+     const params = await context.params
+@@ -42,75 +95,22 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
+ 
+     const body = await request.json()
+     const supabase = await createClient()
++    const patch = buildCaregiverPatch(body)
+ 
+-    const candidates = [
+-      compact({
+-        full_name: text(body.full_name || body.fullName || body.name),
+-        name: text(body.full_name || body.fullName || body.name),
+-        display_name: text(body.full_name || body.fullName || body.name),
+-        phone: text(body.phone),
+-        mobile: text(body.phone),
+-        email: text(body.email),
+-        city: text(body.city),
+-        zone: text(body.zone),
+-        current_status: text(body.status),
+-        status: text(body.status),
+-        role: text(body.role),
+-        function: text(body.role),
+-        skills: list(body.skills),
+-        skill_tags: list(body.skills),
+-        languages: list(body.languages),
+-        mission_types: list(body.mission_types || body.missionTypes),
+-        academy_certified: bool(body.academy_certified || body.academyCertified),
+-        special_needs_capable: bool(body.special_needs_capable || body.specialNeedsCapable),
+-        readiness_score: Number(body.readiness_score || body.readinessScore || 0),
+-        reliability_score: Number(body.reliability_score || body.reliabilityScore || body.readiness_score || 0),
+-        summary: text(body.summary || body.notes),
+-        notes: text(body.notes || body.summary),
+-        updated_at: new Date().toISOString(),
+-      }),
+-      compact({
+-        full_name: text(body.full_name || body.fullName || body.name),
+-        phone: text(body.phone),
+-        email: text(body.email),
+-        city: text(body.city),
+-        zone: text(body.zone),
+-        status: text(body.status),
+-        notes: text(body.notes || body.summary),
+-      }),
+-      compact({
+-        name: text(body.full_name || body.fullName || body.name),
+-        phone: text(body.phone),
+-        email: text(body.email),
+-        city: text(body.city),
+-        zone: text(body.zone),
+-        status: text(body.status),
+-        notes: text(body.notes || body.summary),
+-      }),
+-    ]
++    const { data, error } = await supabase.from('caregivers').update(patch).eq('id', caregiverId).select('*').single()
+ 
+-    let lastError = ''
+-
+-    for (const patch of candidates) {
+-      const { data, error } = await supabase
+-        .from('caregivers')
+-        .update(patch)
+-        .eq('id', caregiverId)
+-        .select('*')
+-        .single()
+-
+-      if (!error) {
+-        return NextResponse.json({ ok: true, caregiver: data })
+-      }
+-
+-      lastError = error.message
++    if (error) {
++      return NextResponse.json({
++        ok: false,
++        error: `Caregiver profile schema/save failed: ${error.message}. Run migration 20260628_carelink_caregiver_profile_schema_recovery.sql before editing caregivers.`,
++      }, { status: 500 })
+     }
+ 
+-    return NextResponse.json({ ok: false, error: lastError || 'Unable to update caregiver' }, { status: 500 })
++    return NextResponse.json({ ok: true, caregiver: data, savedPayload: patch })
+   } catch (error) {
+     return NextResponse.json({
+       ok: false,
+-      error: error instanceof Error ? error.message : 'Unable to update caregiver',
++      error: error instanceof Error ? error.message : 'Unable to update caregiver profile',
+     }, { status: 500 })
+   }
+ }
+diff --git a/app/api/carelink/ops/agents/create/route.ts b/app/api/carelink/ops/agents/create/route.ts
+index 5188d3f..e974f81 100644
+--- a/app/api/carelink/ops/agents/create/route.ts
++++ b/app/api/carelink/ops/agents/create/route.ts
+@@ -11,15 +11,116 @@ function text(value: unknown, fallback = '') {
+   return String(value).trim()
+ }
+ 
+-function arr(value: unknown) {
++function list(value: unknown) {
+   if (Array.isArray(value)) return value.map((x) => text(x)).filter(Boolean)
+   return text(value).split(',').map((x) => x.trim()).filter(Boolean)
+ }
+ 
++function bool(value: unknown) {
++  return value === true || value === 'true' || value === 1 || value === '1' || value === 'yes'
++}
++
++function num(value: unknown, fallback = 0) {
++  const parsed = Number(value)
++  return Number.isFinite(parsed) ? parsed : fallback
++}
++
+ function compact(row: AnyRecord) {
+   return Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined && value !== null && value !== ''))
+ }
+ 
++function buildCaregiverRow(body: AnyRecord) {
++  const fullName = text(body.full_name || body.fullName || body.name)
++  const phone = text(body.phone || body.mobile || body.mobile_phone)
++  const email = text(body.email || body.work_email || body.mobile_email || body.login_email)
++  const city = text(body.city, 'Rabat')
++  const zone = text(body.zone)
++  const status = text(body.status || body.current_status, 'available')
++  const role = text(body.role || body.agent_role || body.caregiver_type, 'Caregiver')
++  const skills = list(body.skills || body.skill_tags || body.competencies)
++  const languages = list(body.languages || body.language_tags || body.spoken_languages)
++  const missionTypes = list(body.mission_types || body.missionTypes || body.service_types)
++  const readiness = num(body.readiness_score || body.readinessScore, 20)
++  const reliability = num(body.reliability_score || body.reliabilityScore || readiness, readiness)
++  const paymentMode = text(body.payment_mode || body.paymentMode, 'monthly')
++  const hourlyRate = body.hourly_rate || body.hourlyRate ? num(body.hourly_rate || body.hourlyRate, 0) : null
++
++  const operationalSummary = [
++    'Created from CareLink Ops Agents Command Center.',
++    `Phone: ${phone || 'missing'}`,
++    `Email: ${email || 'missing'}`,
++    `City / zone: ${city || 'missing'} / ${zone || 'missing'}`,
++    `Skills: ${skills.join(', ') || 'not configured'}`,
++    `Languages: ${languages.join(', ') || 'not configured'}`,
++    `Mission types: ${missionTypes.join(', ') || 'not configured'}`,
++    `Roster: ${text(body.roster_notes || body.rosterNotes) || 'not configured'}`,
++    `Payment: ${paymentMode} / ${hourlyRate ?? 0} MAD/h`,
++  ].join('\n')
++
++  const payload = {
++    source: 'carelink_ops_agents_create_modal',
++    captured_at: new Date().toISOString(),
++    identity: { full_name: fullName, phone, email, city, zone, status, role, skills, languages, mission_types: missionTypes },
++    access: {
++      email: text(body.login_email || body.loginEmail || email),
++      mobile_enabled: bool(body.mobile_enabled ?? body.mobileEnabled ?? true),
++      access_status: text(body.access_status || body.accessStatus, 'active'),
++      access_level: text(body.access_level || body.accessLevel, 'carelink_mobile_agent'),
++    },
++    roster: {
++      preferred_days: list(body.preferred_days || body.preferredDays),
++      preferred_start_time: text(body.preferred_start_time || body.preferredStartTime),
++      preferred_end_time: text(body.preferred_end_time || body.preferredEndTime),
++      preferred_zones: list(body.preferred_zones || body.preferredZones),
++      excluded_zones: list(body.excluded_zones || body.excludedZones),
++      notes: text(body.roster_notes || body.rosterNotes),
++    },
++    finance: {
++      payment_mode: paymentMode,
++      hourly_rate: hourlyRate,
++      daily_rate: body.daily_rate || body.dailyRate || null,
++      mission_rate: body.mission_rate || body.missionRate || null,
++      transport_allowance: body.transport_allowance || body.transportAllowance || null,
++    },
++    training: {
++      training_path: text(body.training_path || body.trainingPath),
++      onboarding_status: text(body.onboarding_status || body.onboardingStatus),
++      certification_status: text(body.certification_status || body.certificationStatus),
++    },
++    raw: body,
++  }
++
++  return compact({
++    full_name: fullName,
++    name: fullName,
++    display_name: fullName,
++    phone,
++    mobile: phone,
++    email,
++    city,
++    zone,
++    status,
++    current_status: status,
++    availability_status: status,
++    role,
++    notes: operationalSummary,
++    summary: operationalSummary,
++    skills_summary: skills.join(', '),
++    skill_tags: skills,
++    languages,
++    language_tags: languages,
++    mission_types: missionTypes,
++    academy_certified: bool(body.academy_certified || body.academyCertified),
++    special_needs_capable: bool(body.special_needs_capable || body.specialNeedsCapable),
++    reliability_score: reliability,
++    readiness_score: readiness,
++    payment_mode: paymentMode,
++    hourly_rate: hourlyRate,
++    carelink_ops_payload: payload,
++    updated_at: new Date().toISOString(),
++  })
++}
++
+ export async function POST(request: Request) {
+   try {
+     const body = await request.json()
+@@ -28,61 +129,17 @@ export async function POST(request: Request) {
+ 
+     if (!fullName) return NextResponse.json({ ok: false, error: 'Full name is required.' }, { status: 400 })
+ 
+-    const summary = [
+-      'Created from CareLink Ops Agent Command Center.',
+-      `Skills: ${arr(body.skills).join(', ') || 'not configured'}`,
+-      `Languages: ${arr(body.languages).join(', ') || 'not configured'}`,
+-      `Mission types: ${arr(body.mission_types || body.missionTypes).join(', ') || 'not configured'}`,
+-      `Roster: ${text(body.roster_notes || body.rosterNotes) || 'not configured'}`,
+-      `Payment: ${text(body.payment_mode || body.paymentMode, 'monthly')} / ${text(body.hourly_rate || body.hourlyRate || 0)} MAD/h`,
+-    ].join('\n')
+-
+-    const candidates = [
+-      compact({
+-        full_name: fullName,
+-        name: fullName,
+-        display_name: fullName,
+-        phone: text(body.phone),
+-        mobile: text(body.phone),
+-        email: text(body.email),
+-        city: text(body.city, 'Rabat'),
+-        zone: text(body.zone),
+-        status: text(body.status, 'available'),
+-        current_status: text(body.status, 'available'),
+-        availability_status: text(body.status, 'available'),
+-        role: text(body.role, 'Caregiver'),
+-        notes: summary,
+-        summary,
+-        skill_tags: arr(body.skills),
+-        skills: arr(body.skills),
+-        languages: arr(body.languages),
+-        mission_types: arr(body.mission_types || body.missionTypes),
+-        academy_certified: Boolean(body.academy_certified || body.academyCertified),
+-        special_needs_capable: Boolean(body.special_needs_capable || body.specialNeedsCapable),
+-        reliability_score: Number(body.reliability_score || body.readiness_score || 20),
+-        readiness_score: Number(body.readiness_score || body.reliability_score || 20),
+-      }),
+-      compact({
+-        full_name: fullName,
+-        phone: text(body.phone),
+-        email: text(body.email),
+-        city: text(body.city, 'Rabat'),
+-        zone: text(body.zone),
+-        status: text(body.status, 'available'),
+-        notes: summary,
+-      }),
+-      compact({ name: fullName, phone: text(body.phone), city: text(body.city, 'Rabat'), zone: text(body.zone), status: text(body.status, 'available') }),
+-      compact({ full_name: fullName }),
+-    ]
+-
+-    let lastError = ''
+-    for (const row of candidates) {
+-      const { data, error } = await supabase.from('caregivers').insert(row).select('*').single()
+-      if (!error) return NextResponse.json({ ok: true, caregiver: data })
+-      lastError = error.message
++    const row = buildCaregiverRow(body)
++    const { data, error } = await supabase.from('caregivers').insert(row).select('*').single()
++
++    if (error) {
++      return NextResponse.json({
++        ok: false,
++        error: `Caregiver schema/save failed: ${error.message}. Run migration 20260628_carelink_caregiver_profile_schema_recovery.sql before creating caregivers.`,
++      }, { status: 500 })
+     }
+ 
+-    return NextResponse.json({ ok: false, error: lastError || 'Unable to create caregiver.' }, { status: 500 })
++    return NextResponse.json({ ok: true, caregiver: data, savedPayload: row })
+   } catch (error) {
+     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Unable to create caregiver.' }, { status: 500 })
+   }
+diff --git a/app/api/carelink/ops/caregivers/create/route.ts b/app/api/carelink/ops/caregivers/create/route.ts
+index 1c5e069..5f3bd75 100644
+--- a/app/api/carelink/ops/caregivers/create/route.ts
++++ b/app/api/carelink/ops/caregivers/create/route.ts
+@@ -4,23 +4,108 @@ import { createClient } from '@/lib/supabase/server'
+ export const dynamic = 'force-dynamic'
+ export const revalidate = 0
+ 
+-type Payload = Record<string, any>
++type AnyRecord = Record<string, any>
+ 
+ function text(value: unknown, fallback = '') {
+   if (value === null || value === undefined || value === '') return fallback
+   return String(value).trim()
+ }
+ 
++function list(value: unknown) {
++  if (Array.isArray(value)) return value.map((x) => text(x)).filter(Boolean)
++  return text(value).split(',').map((x) => x.trim()).filter(Boolean)
++}
++
+ function bool(value: unknown) {
+   return value === true || value === 'true' || value === 1 || value === '1' || value === 'yes'
+ }
+ 
+-function compact<T extends Payload>(input: T) {
+-  const output: Payload = {}
+-  Object.entries(input).forEach(([key, value]) => {
+-    if (value !== undefined && value !== null && value !== '') output[key] = value
++function num(value: unknown, fallback = 0) {
++  const parsed = Number(value)
++  return Number.isFinite(parsed) ? parsed : fallback
++}
++
++function compact(row: AnyRecord) {
++  return Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined && value !== null && value !== ''))
++}
++
++function buildCaregiverRow(body: AnyRecord) {
++  const fullName = text(body.full_name || body.fullName || body.name)
++  const phone = text(body.phone || body.mobile || body.mobile_phone)
++  const email = text(body.email || body.work_email || body.mobile_email || body.login_email)
++  const city = text(body.city, 'Rabat')
++  const zone = text(body.zone)
++  const status = text(body.status || body.current_status, 'available')
++  const role = text(body.role || body.agent_role || body.caregiver_type, 'Caregiver')
++  const skills = list(body.skills || body.skill_tags || body.competencies)
++  const languages = list(body.languages || body.language_tags || body.spoken_languages)
++  const missionTypes = list(body.mission_types || body.missionTypes || body.service_types)
++  const readiness = num(body.readiness_score || body.readinessScore, 20)
++  const reliability = num(body.reliability_score || body.reliabilityScore || readiness, readiness)
++  const paymentMode = text(body.payment_mode || body.paymentMode, 'monthly')
++  const hourlyRate = body.hourly_rate || body.hourlyRate ? num(body.hourly_rate || body.hourlyRate, 0) : null
++
++  const operationalSummary = [
++    'Caregiver created from CareLink Ops Agents Command.',
++    `Phone: ${phone || 'missing'}`,
++    `Email: ${email || 'missing'}`,
++    `City / zone: ${city || 'missing'} / ${zone || 'missing'}`,
++    `Skills: ${skills.join(', ') || 'not specified'}`,
++    `Languages: ${languages.join(', ') || 'not specified'}`,
++    `Mission types: ${missionTypes.join(', ') || 'not specified'}`,
++    `Mobile access: ${bool(body.mobile_access || body.mobileAccess || body.mobile_enabled || body.mobileEnabled) ? 'enabled' : 'not enabled'}`,
++    `Roster preferences: ${text(body.roster_preferences || body.rosterPreferences || body.roster_notes || body.rosterNotes) || 'not specified'}`,
++    `Honoraires: ${hourlyRate ?? 0} MAD/h`,
++    `Payment mode: ${paymentMode}`,
++    `Training path: ${text(body.training_path || body.trainingPath) || 'not specified'}`,
++    `Emergency contact: ${text(body.emergency_contact || body.emergencyContact) || 'not specified'}`,
++  ].join('\n')
++
++  const payload = {
++    source: 'carelink_ops_caregivers_create',
++    captured_at: new Date().toISOString(),
++    identity: { full_name: fullName, phone, email, city, zone, status, role, skills, languages, mission_types: missionTypes },
++    access: {
++      email: text(body.login_email || body.loginEmail || email),
++      mobile_enabled: bool(body.mobile_access || body.mobileAccess || body.mobile_enabled || body.mobileEnabled),
++      access_status: text(body.access_status || body.accessStatus, 'active'),
++      access_level: text(body.access_level || body.accessLevel, 'carelink_mobile_agent'),
++    },
++    roster: body.roster_preferences || body.rosterPreferences || body.roster_notes || body.rosterNotes || null,
++    finance: { payment_mode: paymentMode, hourly_rate: hourlyRate },
++    training: { training_path: text(body.training_path || body.trainingPath) },
++    raw: body,
++  }
++
++  return compact({
++    full_name: fullName,
++    name: fullName,
++    display_name: fullName,
++    phone,
++    mobile: phone,
++    email,
++    city,
++    zone,
++    current_status: status,
++    status,
++    availability_status: status,
++    role,
++    notes: operationalSummary,
++    summary: operationalSummary,
++    skills_summary: skills.join(', '),
++    skill_tags: skills,
++    languages,
++    language_tags: languages,
++    mission_types: missionTypes,
++    academy_certified: bool(body.academy_certified || body.academyCertified),
++    special_needs_capable: bool(body.special_needs_capable || body.specialNeedsCapable),
++    reliability_score: reliability,
++    readiness_score: readiness,
++    payment_mode: paymentMode,
++    hourly_rate: hourlyRate,
++    carelink_ops_payload: payload,
++    updated_at: new Date().toISOString(),
+   })
+-  return output
+ }
+ 
+ export async function POST(request: Request) {
+@@ -28,158 +113,41 @@ export async function POST(request: Request) {
+     const body = await request.json()
+     const paymentRecords = Array.isArray(body.payment_records) ? body.payment_records : []
+     const supabase = await createClient()
+-
+     const fullName = text(body.full_name || body.fullName || body.name)
+-    const phone = text(body.phone)
+-    const email = text(body.email)
+-    const city = text(body.city)
+-    const zone = text(body.zone)
+-    const status = text(body.status, 'available')
+ 
+     if (!fullName) {
+       return NextResponse.json({ ok: false, error: 'Caregiver full name is required' }, { status: 400 })
+     }
+ 
+-    const operationalSummary = [
+-      `Caregiver created from CareLink Ops Agents Command.`,
+-      `Skills: ${text(body.skills) || 'not specified'}`,
+-      `Languages: ${text(body.languages) || 'not specified'}`,
+-      `Mission types: ${text(body.mission_types || body.missionTypes) || 'not specified'}`,
+-      `Mobile access: ${bool(body.mobile_access || body.mobileAccess) ? 'enabled' : 'not enabled'}`,
+-      `Roster preferences: ${text(body.roster_preferences || body.rosterPreferences) || 'not specified'}`,
+-      `Honoraires: ${text(body.hourly_rate || body.hourlyRate) || 'not specified'} MAD/h`,
+-      `Payment mode: ${text(body.payment_mode || body.paymentMode) || 'not specified'}`,
+-      `Training path: ${text(body.training_path || body.trainingPath) || 'not specified'}`,
+-      `Emergency contact: ${text(body.emergency_contact || body.emergencyContact) || 'not specified'}`,
+-    ].join('\n')
+-
+-    const candidates = [
+-      compact({
+-        full_name: fullName,
+-        name: fullName,
+-        display_name: fullName,
+-        phone,
+-        mobile: phone,
+-        email,
+-        city,
+-        zone,
+-        current_status: status,
+-        status,
+-        role: text(body.role, 'Caregiver'),
+-        function: text(body.function, 'Caregiver'),
+-        notes: operationalSummary,
+-        summary: operationalSummary,
+-        skill_tags: text(body.skills)
+-          ? text(body.skills).split(',').map((x) => x.trim()).filter(Boolean)
+-          : undefined,
+-        skills: text(body.skills)
+-          ? text(body.skills).split(',').map((x) => x.trim()).filter(Boolean)
+-          : undefined,
+-        languages: text(body.languages)
+-          ? text(body.languages).split(',').map((x) => x.trim()).filter(Boolean)
+-          : undefined,
+-        mission_types: text(body.mission_types || body.missionTypes)
+-          ? text(body.mission_types || body.missionTypes).split(',').map((x) => x.trim()).filter(Boolean)
+-          : undefined,
+-        academy_certified: bool(body.academy_certified || body.academyCertified),
+-        special_needs_capable: bool(body.special_needs_capable || body.specialNeedsCapable),
+-        reliability_score: Number(body.reliability_score || body.reliabilityScore || 20),
+-        readiness_score: Number(body.readiness_score || body.readinessScore || 20),
+-        hourly_rate: Number(body.hourly_rate || body.hourlyRate || 0),
+-        payment_mode: text(body.payment_mode || body.paymentMode),
+-        mobile_access: bool(body.mobile_access || body.mobileAccess),
+-        carelink_mobile_enabled: bool(body.mobile_access || body.mobileAccess),
+-        roster_preferences: text(body.roster_preferences || body.rosterPreferences),
+-        training_path: text(body.training_path || body.trainingPath),
+-      }),
+-      compact({
+-        full_name: fullName,
+-        phone,
+-        email,
+-        city,
+-        zone,
+-        current_status: status,
+-        status,
+-        role: text(body.role, 'Caregiver'),
+-        notes: operationalSummary,
+-        summary: operationalSummary,
+-        academy_certified: bool(body.academy_certified || body.academyCertified),
+-        special_needs_capable: bool(body.special_needs_capable || body.specialNeedsCapable),
+-        reliability_score: Number(body.reliability_score || body.reliabilityScore || 20),
+-      }),
+-      compact({
+-        full_name: fullName,
+-        phone,
+-        email,
+-        city,
+-        zone,
+-        status,
+-        notes: operationalSummary,
+-      }),
+-      compact({
+-        name: fullName,
+-        phone,
+-        email,
+-        city,
+-        zone,
+-        status,
+-        notes: operationalSummary,
+-      }),
+-      compact({
+-        full_name: fullName,
+-      }),
+-    ]
+-
+-    let lastError: string | null = null
+-
+-    for (const row of candidates) {
+-      const { data, error } = await supabase
+-        .from('caregivers')
+-        .insert(row)
+-        .select('*')
+-        .single()
+-
+-      if (!error) {
+-        let savedPaymentRecords: any[] = []
+-
+-        if (paymentRecords.length && data?.id) {
+-          const paymentRows = paymentRecords.map((line: any) => ({
+-            caregiver_id: data.id,
+-            label: text(line.label || line.title || 'Caregiver payment record'),
+-            amount: Number(line.amount || 0),
+-            currency: text(line.currency, 'MAD'),
+-            status: text(line.status, 'draft'),
+-            validation_type: text(line.validation_type || line.validationType, 'manual'),
+-            period_start: line.period_start || line.periodStart || null,
+-            period_end: line.period_end || line.periodEnd || null,
+-            notes: text(line.notes || line.description || ''),
+-          }))
+-
+-          const { data: paymentData, error: paymentError } = await supabase
+-            .from('carelink_agent_payment_validations')
+-            .insert(paymentRows)
+-            .select('*')
+-
+-          if (!paymentError && paymentData) {
+-            savedPaymentRecords = paymentData
+-          }
+-        }
+-
+-        return NextResponse.json({
+-          ok: true,
+-          caregiver: data,
+-          savedPayload: row,
+-          paymentRecords: savedPaymentRecords,
+-        })
+-      }
+-
+-      lastError = error.message
++    const row = buildCaregiverRow(body)
++    const { data, error } = await supabase.from('caregivers').insert(row).select('*').single()
++
++    if (error) {
++      return NextResponse.json({
++        ok: false,
++        error: `Caregiver schema/save failed: ${error.message}. Run migration 20260628_carelink_caregiver_profile_schema_recovery.sql before creating caregivers.`,
++      }, { status: 500 })
+     }
+ 
+-    return NextResponse.json({
+-      ok: false,
+-      error: lastError || 'Unable to create caregiver',
+-    }, { status: 500 })
++    let savedPaymentRecords: any[] = []
++    if (paymentRecords.length && data?.id) {
++      const paymentRows = paymentRecords.map((line: any) => ({
++        caregiver_id: data.id,
++        label: text(line.label || line.title || 'Caregiver payment record'),
++        amount: Number(line.amount || 0),
++        currency: text(line.currency, 'MAD'),
++        status: text(line.status, 'draft'),
++        validation_type: text(line.validation_type || line.validationType, 'manual'),
++        period_start: line.period_start || line.periodStart || null,
++        period_end: line.period_end || line.periodEnd || null,
++        notes: text(line.notes || line.description || ''),
++      }))
++
++      const { data: paymentData } = await supabase.from('carelink_agent_payment_validations').insert(paymentRows).select('*')
++      if (paymentData) savedPaymentRecords = paymentData
++    }
++
++    return NextResponse.json({ ok: true, caregiver: data, savedPayload: row, paymentRecords: savedPaymentRecords })
+   } catch (error) {
+     return NextResponse.json({
+       ok: false,
+diff --git a/components/carelink/ops/agents/CareLinkCaregiverCreateModal.tsx b/components/carelink/ops/agents/CareLinkCaregiverCreateModal.tsx
+index 411b5da..082e00d 100644
+--- a/components/carelink/ops/agents/CareLinkCaregiverCreateModal.tsx
++++ b/components/carelink/ops/agents/CareLinkCaregiverCreateModal.tsx
+@@ -309,7 +309,55 @@ async function createProfile() {
+     setBusy(true); setError(''); setNotice('')
+     try {
+       const json = await api('/api/carelink/ops/agents/create', {
+-        full_name: fullName, phone, email, city, zone, status, role, skills, mission_types: missionTypes, languages, academy_certified: academyCertified, special_needs_capable: specialNeeds, readiness_score: readiness, reliability_score: readiness, roster_notes: rosterNotes, payment_mode: paymentMode, hourly_rate: hourlyRate,
++        full_name: fullName,
++        phone,
++        email,
++        city,
++        zone,
++        status,
++        role,
++        skills,
++        mission_types: missionTypes,
++        languages,
++        academy_certified: academyCertified,
++        special_needs_capable: specialNeeds,
++        readiness_score: readiness,
++        reliability_score: readiness,
++        login_email: loginEmail || email,
++        mobile_enabled: mobileEnabled,
++        access_status: accessStatus,
++        access_level: accessLevel,
++        preferred_days: preferredDays,
++        preferred_start_time: startTime,
++        preferred_end_time: endTime,
++        preferred_zones: splitList(preferredZones),
++        excluded_zones: splitList(excludedZones),
++        accepts_weekends: acceptWeekends,
++        accepts_night: acceptNight,
++        accepts_emergency_replacement: acceptEmergency,
++        transport_required: transportRequired,
++        roster_notes: rosterNotes,
++        payment_mode: paymentMode,
++        payment_cycle: paymentCycle,
++        hourly_rate: hourlyRate,
++        daily_rate: dailyRate,
++        mission_rate: missionRate,
++        overtime_rate: overtimeRate,
++        transport_allowance: transportAllowance,
++        bank_name: bankName,
++        bank_account: bankAccount,
++        wallet_phone: walletPhone,
++        finance_notes: financeNotes,
++        training_path: trainingPath,
++        onboarding_status: onboardingStatus,
++        hygiene_status: hygieneStatus,
++        reporting_status: reportingStatus,
++        emergency_status: emergencyStatus,
++        special_needs_status: specialNeedsStatus,
++        certification_status: certificationStatus,
++        next_training_date: nextTrainingDate,
++        trainer_name: trainerName,
++        learning_notes: learningNotes,
+       })
+       const id = Number(json.caregiver?.id)
+       if (Number.isFinite(id)) setCreatedId(id)
+diff --git a/supabase/migrations/20260628_carelink_caregiver_profile_schema_recovery.sql b/supabase/migrations/20260628_carelink_caregiver_profile_schema_recovery.sql
+new file mode 100644
+index 0000000..467ef5b
+--- /dev/null
++++ b/supabase/migrations/20260628_carelink_caregiver_profile_schema_recovery.sql
+@@ -0,0 +1,245 @@
++-- CARELINK OPS EMERGENCY RECOVERY — caregiver profile schema alignment
++-- Purpose: stop caregiver creation from silently falling back to name/phone only.
++-- This aligns public.caregivers and linked agent tables with the CareLink OPS Agents modal.
++
++alter table public.caregivers
++  add column if not exists full_name text,
++  add column if not exists name text,
++  add column if not exists display_name text,
++  add column if not exists phone text,
++  add column if not exists mobile text,
++  add column if not exists email text,
++  add column if not exists city text,
++  add column if not exists zone text,
++  add column if not exists current_status text default 'available',
++  add column if not exists status text default 'available',
++  add column if not exists availability_status text default 'available',
++  add column if not exists role text default 'Caregiver',
++  add column if not exists notes text,
++  add column if not exists summary text,
++  add column if not exists skills_summary text,
++  add column if not exists skill_tags text[] not null default '{}'::text[],
++  add column if not exists languages text[] not null default '{}'::text[],
++  add column if not exists language_tags text[] not null default '{}'::text[],
++  add column if not exists mission_types text[] not null default '{}'::text[],
++  add column if not exists academy_certified boolean not null default false,
++  add column if not exists special_needs_capable boolean not null default false,
++  add column if not exists reliability_score numeric not null default 0,
++  add column if not exists readiness_score numeric not null default 0,
++  add column if not exists payment_mode text,
++  add column if not exists hourly_rate numeric,
++  add column if not exists carelink_ops_payload jsonb not null default '{}'::jsonb,
++  add column if not exists created_at timestamptz not null default now(),
++  add column if not exists updated_at timestamptz not null default now();
++
++update public.caregivers
++set
++  full_name = coalesce(nullif(full_name, ''), nullif(name, ''), nullif(display_name, ''), full_name),
++  name = coalesce(nullif(name, ''), nullif(full_name, ''), nullif(display_name, ''), name),
++  display_name = coalesce(nullif(display_name, ''), nullif(full_name, ''), nullif(name, ''), display_name),
++  mobile = coalesce(nullif(mobile, ''), nullif(phone, ''), mobile),
++  status = coalesce(nullif(status, ''), nullif(current_status, ''), 'available'),
++  current_status = coalesce(nullif(current_status, ''), nullif(status, ''), 'available'),
++  availability_status = coalesce(nullif(availability_status, ''), nullif(status, ''), nullif(current_status, ''), 'available'),
++  role = coalesce(nullif(role, ''), 'Caregiver'),
++  updated_at = coalesce(updated_at, now());
++
++create index if not exists idx_caregivers_email_lower on public.caregivers(lower(email));
++create index if not exists idx_caregivers_current_status on public.caregivers(current_status);
++create index if not exists idx_caregivers_city_zone on public.caregivers(city, zone);
++create index if not exists idx_caregivers_skill_tags on public.caregivers using gin(skill_tags);
++create index if not exists idx_caregivers_mission_types on public.caregivers using gin(mission_types);
++
++create table if not exists public.carelink_agent_app_access (
++  id bigserial primary key,
++  caregiver_id bigint not null,
++  auth_user_id uuid null,
++  email text null,
++  access_status text not null default 'pending',
++  access_level text null,
++  mobile_enabled boolean not null default false,
++  can_view_missions boolean not null default true,
++  can_accept_missions boolean not null default true,
++  can_submit_reports boolean not null default true,
++  can_view_payments boolean not null default false,
++  device_policy text null,
++  security_notes text null,
++  session_limit integer null default 1,
++  geo_fence_required boolean not null default false,
++  pin_reset_required boolean not null default false,
++  emergency_access_allowed boolean not null default false,
++  suspended_at timestamptz null,
++  suspension_reason text null,
++  shutdown_until timestamptz null,
++  restored_at timestamptz null,
++  notes text null,
++  payload jsonb not null default '{}'::jsonb,
++  created_at timestamptz not null default now(),
++  updated_at timestamptz not null default now()
++);
++
++alter table public.carelink_agent_app_access
++  add column if not exists auth_user_id uuid null,
++  add column if not exists email text null,
++  add column if not exists access_status text not null default 'pending',
++  add column if not exists access_level text null,
++  add column if not exists mobile_enabled boolean not null default false,
++  add column if not exists can_view_missions boolean not null default true,
++  add column if not exists can_accept_missions boolean not null default true,
++  add column if not exists can_submit_reports boolean not null default true,
++  add column if not exists can_view_payments boolean not null default false,
++  add column if not exists device_policy text null,
++  add column if not exists security_notes text null,
++  add column if not exists session_limit integer null default 1,
++  add column if not exists geo_fence_required boolean not null default false,
++  add column if not exists pin_reset_required boolean not null default false,
++  add column if not exists emergency_access_allowed boolean not null default false,
++  add column if not exists suspended_at timestamptz null,
++  add column if not exists suspension_reason text null,
++  add column if not exists shutdown_until timestamptz null,
++  add column if not exists restored_at timestamptz null,
++  add column if not exists suspended_by text null,
++  add column if not exists restored_by text null,
++  add column if not exists last_invited_at timestamptz null,
++  add column if not exists last_admin_action text null,
++  add column if not exists last_admin_action_at timestamptz null,
++  add column if not exists notes text null,
++  add column if not exists payload jsonb not null default '{}'::jsonb,
++  add column if not exists updated_at timestamptz not null default now();
++
++create unique index if not exists uq_carelink_agent_app_access_caregiver
++  on public.carelink_agent_app_access(caregiver_id);
++create index if not exists idx_carelink_agent_app_access_email_lower
++  on public.carelink_agent_app_access(lower(email));
++
++create table if not exists public.carelink_agent_roster_preferences (
++  id bigserial primary key,
++  caregiver_id bigint not null,
++  preferred_days text[] not null default '{}'::text[],
++  preferred_start_time text null,
++  preferred_end_time text null,
++  preferred_time_blocks text[] not null default '{}'::text[],
++  preferred_zones text[] not null default '{}'::text[],
++  excluded_zones text[] not null default '{}'::text[],
++  blocked_days text[] not null default '{}'::text[],
++  max_daily_hours numeric null,
++  max_weekly_hours numeric null,
++  max_distance_km numeric null,
++  accepts_weekends boolean not null default false,
++  accepts_night boolean not null default false,
++  accepts_emergency_replacement boolean not null default true,
++  transport_required boolean not null default false,
++  roster_notes text null,
++  notes text null,
++  payload jsonb not null default '{}'::jsonb,
++  updated_at timestamptz not null default now()
++);
++
++alter table public.carelink_agent_roster_preferences
++  add column if not exists preferred_days text[] not null default '{}'::text[],
++  add column if not exists preferred_start_time text null,
++  add column if not exists preferred_end_time text null,
++  add column if not exists preferred_time_blocks text[] not null default '{}'::text[],
++  add column if not exists preferred_zones text[] not null default '{}'::text[],
++  add column if not exists excluded_zones text[] not null default '{}'::text[],
++  add column if not exists blocked_days text[] not null default '{}'::text[],
++  add column if not exists max_daily_hours numeric null,
++  add column if not exists max_weekly_hours numeric null,
++  add column if not exists max_distance_km numeric null,
++  add column if not exists accepts_weekends boolean not null default false,
++  add column if not exists accepts_night boolean not null default false,
++  add column if not exists accepts_emergency_replacement boolean not null default true,
++  add column if not exists transport_required boolean not null default false,
++  add column if not exists roster_notes text null,
++  add column if not exists notes text null,
++  add column if not exists payload jsonb not null default '{}'::jsonb,
++  add column if not exists updated_at timestamptz not null default now();
++
++create unique index if not exists uq_carelink_agent_roster_preferences_caregiver
++  on public.carelink_agent_roster_preferences(caregiver_id);
++
++create table if not exists public.carelink_agent_payment_configs (
++  id bigserial primary key,
++  caregiver_id bigint not null,
++  hourly_rate numeric null,
++  hourly_rate_mad numeric null,
++  daily_rate numeric null,
++  mission_rate numeric null,
++  overtime_rate numeric null,
++  transport_allowance numeric null,
++  payment_mode text null,
++  payment_cycle text null,
++  currency text not null default 'MAD',
++  bank_name text null,
++  bank_account text null,
++  wallet_phone text null,
++  finance_notes text null,
++  notes text null,
++  payload jsonb not null default '{}'::jsonb,
++  updated_at timestamptz not null default now()
++);
++
++alter table public.carelink_agent_payment_configs
++  add column if not exists hourly_rate numeric null,
++  add column if not exists hourly_rate_mad numeric null,
++  add column if not exists daily_rate numeric null,
++  add column if not exists mission_rate numeric null,
++  add column if not exists overtime_rate numeric null,
++  add column if not exists transport_allowance numeric null,
++  add column if not exists payment_mode text null,
++  add column if not exists payment_cycle text null,
++  add column if not exists currency text not null default 'MAD',
++  add column if not exists bank_name text null,
++  add column if not exists bank_account text null,
++  add column if not exists wallet_phone text null,
++  add column if not exists finance_notes text null,
++  add column if not exists notes text null,
++  add column if not exists payload jsonb not null default '{}'::jsonb,
++  add column if not exists updated_at timestamptz not null default now();
++
++create unique index if not exists uq_carelink_agent_payment_configs_caregiver
++  on public.carelink_agent_payment_configs(caregiver_id);
++
++create table if not exists public.carelink_agent_training_plans (
++  id bigserial primary key,
++  caregiver_id bigint not null,
++  training_path text null,
++  required_tracks text[] not null default '{}'::text[],
++  completed_tracks text[] not null default '{}'::text[],
++  training_status text null,
++  onboarding_status text null,
++  hygiene_status text null,
++  reporting_status text null,
++  emergency_status text null,
++  special_needs_status text null,
++  certification_status text null,
++  compliance_status text null,
++  next_training_date date null,
++  trainer_name text null,
++  learning_notes text null,
++  notes text null,
++  payload jsonb not null default '{}'::jsonb,
++  updated_at timestamptz not null default now()
++);
++
++alter table public.carelink_agent_training_plans
++  add column if not exists training_path text null,
++  add column if not exists required_tracks text[] not null default '{}'::text[],
++  add column if not exists completed_tracks text[] not null default '{}'::text[],
++  add column if not exists training_status text null,
++  add column if not exists onboarding_status text null,
++  add column if not exists hygiene_status text null,
++  add column if not exists reporting_status text null,
++  add column if not exists emergency_status text null,
++  add column if not exists special_needs_status text null,
++  add column if not exists certification_status text null,
++  add column if not exists compliance_status text null,
++  add column if not exists next_training_date date null,
++  add column if not exists trainer_name text null,
++  add column if not exists learning_notes text null,
++  add column if not exists notes text null,
++  add column if not exists payload jsonb not null default '{}'::jsonb,
++  add column if not exists updated_at timestamptz not null default now();
++
++create unique index if not exists uq_carelink_agent_training_plans_caregiver
++  on public.carelink_agent_training_plans(caregiver_id);
