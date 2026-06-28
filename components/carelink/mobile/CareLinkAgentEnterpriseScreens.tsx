@@ -236,15 +236,68 @@ export function EnterpriseAgentProfileScreen({ workspace, records, runCareLinkAc
   const [requestText, setRequestText] = useState('')
   const [requestKind, setRequestKind] = useState('identity')
   const [sending, setSending] = useState(false)
+
   const agent = workspace?.agent || {}
   const data = dossier(workspace)
+  const identity = ((data as any)?.identity || {}) as Record<string, any>
+  const access = ((data as any)?.access || {}) as Record<string, any>
+  const security = ((data as any)?.security || {}) as Record<string, any>
+
   const profileRequests = getEnterpriseRows(workspace, 'profileRequests')
   const policyAcknowledgements = getEnterpriseRows(workspace, 'policyAcknowledgements')
   const deviceSessions = getEnterpriseRows(workspace, 'deviceSessions')
   const documents = safeArray<Record<string, unknown>>(workspace?.documents)
-  const serviceTypes = Array.from(new Set(records.map((record) => record.serviceType).filter(Boolean))).slice(0, 8)
-  const zones = Array.from(new Set(records.map((record) => record.zone).filter(Boolean))).slice(0, 8)
-  const profileScore = Number(data?.identity?.profileScore ?? workspace?.readiness?.score ?? 0)
+  const availabilityUpdates = getEnterpriseRows(workspace, 'availabilityUpdates')
+  const securityEvents = getEnterpriseRows(workspace, 'securityEvents')
+
+  function listFrom(value: unknown) {
+    if (Array.isArray(value)) return value.map((item) => String(item || '').trim()).filter(Boolean)
+    if (typeof value === 'string' && value.trim()) return value.split(/[;,|]/).map((item) => item.trim()).filter(Boolean)
+    return []
+  }
+
+  const serviceTypes = Array.from(new Set(records.map((record) => String(record.serviceType || '').trim()).filter(Boolean))).slice(0, 8)
+  const zones = Array.from(new Set(records.map((record) => String(record.zone || record.city || '').trim()).filter(Boolean))).slice(0, 8)
+  const activeMissions = records.filter((record) => !['completed', 'closed', 'cancelled', 'canceled'].includes(String(record.status || '').toLowerCase())).length
+  const completedMissions = records.filter((record) => ['completed', 'closed', 'done'].includes(String(record.status || '').toLowerCase())).length
+
+  const agentName = valueText(
+    identity.name ||
+      identity.full_name ||
+      (agent as any).full_name ||
+      (agent as any).name ||
+      (agent as any).display_name,
+    'Agent CareLink',
+  )
+
+  const agentRole = valueText(
+    identity.role ||
+      (agent as any).role ||
+      (agent as any).agent_role ||
+      (agent as any).caregiver_type,
+    'Caregiver terrain',
+  )
+
+  const agentStatus = valueText(
+    (agent as any).status ||
+      access.mobileStatus ||
+      (agent as any).readiness_status ||
+      workspace?.readiness?.status,
+    'active',
+  )
+
+  const phone = identity.phone || (agent as any).phone || (agent as any).mobile_phone
+  const email = identity.email || (agent as any).email || (agent as any).work_email
+  const city = identity.city || (agent as any).city
+  const zone = identity.zone || (agent as any).zone || (agent as any).preferred_zone
+  const languages = listFrom(identity.languages || (agent as any).languages || (agent as any).language_skills || (agent as any).spoken_languages)
+  const skills = listFrom(identity.skills || (agent as any).skills || (agent as any).skill_tags || (agent as any).competencies)
+
+  const profileScore = Number(identity.profileScore ?? workspace?.readiness?.score ?? 0)
+  const documentScore = documents.length ? Math.min(100, documents.length * 25) : 0
+  const policyScore = Math.round((policyAcknowledgements.length / 4) * 100)
+  const readinessTone = profileScore >= 80 ? 'emerald' : profileScore >= 55 ? 'amber' : 'rose'
+  const openCorrections = profileRequests.filter((item) => !['closed', 'resolved', 'approved'].includes(String(item.status || '').toLowerCase())).length
 
   async function sendCorrectionRequest() {
     if (!requestText.trim()) return
@@ -263,74 +316,187 @@ export function EnterpriseAgentProfileScreen({ workspace, records, runCareLinkAc
   }
 
   return (
-    <PageShell eyebrow="Agent Enterprise Dossier" title="Mon dossier professionnel" description="Identité, accès mobile, zones, compétences, conformité, sécurité et demandes de correction synchronisées avec CARELINK-OPS Agents." icon={<UserRound size={24} />} tone="blue">
+    <PageShell
+      eyebrow="Dossier Agent ANGELCARE"
+      title="Profil professionnel"
+      description="Carte agent, identité, accès mobile, zones, compétences, conformité, sécurité et demandes synchronisées avec CARELINK-OPS Agents."
+      icon={<UserRound size={24} />}
+      tone="blue"
+    >
+      <section className="relative overflow-hidden rounded-[2.3rem] border border-blue-100 bg-white p-5 shadow-[0_28px_75px_rgba(29,78,216,0.13)]">
+        <div className="absolute -right-12 -top-16 h-44 w-44 rounded-full bg-blue-100 blur-3xl" />
+        <div className="absolute -bottom-16 left-0 h-44 w-44 rounded-full bg-emerald-100 blur-3xl" />
+
+        <div className="relative">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.34em] text-blue-600">Carte agent synchronisée</p>
+              <h1 className="mt-3 text-[2rem] font-black leading-[0.98] tracking-tight text-slate-950">{agentName}</h1>
+              <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{agentRole}</p>
+            </div>
+
+            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-[1.4rem] bg-gradient-to-br from-slate-950 to-blue-700 text-white shadow-xl shadow-blue-100">
+              <UserRound size={30} />
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            <StatusPill status={agentStatus}>{agentStatus}</StatusPill>
+            <StatusPill status={workspace?.readiness?.status || 'ready'}>{valueText(workspace?.readiness?.status, 'readiness')}</StatusPill>
+            <StatusPill status="blue">{records.length} mission(s)</StatusPill>
+          </div>
+
+          <div className="mt-5 rounded-[1.5rem] bg-slate-950 p-4 text-white shadow-xl shadow-slate-200">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-blue-200">Score profil opérationnel</p>
+                <p className="mt-2 text-3xl font-black">{profileScore}%</p>
+              </div>
+              <div className="rounded-full bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white">
+                {profileScore >= 80 ? 'Premium ready' : profileScore >= 55 ? 'À renforcer' : 'À compléter'}
+              </div>
+            </div>
+            <div className="mt-4"><ProgressBar value={profileScore} tone={readinessTone} /></div>
+          </div>
+        </div>
+      </section>
+
       <div className="grid grid-cols-2 gap-3">
-        <GlassStat label="Profil" value={`${profileScore}%`} icon={<BadgeCheck size={18} />} tone={profileScore >= 80 ? 'emerald' : profileScore >= 55 ? 'amber' : 'rose'} />
-        <GlassStat label="Missions" value={records.length} icon={<ClipboardCheck size={18} />} />
-        <GlassStat label="Documents" value={documents.length} icon={<FileCheck2 size={18} />} tone="slate" />
-        <GlassStat label="Demandes" value={profileRequests.length} icon={<RefreshCcw size={18} />} tone="amber" />
+        <GlassStat label="Profil" value={`${profileScore}%`} icon={<BadgeCheck size={18} />} tone={readinessTone} />
+        <GlassStat label="Actives" value={activeMissions} icon={<ClipboardCheck size={18} />} tone="blue" />
+        <GlassStat label="Documents" value={documents.length} icon={<FileCheck2 size={18} />} tone={documents.length ? 'emerald' : 'slate'} />
+        <GlassStat label="Demandes" value={openCorrections} icon={<RefreshCcw size={18} />} tone={openCorrections ? 'amber' : 'slate'} />
       </div>
 
-      <EnterpriseCard title="Carte agent" subtitle="Lecture directe du profil caregiver lié au compte mobile." icon={<Fingerprint size={18} />}>
-        <div className="mb-4 rounded-[1.5rem] bg-gradient-to-br from-slate-950 to-blue-950 p-4 text-white">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-200">AngelCare Field Agent</p>
-              <h2 className="mt-2 text-2xl font-black">{valueText((agent as any).full_name || (agent as any).name || (agent as any).display_name, 'Agent CareLink')}</h2>
-              <p className="mt-1 text-sm font-semibold text-white/70">{valueText((agent as any).role || (agent as any).agent_role || (agent as any).caregiver_type, 'Caregiver terrain')}</p>
-            </div>
-            <StatusPill status={(agent as any).status || (agent as any).readiness_status}>{valueText((agent as any).status || (agent as any).readiness_status, 'active')}</StatusPill>
-          </div>
-          <div className="mt-4"><ProgressBar value={profileScore} tone={profileScore >= 80 ? 'emerald' : profileScore >= 55 ? 'amber' : 'rose'} /></div>
+      <EnterpriseCard title="Identité professionnelle" subtitle="Informations directes du profil caregiver lié au compte mobile." icon={<Fingerprint size={18} />}>
+        <div className="grid gap-2">
+          <InfoLine label="Téléphone" value={phone} icon={<PhoneCall size={16} />} />
+          <InfoLine label="Email mobile" value={email} icon={<LockKeyhole size={16} />} />
+          <InfoLine label="Ville / zone" value={`${valueText(city, 'Ville non définie')} · ${valueText(zone, 'Zone non définie')}`} icon={<MapPin size={16} />} />
+          <InfoLine label="Langues" value={languages.length ? languages.join(' · ') : 'Non renseignées'} icon={<Languages size={16} />} />
         </div>
-        <InfoLine label="Téléphone" value={(agent as any).phone || (agent as any).mobile_phone} icon={<PhoneCall size={16} />} />
-        <InfoLine label="Email mobile" value={(agent as any).email || (agent as any).work_email} icon={<LockKeyhole size={16} />} />
-        <InfoLine label="Ville / zone" value={`${valueText((agent as any).city, 'Ville non définie')} · ${valueText((agent as any).zone || (agent as any).preferred_zone, 'Zone non définie')}`} icon={<MapPin size={16} />} />
-        <InfoLine label="Langues" value={(agent as any).languages || (agent as any).language_skills || data?.identity?.languages} icon={<Languages size={16} />} />
+
+        <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Compétences visibles OPS</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {skills.length ? skills.slice(0, 10).map((item) => <StatusPill key={item} status="ready">{item}</StatusPill>) : <span className="text-sm font-semibold text-slate-500">Aucune compétence publiée.</span>}
+          </div>
+        </div>
       </EnterpriseCard>
 
-      <EnterpriseCard title="Éligibilité opérationnelle" subtitle="Miroir mobile des zones, services et compétences utilisées par OPS pour assigner les missions." icon={<ShieldCheck size={18} />}>
+      <EnterpriseCard title="Éligibilité opérationnelle" subtitle="Synthèse des zones, services et conditions utilisées pour l’affectation terrain." icon={<ShieldCheck size={18} />}>
         <div className="grid grid-cols-2 gap-3">
           <GlassStat label="Services" value={serviceTypes.length || '—'} icon={<Sparkles size={17} />} tone="emerald" />
           <GlassStat label="Zones" value={zones.length || '—'} icon={<MapPin size={17} />} tone="blue" />
         </div>
-        <div className="mt-4 space-y-3">
-          <div className="rounded-[1.4rem] bg-slate-50 p-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Services visibles</p>
-            <div className="mt-2 flex flex-wrap gap-2">{serviceTypes.length ? serviceTypes.map((item) => <StatusPill key={item} status="ready">{item}</StatusPill>) : <span className="text-sm text-slate-500">Aucun service publié.</span>}</div>
+
+        <div className="mt-4 grid gap-3">
+          <div className="rounded-[1.5rem] border border-emerald-100 bg-emerald-50 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-emerald-900">Services autorisés / visibles</p>
+              <Sparkles size={18} className="text-emerald-700" />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {serviceTypes.length ? serviceTypes.map((item) => <StatusPill key={item} status="ready">{item}</StatusPill>) : <span className="text-sm font-semibold text-emerald-700">Aucun service publié.</span>}
+            </div>
           </div>
-          <div className="rounded-[1.4rem] bg-slate-50 p-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Zones visibles</p>
-            <div className="mt-2 flex flex-wrap gap-2">{zones.length ? zones.map((item) => <StatusPill key={item} status="blue">{item}</StatusPill>) : <span className="text-sm text-slate-500">Aucune zone publiée.</span>}</div>
+
+          <div className="rounded-[1.5rem] border border-blue-100 bg-blue-50 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-blue-900">Zones opérationnelles</p>
+              <MapPin size={18} className="text-blue-700" />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {zones.length ? zones.map((item) => <StatusPill key={item} status="blue">{item}</StatusPill>) : <span className="text-sm font-semibold text-blue-700">Aucune zone publiée.</span>}
+            </div>
           </div>
         </div>
       </EnterpriseCard>
 
-      <EnterpriseCard title="Accès mobile & sécurité" subtitle="Contrôle synchronisé avec User / Mobile Access dans OPS Agents." icon={<LockKeyhole size={18} />}>
-        <InfoLine label="Session active" value={deviceSessions.length ? `${deviceSessions.length} session(s) connue(s)` : 'Session mobile gouvernée'} icon={<Wifi size={16} />} />
-        <InfoLine label="PIN / reset" value={(data?.security?.pinResetRequired || (agent as any).pin_reset_required) ? 'Réinitialisation requise' : 'Aucune réinitialisation requise'} icon={<Fingerprint size={16} />} />
-        <InfoLine label="Dernier contrôle" value={dateLabel(workspace?.generatedAt)} icon={<ShieldCheck size={16} />} />
-        <div className="mt-3 grid gap-2">
-          <RowLink href="/carelink/offline" title="Centre offline & synchronisation" body="Voir les files locales, l’état réseau et les garanties anti-doublon." icon={<Cloud size={17} />} />
+      <EnterpriseCard title="Conformité & readiness" subtitle="Vue qualité des conditions nécessaires pour travailler sans blocage opérationnel." icon={<Award size={18} />}>
+        <div className="space-y-4">
+          <div>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-slate-950">Profil identité</p>
+              <span className="text-sm font-black text-slate-500">{profileScore}%</span>
+            </div>
+            <div className="mt-2"><ProgressBar value={profileScore} tone={readinessTone} /></div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-slate-950">Documents</p>
+              <span className="text-sm font-black text-slate-500">{documentScore}%</span>
+            </div>
+            <div className="mt-2"><ProgressBar value={documentScore} tone={documentScore >= 80 ? 'emerald' : documentScore >= 40 ? 'amber' : 'rose'} /></div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-slate-950">Politiques acceptées</p>
+              <span className="text-sm font-black text-slate-500">{Math.min(100, policyScore)}%</span>
+            </div>
+            <div className="mt-2"><ProgressBar value={Math.min(100, policyScore)} tone={policyScore >= 100 ? 'emerald' : 'amber'} /></div>
+          </div>
+        </div>
+      </EnterpriseCard>
+
+      <EnterpriseCard title="Accès mobile & sécurité" subtitle="Contrôle synchronisé avec User / Mobile Access dans CARELINK-OPS Agents." icon={<LockKeyhole size={18} />}>
+        <div className="grid grid-cols-2 gap-3">
+          <GlassStat label="Sessions" value={deviceSessions.length || '1'} icon={<Wifi size={17} />} tone="blue" />
+          <GlassStat label="Sécurité" value={securityEvents.length || 'OK'} icon={<ShieldAlert size={17} />} tone={securityEvents.length ? 'amber' : 'emerald'} />
+        </div>
+
+        <div className="mt-4 grid gap-2">
+          <InfoLine label="Session active" value={deviceSessions.length ? `${deviceSessions.length} session(s) connue(s)` : 'Session mobile gouvernée'} icon={<Wifi size={16} />} />
+          <InfoLine label="PIN / reset" value={(security.pinResetRequired || (agent as any).pin_reset_required) ? 'Réinitialisation requise' : 'Aucune réinitialisation requise'} icon={<Fingerprint size={16} />} />
+          <InfoLine label="Dernier contrôle" value={dateLabel(workspace?.generatedAt)} icon={<ShieldCheck size={16} />} />
+        </div>
+
+        <div className="mt-4 grid gap-2">
+          <RowLink href="/carelink/offline" title="Centre offline & synchronisation" body="Voir files locales, état réseau, sessions et garanties anti-doublon." icon={<Cloud size={17} />} />
           <RowLink href="/carelink/safety" title="Sécurité et SOS" body="Signaler urgence, risque terrain, téléphone perdu ou besoin de rappel superviseur." icon={<ShieldAlert size={17} />} />
+        </div>
+      </EnterpriseCard>
+
+      <EnterpriseCard title="Disponibilité & affectation" subtitle="Miroir mobile des disponibilités et contraintes terrain utilisées par OPS." icon={<CalendarClock size={18} />}>
+        <div className="grid grid-cols-2 gap-3">
+          <GlassStat label="Disponibilités" value={availabilityUpdates.length || '—'} icon={<CalendarClock size={17} />} tone="emerald" />
+          <GlassStat label="Missions finies" value={completedMissions} icon={<CheckCircle2 size={17} />} tone="blue" />
+        </div>
+        <div className="mt-4">
+          <RowLink href="/carelink/schedule" title="Voir planning & disponibilité" body="Mettre à jour disponibilité, blackout dates et fenêtres terrain." icon={<CalendarClock size={17} />} />
         </div>
       </EnterpriseCard>
 
       <EnterpriseCard title="Demande de correction profil" subtitle="L’agent ne modifie pas directement les champs sensibles: il demande une revue OPS." icon={<RefreshCcw size={18} />}>
         <div className="flex flex-wrap gap-2">
           {[['identity', 'Identité'], ['contact', 'Contact'], ['zone', 'Zone'], ['skills', 'Compétences'], ['documents', 'Documents']].map(([key, label]) => (
-            <button key={key} type="button" onClick={() => setRequestKind(key)} className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1', requestKind === key ? 'bg-slate-950 text-white ring-slate-950' : 'bg-white text-slate-600 ring-slate-200')}>{label}</button>
+            <button key={key} type="button" onClick={() => setRequestKind(key)} className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1 transition', requestKind === key ? 'bg-slate-950 text-white ring-slate-950' : 'bg-white text-slate-600 ring-slate-200')}>
+              {label}
+            </button>
           ))}
         </div>
-        <textarea value={requestText} onChange={(event) => setRequestText(event.target.value)} placeholder="Décrivez la correction demandée à OPS..." className="mt-3 min-h-28 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-400" />
+
+        <textarea
+          value={requestText}
+          onChange={(event) => setRequestText(event.target.value)}
+          placeholder="Décrivez clairement la correction demandée à OPS..."
+          className="mt-3 min-h-28 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none focus:border-sky-400"
+        />
+
         <div className="mt-3 flex items-center justify-between gap-3">
           <p className="text-xs font-semibold leading-5 text-slate-500">La demande sera enregistrée, auditée et visible côté opérations.</p>
           <ActionButton disabled={sending || !requestText.trim()} onClick={sendCorrectionRequest} tone="slate">Envoyer</ActionButton>
         </div>
+
         <div className="mt-4 space-y-2">
-          {profileRequests.slice(0, 3).map((item) => (
-            <div key={String(item.id)} className="rounded-2xl bg-slate-50 p-3">
-              <div className="flex items-center justify-between gap-3"><p className="text-sm font-black text-slate-950">{valueText(item.request_type, 'Correction')}</p><StatusPill status={item.status}>{valueText(item.status, 'pending')}</StatusPill></div>
+          {profileRequests.slice(0, 4).map((item) => (
+            <div key={String(item.id)} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-black text-slate-950">{valueText(item.request_type || item.requestType, 'Correction')}</p>
+                <StatusPill status={item.status}>{valueText(item.status, 'pending')}</StatusPill>
+              </div>
               <p className="mt-1 text-xs leading-5 text-slate-500">{valueText(item.message || item.notes, 'Demande enregistrée')}</p>
             </div>
           ))}
@@ -338,7 +504,7 @@ export function EnterpriseAgentProfileScreen({ workspace, records, runCareLinkAc
         </div>
       </EnterpriseCard>
 
-      <EnterpriseCard title="Politiques acceptées" subtitle="Preuve d’acceptation mobile des règles terrain, confidentialité, urgence et géolocalisation." icon={<FileCheck2 size={18} />}>
+      <EnterpriseCard title="Politiques acceptées" subtitle="Preuve d’acceptation mobile des règles terrain, confidentialité, urgence et sécurité." icon={<FileCheck2 size={18} />}>
         <div className="grid gap-2">
           {['mission_execution', 'confidentiality', 'emergency_protocol', 'mobile_security'].map((key) => {
             const acknowledged = policyAcknowledgements.some((item) => String(item.policy_key || item.policyKey) === key)
@@ -349,6 +515,7 @@ export function EnterpriseAgentProfileScreen({ workspace, records, runCareLinkAc
     </PageShell>
   )
 }
+
 
 function PolicyAction({ policyKey, acknowledged, runCareLinkAction }: { policyKey: string; acknowledged: boolean; runCareLinkAction: RunCareLinkAction }) {
   const [busy, setBusy] = useState(false)

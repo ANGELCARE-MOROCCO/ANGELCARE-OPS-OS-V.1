@@ -158,14 +158,18 @@ export default function GlobalLocalStoragePersistenceBridge() {
       if (timerRef.current) clearTimeout(timerRef.current)
       void flush()
     })
-
-    return () => {
+  return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
       localStorage.setItem = originalSetItem
       localStorage.removeItem = originalRemoveItem
       localStorage.clear = originalClear
     }
   }, [])
+
+  // CARELINK_PATCH_HIDE_GLOBAL_PERSISTENCE_BADGE
+  // Production UX rule: hide the global persistence debug badge everywhere.
+  // Persistence bridge logic remains mounted; only the floating visual pill is removed.
+  return null
 
   return (
     <div

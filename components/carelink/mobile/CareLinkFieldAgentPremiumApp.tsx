@@ -152,6 +152,40 @@ function eventLabel(eventType: string) {
   return labels[eventType] || eventType.replaceAll('_', ' ')
 }
 
+
+function deriveCareLinkAgentDisplayName(workspace: CareLinkMobileWorkspace | null) {
+  const enterpriseIdentity = (workspace?.enterpriseDossier as any)?.identity || {}
+  const profile = (workspace?.profile || {}) as Record<string, any>
+  const agent = (workspace?.agent || {}) as Record<string, any>
+
+  const candidates = [
+    enterpriseIdentity.name,
+    enterpriseIdentity.full_name,
+    profile.full_name,
+    profile.name,
+    profile.display_name,
+    profile.agent_name,
+    profile.caregiver_name,
+    agent.full_name,
+    agent.name,
+    agent.display_name,
+    agent.agent_name,
+    agent.caregiver_name,
+  ]
+
+  const value = candidates.find((item) => typeof item === 'string' && item.trim().length > 1)
+  return value ? String(value).trim() : 'Agent CareLink'
+}
+
+function careLinkTodayFrenchLabel() {
+  return new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date())
+}
+
 function safeArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? value as T[] : []
 }
@@ -693,7 +727,17 @@ export function CareLinkFieldAgentPremiumApp({ records, view = 'home', selectedI
   return (
     <main className="min-h-dvh bg-[#f4f8ff] text-slate-950">
       <div className="mx-auto min-h-dvh max-w-md overflow-hidden bg-[#f8fbff] shadow-[0_30px_100px_rgba(15,23,42,0.12)]">
-        {view !== 'mission' ? <TopBar records={localRecords} queuePending={pendingCount} syncing={syncing} online={isOnline} /> : null}
+        {view !== 'mission' ? (
+          <TopBar
+            records={localRecords}
+            notifications={notificationFeed}
+            queuePending={pendingCount}
+            syncing={syncing}
+            online={isOnline}
+            runCareLinkAction={runCareLinkAction}
+            onNotificationAcknowledged={(id) => setNotificationFeed((current) => current.map((item) => (item.id === id ? { ...item, unread: false } : item)))}
+          />
+        ) : null}
         {view === 'home' ? <HomeScreen records={localRecords} workspace={activeWorkspace} runAction={runAction} busy={busy} queuePending={pendingCount} syncing={syncing} online={isOnline} /> : null}
         {view === 'missions' ? <MissionsScreen records={localRecords} workspace={activeWorkspace} activeTab={activeTab} setActiveTab={setActiveTab} runAction={runAction} busy={busy} /> : null}
         {view === 'mission' ? <MissionDetailScreen mission={selected} dossier={dossier} workspace={activeWorkspace} runAction={runAction} busy={busy} /> : null}
@@ -716,8 +760,45 @@ export function CareLinkFieldAgentPremiumApp({ records, view = 'home', selectedI
   )
 }
 
-function TopBar({ records, queuePending, syncing, online }: { records: MissionControlRecord[]; queuePending: number; syncing: boolean; online: boolean }) {
+function TopBar({
+  records,
+  notifications,
+  queuePending,
+  syncing,
+  online,
+  runCareLinkAction,
+  onNotificationAcknowledged,
+}: {
+  records: MissionControlRecord[]
+  notifications: CareLinkMobileNotification[]
+  queuePending: number
+  syncing: boolean
+  online: boolean
+  runCareLinkAction: (endpoint: string, payload: Record<string, unknown>) => Promise<unknown>
+  onNotificationAcknowledged: (id: string) => void
+}) {
   const todayCount = records.filter((item) => item.dateLabel && item.dateLabel !== 'Non planifiée').length
+  const [open, setOpen] = useState(false)
+  const [busyNotificationId, setBusyNotificationId] = useState<string | null>(null)
+  const unreadCount = notifications.filter((item) => item.unread).length
+  const topNotifications = notifications
+    .slice()
+    .sort((a, b) => Number(Boolean(b.unread)) - Number(Boolean(a.unread)))
+    .slice(0, 5)
+
+  async function acknowledgeNotification(item: CareLinkMobileNotification) {
+    setBusyNotificationId(item.id)
+    try {
+      await runCareLinkAction(`/api/carelink/notifications/${item.id}/acknowledge`, {
+        missionId: item.missionId || null,
+        note: `Notification ${item.id} reconnue depuis le menu mobile`,
+      })
+      onNotificationAcknowledged(item.id)
+    } finally {
+      setBusyNotificationId(null)
+    }
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 px-5 py-4 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-3">
@@ -728,10 +809,78 @@ function TopBar({ records, queuePending, syncing, online }: { records: MissionCo
             <p className="text-[11px] font-semibold text-slate-500">{todayCount} mission{todayCount > 1 ? 's' : ''} aujourd’hui</p>
           </div>
         </div>
-        <button className="relative rounded-full bg-white p-3 text-slate-700 shadow-[0_12px_35px_rgba(15,23,42,0.10)] ring-1 ring-slate-200" aria-label="Notifications">
-          <Bell size={18} />
-          <span className={cx('absolute right-2 top-2 h-2.5 w-2.5 rounded-full ring-2 ring-white', online ? 'bg-emerald-500' : 'bg-amber-500')} />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setOpen((current) => !current)}
+            className="relative rounded-full bg-white p-3 text-slate-700 shadow-[0_12px_35px_rgba(15,23,42,0.10)] ring-1 ring-slate-200"
+            aria-label="Notifications"
+            aria-expanded={open}
+          >
+            <Bell size={18} />
+            <span className={cx('absolute right-2 top-2 h-2.5 w-2.5 rounded-full ring-2 ring-white', unreadCount ? 'bg-rose-500' : online ? 'bg-emerald-500' : 'bg-amber-500')} />
+            {unreadCount ? (
+              <span className="absolute -left-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white ring-2 ring-white">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            ) : null}
+          </button>
+
+          {open ? (
+            <div className="absolute left-0 top-14 z-50 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_28px_75px_rgba(15,23,42,0.22)]">
+              <div className="border-b border-slate-100 bg-slate-50 px-4 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-600">Notifications</p>
+                    <p className="mt-1 text-sm font-black text-slate-950">{unreadCount ? `${unreadCount} non lue${unreadCount > 1 ? 's' : ''}` : 'Tout est synchronisé'}</p>
+                  </div>
+                  <Link href="/carelink/notifications" onClick={() => setOpen(false)} className="rounded-full bg-slate-950 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white">
+                    Tout voir
+                  </Link>
+                </div>
+              </div>
+
+              <div className="max-h-[22rem] overflow-y-auto p-3">
+                {topNotifications.length ? topNotifications.map((item) => (
+                  <article key={item.id} className={cx('mb-2 rounded-[1.2rem] border p-3 last:mb-0', item.unread ? 'border-blue-100 bg-blue-50/70' : 'border-slate-100 bg-white')}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="line-clamp-1 text-sm font-black text-slate-950">{item.title || 'Notification CareLink'}</p>
+                        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{item.body || 'Mise à jour CareLink mobile.'}</p>
+                        <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{item.priority || 'normal'} · {item.unread ? 'Non lue' : 'Lue'}</p>
+                      </div>
+                      <span className={cx('mt-1 h-2.5 w-2.5 shrink-0 rounded-full', item.unread ? 'bg-blue-600' : 'bg-slate-300')} />
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Link
+                        href={item.missionId ? `/carelink/missions/${item.missionId}` : '/carelink/notifications'}
+                        onClick={() => setOpen(false)}
+                        className="rounded-full bg-slate-950 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white"
+                      >
+                        Ouvrir
+                      </Link>
+                      {item.unread ? (
+                        <button
+                          type="button"
+                          disabled={busyNotificationId === item.id}
+                          onClick={() => acknowledgeNotification(item)}
+                          className="rounded-full bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-700 ring-1 ring-slate-200 disabled:opacity-50"
+                        >
+                          {busyNotificationId === item.id ? 'Sync...' : 'Accuser'}
+                        </button>
+                      ) : null}
+                    </div>
+                  </article>
+                )) : (
+                  <div className="rounded-[1.2rem] bg-slate-50 p-4 text-center">
+                    <p className="text-sm font-black text-slate-900">Aucune notification</p>
+                    <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">Les rappels, validations et alertes apparaîtront ici dès synchronisation OPS.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
       <div className="mt-3 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">
         <span>{online ? 'En ligne' : 'Hors ligne'}</span>
@@ -784,18 +933,51 @@ function HomeScreen({
     return status === 'expired' || status === 'review_requested' || (expiresAt != null && expiresAt < Date.now())
   }).length
 
+  const agentDisplayName = deriveCareLinkAgentDisplayName(workspace)
+  const todayLabel = careLinkTodayFrenchLabel()
+
   return (
     <section className="space-y-5 px-5 pb-28 pt-5">
-      <div className="rounded-[2rem] border border-sky-100 bg-white p-4 shadow-sm">
-        <p className="text-[10px] font-black uppercase tracking-[0.32em] text-sky-600">{meta.eyebrow}</p>
-        <h1 className="mt-2 text-2xl font-black text-slate-950">{meta.title}</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-500">{meta.description}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {meta.chips.map((chip) => (
-            <span key={chip} className="rounded-full bg-slate-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
-              {chip}
-            </span>
-          ))}
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-blue-100 bg-white p-5 shadow-[0_24px_70px_rgba(29,78,216,0.12)]">
+        <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-blue-100 blur-2xl" />
+        <div className="absolute -bottom-14 left-4 h-36 w-36 rounded-full bg-emerald-100 blur-2xl" />
+
+        <div className="relative">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.34em] text-blue-600">Accueil ANGELCARE</p>
+              <h1 className="mt-3 text-[1.9rem] font-black leading-[0.98] tracking-tight text-slate-950">
+                Bonjour {agentDisplayName},
+              </h1>
+              <p className="mt-3 text-sm font-bold leading-6 text-slate-600">
+                Ravi de vous revoir chez <span className="font-black text-slate-950">ANGELCARE</span>.
+              </p>
+              <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+                {todayLabel}
+              </p>
+            </div>
+
+            <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-blue-100 ring-1 ring-blue-100">
+              <AngelCareLogo size="sm" />
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            <Link href="/carelink/messages" className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 shadow-sm">
+              <p className="text-xl font-black leading-none text-slate-950">{unreadMessages}</p>
+              <p className="mt-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Messages</p>
+            </Link>
+
+            <Link href="/carelink/notifications" className="rounded-2xl border border-blue-100 bg-blue-50 px-3 py-3 shadow-sm">
+              <p className="text-xl font-black leading-none text-blue-700">{pendingNotifications}</p>
+              <p className="mt-2 text-[9px] font-black uppercase tracking-[0.2em] text-blue-600">Notifications</p>
+            </Link>
+
+            <Link href="/carelink/alerts" className="rounded-2xl border border-rose-100 bg-rose-50 px-3 py-3 shadow-sm">
+              <p className="text-xl font-black leading-none text-rose-700">{criticalAlerts}</p>
+              <p className="mt-2 text-[9px] font-black uppercase tracking-[0.2em] text-rose-600">Alertes</p>
+            </Link>
+          </div>
         </div>
       </div>
 

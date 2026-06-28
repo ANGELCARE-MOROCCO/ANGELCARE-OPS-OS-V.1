@@ -1,0 +1,153 @@
+diff --git a/components/carelink/mobile/CareLinkFieldAgentPremiumApp.tsx b/components/carelink/mobile/CareLinkFieldAgentPremiumApp.tsx
+index 21b2af5..694848b 100644
+--- a/components/carelink/mobile/CareLinkFieldAgentPremiumApp.tsx
++++ b/components/carelink/mobile/CareLinkFieldAgentPremiumApp.tsx
+@@ -693,7 +693,17 @@ export function CareLinkFieldAgentPremiumApp({ records, view = 'home', selectedI
+   return (
+     <main className="min-h-dvh bg-[#f4f8ff] text-slate-950">
+       <div className="mx-auto min-h-dvh max-w-md overflow-hidden bg-[#f8fbff] shadow-[0_30px_100px_rgba(15,23,42,0.12)]">
+-        {view !== 'mission' ? <TopBar records={localRecords} queuePending={pendingCount} syncing={syncing} online={isOnline} /> : null}
++        {view !== 'mission' ? (
++          <TopBar
++            records={localRecords}
++            notifications={notificationFeed}
++            queuePending={pendingCount}
++            syncing={syncing}
++            online={isOnline}
++            runCareLinkAction={runCareLinkAction}
++            onNotificationAcknowledged={(id) => setNotificationFeed((current) => current.map((item) => (item.id === id ? { ...item, unread: false } : item)))}
++          />
++        ) : null}
+         {view === 'home' ? <HomeScreen records={localRecords} workspace={activeWorkspace} runAction={runAction} busy={busy} queuePending={pendingCount} syncing={syncing} online={isOnline} /> : null}
+         {view === 'missions' ? <MissionsScreen records={localRecords} workspace={activeWorkspace} activeTab={activeTab} setActiveTab={setActiveTab} runAction={runAction} busy={busy} /> : null}
+         {view === 'mission' ? <MissionDetailScreen mission={selected} dossier={dossier} workspace={activeWorkspace} runAction={runAction} busy={busy} /> : null}
+@@ -716,8 +726,45 @@ export function CareLinkFieldAgentPremiumApp({ records, view = 'home', selectedI
+   )
+ }
+ 
+-function TopBar({ records, queuePending, syncing, online }: { records: MissionControlRecord[]; queuePending: number; syncing: boolean; online: boolean }) {
++function TopBar({
++  records,
++  notifications,
++  queuePending,
++  syncing,
++  online,
++  runCareLinkAction,
++  onNotificationAcknowledged,
++}: {
++  records: MissionControlRecord[]
++  notifications: CareLinkMobileNotification[]
++  queuePending: number
++  syncing: boolean
++  online: boolean
++  runCareLinkAction: (endpoint: string, payload: Record<string, unknown>) => Promise<unknown>
++  onNotificationAcknowledged: (id: string) => void
++}) {
+   const todayCount = records.filter((item) => item.dateLabel && item.dateLabel !== 'Non planifiée').length
++  const [open, setOpen] = useState(false)
++  const [busyNotificationId, setBusyNotificationId] = useState<string | null>(null)
++  const unreadCount = notifications.filter((item) => item.unread).length
++  const topNotifications = notifications
++    .slice()
++    .sort((a, b) => Number(Boolean(b.unread)) - Number(Boolean(a.unread)))
++    .slice(0, 5)
++
++  async function acknowledgeNotification(item: CareLinkMobileNotification) {
++    setBusyNotificationId(item.id)
++    try {
++      await runCareLinkAction(`/api/carelink/notifications/${item.id}/acknowledge`, {
++        missionId: item.missionId || null,
++        note: `Notification ${item.id} reconnue depuis le menu mobile`,
++      })
++      onNotificationAcknowledged(item.id)
++    } finally {
++      setBusyNotificationId(null)
++    }
++  }
++
+   return (
+     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 px-5 py-4 backdrop-blur-xl">
+       <div className="flex items-center justify-between gap-3">
+@@ -728,10 +775,78 @@ function TopBar({ records, queuePending, syncing, online }: { records: MissionCo
+             <p className="text-[11px] font-semibold text-slate-500">{todayCount} mission{todayCount > 1 ? 's' : ''} aujourd’hui</p>
+           </div>
+         </div>
+-        <button className="relative rounded-full bg-white p-3 text-slate-700 shadow-[0_12px_35px_rgba(15,23,42,0.10)] ring-1 ring-slate-200" aria-label="Notifications">
+-          <Bell size={18} />
+-          <span className={cx('absolute right-2 top-2 h-2.5 w-2.5 rounded-full ring-2 ring-white', online ? 'bg-emerald-500' : 'bg-amber-500')} />
+-        </button>
++        <div className="relative">
++          <button
++            type="button"
++            onClick={() => setOpen((current) => !current)}
++            className="relative rounded-full bg-white p-3 text-slate-700 shadow-[0_12px_35px_rgba(15,23,42,0.10)] ring-1 ring-slate-200"
++            aria-label="Notifications"
++            aria-expanded={open}
++          >
++            <Bell size={18} />
++            <span className={cx('absolute right-2 top-2 h-2.5 w-2.5 rounded-full ring-2 ring-white', unreadCount ? 'bg-rose-500' : online ? 'bg-emerald-500' : 'bg-amber-500')} />
++            {unreadCount ? (
++              <span className="absolute -left-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white ring-2 ring-white">
++                {unreadCount > 9 ? '9+' : unreadCount}
++              </span>
++            ) : null}
++          </button>
++
++          {open ? (
++            <div className="absolute left-0 top-14 z-50 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_28px_75px_rgba(15,23,42,0.22)]">
++              <div className="border-b border-slate-100 bg-slate-50 px-4 py-3">
++                <div className="flex items-center justify-between gap-3">
++                  <div>
++                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-600">Notifications</p>
++                    <p className="mt-1 text-sm font-black text-slate-950">{unreadCount ? `${unreadCount} non lue${unreadCount > 1 ? 's' : ''}` : 'Tout est synchronisé'}</p>
++                  </div>
++                  <Link href="/carelink/notifications" onClick={() => setOpen(false)} className="rounded-full bg-slate-950 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white">
++                    Tout voir
++                  </Link>
++                </div>
++              </div>
++
++              <div className="max-h-[22rem] overflow-y-auto p-3">
++                {topNotifications.length ? topNotifications.map((item) => (
++                  <article key={item.id} className={cx('mb-2 rounded-[1.2rem] border p-3 last:mb-0', item.unread ? 'border-blue-100 bg-blue-50/70' : 'border-slate-100 bg-white')}>
++                    <div className="flex items-start justify-between gap-3">
++                      <div className="min-w-0">
++                        <p className="line-clamp-1 text-sm font-black text-slate-950">{item.title || 'Notification CareLink'}</p>
++                        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{item.body || 'Mise à jour CareLink mobile.'}</p>
++                        <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{item.priority || 'normal'} · {item.unread ? 'Non lue' : 'Lue'}</p>
++                      </div>
++                      <span className={cx('mt-1 h-2.5 w-2.5 shrink-0 rounded-full', item.unread ? 'bg-blue-600' : 'bg-slate-300')} />
++                    </div>
++                    <div className="mt-3 flex flex-wrap gap-2">
++                      <Link
++                        href={item.missionId ? `/carelink/missions/${item.missionId}` : '/carelink/notifications'}
++                        onClick={() => setOpen(false)}
++                        className="rounded-full bg-slate-950 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white"
++                      >
++                        Ouvrir
++                      </Link>
++                      {item.unread ? (
++                        <button
++                          type="button"
++                          disabled={busyNotificationId === item.id}
++                          onClick={() => acknowledgeNotification(item)}
++                          className="rounded-full bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-700 ring-1 ring-slate-200 disabled:opacity-50"
++                        >
++                          {busyNotificationId === item.id ? 'Sync...' : 'Accuser'}
++                        </button>
++                      ) : null}
++                    </div>
++                  </article>
++                )) : (
++                  <div className="rounded-[1.2rem] bg-slate-50 p-4 text-center">
++                    <p className="text-sm font-black text-slate-900">Aucune notification</p>
++                    <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">Les rappels, validations et alertes apparaîtront ici dès synchronisation OPS.</p>
++                  </div>
++                )}
++              </div>
++            </div>
++          ) : null}
++        </div>
+       </div>
+       <div className="mt-3 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">
+         <span>{online ? 'En ligne' : 'Hors ligne'}</span>
