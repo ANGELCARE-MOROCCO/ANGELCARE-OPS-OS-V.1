@@ -49,6 +49,23 @@ const LANGUAGES = ['French', 'Arabic', 'English', 'Spanish']
 function text(value: unknown, fallback = '') { return value === null || value === undefined || value === '' ? fallback : String(value) }
 function number(value: unknown) { const n = Number(value); return Number.isFinite(n) ? n : 0 }
 
+function carelinkIsRealEmail(value: unknown) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text(value).trim().toLowerCase())
+}
+
+function carelinkAliasSeed(value: unknown) {
+  return text(value)
+    .trim()
+    .toLowerCase()
+    .replace(/@.*$/, '')
+    .replace(/[^a-z0-9._-]/g, '')
+}
+
+function carelinkSuggestedAuthEmail(value: unknown, caregiverId?: number | null) {
+  const seed = carelinkAliasSeed(value) || (caregiverId ? `agent${caregiverId}` : 'agent')
+  return `${seed}@angelcarehub.com`
+}
+
 function Field({ label, value, setValue, placeholder = '', type = 'text' }: { label: string; value: string; setValue: (v: string) => void; placeholder?: string; type?: string }) {
   return <label className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><span className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">{label}</span><input type={type} value={value} onChange={(e) => setValue(e.target.value)} placeholder={placeholder} className="mt-3 w-full bg-transparent text-sm font-black text-slate-950 outline-none placeholder:text-slate-300" /></label>
 }
@@ -117,6 +134,7 @@ export function CareLinkCaregiverCreateModal({
   const [specialNeeds, setSpecialNeeds] = useState(false)
 
   const [loginEmail, setLoginEmail] = useState('')
+  const [usernameAlias, setUsernameAlias] = useState('')
   const [password, setPassword] = useState('')
   const [accessLevel, setAccessLevel] = useState('carelink_mobile_agent')
   const [mobileEnabled, setMobileEnabled] = useState(true)
@@ -324,6 +342,9 @@ async function createProfile() {
         readiness_score: readiness,
         reliability_score: readiness,
         login_email: loginEmail || email,
+        login_identifier: loginEmail || email,
+        username: loginEmail || email,
+        profile_email: email,
         mobile_enabled: mobileEnabled,
         access_status: accessStatus,
         access_level: accessLevel,
@@ -411,13 +432,26 @@ async function createProfile() {
           ? true
           : mobileEnabled
 
+    const authEmail = (loginEmail || email).trim().toLowerCase()
+    const aliasIdentifier = (usernameAlias || carelinkAliasSeed(authEmail) || carelinkAliasSeed(fullName)).trim().toLowerCase()
+
+    if (!carelinkIsRealEmail(authEmail)) {
+      setError('Real Auth Email must be a valid email, for example qsafea@angelcarehub.com. Username alias must stay separate.')
+      setTab('access')
+      setBusy(false)
+      return
+    }
+
     try {
       const res = await fetch(`/api/carelink/ops/agents/${id}/mobile-access`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           action,
-          email: loginEmail || email,
+          email: authEmail,
+          profile_email: email.trim().toLowerCase(),
+          login_identifier: aliasIdentifier || authEmail,
+          username: aliasIdentifier || authEmail,
           password,
           access_level: accessLevel,
           access_status: targetStatus,
@@ -627,7 +661,10 @@ async function createProfile() {
     setFullName(text(row.full_name || row.name || row.display_name, ''))
     setPhone(text(row.phone || row.mobile || row.phone_number, ''))
     setEmail(text(row.email, ''))
-    setLoginEmail(text(row.email || row.login_email, ''))
+    const rowEmail = text(row.email, '')
+    const rowAlias = text(row.login_identifier || row.username || row.login_email || '')
+    setLoginEmail(carelinkIsRealEmail(rowEmail) ? rowEmail.toLowerCase() : carelinkSuggestedAuthEmail(rowAlias || rowEmail || row.full_name, Number(row.id)))
+    setUsernameAlias(rowAlias || (!carelinkIsRealEmail(rowEmail) ? carelinkAliasSeed(rowEmail) : carelinkAliasSeed(row.full_name)))
     setCity(text(row.city || row.location_city || row.base_city, 'Rabat'))
     setZone(text(row.zone || row.location_zone || row.base_zone, ''))
     setStatus(text(row.current_status || row.status || row.availability_status, 'available'))
@@ -675,7 +712,13 @@ async function createProfile() {
       if (caregiver) setFullName(String(caregiver.full_name || caregiver.name || caregiver.display_name || ''))
       if (caregiver) setPhone(String(caregiver.phone || caregiver.mobile || caregiver.phone_number || ''))
       if (caregiver) setEmail(String(caregiver.email || ''))
-      if (caregiver) setLoginEmail(String(access.email || caregiver.email || ''))
+      if (access || caregiver) {
+        const accessEmail = String(access.email || '')
+        const accessAlias = String(access.login_identifier || access.username || '')
+        const caregiverEmail = String(caregiver.email || '')
+        setLoginEmail(carelinkIsRealEmail(accessEmail) ? accessEmail.toLowerCase() : carelinkIsRealEmail(caregiverEmail) ? caregiverEmail.toLowerCase() : carelinkSuggestedAuthEmail(accessAlias || caregiver.full_name, Number(caregiver.id || createdId)))
+        setUsernameAlias(accessAlias || (!carelinkIsRealEmail(accessEmail) ? carelinkAliasSeed(accessEmail) : carelinkAliasSeed(caregiver.full_name)))
+      }
       if (caregiver) setCity(String(caregiver.city || caregiver.location_city || caregiver.base_city || 'Rabat'))
       if (caregiver) setZone(String(caregiver.zone || caregiver.location_zone || caregiver.base_zone || ''))
       if (caregiver) setStatus(String(caregiver.current_status || caregiver.status || caregiver.availability_status || 'available'))
@@ -761,6 +804,18 @@ if (!open) return null
     { total: 0, validated: 0, draft: 0, rejected: 0 },
   )
 
+  const liveAccess = command?.access || agentFullCommand?.access || {}
+  const displayedAuthEmail = text(liveAccess.email || loginEmail || email, '—')
+  const displayedAlias = text(liveAccess.login_identifier || liveAccess.username || usernameAlias, '—')
+  const authLinked = Boolean(liveAccess.auth_user_id)
+  const mobileLive = Boolean(liveAccess.mobile_enabled ?? mobileEnabled)
+  const statusLive = text(liveAccess.access_status || accessStatus, 'draft')
+  const loginContractReady =
+    carelinkIsRealEmail(displayedAuthEmail) &&
+    authLinked &&
+    mobileLive &&
+    ['active', 'enabled', 'approved', 'live'].includes(statusLive.toLowerCase())
+
   return <div className="fixed inset-0 z-[6000] bg-slate-950/55 p-4 backdrop-blur-md"><div className="mx-auto flex h-[calc(100vh-32px)] max-w-[1700px] flex-col overflow-hidden rounded-[34px] border border-white/70 bg-slate-50 shadow-[0_40px_100px_rgba(2,6,23,.45)]"><header className="border-b border-slate-200 bg-white p-5"><div className="flex flex-wrap items-start justify-between gap-4"><div><div className="inline-flex rounded-full bg-blue-50 px-4 py-2 text-[11px] font-black uppercase tracking-[.3em] text-blue-700">CareLink Ops · Agent Command Console</div><h2 className="mt-3 select-none text-4xl font-black tracking-[-.06em] text-slate-950" style={{ color: "#020617", WebkitTextFillColor: "#020617", userSelect: "none" }}>{isEditMode ? 'Existing caregiver operational dossier' : 'New caregiver operational setup'}</h2><p className="mt-2 max-w-5xl text-sm font-semibold leading-6 text-slate-500">This is a low-load operational cockpit: create profile, assign CareLink Mobile login, set roster conditions, configure honoraires, validate payments, review live mission history and training readiness.</p></div><div className="flex items-center gap-3"><div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-400">Profile ID</div><div className="mt-1 text-2xl font-black text-slate-950">{createdId || 'Draft'}</div></div><div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-400">Readiness</div><div className="mt-1 text-2xl font-black text-slate-950">{readiness}%</div><div className="mt-2 h-2 w-36 rounded-full bg-slate-100"><div className={`${readiness >= 80 ? 'bg-emerald-500' : readiness >= 55 ? 'bg-amber-500' : 'bg-rose-500'} h-2 rounded-full`} style={{ width: `${readiness}%` }} /></div></div><button onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm hover:bg-slate-50">Close</button></div></div>{error ? <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">{error}</div> : null}{notice ? <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700">{notice}</div> : null}</header><div className="grid min-h-0 flex-1 grid-cols-[340px_1fr_360px]"><aside className="overflow-y-auto border-r border-slate-200 bg-white p-5"><div className="space-y-3">{TAB_META.map((item, index) => <button key={item.key} onClick={() => setTab(item.key)} className={`w-full rounded-[24px] border p-4 text-left transition ${tab === item.key ? 'border-blue-200 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50'}`}><div className="flex gap-3"><div className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-xs font-black ${tab === item.key ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>{index + 1}</div><div><div className="text-xs font-black uppercase tracking-[.18em] text-blue-700">{item.kicker}</div><div className="mt-1 text-sm font-black text-slate-950">{item.label}</div><div className="mt-1 text-xs font-bold leading-5 text-slate-500">{item.detail}</div></div></div></button>)}</div></aside><main className="overflow-y-auto p-6">{tab === 'identity' ? <div className="space-y-5">
   <Panel
     title="Enterprise core agent file"
@@ -817,14 +872,42 @@ if (!open) return null
     </div>}
   >
     <div className="grid gap-4 md:grid-cols-4">
-      <Stat label="Access status" value={text(command?.access?.access_status || accessStatus, 'draft')} tone={String(command?.access?.access_status || accessStatus).includes('suspended') ? 'rose' : 'emerald'} />
-      <Stat label="Mobile enabled" value={(command?.access?.mobile_enabled ?? mobileEnabled) ? 'Enabled' : 'Disabled'} tone={(command?.access?.mobile_enabled ?? mobileEnabled) ? 'emerald' : 'rose'} />
-      <Stat label="Auth user" value={command?.access?.auth_user_id ? 'Linked' : 'Pending'} tone={command?.access?.auth_user_id ? 'blue' : 'amber'} />
-      <Stat label="Session limit" value={sessionLimit} tone="blue" />
+      <Stat label="Access status" value={statusLive} tone={String(statusLive).includes('suspended') ? 'rose' : 'emerald'} />
+      <Stat label="Mobile enabled" value={mobileLive ? 'Enabled' : 'Disabled'} tone={mobileLive ? 'emerald' : 'rose'} />
+      <Stat label="Auth user" value={authLinked ? 'Linked' : 'Pending'} tone={authLinked ? 'blue' : 'amber'} />
+      <Stat label="Login ready" value={loginContractReady ? 'READY' : 'NOT READY'} tone={loginContractReady ? 'emerald' : 'rose'} />
+    </div>
+
+    <div className="mt-4 rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-700">CareLink mobile login contract</div>
+          <div className="mt-2 text-sm font-black text-slate-950">Admin verification before releasing the caregiver to mobile.</div>
+          <p className="mt-1 text-xs font-bold leading-5 text-slate-500">Real Auth Email creates/links the Supabase login user. Username Alias is optional and must never replace the real email.</p>
+        </div>
+        <div className={`rounded-2xl px-4 py-3 text-xs font-black ${loginContractReady ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+          {loginContractReady ? 'LOGIN READY' : 'AUTH LINK REQUIRED'}
+        </div>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <div className="rounded-2xl bg-blue-50 p-3">
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-700">Real Auth Email</div>
+          <div className="mt-1 break-all text-sm font-black text-slate-950">{displayedAuthEmail}</div>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Username Alias</div>
+          <div className="mt-1 break-all text-sm font-black text-slate-950">{displayedAlias}</div>
+        </div>
+        <div className="rounded-2xl bg-amber-50 p-3">
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700">Auth User ID</div>
+          <div className="mt-1 break-all text-sm font-black text-slate-950">{authLinked ? String(liveAccess.auth_user_id) : 'Pending — save with password'}</div>
+        </div>
+      </div>
     </div>
 
     <div className="mt-5 grid gap-4 lg:grid-cols-3">
-      <Field label="Login email / username" value={loginEmail} setValue={setLoginEmail} placeholder={email || 'agent@email.com'} />
+      <Field label="Real Auth Email / Supabase login" value={loginEmail} setValue={setLoginEmail} placeholder="agent@angelcarehub.com" />
+      <Field label="Username alias optional" value={usernameAlias} setValue={setUsernameAlias} placeholder="qsafae, isalma, oasmae..." />
       <Field label="Temporary password" value={password} setValue={setPassword} placeholder="Generate or type password" />
       <Select label="Access level" value={accessLevel} setValue={setAccessLevel} options={['carelink_mobile_agent', 'carelink_mobile_supervisor', 'restricted_agent']} />
       <Select label="Access status" value={accessStatus} setValue={setAccessStatus} options={['active', 'pending_invitation', 'temporarily_suspended', 'revoked']} />
@@ -1114,7 +1197,7 @@ if (!open) return null
               </div>
             ) : null}
 
-<button disabled={busy} onClick={async () => { const id = await ensureProfile(); if (id) { await saveRoster(); await savePayments(); await saveTraining(); if (loginEmail || email) await saveMobileAccess(); setNotice('Full caregiver operational setup synced.') } }} className="mt-5 w-full rounded-2xl bg-blue-600 px-5 py-4 text-sm font-black text-white shadow-lg disabled:opacity-50">{busy ? 'Syncing...' : 'Create + sync all configured modules'}</button><p className="mt-3 text-xs font-bold leading-5 text-slate-500">Mission history and payment validations become fully live after the caregiver profile exists.</p></aside></div></div></div>
+<button disabled={busy} onClick={async () => { const id = await ensureProfile(); if (id) { await saveRoster(); await savePayments(); await saveTraining(); if (loginEmail || email || usernameAlias) await saveMobileAccess(); setNotice('Full caregiver operational setup synced.') } }} className="mt-5 w-full rounded-2xl bg-blue-600 px-5 py-4 text-sm font-black text-white shadow-lg disabled:opacity-50">{busy ? 'Syncing...' : 'Create + sync all configured modules'}</button><p className="mt-3 text-xs font-bold leading-5 text-slate-500">Mission history and payment validations become fully live after the caregiver profile exists.</p></aside></div></div></div>
 }
 
 export default CareLinkCaregiverCreateModal

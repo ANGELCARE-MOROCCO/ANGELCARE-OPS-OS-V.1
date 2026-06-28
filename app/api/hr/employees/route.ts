@@ -125,6 +125,250 @@ async function countRelated(supabase: any, employee: any, table: string) {
   }
   return 0
 }
+
+const AC_HR_WORKSPACE_BEGIN_V2 = '[[ANGELCARE_HR_WORKSPACE_V2_BEGIN]]'
+const AC_HR_WORKSPACE_END_V2 = '[[ANGELCARE_HR_WORKSPACE_V2_END]]'
+
+function acPlainObjectV2(value: any) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+}
+
+function acExtractWorkspaceFromNotesV2(notes: any) {
+  const text = String(notes || '')
+  const start = text.indexOf(AC_HR_WORKSPACE_BEGIN_V2)
+  const end = text.indexOf(AC_HR_WORKSPACE_END_V2)
+
+  if (start === -1 || end === -1 || end <= start) return null
+
+  const json = text.slice(start + AC_HR_WORKSPACE_BEGIN_V2.length, end).trim()
+
+  try {
+    const parsed = JSON.parse(json)
+    return Array.isArray(parsed?.hr_management_workspace) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+function acNotesWithWorkspaceV2(existingNotes: any, workspaceMeta: Record<string, any>) {
+  const text = String(existingNotes || '')
+  const start = text.indexOf(AC_HR_WORKSPACE_BEGIN_V2)
+  const end = text.indexOf(AC_HR_WORKSPACE_END_V2)
+
+  const before = start >= 0 ? text.slice(0, start).trim() : text.trim()
+  const after = start >= 0 && end >= 0 ? text.slice(end + AC_HR_WORKSPACE_END_V2.length).trim() : ''
+
+  const payload = JSON.stringify(workspaceMeta)
+
+  return [
+    before,
+    AC_HR_WORKSPACE_BEGIN_V2,
+    payload,
+    AC_HR_WORKSPACE_END_V2,
+    after,
+  ].filter(Boolean).join('\n')
+}
+
+function acAttachWorkspaceToEmployeeV2(employee: any) {
+  if (!employee) return employee
+
+  const metadata = acPlainObjectV2(employee.metadata)
+  const data = acPlainObjectV2(employee.data)
+  const notesWorkspace = acExtractWorkspaceFromNotesV2(employee.notes)
+
+  const hasMetadataWorkspace = Object.prototype.hasOwnProperty.call(metadata, 'hr_management_workspace')
+  const hasDataWorkspace = Object.prototype.hasOwnProperty.call(data, 'hr_management_workspace')
+  const hasTopWorkspace = Object.prototype.hasOwnProperty.call(employee, 'hr_management_workspace')
+  const hasNotesWorkspace = Boolean(notesWorkspace && Object.prototype.hasOwnProperty.call(notesWorkspace, 'hr_management_workspace'))
+
+  const workspace =
+    hasMetadataWorkspace && Array.isArray(metadata.hr_management_workspace) ? metadata.hr_management_workspace :
+    hasDataWorkspace && Array.isArray(data.hr_management_workspace) ? data.hr_management_workspace :
+    hasTopWorkspace && Array.isArray(employee.hr_management_workspace) ? employee.hr_management_workspace :
+    hasNotesWorkspace && Array.isArray(notesWorkspace?.hr_management_workspace) ? notesWorkspace.hr_management_workspace :
+    null
+
+  const deletedKeys =
+    Array.isArray(metadata.hr_management_workspace_deleted_keys) ? metadata.hr_management_workspace_deleted_keys :
+    Array.isArray(data.hr_management_workspace_deleted_keys) ? data.hr_management_workspace_deleted_keys :
+    Array.isArray(notesWorkspace?.hr_management_workspace_deleted_keys) ? notesWorkspace.hr_management_workspace_deleted_keys :
+    []
+
+  const hasSavedWorkspace =
+    Boolean(metadata.hr_management_workspace_saved) ||
+    Boolean(data.hr_management_workspace_saved) ||
+    Boolean(notesWorkspace?.hr_management_workspace_saved) ||
+    hasMetadataWorkspace ||
+    hasDataWorkspace ||
+    hasTopWorkspace ||
+    hasNotesWorkspace
+
+  if (!hasSavedWorkspace && !workspace) return employee
+
+  return {
+    ...employee,
+    metadata: {
+      ...metadata,
+      ...(notesWorkspace || {}),
+      hr_management_workspace: Array.isArray(workspace) ? workspace : [],
+      hr_management_workspace_deleted_keys: deletedKeys,
+      hr_management_workspace_saved: hasSavedWorkspace,
+    },
+    data: {
+      ...data,
+      hr_management_workspace: Array.isArray(workspace) ? workspace : [],
+      hr_management_workspace_deleted_keys: deletedKeys,
+      hr_management_workspace_saved: hasSavedWorkspace,
+    },
+    hr_management_workspace: Array.isArray(workspace) ? workspace : [],
+  }
+}
+
+function acWorkspaceMetaFromBodyV2(body: any) {
+  const metadata = acPlainObjectV2(body?.metadata)
+  const data = acPlainObjectV2(body?.data)
+
+  const hasTopWorkspace = Object.prototype.hasOwnProperty.call(body || {}, 'hr_management_workspace')
+  const hasMetadataWorkspace = Object.prototype.hasOwnProperty.call(metadata, 'hr_management_workspace')
+  const hasDataWorkspace = Object.prototype.hasOwnProperty.call(data, 'hr_management_workspace')
+
+  const workspace =
+    hasTopWorkspace && Array.isArray(body?.hr_management_workspace) ? body.hr_management_workspace :
+    hasMetadataWorkspace && Array.isArray(metadata.hr_management_workspace) ? metadata.hr_management_workspace :
+    hasDataWorkspace && Array.isArray(data.hr_management_workspace) ? data.hr_management_workspace :
+    []
+
+  if (!hasTopWorkspace && !hasMetadataWorkspace && !hasDataWorkspace) return null
+
+  const deletedKeys = Array.from(new Set([
+    ...(Array.isArray(body?.hr_management_workspace_deleted_keys) ? body.hr_management_workspace_deleted_keys : []),
+    ...(Array.isArray(metadata.hr_management_workspace_deleted_keys) ? metadata.hr_management_workspace_deleted_keys : []),
+    ...(Array.isArray(data.hr_management_workspace_deleted_keys) ? data.hr_management_workspace_deleted_keys : []),
+  ].map((value) => String(value || '').trim()).filter(Boolean)))
+
+  const now = new Date().toISOString()
+
+  return {
+    ...metadata,
+    hr_management_workspace: workspace,
+    hr_management_workspace_deleted_keys: deletedKeys,
+    hr_management_workspace_saved: true,
+    hr_management_workspace_updated_at: body?.hr_management_workspace_updated_at || metadata.hr_management_workspace_updated_at || now,
+    hr_management_workspace_source: body?.hr_management_workspace_source || metadata.hr_management_workspace_source || 'employee_360_dossier_modal',
+    hr_management_workspace_case_count: workspace.length,
+    hr_management_workspace_validated_count: workspace.filter((item: any) =>
+      String(item?.validation_status || item?.status || '').toLowerCase().includes('valid')
+    ).length,
+    hr_management_workspace_last_saved_at: now,
+    hr_management_workspace_last_event: body?.audit_event || metadata.hr_management_workspace_last_event || null,
+  }
+}
+
+async function acUpdateRowWithSchemaFallbackV2(supabase: any, table: string, existing: any, row: Record<string, any>, id: string | null, email: string | null) {
+  let current = { ...row }
+
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    try {
+      let query = supabase.from(table).update(current)
+
+      if (existing?.id) query = query.eq('id', existing.id)
+      else if (id) query = query.eq('id', id)
+      else if (email) query = query.eq('email', email)
+      else return { data: null, error: { message: 'No update key available' } }
+
+      const { data, error } = await query.select('*').maybeSingle()
+
+      if (!error && data) return { data, error: null }
+
+      const msg = String(error?.message || '')
+      const missing1 = msg.match(/Could not find the '([^']+)' column/i)?.[1]
+      const missing2 = msg.match(/column "([^"]+)" .*does not exist/i)?.[1]
+      const missing = missing1 || missing2
+
+      if (missing && missing in current) {
+        delete current[missing]
+        continue
+      }
+
+      return { data: null, error }
+    } catch (error: any) {
+      return { data: null, error }
+    }
+  }
+
+  return { data: null, error: { message: 'Schema fallback exhausted' } }
+}
+
+async function acPersistHRWorkspaceV2(supabase: any, id: string | null, email: string | null, workspaceMeta: Record<string, any>) {
+  const errors: string[] = []
+  const now = new Date().toISOString()
+
+  for (const table of STAFF_TABLE_ATTEMPTS) {
+    const existing = await selectFromTable(supabase, table, id, email)
+    if (!existing) continue
+
+    const mergedMetadata = {
+      ...acPlainObjectV2(existing.metadata),
+      ...workspaceMeta,
+    }
+
+    const mergedData = {
+      ...acPlainObjectV2(existing.data),
+      ...workspaceMeta,
+    }
+
+    const attempts = [
+      {
+        label: 'metadata',
+        row: {
+          metadata: mergedMetadata,
+          updated_at: now,
+        },
+      },
+      {
+        label: 'data',
+        row: {
+          data: mergedData,
+          updated_at: now,
+        },
+      },
+      {
+        label: 'top_level',
+        row: {
+          hr_management_workspace: workspaceMeta.hr_management_workspace,
+          hr_management_workspace_updated_at: workspaceMeta.hr_management_workspace_updated_at,
+          hr_management_workspace_source: workspaceMeta.hr_management_workspace_source,
+          updated_at: now,
+        },
+      },
+      {
+        label: 'notes_marker',
+        row: {
+          notes: acNotesWithWorkspaceV2(existing.notes, workspaceMeta),
+          updated_at: now,
+        },
+      },
+    ]
+
+    for (const attempt of attempts) {
+      const result = await acUpdateRowWithSchemaFallbackV2(supabase, table, existing, attempt.row, id, email)
+
+      if (result.data) {
+        return {
+          data: acAttachWorkspaceToEmployeeV2(result.data),
+          table,
+          storage: attempt.label,
+          errors,
+        }
+      }
+
+      if (result.error?.message) errors.push(`${table}.${attempt.label}: ${result.error.message}`)
+    }
+  }
+
+  return { data: null, table: null, storage: null, errors }
+}
+
 async function enrichEmployee(supabase: any, employee: any) {
   const sync: Record<string, number> = {
     attendance: 0, leave: 0, payroll: 0, documents: 0, contracts: 0, roster: 0, training: 0, performance: 0, onboarding: 0,
@@ -151,7 +395,110 @@ async function enrichEmployee(supabase: any, employee: any) {
   const readiness = Math.round((filled / required.length) * 70 + Math.min(30, Object.values(sync).reduce((a, b) => a + Number(b || 0), 0) * 4))
   sync.readiness = Math.max(0, Math.min(100, readiness))
   sync.risk = Math.max(0, Math.min(100, 100 - sync.readiness))
-  return { ...employee, __sync: sync }
+  return { ...acAttachWorkspaceToEmployeeV2(employee), __sync: sync }
+}
+
+
+function plainRecord(value: any) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+}
+
+function hrWorkspaceMetaFromBody(body: any) {
+  const metadata = plainRecord(body?.metadata)
+  const data = plainRecord(body?.data)
+  const workspace =
+    metadata.hr_management_workspace ||
+    data.hr_management_workspace ||
+    body?.hr_management_workspace ||
+    []
+
+  if (!Array.isArray(workspace)) return null
+
+  const now = new Date().toISOString()
+
+  return {
+    ...metadata,
+    hr_management_workspace: workspace,
+    hr_management_workspace_updated_at: metadata.hr_management_workspace_updated_at || body?.hr_management_workspace_updated_at || now,
+    hr_management_workspace_source: metadata.hr_management_workspace_source || body?.hr_management_workspace_source || 'employee_360_dossier_modal',
+    hr_management_workspace_case_count: workspace.length,
+    hr_management_workspace_validated_count: workspace.filter((item: any) => String(item?.validation_status || item?.status || '').toLowerCase().includes('valid')).length,
+    hr_management_workspace_last_saved_at: now,
+  }
+}
+
+async function updateHRWorkspaceWithFallback(supabase: any, id: string | null, email: string | null, workspaceMeta: Record<string, any>) {
+  const errors: string[] = []
+  const now = new Date().toISOString()
+
+  for (const table of STAFF_TABLE_ATTEMPTS) {
+    const existing = await selectFromTable(supabase, table, id, email)
+    if (!existing) continue
+
+    const mergedMetadata = {
+      ...plainRecord(existing.metadata),
+      ...workspaceMeta,
+    }
+
+    const mergedData = {
+      ...plainRecord(existing.data),
+      ...workspaceMeta,
+    }
+
+    const attempts = [
+      {
+        label: 'metadata',
+        row: {
+          metadata: mergedMetadata,
+          updated_at: now,
+        },
+      },
+      {
+        label: 'data',
+        row: {
+          data: mergedData,
+          updated_at: now,
+        },
+      },
+      {
+        label: 'top_level',
+        row: {
+          hr_management_workspace: workspaceMeta.hr_management_workspace,
+          hr_management_workspace_updated_at: workspaceMeta.hr_management_workspace_updated_at,
+          hr_management_workspace_source: workspaceMeta.hr_management_workspace_source,
+          updated_at: now,
+        },
+      },
+    ]
+
+    for (const attempt of attempts) {
+      try {
+        let query = supabase.from(table).update(attempt.row)
+
+        if (id && existing.id === id) query = query.eq('id', id)
+        else if (existing.id) query = query.eq('id', existing.id)
+        else if (email) query = query.eq('email', email)
+        else continue
+
+        const { data, error } = await query.select('*').maybeSingle()
+
+        if (!error && data) {
+          return {
+            data,
+            table,
+            storage: attempt.label,
+            errors,
+          }
+        }
+
+        if (error) errors.push(`${table}.${attempt.label}: ${error.message}`)
+      } catch (err: any) {
+        errors.push(`${table}.${attempt.label}: ${err?.message || String(err)}`)
+      }
+    }
+  }
+
+  return { data: null, table: null, storage: null, errors }
 }
 
 async function insertWithFallback(supabase: any, row: Record<string, any>) {
@@ -253,20 +600,69 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const url = new URL(request.url)
     const body = await request.json()
-    const id = clean(body.id) as string | null
-    const email = clean(body.email) as string | null
-    if (!id && !email) return NextResponse.json({ ok: false, error: 'Missing employee id or email.' }, { status: 400 })
+
+    const id = (clean(body.id) || clean(url.searchParams.get('id'))) as string | null
+    const email = (clean(body.email) || clean(url.searchParams.get('email'))) as string | null
+
+    if (!id && !email) {
+      return NextResponse.json({ ok: false, error: 'Missing employee id or email.' }, { status: 400 })
+    }
+
     const supabase = await createClient()
+    const workspaceMeta = acWorkspaceMetaFromBodyV2(body)
+
+    if (workspaceMeta) {
+      const result = await acPersistHRWorkspaceV2(supabase, id, email, workspaceMeta)
+
+      if (!result.data) {
+        return NextResponse.json({
+          ok: false,
+          error: 'Could not persist HR workspace into employee production record.',
+          details: result.errors,
+        }, { status: 500 })
+      }
+
+      await logActivity(
+        supabase,
+        result.data,
+        'employee_hr_workspace_saved',
+        `${result.data?.full_name || result.data?.name || email || id} HR workspace was saved from Employee 360 Case Operations Center.`,
+      )
+
+      revalidatePath('/hr/employees')
+      revalidatePath('/hr/staff')
+      revalidatePath('/hr/onboarding')
+      revalidatePath('/hr/training')
+      revalidatePath('/hr')
+
+      return NextResponse.json({
+        ok: true,
+        employee: await enrichEmployee(supabase, result.data),
+        table: result.table,
+        storage: result.storage,
+        workspace_saved: true,
+        workspace_count: Array.isArray(workspaceMeta.hr_management_workspace) ? workspaceMeta.hr_management_workspace.length : 0,
+        warnings: result.errors,
+      })
+    }
+
     const row = employeePayload(body, 'update')
     const result = await updateWithFallback(supabase, id, email, row)
-    if (!result.data) return NextResponse.json({ ok: false, error: 'Could not update employee in known staff tables.', details: result.errors }, { status: 500 })
+
+    if (!result.data) {
+      return NextResponse.json({ ok: false, error: 'Could not update employee in known staff tables.', details: result.errors }, { status: 500 })
+    }
+
     await logActivity(supabase, result.data, 'employee_updated', `${result.data?.full_name || result.data?.name || email || id} was updated from the live staff modal.`)
+
     revalidatePath('/hr/employees')
     revalidatePath('/hr/staff')
     revalidatePath('/hr/onboarding')
     revalidatePath('/hr/training')
     revalidatePath('/hr')
+
     return NextResponse.json({ ok: true, employee: await enrichEmployee(supabase, result.data), table: result.table, warnings: result.errors })
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err?.message || 'Employee update failed' }, { status: 500 })

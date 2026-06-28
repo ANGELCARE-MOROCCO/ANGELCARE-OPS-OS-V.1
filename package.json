@@ -75,7 +75,8 @@
     "email-os:enterprise-workspace-final": "node scripts/verify-email-os-enterprise-workspace-final.mjs",
     "carelink:verify": "node scripts/verify-carelink-routes.mjs",
     "carelink:production-smoke": "node scripts/carelink-production-smoke.mjs",
-    "carelink:deploy-gate": "npm run carelink:verify && npm run carelink:production-smoke"
+    "carelink:deploy-gate": "npm run carelink:mobile-reliability && npm run carelink:verify && npm run carelink:production-smoke",
+    "carelink:mobile-reliability": "node scripts/carelink-mobile-reliability-lockdown.mjs"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",

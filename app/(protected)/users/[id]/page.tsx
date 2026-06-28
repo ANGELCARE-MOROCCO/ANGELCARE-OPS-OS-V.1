@@ -486,18 +486,108 @@ export default async function UserProfilePage({
 
   const supabase = await createClient()
 
-  const { data: user, error } = await supabase
-    .from('app_users')
-    .select('*')
-    .eq('id', id)
-    .maybeSingle()
+  async function safeOne(table: string, column: string, needle: string) {
+    try {
+      const { data, error } = await supabase
+        .from(table)
+        .select('*')
+        .eq(column, needle)
+        .maybeSingle()
 
-  if (error || !user) notFound()
+      if (error) return null
+      return data as AnyRecord | null
+    } catch {
+      return null
+    }
+  }
+
+  async function resolveSystemUserProfile(rawKey: string) {
+    const key = decodeURIComponent(String(rawKey || '').trim())
+    if (!key) return null
+
+    const directById = await safeOne('app_users', 'id', key)
+    if (directById) return directById
+
+    const directByEmail = await safeOne('app_users', 'email', key)
+    if (directByEmail) return directByEmail
+
+    const directByUsername = await safeOne('app_users', 'username', key)
+    if (directByUsername) return directByUsername
+
+    const employeeTables = [
+      'hr_staff_profiles',
+      'hr_staff',
+      'employees',
+      'employee_profiles',
+      'staff_profiles',
+      'profiles',
+    ]
+
+    const employeeLookupColumns = [
+      'id',
+      'employee_id',
+      'staff_id',
+      'profile_id',
+      'user_id',
+      'app_user_id',
+      'auth_user_id',
+      'email',
+      'user_email',
+      'username',
+    ]
+
+    let employee: AnyRecord | null = null
+
+    for (const table of employeeTables) {
+      for (const column of employeeLookupColumns) {
+        employee = await safeOne(table, column, key)
+        if (employee) break
+      }
+      if (employee) break
+    }
+
+    if (!employee) return null
+
+    const candidateUserIds = [
+      employee.user_id,
+      employee.app_user_id,
+      employee.auth_user_id,
+      employee.profile_id,
+    ].map((value) => String(value || '').trim()).filter(Boolean)
+
+    for (const candidate of candidateUserIds) {
+      const byCandidateId = await safeOne('app_users', 'id', candidate)
+      if (byCandidateId) return byCandidateId
+    }
+
+    const candidateEmails = [
+      employee.email,
+      employee.user_email,
+      employee.username,
+      employee.work_email,
+    ].map((value) => String(value || '').trim()).filter(Boolean)
+
+    for (const candidate of candidateEmails) {
+      const byEmail = await safeOne('app_users', 'email', candidate)
+      if (byEmail) return byEmail
+
+      const byUsername = await safeOne('app_users', 'username', candidate)
+      if (byUsername) return byUsername
+    }
+
+    return null
+  }
+
+  const user = await resolveSystemUserProfile(id)
+
+  if (!user) notFound()
+
+  const resolvedUserId = String(user.id || id)
 
   let sessionsQuery = supabase
     .from('app_sessions')
     .select('*')
-    .eq('user_id', id)
+    .eq('user_id', resolvedUserId)
     .order('created_at', { ascending: false })
     .limit(30)
 
@@ -509,7 +599,7 @@ export default async function UserProfilePage({
   let logsQuery = supabase
     .from('app_audit_logs')
     .select('*')
-    .eq('actor_user_id', id)
+    .eq('actor_user_id', resolvedUserId)
     .order('created_at', { ascending: false })
     .limit(40)
 

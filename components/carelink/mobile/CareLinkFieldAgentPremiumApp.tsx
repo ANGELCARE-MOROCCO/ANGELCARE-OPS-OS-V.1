@@ -1,5 +1,9 @@
 'use client'
 
+import CareLinkUnifiedConnectNotificationBell from './CareLinkUnifiedConnectNotificationBell'
+
+import CareLinkAngelCareConnectMobileBridge from './CareLinkAngelCareConnectMobileBridge'
+
 import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from 'next/link'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
@@ -33,6 +37,7 @@ import { useCareLinkRealtime } from '@/lib/carelink/realtime'
 import type { MissionControlRecord, MissionDossier } from '@/lib/missions/types'
 import { buildCareLinkDynamicServiceChecklist, type CareLinkDynamicChecklistDefinition } from '@/lib/carelink/mobile-service-checklists'
 import {
+
   EnterpriseAgentProfileScreen,
   EnterpriseOfflineScreen,
   EnterprisePaymentsScreen,
@@ -763,6 +768,8 @@ export function CareLinkFieldAgentPremiumApp({ records, view = 'home', selectedI
 function TopBar({
   records,
   notifications,
+  messages = [],
+  alerts = [],
   queuePending,
   syncing,
   online,
@@ -771,6 +778,8 @@ function TopBar({
 }: {
   records: MissionControlRecord[]
   notifications: CareLinkMobileNotification[]
+  messages?: any[]
+  alerts?: any[]
   queuePending: number
   syncing: boolean
   online: boolean
@@ -780,6 +789,14 @@ function TopBar({
   const todayCount = records.filter((item) => item.dateLabel && item.dateLabel !== 'Non planifiée').length
   const [open, setOpen] = useState(false)
   const [busyNotificationId, setBusyNotificationId] = useState<string | null>(null)
+  const [topBarHydrated, setTopBarHydrated] = useState(false)
+
+  useEffect(() => {
+    setTopBarHydrated(true)
+  }, [])
+
+  const safeOnline = topBarHydrated ? online : false
+  const safeSyncing = topBarHydrated ? syncing : false
   const unreadCount = notifications.filter((item) => item.unread).length
   const topNotifications = notifications
     .slice()
@@ -810,21 +827,7 @@ function TopBar({
           </div>
         </div>
         <div className="relative">
-          <button
-            type="button"
-            onClick={() => setOpen((current) => !current)}
-            className="relative rounded-full bg-white p-3 text-slate-700 shadow-[0_12px_35px_rgba(15,23,42,0.10)] ring-1 ring-slate-200"
-            aria-label="Notifications"
-            aria-expanded={open}
-          >
-            <Bell size={18} />
-            <span className={cx('absolute right-2 top-2 h-2.5 w-2.5 rounded-full ring-2 ring-white', unreadCount ? 'bg-rose-500' : online ? 'bg-emerald-500' : 'bg-amber-500')} />
-            {unreadCount ? (
-              <span className="absolute -left-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white ring-2 ring-white">
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
-            ) : null}
-          </button>
+          <CareLinkUnifiedConnectNotificationBell records={records} notifications={notifications} messages={messages} alerts={alerts} queuePending={queuePending} />
 
           {open ? (
             <div className="absolute left-0 top-14 z-50 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_28px_75px_rgba(15,23,42,0.22)]">
@@ -883,8 +886,8 @@ function TopBar({
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">
-        <span>{online ? 'En ligne' : 'Hors ligne'}</span>
-        <span>{syncing ? 'Synchronisation...' : queuePending ? `${queuePending} action${queuePending > 1 ? 's' : ''} en attente` : 'Synchronisé'}</span>
+        <span>{safeOnline ? 'En ligne' : 'Hors ligne'}</span>
+        <span>{safeSyncing ? 'Synchronisation...' : queuePending ? `${queuePending} action${queuePending > 1 ? 's' : ''} en attente` : 'Synchronisé'}</span>
       </div>
     </header>
   )
@@ -1105,6 +1108,8 @@ function MissionCard({ mission, runAction, busy }: { mission: MissionControlReco
   )
 }
 
+type MissionSmartFilter = 'all' | 'risk' | 'confirmations' | 'reports' | 'recurring' | 'controls'
+
 function MissionsScreen({
   records,
   workspace,
@@ -1121,63 +1126,394 @@ function MissionsScreen({
   busy: string | null
 }) {
   const meta = routeMeta('missions', workspace)
-  const visible = activeTab === 'completed'
-    ? records.filter((item) => ['completed', 'closed'].includes(item.status))
+  const [smartFilter, setSmartFilter] = useState<MissionSmartFilter>('all')
+
+  const baseVisible = activeTab === 'completed'
+    ? records.filter((item) => ['completed', 'closed'].includes(String(item.status || '').toLowerCase()))
     : activeTab === 'upcoming'
-      ? records.filter((item) => !['completed', 'closed', 'cancelled'].includes(item.status))
+      ? records.filter((item) => !['completed', 'closed', 'cancelled', 'canceled'].includes(String(item.status || '').toLowerCase()))
       : records
+
   const todayCount = records.filter((item) => item.dateLabel && item.dateLabel !== 'Non planifiée').length
-  const activeCount = records.filter((item) => ['assigned', 'agent_notified', 'agent_accepted', 'confirmed', 'en_route', 'arrival_confirmed', 'mission_started', 'in_progress'].includes(item.status)).length
-  const confirmationCount = records.filter((item) => ['assigned', 'agent_notified'].includes(item.status)).length
-  const reportCount = records.filter((item) => ['report_pending', 'completion_requested'].includes(item.status) || item.reportStatus === 'pending').length
+  const activeCount = records.filter((item) => ['assigned', 'agent_notified', 'agent_accepted', 'confirmed', 'en_route', 'arrival_confirmed', 'mission_started', 'in_progress'].includes(String(item.status || '').toLowerCase())).length
+  const confirmationCount = records.filter((item) => ['assigned', 'agent_notified'].includes(String(item.status || '').toLowerCase())).length
+  const reportCount = records.filter((item) => ['report_pending', 'completion_requested'].includes(String(item.status || '').toLowerCase()) || item.reportStatus === 'pending').length
   const checklistCount = safeArray<Record<string, unknown>>(workspace?.checklistItems).filter((item) => !Boolean(item.completed)).length
-  const riskCount = records.filter((item) => ['incident', 'cancelled', 'no_show'].includes(item.status) || ['critical', 'high', 'elevated'].includes(String(item.riskLevel || '').toLowerCase())).length
+  const riskCount = records.filter((item) => ['incident', 'cancelled', 'canceled', 'no_show'].includes(String(item.status || '').toLowerCase()) || ['critical', 'high', 'elevated'].includes(String(item.riskLevel || '').toLowerCase())).length
   const recurringCount = records.filter((item) => item.missionKind === 'dossier' || item.subMissionCount > 0).length
+  const completedCount = records.filter((item) => ['completed', 'closed'].includes(String(item.status || '').toLowerCase())).length
+  const sourceLive = workspace?.source === 'live-db'
+
+  const visible = baseVisible.filter((mission) => {
+    const status = String(mission.status || '').toLowerCase()
+    const risk = String(mission.riskLevel || '').toLowerCase()
+
+    if (smartFilter === 'risk') return ['incident', 'cancelled', 'canceled', 'no_show'].includes(status) || ['critical', 'high', 'elevated'].includes(risk)
+    if (smartFilter === 'confirmations') return ['assigned', 'agent_notified'].includes(status)
+    if (smartFilter === 'reports') return ['report_pending', 'completion_requested'].includes(status) || mission.reportStatus === 'pending'
+    if (smartFilter === 'recurring') return mission.missionKind === 'dossier' || mission.subMissionCount > 0
+    if (smartFilter === 'controls') return checklistCount > 0
+    return true
+  })
+
+  const nextMission = visible[0] || records[0] || null
+  const todayLabel = new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+  }).format(new Date())
 
   return (
     <section className="pb-28">
       <div className="px-5 pt-5">
-        <div className="rounded-[2rem] border border-sky-100 bg-white p-4 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-[0.32em] text-sky-600">{meta.eyebrow}</p>
-          <h1 className="mt-2 text-2xl font-black text-slate-950">{meta.title}</h1>
-          <p className="mt-2 text-sm leading-6 text-slate-500">{meta.description}</p>
+        <div className="relative overflow-hidden rounded-[2.4rem] bg-slate-950 p-5 text-white shadow-[0_28px_80px_rgba(2,6,23,0.28)]">
+          <div className="absolute -right-12 -top-14 h-44 w-44 rounded-full bg-blue-500/30 blur-3xl" />
+          <div className="absolute -bottom-16 left-4 h-44 w-44 rounded-full bg-emerald-400/20 blur-3xl" />
+
+          <div className="relative">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-[0.34em] text-blue-200">{meta.eyebrow}</p>
+                <h1 className="mt-3 text-[2rem] font-black leading-[0.96] tracking-tight">Missions terrain</h1>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-300">
+                  File opérationnelle, confirmations, risques, routes et rapports dans un cockpit mobile synchronisé.
+                </p>
+              </div>
+
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white/10 text-white ring-1 ring-white/10">
+                <ClipboardCheck size={25} />
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <span className="rounded-full bg-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white ring-1 ring-white/10">
+                {todayLabel}
+              </span>
+              <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1', sourceLive ? 'bg-emerald-400/15 text-emerald-100 ring-emerald-300/20' : 'bg-amber-400/15 text-amber-100 ring-amber-300/20')}>
+                {sourceLive ? 'Live OPS' : 'Sync secours'}
+              </span>
+              <span className="rounded-full bg-blue-400/15 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-100 ring-1 ring-blue-300/20">
+                {visible.length} dans ce filtre
+              </span>
+            </div>
+
+            {nextMission ? (
+              <div className="mt-5 rounded-[1.7rem] bg-white/10 p-4 ring-1 ring-white/10">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-200">Prochaine action terrain</p>
+                    <p className="mt-2 text-sm font-black text-white">{nextMission.familyName || 'Mission'} · {nextMission.serviceType || 'Service'}</p>
+                    <p className="mt-1 text-xs font-semibold text-slate-300">{missionTime(nextMission)} · {nextMission.zone || nextMission.city || 'Zone à confirmer'}</p>
+                  </div>
+                  <Link href={`/carelink/missions/${nextMission.id}`} className="rounded-full bg-white px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-slate-950">
+                    Ouvrir
+                  </Link>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
+
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <Metric label="AUJ." value={todayCount} />
-          <Metric label="ACTIVES" value={activeCount} />
-          <Metric label="CONFIRM." value={confirmationCount} />
-          <Metric label="REPORTS" value={reportCount} />
+          <MissionMetricCard label="Aujourd’hui" value={todayCount} subtitle="missions prévues" icon={<CalendarDays size={18} />} tone="blue" />
+          <MissionMetricCard label="Actives" value={activeCount} subtitle="en exécution" icon={<Navigation size={18} />} tone="emerald" />
+          <MissionMetricCard label="Confirmations" value={confirmationCount} subtitle="à traiter" icon={<BellRing size={18} />} tone={confirmationCount ? 'amber' : 'slate'} />
+          <MissionMetricCard label="Rapports" value={reportCount} subtitle="attendus" icon={<FileText size={18} />} tone={reportCount ? 'rose' : 'slate'} />
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {['today', 'upcoming', 'completed'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as 'today' | 'upcoming' | 'completed')}
-              className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] ring-1', activeTab === tab ? 'bg-slate-950 text-white ring-slate-950' : 'bg-white text-slate-600 ring-slate-200')}
-            >
-              {tab === 'today' ? 'Aujourd’hui' : tab === 'upcoming' ? 'À venir' : 'Terminées'}
-            </button>
-          ))}
-          <span className="rounded-full bg-rose-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-rose-700 ring-1 ring-rose-100">{riskCount} à risque</span>
-          <span className="rounded-full bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700 ring-1 ring-emerald-100">{recurringCount} récurrentes</span>
-          <span className="rounded-full bg-sky-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-sky-700 ring-1 ring-sky-100">{checklistCount} contrôles</span>
+
+        <div className="sticky top-[88px] z-30 -mx-5 mt-5 border-y border-slate-200/80 bg-slate-50/92 px-5 py-3 backdrop-blur-xl">
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {(['today', 'upcoming', 'completed'] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={cx(
+                  'shrink-0 rounded-full px-4 py-3 text-[11px] font-black uppercase tracking-[0.22em] ring-1 transition',
+                  activeTab === tab
+                    ? 'bg-slate-950 text-white ring-slate-950 shadow-[0_16px_35px_rgba(15,23,42,0.18)]'
+                    : 'bg-white text-slate-600 ring-slate-200',
+                )}
+              >
+                {tab === 'today' ? 'Aujourd’hui' : tab === 'upcoming' ? 'À venir' : 'Terminées'}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            <MissionSmartChip active={smartFilter === 'all'} onClick={() => setSmartFilter('all')} label="Toutes" value={baseVisible.length} tone="slate" />
+            <MissionSmartChip active={smartFilter === 'risk'} onClick={() => setSmartFilter('risk')} label="À risque" value={riskCount} tone="rose" />
+            <MissionSmartChip active={smartFilter === 'confirmations'} onClick={() => setSmartFilter('confirmations')} label="Confirm." value={confirmationCount} tone="amber" />
+            <MissionSmartChip active={smartFilter === 'reports'} onClick={() => setSmartFilter('reports')} label="Rapports" value={reportCount} tone="blue" />
+            <MissionSmartChip active={smartFilter === 'recurring'} onClick={() => setSmartFilter('recurring')} label="Récurrentes" value={recurringCount} tone="emerald" />
+            <MissionSmartChip active={smartFilter === 'controls'} onClick={() => setSmartFilter('controls')} label="Contrôles" value={checklistCount} tone="sky" />
+          </div>
         </div>
-        <div className="mt-4 rounded-2xl bg-slate-50 p-3 text-xs leading-5 text-slate-600">
-          Synchronisation {workspace?.source === 'live-db' ? 'en direct' : 'de secours'} · {visible.length} mission(s) dans ce filtre · {confirmationCount} confirmation(s) en attente.
+
+        <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">État de la file</p>
+              <p className="mt-1 text-sm font-black text-slate-950">
+                {visible.length} mission{visible.length > 1 ? 's' : ''} · {confirmationCount} confirmation{confirmationCount > 1 ? 's' : ''}
+              </p>
+            </div>
+            <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] ring-1', sourceLive ? 'bg-emerald-50 text-emerald-700 ring-emerald-100' : 'bg-amber-50 text-amber-700 ring-amber-100')}>
+              {sourceLive ? 'Synchronisé' : 'Secours'}
+            </span>
+          </div>
         </div>
       </div>
-      <div className="mt-5 space-y-3 px-5">
-        {visible.map((mission) => <MissionCard key={mission.id} mission={mission} runAction={runAction} busy={busy} />)}
+
+      <div className="mt-5 space-y-4 px-5">
+        {visible.map((mission) => (
+          <PremiumMissionCard key={mission.id} mission={mission} runAction={runAction} busy={busy} />
+        ))}
+
         {!visible.length ? (
-          <EmptyState
-            title="Aucune mission assignée"
-            body={`La file terrain est vide pour ce filtre. Confirmations ${confirmationCount > 0 ? `(${confirmationCount})` : '0'}, rapports en attente ${reportCount}, synchronisation ${workspace?.source === 'live-db' ? 'active' : 'à rafraîchir'}.`}
+          <PremiumMissionEmptyState
+            confirmationCount={confirmationCount}
+            reportCount={reportCount}
+            completedCount={completedCount}
+            sourceLive={sourceLive}
+            onReset={() => {
+              setActiveTab('today')
+              setSmartFilter('all')
+            }}
           />
         ) : null}
       </div>
     </section>
   )
 }
+
+function MissionMetricCard({
+  label,
+  value,
+  subtitle,
+  icon,
+  tone = 'slate',
+}: {
+  label: string
+  value: number | string
+  subtitle: string
+  icon: ReactNode
+  tone?: 'blue' | 'emerald' | 'amber' | 'rose' | 'slate'
+}) {
+  const tones: Record<string, string> = {
+    blue: 'border-blue-100 bg-blue-50 text-blue-700',
+    emerald: 'border-emerald-100 bg-emerald-50 text-emerald-700',
+    amber: 'border-amber-100 bg-amber-50 text-amber-700',
+    rose: 'border-rose-100 bg-rose-50 text-rose-700',
+    slate: 'border-slate-200 bg-white text-slate-700',
+  }
+
+  return (
+    <div className={cx('rounded-[1.7rem] border p-4 shadow-[0_18px_45px_rgba(15,23,42,0.06)]', tones[tone])}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-3xl font-black leading-none text-slate-950">{value}</p>
+          <p className="mt-3 text-[10px] font-black uppercase tracking-[0.2em]">{label}</p>
+          <p className="mt-1 text-[11px] font-bold opacity-70">{subtitle}</p>
+        </div>
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/80 shadow-sm">
+          {icon}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MissionSmartChip({
+  active,
+  onClick,
+  label,
+  value,
+  tone,
+}: {
+  active: boolean
+  onClick: () => void
+  label: string
+  value: number
+  tone: 'slate' | 'rose' | 'amber' | 'blue' | 'emerald' | 'sky'
+}) {
+  const tones: Record<string, string> = {
+    slate: active ? 'bg-slate-950 text-white ring-slate-950' : 'bg-white text-slate-600 ring-slate-200',
+    rose: active ? 'bg-rose-600 text-white ring-rose-600' : 'bg-rose-50 text-rose-700 ring-rose-100',
+    amber: active ? 'bg-amber-500 text-white ring-amber-500' : 'bg-amber-50 text-amber-700 ring-amber-100',
+    blue: active ? 'bg-blue-600 text-white ring-blue-600' : 'bg-blue-50 text-blue-700 ring-blue-100',
+    emerald: active ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-emerald-50 text-emerald-700 ring-emerald-100',
+    sky: active ? 'bg-sky-600 text-white ring-sky-600' : 'bg-sky-50 text-sky-700 ring-sky-100',
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cx('shrink-0 rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1 transition', tones[tone])}
+    >
+      {value} {label}
+    </button>
+  )
+}
+
+function PremiumMissionCard({
+  mission,
+  runAction,
+  busy,
+}: {
+  mission: MissionControlRecord
+  runAction: (mission: MissionControlRecord, action: string) => void
+  busy: string | null
+}) {
+  const isBusy = busy?.startsWith(`${mission.id}:`)
+  const status = String(mission.status || '').toLowerCase()
+  const isRisk = ['incident', 'cancelled', 'canceled', 'no_show'].includes(status) || ['critical', 'high', 'elevated'].includes(String(mission.riskLevel || '').toLowerCase())
+  const totalSub = Math.max(1, mission.subMissionCount || 1)
+  const upcomingSub = Math.max(1, mission.upcomingSubMissionCount || 1)
+  const progress = Math.min(100, Math.max(12, Math.round(((totalSub - upcomingSub + 1) / totalSub) * 100)))
+
+  return (
+    <article className={cx(
+      'overflow-hidden rounded-[2rem] border bg-white shadow-[0_24px_65px_rgba(15,23,42,0.08)] ring-1 ring-white transition',
+      isRisk ? 'border-rose-100' : 'border-slate-200',
+    )}>
+      <Link href={`/carelink/missions/${mission.id}`} className="block p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-slate-950 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white">
+                {missionTime(mission).split(' ')[0]}
+              </span>
+              <span className={cx('rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] ring-1', statusTone(mission.status))}>
+                {statusLabel(mission.status)}
+              </span>
+              <span className={cx('rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] ring-1', riskTone(mission.riskLevel))}>
+                {String(mission.riskLevel || 'normal').toUpperCase()}
+              </span>
+            </div>
+
+            <h2 className="mt-4 text-xl font-black leading-tight tracking-tight text-slate-950">
+              {mission.familyName || 'Mission terrain'}
+            </h2>
+            <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{mission.serviceType || 'Service CareLink'}</p>
+
+            <div className="mt-3 grid gap-2 text-xs font-bold text-slate-500">
+              <span className="flex items-center gap-2"><MapPin size={14} /> {mission.zone || 'Zone'} · {mission.city || 'Ville'}</span>
+              <span className="flex items-center gap-2"><CalendarDays size={14} /> {mission.dateLabel || 'Date non planifiée'} · {missionTime(mission)}</span>
+            </div>
+          </div>
+
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-blue-50 text-blue-700">
+            <ChevronRight size={20} />
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-[1.4rem] bg-slate-50 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Cycle mission</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">{progress}%</p>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
+            <div className={cx('h-full rounded-full', isRisk ? 'bg-rose-500' : 'bg-blue-600')} style={{ width: `${progress}%` }} />
+          </div>
+          <MissionLifecycleDots mission={mission} />
+        </div>
+      </Link>
+
+      <div className="grid grid-cols-3 gap-2 border-t border-slate-100 bg-slate-50/70 p-3">
+        <button disabled={isBusy} onClick={() => runAction(mission, 'accept')} className="rounded-2xl bg-slate-950 px-3 py-3 text-[11px] font-black uppercase tracking-[0.12em] text-white disabled:opacity-50">
+          Accepter
+        </button>
+        <button disabled={isBusy} onClick={() => runAction(mission, 'en-route')} className="rounded-2xl bg-blue-600 px-3 py-3 text-[11px] font-black uppercase tracking-[0.12em] text-white disabled:opacity-50">
+          En route
+        </button>
+        <Link href={`/carelink/missions/${mission.id}`} className="rounded-2xl bg-white px-3 py-3 text-center text-[11px] font-black uppercase tracking-[0.12em] text-slate-700 ring-1 ring-slate-200">
+          Ouvrir
+        </Link>
+      </div>
+    </article>
+  )
+}
+
+function MissionLifecycleDots({ mission }: { mission: MissionControlRecord }) {
+  const status = String(mission.status || '').toLowerCase()
+  const reportStatus = String(mission.reportStatus || '').toLowerCase()
+
+  const steps = [
+    { label: 'Brief', done: !['draft'].includes(status) },
+    { label: 'Route', done: ['en_route', 'arrival_confirmed', 'mission_started', 'in_progress', 'report_pending', 'report_submitted', 'completed', 'closed'].includes(status) },
+    { label: 'Service', done: ['mission_started', 'in_progress', 'report_pending', 'report_submitted', 'completed', 'closed'].includes(status) },
+    { label: 'Rapport', done: ['report_submitted', 'completed', 'closed'].includes(status) || ['submitted', 'validated'].includes(reportStatus) },
+    { label: 'Clôture', done: ['completed', 'closed'].includes(status) },
+  ]
+
+  return (
+    <div className="mt-3 grid grid-cols-5 gap-1">
+      {steps.map((step) => (
+        <div key={step.label} className="text-center">
+          <div className={cx('mx-auto h-2.5 w-2.5 rounded-full ring-2 ring-white', step.done ? 'bg-emerald-500' : 'bg-slate-300')} />
+          <p className={cx('mt-1 text-[8px] font-black uppercase tracking-[0.12em]', step.done ? 'text-emerald-700' : 'text-slate-400')}>{step.label}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PremiumMissionEmptyState({
+  confirmationCount,
+  reportCount,
+  completedCount,
+  sourceLive,
+  onReset,
+}: {
+  confirmationCount: number
+  reportCount: number
+  completedCount: number
+  sourceLive: boolean
+  onReset: () => void
+}) {
+  return (
+    <div className="overflow-hidden rounded-[2.2rem] border border-dashed border-blue-200 bg-white p-5 text-center shadow-[0_22px_55px_rgba(15,23,42,0.06)]">
+      <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-blue-50 text-blue-700">
+        <ClipboardCheck size={28} />
+      </div>
+      <h2 className="mt-4 text-xl font-black text-slate-950">Aucune mission dans ce filtre</h2>
+      <p className="mx-auto mt-2 max-w-sm text-sm font-semibold leading-6 text-slate-500">
+        La file terrain est vide ici. Le système reste synchronisé et prêt à recevoir les prochaines affectations OPS.
+      </p>
+
+      <div className="mt-5 grid grid-cols-3 gap-2">
+        <div className="rounded-2xl bg-amber-50 p-3">
+          <p className="text-lg font-black text-amber-700">{confirmationCount}</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-700">Confirm.</p>
+        </div>
+        <div className="rounded-2xl bg-blue-50 p-3">
+          <p className="text-lg font-black text-blue-700">{reportCount}</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-blue-700">Reports</p>
+        </div>
+        <div className="rounded-2xl bg-emerald-50 p-3">
+          <p className="text-lg font-black text-emerald-700">{completedCount}</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-emerald-700">Done</p>
+        </div>
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <button type="button" onClick={onReset} className="rounded-2xl bg-slate-950 px-4 py-4 text-xs font-black uppercase tracking-[0.14em] text-white">
+          Réinitialiser
+        </button>
+        <Link href="/carelink/messages" className="rounded-2xl bg-blue-50 px-4 py-4 text-xs font-black uppercase tracking-[0.14em] text-blue-700 ring-1 ring-blue-100">
+          Message OPS
+        </Link>
+      </div>
+
+      <p className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+        {sourceLive ? 'Synchronisation live active' : 'Synchronisation de secours'}
+      </p>
+    </div>
+  )
+}
+
 
 function MissionDetailScreen({
   mission,
@@ -1642,141 +1978,392 @@ function MessagesScreen({
   messages: Array<{ id: string; title: string; body: string; missionId?: string | number | null; priority: string; unread: boolean; createdAt: string }>
   runCareLinkAction: (endpoint: string, payload: Record<string, unknown>) => Promise<unknown>
 }) {
-  const [subject, setSubject] = useState('')
-  const [body, setBody] = useState('')
-  const [priority, setPriority] = useState<'normal' | 'high' | 'critical'>('normal')
-  const threads = workspace?.dispatchThreads || []
   const meta = routeMeta('messages', workspace)
-  const unreadCount = threads.reduce((sum, thread) => sum + Number(thread.unreadCount || 0), 0)
+  const [localMessages, setLocalMessages] = useState(messages)
+  const [selectedId, setSelectedId] = useState<string | null>(messages[0]?.id ? String(messages[0].id) : null)
+  const [draftSubject, setDraftSubject] = useState('')
+  const [draftBody, setDraftBody] = useState('')
+  const [draftPriority, setDraftPriority] = useState<'normal' | 'high' | 'urgent'>('normal')
+  const [draftMissionId, setDraftMissionId] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [notice, setNotice] = useState('')
 
-  async function sendMessage() {
-    if (!body.trim()) return
+  useEffect(() => {
+    setLocalMessages(messages)
+    setSelectedId((current) => {
+      if (current && messages.some((message) => String(message.id) === current)) return current
+      return messages[0]?.id ? String(messages[0].id) : null
+    })
+  }, [messages])
+
+  const selectedMessage = localMessages.find((message) => String(message.id) === selectedId) || localMessages[0] || null
+  const unreadCount = localMessages.filter((message) => message.unread).length
+  const urgentCount = localMessages.filter((message) => ['urgent', 'critical', 'high'].includes(String(message.priority || '').toLowerCase())).length
+  const missionLinkedCount = localMessages.filter((message) => message.missionId).length
+  const latestMessage = localMessages[0] || null
+  const missionOptions = records.slice(0, 12)
+
+  function priorityClass(priority: unknown) {
+    const value = String(priority || '').toLowerCase()
+    if (['urgent', 'critical'].includes(value)) return 'bg-rose-50 text-rose-700 ring-rose-100'
+    if (['high', 'important'].includes(value)) return 'bg-amber-50 text-amber-800 ring-amber-100'
+    return 'bg-blue-50 text-blue-700 ring-blue-100'
+  }
+
+  function formatMessageDate(value: unknown) {
+    if (!value) return '—'
+    const date = new Date(String(value))
+    if (Number.isNaN(date.getTime())) return String(value)
+    return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(date)
+  }
+
+  function messageMissionLabel(message: { missionId?: string | number | null }) {
+    if (!message.missionId) return 'Fil général'
+    const mission = records.find((record) => String(record.id) === String(message.missionId))
+    return mission ? `${mission.familyName || mission.code || `Mission ${mission.id}`}` : `Mission ${message.missionId}`
+  }
+
+  async function markMessageRead(message: { id: string; title: string; body: string; missionId?: string | number | null; priority: string; unread: boolean; createdAt: string }) {
+    if (!message?.id || !message.unread) return
+    setBusy(`read:${message.id}`)
+    setNotice('')
     try {
-      const mission = records[0] || null
-      await runCareLinkAction('/api/carelink/messages', {
-        subject: subject.trim() || null,
-        body: body.trim(),
-        priority,
-        missionId: mission?.id || null,
-        caregiverId: workspace?.agent?.id ? Number(workspace.agent.id) : null,
-        senderType: 'agent',
-        recipientType: 'liaison_operationnelle',
-        threadKey: mission ? `mission:${mission.id}` : 'global:liaison',
-        metadata: { source: 'carelink_mobile', mission_code: mission?.code || null },
+      await runCareLinkAction(`/api/carelink/messages/${message.id}/read`, {
+        missionId: message.missionId || null,
+        note: `Message ${message.id} lu depuis CareLink mobile`,
+        source: 'carelink_mobile_messages_enterprise_r1',
       })
-      setBody('')
-      setSubject('')
-      setPriority('normal')
-    } catch {
-      // The offline queue will retry if the network fails.
+
+      setLocalMessages((current) => current.map((item) => String(item.id) === String(message.id) ? { ...item, unread: false } : item))
+      setNotice('Message marqué comme lu et synchronisé avec OPS.')
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function sendMessage(kind: 'reply' | 'new' | 'location' = 'new') {
+    const body = kind === 'location'
+      ? 'Localisation terrain envoyée depuis le centre messages CareLink.'
+      : draftBody.trim()
+
+    if (!body) return
+
+    setBusy(`send:${kind}`)
+    setNotice('')
+    try {
+      const payloadMissionId = draftMissionId || selectedMessage?.missionId || null
+      const response = (await runCareLinkAction('/api/carelink/messages', {
+        missionId: payloadMissionId,
+        subject: draftSubject.trim() || (kind === 'reply' && selectedMessage ? `Réponse · ${selectedMessage.title || 'Dispatch'}` : 'Message agent CareLink'),
+        body,
+        priority: kind === 'location' ? 'high' : draftPriority,
+        recipientType: 'dispatch',
+        threadKey: payloadMissionId ? `mission:${payloadMissionId}` : (selectedMessage?.missionId ? `mission:${selectedMessage.missionId}` : 'agent:dispatch'),
+        idempotencyKey: `carelink-message-r1-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        metadata: {
+          source: 'carelink_mobile_messages_enterprise_r1',
+          action: kind,
+          reply_to: kind === 'reply' ? selectedMessage?.id || null : null,
+        },
+      })) as any
+
+      const created = (response?.data?.message || response?.data?.data || response?.data || {
+        id: `local-message-${Date.now()}`,
+        title: draftSubject.trim() || (kind === 'location' ? 'Localisation terrain' : 'Message agent CareLink'),
+        body,
+        missionId: payloadMissionId,
+        priority: kind === 'location' ? 'high' : draftPriority,
+        unread: false,
+        createdAt: new Date().toISOString(),
+      }) as Record<string, any>
+
+      const normalized = {
+        id: String(created.id || `local-message-${Date.now()}`),
+        title: String(created.title || created.subject || draftSubject.trim() || (kind === 'location' ? 'Localisation terrain' : 'Message agent CareLink')),
+        body: String(created.body || body),
+        missionId: created.missionId || created.mission_id || payloadMissionId || null,
+        priority: String(created.priority || (kind === 'location' ? 'high' : draftPriority)),
+        unread: Boolean(created.unread ?? false),
+        createdAt: String(created.createdAt || created.created_at || new Date().toISOString()),
+      }
+
+      setLocalMessages((current) => [normalized, ...current].slice(0, 80))
+      setSelectedId(normalized.id)
+      setDraftBody('')
+      if (kind !== 'reply') setDraftSubject('')
+      setNotice(kind === 'location' ? 'Localisation envoyée à la liaison OPS.' : 'Message envoyé et synchronisé avec OPS.')
+    } finally {
+      setBusy(null)
     }
   }
 
   return (
-    <section className="pb-28">
+<section className="pb-28">
+      <style>{`
+        [data-carelink-messages-hero-white="true"],
+        [data-carelink-messages-hero-white="true"] *,
+        [data-carelink-messages-hero-white="true"] h1,
+        [data-carelink-messages-hero-white="true"] h2,
+        [data-carelink-messages-hero-white="true"] h3,
+        [data-carelink-messages-hero-white="true"] p,
+        [data-carelink-messages-hero-white="true"] span,
+        [data-carelink-messages-hero-white="true"] div {
+          color: #ffffff !important;
+          -webkit-text-fill-color: #ffffff !important;
+          opacity: 1 !important;
+        }
+
+        [data-carelink-messages-hero-white="true"] svg {
+          color: #ffffff !important;
+          stroke: #ffffff !important;
+        }
+      `}</style>
+
       <div className="px-5 pt-5">
-        <div className="rounded-[2rem] bg-gradient-to-br from-amber-400 to-orange-500 p-5 text-white shadow-xl shadow-amber-100">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-50">{meta.eyebrow}</p>
-          <h1 className="mt-2 text-3xl font-black">{meta.title}</h1>
-          <p className="mt-2 text-sm leading-6 text-amber-50">{meta.description}</p>
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            <Metric label="FILS" value={threads.length} />
-            <Metric label="NON LUES" value={unreadCount} />
-            <Metric label="MESSAGES" value={messages.length} />
+        <div className="relative overflow-hidden rounded-[2.3rem] bg-gradient-to-br from-slate-950 via-blue-800 to-cyan-500 p-5 text-white shadow-[0_28px_80px_rgba(15,23,42,0.22)]" data-carelink-messages-hero-white="true">
+          <div className="absolute -right-12 -top-16 h-44 w-44 rounded-full bg-white/15 blur-3xl" />
+          <div className="absolute -bottom-20 left-4 h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl" />
+
+          <div className="relative">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.34em] text-blue-100">{meta.eyebrow}</p>
+                <h1 className="mt-3 text-[2rem] font-black leading-[0.98] tracking-tight text-white">Messages OPS</h1>
+                <p className="mt-3 text-sm font-semibold leading-6 text-blue-50">
+                  Fils dispatch, réponses, lecture, priorités et liaison opérationnelle synchronisée.
+                </p>
+              </div>
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white/12 text-white ring-1 ring-white/15">
+                <MessageCircle size={26} />
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              <div className="rounded-2xl bg-white/10 p-3 ring-1 ring-white/10">
+                <p className="text-2xl font-black">{localMessages.length}</p>
+                <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-blue-100">Messages</p>
+              </div>
+              <div className="rounded-2xl bg-white/10 p-3 ring-1 ring-white/10">
+                <p className="text-2xl font-black">{unreadCount}</p>
+                <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-blue-100">Non lus</p>
+              </div>
+              <div className="rounded-2xl bg-white/10 p-3 ring-1 ring-white/10">
+                <p className="text-2xl font-black">{urgentCount}</p>
+                <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-blue-100">Urgents</p>
+              </div>
+            </div>
+
+            {latestMessage ? (
+              <div className="mt-4 rounded-[1.5rem] bg-white/10 p-4 ring-1 ring-white/10">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-100">Dernier contact</p>
+                <p className="mt-2 text-sm font-black text-white">{latestMessage.title || 'Message dispatch'}</p>
+                <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-blue-50">{latestMessage.body}</p>
+              </div>
+            ) : null}
           </div>
         </div>
+
+        {notice ? (
+          <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700">
+            {notice}
+          </div>
+        ) : null}
       </div>
-      <div className="mt-5 space-y-4 px-5">
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-600">Rédaction</p>
-          <div className="mt-3 space-y-3">
-            <input value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Objet court" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-400" />
-            <textarea value={body} onChange={(event) => setBody(event.target.value)} placeholder="Message à la liaison opérationnelle..." className="min-h-28 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-400" />
-            <div className="flex flex-wrap items-center gap-2">
-              {(['normal', 'high', 'critical'] as const).map((value) => (
-                <button key={value} type="button" onClick={() => setPriority(value)} className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em]', priority === value ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-600')}>
-                  {value === 'normal' ? 'Normal' : value === 'high' ? 'Priorité' : 'Critique'}
-                </button>
-              ))}
-              <button onClick={sendMessage} className="ml-auto rounded-2xl bg-blue-600 px-4 py-3 text-xs font-black text-white">Envoyer</button>
+
+      <div className="mt-5 grid gap-4 px-5">
+        <CareLinkAngelCareConnectMobileBridge />
+        
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-[0_18px_55px_rgba(15,23,42,0.07)]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Composer</p>
+              <h2 className="mt-1 text-lg font-black text-slate-950">Message à la liaison OPS</h2>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {['Pris en compte', 'En route', 'Besoin d’appui', 'Je transmets ma localisation'].map((quickReply) => (
+            <span className="rounded-full bg-blue-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-blue-700 ring-1 ring-blue-100">
+              {missionLinkedCount} liés mission
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-3">
+            <input
+              value={draftSubject}
+              onChange={(event) => setDraftSubject(event.target.value)}
+              placeholder="Sujet du message"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:border-blue-400"
+            />
+
+            <select
+              value={draftMissionId}
+              onChange={(event) => setDraftMissionId(event.target.value)}
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:border-blue-400"
+            >
+              <option value="">Fil général dispatch</option>
+              {missionOptions.map((mission) => (
+                <option key={String(mission.id)} value={String(mission.id)}>
+                  {mission.familyName || mission.code || `Mission ${mission.id}`} · {mission.dateLabel || 'Date'}
+                </option>
+              ))}
+            </select>
+
+            <div className="grid grid-cols-3 gap-2">
+              {(['normal', 'high', 'urgent'] as const).map((item) => (
                 <button
-                  key={quickReply}
+                  key={item}
                   type="button"
-                  onClick={() => {
-                    setBody(quickReply)
-                    setPriority(quickReply.includes('localisation') ? 'high' : 'normal')
-                  }}
-                  className="rounded-full bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 ring-1 ring-slate-200"
+                  onClick={() => setDraftPriority(item)}
+                  className={cx(
+                    'rounded-2xl px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] ring-1 transition active:scale-[0.98]',
+                    draftPriority === item ? 'bg-slate-950 text-white ring-slate-950' : priorityClass(item),
+                  )}
                 >
-                  {quickReply}
+                  {item === 'normal' ? 'Normal' : item === 'high' ? 'Important' : 'Urgent'}
                 </button>
               ))}
+            </div>
+
+            <textarea
+              value={draftBody}
+              onChange={(event) => setDraftBody(event.target.value)}
+              placeholder="Écrire un message clair pour OPS Dispatch..."
+              className="min-h-32 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold leading-6 text-slate-950 outline-none focus:border-blue-400"
+            />
+
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={async () => {
-                  try {
-                    const mission = records[0] || null
-                    await runCareLinkAction('/api/carelink/messages', {
-                      subject: 'Localisation en direct',
-                      body: 'Localisation terrain transmise depuis CareLink mobile.',
-                      priority: 'high',
-                      missionId: mission?.id || null,
-                      caregiverId: workspace?.agent?.id ? Number(workspace.agent.id) : null,
-                      senderType: 'agent',
-                      recipientType: 'liaison_operationnelle',
-                      threadKey: mission ? `mission:${mission.id}` : 'global:liaison',
-                      metadata: { source: 'carelink_mobile', type: 'location' },
-                    })
-                  } catch {}
-                }}
-                className="rounded-full bg-sky-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-sky-700 ring-1 ring-sky-100"
+                disabled={Boolean(busy) || !draftBody.trim()}
+                onClick={() => sendMessage('new')}
+                className="rounded-2xl bg-slate-950 px-4 py-4 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg disabled:opacity-50"
               >
-                Envoyer localisation
+                Envoyer OPS
               </button>
-              <a href={workspace?.agent?.phone ? `tel:${workspace.agent.phone}` : '/carelink/safety'} className="rounded-full bg-slate-950 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                Appeler la liaison opérationnelle
-              </a>
+              <button
+                type="button"
+                disabled={Boolean(busy)}
+                onClick={() => sendMessage('location')}
+                className="rounded-2xl bg-blue-600 px-4 py-4 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg disabled:opacity-50"
+              >
+                Localisation
+              </button>
             </div>
           </div>
         </section>
 
-        {threads.length ? threads.map((thread) => (
-          <article key={thread.id} className={cx('rounded-[2rem] border p-4 shadow-sm', thread.priority === 'critical' ? 'border-rose-200 bg-rose-50' : thread.priority === 'high' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white')}>
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Fil mission</p>
-                <h3 className="mt-1 text-base font-black text-slate-950">{thread.title}</h3>
-                <p className="mt-1 text-sm leading-6 text-slate-600">{thread.lastMessage}</p>
-              </div>
-              <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black text-slate-600 ring-1 ring-slate-200">{thread.unreadCount} non lue{thread.unreadCount > 1 ? 's' : ''}</span>
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-[0_18px_55px_rgba(15,23,42,0.07)]">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Boîte dispatch</p>
+              <h2 className="mt-1 text-lg font-black text-slate-950">Messages reçus</h2>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {thread.missionId ? <Link href={`/carelink/missions/${thread.missionId}`} className="inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">Ouvrir la mission</Link> : <span className="inline-flex rounded-full bg-white px-4 py-2 text-xs font-black text-slate-500 ring-1 ring-slate-200">Fil global de liaison opérationnelle</span>}
-              <span className="inline-flex rounded-full bg-white px-4 py-2 text-xs font-black text-slate-500 ring-1 ring-slate-200">{thread.priority === 'critical' ? 'Critique' : thread.priority === 'high' ? 'Prioritaire' : 'Normal'}</span>
-              <span className="inline-flex rounded-full bg-white px-4 py-2 text-xs font-black text-slate-500 ring-1 ring-slate-200">{thread.status}</span>
-            </div>
-          </article>
-        )) : <EmptyState title="Aucune liaison opérationnelle persistante" body="Les fils mission et le fil global apparaîtront ici dès qu’un message sera envoyé ou reçu." />}
-
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-600">Messages récents</p>
-          <div className="mt-3 space-y-2">
-            {messages.slice(0, 5).map((message) => (
-              <div key={message.id} className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-sm font-black text-slate-950">{message.title}</p>
-                <p className="mt-1 text-sm text-slate-600">{message.body}</p>
-              </div>
-            ))}
-            {!messages.length ? <p className="text-sm text-slate-500">Aucun message enregistré.</p> : null}
+            <span className="rounded-full bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 ring-1 ring-slate-200">
+              {unreadCount} non lus
+            </span>
           </div>
+
+          <div className="mt-4 space-y-3">
+            {localMessages.map((message) => (
+              <button
+                key={String(message.id)}
+                type="button"
+                onClick={() => {
+                  setSelectedId(String(message.id))
+                  if (message.unread) void markMessageRead(message)
+                }}
+                className={cx(
+                  'w-full rounded-[1.5rem] border p-4 text-left transition active:scale-[0.99]',
+                  String(selectedMessage?.id) === String(message.id) ? 'border-blue-200 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white',
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {message.unread ? <span className="rounded-full bg-rose-500 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-white">Nouveau</span> : null}
+                      <span className={cx('rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] ring-1', priorityClass(message.priority))}>{message.priority || 'normal'}</span>
+                      <span className="rounded-full bg-slate-50 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-slate-500 ring-1 ring-slate-100">{formatMessageDate(message.createdAt)}</span>
+                    </div>
+                    <p className="mt-3 text-sm font-black leading-5 text-slate-950">{message.title || 'Message dispatch'}</p>
+                    <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{message.body}</p>
+                    <p className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">{messageMissionLabel(message)}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+
+            {!localMessages.length ? (
+              <div className="rounded-[1.8rem] border border-dashed border-blue-200 bg-blue-50/50 p-6 text-center">
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-blue-700 shadow-sm">
+                  <MessageCircle size={24} />
+                </div>
+                <h3 className="mt-4 text-lg font-black text-slate-950">Aucun message OPS</h3>
+                <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
+                  Les messages persistants du dispatch apparaîtront ici. Vous pouvez déjà envoyer une demande à OPS.
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-[0_18px_55px_rgba(15,23,42,0.07)]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Détail thread</p>
+              <h2 className="mt-1 text-lg font-black text-slate-950">{selectedMessage?.title || 'Aucun thread sélectionné'}</h2>
+            </div>
+            {selectedMessage ? <span className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] ring-1', priorityClass(selectedMessage.priority))}>{selectedMessage.priority}</span> : null}
+          </div>
+
+          {selectedMessage ? (
+            <div className="mt-4">
+              <div className="rounded-[1.5rem] bg-slate-50 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{messageMissionLabel(selectedMessage)}</p>
+                <p className="mt-3 text-sm font-semibold leading-7 text-slate-700">{selectedMessage.body}</p>
+                <p className="mt-3 text-xs font-bold text-slate-400">{formatMessageDate(selectedMessage.createdAt)}</p>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={Boolean(busy) || !selectedMessage.unread}
+                  onClick={() => markMessageRead(selectedMessage)}
+                  className="rounded-2xl bg-emerald-600 px-4 py-4 text-xs font-black uppercase tracking-[0.14em] text-white disabled:opacity-50"
+                >
+                  Marquer lu
+                </button>
+                <Link
+                  href={selectedMessage.missionId ? `/carelink/missions/${selectedMessage.missionId}` : '/carelink/missions'}
+                  className="rounded-2xl bg-slate-950 px-4 py-4 text-center text-xs font-black uppercase tracking-[0.14em] text-white"
+                >
+                  Mission liée
+                </Link>
+              </div>
+
+              <div className="mt-3 grid gap-2">
+                <textarea
+                  value={draftBody}
+                  onChange={(event) => setDraftBody(event.target.value)}
+                  placeholder="Répondre à ce thread OPS..."
+                  className="min-h-24 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-slate-950 outline-none focus:border-blue-400"
+                />
+                <button
+                  type="button"
+                  disabled={Boolean(busy) || !draftBody.trim()}
+                  onClick={() => sendMessage('reply')}
+                  className="rounded-2xl bg-blue-600 px-4 py-4 text-xs font-black uppercase tracking-[0.16em] text-white disabled:opacity-50"
+                >
+                  Répondre au thread
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="mt-4 text-sm font-semibold leading-6 text-slate-500">Sélectionnez un message pour afficher le détail et répondre.</p>
+          )}
         </section>
       </div>
     </section>
   )
 }
+
+
 
 function ProfileScreen({
   records,

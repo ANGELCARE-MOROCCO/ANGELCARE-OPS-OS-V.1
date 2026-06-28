@@ -2,7 +2,7 @@
 
 import { OperationCompletionManagerButton } from '@/components/operation-completion/OperationCompletionEngine'
 import Link from 'next/link'
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
+import {useEffect, useMemo, useState, type CSSProperties, type ReactNode} from 'react'
 import type { UserStaffRecord } from './UsersEmployeeCommandClient'
 import type {
   AccessGovernancePreview,
@@ -132,8 +132,25 @@ export default function UserAccessGovernanceCenter({
   const [events, setEvents] = useState(initialEvents)
   const [scans, setScans] = useState(initialScans)
   const [query, setQuery] = useState('')
-  const [activeUsersPage, setActiveUsersPage] = useState<UsersPageMode>('governance')
-  const [moduleQuery, setModuleQuery] = useState('')
+
+  const [activeUsersPage, setActiveUsersPage] = useState<any>('messages')
+  
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+    const shouldOpenAttendance =
+      params.get('workspace') === 'attendance' ||
+      params.get('attendanceA4Bridge') === '1' ||
+      params.has('attendanceEmployeeId') ||
+      params.has('attendanceEmail')
+
+    if (shouldOpenAttendance) {
+      setActiveUsersPage('attendance')
+    }
+  }, [])
+const [moduleQuery, setModuleQuery] = useState('')
   const [routeQuery, setRouteQuery] = useState('')
   const [templateQuery, setTemplateQuery] = useState('')
   const [selectedPreview, setSelectedPreview] = useState<AccessGovernancePreview | null>(null)
@@ -1251,6 +1268,115 @@ function UsersAttendanceInPage({ users, canOpenProfile }: { users: UserStaffReco
   }, [attendanceQuery, attendanceStatus, attendanceDepartment, attendanceMonth, users])
 
   const selectedAttendanceUser = users.find((user) => user.id === selectedAttendanceUserId) || null
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+    const isAttendanceA4Bridge =
+      params.get('attendanceA4Bridge') === '1' ||
+      params.has('attendanceEmployeeId') ||
+      params.has('attendanceEmail')
+
+    if (!isAttendanceA4Bridge) return
+
+    const normalize = (value: unknown) =>
+      String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+
+    const targetId = normalize(params.get('attendanceEmployeeId'))
+    const targetEmail = normalize(params.get('attendanceEmail'))
+    const targetMonth = String(params.get('attendanceMonth') || '').trim()
+
+    if (/^\d{4}-\d{2}$/.test(targetMonth)) {
+      setAttendanceMonth(targetMonth)
+      setAttendanceDate(`${targetMonth}-01`)
+    }
+
+    const matchedUser = users.find((rawUser) => {
+      const user = rawUser as any
+      const candidates = [
+        user.id,
+        user.email,
+        user.username,
+        user.staffId,
+        user.profileId,
+        user.authUserId,
+        user.fullName,
+        user.name,
+      ].map(normalize).filter(Boolean)
+
+      return Boolean(
+        (targetId && candidates.includes(targetId)) ||
+        (targetEmail && candidates.includes(targetEmail)) ||
+        (targetEmail && candidates.some((candidate) => candidate.includes(targetEmail))) ||
+        (targetId && candidates.some((candidate) => candidate.includes(targetId)))
+      )
+    })
+
+    if (matchedUser?.id && selectedAttendanceUserId !== matchedUser.id) {
+      setSelectedAttendanceUserId(matchedUser.id)
+    }
+  }, [users, selectedAttendanceUserId])
+
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+    const isAttendanceBridge =
+      params.get('attendanceA4Bridge') === '1' ||
+      params.get('workspace') === 'attendance' ||
+      params.has('attendanceEmployeeId') ||
+      params.has('attendanceEmail')
+
+    if (!isAttendanceBridge) return
+
+    const normalize = (value: unknown) =>
+      String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+
+    const targetId = normalize(params.get('attendanceEmployeeId'))
+    const targetEmail = normalize(params.get('attendanceEmail'))
+    const targetMonth = String(params.get('attendanceMonth') || '').trim()
+
+
+    if (/^\d{4}-\d{2}$/.test(targetMonth)) {
+      setAttendanceMonth(targetMonth)
+      setAttendanceDate(`${targetMonth}-01`)
+    }
+
+    const matchedUser = users.find((user) => {
+      const candidates = [
+        user.id,
+        user.email,
+        user.username,
+        user.staffId,
+        (user as any).profileId,
+        (user as any).authUserId,
+        user.fullName,
+      ].map(normalize).filter(Boolean)
+
+      return Boolean(
+        (targetId && candidates.includes(targetId)) ||
+        (targetEmail && candidates.includes(targetEmail)) ||
+        (targetEmail && candidates.some((candidate) => candidate.includes(targetEmail))) ||
+        (targetId && candidates.some((candidate) => candidate.includes(targetId)))
+      )
+    })
+
+    if (matchedUser?.id && selectedAttendanceUserId !== matchedUser.id) {
+      setSelectedAttendanceUserId(matchedUser.id)
+    }
+  }, [users, selectedAttendanceUserId])
+
+
   const totalUsers = users.length
   const onlineUsers = users.filter((user) => normalizedAttendanceStatus(user) === 'online').length
   const offlineUsers = users.filter((user) => normalizedAttendanceStatus(user) === 'offline').length

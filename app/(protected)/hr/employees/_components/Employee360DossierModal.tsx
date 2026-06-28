@@ -325,6 +325,8 @@ function EmployeeMegaHRWorkspace({
   const [selectedActionId, setSelectedActionId] = useState('')
   const [savingWorkspace, setSavingWorkspace] = useState(false)
   const [workspaceMessage, setWorkspaceMessage] = useState('')
+  const [deletedHRWorkspaceKeys, setDeletedHRWorkspaceKeys] = useState<string[]>([])
+  const [hrCenterProductionSaving, setHrCenterProductionSaving] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [priorityFilter, setPriorityFilter] = useState('all')
@@ -498,6 +500,133 @@ function EmployeeMegaHRWorkspace({
 
   const activeCategory = categories.find((category) => category.key === active) || categories[0]
 
+  function attendanceEmployeeCode() {
+    return String(
+      value(employee, ['full_name', 'name', 'display_name']) ||
+      value(employee, ['email', 'user_email', 'work_email', 'username']) ||
+      employeeId ||
+      'USER'
+    )
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 22) || 'USER'
+  }
+
+  function employeeCreationMonth() {
+    const raw =
+      value(employee, ['created_at', 'createdAt', 'created_on']) ||
+      value(employee, ['hire_date', 'start_date', 'joined_at']) ||
+      ''
+
+    const parsed = raw ? new Date(raw) : null
+    if (parsed && !Number.isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 7)
+
+    return new Date().toISOString().slice(0, 7)
+  }
+
+  function monthsFromCreationToNow() {
+    const startMonth = employeeCreationMonth()
+    const nowMonth = new Date().toISOString().slice(0, 7)
+    const months: string[] = []
+
+    const [sy, sm] = startMonth.split('-').map(Number)
+    const [ey, em] = nowMonth.split('-').map(Number)
+
+    const cursor = new Date(sy, sm - 1, 1)
+    const end = new Date(ey, em - 1, 1)
+
+    if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return [nowMonth]
+
+    while (cursor <= end) {
+      months.push(`${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`)
+      cursor.setMonth(cursor.getMonth() + 1)
+    }
+
+    return months
+  }
+
+  function attendanceMonthEnd(monthIso: string) {
+    const [y, m] = monthIso.split('-').map(Number)
+    return new Date(y, m, 0).toISOString().slice(0, 10)
+  }
+
+  function officialAttendanceHref(monthIso: string) {
+    const email = value(employee, ['email', 'user_email', 'work_email', 'username'], '')
+    return `/users?workspace=attendance&attendanceA4Bridge=1&attendanceEmployeeId=${encodeURIComponent(employeeId)}&attendanceEmail=${encodeURIComponent(email)}&attendanceMonth=${encodeURIComponent(monthIso)}`
+  }
+
+  function officialAttendanceReference(monthIso: string) {
+    return `AC-ATT-${attendanceEmployeeCode()}-${monthIso}`
+  }
+
+  function monthlyAttendanceCaseExists(items: EmployeeHRAction[], monthIso: string) {
+    const reference = officialAttendanceReference(monthIso).toLowerCase()
+
+    return items.some((item) => {
+      const ref = String(item.reference || '').toLowerCase()
+      const period = String(item.period || '').toLowerCase()
+      const title = String(item.title || '').toLowerCase()
+      const type = String(item.case_type || '').toLowerCase()
+
+      return (
+        ref === reference ||
+        (period === monthIso.toLowerCase() && title.includes('présence')) ||
+        (period === monthIso.toLowerCase() && title.includes('presence')) ||
+        (period === monthIso.toLowerCase() && type.includes('rapport mensuel'))
+      )
+    })
+  }
+
+  function buildOfficialMonthlyAttendanceCase(monthIso: string): EmployeeHRAction {
+    const now = new Date().toISOString()
+    const endDate = attendanceMonthEnd(monthIso)
+    const href = officialAttendanceHref(monthIso)
+
+    return {
+      id: `official-attendance-a4-${attendanceEmployeeCode()}-${monthIso}`,
+      category: 'attendance',
+      title: `Rapport mensuel de présence — ${monthIso}`,
+      owner: 'AngelCare Attendance System',
+      status: 'Validé',
+      priority: 'Normale',
+      due_date: endDate,
+      amount: '',
+      notes: `Rapport mensuel A4 officiel. Source: Users / Attendance / Print month A4. Lien: ${href}`,
+      case_type: 'Rapport mensuel A4 présence',
+      workflow_status: 'Généré automatiquement',
+      payment_method: '',
+      period: monthIso,
+      reference: officialAttendanceReference(monthIso),
+      evidence: href,
+      start_date: `${monthIso}-01`,
+      end_date: endDate,
+      duration: 'Mois complet',
+      impact: 'Présence mensuelle officielle: pointage, retards, absences, heures, anomalies et validation RH.',
+      production_status: 'Sauvegardé production',
+      validation_status: 'Validé système',
+      saved_at: now,
+      validated_at: now,
+      validator: 'AngelCare Attendance System',
+    }
+  }
+
+  function syncOfficialMonthlyAttendanceA4Cases(items: EmployeeHRAction[]) {
+    const next = Array.isArray(items) ? [...items] : []
+    const created: EmployeeHRAction[] = []
+
+    for (const monthIso of monthsFromCreationToNow()) {
+      if (monthlyAttendanceCaseExists(next, monthIso)) continue
+      const action = buildOfficialMonthlyAttendanceCase(monthIso)
+      next.unshift(action)
+      created.push(action)
+    }
+
+    return { actions: next, created }
+  }
+
+
+
   function buildContractDefaults(seed?: Partial<EmployeeHRAction>) {
     const fullName = employeeName || value(employee, ['full_name', 'name'], 'Collaborateur')
     const cleanName = fullName.toUpperCase()
@@ -598,6 +727,87 @@ function EmployeeMegaHRWorkspace({
     }
   }, [selectedActionId, actions, filteredActions, categoryActions])
 
+
+  
+
+
+
+  function hrActionStableKey(action: Partial<EmployeeHRAction> | null | undefined) {
+    if (!action) return ''
+
+    return [
+      action.category,
+      action.case_type,
+      action.title,
+      action.reference,
+      action.period,
+    ]
+      .map((part) => String(part || '').trim().toLowerCase())
+      .filter(Boolean)
+      .join('::')
+  }
+
+  function readHRWorkspaceBundleFromEmployeeRecord(record: any): {
+    actions: EmployeeHRAction[]
+    deletedKeys: string[]
+    hasSavedWorkspace: boolean
+  } {
+    const metadata = record?.metadata && typeof record.metadata === 'object' ? record.metadata : {}
+    const data = record?.data && typeof record.data === 'object' ? record.data : {}
+
+    const notes = String(record?.notes || '')
+    const begin = '[[ANGELCARE_HR_WORKSPACE_V2_BEGIN]]'
+    const end = '[[ANGELCARE_HR_WORKSPACE_V2_END]]'
+    const start = notes.indexOf(begin)
+    const stop = notes.indexOf(end)
+
+    let notesPayload: any = null
+
+    if (start >= 0 && stop > start) {
+      try {
+        notesPayload = JSON.parse(notes.slice(start + begin.length, stop).trim())
+      } catch {}
+    }
+
+    const hasMetadataWorkspace = Object.prototype.hasOwnProperty.call(metadata, 'hr_management_workspace')
+    const hasDataWorkspace = Object.prototype.hasOwnProperty.call(data, 'hr_management_workspace')
+    const hasTopWorkspace = Object.prototype.hasOwnProperty.call(record || {}, 'hr_management_workspace')
+    const hasNotesWorkspace = Boolean(notesPayload && Object.prototype.hasOwnProperty.call(notesPayload, 'hr_management_workspace'))
+
+    const rawActions =
+      hasMetadataWorkspace && Array.isArray(metadata.hr_management_workspace) ? metadata.hr_management_workspace :
+      hasDataWorkspace && Array.isArray(data.hr_management_workspace) ? data.hr_management_workspace :
+      hasTopWorkspace && Array.isArray(record?.hr_management_workspace) ? record.hr_management_workspace :
+      hasNotesWorkspace && Array.isArray(notesPayload?.hr_management_workspace) ? notesPayload.hr_management_workspace :
+      []
+
+    const deletedKeys = Array.from(new Set([
+      ...(Array.isArray(metadata.hr_management_workspace_deleted_keys) ? metadata.hr_management_workspace_deleted_keys : []),
+      ...(Array.isArray(data.hr_management_workspace_deleted_keys) ? data.hr_management_workspace_deleted_keys : []),
+      ...(Array.isArray(notesPayload?.hr_management_workspace_deleted_keys) ? notesPayload.hr_management_workspace_deleted_keys : []),
+    ].map((value) => String(value || '').trim()).filter(Boolean)))
+
+    const hasSavedWorkspace =
+      Boolean(metadata.hr_management_workspace_saved) ||
+      Boolean(data.hr_management_workspace_saved) ||
+      Boolean(notesPayload?.hr_management_workspace_saved) ||
+      hasMetadataWorkspace ||
+      hasDataWorkspace ||
+      hasTopWorkspace ||
+      hasNotesWorkspace
+
+    const actions = (Array.isArray(rawActions) ? rawActions : []).filter((action) => {
+      const key = hrActionStableKey(action)
+      return !key || !deletedKeys.includes(key)
+    }) as EmployeeHRAction[]
+
+    return { actions, deletedKeys, hasSavedWorkspace }
+  }
+
+  function readHRWorkspaceFromEmployeeRecord(record: any): EmployeeHRAction[] {
+    return readHRWorkspaceBundleFromEmployeeRecord(record).actions
+  }
+
   function seedActions() {
     return categories.flatMap((category) =>
       category.templates.slice(0, 2).map((title, index) => ({
@@ -627,23 +837,60 @@ function EmployeeMegaHRWorkspace({
   }
 
   useEffect(() => {
-    const stored =
-      employee?.metadata?.hr_management_workspace ||
-      employee?.data?.hr_management_workspace ||
-      employee?.hr_management_workspace ||
-      []
+    let alive = true
 
-    if (Array.isArray(stored) && stored.length) {
-      setActions(stored)
-      setSelectedActionId(stored[0]?.id || '')
-      setWorkspaceMessage('Workspace RH chargé depuis le dossier employé synchronisé.')
-      return
+    async function loadWorkspaceFromProduction() {
+      const propBundle = readHRWorkspaceBundleFromEmployeeRecord(employee)
+      const propStored = propBundle.actions
+
+      try {
+        const email = value(employee, ['email', 'user_email', 'work_email', 'username'], '')
+        const params = new URLSearchParams()
+        if (employeeId) params.set('id', employeeId)
+        if (email) params.set('email', email)
+
+        const response = await fetch(`/api/hr/employees?${params.toString()}`, {
+          cache: 'no-store',
+          credentials: 'same-origin',
+        })
+
+        const payload = await response.json().catch(() => null)
+        const freshEmployee = payload?.employee || null
+        const freshBundle = readHRWorkspaceBundleFromEmployeeRecord(freshEmployee)
+        const freshStored = freshBundle.actions
+
+        if (!alive) return
+
+        if (freshStored.length || freshBundle.hasSavedWorkspace) {
+          setDeletedHRWorkspaceKeys(freshBundle.deletedKeys)
+          setActions(freshStored)
+          setSelectedActionId(freshStored[0]?.id || '')
+          setWorkspaceMessage('Workspace RH chargé depuis la sauvegarde production du dossier employé.')
+          return
+        }
+      } catch {}
+
+      if (!alive) return
+
+      if (propStored.length || propBundle.hasSavedWorkspace) {
+        setDeletedHRWorkspaceKeys(propBundle.deletedKeys)
+        setActions(propStored)
+        setSelectedActionId(propStored[0]?.id || '')
+        setWorkspaceMessage('Workspace RH chargé depuis le dossier employé synchronisé.')
+        return
+      }
+
+      const seed = seedActions().filter((action) => !propBundle.deletedKeys.includes(hrActionStableKey(action)))
+      setActions(seed)
+      setSelectedActionId(seed[0]?.id || '')
+      setWorkspaceMessage('Workspace RH initialisé depuis les modèles opérationnels. Aucune sauvegarde production retrouvée pour ce collaborateur.')
     }
 
-    const seed = seedActions()
-    setActions(seed)
-    setSelectedActionId(seed[0]?.id || '')
-    setWorkspaceMessage('Workspace RH initialisé depuis les modèles opérationnels. Cliquez sur Sauvegarder tout pour synchroniser.')
+    void loadWorkspaceFromProduction()
+
+    return () => {
+      alive = false
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employeeId])
 
@@ -652,7 +899,50 @@ function EmployeeMegaHRWorkspace({
     setWorkspaceMessage(message)
   }
 
-  async function saveToProduction(nextActions = actions) {
+
+  function buildWorkspaceAuditTrail(event?: Record<string, unknown>) {
+    if (!event) return null
+
+    const meta = employee?.metadata || {}
+    const data = employee?.data || {}
+
+    const existing = Array.isArray(meta?.hr_management_workspace_audit_trail)
+      ? meta.hr_management_workspace_audit_trail
+      : Array.isArray(data?.hr_management_workspace_audit_trail)
+        ? data.hr_management_workspace_audit_trail
+        : []
+
+    return [
+      ...existing,
+      {
+        id: makeActionId(),
+        at: new Date().toISOString(),
+        employee_id: employeeId,
+        employee_name: employeeName,
+        source: 'employee_360_case_operations_center',
+        ...event,
+      },
+    ].slice(-80)
+  }
+
+
+  async function saveHrCaseOperationsCenterProduction() {
+    if (hrCenterProductionSaving) return
+
+    setHrCenterProductionSaving(true)
+    setWorkspaceMessage('Sauvegarde production du Centre opérationnel RH en cours...')
+
+    try {
+      await saveToProduction(actions)
+      setWorkspaceMessage('Centre opérationnel RH sauvegardé en production. Les cas, contrats, attestations, validations et références sont retrouvables dans le dossier collaborateur.')
+    } catch (error: any) {
+      setWorkspaceMessage(error?.message || 'Impossible de sauvegarder le Centre opérationnel RH en production.')
+    } finally {
+      setHrCenterProductionSaving(false)
+    }
+  }
+
+    async function saveToProduction(nextActions = actions, auditEvent?: Record<string, unknown>) {
     if (!employeeId) {
       setWorkspaceMessage('Identifiant employé manquant. Impossible de synchroniser le workspace RH.')
       return
@@ -662,29 +952,56 @@ function EmployeeMegaHRWorkspace({
       setSavingWorkspace(true)
       setWorkspaceMessage('Sauvegarde production du workspace RH en cours...')
 
+      const now = new Date().toISOString()
+      const employeeEmail = value(employee, ['email', 'user_email', 'work_email', 'username'], '')
+
       const response = await fetch(`/api/hr/employees?id=${encodeURIComponent(employeeId)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
         body: JSON.stringify({
+          id: employeeId,
+          email: employeeEmail,
+          hr_management_workspace: nextActions,
+            hr_management_workspace_deleted_keys: deletedHRWorkspaceKeys,
+            hr_management_workspace_saved: true,
+          hr_management_workspace_updated_at: now,
+          hr_management_workspace_source: 'employee_360_dossier_modal',
+          audit_event: auditEvent || {
+            event: 'workspace_saved',
+            action_id: selectedActionId,
+            at: now,
+          },
           metadata: {
             ...(employee?.metadata || {}),
             hr_management_workspace: nextActions,
-            hr_management_workspace_updated_at: new Date().toISOString(),
+            hr_management_workspace_updated_at: now,
+            hr_management_workspace_source: 'employee_360_dossier_modal',
+          },
+          data: {
+            ...(employee?.data || {}),
+            hr_management_workspace: nextActions,
+            hr_management_workspace_updated_at: now,
             hr_management_workspace_source: 'employee_360_dossier_modal',
           },
         }),
       })
 
       const payload = await response.json().catch(() => null)
+
       if (!response.ok || !payload?.ok) {
         setWorkspaceMessage(payload?.error || 'Erreur API: le workspace RH n’a pas été sauvegardé en production.')
         return
       }
 
-      setActions(nextActions)
-      setWorkspaceMessage('Workspace RH sauvegardé en production dans le dossier employé.')
-      onSaved?.()
+      const savedWorkspace = readHRWorkspaceFromEmployeeRecord(payload?.employee)
+
+      setActions(savedWorkspace.length ? savedWorkspace : nextActions)
+      setSelectedActionId((savedWorkspace.length ? savedWorkspace : nextActions)[0]?.id || selectedActionId)
+      setWorkspaceMessage(`Workspace RH sauvegardé en production (${payload?.storage || payload?.table || 'employee record'}). Les cas seront rechargés depuis la sauvegarde production.`)
+      if (!Boolean(auditEvent?.skipOnSaved || auditEvent?.silent || auditEvent?.keepModalOpen)) {
+        onSaved?.()
+      }
     } catch {
       setWorkspaceMessage('Erreur réseau: sauvegarde production non confirmée.')
     } finally {
@@ -708,7 +1025,17 @@ function EmployeeMegaHRWorkspace({
     setSelectedActionId(safeAction.id)
     setWorkspaceMessage(message)
 
-    await saveToProduction(nextActions)
+    await saveToProduction(nextActions, {
+      event: 'case_saved',
+      action_id: safeAction.id,
+      category: safeAction.category,
+      title: safeAction.title,
+      case_type: safeAction.case_type || '',
+      status: safeAction.status,
+      validation_status: safeAction.validation_status || '',
+      production_status: safeAction.production_status || '',
+      reference: safeAction.reference || '',
+    })
   }
 
   function isAttestationAction(action?: Partial<EmployeeHRAction> | null) {
@@ -804,10 +1131,25 @@ function EmployeeMegaHRWorkspace({
     setSelectedActionId(validatedAction.id)
     setWorkspaceMessage(`${validatedAction.title || validatedAction.case_type || 'Cas RH'} validé et sauvegardé.`)
 
-    await saveToProduction(nextActions)
+    await saveToProduction(nextActions, {
+      event: 'case_validated',
+      action_id: validatedAction.id,
+      category: validatedAction.category,
+      title: validatedAction.title,
+      case_type: validatedAction.case_type || '',
+      status: validatedAction.status,
+      validation_status: validatedAction.validation_status || '',
+      production_status: validatedAction.production_status || '',
+      reference: validatedAction.reference || '',
+      validator: validatedAction.validator || '',
+      validated_at: validatedAction.validated_at || '',
+    })
   }
 
   function deleteAction(actionId: string) {
+    const deletedAction = actions.find((item) => item.id === actionId)
+    const deletedActionKey = hrActionStableKey(deletedAction)
+
     setContractModalOpen(false)
     setAttestationModalOpen(false)
     const next = actions.filter((action) => action.id !== actionId)
@@ -824,6 +1166,45 @@ function buildAttestationStageRef(seed?: unknown) {
 
 
 function printAction(action: EmployeeHRAction) {
+
+    const attendancePrintMarker = [
+      action?.id,
+      action?.reference,
+      action?.title,
+      action?.case_type,
+      action?.notes,
+      action?.evidence,
+    ]
+      .map((item) => String(item || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase())
+      .join(' ')
+
+    const isOfficialAttendanceMonthlyA4 =
+      attendancePrintMarker.includes('official-attendance-a4') ||
+      attendancePrintMarker.includes('ac-att-') ||
+      attendancePrintMarker.includes('rapport mensuel de presence') ||
+      attendancePrintMarker.includes('rapport mensuel a4 presence') ||
+      attendancePrintMarker.includes('users / attendance / print month a4')
+
+    if (isOfficialAttendanceMonthlyA4) {
+      const directEvidence = String(action?.evidence || '').trim()
+      const noteLink = String(action?.notes || '').match(/\/users\?[^ \n\r\t]+/i)?.[0] || ''
+      const period =
+        String(action?.period || '').match(/\d{4}-\d{2}/)?.[0] ||
+        String(action?.reference || '').match(/\d{4}-\d{2}/)?.[0] ||
+        String(action?.id || '').match(/\d{4}-\d{2}/)?.[0] ||
+        new Date().toISOString().slice(0, 7)
+
+      const email = value(employee, ['email', 'user_email', 'work_email', 'username'], '')
+      const fallbackLink = `/users?workspace=attendance&attendanceA4Bridge=1&attendanceEmployeeId=${encodeURIComponent(employeeId)}&attendanceEmail=${encodeURIComponent(email)}&attendanceMonth=${encodeURIComponent(period)}`
+      const href = directEvidence.startsWith('/users?') || directEvidence.startsWith('http')
+        ? directEvidence
+        : noteLink || fallbackLink
+
+      window.open(href, '_blank', 'noopener,noreferrer')
+      return
+    }
+
+
     const category = categories.find((item) => item.key === action.category) || activeCategory
 
     if (action.category === 'documents' && String(action.case_type || action.title || '').toLowerCase().includes('attestation')) {
@@ -1263,7 +1644,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
   <section class="header">
     <div class="brand">
       <img src="/logo.png" />
-      <div><b>AngelCare HR</b><span>Dossier collaborateur 360</span></div>
+      <div><b>AngelCare HR</b><span><span className="select-none !text-slate-950 [color:#020617!important]">Dossier collaborateur 360</span></span></div>
     </div>
     <div class="ref"><small>Référence document</small><strong>${ref}</strong><small>${generatedAt}</small></div>
   </section>
@@ -1313,31 +1694,68 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
     teal: 'bg-teal-50 text-teal-800 border-teal-100',
   }
 
+
+  useEffect(() => {
+    if (!employeeId) return
+
+    const sync = syncOfficialMonthlyAttendanceA4Cases(actions)
+    if (!sync.created.length) return
+
+    setActions(sync.actions)
+    setSelectedActionId(sync.actions[0]?.id || '')
+    setWorkspaceMessage(`Présence: ${sync.created.length} rapport(s) mensuel(s) A4 officiel(s) généré(s).`)
+
+    void saveToProduction(sync.actions, {
+      event: 'official_monthly_attendance_a4_auto_generated',
+      keepModalOpen: true,
+      skipOnSaved: true,
+      created_count: sync.created.length,
+      months: sync.created.map((item) => item.period),
+      source: 'users_attendance_print_month_a4',
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employeeId, actions.length])
+
   const statuses = Array.from(new Set(['all', ...activeCategory.workflow, ...categoryActions.map((action) => action.status || '').filter(Boolean), ...categoryActions.map((action) => action.validation_status || '').filter(Boolean)]))
   const priorities = ['all', 'Basse', 'Normale', 'Haute', 'Critique']
 
   return (
-    <section className="mt-6 rounded-[34px] border border-white/80 bg-white p-5 shadow-xl shadow-slate-200/70">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+    <section className="mt-6 overflow-hidden rounded-[38px] border border-white/80 bg-white shadow-[0_32px_110px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/70">
+      <div className="bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.10),transparent_34%),linear-gradient(135deg,#ffffff_0%,#f8fbff_55%,#eef7ff_100%)] p-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between !text-slate-950 text-slate-950 select-none">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.26em] text-violet-700">Employee HR case operations center</p>
-          <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Centre opérationnel RH collaborateur</h3>
+          <p className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.26em] text-violet-700 ring-1 ring-violet-100">Employee HR case operations center</p>
+          <h3 className="mt-3 text-3xl font-black tracking-[-0.045em] text-slate-950"><span className="select-none !text-slate-950 text-slate-950 [color:#020617!important]">Centre opérationnel RH collaborateur</span></h3>
           <p className="mt-2 max-w-5xl text-sm font-bold leading-6 text-slate-500">
             Paie, congés, présence, planning, documents, contrats, performance et formation sont traités comme des cas RH structurés:
             création, édition, validation, suppression, historique filtrable, sauvegarde production et impression A5.
           </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={saveHrCaseOperationsCenterProduction}
+                disabled={hrCenterProductionSaving}
+                className="rounded-[22px] bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-xl shadow-slate-300 transition hover:-translate-y-0.5 hover:bg-violet-700 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {hrCenterProductionSaving ? 'Sauvegarde production...' : 'Sauvegarder Centre RH en production'}
+              </button>
+
+              <span className="rounded-[22px] border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs font-black leading-5 text-emerald-800">
+                Sauvegarde dédiée au centre RH : cas, contrats, attestations, validations, références, preuves et historique.
+              </span>
+            </div>
+
         </div>
 
         <div className="grid gap-2 sm:grid-cols-4 xl:min-w-[640px]">
-          <div className="rounded-2xl bg-slate-950 p-4 text-white">
+          <div className="rounded-[24px] bg-slate-950 p-4 text-white shadow-2xl shadow-slate-300/60 ring-1 ring-white/10">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Cas total</p>
             <p className="mt-1 text-2xl font-black">{actions.length}</p>
           </div>
-          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-emerald-800">
+          <div className="rounded-[24px] border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 text-emerald-800 shadow-sm">
             <p className="text-[10px] font-black uppercase tracking-[0.2em]">Sync source</p>
             <p className="mt-1 text-2xl font-black">{activeCategory.synced}</p>
           </div>
-          <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4 text-amber-800">
+          <div className="rounded-[24px] border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-4 text-amber-800 shadow-sm">
             <p className="text-[10px] font-black uppercase tracking-[0.2em]">À valider</p>
             <p className="mt-1 text-2xl font-black">{actions.filter((action) => String(action.validation_status || '').toLowerCase().includes('attente')).length}</p>
           </div>
@@ -1345,7 +1763,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
             type="button"
             disabled={savingWorkspace}
             onClick={() => saveToProduction(actions)}
-            className="rounded-2xl bg-violet-600 p-4 text-left text-white shadow-lg shadow-violet-200 transition hover:bg-violet-700 disabled:opacity-50"
+            className="rounded-[24px] bg-gradient-to-br from-violet-600 to-fuchsia-600 p-4 text-left text-white shadow-xl shadow-violet-200 transition hover:-translate-y-0.5 hover:shadow-2xl disabled:opacity-50"
           >
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">Production</p>
             <p className="mt-1 text-sm font-black">{savingWorkspace ? 'Sauvegarde...' : 'Sauvegarder tout'}</p>
@@ -1354,13 +1772,13 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
       </div>
 
       {workspaceMessage ? (
-        <div className="mt-4 rounded-2xl border border-cyan-100 bg-cyan-50 p-3 text-sm font-black text-cyan-800">
+        <div className="mx-5 mt-4 rounded-[24px] border border-cyan-100 bg-gradient-to-r from-cyan-50 to-white p-4 text-sm font-black text-cyan-800 shadow-sm">
           {workspaceMessage}
         </div>
       ) : null}
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)_430px]">
-        <aside className="rounded-[28px] border border-slate-200 bg-slate-50 p-3">
+      <div className="grid gap-5 bg-slate-50/80 p-5 xl:grid-cols-[315px_minmax(0,1fr)_450px]">
+        <aside className="rounded-[32px] border border-slate-200 bg-white p-3 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
           <div className="grid gap-2">
             {categories.map((category) => {
               const count = actions.filter((action) => action.category === category.key).length
@@ -1377,8 +1795,8 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                     setPriorityFilter('all')
                     setSelectedActionId(actions.find((action) => action.category === category.key)?.id || '')
                   }}
-                  className={`rounded-[22px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md ${
-                    isActive ? colorClass[category.color] : 'border-slate-200 bg-white text-slate-700 hover:border-violet-200'
+                  className={`rounded-[24px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-slate-200/70 ${
+                    isActive ? `${colorClass[category.color]} shadow-lg shadow-slate-200/80 ring-1 ring-white` : 'border-slate-200 bg-white text-slate-700 hover:border-violet-200 hover:bg-violet-50/40'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -1395,7 +1813,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
           </div>
         </aside>
 
-        <main className="rounded-[28px] border border-slate-200 bg-white p-4">
+        <main className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Catégorie active</p>
@@ -1408,37 +1826,47 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                   key={template}
                   type="button"
                   onClick={() => createAction(template)}
-                  className="rounded-full border border-violet-100 bg-violet-50 px-3 py-2 text-xs font-black text-violet-700 hover:bg-violet-100"
+                  className="rounded-2xl border border-violet-100 bg-violet-50 px-3 py-2 text-xs font-black text-violet-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-violet-100 hover:shadow-md"
                 >
                   + {template}
                 </button>
               ))}
+              <a
+                data-attendance-a4-force-visible-button
+                href={`/users?workspace=attendance&attendanceA4Bridge=1&attendanceEmployeeId=${encodeURIComponent(employeeId)}&attendanceEmail=${encodeURIComponent(value(employee, ['email', 'user_email', 'work_email', 'username'], ''))}&attendanceMonth=${encodeURIComponent(new Date().toISOString().slice(0, 7))}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-black text-blue-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-100 hover:shadow-md"
+              >
+                Ouvrir A4 présence officiel
+              </a>
+
               <button
                 type="button"
                 onClick={() => createAction()}
-                className="rounded-full bg-slate-950 px-3 py-2 text-xs font-black text-white hover:bg-violet-700"
+                className="rounded-2xl bg-slate-950 px-3 py-2 text-xs font-black text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:bg-violet-700"
               >
                 + Cas libre
               </button>
             </div>
           </div>
 
-          <div className="mt-4 rounded-[24px] border border-slate-200 bg-slate-50 p-3">
+          <div className="mt-4 rounded-[26px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-3 shadow-inner">
             <div className="grid gap-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Filtrer titre, responsable, référence, notes..."
-                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:ring-4 focus:ring-violet-100"
+                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none shadow-sm transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
               />
-              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
+              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none shadow-sm transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                 <option value="all">Tous types</option>
                 {activeCategory.caseTypes.map((type) => <option key={type}>{type}</option>)}
               </select>
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none shadow-sm transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                 {statuses.map((status) => <option key={status} value={status}>{status === 'all' ? 'Tous statuts' : status}</option>)}
               </select>
-              <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
+              <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none shadow-sm transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                 {priorities.map((priority) => <option key={priority} value={priority}>{priority === 'all' ? 'Toutes priorités' : priority}</option>)}
               </select>
             </div>
@@ -1457,8 +1885,8 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                     setAttestationModalOpen(true)
                   }
                 }}
-                className={`rounded-[24px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg ${
-                  selectedAction?.id === action.id ? 'border-violet-200 bg-violet-50' : 'border-slate-200 bg-slate-50/80'
+                className={`group rounded-[28px] border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-slate-200/80 ${
+                  selectedAction?.id === action.id ? 'border-violet-300 bg-gradient-to-br from-violet-50 to-white ring-2 ring-violet-100' : 'border-slate-200 bg-white hover:border-violet-200 hover:bg-slate-50'
                 }`}
               >
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -1472,6 +1900,8 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                     <span className="rounded-full bg-cyan-50 px-3 py-1 text-cyan-700 ring-1 ring-cyan-100">{action.validation_status || 'En attente'}</span>
                     <span className={action.priority === 'Haute' || action.priority === 'Critique' ? 'rounded-full bg-rose-50 px-3 py-1 text-rose-700 ring-1 ring-rose-100' : 'rounded-full bg-emerald-50 px-3 py-1 text-emerald-700 ring-1 ring-emerald-100'}>{action.priority}</span>
                     {action.amount ? <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700 ring-1 ring-amber-100">{action.amount}</span> : null}
+                    {action.production_status ? <span className="rounded-full bg-slate-950 px-3 py-1 text-white ring-1 ring-slate-800">{action.production_status}</span> : null}
+                    {action.saved_at ? <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700 ring-1 ring-emerald-100">sync</span> : null}
                   </div>
                 </div>
               </button>
@@ -1484,7 +1914,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
           </div>
         </main>
 
-        <aside className="rounded-[28px] border border-slate-200 bg-slate-50 p-4">
+        <aside className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_18px_60px_rgba(15,23,42,0.07)]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Fiche opération</p>
@@ -1497,27 +1927,27 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
 
           {selectedAction ? (
             <div className="mt-4 grid gap-3">
-              <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+              <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Titre</span>
-                <input value={selectedAction.title} onChange={(event) => updateAction(selectedAction.id, { title: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none focus:ring-4 focus:ring-violet-100" />
+                <input value={selectedAction.title} onChange={(event) => updateAction(selectedAction.id, { title: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 focus:ring-4 focus:ring-violet-100" />
               </label>
 
-              <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+              <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Type opération</span>
-                <select value={selectedAction.case_type || activeCategory.caseTypes[0]} onChange={(event) => updateAction(selectedAction.id, { case_type: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none">
+                <select value={selectedAction.case_type || activeCategory.caseTypes[0]} onChange={(event) => updateAction(selectedAction.id, { case_type: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                   {activeCategory.caseTypes.map((type) => <option key={type}>{type}</option>)}
                 </select>
               </label>
 
-              <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+              <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Responsable</span>
-                <input value={selectedAction.owner} onChange={(event) => updateAction(selectedAction.id, { owner: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none focus:ring-4 focus:ring-violet-100" />
+                <input value={selectedAction.owner} onChange={(event) => updateAction(selectedAction.id, { owner: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 focus:ring-4 focus:ring-violet-100" />
               </label>
 
               <div className="grid grid-cols-2 gap-3">
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Statut</span>
-                  <select value={selectedAction.status} onChange={(event) => updateAction(selectedAction.id, { status: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none">
+                  <select value={selectedAction.status} onChange={(event) => updateAction(selectedAction.id, { status: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                     <option>À traiter</option>
                     <option>Planifié</option>
                     <option>En cours</option>
@@ -1527,9 +1957,9 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                     <option>Annulé</option>
                   </select>
                 </label>
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Priorité</span>
-                  <select value={selectedAction.priority} onChange={(event) => updateAction(selectedAction.id, { priority: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none">
+                  <select value={selectedAction.priority} onChange={(event) => updateAction(selectedAction.id, { priority: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                     <option>Basse</option>
                     <option>Normale</option>
                     <option>Haute</option>
@@ -1539,15 +1969,15 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Workflow</span>
-                  <select value={selectedAction.workflow_status || activeCategory.workflow[0]} onChange={(event) => updateAction(selectedAction.id, { workflow_status: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none">
+                  <select value={selectedAction.workflow_status || activeCategory.workflow[0]} onChange={(event) => updateAction(selectedAction.id, { workflow_status: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                     {activeCategory.workflow.map((status) => <option key={status}>{status}</option>)}
                   </select>
                 </label>
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Validation</span>
-                  <select value={selectedAction.validation_status || 'En attente'} onChange={(event) => updateAction(selectedAction.id, { validation_status: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none">
+                  <select value={selectedAction.validation_status || 'En attente'} onChange={(event) => updateAction(selectedAction.id, { validation_status: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                     <option>En attente</option>
                     <option>À revoir</option>
                     <option>Validé RH</option>
@@ -1558,47 +1988,47 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Date</span>
-                  <input type="date" value={selectedAction.due_date} onChange={(event) => updateAction(selectedAction.id, { due_date: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none" />
+                  <input type="date" value={selectedAction.due_date} onChange={(event) => updateAction(selectedAction.id, { due_date: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
                 </label>
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Montant / valeur</span>
-                  <input value={selectedAction.amount || ''} onChange={(event) => updateAction(selectedAction.id, { amount: event.target.value })} placeholder="Ex: 1500 MAD" className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none" />
+                  <input value={selectedAction.amount || ''} onChange={(event) => updateAction(selectedAction.id, { amount: event.target.value })} placeholder="Ex: 1500 MAD" className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
                 </label>
               </div>
 
               {activeCategory.fields.includes('payment_method') ? (
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Mode paiement</span>
-                  <select value={selectedAction.payment_method || activeCategory.methods[0] || ''} onChange={(event) => updateAction(selectedAction.id, { payment_method: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none">
+                  <select value={selectedAction.payment_method || activeCategory.methods[0] || ''} onChange={(event) => updateAction(selectedAction.id, { payment_method: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                     {activeCategory.methods.map((method) => <option key={method}>{method}</option>)}
                   </select>
                 </label>
               ) : null}
 
               <div className="grid grid-cols-2 gap-3">
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Période / début</span>
-                  <input value={selectedAction.period || selectedAction.start_date || ''} onChange={(event) => updateAction(selectedAction.id, { period: event.target.value, start_date: event.target.value })} placeholder="2026-06 ou date" className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none" />
+                  <input value={selectedAction.period || selectedAction.start_date || ''} onChange={(event) => updateAction(selectedAction.id, { period: event.target.value, start_date: event.target.value })} placeholder="2026-06 ou date" className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
                 </label>
-                <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                   <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Fin / durée</span>
-                  <input value={selectedAction.end_date || selectedAction.duration || ''} onChange={(event) => updateAction(selectedAction.id, { end_date: event.target.value, duration: event.target.value })} placeholder="Fin ou durée" className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none" />
+                  <input value={selectedAction.end_date || selectedAction.duration || ''} onChange={(event) => updateAction(selectedAction.id, { end_date: event.target.value, duration: event.target.value })} placeholder="Fin ou durée" className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
                 </label>
               </div>
 
-              <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+              <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Référence / preuve</span>
-                <input value={selectedAction.reference || ''} onChange={(event) => updateAction(selectedAction.id, { reference: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none" />
+                <input value={selectedAction.reference || ''} onChange={(event) => updateAction(selectedAction.id, { reference: event.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
               </label>
 
-              <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+              <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Impact / justification</span>
                 <textarea value={selectedAction.impact || selectedAction.evidence || ''} onChange={(event) => updateAction(selectedAction.id, { impact: event.target.value, evidence: event.target.value })} rows={3} className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold outline-none focus:ring-4 focus:ring-violet-100" />
               </label>
 
-              <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+              <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Notes</span>
                 <textarea value={selectedAction.notes} onChange={(event) => updateAction(selectedAction.id, { notes: event.target.value })} rows={4} className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold outline-none focus:ring-4 focus:ring-violet-100" />
               </label>
@@ -1616,11 +2046,11 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
               ) : null}
 
               <div className="grid grid-cols-2 gap-2">
-                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-3 py-2 text-xs font-black text-white">Valider & sauvegarder</button>
-                <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-3 py-2 text-xs font-black text-white">{activeCategory.key === 'contracts' ? 'Print A4' : 'Print A5'}</button>
-                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-3 py-2 text-xs font-black text-white">Save</button>
-                <button type="button" onClick={() => duplicateAction(selectedAction)} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700">Duplicate</button>
-                <button type="button" onClick={() => deleteAction(selectedAction.id)} className="col-span-2 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-700">Delete permanently</button>
+                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-3 py-2 text-xs font-black text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-700">Valider & sauvegarder</button>
+                <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-3 py-2 text-xs font-black text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:bg-slate-800">{activeCategory.key === 'contracts' ? 'Print A4' : 'Print A5'}</button>
+                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-3 py-2 text-xs font-black text-white shadow-lg shadow-violet-100 transition hover:-translate-y-0.5 hover:bg-violet-700">Save</button>
+                <button type="button" onClick={() => duplicateAction(selectedAction)} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md">Duplicate</button>
+                <button type="button" onClick={() => deleteAction(selectedAction.id)} className="col-span-2 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-rose-100 hover:shadow-md">Delete permanently</button>
               </div>
             </div>
           ) : (
@@ -1632,9 +2062,9 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
       </div>
 
       {attestationModalOpen && selectedAction && activeCategory.key === 'documents' ? (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-4">
-          <div className="max-h-[94vh] w-full max-w-7xl overflow-auto rounded-[32px] border border-slate-200 bg-white shadow-2xl">
-            <div className="sticky top-0 z-10 flex flex-col gap-3 border-b border-slate-200 bg-white p-5 xl:flex-row xl:items-start xl:justify-between">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/65 p-4 backdrop-blur-md">
+          <div className="max-h-[94vh] w-full max-w-7xl overflow-auto rounded-[36px] border border-white/80 bg-white shadow-[0_50px_170px_rgba(15,23,42,0.45)] ring-1 ring-slate-200/80">
+            <div className="sticky top-0 z-10 flex flex-col gap-3 border-b border-slate-200 bg-white/95 p-5 backdrop-blur-xl xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.26em] text-blue-600">Attestation RH · constructeur A4</p>
                 <h3 className="mt-1 text-3xl font-black tracking-[-0.04em] text-slate-950">Attestation de stage collaborateur</h3>
@@ -1643,26 +2073,26 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Valider & sauvegarder attestation</button>
-                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save</button>
-                <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white">Print A4</button>
-                <button type="button" onClick={() => { deleteAction(selectedAction.id); setAttestationModalOpen(false) }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">Delete permanently</button>
-                <button type="button" onClick={() => setAttestationModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Fermer</button>
+                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-700">Valider & sauvegarder attestation</button>
+                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-violet-100 transition hover:-translate-y-0.5 hover:bg-violet-700">Save</button>
+                <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:bg-slate-800">Print A4</button>
+                <button type="button" onClick={() => { deleteAction(selectedAction.id); setAttestationModalOpen(false) }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-rose-100 hover:shadow-md">Delete permanently</button>
+                <button type="button" onClick={() => setAttestationModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md">Fermer</button>
               </div>
             </div>
 
             <div className="grid gap-5 p-5 xl:grid-cols-[minmax(0,1fr)_420px]">
               <div className="grid gap-4">
-                <section className="rounded-[28px] border border-slate-200 bg-slate-50 p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_18px_60px_rgba(15,23,42,0.07)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Informations attestation</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
-                    <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Nature document</span><input value={selectedAction.attestation_kind || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_kind: e.target.value, case_type: 'Attestation de stage' })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
-                    <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Ville</span><input value={selectedAction.attestation_city || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_city: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
-                    <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Date attestation</span><input type="date" value={selectedAction.attestation_date || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_date: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
+                    <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Nature document</span><input value={selectedAction.attestation_kind || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_kind: e.target.value, case_type: 'Attestation de stage' })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
+                    <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Ville</span><input value={selectedAction.attestation_city || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_city: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
+                    <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Date attestation</span><input type="date" value={selectedAction.attestation_date || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_date: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-slate-200 bg-white p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Émetteur ARTAB / ANGELCARE</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-2">
                     <label className="block rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Nom société</span><input value={selectedAction.attestation_company_name || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_company_name: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold" /></label>
@@ -1670,7 +2100,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-slate-200 bg-white p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Identité stagiaire</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
                     <label className="block rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Civilité</span><input value={selectedAction.attestation_employee_civility || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_employee_civility: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold" /></label>
@@ -1680,7 +2110,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-slate-200 bg-white p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Période, appréciation et texte officiel</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-2">
                     <label className="block rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Début stage</span><input type="date" value={selectedAction.attestation_start_date || ''} onChange={(e) => updateAction(selectedAction.id, { attestation_start_date: e.target.value, start_date: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold" /></label>
@@ -1710,9 +2140,9 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
       ) : null}
 
       {contractModalOpen && selectedAction && activeCategory.key === 'contracts' ? (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-4">
-          <div className="max-h-[94vh] w-full max-w-7xl overflow-auto rounded-[32px] border border-slate-200 bg-white shadow-2xl">
-            <div className="sticky top-0 z-10 flex flex-col gap-3 border-b border-slate-200 bg-white p-5 xl:flex-row xl:items-start xl:justify-between">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/65 p-4 backdrop-blur-md">
+          <div className="max-h-[94vh] w-full max-w-7xl overflow-auto rounded-[36px] border border-white/80 bg-white shadow-[0_50px_170px_rgba(15,23,42,0.45)] ring-1 ring-slate-200/80">
+            <div className="sticky top-0 z-10 flex flex-col gap-3 border-b border-slate-200 bg-white/95 p-5 backdrop-blur-xl xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.26em] text-rose-600">Contrat RH · constructeur A4</p>
                 <h3 className="mt-1 text-3xl font-black tracking-[-0.04em] text-slate-950">Contrat opérationnel collaborateur</h3>
@@ -1721,26 +2151,26 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Valider & sauvegarder contrat</button>
-                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white">Save</button>
-                <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white">Print A4</button>
-                <button type="button" onClick={() => { deleteAction(selectedAction.id); setContractModalOpen(false) }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">Delete permanently</button>
-                <button type="button" onClick={() => setContractModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">Fermer</button>
+                <button type="button" onClick={() => validateAction(selectedAction)} className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-700">Valider & sauvegarder contrat</button>
+                <button type="button" onClick={() => saveSelectedActionToProduction(selectedAction)} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-violet-100 transition hover:-translate-y-0.5 hover:bg-violet-700">Save</button>
+                <button type="button" onClick={() => printAction(selectedAction)} className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:bg-slate-800">Print A4</button>
+                <button type="button" onClick={() => { deleteAction(selectedAction.id); setContractModalOpen(false) }} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-rose-100 hover:shadow-md">Delete permanently</button>
+                <button type="button" onClick={() => setContractModalOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md">Fermer</button>
               </div>
             </div>
 
             <div className="grid gap-5 p-5 xl:grid-cols-[minmax(0,1fr)_420px]">
               <div className="grid gap-4">
-                <section className="rounded-[28px] border border-slate-200 bg-slate-50 p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_18px_60px_rgba(15,23,42,0.07)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Informations contrat</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
-                    <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Nature contrat</span><input value={selectedAction.contract_kind || ''} onChange={(e) => updateAction(selectedAction.id, { contract_kind: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
-                    <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Ville signature</span><input value={selectedAction.contract_city || ''} onChange={(e) => updateAction(selectedAction.id, { contract_city: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
-                    <label className="block rounded-2xl bg-white p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Date signature</span><input type="date" value={selectedAction.contract_date || ''} onChange={(e) => updateAction(selectedAction.id, { contract_date: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
+                    <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Nature contrat</span><input value={selectedAction.contract_kind || ''} onChange={(e) => updateAction(selectedAction.id, { contract_kind: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
+                    <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Ville signature</span><input value={selectedAction.contract_city || ''} onChange={(e) => updateAction(selectedAction.id, { contract_city: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
+                    <label className="block rounded-[20px] border border-slate-100 bg-white p-3 shadow-sm ring-1 ring-slate-100 transition hover:border-violet-100 hover:shadow-md"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Date signature</span><input type="date" value={selectedAction.contract_date || ''} onChange={(e) => updateAction(selectedAction.id, { contract_date: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold" /></label>
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-slate-200 bg-white p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Société & unité AngelCare</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-2">
                     <label className="block rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Raison sociale</span><input value={selectedAction.company_legal_name || ''} onChange={(e) => updateAction(selectedAction.id, { company_legal_name: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold" /></label>
@@ -1752,7 +2182,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-slate-200 bg-white p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Identité collaborateur / stagiaire</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
                     <label className="block rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Civilité</span><input value={selectedAction.employee_civility || ''} onChange={(e) => updateAction(selectedAction.id, { employee_civility: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold" /></label>
@@ -1763,7 +2193,7 @@ h1 { font-size: 15px; margin: 12px 0 3px; letter-spacing: -.02em; }
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-slate-200 bg-white p-4">
+                <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.055)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Engagement, durée, horaires et clauses</p>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
                     <label className="block rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-100"><span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Fonction</span><input value={selectedAction.contract_role || ''} onChange={(e) => updateAction(selectedAction.id, { contract_role: e.target.value })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold" /></label>
@@ -1997,12 +2427,12 @@ export default function Employee360DossierModal({
           </div>
         ) : null}
 
-        <div className="overflow-auto bg-slate-50/70 p-6">
+        <div className="overflow-auto bg-slate-50/70 p-6 !text-slate-950 [color:#020617!important] font-black select-none">
           <header className="rounded-[34px] border border-white/80 bg-gradient-to-br from-white via-violet-50/70 to-cyan-50/70 p-6 shadow-xl shadow-slate-200/70">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.34em] text-violet-700">AngelCare HR Command OS</p>
-                <h1 className="mt-3 text-4xl font-black tracking-[-0.05em] text-slate-950">Dossier collaborateur 360</h1>
+                <h1 className="mt-3 text-4xl font-black tracking-[-0.05em] text-slate-950"><span className="select-none !text-slate-950 [color:#020617!important]">Dossier collaborateur 360</span></h1>
                 <p className="mt-2 text-lg font-black text-slate-600">{name}</p>
                 <p className="mt-1 text-sm font-bold text-slate-500">{role} · {department} · {city}</p>
               </div>
@@ -2094,12 +2524,12 @@ export default function Employee360DossierModal({
         </div>
       </div>
 
-      <div className="employee-a4-print">
+      <div className="employee-a4-print !text-slate-950 [color:#020617!important] font-black select-none">
         <section className="employee-a4-page">
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 24, borderBottom: '3px solid #0f172a', paddingBottom: 18 }}>
             <div>
               <div style={{ fontSize: 10, letterSpacing: 4, fontWeight: 900, color: '#2563eb', textTransform: 'uppercase' }}>AngelCare HR Command OS</div>
-              <h1 style={{ margin: '10px 0 0', fontSize: 34, lineHeight: 1, letterSpacing: -1.5 }}>Dossier collaborateur 360</h1>
+              <h1 style={{ margin: '10px 0 0', fontSize: 34, lineHeight: 1, letterSpacing: -1.5 }}><span className="select-none !text-slate-950 [color:#020617!important]">Dossier collaborateur 360</span></h1>
               <div style={{ marginTop: 10, fontSize: 18, fontWeight: 900 }}>{name}</div>
               <div style={{ marginTop: 4, fontSize: 12, color: '#475569', fontWeight: 700 }}>{role} · {department} · {city}</div>
             </div>

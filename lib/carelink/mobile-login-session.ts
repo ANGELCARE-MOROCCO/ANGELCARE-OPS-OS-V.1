@@ -71,7 +71,40 @@ async function getCaregiver(supabase: SupabaseClient, caregiverId: unknown) {
   return safeSingle<AnyRecord>(supabase.from('caregivers').select('*').eq('id', id).maybeSingle())
 }
 
-async function findCareLinkAccessForAuthUser(supabase: SupabaseClient, authUserId: string, email: string) {
+async function findCareLinkAccessByTextColumn(supabase: SupabaseClient, column: string, value: string) {
+  const cleanValue = lower(value)
+  if (!cleanValue) return null
+
+  return safeSingle<AnyRecord>(
+    supabase
+      .from('carelink_agent_app_access')
+      .select('*')
+      .ilike(column, cleanValue)
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+  )
+}
+
+async function findCareLinkAccessForLoginIdentifier(supabase: SupabaseClient, identifier: string) {
+  const cleanIdentifier = lower(identifier)
+  if (!cleanIdentifier) return null
+
+  for (const column of ['email', 'login_identifier', 'username']) {
+    const row = await findCareLinkAccessByTextColumn(supabase, column, cleanIdentifier)
+    if (row) return row
+  }
+
+  return null
+}
+
+async function findCareLinkAccessForAuthUser(
+  supabase: SupabaseClient,
+  authUserId: string,
+  email: string,
+  identifier?: string,
+  preResolved?: AnyRecord | null,
+) {
   const byAuth = await safeSingle<AnyRecord>(
     supabase
       .from('carelink_agent_app_access')
@@ -83,17 +116,15 @@ async function findCareLinkAccessForAuthUser(supabase: SupabaseClient, authUserI
   )
   if (byAuth) return byAuth
 
-  if (!email) return null
+  const candidates = Array.from(new Set([email, identifier, preResolved?.email, preResolved?.login_identifier, preResolved?.username].map(lower).filter(Boolean)))
+  for (const candidate of candidates) {
+    for (const column of ['email', 'login_identifier', 'username']) {
+      const row = await findCareLinkAccessByTextColumn(supabase, column, candidate)
+      if (row) return row
+    }
+  }
 
-  return safeSingle<AnyRecord>(
-    supabase
-      .from('carelink_agent_app_access')
-      .select('*')
-      .eq('email', email)
-      .order('id', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-  )
+  return preResolved || null
 }
 
 function assertCareLinkMobileLoginAccess(access: AnyRecord | null) {
@@ -321,20 +352,27 @@ export async function loginCareLinkMobileAgent(args: { identifier: string; passw
     throw new CareLinkMobileLoginError('Login and password are required.', 'carelink_mobile_credentials_required', 400)
   }
 
-  if (!identifier.includes('@')) {
-    throw new CareLinkMobileLoginError('Use the login email created in CareLink OPS Agents.', 'carelink_mobile_email_required', 400)
+  const supabase = await createClient()
+  const preResolvedAccess = await findCareLinkAccessForLoginIdentifier(supabase, identifier)
+  const authEmail = lower(preResolvedAccess?.email || (identifier.includes('@') ? identifier : ''))
+
+  if (!authEmail || !authEmail.includes('@')) {
+    throw new CareLinkMobileLoginError(
+      'This CareLink login identifier is not linked to a valid authentication email in OPS Agents.',
+      'carelink_mobile_login_identifier_not_linked',
+      403,
+    )
   }
 
-  const supabase = await createClient()
-  const { data, error } = await supabase.auth.signInWithPassword({ email: identifier, password })
+  const { data, error } = await supabase.auth.signInWithPassword({ email: authEmail, password })
 
   if (error || !data?.user?.id) {
     throw new CareLinkMobileLoginError('Invalid CareLink Mobile login credentials.', 'carelink_mobile_invalid_credentials', 401)
   }
 
   const authUserId = data.user.id
-  const email = lower(data.user.email || identifier)
-  const access = await findCareLinkAccessForAuthUser(supabase, authUserId, email)
+  const email = lower(data.user.email || authEmail)
+  const access = await findCareLinkAccessForAuthUser(supabase, authUserId, email, identifier, preResolvedAccess)
 
   assertCareLinkMobileLoginAccess(access)
 

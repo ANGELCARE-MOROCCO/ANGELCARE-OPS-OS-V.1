@@ -644,12 +644,10 @@ function missionConflicts(records: MissionControlRecord[], availability: string,
 }
 
 export function EnterpriseScheduleScreen({ workspace, records, runCareLinkAction }: EnterpriseScreenProps) {
+  const roster = ((dossier(workspace)?.roster || {}) as Record<string, any>)
   const availabilityRows = getEnterpriseRows(workspace, 'availabilityUpdates')
-  const presenceEvents = getEnterpriseRows(workspace, 'presenceEvents')
-  const data = dossier(workspace)
-  const roster = (data?.roster || {}) as Record<string, any>
   const latestAvailability = availabilityRows[0]
-  const days = Array.from(new Set(records.map((item) => item.dateLabel || 'Non planifiée')))
+
   const [availability, setAvailability] = useState(String((latestAvailability as any)?.availability_status || roster.availabilityStatus || 'available'))
   const [availabilityType, setAvailabilityType] = useState('status_update')
   const [note, setNote] = useState('')
@@ -659,165 +657,405 @@ export function EnterpriseScheduleScreen({ workspace, records, runCareLinkAction
   const [dayPart, setDayPart] = useState('full_day')
   const [preferredZones, setPreferredZones] = useState(valueText(roster.preferredZones, ''))
   const [excludedZones, setExcludedZones] = useState(valueText(roster.excludedZones, ''))
-  const [weekendAvailable, setWeekendAvailable] = useState(Boolean(roster.weekendAcceptance))
-  const [nightAvailable, setNightAvailable] = useState(Boolean(roster.nightAcceptance))
-  const [emergencyAvailable, setEmergencyAvailable] = useState(Boolean(roster.emergencyReplacement))
+  const [weeklyWindows, setWeeklyWindows] = useState(valueText(roster.weeklyWindows || roster.weekly_windows, 'Lundi-Vendredi 10:00-18:00'))
+  const [workloadLimit, setWorkloadLimit] = useState(String(roster.workloadLimit || roster.maxWeeklyMissions || ''))
+  const [preferredShift, setPreferredShift] = useState(String(roster.preferredShift || 'day'))
+  const [replacementMode, setReplacementMode] = useState(String(roster.replacementMode || 'normal'))
+  const [weekendAvailable, setWeekendAvailable] = useState(Boolean(roster.weekendAcceptance || roster.weekendAvailable))
+  const [nightAvailable, setNightAvailable] = useState(Boolean(roster.nightAcceptance || roster.nightAvailable))
+  const [emergencyAvailable, setEmergencyAvailable] = useState(Boolean(roster.emergencyReplacement || roster.emergencyAvailable))
   const [transportReady, setTransportReady] = useState(Boolean(roster.transportReady ?? !roster.transportRequired))
   const [busy, setBusy] = useState(false)
-  const conflicts = missionConflicts(records, availability, blackoutDate)
+  const [savedMessage, setSavedMessage] = useState('')
+  const [localRows, setLocalRows] = useState<Record<string, unknown>[]>([])
+
+  const visibleRows = localRows.length ? localRows : availabilityRows
+  const currentRow = visibleRows[0] || latestAvailability
+  const openMissions = records.filter((record) => !['completed', 'closed', 'cancelled', 'canceled'].includes(String(record.status || '').toLowerCase()))
+  const todayMissions = records.filter((record) => record.dateLabel && record.dateLabel !== 'Non planifiée')
+  const preferredZonesList = splitRosterInput(preferredZones)
+  const excludedZonesList = splitRosterInput(excludedZones)
+
+  const conflicts = records.filter((record) => {
+    const status = String(record.status || '').toLowerCase()
+    if (['completed', 'closed', 'cancelled', 'canceled'].includes(status)) return false
+    if (['unavailable', 'day_off', 'blackout'].includes(availability)) return true
+    if (!blackoutDate) return false
+    const missionDate = String((record as any).date || (record as any).startAt || (record as any).scheduledAt || record.dateLabel || '')
+    return missionDate.includes(blackoutDate)
+  })
+
   const conflictLevel = conflicts.length ? 'availability_conflict' : null
 
-  async function saveAvailability() {
+  const rosterCompleteness = Math.min(100, Math.round(
+    (availability ? 18 : 0) +
+    (effectiveFrom || effectiveUntil ? 12 : 0) +
+    (preferredZonesList.length ? 15 : 0) +
+    (weeklyWindows ? 15 : 0) +
+    (transportReady ? 10 : 0) +
+    (weekendAvailable ? 8 : 0) +
+    (nightAvailable ? 8 : 0) +
+    (emergencyAvailable ? 8 : 0) +
+    (note ? 6 : 0),
+  ))
+
+  async function saveRosterUpdate(nextType = availabilityType, nextStatus = availability, extra: Record<string, unknown> = {}) {
     setBusy(true)
+    setSavedMessage('')
+
     try {
-      await runCareLinkAction('/api/carelink/availability', {
-        availability,
-        availabilityStatus: availability,
-        availabilityType,
-        note: note || `Roster ${availabilityType} · ${availability}`,
+      const payload = {
+        availability: nextStatus,
+        availabilityStatus: nextStatus,
+        availabilityType: nextType,
+        note: note || `Roster ${nextType} · ${nextStatus}`,
         effectiveFrom: effectiveFrom || null,
         effectiveUntil: effectiveUntil || null,
         blackoutDate: blackoutDate || null,
         dayPart,
-        preferredZones: splitRosterInput(preferredZones),
-        excludedZones: splitRosterInput(excludedZones),
+        preferredZones: preferredZonesList,
+        excludedZones: excludedZonesList,
         weekendAvailable,
         nightAvailable,
         emergencyAvailable,
         transportReady,
         conflictLevel,
-        source: 'carelink_mobile_p14_availability_roster',
-        metadata: { source: 'carelink_mobile_p14', conflicts: conflicts.map((mission) => ({ id: mission.id, code: mission.code, status: mission.status })) },
-      })
+        metadata: {
+          source: 'carelink_mobile_schedule_enterprise_recovered',
+          section: extra.section || nextType,
+          weekly_windows: weeklyWindows,
+          workload_limit: workloadLimit || null,
+          preferred_shift: preferredShift,
+          replacement_mode: replacementMode,
+          preferred_zones: preferredZonesList,
+          excluded_zones: excludedZonesList,
+          weekend_available: weekendAvailable,
+          night_available: nightAvailable,
+          emergency_available: emergencyAvailable,
+          transport_ready: transportReady,
+          conflicts: conflicts.map((mission) => ({
+            id: mission.id,
+            code: mission.code,
+            status: mission.status,
+            date: mission.dateLabel,
+          })),
+          ...extra,
+        },
+      }
+
+      const response = (await runCareLinkAction('/api/carelink/availability', payload)) as any
+      const saved = (response?.data?.data || response?.data || {
+        id: `local-roster-${Date.now()}`,
+        availability_status: nextStatus,
+        availability_type: nextType,
+        note: payload.note,
+        conflict_level: conflictLevel || 'recorded',
+        created_at: new Date().toISOString(),
+        metadata: payload.metadata,
+      }) as Record<string, unknown>
+
+      setAvailability(nextStatus)
+      setAvailabilityType(nextType)
+      setLocalRows((current) => [saved, ...current].slice(0, 12))
+      setSavedMessage(`Synchronisé: ${nextType.replaceAll('_', ' ')} · ${nextStatus}`)
       setNote('')
     } finally {
       setBusy(false)
     }
   }
 
-  async function markPresence(eventType: string) {
-    await runCareLinkAction('/api/carelink/presence', {
-      eventType,
-      note: `Présence mobile: ${eventType}`,
-      source: 'carelink_mobile_schedule_enterprise',
-    })
-  }
+  const statusOptions = [
+    ['available', 'Disponible'],
+    ['limited', 'Limitée'],
+    ['unavailable', 'Indisponible'],
+    ['emergency_backup', 'Backup urgence'],
+    ['day_off', 'Jour off'],
+    ['blackout', 'Blackout'],
+    ['transport_limited', 'Transport limité'],
+  ]
+
+  const requestTypes = [
+    ['status_update', 'Statut'],
+    ['day_off_request', 'Jour off'],
+    ['blackout_date', 'Blackout'],
+    ['emergency_availability', 'Urgence'],
+    ['weekend_availability', 'Weekend'],
+    ['night_availability', 'Nuit'],
+    ['transport_readiness', 'Transport'],
+    ['zone_preference', 'Zones'],
+  ]
 
   return (
-    <PageShell eyebrow="Roster & Availability" title="Disponibilité & roster" description="Cockpit agent pour disponibilité, jours off, blackout, urgences, weekend, nuit, transport et conflits avant dispatch." icon={<CalendarClock size={24} />} tone="blue">
-      <div className="grid grid-cols-2 gap-3">
-        <GlassStat label="Jours" value={days.length} icon={<CalendarClock size={17} />} />
-        <GlassStat label="Missions" value={records.length} icon={<ClipboardCheck size={17} />} tone="emerald" />
-        <GlassStat label="Disponibilités" value={availabilityRows.length} icon={<CheckCircle2 size={17} />} tone="amber" />
-        <GlassStat label="Conflits" value={conflicts.length} icon={<AlertTriangle size={17} />} tone={conflicts.length ? 'rose' : 'emerald'} />
-      </div>
+    <PageShell
+      eyebrow="Roster & Availability"
+      title="Disponibilité terrain"
+      description="Cockpit agent complet: statut, dates, blackout, weekend, nuit, transport, zones, charge de travail, conflits et synchronisation OPS."
+      icon={<CalendarClock size={24} />}
+      tone="blue"
+    >
+            <style>{`
+        body:has([data-carelink-schedule-r4-force="true"]) h1 {
+          color: #ffffff !important;
+          -webkit-text-fill-color: #ffffff !important;
+        }
 
-      <EnterpriseCard title="Statut disponibilité" subtitle="Signal opérationnel visible pour OPS / dispatch avant assignation, remplacement ou modification planning." icon={<BadgeCheck size={18} />}>
-        <div className="rounded-[1.4rem] bg-slate-50 p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Dernier statut</p>
-          <p className="mt-1 text-sm font-black text-slate-950">{latestAvailabilityLabel(latestAvailability)}</p>
-          <p className="mt-1 text-xs font-semibold text-slate-500">{dateLabel((latestAvailability as any)?.created_at || (latestAvailability as any)?.createdAt)}</p>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {[
-            ['available', 'Disponible'],
-            ['limited', 'Sous condition'],
-            ['unavailable', 'Indisponible'],
-            ['emergency_backup', 'Urgence'],
-            ['day_off', 'Jour off'],
-            ['blackout', 'Blackout'],
-            ['transport_limited', 'Transport limité'],
-          ].map(([key, label]) => <button key={key} onClick={() => setAvailability(key)} className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1', availability === key ? 'bg-slate-950 text-white ring-slate-950' : 'bg-white text-slate-600 ring-slate-200')}>{label}</button>)}
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {[
-            ['status_update', 'Statut'],
-            ['day_off_request', 'Day off'],
-            ['blackout_date', 'Blackout'],
-            ['emergency_availability', 'Urgence'],
-            ['weekend_availability', 'Weekend'],
-            ['night_availability', 'Nuit'],
-            ['transport_readiness', 'Transport'],
-            ['zone_preference', 'Zones'],
-          ].map(([key, label]) => <button key={key} onClick={() => setAvailabilityType(key)} className={cx('rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] ring-1', availabilityType === key ? 'bg-blue-600 text-white ring-blue-600' : 'bg-blue-50 text-blue-700 ring-blue-100')}>{label}</button>)}
-        </div>
-      </EnterpriseCard>
+        body:has([data-carelink-schedule-r4-force="true"]) [class*="bg-slate-950"],
+        body:has([data-carelink-schedule-r4-force="true"]) [class*="bg-slate-950"] *,
+        body:has([data-carelink-schedule-r4-force="true"]) [class*="bg-[#000"],
+        body:has([data-carelink-schedule-r4-force="true"]) [class*="bg-[#000"] * {
+          color: #ffffff !important;
+          -webkit-text-fill-color: #ffffff !important;
+        }
 
-      <EnterpriseCard title="Fenêtre & blocage" subtitle="Déclaration datée pour indisponibilité, blackout ou disponibilité limitée." icon={<CalendarClock size={18} />}>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Début</span><input value={effectiveFrom} onChange={(event) => setEffectiveFrom(event.target.value)} type="datetime-local" className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold outline-none focus:border-sky-400" /></label>
-          <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Fin</span><input value={effectiveUntil} onChange={(event) => setEffectiveUntil(event.target.value)} type="datetime-local" className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold outline-none focus:border-sky-400" /></label>
-          <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Blackout date</span><input value={blackoutDate} onChange={(event) => setBlackoutDate(event.target.value)} type="date" className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold outline-none focus:border-sky-400" /></label>
-          <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Partie journée</span><select value={dayPart} onChange={(event) => setDayPart(event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold outline-none focus:border-sky-400"><option value="full_day">Journée</option><option value="morning">Matin</option><option value="afternoon">Après-midi</option><option value="evening">Soir</option><option value="night">Nuit</option></select></label>
-        </div>
-        {conflicts.length ? <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 p-3 text-sm font-bold leading-6 text-rose-700">Attention: {conflicts.length} mission(s) peuvent être impactées. OPS recevra un signal conflit disponibilité.</div> : null}
-      </EnterpriseCard>
+        body:has([data-carelink-schedule-r4-force="true"]) span[style],
+        body:has([data-carelink-schedule-r4-force="true"]) button span {
+          color: #ffffff !important;
+          -webkit-text-fill-color: #ffffff !important;
+        }
+      `}</style>
+      <span data-carelink-schedule-r4-force="true" className="hidden" />
+<section className="relative overflow-hidden rounded-[2.3rem] border border-blue-100 bg-white p-5 shadow-[0_28px_75px_rgba(29,78,216,0.13)]">
+        <div className="absolute -right-14 -top-16 h-44 w-44 rounded-full bg-blue-100 blur-3xl" />
+        <div className="absolute -bottom-16 left-0 h-44 w-44 rounded-full bg-emerald-100 blur-3xl" />
 
-      <EnterpriseCard title="Conditions roster" subtitle="Préférences terrain utiles à la planification: zones, weekend, nuit, urgence et transport." icon={<MapPin size={18} />}>
-        <div className="grid gap-3">
-          <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Zones préférées</span><input value={preferredZones} onChange={(event) => setPreferredZones(event.target.value)} placeholder="Rabat, Agdal, Hay Riad" className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none focus:border-sky-400" /></label>
-          <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Zones exclues</span><input value={excludedZones} onChange={(event) => setExcludedZones(event.target.value)} placeholder="Zone non souhaitée" className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold outline-none focus:border-sky-400" /></label>
+        <div className="relative">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.34em] text-blue-600">Planning synchronisé OPS</p>
+              <h1 className="mt-3 text-[2rem] font-black leading-[0.98] tracking-tight text-white">Roster cockpit</h1>
+              <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
+                Chaque action enregistre un vrai signal de disponibilité exploitable côté dispatch.
+              </p>
+            </div>
+
+            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-[1.4rem] bg-gradient-to-br from-slate-950 to-blue-700 text-white shadow-xl shadow-blue-100">
+              <CalendarClock size={30} />
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <GlassStat label="Roster" value={`${rosterCompleteness}%`} icon={<Wifi size={17} />} tone={rosterCompleteness >= 70 ? 'emerald' : rosterCompleteness >= 40 ? 'amber' : 'rose'} />
+            <GlassStat label="Ouvertes" value={openMissions.length} icon={<Route size={17} />} tone="blue" />
+            <GlassStat label="Aujourd’hui" value={todayMissions.length} icon={<CalendarClock size={17} />} tone="slate" />
+            <GlassStat label="Conflits" value={conflicts.length} icon={<ShieldAlert size={17} />} tone={conflicts.length ? 'rose' : 'emerald'} />
+          </div>
+
+          {savedMessage ? (
+            <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700">
+              {savedMessage}
+            </div>
+          ) : null}
+
+          <div className="mt-4 rounded-[1.5rem] bg-slate-950 p-4 text-white">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-200">Dernier signal roster</p>
+            <p className="mt-2 text-sm font-black">{latestAvailabilityLabel(currentRow)}</p>
+            <p className="mt-1 text-xs font-semibold text-slate-300">{dateLabel((currentRow as any)?.created_at || (currentRow as any)?.createdAt)}</p>
+          </div>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {[
-            { key: 'weekend', label: 'Weekend', value: weekendAvailable, setter: setWeekendAvailable },
-            { key: 'night', label: 'Nuit', value: nightAvailable, setter: setNightAvailable },
-            { key: 'emergency', label: 'Urgence', value: emergencyAvailable, setter: setEmergencyAvailable },
-            { key: 'transport', label: 'Transport prêt', value: transportReady, setter: setTransportReady },
-          ].map((item) => (
+      </section>
+
+      <EnterpriseCard title="1. Statut immédiat" subtitle="Définissez l’état que le dispatch doit respecter maintenant." icon={<Wifi size={18} />}>
+        <div className="grid grid-cols-2 gap-2">
+          {statusOptions.map(([key, label]) => (
             <button
-              key={item.key}
+              key={key}
               type="button"
-              onClick={() => item.setter(!item.value)}
-              className={cx('rounded-2xl px-3 py-4 text-xs font-black ring-1 transition', item.value ? 'bg-emerald-50 text-emerald-700 ring-emerald-100' : 'bg-slate-50 text-slate-500 ring-slate-200')}
+              onClick={() => setAvailability(key)}
+              className={cx(
+                'rounded-2xl px-3 py-4 text-xs font-black uppercase tracking-[0.14em] ring-1 transition active:scale-[0.98]',
+                availability === key ? 'bg-slate-950 text-white ring-slate-950 shadow-lg shadow-slate-200' : 'bg-white text-slate-600 ring-slate-200',
+              )}
             >
-              {item.label}: {item.value ? 'Oui' : 'Non'}
+              {label}
             </button>
           ))}
         </div>
-        <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Note disponibilité, contrainte transport, zone, horaire..." className="mt-4 min-h-24 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-400" />
-        <div className="mt-3 flex justify-end"><ActionButton disabled={busy} onClick={saveAvailability} tone={conflicts.length ? 'amber' : 'emerald'}>Synchroniser roster</ActionButton></div>
-      </EnterpriseCard>
 
-      <EnterpriseCard title="Historique disponibilité" subtitle="Dernières déclarations envoyées à OPS." icon={<RefreshCcw size={18} />}>
-        <div className="space-y-2">
-          {availabilityRows.slice(0, 6).map((item) => <div key={String(item.id)} className="rounded-2xl bg-slate-50 p-3"><div className="flex justify-between gap-3"><div><p className="text-sm font-black text-slate-950">{valueText(item.availability_status || item.availabilityStatus)}</p><p className="mt-1 text-xs font-semibold text-slate-500">{valueText(item.availability_type || item.availabilityType, 'status_update')} · {dateLabel(item.created_at || item.createdAt)}</p></div><StatusPill status={item.conflict_level || item.review_status || 'recorded'}>{valueText(item.conflict_level || item.review_status || 'recorded')}</StatusPill></div></div>)}
-          {!availabilityRows.length ? <EmptyMicro title="Aucune disponibilité publiée" body="Les déclarations roster envoyées à OPS apparaîtront ici." /> : null}
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <label className="grid gap-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Début</span>
+            <input value={effectiveFrom} onChange={(event) => setEffectiveFrom(event.target.value)} type="datetime-local" className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold outline-none" />
+          </label>
+
+          <label className="grid gap-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Fin</span>
+            <input value={effectiveUntil} onChange={(event) => setEffectiveUntil(event.target.value)} type="datetime-local" className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold outline-none" />
+          </label>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <ActionButton disabled={busy} onClick={() => saveRosterUpdate('status_update', availability, { section: 'immediate_status' })} tone="emerald">
+            Sauvegarder statut
+          </ActionButton>
         </div>
       </EnterpriseCard>
 
-      <EnterpriseCard title="Présence terrain" subtitle="Preuve mobile de shift, pause, retour et fin de journée." icon={<Clock3 size={18} />}>
+      <EnterpriseCard title="2. Type de demande" subtitle="Choisissez la nature exacte de la mise à jour roster." icon={<RefreshCcw size={18} />}>
         <div className="grid grid-cols-2 gap-2">
-          <ActionButton onClick={() => markPresence('shift_start')} tone="emerald">Start shift</ActionButton>
-          <ActionButton onClick={() => markPresence('pause_start')} tone="amber">Pause</ActionButton>
-          <ActionButton onClick={() => markPresence('pause_end')} tone="blue">Retour</ActionButton>
-          <ActionButton onClick={() => markPresence('shift_end')} tone="slate">End shift</ActionButton>
+          {requestTypes.map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setAvailabilityType(key)}
+              className={cx(
+                'rounded-2xl px-3 py-3 text-[10px] font-black uppercase tracking-[0.16em] ring-1 transition active:scale-[0.98]',
+                availabilityType === key ? 'bg-blue-600 text-white ring-blue-600 shadow-lg shadow-blue-100' : 'bg-blue-50 text-blue-700 ring-blue-100',
+              )}
+            >
+              {label}
+            </button>
+          ))}
         </div>
-        <div className="mt-4 space-y-2">
-          {presenceEvents.slice(0, 4).map((item) => <div key={String(item.id)} className="rounded-2xl bg-slate-50 p-3"><div className="flex justify-between"><p className="text-sm font-black text-slate-950">{valueText(item.event_type || item.eventType)}</p><p className="text-xs font-bold text-slate-500">{dateLabel(item.created_at || item.createdAt)}</p></div></div>)}
+
+        <div className="mt-4 grid gap-2">
+          <ScheduleSaveActionCard title="Publier statut général" body="Met à jour le signal principal utilisé par OPS Dispatch." disabled={busy} onClick={() => saveRosterUpdate('status_update', availability, { section: 'general_status' })} />
+          <ScheduleSaveActionCard title="Demander jour off" body="Enregistre un jour off contrôlé avec date/période si renseignée." disabled={busy} onClick={() => saveRosterUpdate('day_off_request', 'day_off', { section: 'day_off' })} />
+          <ScheduleSaveActionCard title="Bloquer blackout" body="Bloque une date précise pour éviter l’affectation." disabled={busy} onClick={() => saveRosterUpdate('blackout_date', 'blackout', { section: 'blackout' })} />
+          <ScheduleSaveActionCard title="Activer backup urgence" body="Signale une disponibilité de remplacement prioritaire." disabled={busy} onClick={() => saveRosterUpdate('emergency_availability', emergencyAvailable ? 'emergency_backup' : 'limited', { section: 'emergency_backup' })} />
         </div>
       </EnterpriseCard>
 
-      <EnterpriseCard title="Timeline missions" subtitle="Vue terrain claire, sans pagination, alignée avec dispatch." icon={<Route size={18} />}>
-        <div className="space-y-4">
-          {days.map((day) => (
-            <div key={day}>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.26em] text-sky-600">{day}</p>
-              <div className="space-y-3">
-                {records.filter((item) => (item.dateLabel || 'Non planifiée') === day).map((mission) => (
-                  <Link key={mission.id} href={`/carelink/missions/${mission.id}`} className="block rounded-[1.5rem] border border-slate-200 bg-slate-50 p-3 transition active:scale-[0.99]">
-                    <div className="flex items-start justify-between gap-3"><div><p className="text-sm font-black text-slate-950">{mission.familyName || 'Client'} · {mission.serviceType}</p><p className="mt-1 text-xs font-semibold text-slate-500">{mission.timeLabel || 'Horaire'} · {mission.zone || mission.city}</p></div><StatusPill status={mission.status}>{recordStatus(mission)}</StatusPill></div>
-                  </Link>
-                ))}
+      <EnterpriseCard title="3. Dates, jour off & blackout" subtitle="Les indisponibilités précises deviennent des signaux traçables côté OPS." icon={<CalendarClock size={18} />}>
+        <div className="grid gap-3">
+          <label className="grid gap-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Date blackout / jour off</span>
+            <input value={blackoutDate} onChange={(event) => setBlackoutDate(event.target.value)} type="date" className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none" />
+          </label>
+
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              ['full_day', 'Journée'],
+              ['morning', 'Matin'],
+              ['afternoon', 'Après-midi'],
+              ['night', 'Nuit'],
+              ['weekend', 'Weekend'],
+              ['custom', 'Custom'],
+            ].map(([key, label]) => (
+              <button key={key} type="button" onClick={() => setDayPart(key)} className={cx('rounded-2xl px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] ring-1', dayPart === key ? 'bg-slate-950 text-white ring-slate-950' : 'bg-white text-slate-600 ring-slate-200')}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <ActionButton disabled={busy || !blackoutDate} onClick={() => saveRosterUpdate('day_off_request', 'day_off', { section: 'date_day_off' })} tone="amber">Sauver jour off</ActionButton>
+            <ActionButton disabled={busy || !blackoutDate} onClick={() => saveRosterUpdate('blackout_date', 'blackout', { section: 'date_blackout' })} tone="rose">Sauver blackout</ActionButton>
+          </div>
+        </div>
+      </EnterpriseCard>
+
+      <EnterpriseCard title="4. Fenêtres hebdomadaires & charge" subtitle="Décrivez vos règles régulières en format simple exploitable par OPS." icon={<Route size={18} />}>
+        <div className="grid gap-3">
+          <textarea value={weeklyWindows} onChange={(event) => setWeeklyWindows(event.target.value)} rows={4} placeholder="Ex: Lundi-Vendredi 10:00-18:00; Samedi matin possible" className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none" />
+
+          <div className="grid grid-cols-2 gap-2">
+            <input value={workloadLimit} onChange={(event) => setWorkloadLimit(event.target.value)} placeholder="Limite charge" className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none" />
+            <select value={preferredShift} onChange={(event) => setPreferredShift(event.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none">
+              <option value="day">Journée</option>
+              <option value="morning">Matin</option>
+              <option value="afternoon">Après-midi</option>
+              <option value="night">Nuit</option>
+              <option value="weekend">Weekend</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end">
+            <ActionButton disabled={busy} onClick={() => saveRosterUpdate('status_update', availability, { section: 'weekly_windows' })} tone="blue">Sauver fenêtres</ActionButton>
+          </div>
+        </div>
+      </EnterpriseCard>
+
+      <EnterpriseCard title="5. Zones, transport & remplacement" subtitle="Les règles de distance et remplacement doivent être claires avant affectation." icon={<MapPin size={18} />}>
+        <div className="grid gap-3">
+          <input value={preferredZones} onChange={(event) => setPreferredZones(event.target.value)} placeholder="Zones préférées: Rabat, Agdal, Témara..." className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none" />
+          <input value={excludedZones} onChange={(event) => setExcludedZones(event.target.value)} placeholder="Zones exclues / contraintes" className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none" />
+
+          <div className="grid grid-cols-2 gap-2">
+            <ScheduleToggleCard active={weekendAvailable} onClick={() => setWeekendAvailable(!weekendAvailable)} title="Weekend" body={weekendAvailable ? 'Accepté' : 'Non accepté'} />
+            <ScheduleToggleCard active={nightAvailable} onClick={() => setNightAvailable(!nightAvailable)} title="Nuit" body={nightAvailable ? 'Acceptée' : 'Non acceptée'} />
+            <ScheduleToggleCard active={emergencyAvailable} onClick={() => setEmergencyAvailable(!emergencyAvailable)} title="Urgence" body={emergencyAvailable ? 'Disponible' : 'Non disponible'} />
+            <ScheduleToggleCard active={transportReady} onClick={() => setTransportReady(!transportReady)} title="Transport" body={transportReady ? 'Prêt' : 'Limité'} />
+          </div>
+
+          <select value={replacementMode} onChange={(event) => setReplacementMode(event.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none">
+            <option value="normal">Normal</option>
+            <option value="priority_backup">Backup prioritaire</option>
+            <option value="only_nearby">Seulement proximité</option>
+            <option value="not_replacement">Pas remplacement</option>
+          </select>
+
+          <div className="grid grid-cols-2 gap-2">
+            <ActionButton disabled={busy} onClick={() => saveRosterUpdate('zone_preference', transportReady ? 'available' : 'transport_limited', { section: 'zones_transport' })} tone="blue">Sauver zones</ActionButton>
+            <ActionButton disabled={busy} onClick={() => saveRosterUpdate('transport_readiness', transportReady ? 'available' : 'transport_limited', { section: 'transport_readiness' })} tone="slate">Sauver transport</ActionButton>
+          </div>
+        </div>
+      </EnterpriseCard>
+
+      <EnterpriseCard title="6. Note OPS & conflits" subtitle="Le contexte saisi ici accompagne chaque sauvegarde." icon={<ShieldAlert size={18} />}>
+        <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Ex: disponible uniquement Témara matin, éviter missions longues après 17h..." className="min-h-28 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none focus:border-blue-400" />
+
+        <div className="mt-3 space-y-2">
+          {conflicts.slice(0, 4).map((mission) => (
+            <div key={String(mission.id)} className="rounded-2xl bg-rose-50 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-black text-rose-900">{mission.familyName || mission.code || `Mission ${mission.id}`}</p>
+                <StatusPill status="conflict">Conflit</StatusPill>
+              </div>
+              <p className="mt-1 text-xs font-semibold text-rose-700">{mission.dateLabel || 'Date non planifiée'} · {valueText(mission.status)}</p>
+            </div>
+          ))}
+          {!conflicts.length ? <EmptyMicro title="Aucun conflit détecté" body="Votre disponibilité actuelle ne bloque pas les missions visibles." /> : null}
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <ActionButton disabled={busy} onClick={() => saveRosterUpdate(availabilityType, availability, { section: 'full_roster_sync' })} tone={conflicts.length ? 'amber' : 'emerald'}>Synchroniser roster complet</ActionButton>
+        </div>
+      </EnterpriseCard>
+
+      <EnterpriseCard title="Historique synchronisé" subtitle="Dernières demandes roster enregistrées côté mobile/OPS." icon={<RefreshCcw size={18} />}>
+        <div className="space-y-2">
+          {visibleRows.slice(0, 10).map((item) => (
+            <div key={String(item.id || `${item.availability_type}-${item.created_at}`)} className="rounded-2xl bg-slate-50 p-3">
+              <div className="flex justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-950">{valueText(item.availability_status || item.availabilityStatus)}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-500">{valueText(item.availability_type || item.availabilityType, 'status_update')} · {dateLabel(item.created_at || item.createdAt)}</p>
+                  {item.note ? <p className="mt-1 text-xs leading-5 text-slate-500">{valueText(item.note)}</p> : null}
+                </div>
+                <StatusPill status={item.conflict_level || item.review_status || 'recorded'}>{valueText(item.conflict_level || item.review_status, 'recorded')}</StatusPill>
               </div>
             </div>
           ))}
-          {!records.length ? <EmptyMicro title="Aucune mission publiée" body="Les missions assignées apparaîtront ici dès publication OPS." /> : null}
+          {!visibleRows.length ? <EmptyMicro title="Aucun roster enregistré" body="Sauvegardez un statut, une date ou une zone pour créer le premier enregistrement OPS." /> : null}
         </div>
       </EnterpriseCard>
     </PageShell>
   )
 }
+
+function ScheduleSaveActionCard({ title, body, disabled, onClick }: { title: string; body: string; disabled?: boolean; onClick: () => void }) {
+  return (
+    <button type="button" disabled={disabled} onClick={onClick} className="rounded-[1.35rem] border border-slate-200 bg-white p-4 text-left shadow-sm transition active:scale-[0.99] disabled:opacity-50">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-black text-slate-950">{title}</p>
+          <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">{body}</p>
+        </div>
+        <span className="rounded-full bg-slate-950 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white" style={{ color: "#fff" }}>Save</span>
+      </div>
+    </button>
+  )
+}
+
+function ScheduleToggleCard({ active, onClick, title, body }: { active: boolean; onClick: () => void; title: string; body: string }) {
+  return (
+    <button type="button" onClick={onClick} className={cx('rounded-2xl border p-4 text-left transition active:scale-[0.98]', active ? 'border-emerald-100 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-600')}>
+      <p className="text-sm font-black text-slate-950">{title}</p>
+      <p className="mt-1 text-xs font-bold">{body}</p>
+    </button>
+  )
+}
+
 
 export function EnterprisePaymentsScreen({ workspace, records, runCareLinkAction }: EnterpriseScreenProps) {
   const payments = workspace?.payments

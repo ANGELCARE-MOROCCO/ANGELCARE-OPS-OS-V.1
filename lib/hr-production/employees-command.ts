@@ -1,4 +1,5 @@
 import { getHRDashboardData } from './repository'
+import { createClient } from '@/lib/supabase/server'
 
 export type EmployeeCommandRow = Record<string, any> & {
   __sync?: {
@@ -23,6 +24,24 @@ function first(row: any, keys: string[], fallback = '—') {
   for (const key of keys) if (s(row?.[key])) return s(row[key])
   return fallback
 }
+
+function userBridgeKey(value: any) {
+  return lower(value)
+}
+
+function userBridgeEmail(row: any) {
+  return userBridgeKey(row?.email || row?.user_email || row?.username || row?.work_email || row?.personal_email)
+}
+
+function userBridgeIds(row: any) {
+  return [
+    row?.user_id,
+    row?.app_user_id,
+    row?.auth_user_id,
+    row?.profile_id,
+  ].map(userBridgeKey).filter(Boolean)
+}
+
 function employeeKeys(row: any) {
   return new Set([row?.id, row?.staff_id, row?.employee_id, row?.user_id, row?.profile_id, row?.email, row?.full_name, row?.name].map((x) => lower(x)).filter(Boolean))
 }
@@ -63,6 +82,34 @@ function risk(row: any, rel: Record<string, number>, ready: number) {
 
 export async function getHREmployeesCommandData() {
   const data = await getHRDashboardData()
+
+  let appUsers: any[] = []
+  try {
+    const supabase = await createClient()
+    const { data: users } = await supabase.from('app_users').select('*').limit(2000)
+    appUsers = Array.isArray(users) ? users : []
+  } catch {
+    appUsers = []
+  }
+
+  const usersById = new Map((appUsers.map((user) => [userBridgeKey(user?.id), user]).filter(([key]) => Boolean(key))) as Array<[string, Record<string, any>]>)
+  const usersByEmail = new Map((appUsers.map((user) => [userBridgeEmail(user), user]).filter(([key]) => Boolean(key))) as Array<[string, Record<string, any>]>)
+
+  function linkedUserForEmployee(employee: any) {
+    for (const candidate of userBridgeIds(employee)) {
+      const found = usersById.get(candidate)
+      if (found) return found
+    }
+
+    const email = userBridgeEmail(employee)
+    if (email) {
+      const found = usersByEmail.get(email)
+      if (found) return found
+    }
+
+    return null
+  }
+
   const employees: EmployeeCommandRow[] = (data.staff || []).map((employee: any) => {
     const keys = employeeKeys(employee)
     const rel = {
@@ -77,8 +124,23 @@ export async function getHREmployeesCommandData() {
       onboarding: countRelated(data.onboarding || [], keys),
     }
     const ready = readiness(employee, rel)
+    const linkedUser = linkedUserForEmployee(employee)
+    const linkedUserId = s(linkedUser?.id)
+    const linkedUserEmail = s(linkedUser?.email || linkedUser?.username)
+
     return {
       ...employee,
+      app_user_id: linkedUserId || employee.app_user_id || employee.user_id || null,
+      user_system_id: linkedUserId || null,
+      user_system_email: linkedUserEmail || s(employee.email || employee.user_email || employee.username),
+      user_system_href: linkedUserId ? `/users/${encodeURIComponent(linkedUserId)}` : linkedUserEmail ? `/users/${encodeURIComponent(linkedUserEmail)}` : '',
+      __userSystem: linkedUser ? {
+        id: linkedUserId,
+        email: linkedUserEmail,
+        username: s(linkedUser.username),
+        full_name: s(linkedUser.full_name || linkedUser.name || linkedUser.display_name),
+        href: linkedUserId ? `/users/${encodeURIComponent(linkedUserId)}` : '',
+      } : null,
       __sync: { ...rel, readiness: ready, risk: risk(employee, rel, ready), profileKey: first(employee, ['id', 'user_id', 'profile_id', 'email', 'full_name'], 'unknown') },
     }
   })
@@ -99,7 +161,7 @@ export async function getHREmployeesCommandData() {
 
   return {
     loadedAt: data.loadedAt,
-    errors: data.errors || {},
+    errors: data.errors || ({} as Record<string, any>),
     employees,
     active,
     archived,

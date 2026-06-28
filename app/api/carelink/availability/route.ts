@@ -77,6 +77,10 @@ export async function POST(request: Request) {
       emergencyAvailable?: boolean | string | null
       transportReady?: boolean | string | null
       conflictLevel?: string | null
+      weeklyWindows?: unknown
+      workloadLimit?: number | string | null
+      preferredShift?: string | null
+      replacementMode?: string | null
       metadata?: Record<string, unknown>
     }
     const session = body.missionId
@@ -102,7 +106,14 @@ export async function POST(request: Request) {
       emergency_available: asBool(body.emergencyAvailable),
       transport_ready: asBool(body.transportReady),
       conflict_level: body.conflictLevel || null,
-      metadata: { source: 'carelink_mobile_p14', ...(body.metadata || {}) },
+      metadata: {
+        source: 'carelink_mobile_p14',
+        weekly_windows: body.weeklyWindows || null,
+        workload_limit: body.workloadLimit || null,
+        preferred_shift: body.preferredShift || null,
+        replacement_mode: body.replacementMode || null,
+        ...(body.metadata || {}),
+      },
     }
 
     const { data, error } = await session.supabase

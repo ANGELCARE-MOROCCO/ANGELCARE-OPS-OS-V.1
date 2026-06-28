@@ -923,6 +923,10 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
                         <tbody className="bg-white">
                           {filtered.map((e) => {
                             const id = value(e, ['id'], '')
+                            const userSystemHref = String(e?.__userSystem?.href || e?.user_system_href || '').trim()
+                            const userSystemId = String(e?.__userSystem?.id || e?.user_system_id || e?.app_user_id || '').trim()
+                            const userSystemEmail = String(e?.__userSystem?.email || e?.user_system_email || e?.email || e?.user_email || e?.username || '').trim()
+                            const opsLayerHref = userSystemHref || (userSystemId ? `/users/${encodeURIComponent(userSystemId)}` : userSystemEmail ? `/users/${encodeURIComponent(userSystemEmail)}` : '/users')
                             const name = value(e, ['full_name', 'name', 'email'], 'Unnamed employee')
                             const email = value(e, ['email', 'phone'], 'No contact')
                             const role = value(e, ['position', 'job_title', 'role'], 'Role not defined')
@@ -1058,7 +1062,8 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
                                       Open 360
                                     </button>
                                     <Link
-                                      href={id ? `/hr/employees/${id}` : '/hr/attendance'}
+                                      href={opsLayerHref}
+                                      title="Open employee user system profile"
                                       className="rounded-full border border-violet-100 bg-white px-4 py-2 text-xs font-black text-violet-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-violet-50"
                                     >
                                       Ops layer

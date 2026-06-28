@@ -106,8 +106,8 @@ export default async function CareLinkMobileLoginPage({ searchParams }: { search
             <span className="text-[11px] font-black uppercase tracking-[.18em] text-slate-500">Login email</span>
             <input
               name="identifier"
-              type="email"
-              inputMode="email"
+              type="text"
+              inputMode="text"
               autoComplete="username"
               placeholder="agent@angelcare.ma"
               className="mt-2 h-14 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base font-extrabold text-slate-950 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-4 focus:ring-blue-100"

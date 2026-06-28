@@ -28,3 +28,13 @@ coverage
 carelink-p*.patch
 tsconfig.tsbuildinfo
 *.backup-*
+
+# Local AI patch packs / temporary generated patch folders
+*-patch-pack/
+*_patch_pack/
+carelink-*-patch-pack/
+carelink_*_patch_pack/
+*.patch
+*.diff
+*.zip
+*audit*.txt

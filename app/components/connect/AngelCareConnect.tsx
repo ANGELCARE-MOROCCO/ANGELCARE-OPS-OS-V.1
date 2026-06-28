@@ -302,6 +302,16 @@ function attachmentIsPdf(attachment: AttachmentPreview) {
   return attachment.contentType === "application/pdf" || attachment.filename.toLowerCase().endsWith(".pdf")
 }
 
+
+const CONNECT_PRIVATE_CONTACT_LABEL = "Coordonnées protégées"
+
+function connectPublicStaffSubtitle(member?: StaffUser | null) {
+  return [member?.job_title, member?.role, member?.department]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean)
+    .join(" · ") || "AngelCare staff"
+}
+
 function readLabel(message: Message, selected?: Conversation | null) {
   const readers = (message.read_by || []).filter((reader) => reader.name || reader.user_id)
   if (readers.length > 0) {
@@ -316,16 +326,23 @@ export default function AngelCareConnect({
   embedded = false,
   defaultOpen = false,
   forceFloating = false,
+  mobileEmbedded = false,
+  hideContactDetails = true,
+  disableStaffDirectory = false,
 }: {
   embedded?: boolean
   defaultOpen?: boolean
   forceFloating?: boolean
+  mobileEmbedded?: boolean
+  hideContactDetails?: boolean
+  disableStaffDirectory?: boolean
 } = {}) {
   const floating = !embedded || forceFloating
   const [open, setOpen] = useState(embedded || defaultOpen)
   const [panelSize, setPanelSize] = useState<PanelSize>("expanded")
   const [mode, setMode] = useState<ConnectMode>("direct")
   const [selectedId, setSelectedId] = useState("")
+  const [mobilePane, setMobilePane] = useState<"list" | "thread">("list")
   const [query, setQuery] = useState("")
   const [draft, setDraft] = useState("")
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -426,6 +443,10 @@ export default function AngelCareConnect({
   useEffect(() => {
     selectedIdRef.current = selectedId
   }, [selectedId])
+
+  useEffect(() => {
+    if (mobileEmbedded && selectedId) setMobilePane("thread")
+  }, [mobileEmbedded, selectedId])
 
   useEffect(() => {
     if (!shouldStartAutoRefresh()) return
@@ -728,7 +749,10 @@ export default function AngelCareConnect({
   }
 
   function openConnectContext(conversationId?: string | null, nextMode?: ConnectMode) {
-    if (conversationId) setSelectedId(conversationId)
+    if (conversationId) {
+      setSelectedId(conversationId)
+      if (mobileEmbedded) setMobilePane("thread")
+    }
     if (nextMode) changeMode(nextMode)
     setPanelOpen(true)
   }
@@ -791,7 +815,7 @@ export default function AngelCareConnect({
     const normalized = query.trim().toLowerCase()
     const list = staff.filter((member) => member.id !== currentUser?.id)
     if (!normalized) return list.slice(0, 10)
-    return list.filter((member) => [member.name, member.email, member.department, member.role, member.job_title]
+    return list.filter((member) => [member.name, member.department, member.role, member.job_title]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalized))).slice(0, 12)
   }, [staff, currentUser?.id, query])
@@ -800,7 +824,7 @@ export default function AngelCareConnect({
     const normalized = roomSearch.trim().toLowerCase()
     const list = staff.filter((member) => member.id !== currentUser?.id)
     if (!normalized) return list.slice(0, 80)
-    return list.filter((member) => [member.name, member.email, member.department, member.role, member.job_title]
+    return list.filter((member) => [member.name, member.department, member.role, member.job_title]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalized))).slice(0, 80)
   }, [staff, currentUser?.id, roomSearch])
@@ -809,7 +833,7 @@ export default function AngelCareConnect({
     const normalized = taskSearch.trim().toLowerCase()
     const list = staff.filter((member) => member.id !== currentUser?.id)
     if (!normalized) return list.slice(0, 120)
-    return list.filter((member) => [member.name, member.email, member.department, member.role, member.job_title]
+    return list.filter((member) => [member.name, member.department, member.role, member.job_title]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalized))).slice(0, 120)
   }, [staff, currentUser?.id, taskSearch])
@@ -968,6 +992,11 @@ export default function AngelCareConnect({
   }
 
   async function createDirectConversation(target: StaffUser) {
+    if (disableStaffDirectory) {
+      setError("Le démarrage de conversations privées est désactivé sur CareLink Mobile.")
+      return
+    }
+
     setError(null)
     try {
       const payload = await readJson<{ conversation: Conversation }>("/api/connect/conversations", {
@@ -1325,11 +1354,19 @@ export default function AngelCareConnect({
         }
     : undefined
 
-  const sidebarWidth = panelSize === "narrow" ? "w-[292px]" : "w-[310px]"
-  const showRightPanel = rightPanelOpen && panelSize === "expanded"
+  const sidebarWidth = mobileEmbedded ? "w-full" : panelSize === "narrow" ? "w-[292px]" : "w-[310px]"
+  const showRightPanel = !mobileEmbedded && rightPanelOpen && panelSize === "expanded"
 
   return (
-    <section data-connect-shell className={shellClass} style={shellStyle} aria-label="AngelCare Connect messenger">
+    <section
+      data-connect-shell
+      data-connect-mobile-embedded={mobileEmbedded ? "true" : undefined}
+      data-connect-mobile-pane={mobileEmbedded ? mobilePane : undefined}
+      data-connect-staff-directory-disabled={disableStaffDirectory ? "true" : undefined}
+      className={shellClass}
+      style={shellStyle}
+      aria-label="AngelCare Connect messenger"
+    >
       {toastAlerts.length > 0 && (
         <div className="pointer-events-none fixed right-5 top-5 z-[98] flex w-[min(380px,calc(100vw-32px))] flex-col gap-2">
           {toastAlerts.map((alert) => (
@@ -1355,7 +1392,7 @@ export default function AngelCareConnect({
           ))}
         </div>
       )}
-      <aside className={cx("flex min-h-0 shrink-0 flex-col border-r border-slate-200 bg-white", sidebarWidth)}>
+      <aside className={cx("flex min-h-0 shrink-0 flex-col border-r border-slate-200 bg-white", sidebarWidth, mobileEmbedded && mobilePane === "thread" && "hidden")}>
         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
           <button className="flex min-w-0 items-center gap-2 text-left">
             <span className="truncate text-base font-black text-slate-950">
@@ -1455,7 +1492,7 @@ export default function AngelCareConnect({
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center">
               <UserRound className="mx-auto h-8 w-8 text-slate-400" />
               <p className="mt-3 text-sm font-black text-slate-800">No conversations found</p>
-              <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">Search staff below or create a team room.</p>
+              <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">{disableStaffDirectory ? 'Les conversations autorisées apparaîtront ici.' : 'Search staff below or create a team room.'}</p>
             </div>
           )}
 
@@ -1463,7 +1500,7 @@ export default function AngelCareConnect({
             <div className="mt-5 border-t border-slate-100 pt-4">
               <p className="mb-2 px-2 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Start private chat</p>
               {staffResults.map((member) => (
-                <button key={member.id} onClick={() => void createDirectConversation(member)} className="mb-1 flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-slate-50">
+                <button data-connect-staff-directory-item="true" key={member.id} onClick={() => { if (mobileEmbedded) setMobilePane("thread"); void createDirectConversation(member) }} className="mb-1 flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-slate-50">
                   <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-600">
                     {initials(member.name)}
                     <span className={cx("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusTone(member.status))} />
@@ -1480,7 +1517,17 @@ export default function AngelCareConnect({
         </div>
       </aside>
 
-      <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
+      <main className={cx("flex min-h-0 min-w-0 flex-1 flex-col bg-white", mobileEmbedded && mobilePane === "list" && "hidden")}>
+        {mobileEmbedded ? (
+          <button
+            type="button"
+            onClick={() => setMobilePane("list")}
+            className="mx-4 mt-4 inline-flex items-center justify-center rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-white shadow-lg"
+            style={{ color: "#ffffff" }}
+          >
+            ← Conversations
+          </button>
+        ) : null}
         <header onPointerDown={(event) => beginWidgetDrag(event, "panel")} className={cx("flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4", floating && "cursor-move")}>
           <div className="flex min-w-0 items-center gap-3">
             <span className="relative grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-violet-100 to-slate-100 text-sm font-black text-violet-700">
@@ -1776,8 +1823,8 @@ export default function AngelCareConnect({
             <section>
               <h4 className="text-sm font-black text-slate-950">About</h4>
               <dl className="mt-3 space-y-3 text-sm">
-                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Email</dt><dd className="truncate font-bold text-slate-700">{selectedMember?.email || currentUser?.email || "—"}</dd></div>
-                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Phone</dt><dd className="font-bold text-slate-700">{selectedMember?.phone || "—"}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Email</dt><dd className="truncate font-bold text-slate-700">{hideContactDetails ? CONNECT_PRIVATE_CONTACT_LABEL : (selectedMember?.email || currentUser?.email || "—")}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Phone</dt><dd className="font-bold text-slate-700">{hideContactDetails ? CONNECT_PRIVATE_CONTACT_LABEL : (selectedMember?.phone || currentUser?.phone || "—")}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Department</dt><dd className="truncate font-bold text-slate-700">{selectedMember?.department || selected?.department || "—"}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="font-semibold text-slate-500">Privacy</dt><dd className="truncate font-bold text-slate-700">{selected?.privacy_level || "—"}</dd></div>
               </dl>
@@ -1944,7 +1991,7 @@ export default function AngelCareConnect({
                 {taskMemberResults.map((member) => {
                   const checked = selectedTaskAssignees.includes(member.id)
                   return (
-                    <button key={member.id} onClick={() => toggleTaskAssignee(member.id)} className={cx("flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition", checked ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50")}>
+                    <button data-connect-staff-directory-item="true" key={member.id} onClick={() => toggleTaskAssignee(member.id)} className={cx("flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition", checked ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50")}>
                       <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-700">{initials(member.name)}<span className={cx("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusTone(member.status))} /></span>
                       <span className="min-w-0 flex-1"><span className="block truncate text-sm font-black text-slate-950">{member.name}</span><span className="block truncate text-xs font-bold text-slate-500">{member.department || "AngelCare"} · {member.job_title || member.role || "staff"}</span></span>
                       <span className={cx("grid h-6 w-6 place-items-center rounded-full border text-xs font-black", checked ? "border-emerald-600 bg-emerald-600 text-white" : "border-slate-300 text-slate-300")}>{checked ? <Check className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}</span>
@@ -1993,7 +2040,7 @@ export default function AngelCareConnect({
                 {roomMemberResults.map((member) => {
                   const checked = selectedRoomMembers.includes(member.id)
                   return (
-                    <button key={member.id} onClick={() => toggleRoomMember(member.id)} className={cx("flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition", checked ? "border-violet-300 bg-violet-50" : "border-slate-200 bg-white hover:bg-slate-50")}>
+                    <button data-connect-staff-directory-item="true" key={member.id} onClick={() => toggleRoomMember(member.id)} className={cx("flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition", checked ? "border-violet-300 bg-violet-50" : "border-slate-200 bg-white hover:bg-slate-50")}>
                       <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-700">
                         {initials(member.name)}
                         <span className={cx("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusTone(member.status))} />
