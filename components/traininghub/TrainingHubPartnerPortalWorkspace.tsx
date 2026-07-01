@@ -1,6 +1,6 @@
 'use client'
 
-import TrainingHubPartnerScopeGuardPanel from './TrainingHubPartnerScopeGuardPanel'
+import TrainingHubPartnerBusinessPortalBoard from './TrainingHubPartnerBusinessPortalBoard'
 import type { CSSProperties, ReactNode } from 'react'
 import { useState } from 'react'
 import AngelCareLogo from '@/components/brand/AngelCareLogo'
@@ -192,7 +192,7 @@ export default function TrainingHubPartnerPortalWorkspace({
           </div>
 
           <div style={heroGridStyle}>
-            <TrainingHubPartnerScopeGuardPanel />
+      <TrainingHubPartnerBusinessPortalBoard />
 
       <section style={heroStoryStyle}>
               <div style={kickerStyle}>ANGELCARE • PARTNER EXPERIENCE</div>
@@ -621,8 +621,6 @@ const emptyIconStyle: CSSProperties = { fontSize: 28, color: '#94a3b8', marginBo
 const emptyTitleStyle: CSSProperties = { fontWeight: 950, color: '#334155', marginBottom: 4 }
 const emptyTextStyle: CSSProperties = { fontSize: 12, lineHeight: 1.5, fontWeight: 650 }
 
-
-
 const partnerIdentityGlowStyle: CSSProperties = {
   position: 'absolute',
   right: -60,
@@ -764,7 +762,6 @@ const partnerMiniStatStyle: CSSProperties = {
   border: '1px solid rgba(255,255,255,.13)',
   color: '#fff',
 }
-
 
 const compactIdentityGlowStyle: CSSProperties = {
   position: 'absolute',
