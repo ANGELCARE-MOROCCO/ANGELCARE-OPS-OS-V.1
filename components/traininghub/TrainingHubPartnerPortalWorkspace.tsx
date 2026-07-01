@@ -1,6 +1,7 @@
 'use client'
 
 import TrainingHubPartnerBusinessPortalBoard from './TrainingHubPartnerBusinessPortalBoard'
+import TrainingHubPartnerHeroIdentitySplit from './TrainingHubPartnerHeroIdentitySplit'
 import type { CSSProperties, ReactNode } from 'react'
 import { useState } from 'react'
 import AngelCareLogo from '@/components/brand/AngelCareLogo'
@@ -192,22 +193,9 @@ export default function TrainingHubPartnerPortalWorkspace({
           </div>
 
           <div style={heroGridStyle}>
+      <TrainingHubPartnerHeroIdentitySplit />
+
       <TrainingHubPartnerBusinessPortalBoard />
-
-      <section style={heroStoryStyle}>
-              <div style={kickerStyle}>ANGELCARE • PARTNER EXPERIENCE</div>
-              <h1 style={heroTitleStyle}>Votre montée en gamme devient visible.</h1>
-              <p style={heroSubtitleStyle}>
-                Une vue direction simple et premium pour suivre ce qui compte vraiment : formations activées, équipe formée,
-                refresh disponibles, certificats et preuves de progression.
-              </p>
-
-              <div style={heroActionsStyle}>
-                <a href="#trainings" style={primaryActionStyle}>Voir mes formations</a>
-                <a href="#academy" style={secondaryActionStyle}>Ouvrir le refresh</a>
-                <a href="#proof" style={ghostActionStyle}>Preuves & kits</a>
-              </div>
-</section>
 
             <aside style={controlPanelStyle}>
               <div style={compactIdentityGlowStyle} />
@@ -216,7 +204,7 @@ export default function TrainingHubPartnerPortalWorkspace({
                 <div style={compactIdentityMainStyle}>
                   <div style={partnerCompactAvatarStyle}>{initials(organization?.name || context.profile.full_name)}</div>
                   <div style={compactIdentityCopyStyle}>
-                    <div style={compactOverlineStyle}>Identité partenaire</div>
+
                     <h2 style={compactPartnerNameStyle}>{organization?.name || 'Partenaire AngelCare'}</h2>
                     <p style={compactPartnerMetaStyle}>
                       {organization?.city || sites[0]?.city || 'Maroc'} • {Math.max(sites.length, 1)} site • {context.roles[0]?.code || 'partner_owner'}

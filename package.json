@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 node --max-old-space-size=8192 ./node_modules/next/dist/bin/next build --webpack",
     "start": "next start",
     "scan:routes": "node scripts/scan-app-routes.mjs",
     "verify:email-os": "node scripts/verify-email-os-production.mjs",

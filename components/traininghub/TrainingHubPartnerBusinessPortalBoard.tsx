@@ -118,8 +118,10 @@ export default function TrainingHubPartnerBusinessPortalBoard() {
     return (
       <section style={panelStyle}>
         <div style={eyebrowStyle}>ESPACE PARTENAIRE</div>
-        <h2 style={titleStyle}>Portail formation</h2>
-        <div style={alertStyle}>{message}</div>
+        <h2 style={titleStyle}>Votre espace formation est en préparation</h2>
+        <div style={alertStyle}>
+          Le portail partenaire n’a pas encore trouvé de dossier formation rattaché à cette session. Votre équipe AngelCare peut rattacher l’établissement, activer l’accès ou vérifier le compte partenaire.
+        </div>
       </section>
     )
   }
@@ -140,8 +142,7 @@ export default function TrainingHubPartnerBusinessPortalBoard() {
           <small>{clean(data?.organization?.city || data?.organization?.metadata?.city, 'Ville non renseignée')} • {statusLabel(data?.organization?.status)}</small>
         </div>
       </div>
-
-      <div style={progressGridStyle}>
+<div style={progressGridStyle}>
         <div style={progressCardStyle}>
           <div style={progressTopStyle}>
             <span>Progression formation</span>
@@ -254,3 +255,4 @@ const stepStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 8
 const stepActiveStyle: CSSProperties = { ...stepStyle, background: '#ecfdf5', borderColor: '#bbf7d0', color: '#047857' }
 const helpStyle: CSSProperties = { display: 'grid', gap: 5, borderRadius: 18, padding: 14, background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1d4ed8', fontWeight: 850 }
 const alertStyle: CSSProperties = { marginTop: 12, borderRadius: 18, padding: 14, background: '#fff7ed', border: '1px solid #fed7aa', color: '#c2410c', fontWeight: 850 }
+
