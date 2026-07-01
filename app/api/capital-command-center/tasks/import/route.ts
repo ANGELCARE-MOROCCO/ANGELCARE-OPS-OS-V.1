@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createResource, listResource, logActivity } from '@/lib/capital-command-center/tasks-store'
+import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, runAc360WiredAction } from '@/lib/ac360/action-wiring'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -123,32 +124,43 @@ export async function POST(request: NextRequest) {
     const defaults = isPlainObject(body?.defaults) ? body.defaults : {}
     const importBatchId = String(body?.import_batch_id || `tasks_csv_${Date.now()}`).slice(0, 120)
     const filename = String(body?.filename || '').slice(0, 240)
-    const lookups = await nameLookup()
-    const inserted: AnyRecord[] = []
-    const failed: AnyRecord[] = []
 
-    for (let i = 0; i < rows.length; i++) {
-      const row = isPlainObject(rows[i]) ? rows[i] : {}
-      const normalized = normalizeIncomingTask(row, lookups, defaults, importBatchId, filename, i + 2)
-      if (normalized.failed.length) {
-        failed.push({ row: i + 2, error: normalized.failed.join(', ') })
-        continue
-      }
-      try {
-        const created = await createResource('tasks', normalized.payload)
-        inserted.push(created)
-        await logActivity({
-          action: 'task.imported',
-          task_id: created?.id,
-          actor_name: 'Tasks CSV Import',
-          after: { id: created?.id, title: created?.title, import_batch_id: importBatchId, filename, row: i + 2 },
-        })
-      } catch (error: any) {
-        failed.push({ row: i + 2, title: row.title || null, error: error?.message || 'Insert failed' })
-      }
-    }
+    const guarded = await runAc360WiredAction('capital.tasks.import', async () => {
+      const lookups = await nameLookup()
+      const inserted: AnyRecord[] = []
+      const failed: AnyRecord[] = []
 
-    return NextResponse.json({ ok: true, data: { inserted_count: inserted.length, failed_count: failed.length, inserted, failed, import_batch_id: importBatchId } })
+      for (let i = 0; i < rows.length; i++) {
+        const row = isPlainObject(rows[i]) ? rows[i] : {}
+        const normalized = normalizeIncomingTask(row, lookups, defaults, importBatchId, filename, i + 2)
+        if (normalized.failed.length) {
+          failed.push({ row: i + 2, error: normalized.failed.join(', ') })
+          continue
+        }
+        try {
+          const created = await createResource('tasks', normalized.payload)
+          inserted.push(created)
+          await logActivity({
+            action: 'task.imported',
+            task_id: created?.id,
+            actor_name: 'Tasks CSV Import',
+            after: { id: created?.id, title: created?.title, import_batch_id: importBatchId, filename, row: i + 2, ac360_guarded: true },
+          })
+        } catch (error: any) {
+          failed.push({ row: i + 2, title: row.title || null, error: error?.message || 'Insert failed' })
+        }
+      }
+
+      return { inserted_count: inserted.length, failed_count: failed.length, inserted, failed, import_batch_id: importBatchId }
+    }, {
+      orgId: body.orgId || body.org_id,
+      quantity: rows.length,
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('capital.tasks.import', `${importBatchId}:${rows.length}`),
+      metadata: { importBatchId, filename, rowCount: rows.length, source: 'api.capital-command-center.tasks.import.POST' },
+    })
+
+    if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
+    return NextResponse.json({ ok: true, data: guarded.data, ac360: { guard: guarded.guard, usage: guarded.usage } })
   } catch (error: any) {
     return NextResponse.json({ ok: false, error: error?.message || 'Unable to import tasks' }, { status: 500 })
   }

@@ -11,7 +11,22 @@ type LoginUser = {
   permissions?: string[] | null
 }
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ error?: string | string[] }>
+}) {
+  const params = searchParams ? await searchParams : {}
+  const errorCode = Array.isArray(params.error) ? params.error[0] : params.error
+  const loginError =
+    errorCode === 'missing'
+      ? 'Veuillez saisir le nom utilisateur et le mot de passe.'
+      : errorCode === 'invalid'
+        ? 'Identifiants incorrects.'
+        : errorCode === 'server'
+          ? 'Connexion indisponible pour le moment. Réessayez.'
+          : null
+
   async function loginAction(formData: FormData) {
     'use server'
 
@@ -19,7 +34,7 @@ export default function LoginPage() {
     const password = String(formData.get('password') || '')
 
     if (!username || !password) {
-      throw new Error('Nom utilisateur et mot de passe obligatoires.')
+      redirect('/login?error=missing')
     }
 
     const supabase = await createClient()
@@ -29,23 +44,30 @@ export default function LoginPage() {
       input_password: password,
     })
 
-    if (error) throw new Error(error.message)
-
-    const rpcUser = Array.isArray(data) ? (data[0] as LoginUser | undefined) : (data as LoginUser | null)
-
-    if (!rpcUser?.id) {
-      throw new Error('Identifiants incorrects.')
+    if (error) {
+      redirect('/login?error=invalid')
     }
 
-    const { data: fullUser, error: fullUserError } = await supabase
-      .from('app_users')
-      .select('id, role, permissions')
-      .eq('id', rpcUser.id)
-      .single()
+    const rpcRow = Array.isArray(data) ? data[0] : data
+    const rpcUserId =
+      typeof rpcRow === 'string'
+        ? rpcRow
+        : rpcRow && typeof rpcRow === 'object' && 'id' in rpcRow
+          ? String((rpcRow as LoginUser).id || '')
+          : ''
 
-    if (fullUserError) throw new Error(fullUserError.message)
+    if (!rpcUserId) {
+      redirect('/login?error=invalid')
+    }
 
-    const user = fullUser as LoginUser
+    const user = {
+      id: rpcUserId,
+      role: rpcRow && typeof rpcRow === 'object' && 'role' in rpcRow ? String((rpcRow as any).role || '') : null,
+      permissions:
+        rpcRow && typeof rpcRow === 'object' && Array.isArray((rpcRow as any).permissions)
+          ? (rpcRow as any).permissions
+          : [],
+    } as LoginUser
 
     const token = crypto.randomUUID()
     const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000)
@@ -56,7 +78,9 @@ export default function LoginPage() {
       expires_at: expiresAt.toISOString(),
     })
 
-    if (sessionError) throw new Error(sessionError.message)
+    if (sessionError) {
+      redirect('/login?error=server')
+    }
 
     await supabase
       .from('app_users')
@@ -118,6 +142,8 @@ export default function LoginPage() {
           <h1 style={titleStyle}>Connexion équipe</h1>
           <p style={textStyle}>Accès réservé aux utilisateurs créés par CEO ou Manager.</p>
 
+          {loginError ? <div style={formErrorStyle}>{loginError}</div> : null}
+
           <form action={loginAction} style={formStyle}>
             <label style={fieldStyle}>
               <span style={labelStyle}>Nom utilisateur</span>
@@ -137,6 +163,18 @@ export default function LoginPage() {
       </section>
     </main>
   )
+}
+
+
+const formErrorStyle: React.CSSProperties = {
+  border: '1px solid rgba(239, 68, 68, .22)',
+  background: 'rgba(254, 242, 242, .96)',
+  color: '#b91c1c',
+  borderRadius: 16,
+  padding: '12px 14px',
+  fontSize: 13,
+  fontWeight: 800,
+  marginBottom: 14,
 }
 
 const pageStyle: React.CSSProperties = {
