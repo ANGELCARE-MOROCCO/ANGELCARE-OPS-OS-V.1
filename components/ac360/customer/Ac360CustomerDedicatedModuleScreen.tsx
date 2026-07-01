@@ -163,7 +163,7 @@ function RouteHero({ route, module, live, onOpenCommand }: { route: Ac360Dedicat
       <div className="grid gap-6 xl:grid-cols-[1.45fr_0.75fr]">
         <div>
           <div className="flex flex-wrap gap-2">
-            <SmallBadge className="border-blue-200 bg-white text-blue-800">Phase 3G · Live records & formulaires</SmallBadge>
+            <SmallBadge className="border-blue-200 bg-white text-blue-800">Phase 3H · Formulaires live & recovery</SmallBadge>
             <SmallBadge className="border-slate-200 bg-white text-slate-700">FR Maroc natif</SmallBadge>
             <SmallBadge className="border-emerald-200 bg-emerald-50 text-emerald-800">Thème blanc premium</SmallBadge>
           </div>
@@ -357,7 +357,7 @@ export function Ac360CustomerDedicatedModuleScreen({ route }: { route: Ac360Dedi
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] text-slate-950" data-ac360-phase3g="live-records-real-tables" data-ac360-phase3f="outcomes-bulk-saved-views">
+    <div className="min-h-screen bg-[#f7f9fc] text-slate-950" data-ac360-phase3h="live-forms-preflight-recovery" data-ac360-phase3g="live-records-real-tables" data-ac360-phase3f="outcomes-bulk-saved-views">
       <TopModuleBar route={route} module={module} live={live} refreshing={refreshing} onRefresh={refreshLive} />
       <div className="mx-auto flex max-w-[1900px]">
         <DedicatedLeftNav activeSlug={route.slug} />
@@ -367,7 +367,7 @@ export function Ac360CustomerDedicatedModuleScreen({ route }: { route: Ac360Dedi
             <span>›</span>
             <span>{route.label}</span>
             <span>›</span>
-            <span>Route dédiée Phase 3G</span>
+            <span>Route dédiée Phase 3H</span>
           </div>
           <RouteHero route={route} module={module} live={live} onOpenCommand={setActiveCommand} />
           <InPageNav route={route} />
@@ -385,7 +385,7 @@ export function Ac360CustomerDedicatedModuleScreen({ route }: { route: Ac360Dedi
       </div>
       <div className="sticky bottom-0 z-20 border-t border-slate-200 bg-white/95 px-5 py-3 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1800px] flex-wrap items-center justify-between gap-3 text-xs font-black uppercase tracking-[0.14em] text-slate-500">
-          <span>AC360 Phase 3G · Live records · Formulaires métier · Tables réelles · FR Maroc</span>
+          <span>AC360 Phase 3H · Pré-vol inline · Recovery client · Payloads réels · FR Maroc</span>
           <span>Plan : {live?.context.planName || 'Command'} · Crédits : {live?.billing.creditPercent ?? 82}% · Endpoint : {route.endpoint}</span>
         </div>
       </div>

@@ -17,7 +17,7 @@ export type Ac360CustomerCommand = {
   shortLabel: string
   description: string
   businessImpact: string
-  wiringKey: Ac360WiringKey | string
+  wiringKey: Ac360WiringKey | string | string
   targetEndpoint: string
   method: 'POST' | 'PATCH' | 'PUT' | 'DELETE'
   quantity: number
@@ -30,7 +30,7 @@ export type Ac360CustomerCommand = {
   recommendedNext?: string[]
 }
 
-const phase = 'phase_3e_customer_command_execution'
+const phase = 'phase_3h_live_forms_preflight_recovery'
 
 const baseMeta = (moduleKey: string, commandKey: string) => ({
   source: 'ac360_customer_command_modal',
@@ -164,7 +164,7 @@ export const ac360CustomerCommands: Ac360CustomerCommand[] = [
     shortLabel: 'Générer rapport',
     description: 'Créer une demande de rapport avec contrôle plan, crédits rapport, stockage et audit.',
     businessImpact: 'Produit un livrable de pilotage ou preuve opérationnelle pour direction, parents ou finance.',
-    wiringKey: 'ac360.school_documents.report_job.queue',
+    wiringKey: 'ac360.school_documents.report_job.queue' as any,
     targetEndpoint: '/api/ac360/school-documents/reports/queue',
     method: 'POST',
     quantity: 1,
@@ -186,7 +186,7 @@ export const ac360CustomerCommands: Ac360CustomerCommand[] = [
     shortLabel: 'Créer tâche',
     description: 'Créer une tâche assignable avec gouvernance, priorité, deadline et preuve.',
     businessImpact: 'Transforme les risques et demandes en exécution suivie par responsable.',
-    wiringKey: 'ac360.school_ops.task.create',
+    wiringKey: 'ac360.school_ops.task.create' as any,
     targetEndpoint: '/api/ac360/school-ops/tasks',
     method: 'POST',
     quantity: 1,
