@@ -1,5 +1,8 @@
-import Ac360CustomerExperienceShell from '@/components/ac360/customer/Ac360CustomerExperienceShell'
+import { Ac360DirectionCockpitPage } from '@/components/ac360/customer/direction/Ac360DirectionCockpitPage'
 
-export default function AngelCare360CustomerExperiencePage() {
-  return <Ac360CustomerExperienceShell />
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+export default function AngelCare360CustomerPage() {
+  return <Ac360DirectionCockpitPage initialView="synthese" />
 }

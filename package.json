@@ -76,7 +76,12 @@
     "carelink:verify": "node scripts/verify-carelink-routes.mjs",
     "carelink:production-smoke": "node scripts/carelink-production-smoke.mjs",
     "carelink:deploy-gate": "npm run carelink:mobile-reliability && npm run carelink:verify && npm run carelink:production-smoke",
-    "carelink:mobile-reliability": "node scripts/carelink-mobile-reliability-lockdown.mjs"
+    "carelink:mobile-reliability": "node scripts/carelink-mobile-reliability-lockdown.mjs",
+    "traininghub:static": "node --env-file=.env.local scripts/verify-traininghub-production-hardening-static.mjs",
+    "traininghub:prod-gate": "node --env-file=.env.local scripts/traininghub-final-production-completion-gate.mjs --with-tsc",
+    "traininghub:prod-gate:full": "node --env-file=.env.local scripts/traininghub-final-production-completion-gate.mjs --full",
+    "traininghub:e2e": "node --env-file=.env.local scripts/traininghub-e2e-prod-journey-smoke.mjs",
+    "traininghub:cleanup-report": "node --env-file=.env.local scripts/traininghub-production-safe-cleanup-report.mjs"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",

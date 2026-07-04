@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import type { Ac360DedicatedModuleRoute } from '@/lib/ac360/customer-module-routes'
+import { Ac360CustomerRecordIntelligenceDrawer } from '@/components/ac360/customer/Ac360CustomerRecordIntelligenceDrawer'
 import { getAc360CustomerCommandsForModule, getAc360PrimaryCustomerCommand, type Ac360CustomerCommand } from '@/lib/ac360/customer-command-model'
 import {
   buildAc360CustomerFormPreview,
@@ -244,25 +245,12 @@ export function Ac360CustomerLiveRecordsTable({
       </div>
 
       {selectedRecord ? (
-        <div className="rounded-[2rem] border border-blue-200 bg-blue-50 p-5 shadow-sm md:p-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <SmallBadge className="border-blue-200 bg-white text-blue-800">Détail record live</SmallBadge>
-              <h3 className="mt-3 text-2xl font-black text-slate-950">{selectedRecord.primary}</h3>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{selectedRecord.secondary}</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => onOpenCommand(getAc360PrimaryCustomerCommand(route.moduleKey))} className="rounded-2xl bg-blue-700 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white hover:bg-blue-800">Commander</button>
-              <button type="button" onClick={() => setSelectedRecord(null)} className="rounded-2xl border border-blue-200 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-blue-800 hover:bg-blue-50">Fermer</button>
-            </div>
-          </div>
-          <div className="mt-5 grid gap-3 md:grid-cols-4">
-            <SmallBadge className="border-slate-200 bg-white text-slate-700">Owner : {selectedRecord.owner}</SmallBadge>
-            <SmallBadge className={toneClass(selectedRecord.statusTone)}>Statut : {selectedRecord.status}</SmallBadge>
-            <SmallBadge className="border-amber-200 bg-white text-amber-800">Risque : {selectedRecord.risk}</SmallBadge>
-            <SmallBadge className="border-emerald-200 bg-white text-emerald-800">Preuve : {selectedRecord.proof}</SmallBadge>
-          </div>
-        </div>
+        <Ac360CustomerRecordIntelligenceDrawer
+          route={route}
+          record={selectedRecord}
+          onClose={() => setSelectedRecord(null)}
+          onOpenCommand={onOpenCommand}
+        />
       ) : null}
 
       <ModuleActionForm route={route} onOpenCommand={onOpenCommand} />

@@ -11,6 +11,11 @@ import {
 } from '@/lib/ac360/customer-ui-model'
 import { getAc360DedicatedModuleRouteByModuleKey } from '@/lib/ac360/customer-module-routes'
 import { Ac360CustomerModuleWorkspace } from './Ac360CustomerModuleWorkspace'
+import { Ac360CustomerSmartCommandCenter } from './Ac360CustomerSmartCommandCenter'
+import { Ac360CustomerMobileExecutionDock, Ac360CustomerRolePortal } from './Ac360CustomerRolePortal'
+import { Ac360CustomerPersonalizationAdoptionLayer } from './Ac360CustomerPersonalizationAdoptionLayer'
+import { Ac360CustomerSuccessReadinessLayer } from './Ac360CustomerSuccessReadinessLayer'
+import { Ac360CustomerExecutiveReportingLayer } from './Ac360CustomerExecutiveReportingLayer'
 import {
   ac360CustomerLiveEndpoints,
   getAc360ModuleLiveSignal,
@@ -677,12 +682,21 @@ export default function Ac360CustomerExperienceShell() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] text-slate-950">
+    <div className="min-h-screen bg-[#f7f9fc] text-slate-950" data-ac360-phase3n="executive-reporting-export-center-board-packs" data-ac360-phase3m="success-readiness-usage-training-reporting" data-ac360-phase3l="personalization-onboarding-adoption" data-ac360-phase3k="role-permission-mobile-execution" data-ac360-phase3j="smart-command-center-global-search">
       <TopIntelligenceBar selectedRole={selectedRole} live={live} refreshing={refreshing} onRefresh={refreshLive} />
       <div className="mx-auto flex max-w-[1900px]">
         <LeftStrategicNavigation selectedKey={selectedKey} setSelectedKey={setSelectedKey} live={live} />
         <main className="min-w-0 flex-1 px-4 py-5 md:px-6 lg:px-8">
           <HeroCommandCenter selectedModule={selectedModule} live={live} refreshing={refreshing} onRefresh={refreshLive} setSelectedKey={setSelectedKey} />
+          <div className="mt-6">
+            <Ac360CustomerSmartCommandCenter live={live} activeModuleKey={selectedModule.key} onSelectModule={setSelectedKey} />
+          </div>
+          <div className="mt-6">
+            <Ac360CustomerRolePortal selectedRole={selectedRole} activeModuleKey={selectedModule.key} live={live} />
+          </div>
+          <Ac360CustomerPersonalizationAdoptionLayer selectedRole={selectedRole} activeModuleKey={selectedModule.key} live={live} />
+          <Ac360CustomerSuccessReadinessLayer selectedRole={selectedRole} activeModuleKey={selectedModule.key} live={live} />
+          <Ac360CustomerExecutiveReportingLayer selectedRole={selectedRole} activeModuleKey={selectedModule.key} live={live} />
           <RuntimeCoveragePanel live={live} />
           <RoleExperienceSwitcher selectedRole={selectedRole} setSelectedRole={setSelectedRole} />
           <ModuleDetailWorkspace module={selectedModule} live={live} />
@@ -715,12 +729,13 @@ export default function Ac360CustomerExperienceShell() {
         </main>
         <RightContextRail module={selectedModule} live={live} />
       </div>
-      <div className="sticky bottom-0 z-20 border-t border-slate-200 bg-white/95 px-5 py-3 backdrop-blur-xl">
+      <div className="sticky bottom-0 z-20 border-t border-slate-200 bg-white/95 px-5 py-3 backdrop-blur-xl max-lg:hidden">
         <div className="mx-auto flex max-w-[1800px] flex-wrap items-center justify-between gap-3 text-xs font-black uppercase tracking-[0.14em] text-slate-500">
-          <span>AC360 UI Client · Phase 3B live · Thème blanc appliqué · Socle backend gardé</span>
+          <span>AC360 UI Client · Phase 3M readiness, usage analytics, training, adoption reporting · Thème blanc appliqué · Socle backend gardé</span>
           <span>Plan : {live?.context.planName || 'Command'} · Crédits : {live?.billing.creditPercent ?? 82}% · Restrictions : {live?.billing.restrictionCount || 'aucun blocage dur'} · Add-ons : {live?.billing.activeAddonCount ?? 9} actifs</span>
         </div>
       </div>
+      <Ac360CustomerMobileExecutionDock selectedRole={selectedRole} activeModuleKey={selectedModule.key} />
     </div>
   )
 }

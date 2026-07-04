@@ -666,15 +666,28 @@ export async function createNotification(currentUser: MinimalAppUser, payload: P
 }
 
 
+// CONNECT_ACTION_ASSIGNEE_RESILIENCE_PATCH
 async function attachActionAssignees(supabase: SupabaseClient, actions: any[]): Promise<ConnectAction[]> {
   if (!actions.length) return []
   const actionIds = actions.map((action) => String(action.id))
-  const { data: rows, error } = await supabase
-    .from('connect_action_assignees')
-    .select('*')
-    .in('action_id', actionIds)
-  assertSupabaseOk(error, 'Load Connect task assignees')
-  const assigneeRows = (rows || []) as any[]
+
+  let assigneeRows: any[] = []
+  try {
+    const { data: rows, error } = await supabase
+      .from('connect_action_assignees')
+      .select('*')
+      .in('action_id', actionIds)
+    assertSupabaseOk(error, 'Load Connect task assignees')
+    assigneeRows = (rows || []) as any[]
+  } catch (error) {
+    console.warn('[Connect] Task assignee load failed; returning actions without assignee hydration', error)
+    return actions.map((action) => ({
+      ...(action as ConnectAction),
+      assignees: [],
+      assignee_ids: [],
+    }))
+  }
+
   const users = await getUsersByIds(supabase, normalizeIds(assigneeRows.map((row) => row.user_id)))
   const grouped = new Map<string, any[]>()
   for (const row of assigneeRows) {
@@ -710,16 +723,23 @@ async function canSeeAction(supabase: SupabaseClient, currentUserId: string, act
   return assignee ? action : null
 }
 
+// CONNECT_GET_ACTIONS_RESILIENCE_PATCH
 export async function getActions(currentUser: MinimalAppUser): Promise<ConnectAction[]> {
   const supabase = await createClient()
   const currentUserId = userId(currentUser)
-  const { data: assignedRows, error: assignedError } = await supabase
-    .from('connect_action_assignees')
-    .select('action_id')
-    .eq('user_id', currentUserId)
-  assertSupabaseOk(assignedError, 'Load assigned Connect tasks')
 
-  const assignedIds = normalizeIds(((assignedRows || []) as any[]).map((row) => row.action_id))
+  let assignedIds: string[] = []
+  try {
+    const { data: assignedRows, error: assignedError } = await supabase
+      .from('connect_action_assignees')
+      .select('action_id')
+      .eq('user_id', currentUserId)
+    assertSupabaseOk(assignedError, 'Load assigned Connect tasks')
+    assignedIds = normalizeIds(((assignedRows || []) as any[]).map((row) => row.action_id))
+  } catch (error) {
+    console.warn('[Connect] Assigned task lookup failed; continuing with owned/created tasks only', error)
+  }
+
   const orTerms = [`owner_id.eq.${currentUserId}`, `created_by.eq.${currentUserId}`]
   if (assignedIds.length) orTerms.push(`id.in.(${assignedIds.join(',')})`)
 

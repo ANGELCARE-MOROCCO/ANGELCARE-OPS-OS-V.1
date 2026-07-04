@@ -823,3 +823,178 @@ body:has([data-market-os-root]) {
   background: transparent !important;
 }
 
+
+/* =========================================================
+   ANGELCARE 360 — DIRECTION COCKPIT PREMIUM BUTTON SYSTEM
+   Client-facing SaaS button polish. Scoped only to Cockpit de Direction.
+   Purpose: eliminate premature/plain buttons and enforce a premium
+   corporate action language without touching other app modules.
+   ========================================================= */
+
+[data-ac360-direction-cockpit="true"] button {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 18px;
+  letter-spacing: .005em;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+[data-ac360-direction-cockpit="true"] button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+[data-ac360-direction-cockpit="true"] button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+[data-ac360-direction-cockpit="true"] button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .22);
+  outline-offset: 3px;
+}
+
+[data-ac360-direction-cockpit="true"] button:disabled {
+  cursor: not-allowed;
+  filter: saturate(.7);
+}
+
+/* Primary executive action buttons */
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-700"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-600"] {
+  color: #ffffff !important;
+  border: 1px solid rgba(37, 99, 235, .72) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.34), transparent 28%),
+    linear-gradient(135deg, #1d4ed8 0%, #2563eb 42%, #0f4fd6 100%) !important;
+  box-shadow:
+    0 18px 34px rgba(37, 99, 235, .24),
+    0 6px 12px rgba(15, 23, 42, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-700"]:not(:disabled):hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-600"]:not(:disabled):hover {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.42), transparent 30%),
+    linear-gradient(135deg, #1e40af 0%, #2563eb 48%, #1d4ed8 100%) !important;
+  box-shadow:
+    0 22px 42px rgba(37, 99, 235, .30),
+    0 10px 18px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .38) !important;
+}
+
+/* Premium secondary buttons — white, dimensional, not flat */
+[data-ac360-direction-cockpit="true"] button[class*="bg-white"],
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-200"],
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-100"] {
+  border-color: rgba(203, 213, 225, .92) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,250,252,.96) 100%) !important;
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, .055),
+    0 1px 0 rgba(255, 255, 255, .95) inset !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="bg-white"]:not(:disabled):hover,
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-200"]:not(:disabled):hover,
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-100"]:not(:disabled):hover {
+  border-color: rgba(37, 99, 235, .35) !important;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 18px 34px rgba(15, 23, 42, .08),
+    0 8px 18px rgba(37, 99, 235, .07),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+/* Text/link actions become executive micro-pills */
+[data-ac360-direction-cockpit="true"] button[class*="text-blue-700"]:not([class*="bg-blue-700"]):not([class*="bg-blue-600"]) {
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(191, 219, 254, .95) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(239,246,255,.86) 100%) !important;
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, .075),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+  padding: 6px 11px !important;
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="text-blue-700"]:not([class*="bg-blue-700"]):not([class*="bg-blue-600"]):hover {
+  color: #1e40af !important;
+  border-color: rgba(37, 99, 235, .45) !important;
+  box-shadow:
+    0 12px 24px rgba(37, 99, 235, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+/* Soft colored command buttons in execution/reality strips */
+[data-ac360-direction-cockpit="true"] button[class*="bg-emerald-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-amber-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-violet-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-cyan-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-orange-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-rose-50"] {
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, .055),
+    inset 0 1px 0 rgba(255, 255, 255, .78) !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="bg-emerald-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-amber-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-violet-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-cyan-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-orange-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-rose-50"]:hover {
+  box-shadow:
+    0 18px 36px rgba(15, 23, 42, .085),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+}
+
+/* Report-template and selectable cards should feel clickable but elegant */
+[data-ac360-direction-cockpit="true"] button.text-left,
+[data-ac360-direction-cockpit="true"] button[class*="p-4"][class*="border"] {
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+  border-color: rgba(226, 232, 240, .95) !important;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, .05),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+}
+
+[data-ac360-direction-cockpit="true"] button.text-left:hover,
+[data-ac360-direction-cockpit="true"] button[class*="p-4"][class*="border"]:hover {
+  border-color: rgba(37, 99, 235, .36) !important;
+  box-shadow:
+    0 20px 40px rgba(15, 23, 42, .09),
+    0 10px 22px rgba(37, 99, 235, .07),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+/* Modal close / compact icon buttons */
+[data-ac360-direction-cockpit="true"] button[aria-label],
+[data-ac360-direction-cockpit="true"] button:has(+ .sr-only) {
+  min-height: 38px;
+  min-width: 38px;
+}
+
+/* Fixed mobile action dock — high confidence command buttons */
+[data-ac360-direction-cockpit="true"] .fixed.bottom-4 button {
+  min-width: 86px;
+  box-shadow:
+    0 16px 34px rgba(37, 99, 235, .26),
+    inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+
+

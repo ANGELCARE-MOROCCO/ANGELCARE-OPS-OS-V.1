@@ -1,4 +1,7 @@
-import { redirect } from 'next/navigation'
-export default function TrainingHubSettingsIndexPage() {
-  redirect('/traininghub/settings/access')
+import { TrainingHubInternalAdminPage } from '@/components/traininghub/internal/TrainingHubInternalAdminPage'
+
+export const dynamic = 'force-dynamic'
+
+export default function Page() {
+  return <TrainingHubInternalAdminPage moduleKey="settings" />
 }

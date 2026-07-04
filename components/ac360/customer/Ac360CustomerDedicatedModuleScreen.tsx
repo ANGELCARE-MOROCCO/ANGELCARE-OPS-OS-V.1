@@ -1,4 +1,4 @@
- 'use client'
+'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -8,6 +8,12 @@ import { getAc360CustomerCommandsForModule, getAc360PrimaryCustomerCommand, type
 import { Ac360CustomerCommandModal } from '@/components/ac360/customer/Ac360CustomerCommandModal'
 import { Ac360CustomerOperationalTableHardening } from '@/components/ac360/customer/Ac360CustomerOperationalTableHardening'
 import { Ac360CustomerLiveRecordsTable } from '@/components/ac360/customer/Ac360CustomerLiveRecordsTable'
+import { Ac360CustomerSmartCommandCenter } from '@/components/ac360/customer/Ac360CustomerSmartCommandCenter'
+import { Ac360CustomerMobileExecutionDock, Ac360CustomerRolePortal } from '@/components/ac360/customer/Ac360CustomerRolePortal'
+import { Ac360CustomerPersonalizationAdoptionLayer } from '@/components/ac360/customer/Ac360CustomerPersonalizationAdoptionLayer'
+import { Ac360CustomerSuccessReadinessLayer } from '@/components/ac360/customer/Ac360CustomerSuccessReadinessLayer'
+import { Ac360CustomerExecutiveReportingLayer } from '@/components/ac360/customer/Ac360CustomerExecutiveReportingLayer'
+import { getAc360RolePortalForModule } from '@/lib/ac360/customer-role-portal-model'
 import {
   ac360DedicatedModuleRoutes,
   getAc360DedicatedModuleForRoute,
@@ -70,7 +76,7 @@ function TopModuleBar({ route, module, live, refreshing, onRefresh }: { route: A
     <div className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1900px] flex-wrap items-center justify-between gap-3 px-5 py-3">
         <div className="flex items-center gap-3">
-          <Link href="/angelcare-360/customer" className="flex h-11 w-11 items-center justify-center rounded-2xl border border-blue-100 bg-blue-700 text-sm font-black text-white shadow-lg shadow-blue-100">AC</Link>
+          <Link href="/angelcare-360/customer/cockpit-direction" className="flex h-11 w-11 items-center justify-center rounded-2xl border border-blue-100 bg-blue-700 text-sm font-black text-white shadow-lg shadow-blue-100">AC</Link>
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">AngelCare 360 · Espace dédié</p>
             <h1 className="text-base font-black text-slate-950">{route.label}</h1>
@@ -163,7 +169,7 @@ function RouteHero({ route, module, live, onOpenCommand }: { route: Ac360Dedicat
       <div className="grid gap-6 xl:grid-cols-[1.45fr_0.75fr]">
         <div>
           <div className="flex flex-wrap gap-2">
-            <SmallBadge className="border-blue-200 bg-white text-blue-800">Phase 3H · Formulaires live & recovery</SmallBadge>
+            <SmallBadge className="border-blue-200 bg-white text-blue-800">Phase 3I · Détails live, timelines & actions intelligentes</SmallBadge>
             <SmallBadge className="border-slate-200 bg-white text-slate-700">FR Maroc natif</SmallBadge>
             <SmallBadge className="border-emerald-200 bg-emerald-50 text-emerald-800">Thème blanc premium</SmallBadge>
           </div>
@@ -341,6 +347,7 @@ export function Ac360CustomerDedicatedModuleScreen({ route }: { route: Ac360Dedi
   const [refreshing, setRefreshing] = useState(true)
   const [activeCommand, setActiveCommand] = useState<Ac360CustomerCommand | null>(null)
   const module = useMemo(() => getAc360DedicatedModuleForRoute(route), [route])
+  const selectedRole = useMemo(() => getAc360RolePortalForModule(module.key).label, [module.key])
 
   const refreshLive = async () => {
     setRefreshing(true)
@@ -357,19 +364,34 @@ export function Ac360CustomerDedicatedModuleScreen({ route }: { route: Ac360Dedi
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] text-slate-950" data-ac360-phase3h="live-forms-preflight-recovery" data-ac360-phase3g="live-records-real-tables" data-ac360-phase3f="outcomes-bulk-saved-views">
+    <div className="min-h-screen bg-[#f7f9fc] text-slate-950" data-ac360-phase3n="executive-reporting-export-center-board-packs" data-ac360-phase3m="success-readiness-usage-training-reporting" data-ac360-phase3l="personalization-onboarding-adoption" data-ac360-phase3k="role-permission-mobile-execution" data-ac360-phase3j="smart-command-center-global-search" data-ac360-phase3i="record-detail-intelligence" data-ac360-phase3h="live-forms-preflight-recovery" data-ac360-phase3g="live-records-real-tables" data-ac360-phase3f="outcomes-bulk-saved-views">
       <TopModuleBar route={route} module={module} live={live} refreshing={refreshing} onRefresh={refreshLive} />
       <div className="mx-auto flex max-w-[1900px]">
         <DedicatedLeftNav activeSlug={route.slug} />
         <main className="min-w-0 flex-1 px-4 py-5 md:px-6 lg:px-8">
           <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">
-            <Link href="/angelcare-360/customer" className="hover:text-blue-700">Cockpit client</Link>
+            <Link href="/angelcare-360/customer/cockpit-direction" className="hover:text-blue-700">Cockpit de direction</Link>
             <span>›</span>
             <span>{route.label}</span>
             <span>›</span>
-            <span>Route dédiée Phase 3H</span>
+            <span>Route dédiée Phase 3K</span>
           </div>
           <RouteHero route={route} module={module} live={live} onOpenCommand={setActiveCommand} />
+          <div className="mt-5">
+            <Ac360CustomerSmartCommandCenter live={live} activeModuleKey={module.key} compact onOpenCommand={setActiveCommand} />
+          </div>
+          <div className="mt-5">
+            <Ac360CustomerRolePortal selectedRole={selectedRole} activeModuleKey={module.key} live={live} compact />
+          </div>
+          <div className="mt-5">
+            <Ac360CustomerPersonalizationAdoptionLayer selectedRole={selectedRole} activeModuleKey={module.key} live={live} compact />
+          </div>
+          <div className="mt-5">
+            <Ac360CustomerSuccessReadinessLayer selectedRole={selectedRole} activeModuleKey={module.key} live={live} compact />
+          </div>
+          <div className="mt-5">
+            <Ac360CustomerExecutiveReportingLayer selectedRole={selectedRole} activeModuleKey={module.key} live={live} compact />
+          </div>
           <InPageNav route={route} />
           <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {route.kpis.map((kpi) => <KpiCard key={kpi.label} kpi={kpi} />)}
@@ -383,12 +405,13 @@ export function Ac360CustomerDedicatedModuleScreen({ route }: { route: Ac360Dedi
         </main>
         <RightModuleRail route={route} module={module} live={live} onOpenCommand={setActiveCommand} />
       </div>
-      <div className="sticky bottom-0 z-20 border-t border-slate-200 bg-white/95 px-5 py-3 backdrop-blur-xl">
+      <div className="sticky bottom-0 z-20 border-t border-slate-200 bg-white/95 px-5 py-3 backdrop-blur-xl max-lg:hidden">
         <div className="mx-auto flex max-w-[1800px] flex-wrap items-center justify-between gap-3 text-xs font-black uppercase tracking-[0.14em] text-slate-500">
-          <span>AC360 Phase 3H · Pré-vol inline · Recovery client · Payloads réels · FR Maroc</span>
+          <span>AC360 Phase 3N · Reporting exécutif · Exports · Board packs · Print-ready · FR Maroc</span>
           <span>Plan : {live?.context.planName || 'Command'} · Crédits : {live?.billing.creditPercent ?? 82}% · Endpoint : {route.endpoint}</span>
         </div>
       </div>
+      <Ac360CustomerMobileExecutionDock selectedRole={selectedRole} activeModuleKey={module.key} />
       <Ac360CustomerCommandModal command={activeCommand} open={Boolean(activeCommand)} onClose={() => setActiveCommand(null)} onExecuted={refreshLive} />
     </div>
   )
@@ -402,7 +425,7 @@ export function Ac360CustomerDedicatedModuleNotFound({ slug }: { slug: string })
         <h1 className="mt-4 text-4xl font-black tracking-[-0.04em] text-slate-950">Aucun espace dédié pour « {slug} ».</h1>
         <p className="mt-3 text-base font-semibold leading-7 text-slate-600">Revenir au cockpit client ou ouvrir l’un des espaces dédiés disponibles.</p>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Link href="/angelcare-360/customer" className="rounded-2xl bg-blue-700 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">Retour cockpit</Link>
+          <Link href="/angelcare-360/customer/cockpit-direction" className="rounded-2xl bg-blue-700 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">Retour cockpit</Link>
           {ac360CustomerModules.slice(0, 4).map((module) => {
             const route = routeForModule(module)
             return route ? <Link key={route.slug} href={`/angelcare-360/customer/${route.slug}`} className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-slate-700">{module.label}</Link> : null

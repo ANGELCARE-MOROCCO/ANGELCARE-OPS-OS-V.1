@@ -1,6 +1,7 @@
 import TrainingHubPartnerPortalWorkspace from '@/components/traininghub/TrainingHubPartnerPortalWorkspace'
 import { createTrainingHubUserClient } from '@/lib/traininghub/supabase'
 import { requireTrainingHubExperiencePageContext } from '../traininghub-page-context'
+const TrainingHubPartnerPortalWorkspaceAny = TrainingHubPartnerPortalWorkspace as any
 
 export const dynamic = 'force-dynamic'
 
@@ -111,7 +112,7 @@ export default async function TrainingHubPartnerPortalPage() {
     .filter(Boolean) as string[]
 
   return (
-    <TrainingHubPartnerPortalWorkspace
+    <TrainingHubPartnerPortalWorkspaceAny
       context={context}
       sessions={sessions.data as any[]}
       proposals={proposals.data as any[]}

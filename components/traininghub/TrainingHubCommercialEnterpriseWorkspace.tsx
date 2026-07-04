@@ -3,6 +3,8 @@
 import TrainingHubPartnerLifecycleCommandDock from './TrainingHubPartnerLifecycleCommandDock'
 import TrainingHubCommercialBusinessOverviewPanel from './TrainingHubCommercialBusinessOverviewPanel'
 import TrainingHubPartnerBusinessDossierBoard from './TrainingHubPartnerBusinessDossierBoard'
+import TrainingHubPartnerTeamAccessPanel from './TrainingHubPartnerTeamAccessPanel'
+import TrainingHubPartnerOfferBuilderPreview from './TrainingHubPartnerOfferBuilderPreview'
 import type { CSSProperties, FormEvent, ReactNode } from 'react'
 import TrainingHubDeliveryCertificationPanel from './TrainingHubDeliveryCertificationPanel'
 import TrainingHubRevenueLifecyclePanel from './TrainingHubRevenueLifecyclePanel'
@@ -331,7 +333,6 @@ export default function TrainingHubCommercialEnterpriseWorkspace({
         certificates={certificates}
       />
 
-
       <TrainingHubProductionHardeningPanel
         organizations={organizations}
         proposals={proposals}
@@ -346,7 +347,6 @@ export default function TrainingHubCommercialEnterpriseWorkspace({
         participants={participants}
         certificates={certificates}
       />
-
 
       <section style={heroStyle}>
         <div style={heroCopyStyle}>
@@ -421,7 +421,6 @@ export default function TrainingHubCommercialEnterpriseWorkspace({
         </article>
       </section>
 
-
       <TrainingHubPartnerAccountsPanel
         organizations={organizations}
         profiles={profiles}
@@ -429,7 +428,6 @@ export default function TrainingHubCommercialEnterpriseWorkspace({
         roleAssignments={roleAssignments}
         roles={roles}
       />
-
 
       <TrainingHubRevenueLifecyclePanel
         organizations={organizations}
@@ -447,6 +445,20 @@ export default function TrainingHubCommercialEnterpriseWorkspace({
         sessions={sessions}
         participants={participants}
         certificates={certificates}
+      />
+
+      <TrainingHubPartnerTeamAccessPanel
+        organizations={organizations}
+        profiles={profiles}
+        memberships={memberships}
+        roleAssignments={roleAssignments}
+      />
+
+      <TrainingHubPartnerOfferBuilderPreview
+        organizations={organizations}
+        courses={courses}
+        proposals={proposals}
+        invoices={invoices}
       />
 
       <TrainingHubPartnerBusinessDossierBoard

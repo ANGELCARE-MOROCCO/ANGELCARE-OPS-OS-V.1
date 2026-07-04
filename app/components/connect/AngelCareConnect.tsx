@@ -620,19 +620,33 @@ export default function AngelCareConnect({
     browserNotificationBootedRef.current = true
   }
 
+  // CONNECT_MOBILE_RESILIENT_LOAD_PATCH
+  // A failed optional feed (tasks/calls/notifications) must never block private rooms/messages from loading in CareLink Mobile.
   async function loadConnectShell(showLoading = true) {
     if (showLoading) setLoading(true)
     setError(null)
+
+    async function soft<T>(label: string, fallback: T, loader: () => Promise<T>): Promise<T> {
+      try {
+        return await loader()
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err || 'Unknown error')
+        setError((current) => current || `${label}: ${message}`)
+        return fallback
+      }
+    }
+
     try {
       const route = typeof window !== "undefined" ? window.location.pathname : ""
       const [mePayload, conversationPayload, staffPayload, actionPayload, notificationPayload, callPayload] = await Promise.all([
-        readJson<{ user: StaffUser | null }>(`/api/connect/me?route=${encodeURIComponent(route)}`),
-        readJson<{ conversations: Conversation[] }>("/api/connect/conversations"),
-        readJson<{ staff: StaffUser[] }>("/api/connect/staff"),
-        readJson<{ actions: ConnectAction[] }>("/api/connect/actions"),
-        readJson<{ notifications: Notice[] }>("/api/connect/notifications"),
-        readJson<{ calls: CallSession[] }>("/api/connect/calls"),
+        soft('Load Connect identity', { user: null as StaffUser | null }, () => readJson<{ user: StaffUser | null }>(`/api/connect/me?route=${encodeURIComponent(route)}`)),
+        soft('Load Connect conversations', { conversations: [] as Conversation[] }, () => readJson<{ conversations: Conversation[] }>("/api/connect/conversations")),
+        soft('Load Connect staff', { staff: [] as StaffUser[] }, () => readJson<{ staff: StaffUser[] }>("/api/connect/staff")),
+        soft('Load assigned Connect tasks', { actions: [] as ConnectAction[] }, () => readJson<{ actions: ConnectAction[] }>("/api/connect/actions")),
+        soft('Load Connect notifications', { notifications: [] as Notice[] }, () => readJson<{ notifications: Notice[] }>("/api/connect/notifications")),
+        soft('Load Connect calls', { calls: [] as CallSession[] }, () => readJson<{ calls: CallSession[] }>("/api/connect/calls")),
       ])
+
       setCurrentUser(mePayload.user)
       const nextConversations = conversationPayload.conversations || []
       setConversations(nextConversations)
@@ -644,8 +658,6 @@ export default function AngelCareConnect({
       setCalls(nextCalls)
       showBrowserConnectNotifications(nextConversations, nextNotifications, nextCalls, mePayload.user)
       setSelectedId((current) => current || nextConversations[0]?.id || "")
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "AngelCare Connect failed to load")
     } finally {
       if (showLoading) setLoading(false)
     }

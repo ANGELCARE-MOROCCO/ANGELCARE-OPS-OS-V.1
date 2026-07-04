@@ -94,7 +94,7 @@ export const ac360CustomerModules: Ac360CustomerModule[] = [
     headline: 'Un poste de commandement premium pour piloter aujourd’hui, les risques, l’argent, les parents, l’équipe et la croissance.',
     strategicPurpose: 'Donner à la direction une vision dense mais calme de la santé de l’établissement, des urgences, des décisions et des prochaines actions.',
     backendRuntime: 'Phases 2S / 2U + tableaux de bord modules',
-    routeHint: '/angelcare-360/customer#command-center',
+    routeHint: '/angelcare-360/customer/cockpit-direction',
     icon: '◈',
     status: 'included',
     planSignal: 'Start / Pro / Command, avec profondeur progressive selon le plan.',
