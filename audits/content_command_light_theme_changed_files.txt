@@ -1,7 +1,0 @@
-components/market-os/content-command-center.tsx
-components/market-os/content-task-editor.tsx
-components/market-os/content-create-page.tsx
-components/market-os/content-command/tasks/TaskDetailWorkspace.tsx
-components/market-os/content-command/content-assets-page.tsx
-components/market-os/content-command/content-detail-page.tsx
-components/market-os/content-command/content-command-system.tsx

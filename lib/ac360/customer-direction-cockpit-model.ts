@@ -106,7 +106,7 @@ export const directionSidebar = [
       { label: 'Décisions, rapports & exports', route: '/angelcare-360/customer/cockpit-direction/rapports' },
     ],
   },
-  { label: 'Opérations', route: '/angelcare-360/customer/presence-operations', icon: '▦' },
+  { label: 'Opérations', route: '/angelcare-360/customer/operations/aujourdhui', icon: '▦' },
   { label: 'Finance', route: '/angelcare-360/customer/finance-creances', icon: '◫' },
   { label: 'Admissions', route: '/angelcare-360/customer/admissions-crm', icon: '▣' },
   { label: 'RH', route: '/angelcare-360/customer/rh-planning', icon: '♙' },

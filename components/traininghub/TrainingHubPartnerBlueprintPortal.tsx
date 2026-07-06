@@ -35,6 +35,14 @@ type PartnerRequest = {
   updated_at?: string
 }
 
+type TrainingHubPartnerBlueprintPortalProps = {
+  context?: any
+  initialData?: PortalSummary | null
+  initialRequests?: PartnerRequest[]
+  queryWarnings?: string[]
+  adminPreview?: boolean
+}
+
 type TabKey = 'direction' | 'formations' | 'equipe' | 'certificats' | 'refresh' | 'documents' | 'facturation' | 'demandes'
 
 const TABS: Array<{ key: TabKey; label: string; icon: string; href: string }> = [
@@ -218,18 +226,23 @@ function nextAttention(data: PortalSummary | null, requests: PartnerRequest[]) {
   return items.slice(0, 4)
 }
 
-export default function TrainingHubPartnerBlueprintPortal() {
-  const [data, setData] = useState<PortalSummary | null>(null)
-  const [requests, setRequests] = useState<PartnerRequest[]>([])
+export default function TrainingHubPartnerBlueprintPortal({
+  initialData = null,
+  initialRequests = [],
+  queryWarnings = [],
+  adminPreview = false,
+}: TrainingHubPartnerBlueprintPortalProps) {
+  const [data, setData] = useState<PortalSummary | null>(initialData)
+  const [requests, setRequests] = useState<PartnerRequest[]>(initialRequests)
   const [tab, setTab] = useState<TabKey>('direction')
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [requestOpen, setRequestOpen] = useState(false)
   const [requestType, setRequestType] = useState('formation_request')
   const [requestTitle, setRequestTitle] = useState('')
   const [requestDescription, setRequestDescription] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!initialData)
   const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(queryWarnings.length ? `${queryWarnings.length} alerte(s) de synchronisation à vérifier.` : null)
 
   async function load() {
     setLoading(true)
@@ -245,19 +258,34 @@ export default function TrainingHubPartnerBlueprintPortal() {
       const requestsPayload = await requestsResponse.json().catch(() => ({}))
 
       if (!summaryResponse.ok || summaryPayload?.ok === false) {
-        setMessage(summaryPayload?.error?.message || summaryPayload?.message || 'Votre espace partenaire est en préparation.')
+        if (!initialData) {
+          setMessage(summaryPayload?.error?.message || summaryPayload?.message || 'Votre espace partenaire est en préparation.')
+        } else {
+          setMessage('Portail affiché depuis le dernier état serveur. Synchronisation live à vérifier.')
+        }
         return
       }
 
       setData(summaryPayload.data)
       setRequests(Array.isArray(requestsPayload?.data) ? requestsPayload.data : [])
+      const warnings = Array.isArray(summaryPayload?.data?.warnings) ? summaryPayload.data.warnings : []
+      setMessage(warnings.length ? `${warnings.length} alerte(s) de synchronisation à vérifier.` : null)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    load()
+    if (!initialData) {
+      load()
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      load()
+    }, 350)
+
+    return () => window.clearTimeout(timer)
   }, [])
 
   const org = data?.organization || {}
@@ -328,6 +356,7 @@ export default function TrainingHubPartnerBlueprintPortal() {
         <Header />
 
         {message ? <div style={infoBannerStyle}>{message}</div> : null}
+        {adminPreview ? <div style={previewBannerStyle}>Mode prévisualisation interne AngelCare — données affichées depuis le périmètre partenaire résolu.</div> : null}
 
         <section style={heroShellStyle}>
           <div style={heroOrnamentStyle} />
@@ -1492,3 +1521,5 @@ const modalFooterStyle: CSSProperties = {
   justifyContent: 'flex-end',
   gap: 12,
 }
+
+const previewBannerStyle: CSSProperties = { borderRadius: 20, padding: '12px 16px', background: '#eef6ff', border: '1px solid #bfdbfe', color: '#1d4ed8', fontWeight: 900 }

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { APP_SESSION_COOKIE } from '@/lib/auth/session'
 import { getFirstAllowedRoute } from '@/lib/auth/permissions'
+import OpsosLoginSessionCleaner from '@/components/auth/OpsosLoginSessionCleaner'
 
 type LoginUser = {
   id: string
@@ -102,7 +103,9 @@ export default async function LoginPage({
   }
 
   return (
-    <main style={pageStyle}>
+    <>
+      <OpsosLoginSessionCleaner />
+      <main style={pageStyle}>
       <div style={backgroundImageStyle} />
       <div style={backgroundOverlayStyle} />
 
@@ -162,6 +165,7 @@ export default async function LoginPage({
         </section>
       </section>
     </main>
+    </>
   )
 }
 

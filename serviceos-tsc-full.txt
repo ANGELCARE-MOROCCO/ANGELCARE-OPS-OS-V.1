@@ -1,4 +1,0 @@
-lib/service-os/seed.ts(29,871): error TS2322: Type 'number' is not assignable to type 'string'.
-lib/service-os/seed.ts(30,1022): error TS2322: Type 'number' is not assignable to type 'string'.
-lib/service-os/seed.ts(31,908): error TS2322: Type 'number' is not assignable to type 'string'.
-lib/service-os/seed.ts(32,908): error TS2322: Type 'number' is not assignable to type 'string'.

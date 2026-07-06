@@ -1,3 +1,0 @@
-import Link from 'next/link'
-const links=[['/market-os/marketing-home','Marketing Home'],['/market-os/content-command','Content Command'],['/market-os/campaign-lifecycle','Campaign Lifecycle'],['/market-os/partnership-referral-growth','Partnerships'],['/market-os/research-competitive-intelligence','Market Intelligence'],['/revenue-command-center','Revenue Sync']]
-export default function MarketingHomeNavigationBridge(){return <div className="flex flex-wrap gap-2">{links.map(([href,label])=><Link key={href} href={href} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-2 text-sm font-black text-white">{label}</Link>)}</div>}

@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server'
-import {
-  getTrainingHubContext,
-  trainingHubErrorResponse,
-  TrainingHubHttpError,
-} from '@/lib/traininghub/auth'
+import { getTrainingHubContext, trainingHubErrorResponse, TrainingHubHttpError } from '@/lib/traininghub/auth'
 import { createTrainingHubUserClient } from '@/lib/traininghub/supabase'
+import { resolveTrainingHubPartnerOrganizationScope } from '@/lib/traininghub/partner-portal-sync'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 type CountResult = {
   table: string
@@ -15,14 +13,6 @@ type CountResult = {
   own: number
   leaked: boolean
   error: string | null
-}
-
-function clean(value: unknown) {
-  return String(value || '').trim()
-}
-
-function bool(value: unknown) {
-  return value === true || value === 'true'
 }
 
 async function countRows(supabase: any, table: string, field?: string, value?: string) {
@@ -56,21 +46,16 @@ async function checkTable(supabase: any, table: string, label: string, organizat
 
 export async function GET() {
   try {
-    const context = (await getTrainingHubContext()) as any
+    const context = await getTrainingHubContext()
     const supabase = await createTrainingHubUserClient()
+    const isInternal = Boolean(context.isInternal || context.isSuperAdmin)
+    const scope = await resolveTrainingHubPartnerOrganizationScope(supabase, context)
 
-    const isInternal = bool(context.isInternal) || bool(context.isSuperAdmin)
-    const organizationId =
-      clean(context.organization?.id) ||
-      clean(context.organization_id) ||
-      clean(context.membership?.organization_id) ||
-      clean(context.profile?.organization_id)
-
-    if (!organizationId && !isInternal) {
+    if (!scope.organizationId && !isInternal) {
       throw new TrainingHubHttpError('Aucun périmètre partenaire trouvé pour cette session.', 403, 'TRAININGHUB_PARTNER_SCOPE_MISSING')
     }
 
-    const scopedOrganizationId = organizationId || clean(context.organization?.id)
+    const scopedOrganizationId = scope.organizationId
 
     const checks = scopedOrganizationId
       ? await Promise.all([
@@ -102,7 +87,7 @@ export async function GET() {
       data: {
         mode: isInternal ? 'internal_admin' : 'partner_scoped',
         organization_id: scopedOrganizationId || null,
-        organization_name: context.organization?.name || context.organization?.legal_name || null,
+        organization_name: scope.organization?.name || scope.organization?.legal_name || null,
         profile_id: context.profile?.id || null,
         profile_email: context.profile?.email || null,
         score,

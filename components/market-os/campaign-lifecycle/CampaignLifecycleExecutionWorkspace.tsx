@@ -3,6 +3,7 @@
 import AngelCareLogo from "@/components/brand/AngelCareLogo";
 import Link from "next/link"
 import React, { useEffect, useMemo, useRef, useState } from "react"
+import { useOpsosRuntimeConfig } from "@/hooks/useOpsosRuntimeConfig"
 
 type Stage = "planning" | "production" | "approval" | "launch-ready" | "live" | "optimization"
 type Risk = "low" | "medium" | "high" | "critical"
@@ -520,6 +521,62 @@ export default function CampaignLifecycleExecutionWorkspace() {
   const [modalMode, setModalMode] = useState<ModalMode>("create")
   const [modalOpen, setModalOpen] = useState(false)
   const [draft, setDraft] = useState<Campaign>(emptyCampaignDraft())
+  const opsosRuntime = useOpsosRuntimeConfig({
+    route: "/market-os/campaign-lifecycle",
+    module: "market-os",
+    pollMs: 60000,
+  })
+
+  const opsosRules = opsosRuntime.rules as Record<string, any>
+  const opsosTimelineControl = opsosRuntime.getControlValue<Record<string, any>>("marketos.timeline.max_cards", {})
+  const opsosDisablePollingControl = opsosRuntime.getControlValue<Record<string, any>>("marketos.disable_live_polling", {})
+  const opsosSafeMode = Boolean(opsosRuntime.safeModeEnabled)
+  const opsosMaxTimelineCards = Math.max(
+    1,
+    Number(
+      opsosRules.limitCards ??
+      opsosRules.maxCards ??
+      opsosRules.maxRows ??
+      opsosTimelineControl.maxCards ??
+      40
+    ) || 40
+  )
+  const opsosDisablePolling = Boolean(opsosDisablePollingControl.disablePolling) || Boolean(opsosSafeMode && (opsosRules.disableLivePolling || opsosRules.disablePolling))
+  const opsosDisableAnimations = Boolean(opsosSafeMode && opsosRules.disableAnimations)
+  const opsosLazyModals = Boolean(opsosSafeMode && (opsosRules.lazyLoadModals || opsosRules.lazyModals))
+  const opsosDisablePrintPreview = Boolean(opsosSafeMode && opsosRules.disablePrintPreview)
+
+  const opsosTimelineCampaigns = useMemo(() => {
+    return state.campaigns.slice(0, opsosMaxTimelineCards)
+  }, [state.campaigns, opsosMaxTimelineCards])
+
+  useEffect(() => {
+    if (!hydrated) return
+    void fetch("/api/opsos-control-plane/telemetry", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        source: "client",
+        event: {
+          eventType: "interaction",
+          route: "/market-os/campaign-lifecycle",
+          interactionName: "opsos_runtime_enforcement_applied",
+          severity: opsosSafeMode ? "warning" : "info",
+          metadata: {
+            safeMode: opsosSafeMode,
+            maxTimelineCards: opsosMaxTimelineCards,
+            originalCampaignCount: state.campaigns.length,
+            renderedTimelineCards: Math.min(state.campaigns.length, opsosMaxTimelineCards),
+            disablePolling: opsosDisablePolling,
+            disableAnimations: opsosDisableAnimations,
+            lazyModals: opsosLazyModals,
+            disablePrintPreview: opsosDisablePrintPreview,
+            configSource: opsosRuntime.snapshot?.source || "unknown",
+          },
+        },
+      }),
+    }).catch(() => undefined)
+  }, [hydrated, opsosSafeMode, opsosMaxTimelineCards, state.campaigns.length, opsosDisablePolling, opsosDisableAnimations, opsosLazyModals, opsosDisablePrintPreview, opsosRuntime.snapshot?.source])
 
   useEffect(() => {
     setState(parseState(window.localStorage.getItem(STORAGE_KEY)))
@@ -1990,9 +2047,17 @@ const selectedTaskOps = filteredTaskOps.find((task) => task.id === selectedTaskO
   }
 
   return (
-    <main data-campaign-lifecycle-root="true" data-active-panel={activePanel} onClickCapture={handleCampaignLifecycleActionCapture} className="min-h-screen bg-white text-slate-950">
+    <main data-campaign-lifecycle-root="true" data-active-panel={activePanel} data-opsos-safe-mode={opsosSafeMode ? "true" : "false"} data-opsos-disable-animations={opsosDisableAnimations ? "true" : "false"} onClickCapture={handleCampaignLifecycleActionCapture} className="min-h-screen bg-white text-slate-950">
 
       <style>{`
+        [data-campaign-lifecycle-root="true"][data-opsos-disable-animations="true"] *,
+        [data-campaign-lifecycle-root="true"][data-opsos-safe-mode="true"] [data-timeline-square-card="true"] {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+          scroll-behavior: auto !important;
+        }
+
         [data-campaign-lifecycle-root="true"] button,
         [data-campaign-lifecycle-root="true"] a[href] {
           min-height: 42px !important;
@@ -2347,6 +2412,30 @@ const selectedTaskOps = filteredTaskOps.find((task) => task.id === selectedTaskO
           </header>
 
           <div className="space-y-5 p-5">
+            {(opsosSafeMode || opsosRuntime.error || opsosMaxTimelineCards < state.campaigns.length) ? (
+              <section className="rounded-[28px] border border-amber-200 bg-gradient-to-r from-amber-50 via-white to-emerald-50 p-4 shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700">OPSOS Runtime Enforcement</p>
+                    <h3 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950">
+                      {opsosSafeMode ? "Market-OS Safe Mode Active" : "Market-OS Runtime Controls Active"}
+                    </h3>
+                    <p className="mt-1 text-sm font-bold text-slate-600">
+                      {opsosRuntime.error
+                        ? `Runtime config fallback active: ${opsosRuntime.error}`
+                        : `Timeline cards limited to ${Math.min(state.campaigns.length, opsosMaxTimelineCards)} / ${state.campaigns.length}. Polling guard: ${opsosDisablePolling ? "on" : "off"}. Lazy modals: ${opsosLazyModals ? "on" : "off"}.`}
+                    </p>
+                  </div>
+                  <div className="grid gap-2 text-right text-xs font-black text-slate-700 sm:grid-cols-4">
+                    <span className="rounded-2xl border border-white/80 bg-white px-3 py-2 shadow-sm">Safe: {opsosSafeMode ? "ON" : "OFF"}</span>
+                    <span className="rounded-2xl border border-white/80 bg-white px-3 py-2 shadow-sm">Max cards: {opsosMaxTimelineCards}</span>
+                    <span className="rounded-2xl border border-white/80 bg-white px-3 py-2 shadow-sm">Polling: {opsosDisablePolling ? "Limited" : "Normal"}</span>
+                    <span className="rounded-2xl border border-white/80 bg-white px-3 py-2 shadow-sm">Source: {opsosRuntime.snapshot?.source || "loading"}</span>
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
             <section className="flex flex-wrap items-end justify-between gap-4">
               <div data-command-dashboard-shell="true">
                 <h1 className="text-4xl font-black tracking-[-0.06em] text-slate-950">ANGELCARE Campaign Command Center</h1>
@@ -4171,13 +4260,18 @@ const selectedTaskOps = filteredTaskOps.find((task) => task.id === selectedTaskO
                         <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">Campaign Timeline Control</p>
                         <h3 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">Dates, remaining days and expiry actions</h3>
                         <p className="mt-1 text-sm font-bold text-slate-500">Automatic timeline pressure, remaining days and campaign date governance.</p>
+                        {opsosMaxTimelineCards < state.campaigns.length ? (
+                          <p className="mt-2 inline-flex rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-black text-amber-800">
+                            OPSOS limit active: showing {opsosTimelineCampaigns.length} of {state.campaigns.length} timeline cards.
+                          </p>
+                        ) : null}
                       </div>
                     </div>
 
                     <div className="grid items-start gap-4 p-5 xl:grid-cols-[minmax(0,1fr)_360px]">
                       <div className="max-h-[74vh] overflow-y-auto pr-2">
                         <div className="grid grid-cols-1 gap-5 2xl:grid-cols-2">
-                          {state.campaigns.length ? state.campaigns.map((campaign) => {
+                          {opsosTimelineCampaigns.length ? opsosTimelineCampaigns.map((campaign) => {
                             const tone = campaignExpiryTone(campaign)
                             const remaining = remainingCampaignDays(campaign)
                             const selectedRow = selectedDatesCampaign?.id === campaign.id

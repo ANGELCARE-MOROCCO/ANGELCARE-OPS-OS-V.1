@@ -408,6 +408,84 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   const action = body.action || 'save'
   const form = body.form || {}
 
+
+  if (action === 'activate') {
+    const now = new Date().toISOString()
+    const { data: organization } = await supabase.from('core_organizations').select('*').eq('id', id).maybeSingle()
+
+    const update = await adaptiveUpdate(supabase, 'core_organizations', id, {
+      status: 'active',
+      stage: 'active',
+      metadata: {
+        ...(organization?.metadata || body.currentMetadata || {}),
+        access_temporarily_suspended: false,
+        partner_portal_enabled: true,
+        activation_status_changed_at: now,
+        access_status_changed_at: now,
+        activation_source: 'traininghub_existing_partner_modal',
+      },
+      updated_at: now,
+    })
+
+    const profiles = await selectMaybeByOrg(supabase, 'core_user_profiles', id, 50)
+    for (const profile of profiles) {
+      await adaptiveUpdate(supabase, 'core_user_profiles', profile.id, {
+        status: 'active',
+        access_status: 'active',
+        metadata: {
+          ...(profile.metadata || {}),
+          partner_portal_enabled: true,
+          activation_status_changed_at: now,
+        },
+        updated_at: now,
+      })
+    }
+
+    const memberships = await selectMaybeByOrg(supabase, 'core_memberships', id, 50)
+    for (const membership of memberships) {
+      await adaptiveUpdate(supabase, 'core_memberships', membership.id, {
+        status: 'active',
+        metadata: {
+          ...(membership.metadata || {}),
+          partner_portal_enabled: true,
+          activation_status_changed_at: now,
+        },
+        updated_at: now,
+      })
+    }
+
+    const roleAssignments = await selectMaybeByOrg(supabase, 'authz_user_role_assignments', id, 50)
+    for (const assignment of roleAssignments) {
+      await adaptiveUpdate(supabase, 'authz_user_role_assignments', assignment.id, {
+        status: 'active',
+        metadata: {
+          ...(assignment.metadata || {}),
+          partner_portal_enabled: true,
+          activation_status_changed_at: now,
+        },
+        updated_at: now,
+      })
+    }
+
+    await logActivity(supabase, id, 'partner_activated', {
+      title: 'Dossier partenaire activé',
+      profiles: profiles.length,
+      memberships: memberships.length,
+      roleAssignments: roleAssignments.length,
+    })
+
+    return NextResponse.json({
+      ok: update.ok,
+      data: {
+        organization: update.data,
+        profiles: profiles.length,
+        memberships: memberships.length,
+        roleAssignments: roleAssignments.length,
+      },
+      message: update.ok ? 'Dossier partenaire activé.' : update.error,
+    })
+  }
+
   if (action === 'set_password') {
     const result = await ensureAuthAccess(supabase, id, form, String(body.password || ''))
     if (!result.ok) return NextResponse.json({ ok: false, message: result.message }, { status: 400 })

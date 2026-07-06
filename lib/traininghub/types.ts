@@ -40,6 +40,11 @@ export type TrainingHubMembership = {
   organization_id: string
   site_id: string | null
   user_id: string
+  auth_user_id?: string | null
+  profile_id?: string | null
+  role_id?: string | null
+  role?: string | null
+  role_key?: string | null
   membership_type: string | null
   status: string | null
   organization?: TrainingHubOrganization | null
@@ -73,6 +78,9 @@ export type TrainingHubEntitlement = {
 
 export type TrainingHubContext = {
   authUser: TrainingHubAuthUser
+  organization?: TrainingHubOrganization | null
+  organization_id?: string | null
+  membership?: TrainingHubMembership | null
   profile: TrainingHubProfile
   memberships: TrainingHubMembership[]
   organizations: TrainingHubOrganization[]

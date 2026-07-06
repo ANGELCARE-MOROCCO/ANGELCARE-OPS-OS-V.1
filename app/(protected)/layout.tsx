@@ -6,6 +6,7 @@ import OverheadPanel from '@/app/components/erp/OverheadPanel'
 import AppShell from '@/app/components/erp/AppShell'
 import UserActivityTracker from '@/components/users/UserActivityTracker'
 import { MODULE_ACCESS_LINKS } from '@/lib/auth/permissions'
+import OpsosTelemetryProvider from '@/components/opsos-control-plane/OpsosTelemetryProvider'
 
 export default async function ProtectedLayout({
   children,
@@ -36,7 +37,7 @@ export default async function ProtectedLayout({
 
       {/* Global protected content offset: keeps every logged-in page below the fixed overhead panel */}
       <div style={{ paddingTop: 86, minHeight: '100vh' }}>
-        {children}
+        <OpsosTelemetryProvider>{children}</OpsosTelemetryProvider>
       </div>
 
       {/* Global voice terminal */}

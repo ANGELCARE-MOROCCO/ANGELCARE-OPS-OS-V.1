@@ -5,73 +5,16 @@ import {
   TrainingHubHttpError,
 } from '@/lib/traininghub/auth'
 import { createTrainingHubUserClient } from '@/lib/traininghub/supabase'
+import {
+  listTrainingHubPartnerRequests,
+  resolveTrainingHubPartnerOrganizationScope,
+} from '@/lib/traininghub/partner-portal-sync'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 function clean(value: unknown) {
   return String(value || '').trim()
-}
-
-function organizationIdFrom(context: any) {
-  return clean(context.organization?.id) || clean(context.organization_id) || clean(context.membership?.organization_id) || clean(context.profile?.organization_id)
-}
-
-async function listFromPartnerRequests(supabase: any, organizationId: string) {
-  const { data, error } = await supabase
-    .from('partner_requests')
-    .select('*')
-    .eq('organization_id', organizationId)
-    .order('created_at', { ascending: false })
-
-  if (error) return { rows: [], error }
-  return { rows: Array.isArray(data) ? data : [], error: null }
-}
-
-async function listFromAutoEvents(supabase: any, organizationId: string) {
-  const { data, error } = await supabase
-    .from('auto_events')
-    .select('*')
-    .eq('organization_id', organizationId)
-    .ilike('event_type', 'partner_request%')
-    .order('created_at', { ascending: false })
-
-  if (error) return { rows: [], error }
-  return {
-    rows: (Array.isArray(data) ? data : []).map((row: any) => ({
-      id: row.id,
-      request_type: row.payload?.request_type || row.event_type || 'support_issue',
-      title: row.title || row.payload?.title || 'Demande partenaire',
-      description: row.payload?.description || row.description || '',
-      status: row.status || 'open',
-      priority: row.payload?.priority || 'normal',
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    })),
-    error: null,
-  }
-}
-
-export async function GET() {
-  try {
-    const context = (await getTrainingHubContext()) as any
-    const organizationId = organizationIdFrom(context)
-
-    if (!organizationId) {
-      throw new TrainingHubHttpError('Aucun établissement partenaire rattaché à cette session.', 403, 'TRAININGHUB_PARTNER_SCOPE_MISSING')
-    }
-
-    const supabase = await createTrainingHubUserClient()
-    const primary = await listFromPartnerRequests(supabase, organizationId)
-
-    if (!primary.error) {
-      return NextResponse.json({ ok: true, data: primary.rows })
-    }
-
-    const fallback = await listFromAutoEvents(supabase, organizationId)
-    return NextResponse.json({ ok: true, data: fallback.rows, fallback: true })
-  } catch (error) {
-    return trainingHubErrorResponse(error)
-  }
 }
 
 async function insertPartnerRequest(supabase: any, organizationId: string, profileId: string, body: any) {
@@ -125,10 +68,27 @@ async function insertFallbackEvent(supabase: any, organizationId: string, profil
   }
 }
 
+export async function GET() {
+  try {
+    const context = await getTrainingHubContext()
+    const supabase = await createTrainingHubUserClient()
+    const data = await listTrainingHubPartnerRequests(supabase, context)
+
+    return NextResponse.json(
+      { ok: true, data },
+      { headers: { 'Cache-Control': 'no-store' } },
+    )
+  } catch (error) {
+    return trainingHubErrorResponse(error)
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const context = (await getTrainingHubContext()) as any
-    const organizationId = organizationIdFrom(context)
+    const context = await getTrainingHubContext()
+    const supabase = await createTrainingHubUserClient()
+    const scope = await resolveTrainingHubPartnerOrganizationScope(supabase, context)
+    const organizationId = clean(scope.organizationId)
     const profileId = clean(context.profile?.id)
 
     if (!organizationId) {
@@ -142,7 +102,6 @@ export async function POST(request: NextRequest) {
       throw new TrainingHubHttpError('Objet de demande requis.', 400, 'TRAININGHUB_REQUEST_TITLE_REQUIRED')
     }
 
-    const supabase = await createTrainingHubUserClient()
     const primary = await insertPartnerRequest(supabase, organizationId, profileId, body)
 
     if (!primary.error) {
@@ -155,42 +114,6 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ ok: true, data: fallback.data, fallback: true })
-  } catch (error) {
-    return trainingHubErrorResponse(error)
-  }
-}
-
-export async function PATCH(request: NextRequest) {
-  try {
-    const context = (await getTrainingHubContext()) as any
-    const organizationId = organizationIdFrom(context)
-
-    if (!organizationId) {
-      throw new TrainingHubHttpError('Aucun établissement partenaire rattaché à cette session.', 403, 'TRAININGHUB_PARTNER_SCOPE_MISSING')
-    }
-
-    const body = await request.json()
-    const id = clean(body.id)
-    const status = clean(body.status || 'closed')
-
-    if (!id) {
-      throw new TrainingHubHttpError('Demande requise.', 400, 'TRAININGHUB_REQUEST_ID_REQUIRED')
-    }
-
-    const supabase = await createTrainingHubUserClient()
-    const { data, error } = await supabase
-      .from('partner_requests')
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .eq('organization_id', organizationId)
-      .select('*')
-      .maybeSingle()
-
-    if (error) {
-      throw new TrainingHubHttpError(error.message, 500, 'TRAININGHUB_REQUEST_UPDATE_FAILED')
-    }
-
-    return NextResponse.json({ ok: true, data })
   } catch (error) {
     return trainingHubErrorResponse(error)
   }

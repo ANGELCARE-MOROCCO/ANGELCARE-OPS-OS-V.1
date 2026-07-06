@@ -1,7 +1,10 @@
-import { TrainingHubInternalAdminPage } from '@/components/traininghub/internal/TrainingHubInternalAdminPage'
+import TrainingHubCommercialCommandCenter from '@/components/traininghub/commercial/TrainingHubCommercialCommandCenter'
+import { requireTrainingHubPageContext } from '../traininghub-page-context'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-export default function Page() {
-  return <TrainingHubInternalAdminPage moduleKey="commercial" />
+export default async function TrainingHubCommercialPage() {
+  await requireTrainingHubPageContext()
+  return <TrainingHubCommercialCommandCenter />
 }
