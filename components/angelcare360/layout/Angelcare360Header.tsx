@@ -1,0 +1,174 @@
+import Link from 'next/link'
+import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
+
+type Angelcare360HeaderProps = {
+  user: Angelcare360SessionUser
+  access: Angelcare360AccessProfile
+  pathname: string
+  onToggleSidebar: () => void
+  showMenuButton: boolean
+}
+
+export default function Angelcare360Header({ user, access, pathname, onToggleSidebar, showMenuButton }: Angelcare360HeaderProps) {
+  const title = pathname.includes('/direction') ? 'Cockpit de Direction' : 'Vue d’ensemble'
+
+  return (
+    <header style={headerStyle}>
+      <div style={brandRowStyle}>
+        {showMenuButton ? (
+          <button type="button" onClick={onToggleSidebar} style={menuButtonStyle} aria-label="Ouvrir la navigation AngelCare 360">
+            Menu
+          </button>
+        ) : (
+          <div aria-hidden="true" style={menuSpacerStyle} />
+        )}
+        <Link href="/angelcare-360-command-center" style={brandLinkStyle} aria-label="Retour au cockpit d’AngelCare 360">
+          <AngelCareLogo size="sm" showText />
+          <div style={brandCopyStyle}>
+            <div style={brandTitleStyle}>ANGELCARE 360 COMMAND CENTER</div>
+            <div style={brandSubtitleStyle}>Pilotage scolaire français</div>
+          </div>
+        </Link>
+      </div>
+
+      <div style={metaRowStyle}>
+        <div style={routeChipStyle}>{title}</div>
+        <div style={roleChipStyle}>{access.summary}</div>
+        <div style={userChipStyle}>
+          {user.full_name || user.name || user.email || 'Utilisateur connecté'}
+        </div>
+      </div>
+
+      <div style={routeActionsStyle}>
+        <Link href="/angelcare-360-command-center" style={actionLinkStyle}>
+          Vue d’ensemble
+        </Link>
+        <Link href="/angelcare-360-command-center/direction" style={primaryActionLinkStyle}>
+          Cockpit détaillé
+        </Link>
+      </div>
+    </header>
+  )
+}
+
+const headerStyle: React.CSSProperties = {
+  display: 'grid',
+  gap: 12,
+  padding: '16px 22px',
+  background: 'rgba(255,255,255,.92)',
+  borderBottom: '1px solid #e2e8f0',
+  backdropFilter: 'blur(14px)',
+}
+
+const brandRowStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 12,
+}
+
+const menuButtonStyle: React.CSSProperties = {
+  border: '1px solid #cbd5e1',
+  borderRadius: 12,
+  padding: '8px 12px',
+  background: '#fff',
+  color: '#0f172a',
+  fontWeight: 800,
+  cursor: 'pointer',
+}
+
+const menuSpacerStyle: React.CSSProperties = {
+  width: 70,
+  height: 36,
+}
+
+const brandLinkStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 14,
+  textDecoration: 'none',
+  minWidth: 0,
+}
+
+const brandCopyStyle: React.CSSProperties = {
+  display: 'grid',
+  gap: 2,
+}
+
+const brandTitleStyle: React.CSSProperties = {
+  color: '#0f172a',
+  fontSize: 14,
+  fontWeight: 950,
+  letterSpacing: 0.4,
+}
+
+const brandSubtitleStyle: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: 12,
+  fontWeight: 650,
+}
+
+const metaRowStyle: React.CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 10,
+}
+
+const routeChipStyle: React.CSSProperties = {
+  borderRadius: 999,
+  background: '#eff6ff',
+  color: '#1d4ed8',
+  padding: '7px 10px',
+  fontSize: 12,
+  fontWeight: 900,
+}
+
+const roleChipStyle: React.CSSProperties = {
+  borderRadius: 999,
+  background: '#f8fafc',
+  color: '#334155',
+  padding: '7px 10px',
+  fontSize: 12,
+  fontWeight: 800,
+  border: '1px solid #e2e8f0',
+}
+
+const userChipStyle: React.CSSProperties = {
+  borderRadius: 999,
+  background: '#0f172a',
+  color: '#fff',
+  padding: '7px 10px',
+  fontSize: 12,
+  fontWeight: 800,
+}
+
+const routeActionsStyle: React.CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 10,
+}
+
+const actionLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  borderRadius: 12,
+  background: '#fff',
+  color: '#0f172a',
+  textDecoration: 'none',
+  padding: '9px 12px',
+  border: '1px solid #cbd5e1',
+  fontWeight: 800,
+}
+
+const primaryActionLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  borderRadius: 12,
+  background: '#0f172a',
+  color: '#fff',
+  textDecoration: 'none',
+  padding: '9px 12px',
+  border: '1px solid #0f172a',
+  fontWeight: 800,
+}
