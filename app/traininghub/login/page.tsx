@@ -1,7 +1,7 @@
 'use client'
 
 import type { CSSProperties, FormEvent } from 'react'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { clearTrainingHubBrowserSession, getTrainingHubBrowserClient } from '@/lib/traininghub/browser-client'
 
@@ -40,6 +40,30 @@ function messageFromError(code: string | null) {
 }
 
 export default function TrainingHubUnifiedLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main
+          style={{
+            minHeight: '100vh',
+            display: 'grid',
+            placeItems: 'center',
+            background: '#f8fbff',
+            color: '#0f1b33',
+            fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+            fontWeight: 900,
+          }}
+        >
+          Chargement TrainingHub...
+        </main>
+      }
+    >
+      <TrainingHubUnifiedLoginInner />
+    </Suspense>
+  )
+}
+
+function TrainingHubUnifiedLoginInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
