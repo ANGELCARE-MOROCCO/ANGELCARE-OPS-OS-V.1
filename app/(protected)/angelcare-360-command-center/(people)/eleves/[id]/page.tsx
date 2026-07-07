@@ -32,27 +32,28 @@ export default async function Angelcare360StudentDetailPage({ params }: { params
   const student = await getAngelcare360StudentById(id)
   if (!student) notFound()
 
-  const metadata = (student.metadata_json as Record<string, unknown> | undefined) || {}
+  const studentRecord = student as Record<string, unknown>
+  const metadata = (studentRecord.metadata_json as Record<string, unknown> | undefined) || {}
   const parents = (student.parents as Array<Record<string, unknown>>) || []
   const contacts = (student.emergency_contacts as Array<Record<string, unknown>>) || []
   const documents = (student.documents as Array<Record<string, unknown>>) || []
   const enrollments = (student.enrollments as Array<Record<string, unknown>>) || []
-  const audits = (student.latest_audit_events as Array<Record<string, unknown>>) || []
+  const audits = (student.latest_audit_events as unknown as Array<Record<string, unknown>>) || []
   const activeEnrollment = enrollments[0] || null
 
   return (
     <Angelcare360PeopleDossier
-      title={asText(student.full_name)}
-      subtitle={`Élève ${asText(student.student_code)} · ${asText(student.status)} · ${asText(student.admission_status)}`}
+      title={asText(studentRecord.full_name)}
+      subtitle={`Élève ${asText(studentRecord.student_code)} · ${asText(studentRecord.status)} · ${asText(studentRecord.admission_status)}`}
       summaryItems={[
-        { label: 'Matricule', value: asText(student.student_code) },
-        { label: 'Date de naissance', value: asText(student.date_of_birth) },
-        { label: 'Sexe', value: asText(student.gender) },
+        { label: 'Matricule', value: asText(studentRecord.student_code) },
+        { label: 'Date de naissance', value: asText(studentRecord.date_of_birth) },
+        { label: 'Sexe', value: asText(studentRecord.gender) },
         { label: 'Nationalité', value: asText(metadata.nationality) },
-        { label: 'Classe', value: asText(student.class_name || activeEnrollment?.class_name) },
-        { label: 'Section', value: asText(student.section_name || activeEnrollment?.section_name) },
-        { label: 'Statut', value: asText(student.status) },
-        { label: 'Transport', value: student.transport_required ? 'Oui' : 'Non' },
+        { label: 'Classe', value: asText(studentRecord.class_name || activeEnrollment?.class_name) },
+        { label: 'Section', value: asText(studentRecord.section_name || activeEnrollment?.section_name) },
+        { label: 'Statut', value: asText(studentRecord.status) },
+        { label: 'Transport', value: studentRecord.transport_required ? 'Oui' : 'Non' },
       ]}
       relatedPanels={[
         {

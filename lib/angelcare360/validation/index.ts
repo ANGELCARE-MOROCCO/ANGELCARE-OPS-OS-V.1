@@ -1,4 +1,5 @@
 import type { Angelcare360AuditEventInput } from '@/types/angelcare360/audit'
+import type { Angelcare360AdmissionsAuditFilter } from '@/types/angelcare360/admissions'
 
 export type Angelcare360ValidationIssue = {
   path: string
@@ -300,6 +301,409 @@ export const angelcare360AdmissionLeadSchema = buildSimpleSchema<Angelcare360Adm
   ['parentName', 'Le nom du parent est obligatoire.', true],
   ['studentFullName', 'Le nom de l’enfant est obligatoire.', true],
 ])
+
+export type Angelcare360AdmissionLeadUpsertInput = SimpleDomainInput & {
+  id?: string | null
+  leadCode: string
+  parentName: string
+  parentPhone?: string | null
+  parentEmail?: string | null
+  studentFullName: string
+  childFirstName?: string | null
+  childLastName?: string | null
+  childDateOfBirth?: string | null
+  relationshipType?: 'père' | 'mère' | 'tuteur' | 'autre' | string | null
+  desiredLevel?: string | null
+  sourceChannel?: string | null
+  assignedStaffId?: string | null
+  priority?: 'low' | 'normal' | 'high' | 'urgent' | string | null
+  nextAction?: string | null
+  nextActionAt?: string | null
+  responsibleStaffId?: string | null
+  notes?: string | null
+  status: 'new' | 'contacted' | 'qualified' | 'application_open' | 'converted' | 'archived'
+}
+
+function buildAdmissionLeadUpsertSchema(name: string) {
+  return createSchema<Angelcare360AdmissionLeadUpsertInput>(name, (input) => {
+    const errors: Angelcare360ValidationIssue[] = []
+    if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de demande d’inscription doit être un objet.' }] }
+
+    const childDateOfBirth = asOptionalString(input.childDateOfBirth)
+    if (childDateOfBirth) {
+      const parsed = new Date(childDateOfBirth)
+      if (Number.isNaN(parsed.getTime())) {
+        errors.push({ path: 'childDateOfBirth', message: 'La date de naissance de l’enfant est invalide.' })
+      }
+    }
+
+    const data: Angelcare360AdmissionLeadUpsertInput = {
+      id: asOptionalString(input.id),
+      schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+      leadCode: asString(input.leadCode, 'Le code de la demande est obligatoire.', 'leadCode', errors),
+      parentName: asString(input.parentName, 'Le nom du parent est obligatoire.', 'parentName', errors),
+      parentPhone: asOptionalString(input.parentPhone),
+      parentEmail: asOptionalString(input.parentEmail),
+      studentFullName: asString(input.studentFullName, 'Le nom de l’enfant est obligatoire.', 'studentFullName', errors),
+      childFirstName: asOptionalString(input.childFirstName),
+      childLastName: asOptionalString(input.childLastName),
+      childDateOfBirth,
+      relationshipType: asEnum(
+        input.relationshipType || 'tuteur',
+        ['père', 'mère', 'tuteur', 'autre'] as const,
+        'La relation du contact est invalide.',
+        'relationshipType',
+        errors,
+      ),
+      desiredLevel: asOptionalString(input.desiredLevel),
+      sourceChannel: asOptionalString(input.sourceChannel),
+      assignedStaffId: asOptionalString(input.assignedStaffId),
+      priority: asEnum(
+        input.priority || 'normal',
+        ['low', 'normal', 'high', 'urgent'] as const,
+        'La priorité de la demande est invalide.',
+        'priority',
+        errors,
+      ),
+      nextAction: asOptionalString(input.nextAction),
+      nextActionAt: asOptionalString(input.nextActionAt),
+      responsibleStaffId: asOptionalString(input.responsibleStaffId),
+      notes: asOptionalString(input.notes),
+      status: asEnum(input.status, ['new', 'contacted', 'qualified', 'application_open', 'converted', 'archived'] as const, 'Le statut de la demande est invalide.', 'status', errors),
+    }
+
+    if (!data.parentPhone && !data.parentEmail) {
+      errors.push({ path: 'parentPhone', message: 'Le téléphone ou l’adresse email du contact est requis.' })
+    }
+
+    if (data.parentEmail) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailPattern.test(data.parentEmail)) {
+        errors.push({ path: 'parentEmail', message: 'L’adresse email du contact est invalide.' })
+      }
+    }
+
+    return errors.length ? { success: false, errors } : { success: true, data }
+  })
+}
+
+export const angelcare360AdmissionLeadCreateSchema = buildAdmissionLeadUpsertSchema('admission_lead_create')
+export const angelcare360AdmissionLeadUpdateSchema = buildAdmissionLeadUpsertSchema('admission_lead_update')
+
+export type Angelcare360AdmissionLeadStatusChangeInput = {
+  id: string
+  schoolId: string
+  status: 'new' | 'contacted' | 'qualified' | 'application_open' | 'converted' | 'archived'
+  note?: string | null
+}
+
+export const angelcare360AdmissionLeadStatusChangeSchema = createSchema<Angelcare360AdmissionLeadStatusChangeInput>('admission_lead_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut doit être un objet.' }] }
+  const data: Angelcare360AdmissionLeadStatusChangeInput = {
+    id: asString(input.id, 'L’identifiant de la demande est requis.', 'id', errors),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    status: asEnum(input.status, ['new', 'contacted', 'qualified', 'application_open', 'converted', 'archived'] as const, 'Le statut de la demande est invalide.', 'status', errors),
+    note: asOptionalString(input.note),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AdmissionApplicationUpsertInput = SimpleDomainInput & {
+  id?: string | null
+  applicationCode: string
+  leadId?: string | null
+  parentId?: string | null
+  studentId?: string | null
+  academicYearId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+  source?: string | null
+  childFirstName?: string | null
+  childLastName?: string | null
+  childDateOfBirth?: string | null
+  childGender?: string | null
+  childNationality?: string | null
+  parentFirstName?: string | null
+  parentLastName?: string | null
+  relationshipType?: 'père' | 'mère' | 'tuteur' | 'autre' | string | null
+  phone?: string | null
+  email?: string | null
+  address?: string | null
+  applicationStage: string
+  applicationDate?: string | null
+  decisionDate?: string | null
+  decisionStatus?: 'pending' | 'accepted' | 'rejected' | 'waitlisted' | 'converted' | string | null
+  decisionReason?: string | null
+  priority?: 'low' | 'normal' | 'high' | 'urgent' | string | null
+  nextAction?: string | null
+  nextActionAt?: string | null
+  responsibleStaffId?: string | null
+  convertedAt?: string | null
+  convertedStudentId?: string | null
+  convertedParentId?: string | null
+  convertedEnrollmentId?: string | null
+  status: 'open' | 'in_review' | 'approved' | 'rejected' | 'waitlisted' | 'converted' | 'archived'
+}
+
+function buildAdmissionApplicationUpsertSchema(name: string) {
+  return createSchema<Angelcare360AdmissionApplicationUpsertInput>(name, (input) => {
+    const errors: Angelcare360ValidationIssue[] = []
+    if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload dossier d’admission doit être un objet.' }] }
+
+    const data: Angelcare360AdmissionApplicationUpsertInput = {
+      id: asOptionalString(input.id),
+      schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+      applicationCode: asString(input.applicationCode, 'Le code du dossier est obligatoire.', 'applicationCode', errors),
+      leadId: asOptionalString(input.leadId),
+      parentId: asOptionalString(input.parentId),
+      studentId: asOptionalString(input.studentId),
+      academicYearId: asOptionalString(input.academicYearId),
+      classId: asOptionalString(input.classId),
+      sectionId: asOptionalString(input.sectionId),
+      source: asOptionalString(input.source),
+      childFirstName: asOptionalString(input.childFirstName),
+      childLastName: asOptionalString(input.childLastName),
+      childDateOfBirth: asOptionalString(input.childDateOfBirth),
+      childGender: asOptionalString(input.childGender),
+      childNationality: asOptionalString(input.childNationality),
+      parentFirstName: asOptionalString(input.parentFirstName),
+      parentLastName: asOptionalString(input.parentLastName),
+      relationshipType: asEnum(
+        input.relationshipType || 'tuteur',
+        ['père', 'mère', 'tuteur', 'autre'] as const,
+        'La relation du parent est invalide.',
+        'relationshipType',
+        errors,
+      ),
+      phone: asOptionalString(input.phone),
+      email: asOptionalString(input.email),
+      address: asOptionalString(input.address),
+      applicationStage: asString(input.applicationStage, 'L’étape du dossier est obligatoire.', 'applicationStage', errors),
+      applicationDate: asOptionalString(input.applicationDate),
+      decisionDate: asOptionalString(input.decisionDate),
+      decisionStatus: asOptionalString(input.decisionStatus),
+      decisionReason: asOptionalString(input.decisionReason),
+      priority: asEnum(
+        input.priority || 'normal',
+        ['low', 'normal', 'high', 'urgent'] as const,
+        'La priorité du dossier est invalide.',
+        'priority',
+        errors,
+      ),
+      nextAction: asOptionalString(input.nextAction),
+      nextActionAt: asOptionalString(input.nextActionAt),
+      responsibleStaffId: asOptionalString(input.responsibleStaffId),
+      convertedAt: asOptionalString(input.convertedAt),
+      convertedStudentId: asOptionalString(input.convertedStudentId),
+      convertedParentId: asOptionalString(input.convertedParentId),
+      convertedEnrollmentId: asOptionalString(input.convertedEnrollmentId),
+      status: asEnum(input.status, ['open', 'in_review', 'approved', 'rejected', 'waitlisted', 'converted', 'archived'] as const, 'Le statut du dossier est invalide.', 'status', errors),
+    }
+
+    if (data.childDateOfBirth) {
+      const parsed = new Date(data.childDateOfBirth)
+      if (Number.isNaN(parsed.getTime())) {
+        errors.push({ path: 'childDateOfBirth', message: 'La date de naissance de l’enfant est invalide.' })
+      }
+    }
+
+    if (!data.childFirstName || !data.childLastName) {
+      errors.push({ path: 'childFirstName', message: 'Le prénom et le nom de l’enfant sont requis pour le dossier.' })
+    }
+
+    if (!data.parentFirstName || !data.parentLastName) {
+      errors.push({ path: 'parentFirstName', message: 'Le prénom et le nom du parent sont requis pour le dossier.' })
+    }
+
+    if (data.email) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailPattern.test(data.email)) {
+        errors.push({ path: 'email', message: 'L’adresse email du parent est invalide.' })
+      }
+    }
+
+    if (!data.phone && !data.email) {
+      errors.push({ path: 'phone', message: 'Le téléphone ou l’adresse email du parent est requis.' })
+    }
+
+    return errors.length ? { success: false, errors } : { success: true, data }
+  })
+}
+
+export const angelcare360AdmissionApplicationCreateSchema = buildAdmissionApplicationUpsertSchema('admission_application_create')
+export const angelcare360AdmissionApplicationUpdateSchema = buildAdmissionApplicationUpsertSchema('admission_application_update')
+
+export type Angelcare360AdmissionApplicationStatusChangeInput = {
+  id: string
+  schoolId: string
+  status: 'open' | 'in_review' | 'approved' | 'rejected' | 'waitlisted' | 'converted' | 'archived'
+  applicationStage?: string | null
+  note?: string | null
+}
+
+export const angelcare360AdmissionApplicationStatusChangeSchema = createSchema<Angelcare360AdmissionApplicationStatusChangeInput>('admission_application_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut du dossier doit être un objet.' }] }
+  const data: Angelcare360AdmissionApplicationStatusChangeInput = {
+    id: asString(input.id, 'L’identifiant du dossier est requis.', 'id', errors),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    status: asEnum(input.status, ['open', 'in_review', 'approved', 'rejected', 'waitlisted', 'converted', 'archived'] as const, 'Le statut du dossier est invalide.', 'status', errors),
+    applicationStage: asOptionalString(input.applicationStage),
+    note: asOptionalString(input.note),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AdmissionDecisionInput = {
+  id: string
+  schoolId: string
+  decisionStatus: 'pending' | 'accepted' | 'rejected' | 'waitlisted' | 'converted'
+  decisionReason?: string | null
+}
+
+export const angelcare360AdmissionDecisionSchema = createSchema<Angelcare360AdmissionDecisionInput>('admission_decision', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La décision d’admission doit être un objet.' }] }
+  const data: Angelcare360AdmissionDecisionInput = {
+    id: asString(input.id, 'L’identifiant du dossier est requis.', 'id', errors),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    decisionStatus: asEnum(input.decisionStatus, ['pending', 'accepted', 'rejected', 'waitlisted', 'converted'] as const, 'Le statut de décision est invalide.', 'decisionStatus', errors),
+    decisionReason: asOptionalString(input.decisionReason),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AdmissionRequiredDocumentInput = {
+  id?: string | null
+  schoolId: string
+  academicYearId?: string | null
+  documentKey: string
+  title: string
+  description?: string | null
+  requiredForStage?: string | null
+  sortOrder: number
+  isRequired?: boolean
+  status: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360AdmissionRequiredDocumentCreateSchema = createSchema<Angelcare360AdmissionRequiredDocumentInput>('admission_required_document_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le document requis doit être un objet.' }] }
+  const data: Angelcare360AdmissionRequiredDocumentInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    documentKey: asString(input.documentKey, 'La clé du document est obligatoire.', 'documentKey', errors),
+    title: asString(input.title, 'Le titre du document est obligatoire.', 'title', errors),
+    description: asOptionalString(input.description),
+    requiredForStage: asOptionalString(input.requiredForStage),
+    sortOrder: Math.max(1, asOptionalNumber(input.sortOrder, 1)),
+    isRequired: asOptionalBoolean(input.isRequired, true),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut du document est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AdmissionRequiredDocumentUpdateSchema = angelcare360AdmissionRequiredDocumentCreateSchema
+
+export type Angelcare360AdmissionDocumentSubmissionUpdateInput = {
+  id?: string | null
+  schoolId: string
+  applicationId: string
+  requiredDocumentId: string
+  documentId?: string | null
+  verificationStatus: 'pending' | 'complete' | 'missing' | 'rejected'
+  notes?: string | null
+  rejectionReason?: string | null
+  status: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360AdmissionDocumentSubmissionUpdateSchema = createSchema<Angelcare360AdmissionDocumentSubmissionUpdateInput>('admission_document_submission_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La soumission documentaire doit être un objet.' }] }
+  const data: Angelcare360AdmissionDocumentSubmissionUpdateInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    applicationId: asString(input.applicationId, 'Le dossier est requis.', 'applicationId', errors),
+    requiredDocumentId: asString(input.requiredDocumentId, 'Le document requis est obligatoire.', 'requiredDocumentId', errors),
+    documentId: asOptionalString(input.documentId),
+    verificationStatus: asEnum(input.verificationStatus, ['pending', 'complete', 'missing', 'rejected'] as const, 'Le statut documentaire est invalide.', 'verificationStatus', errors),
+    notes: asOptionalString(input.notes),
+    rejectionReason: asOptionalString(input.rejectionReason),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut de la soumission est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AdmissionNextActionInput = {
+  schoolId: string
+  id: string
+  entity: 'lead' | 'application'
+  nextAction?: string | null
+  nextActionAt?: string | null
+  responsibleStaffId?: string | null
+  notes?: string | null
+}
+
+export const angelcare360AdmissionNextActionSchema = createSchema<Angelcare360AdmissionNextActionInput>('admission_next_action', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La prochaine action doit être un objet.' }] }
+  const data: Angelcare360AdmissionNextActionInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant est requis.', 'id', errors),
+    entity: asEnum(input.entity, ['lead', 'application'] as const, 'Le type de dossier est invalide.', 'entity', errors),
+    nextAction: asOptionalString(input.nextAction),
+    nextActionAt: asOptionalString(input.nextActionAt),
+    responsibleStaffId: asOptionalString(input.responsibleStaffId),
+    notes: asOptionalString(input.notes),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AdmissionConversionInput = {
+  schoolId: string
+  applicationId: string
+  academicYearId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+  duplicateOverride?: boolean
+  notes?: string | null
+}
+
+export const angelcare360AdmissionConversionSchema = createSchema<Angelcare360AdmissionConversionInput>('admission_conversion', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La conversion doit être un objet.' }] }
+  const data: Angelcare360AdmissionConversionInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    applicationId: asString(input.applicationId, 'Le dossier d’admission est requis.', 'applicationId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+    duplicateOverride: asOptionalBoolean(input.duplicateOverride, false),
+    notes: asOptionalString(input.notes),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AdmissionsAuditFilterSchema = createSchema<Angelcare360AdmissionsAuditFilter>('admissions_audit_filter', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit admissions doit être un objet.' }] }
+  const data: Angelcare360AdmissionsAuditFilter = {
+    search: asOptionalString(input.search),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    actorRole: asOptionalString(input.actorRole),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    errors.push({ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
 
 export const angelcare360AttendanceRecordSchema = buildSimpleSchema<Angelcare360AttendanceRecordInput>('attendance_record', [
   ['schoolId', 'L’établissement est requis.', true],

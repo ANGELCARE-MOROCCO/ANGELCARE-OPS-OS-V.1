@@ -249,3 +249,11 @@ Do not move to the next phase until:
 - Added real French admin routes for établissements, années scolaires, périodes, classes, sections, matières, affectations enseignants, rôles & permissions, paramètres, and audit.
 - Added a generic authenticated mutation route at `POST /api/angelcare360/administration` plus server-side permission, validation, and audit wiring.
 - The latest `npm run build` run reached the production compile stage and then encountered TypeScript checks that were fixed during the phase; the final rerun was interrupted by the user before completion, so the last build result is incomplete and should be rerun to completion before Phase 4.
+
+## Phase 5 Admissions / Conversion Engine Note
+
+- Phase 5 implemented the isolated `Admissions & Inscriptions` operating layer under `app/(protected)/angelcare-360-command-center/admissions`.
+- Added the admissions cockpit, pipeline, demandes, dossiers, documents, entretiens / suivis, conversions, and audit routes with French premium enterprise UI.
+- Added the admissions mutation API at `POST /api/angelcare360/admissions`, plus server-side validation, duplicate detection, capacity checks, and critical audit logging.
+- The admissions conversion path now creates or reuses `Élève`, `Parent`, `Lien parent/enfant`, and `Inscription de classe` records safely when conversion prerequisites are satisfied.
+- `npm run build` was launched for validation, but the build remained on the optimized production build step for an extended time and was stopped with exit code `130` to avoid leaving a hanging process in this environment.

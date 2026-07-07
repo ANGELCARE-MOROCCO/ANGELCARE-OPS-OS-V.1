@@ -71,8 +71,8 @@ export default function Angelcare360CommandCenterView({
   const cockpitModule = getAngelcare360ModuleById('cockpit-direction')
 
   const alerts = [
-    'Aucun module métier n’est encore relié à une base de données dédiée pour cette phase.',
-    'Les boutons de mutation restent verrouillés tant que la phase 2 n’a pas posé le schéma.',
+    'Les modules Administration, Admissions et People Core sont désormais branchés au socle de données; les autres modules restent verrouillés.',
+    'Les mutations actives sont server-side, validées et auditées; les modules non livrés restent volontairement fermés.',
     `La session active est contrôlée par le rôle ${session.roleLabel} et la route protégée.`,
   ]
 
@@ -134,9 +134,9 @@ export default function Angelcare360CommandCenterView({
       <section style={snapshotGridStyle}>
         <article style={snapshotCardStyle}>
           <div style={snapshotLabelStyle}>Admissions</div>
-          <h2 style={snapshotTitleStyle}>Périmètre d’inscription à brancher</h2>
+          <h2 style={snapshotTitleStyle}>Admissions & inscriptions actives</h2>
           <p style={snapshotTextStyle}>
-            Formulaire, pipeline, documents et statut seront activés en phase 2. Le cockpit conserve le suivi sans créer de faux dossiers.
+            Pipeline, suivi documentaire, suivi des décisions et conversion vers les dossiers personnes sont opérationnels dans un espace isolé.
           </p>
         </article>
         <article style={snapshotCardStyle}>
@@ -711,4 +711,3 @@ const footerNoteTextStyle: React.CSSProperties = {
   lineHeight: 1.6,
   fontWeight: 600,
 }
-

@@ -20,16 +20,16 @@ export const ANGELCARE360_MODULE_REGISTRY: Angelcare360ModuleRecord[] = [
     id: 'admissions',
     label: 'Admissions',
     group: 'Scolarité',
-    href: '#admissions',
-    stage: 'prévu',
-    badge: 'Phase 2',
-    description: 'Demande d’inscription, collecte des pièces, validation du dossier et confirmation d’entrée.',
-    operationalPurpose: 'Créer un tunnel d’admission contrôlé et auditable.',
-    accessNote: 'Le flux métier sera branché en phase 2.',
-    previewActionLabel: 'Préparer le périmètre',
-    disabledActionLabel: 'Création verrouillée',
-    disabledActionReason: 'Le module Admissions n’est pas encore branché au schéma de données.',
-    keywords: ['inscription', 'lead', 'dossier', 'documents', 'pipeline'],
+    href: '/angelcare-360-command-center/admissions',
+    stage: 'actif',
+    badge: 'Actif',
+    description: 'Demandes d’inscription, collecte des pièces, validation du dossier et conversion sécurisée vers les dossiers personnes.',
+    operationalPurpose: 'Recevoir, qualifier et convertir les admissions sans faux dossier.',
+    accessNote: 'Le flux Admissions & Inscriptions est désormais branché au socle données.',
+    previewActionLabel: 'Ouvrir les admissions',
+    disabledActionLabel: 'Module verrouillé',
+    disabledActionReason: 'Le module Admissions est maintenant actif dans le command center.',
+    keywords: ['inscription', 'lead', 'dossier', 'documents', 'pipeline', 'conversion'],
   },
   {
     id: 'eleves',
@@ -411,4 +411,3 @@ export const ANGELCARE360_MODULE_REGISTRY: Angelcare360ModuleRecord[] = [
 export function getAngelcare360ModuleById(moduleId: string | null | undefined) {
   return ANGELCARE360_MODULE_REGISTRY.find((module) => module.id === moduleId) || null
 }
-
