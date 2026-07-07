@@ -155,9 +155,9 @@ export default function Angelcare360CommandCenterView({
         </article>
         <article style={snapshotCardStyle}>
           <div style={snapshotLabelStyle}>Académique</div>
-          <h2 style={snapshotTitleStyle}>Évaluation à modéliser</h2>
+          <h2 style={snapshotTitleStyle}>Chaîne académique active</h2>
           <p style={snapshotTextStyle}>
-            Devoirs, examens, notes, bulletins et appréciations seront construits sur des entités réelles dans la phase 2.
+            Devoirs, examens, notes, bulletins et appréciations sont désormais branchés sur des entités réelles et auditées.
           </p>
         </article>
       </section>

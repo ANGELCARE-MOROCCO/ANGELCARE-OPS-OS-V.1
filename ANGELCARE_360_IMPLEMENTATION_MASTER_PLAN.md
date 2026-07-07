@@ -112,31 +112,56 @@ Acceptance criteria:
 - schedule views are functional
 - attendance mutations are audited
 
-## Phase 6 - Academics
+## Phase 6 - Daily School Operations
 
 Objective:
 
-- Academic production workflows.
+- Daily school execution and attendance workflows.
 
 Scope:
 
-- devoirs
+- présences
+- absences
+- retards
+- justifications
+- emploi du temps
+- calendrier scolaire
+
+Acceptance criteria:
+
+- daily and monthly views exist
+- justification flow exists
+- schedule views are functional
+- attendance mutations are audited
+
+## Phase 7 - Academics & Evaluation
+
+Objective:
+
+- Academic production, assessment, averages, and bulletin workflows.
+
+Scope:
+
 - cours
+- devoirs
+- soumissions
 - examens
+- sessions d’examens
 - notes
 - moyennes
 - bulletins
 - appréciations
-- PDF readiness
+- audit académique
 
 Acceptance criteria:
 
-- teacher and admin academic views exist
-- submission and grading flows are real
-- report-card/export readiness exists
-- approval or review states are explicit where needed
+- academic route tree exists
+- server-backed lesson, assignment, exam, mark, average, and bulletin actions exist
+- status workflows are explicit and permission-aware
+- PDF/export readiness is locked unless a real export stack exists
+- audit events are written for critical academic mutations
 
-## Phase 7 - Finance
+## Phase 8 - Finance
 
 Objective:
 
@@ -160,7 +185,7 @@ Acceptance criteria:
 - finance actions are audited
 - export/report endpoints exist
 
-## Phase 8 - Extended Modules
+## Phase 9 - Extended Modules
 
 Objective:
 
@@ -184,7 +209,7 @@ Acceptance criteria:
 - permissions are enforced
 - reporting/export surfaces exist
 
-## Phase 9 - Production Hardening
+## Phase 10 - Production Hardening
 
 Objective:
 

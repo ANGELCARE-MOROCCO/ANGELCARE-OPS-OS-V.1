@@ -32,7 +32,7 @@ function asString(value: unknown, message: string, path: string, errors: Angelca
     return ''
   }
 
-  return value.trim()
+  return String(value).trim()
 }
 
 function asOptionalString(value: unknown) {
@@ -83,13 +83,13 @@ function asDateString(value: unknown, message: string, path: string, errors: Ang
     return ''
   }
 
-  const parsed = new Date(value)
+  const parsed = new Date(String(value))
   if (Number.isNaN(parsed.getTime())) {
     errors.push({ path, message })
     return ''
   }
 
-  return value.trim()
+  return String(value).trim()
 }
 
 function asTimeString(value: unknown, message: string, path: string, errors: Angelcare360ValidationIssue[]) {
@@ -98,7 +98,7 @@ function asTimeString(value: unknown, message: string, path: string, errors: Ang
     return ''
   }
 
-  const normalized = value.trim()
+  const normalized = String(value).trim()
   if (!/^\d{2}:\d{2}(:\d{2})?$/.test(normalized)) {
     errors.push({ path, message })
     return ''
@@ -1126,6 +1126,543 @@ export const angelcare360AttendanceAuditFilterSchema = createSchema<Angelcare360
     action: asOptionalString(input.action),
     severity: asOptionalString(input.severity),
     entityType: asOptionalString(input.entityType),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    errors.push({ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360LessonCreateInput = {
+  schoolId: string
+  academicYearId: string
+  classId: string
+  sectionId?: string | null
+  subjectId: string
+  staffId?: string | null
+  lessonCode?: string | null
+  lessonDate: string
+  title: string
+  objectives?: string | null
+  homeworkSummary?: string | null
+  status: 'draft' | 'planned' | 'completed' | 'cancelled' | 'archived'
+}
+
+export const angelcare360LessonCreateSchema = createSchema<Angelcare360LessonCreateInput>('lesson_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de cours doit être un objet.' }] }
+  const data: Angelcare360LessonCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    subjectId: asString(input.subjectId, 'La matière est requise.', 'subjectId', errors),
+    staffId: asOptionalString(input.staffId),
+    lessonCode: asOptionalString(input.lessonCode),
+    lessonDate: asDateString(input.lessonDate, 'La date du cours est obligatoire.', 'lessonDate', errors),
+    title: asString(input.title, 'Le titre du cours est obligatoire.', 'title', errors),
+    objectives: asOptionalString(input.objectives),
+    homeworkSummary: asOptionalString(input.homeworkSummary),
+    status: asEnum(input.status, ['draft', 'planned', 'completed', 'cancelled', 'archived'] as const, 'Le statut du cours est invalide.', 'status', errors),
+  }
+
+  if (data.status === 'planned' && !data.lessonDate) {
+    errors.push({ path: 'lessonDate', message: 'Une date est requise pour un cours planifié.' })
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360LessonUpdateInput = Angelcare360LessonCreateInput & {
+  id: string
+}
+
+export const angelcare360LessonUpdateSchema = createSchema<Angelcare360LessonUpdateInput>('lesson_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de cours doit être un objet.' }] }
+  const parsed = angelcare360LessonCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360LessonUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant du cours est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AssignmentCreateInput = {
+  schoolId: string
+  academicYearId: string
+  classId: string
+  sectionId?: string | null
+  subjectId: string
+  staffId: string
+  assignmentCode?: string | null
+  title: string
+  description?: string | null
+  dueOn?: string | null
+  maxScore?: number | null
+  status: 'draft' | 'published' | 'closed' | 'archived'
+}
+
+export const angelcare360AssignmentCreateSchema = createSchema<Angelcare360AssignmentCreateInput>('assignment_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de devoir doit être un objet.' }] }
+  const status = asEnum(input.status || 'draft', ['draft', 'published', 'closed', 'archived'] as const, 'Le statut du devoir est invalide.', 'status', errors)
+  const dueOn = asOptionalString(input.dueOn)
+  if (status === 'published' && !dueOn) {
+    errors.push({ path: 'dueOn', message: 'La date d’échéance est obligatoire pour un devoir publié.' })
+  }
+  const maxScore = input.maxScore === null || input.maxScore === undefined ? null : asOptionalNumber(input.maxScore, 0)
+  if (maxScore !== null && maxScore <= 0) {
+    errors.push({ path: 'maxScore', message: 'Le score maximal doit être strictement positif.' })
+  }
+  const data: Angelcare360AssignmentCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    subjectId: asString(input.subjectId, 'La matière est requise.', 'subjectId', errors),
+    staffId: asString(input.staffId, 'L’enseignant responsable est requis.', 'staffId', errors),
+    assignmentCode: asOptionalString(input.assignmentCode),
+    title: asString(input.title, 'Le titre du devoir est obligatoire.', 'title', errors),
+    description: asOptionalString(input.description),
+    dueOn,
+    maxScore,
+    status,
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AssignmentUpdateInput = Angelcare360AssignmentCreateInput & { id: string }
+
+export const angelcare360AssignmentUpdateSchema = createSchema<Angelcare360AssignmentUpdateInput>('assignment_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de devoir doit être un objet.' }] }
+  const parsed = angelcare360AssignmentCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360AssignmentUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant du devoir est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AssignmentStatusChangeInput = {
+  schoolId: string
+  id: string
+  status: 'draft' | 'published' | 'closed' | 'archived'
+}
+
+export const angelcare360AssignmentStatusChangeSchema = createSchema<Angelcare360AssignmentStatusChangeInput>('assignment_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut du devoir doit être un objet.' }] }
+  const data: Angelcare360AssignmentStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du devoir est requis.', 'id', errors),
+    status: asEnum(input.status, ['draft', 'published', 'closed', 'archived'] as const, 'Le statut du devoir est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360SubmissionStatusUpdateInput = {
+  schoolId: string
+  assignmentId: string
+  studentId: string
+  status: 'pending' | 'draft' | 'submitted' | 'late' | 'reviewed' | 'graded' | 'missing' | 'archived'
+  score?: number | null
+  feedback?: string | null
+  submittedAt?: string | null
+}
+
+export const angelcare360SubmissionStatusUpdateSchema = createSchema<Angelcare360SubmissionStatusUpdateInput>('submission_status_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de soumission doit être un objet.' }] }
+  const score = input.score === null || input.score === undefined ? null : asOptionalNumber(input.score, 0)
+  if (score !== null && score < 0) {
+    errors.push({ path: 'score', message: 'La note de soumission ne peut pas être négative.' })
+  }
+  const data: Angelcare360SubmissionStatusUpdateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    assignmentId: asString(input.assignmentId, 'Le devoir est requis.', 'assignmentId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    status: asEnum(input.status, ['pending', 'draft', 'submitted', 'late', 'reviewed', 'graded', 'missing', 'archived'] as const, 'Le statut de soumission est invalide.', 'status', errors),
+    score,
+    feedback: asOptionalString(input.feedback),
+    submittedAt: asOptionalString(input.submittedAt),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ExamCreateInput = {
+  schoolId: string
+  academicYearId: string
+  classId: string
+  sectionId?: string | null
+  subjectId: string
+  staffId?: string | null
+  examCode?: string | null
+  title: string
+  examType: string
+  scheduledOn: string
+  durationMinutes?: number | null
+  maxScore?: number | null
+  status: 'draft' | 'planned' | 'scheduled' | 'active' | 'open' | 'completed' | 'closed' | 'graded' | 'archived'
+}
+
+export const angelcare360ExamCreateSchema = createSchema<Angelcare360ExamCreateInput>('exam_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’examen doit être un objet.' }] }
+  const durationMinutes = input.durationMinutes === null || input.durationMinutes === undefined ? null : Math.trunc(asOptionalNumber(input.durationMinutes, 0))
+  if (durationMinutes !== null && durationMinutes <= 0) {
+    errors.push({ path: 'durationMinutes', message: 'La durée de l’examen doit être strictement positive.' })
+  }
+  const maxScore = input.maxScore === null || input.maxScore === undefined ? null : asOptionalNumber(input.maxScore, 0)
+  if (maxScore !== null && maxScore <= 0) {
+    errors.push({ path: 'maxScore', message: 'Le score maximal de l’examen doit être strictement positif.' })
+  }
+  const data: Angelcare360ExamCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    subjectId: asString(input.subjectId, 'La matière est requise.', 'subjectId', errors),
+    staffId: asOptionalString(input.staffId),
+    examCode: asOptionalString(input.examCode),
+    title: asString(input.title, 'Le titre de l’examen est obligatoire.', 'title', errors),
+    examType: asString(input.examType, 'Le type d’examen est obligatoire.', 'examType', errors),
+    scheduledOn: asDateString(input.scheduledOn, 'La date de l’examen est obligatoire.', 'scheduledOn', errors),
+    durationMinutes,
+    maxScore,
+    status: asEnum(input.status, ['draft', 'planned', 'scheduled', 'active', 'open', 'completed', 'closed', 'graded', 'archived'] as const, 'Le statut de l’examen est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ExamUpdateInput = Angelcare360ExamCreateInput & { id: string }
+
+export const angelcare360ExamUpdateSchema = createSchema<Angelcare360ExamUpdateInput>('exam_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’examen doit être un objet.' }] }
+  const parsed = angelcare360ExamCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360ExamUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant de l’examen est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ExamStatusChangeInput = {
+  schoolId: string
+  id: string
+  status: 'draft' | 'planned' | 'scheduled' | 'active' | 'open' | 'completed' | 'closed' | 'graded' | 'archived'
+}
+
+export const angelcare360ExamStatusChangeSchema = createSchema<Angelcare360ExamStatusChangeInput>('exam_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut de l’examen doit être un objet.' }] }
+  const data: Angelcare360ExamStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de l’examen est requis.', 'id', errors),
+    status: asEnum(input.status, ['draft', 'planned', 'scheduled', 'active', 'open', 'completed', 'closed', 'graded', 'archived'] as const, 'Le statut de l’examen est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ExamSessionCreateInput = {
+  schoolId: string
+  examId: string
+  sessionCode: string
+  room?: string | null
+  startsAt?: string | null
+  endsAt?: string | null
+  invigilatorStaffId?: string | null
+  status: 'planned' | 'scheduled' | 'open' | 'closed' | 'archived'
+}
+
+export const angelcare360ExamSessionCreateSchema = createSchema<Angelcare360ExamSessionCreateInput>('exam_session_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de session d’examen doit être un objet.' }] }
+  const startsAt = asOptionalString(input.startsAt)
+  const endsAt = asOptionalString(input.endsAt)
+  if (startsAt && endsAt && !isValidDateOrder(startsAt, endsAt)) {
+    errors.push({ path: 'endsAt', message: 'La fin de session doit être postérieure au début.' })
+  }
+  const data: Angelcare360ExamSessionCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    examId: asString(input.examId, 'L’examen est requis.', 'examId', errors),
+    sessionCode: asString(input.sessionCode, 'Le code de session est obligatoire.', 'sessionCode', errors),
+    room: asOptionalString(input.room),
+    startsAt,
+    endsAt,
+    invigilatorStaffId: asOptionalString(input.invigilatorStaffId),
+    status: asEnum(input.status, ['planned', 'scheduled', 'open', 'closed', 'archived'] as const, 'Le statut de session est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ExamSessionUpdateInput = Angelcare360ExamSessionCreateInput & { id: string }
+
+export const angelcare360ExamSessionUpdateSchema = createSchema<Angelcare360ExamSessionUpdateInput>('exam_session_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de session d’examen doit être un objet.' }] }
+  const parsed = angelcare360ExamSessionCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360ExamSessionUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant de la session est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360MarkUpdateInput = {
+  schoolId: string
+  academicYearId: string
+  studentId: string
+  subjectId: string
+  examId?: string | null
+  assignmentId?: string | null
+  assessmentType: string
+  score?: number | null
+  maxScore: number
+  markState: 'present' | 'absent' | 'exempt' | 'pending'
+  grade?: string | null
+  recordedByStaffId?: string | null
+}
+
+export const angelcare360MarkUpdateSchema = createSchema<Angelcare360MarkUpdateInput>('mark_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de note doit être un objet.' }] }
+  const score = input.score === null || input.score === undefined ? null : asOptionalNumber(input.score, 0)
+  const maxScore = asOptionalNumber(input.maxScore, 0)
+  const markState = asEnum(input.markState || 'present', ['present', 'absent', 'exempt', 'pending'] as const, 'L’état de note est invalide.', 'markState', errors)
+  if (maxScore <= 0) {
+    errors.push({ path: 'maxScore', message: 'Le score maximal doit être strictement positif.' })
+  }
+  if (score !== null && score < 0) {
+    errors.push({ path: 'score', message: 'La note ne peut pas être négative.' })
+  }
+  if (score !== null && maxScore > 0 && score > maxScore) {
+    errors.push({ path: 'score', message: 'La note ne peut pas dépasser le score maximal.' })
+  }
+  const data: Angelcare360MarkUpdateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    subjectId: asString(input.subjectId, 'La matière est requise.', 'subjectId', errors),
+    examId: asOptionalString(input.examId),
+    assignmentId: asOptionalString(input.assignmentId),
+    assessmentType: asString(input.assessmentType, 'Le type d’évaluation est obligatoire.', 'assessmentType', errors),
+    score,
+    maxScore,
+    markState,
+    grade: asOptionalString(input.grade),
+    recordedByStaffId: asOptionalString(input.recordedByStaffId),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360BulkMarkUpdateInput = {
+  schoolId: string
+  academicYearId: string
+  examId?: string | null
+  assignmentId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+  subjectId: string
+  assessmentType: string
+  records: Array<Angelcare360MarkUpdateInput & { studentId: string }>
+}
+
+export const angelcare360BulkMarkUpdateSchema = createSchema<Angelcare360BulkMarkUpdateInput>('bulk_mark_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le lot de notes doit être un objet.' }] }
+  const recordsInput = Array.isArray(input.records) ? input.records : []
+  const records = recordsInput.map((record, index) => {
+    const parsed = angelcare360MarkUpdateSchema.safeParse({
+      ...(isRecord(record) ? record : {}),
+      schoolId: input.schoolId,
+      academicYearId: input.academicYearId,
+      subjectId: input.subjectId,
+      examId: input.examId || null,
+      assignmentId: input.assignmentId || null,
+      assessmentType: input.assessmentType,
+    })
+    if (!parsed.success) {
+      for (const error of parsed.errors) {
+        errors.push({ path: `records.${index}.${error.path}`, message: error.message })
+      }
+      return null
+    }
+    return parsed.data
+  }).filter((record): record is Angelcare360MarkUpdateInput => Boolean(record))
+
+  const data: Angelcare360BulkMarkUpdateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    examId: asOptionalString(input.examId),
+    assignmentId: asOptionalString(input.assignmentId),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+    subjectId: asString(input.subjectId, 'La matière est requise.', 'subjectId', errors),
+    assessmentType: asString(input.assessmentType, 'Le type d’évaluation est obligatoire.', 'assessmentType', errors),
+    records,
+  }
+
+  if (records.length === 0) {
+    errors.push({ path: 'records', message: 'Au moins une note doit être fournie.' })
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AverageReadinessCheckInput = {
+  schoolId: string
+  academicYearId?: string | null
+  termId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+  studentId?: string | null
+  subjectId?: string | null
+}
+
+export const angelcare360AverageReadinessCheckSchema = createSchema<Angelcare360AverageReadinessCheckInput>('average_readiness_check', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le contrôle de moyennes doit être un objet.' }] }
+  const data: Angelcare360AverageReadinessCheckInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    termId: asOptionalString(input.termId),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+    studentId: asOptionalString(input.studentId),
+    subjectId: asOptionalString(input.subjectId),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ReportCardDraftCreateInput = {
+  schoolId: string
+  academicYearId: string
+  studentId: string
+  classId: string
+  sectionId?: string | null
+  termId: string
+  reportCardCode?: string | null
+  generatedOn?: string | null
+  status?: 'draft'
+}
+
+export const angelcare360ReportCardDraftCreateSchema = createSchema<Angelcare360ReportCardDraftCreateInput>('report_card_draft_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le brouillon du bulletin doit être un objet.' }] }
+  const data: Angelcare360ReportCardDraftCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    termId: asString(input.termId, 'La période est requise.', 'termId', errors),
+    reportCardCode: asOptionalString(input.reportCardCode),
+    generatedOn: asOptionalString(input.generatedOn),
+    status: 'draft',
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ReportCardStatusChangeInput = {
+  schoolId: string
+  id: string
+  status: 'draft' | 'calculated' | 'reviewed' | 'approved' | 'published' | 'archived'
+}
+
+export const angelcare360ReportCardStatusChangeSchema = createSchema<Angelcare360ReportCardStatusChangeInput>('report_card_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut du bulletin doit être un objet.' }] }
+  const data: Angelcare360ReportCardStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du bulletin est requis.', 'id', errors),
+    status: asEnum(input.status, ['draft', 'calculated', 'reviewed', 'approved', 'published', 'archived'] as const, 'Le statut du bulletin est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360TeacherCommentCreateInput = {
+  schoolId: string
+  academicYearId: string
+  studentId: string
+  classId: string
+  sectionId?: string | null
+  termId?: string | null
+  staffId: string
+  commentType: string
+  commentText: string
+  rating?: number | null
+  status?: 'active' | 'archived'
+}
+
+export const angelcare360TeacherCommentCreateSchema = createSchema<Angelcare360TeacherCommentCreateInput>('teacher_comment_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le commentaire enseignant doit être un objet.' }] }
+  const rating = input.rating === null || input.rating === undefined ? null : asOptionalInteger(input.rating, 0)
+  if (rating !== null && (rating < 0 || rating > 5)) {
+    errors.push({ path: 'rating', message: 'La note d’appréciation doit être comprise entre 0 et 5.' })
+  }
+  const data: Angelcare360TeacherCommentCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    termId: asOptionalString(input.termId),
+    staffId: asString(input.staffId, 'L’enseignant est requis.', 'staffId', errors),
+    commentType: asString(input.commentType, 'Le type d’appréciation est obligatoire.', 'commentType', errors),
+    commentText: asString(input.commentText, 'Le commentaire est obligatoire.', 'commentText', errors),
+    rating,
+    status: asEnum(input.status || 'active', ['active', 'archived'] as const, 'Le statut du commentaire est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360TeacherCommentUpdateInput = Angelcare360TeacherCommentCreateInput & { id: string }
+
+export const angelcare360TeacherCommentUpdateSchema = createSchema<Angelcare360TeacherCommentUpdateInput>('teacher_comment_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le commentaire enseignant doit être un objet.' }] }
+  const parsed = angelcare360TeacherCommentCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360TeacherCommentUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant du commentaire est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360AcademicAuditQueryInput = {
+  search?: string | null
+  module?: string | null
+  action?: string | null
+  severity?: string | null
+  entityType?: string | null
+  entityId?: string | null
+  actorRole?: string | null
+  from?: string | null
+  to?: string | null
+}
+
+export const angelcare360AcademicAuditQuerySchema = createSchema<Angelcare360AcademicAuditQueryInput>('academic_audit_query', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit académique doit être un objet.' }] }
+  const data: Angelcare360AcademicAuditQueryInput = {
+    search: asOptionalString(input.search),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorRole: asOptionalString(input.actorRole),
     from: asOptionalString(input.from),
     to: asOptionalString(input.to),
   }
