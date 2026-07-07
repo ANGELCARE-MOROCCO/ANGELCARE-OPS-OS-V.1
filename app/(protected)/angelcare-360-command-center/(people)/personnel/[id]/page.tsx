@@ -32,62 +32,78 @@ export default async function Angelcare360StaffDetailPage({ params }: { params: 
   const staff = await getAngelcare360StaffById(id)
   if (!staff) notFound()
 
-  const metadata = (staff.metadata_json as Record<string, unknown> | undefined) || {}
-  const assignments = (staff.assignments as Array<Record<string, unknown>>) || []
-  const contracts = (staff.contracts as Array<Record<string, unknown>>) || []
-  const documents = (staff.documents as Array<Record<string, unknown>>) || []
-  const contacts = (staff.emergency_contacts as Array<Record<string, unknown>>) || []
-  const audits = (staff.latest_audit_events as Array<Record<string, unknown>>) || []
+  const staffRecord = staff as Record<string, unknown>
+  const metadata = (staffRecord.metadata_json as Record<string, unknown> | undefined) || {}
+  const assignments = (staffRecord.assignments as unknown as Array<Record<string, unknown>>) || []
+  const contracts = (staffRecord.contracts as unknown as Array<Record<string, unknown>>) || []
+  const documents = (staffRecord.documents as unknown as Array<Record<string, unknown>>) || []
+  const contacts = (staffRecord.emergency_contacts as unknown as Array<Record<string, unknown>>) || []
+  const audits = (staffRecord.latest_audit_events as unknown as Array<Record<string, unknown>>) || []
 
   return (
     <Angelcare360PeopleDossier
-      title={asText(staff.full_name)}
-      subtitle={`Personnel ${asText(staff.staff_code)} · ${asText(staff.staff_type)} · ${asText(staff.status)}`}
+      title={asText(staffRecord.full_name)}
+      subtitle={`Personnel ${asText(staffRecord.staff_code)} · ${asText(staffRecord.staff_type)} · ${asText(staffRecord.status)}`}
       summaryItems={[
-        { label: 'Matricule', value: asText(staff.staff_code) },
-        { label: 'Fonction', value: asText(staff.staff_type) },
-        { label: 'Département', value: asText(staff.department) },
+        { label: 'Matricule', value: asText(staffRecord.staff_code) },
+        { label: 'Fonction', value: asText(staffRecord.staff_type) },
+        { label: 'Département', value: asText(staffRecord.department) },
         { label: 'Spécialité', value: asText(metadata.speciality) },
-        { label: 'Email', value: asText(staff.email) },
-        { label: 'Téléphone', value: asText(staff.phone) },
-        { label: 'Date d’entrée', value: asText(staff.hire_date) },
-        { label: 'Statut', value: asText(staff.status) },
+        { label: 'Email', value: asText(staffRecord.email) },
+        { label: 'Téléphone', value: asText(staffRecord.phone) },
+        { label: 'Date d’entrée', value: asText(staffRecord.hire_date) },
+        { label: 'Statut', value: asText(staffRecord.status) },
       ]}
       relatedPanels={[
         {
           title: 'Affectations',
           items: assignments.length
-            ? assignments.map((assignment) => ({
-                label: asText(assignment.assignment_type || 'Affectation'),
-                value: `${asText((assignment.class as Record<string, unknown> | undefined)?.name || assignment.class_name)} · ${asText((assignment.section as Record<string, unknown> | undefined)?.name || assignment.section_name)} · ${asText((assignment.subject as Record<string, unknown> | undefined)?.name || assignment.subject_name)}`,
-              }))
+            ? assignments.map((assignment) => {
+                const assignmentRecord = assignment as Record<string, unknown>
+                const classRecord = assignmentRecord.class as Record<string, unknown> | undefined
+                const sectionRecord = assignmentRecord.section as Record<string, unknown> | undefined
+                const subjectRecord = assignmentRecord.subject as Record<string, unknown> | undefined
+                return {
+                  label: asText(assignmentRecord.assignment_type || 'Affectation'),
+                  value: `${asText(classRecord?.name || assignmentRecord.class_name)} · ${asText(sectionRecord?.name || assignmentRecord.section_name)} · ${asText(subjectRecord?.name || assignmentRecord.subject_name)}`,
+                }
+              })
             : [{ label: 'Affectation', value: 'Aucune affectation active' }],
         },
         {
           title: 'Contrats',
           items: contracts.length
-            ? contracts.map((contract) => ({
-                label: asText(contract.contract_number),
-                value: `${asText(contract.contract_type)} · ${asText(contract.status)} · ${asText(contract.starts_on)} → ${asText(contract.ends_on)}`,
-              }))
+            ? contracts.map((contract) => {
+                const contractRecord = contract as Record<string, unknown>
+                return {
+                  label: asText(contractRecord.contract_number),
+                  value: `${asText(contractRecord.contract_type)} · ${asText(contractRecord.status)} · ${asText(contractRecord.starts_on)} → ${asText(contractRecord.ends_on)}`,
+                }
+              })
             : [{ label: 'Contrat', value: 'Aucun contrat renseigné' }],
         },
         {
           title: 'Documents',
           items: documents.length
-            ? documents.map((document) => ({
-                label: asText(document.category),
-                value: `${asText(document.title)} · ${asText(document.status)}`,
-              }))
+            ? documents.map((document) => {
+                const documentRecord = document as Record<string, unknown>
+                return {
+                  label: asText(documentRecord.category),
+                  value: `${asText(documentRecord.title)} · ${asText(documentRecord.status)}`,
+                }
+              })
             : [{ label: 'Document', value: 'Aucun document référencé' }],
         },
         {
           title: 'Contacts d’urgence',
           items: contacts.length
-            ? contacts.map((contact) => ({
-                label: asText(contact.relationship_type || 'Contact'),
-                value: `${asText(contact.contact_name)} · ${asText(contact.phone)}`,
-              }))
+            ? contacts.map((contact) => {
+                const contactRecord = contact as Record<string, unknown>
+                return {
+                  label: asText(contactRecord.relationship_type || 'Contact'),
+                  value: `${asText(contactRecord.contact_name)} · ${asText(contactRecord.phone)}`,
+                }
+              })
             : [{ label: 'Contact', value: 'Aucun contact d’urgence' }],
         },
       ]}

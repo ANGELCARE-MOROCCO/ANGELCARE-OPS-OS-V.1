@@ -37,10 +37,10 @@ export default async function Angelcare360StudentsPage() {
   const config = createStudentPeopleConfig({
     schoolId: context.school.id,
     academicYearId: context.academicYear?.id || null,
-    classOptions: createClassOptions(classRows as Array<Record<string, unknown>>),
-    sectionOptions: createSectionOptions(sectionRows as Array<Record<string, unknown>>),
-    classRows: classRows as Array<Record<string, unknown>>,
-    sectionRows: sectionRows as Array<Record<string, unknown>>,
+    classOptions: createClassOptions(classRows as unknown as Array<Record<string, unknown>>),
+    sectionOptions: createSectionOptions(sectionRows as unknown as Array<Record<string, unknown>>),
+    classRows: classRows as unknown as Array<Record<string, unknown>>,
+    sectionRows: sectionRows as unknown as Array<Record<string, unknown>>,
   })
 
   const canCreate = context.access.accessLevel === 'super_admin' || context.permissions.has('eleves.create')
@@ -61,7 +61,7 @@ export default async function Angelcare360StudentsPage() {
   return (
     <Angelcare360PeopleHub
       config={config}
-      rows={rows as Array<Record<string, unknown>>}
+      rows={rows as unknown as Array<Record<string, unknown>>}
       contextRow={contextRow}
       canCreate={canCreate}
       canUpdate={canUpdate}

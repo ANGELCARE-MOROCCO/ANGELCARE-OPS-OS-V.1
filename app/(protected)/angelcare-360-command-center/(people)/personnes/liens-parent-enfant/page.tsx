@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation'
 import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare360ErrorState'
 import Angelcare360PeopleHub from '@/components/angelcare360/people/Angelcare360PeopleHub'
 import Angelcare360AdministrationContextRow from '@/components/angelcare360/administration/Angelcare360AdministrationContextRow'
-import { getAngelcare360AccessContext, listAngelcare360Parents, listAngelcare360Students } from '@/lib/angelcare360/server'
-import { listAngelcare360StudentParentLinks } from '@/lib/angelcare360/server/people'
+import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
+import { listAngelcare360Parents, listAngelcare360StudentParentLinks, listAngelcare360Students } from '@/lib/angelcare360/server/people'
 import {
   createParentOptions,
   createStudentOptions,
@@ -40,8 +40,8 @@ export default async function Angelcare360ParentChildLinksPage() {
 
   const config = createStudentParentLinkPeopleConfig({
     schoolId: context.school.id,
-    studentOptions: createStudentOptions(students as Array<Record<string, unknown>>),
-    parentOptions: createParentOptions(parents as Array<Record<string, unknown>>),
+    studentOptions: createStudentOptions(students as unknown as Array<Record<string, unknown>>),
+    parentOptions: createParentOptions(parents as unknown as Array<Record<string, unknown>>),
   })
 
   const canCreate = context.access.accessLevel === 'super_admin' || context.permissions.has('parents.update')
@@ -61,7 +61,7 @@ export default async function Angelcare360ParentChildLinksPage() {
   return (
     <Angelcare360PeopleHub
       config={config}
-      rows={links as Array<Record<string, unknown>>}
+      rows={links as unknown as Array<Record<string, unknown>>}
       contextRow={contextRow}
       canCreate={canCreate}
       canUpdate={canUpdate}

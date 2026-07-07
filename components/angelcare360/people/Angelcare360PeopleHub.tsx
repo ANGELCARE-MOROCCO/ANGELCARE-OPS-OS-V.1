@@ -136,7 +136,7 @@ export default function Angelcare360PeopleHub({
 
     startTransition(async () => {
       try {
-        const normalizedRow = normalizeRowPayload(row)
+        const normalizedRow = normalizeRowPayload(row) as Record<string, unknown>
         const response = await fetch('/api/angelcare360/people', {
           method: 'POST',
           headers: {

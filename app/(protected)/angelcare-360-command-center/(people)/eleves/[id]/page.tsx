@@ -34,11 +34,11 @@ export default async function Angelcare360StudentDetailPage({ params }: { params
 
   const studentRecord = student as Record<string, unknown>
   const metadata = (studentRecord.metadata_json as Record<string, unknown> | undefined) || {}
-  const parents = (student.parents as Array<Record<string, unknown>>) || []
-  const contacts = (student.emergency_contacts as Array<Record<string, unknown>>) || []
-  const documents = (student.documents as Array<Record<string, unknown>>) || []
-  const enrollments = (student.enrollments as Array<Record<string, unknown>>) || []
-  const audits = (student.latest_audit_events as unknown as Array<Record<string, unknown>>) || []
+  const parents = (studentRecord.parents as unknown as Array<Record<string, unknown>>) || []
+  const contacts = (studentRecord.emergency_contacts as unknown as Array<Record<string, unknown>>) || []
+  const documents = (studentRecord.documents as unknown as Array<Record<string, unknown>>) || []
+  const enrollments = (studentRecord.enrollments as unknown as Array<Record<string, unknown>>) || []
+  const audits = (studentRecord.latest_audit_events as unknown as Array<Record<string, unknown>>) || []
   const activeEnrollment = enrollments[0] || null
 
   return (
@@ -59,32 +59,41 @@ export default async function Angelcare360StudentDetailPage({ params }: { params
         {
           title: 'Famille liée',
           items: parents.length
-            ? parents.map((parent) => ({
-                label: asText(parent.relationship_type || parent.relationship || 'Relation'),
+            ? parents.map((parent) => {
+                const parentRecord = parent as Record<string, unknown>
+                return {
+                label: asText(parentRecord.relationship_type || parentRecord.relationship || 'Relation'),
                 value: (
-                  <Link href={`/angelcare-360-command-center/parents/${parent.id}`}>
-                    {asText(parent.full_name || parent.first_name)} · {asText(parent.parent_code)}
+                  <Link href={`/angelcare-360-command-center/parents/${parentRecord.id}`}>
+                    {asText(parentRecord.full_name || parentRecord.first_name)} · {asText(parentRecord.parent_code)}
                   </Link>
                 ),
-              }))
+                }
+              })
             : [{ label: 'Parent', value: 'Aucun parent lié' }],
         },
         {
           title: 'Contacts d’urgence',
           items: contacts.length
-            ? contacts.map((contact) => ({
-                label: asText(contact.relationship_type || 'Contact'),
-                value: `${asText(contact.contact_name)} · ${asText(contact.phone)}`,
-              }))
+            ? contacts.map((contact) => {
+                const contactRecord = contact as Record<string, unknown>
+                return {
+                  label: asText(contactRecord.relationship_type || 'Contact'),
+                  value: `${asText(contactRecord.contact_name)} · ${asText(contactRecord.phone)}`,
+                }
+              })
             : [{ label: 'Contact', value: 'Aucun contact d’urgence enregistré' }],
         },
         {
           title: 'Documents',
           items: documents.length
-            ? documents.map((document) => ({
-                label: asText(document.category),
-                value: `${asText(document.title)} · ${asText(document.status)}`,
-              }))
+            ? documents.map((document) => {
+                const documentRecord = document as Record<string, unknown>
+                return {
+                  label: asText(documentRecord.category),
+                  value: `${asText(documentRecord.title)} · ${asText(documentRecord.status)}`,
+                }
+              })
             : [{ label: 'Document', value: 'Aucun document référencé' }],
         },
         {

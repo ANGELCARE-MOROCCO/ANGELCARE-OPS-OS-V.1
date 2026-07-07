@@ -55,6 +55,11 @@ function asOptionalNumber(value: unknown, fallback = 0) {
   return fallback
 }
 
+function asOptionalInteger(value: unknown, fallback = 0) {
+  const parsed = asOptionalNumber(value, fallback)
+  return Number.isFinite(parsed) ? Math.trunc(parsed) : fallback
+}
+
 function asOptionalStringArray(value: unknown) {
   if (Array.isArray(value)) {
     return value.filter((item): item is string => typeof item === 'string').map((item) => item.trim()).filter(Boolean)
@@ -85,6 +90,21 @@ function asDateString(value: unknown, message: string, path: string, errors: Ang
   }
 
   return value.trim()
+}
+
+function asTimeString(value: unknown, message: string, path: string, errors: Angelcare360ValidationIssue[]) {
+  if (!isNonEmptyString(value)) {
+    errors.push({ path, message })
+    return ''
+  }
+
+  const normalized = value.trim()
+  if (!/^\d{2}:\d{2}(:\d{2})?$/.test(normalized)) {
+    errors.push({ path, message })
+    return ''
+  }
+
+  return normalized.length === 5 ? `${normalized}:00` : normalized
 }
 
 function asEnum<T extends string>(value: unknown, allowed: readonly T[], message: string, path: string, errors: Angelcare360ValidationIssue[]) {
@@ -246,6 +266,118 @@ export type Angelcare360LibraryBookInput = SimpleDomainInput & { bookCode: strin
 export type Angelcare360InventoryItemInput = SimpleDomainInput & { categoryId: string; itemCode: string; label: string; currentStock: number }
 export type Angelcare360MessageInput = SimpleDomainInput & { messageCode: string; subject: string; body: string }
 export type Angelcare360NotificationInput = SimpleDomainInput & { notificationCode: string; title: string; body: string }
+export type Angelcare360AttendanceSessionOpenInput = SimpleDomainInput & {
+  academicYearId: string
+  classId: string
+  sectionId?: string | null
+  sessionDate: string
+  sessionKey: string
+  sessionStatus: 'draft' | 'open' | 'closed' | 'locked' | 'cancelled'
+  notes?: string | null
+}
+export type Angelcare360AttendanceSessionCloseInput = SimpleDomainInput & {
+  attendanceSessionId: string
+  notes?: string | null
+}
+export type Angelcare360AttendanceSessionQueryInput = SimpleDomainInput & {
+  date?: string | null
+  academicYearId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+}
+export type Angelcare360AttendanceRecordUpdateInput = SimpleDomainInput & {
+  attendanceSessionId: string
+  studentId: string
+  attendanceStatus: string
+  minutesLate?: number | null
+  note?: string | null
+  justificationRequired?: boolean
+}
+export type Angelcare360AttendanceBulkUpdateInput = SimpleDomainInput & {
+  attendanceSessionId: string
+  records: Angelcare360AttendanceRecordUpdateInput[]
+}
+export type Angelcare360AttendanceStudentSummaryQueryInput = SimpleDomainInput & {
+  studentId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+  from?: string | null
+  to?: string | null
+}
+export type Angelcare360AttendanceLateRecordsQueryInput = SimpleDomainInput & {
+  from?: string | null
+  to?: string | null
+  classId?: string | null
+  studentId?: string | null
+}
+export type Angelcare360AttendanceAbsenceRecordsQueryInput = SimpleDomainInput & {
+  from?: string | null
+  to?: string | null
+  classId?: string | null
+  studentId?: string | null
+}
+export type Angelcare360AttendanceJustificationCreateInput = SimpleDomainInput & {
+  attendanceRecordId: string
+  justificationCode: string
+  reasonCategory: string
+  description: string
+  evidenceDocumentId?: string | null
+  status?: 'pending' | 'accepted' | 'rejected' | 'expired' | 'cancelled'
+}
+export type Angelcare360AttendanceJustificationUpdateInput = Angelcare360AttendanceJustificationCreateInput & {
+  id: string
+  reviewedAt?: string | null
+}
+export type Angelcare360AttendanceJustificationDecisionInput = SimpleDomainInput & {
+  id: string
+  decision: 'pending' | 'accepted' | 'rejected' | 'expired' | 'cancelled'
+  decisionReason?: string | null
+}
+export type Angelcare360TimetableSlotCreateInput = SimpleDomainInput & {
+  academicYearId: string
+  classId: string
+  sectionId?: string | null
+  subjectId: string
+  staffId?: string | null
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  room?: string | null
+  slotType?: string | null
+  status?: 'active' | 'draft' | 'suspended' | 'archived'
+}
+export type Angelcare360TimetableSlotUpdateInput = Angelcare360TimetableSlotCreateInput & { id: string }
+export type Angelcare360TimetableConflictCheckInput = SimpleDomainInput & {
+  academicYearId?: string | null
+  classId?: string | null
+  sectionId?: string | null
+  staffId?: string | null
+  dayOfWeek?: number | null
+  startTime?: string | null
+  endTime?: string | null
+}
+export type Angelcare360SchoolCalendarEventCreateInput = SimpleDomainInput & {
+  academicYearId?: string | null
+  eventCode: string
+  title: string
+  description?: string | null
+  eventType: string
+  startsOn: string
+  endsOn: string
+  allDay?: boolean
+  audience?: string
+  status?: 'planned' | 'published' | 'completed' | 'cancelled' | 'archived'
+}
+export type Angelcare360SchoolCalendarEventUpdateInput = Angelcare360SchoolCalendarEventCreateInput & { id: string }
+export type Angelcare360AttendanceAuditFilterInput = {
+  search?: string | null
+  module?: string | null
+  action?: string | null
+  severity?: string | null
+  entityType?: string | null
+  from?: string | null
+  to?: string | null
+}
 
 export const angelcare360StudentSchema = buildSimpleSchema<Angelcare360StudentInput>('student', [
   ['schoolId', 'L’établissement est requis.', true],
@@ -705,21 +837,306 @@ export const angelcare360AdmissionsAuditFilterSchema = createSchema<Angelcare360
   return errors.length ? { success: false, errors } : { success: true, data }
 })
 
-export const angelcare360AttendanceRecordSchema = buildSimpleSchema<Angelcare360AttendanceRecordInput>('attendance_record', [
-  ['schoolId', 'L’établissement est requis.', true],
-  ['attendanceSessionId', 'La session de présence est requise.', true],
-  ['studentId', 'L’élève est requis.', true],
-  ['attendanceStatus', 'Le statut de présence est obligatoire.', true],
-])
+export const angelcare360AttendanceSessionOpenSchema = createSchema<Angelcare360AttendanceSessionOpenInput>('attendance_session_open', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de session de présence doit être un objet.' }] }
+  const data: Angelcare360AttendanceSessionOpenInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    sessionDate: asDateString(input.sessionDate, 'La date de présence est invalide.', 'sessionDate', errors),
+    sessionKey: asString(input.sessionKey || 'daily', 'La clé de session est obligatoire.', 'sessionKey', errors),
+    sessionStatus: asEnum(input.sessionStatus || 'open', ['draft', 'open', 'closed', 'locked', 'cancelled'] as const, 'Le statut de session est invalide.', 'sessionStatus', errors),
+    notes: asOptionalString(input.notes),
+  }
+  if (data.sessionDate && data.sessionDate.length > 10) {
+    data.sessionDate = data.sessionDate.slice(0, 10)
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
 
-export const angelcare360TimetableSlotSchema = buildSimpleSchema<Angelcare360TimetableSlotInput>('timetable_slot', [
-  ['schoolId', 'L’établissement est requis.', true],
-  ['academicYearId', 'L’année scolaire est requise.', true],
-  ['classId', 'La classe est requise.', true],
-  ['subjectId', 'La matière est requise.', true],
-  ['startTime', 'L’heure de début est obligatoire.', true],
-  ['endTime', 'L’heure de fin est obligatoire.', true],
-])
+export const angelcare360AttendanceSessionCloseSchema = createSchema<Angelcare360AttendanceSessionCloseInput>('attendance_session_close', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de clôture de session doit être un objet.' }] }
+  const data: Angelcare360AttendanceSessionCloseInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    attendanceSessionId: asString(input.attendanceSessionId, 'La session de présence est requise.', 'attendanceSessionId', errors),
+    notes: asOptionalString(input.notes),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceSessionQuerySchema = createSchema<Angelcare360AttendanceSessionQueryInput>('attendance_session_query', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre de session doit être un objet.' }] }
+  const data: Angelcare360AttendanceSessionQueryInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    date: asOptionalString(input.date),
+    academicYearId: asOptionalString(input.academicYearId),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+  }
+  if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+    errors.push({ path: 'date', message: 'La date de filtre est invalide.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceRecordUpdateSchema = createSchema<Angelcare360AttendanceRecordUpdateInput>('attendance_record_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de présence doit être un objet.' }] }
+  const data: Angelcare360AttendanceRecordUpdateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    attendanceSessionId: asString(input.attendanceSessionId, 'La session de présence est requise.', 'attendanceSessionId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    attendanceStatus: asEnum(
+      input.attendanceStatus,
+      ['present', 'absent', 'late', 'excused', 'justified', 'pending_justification', 'left_early', 'unknown'] as const,
+      'Le statut de présence est invalide.',
+      'attendanceStatus',
+      errors,
+    ),
+    minutesLate: input.minutesLate === undefined || input.minutesLate === null ? null : asOptionalInteger(input.minutesLate, 0),
+    note: asOptionalString(input.note),
+    justificationRequired: asOptionalBoolean(input.justificationRequired, false),
+  }
+  if (data.attendanceStatus === 'late' && (data.minutesLate === null || data.minutesLate === undefined || data.minutesLate <= 0)) {
+    errors.push({ path: 'minutesLate', message: 'Le retard doit contenir un nombre de minutes positif.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceBulkUpdateSchema = createSchema<Angelcare360AttendanceBulkUpdateInput>('attendance_bulk_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le lot de présence doit être un objet.' }] }
+  const recordsInput = Array.isArray(input.records) ? input.records : []
+  const records = recordsInput.map((record, index) => {
+    const parsed = angelcare360AttendanceRecordUpdateSchema.safeParse({
+      ...(isRecord(record) ? record : {}),
+      schoolId: input.schoolId,
+      attendanceSessionId: input.attendanceSessionId,
+    })
+    if (!parsed.success) {
+      for (const error of parsed.errors) {
+        errors.push({ path: `records.${index}.${error.path}`, message: error.message })
+      }
+      return null
+    }
+    return parsed.data
+  }).filter((record): record is Angelcare360AttendanceRecordUpdateInput => Boolean(record))
+
+  const data: Angelcare360AttendanceBulkUpdateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    attendanceSessionId: asString(input.attendanceSessionId, 'La session de présence est requise.', 'attendanceSessionId', errors),
+    records,
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceStudentSummaryQuerySchema = createSchema<Angelcare360AttendanceStudentSummaryQueryInput>('attendance_student_summary_query', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre des présences élève doit être un objet.' }] }
+  const data: Angelcare360AttendanceStudentSummaryQueryInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    studentId: asOptionalString(input.studentId),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    errors.push({ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceLateRecordsQuerySchema = createSchema<Angelcare360AttendanceLateRecordsQueryInput>('attendance_late_records_query', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre des retards doit être un objet.' }] }
+  const data: Angelcare360AttendanceLateRecordsQueryInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+    classId: asOptionalString(input.classId),
+    studentId: asOptionalString(input.studentId),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    errors.push({ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceAbsenceRecordsQuerySchema = createSchema<Angelcare360AttendanceAbsenceRecordsQueryInput>('attendance_absence_records_query', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre des absences doit être un objet.' }] }
+  const data: Angelcare360AttendanceAbsenceRecordsQueryInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+    classId: asOptionalString(input.classId),
+    studentId: asOptionalString(input.studentId),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    errors.push({ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceJustificationCreateSchema = createSchema<Angelcare360AttendanceJustificationCreateInput>('attendance_justification_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de justification doit être un objet.' }] }
+  const data: Angelcare360AttendanceJustificationCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    attendanceRecordId: asString(input.attendanceRecordId, 'Le relevé de présence est requis.', 'attendanceRecordId', errors),
+    justificationCode: asString(input.justificationCode, 'Le code de justification est obligatoire.', 'justificationCode', errors),
+    reasonCategory: asString(input.reasonCategory, 'La catégorie de motif est obligatoire.', 'reasonCategory', errors),
+    description: asString(input.description, 'La description de justification est obligatoire.', 'description', errors),
+    evidenceDocumentId: asOptionalString(input.evidenceDocumentId),
+    status: asEnum(input.status || 'pending', ['pending', 'accepted', 'rejected', 'expired', 'cancelled'] as const, 'Le statut de justification est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceJustificationUpdateSchema = createSchema<Angelcare360AttendanceJustificationUpdateInput>('attendance_justification_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de justification doit être un objet.' }] }
+  const parsed = angelcare360AttendanceJustificationCreateSchema.safeParse(input)
+  if (!parsed.success) {
+    return { success: false, errors: parsed.errors }
+  }
+  const data: Angelcare360AttendanceJustificationUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant de la justification est requis.', 'id', errors),
+    reviewedAt: asOptionalString(input.reviewedAt),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceJustificationDecisionSchema = createSchema<Angelcare360AttendanceJustificationDecisionInput>('attendance_justification_decision', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de décision doit être un objet.' }] }
+  const data: Angelcare360AttendanceJustificationDecisionInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la justification est requis.', 'id', errors),
+    decision: asEnum(input.decision, ['pending', 'accepted', 'rejected', 'expired', 'cancelled'] as const, 'La décision de justification est invalide.', 'decision', errors),
+    decisionReason: asOptionalString(input.decisionReason),
+  }
+  if (data.decision === 'rejected' && !data.decisionReason) {
+    errors.push({ path: 'decisionReason', message: 'Le motif de refus est obligatoire.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TimetableSlotCreateSchema = createSchema<Angelcare360TimetableSlotCreateInput>('timetable_slot_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’emploi du temps doit être un objet.' }] }
+  const data: Angelcare360TimetableSlotCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    subjectId: asString(input.subjectId, 'La matière est requise.', 'subjectId', errors),
+    staffId: asOptionalString(input.staffId),
+    dayOfWeek: asOptionalInteger(input.dayOfWeek, 1),
+    startTime: asTimeString(input.startTime, 'L’heure de début est obligatoire.', 'startTime', errors),
+    endTime: asTimeString(input.endTime, 'L’heure de fin est obligatoire.', 'endTime', errors),
+    room: asOptionalString(input.room),
+    slotType: asOptionalString(input.slotType),
+    status: asEnum(input.status || 'active', ['active', 'draft', 'suspended', 'archived'] as const, 'Le statut du créneau est invalide.', 'status', errors),
+  }
+  if (data.dayOfWeek < 1 || data.dayOfWeek > 7) {
+    errors.push({ path: 'dayOfWeek', message: 'Le jour de semaine doit être compris entre 1 et 7.' })
+  }
+  if (data.startTime && data.endTime && data.startTime >= data.endTime) {
+    errors.push({ path: 'endTime', message: 'L’heure de fin doit être postérieure à l’heure de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TimetableSlotUpdateSchema = createSchema<Angelcare360TimetableSlotUpdateInput>('timetable_slot_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’emploi du temps doit être un objet.' }] }
+  const parsed = angelcare360TimetableSlotCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360TimetableSlotUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant du créneau est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TimetableConflictCheckSchema = createSchema<Angelcare360TimetableConflictCheckInput>('timetable_conflict_check', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre de conflit doit être un objet.' }] }
+  const data: Angelcare360TimetableConflictCheckInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+    staffId: asOptionalString(input.staffId),
+    dayOfWeek: input.dayOfWeek === undefined || input.dayOfWeek === null ? null : asOptionalInteger(input.dayOfWeek, 0),
+    startTime: asOptionalString(input.startTime),
+    endTime: asOptionalString(input.endTime),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360SchoolCalendarEventCreateSchema = createSchema<Angelcare360SchoolCalendarEventCreateInput>('school_calendar_event_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’évènement scolaire doit être un objet.' }] }
+  const data: Angelcare360SchoolCalendarEventCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    eventCode: asString(input.eventCode, 'Le code de l’évènement est obligatoire.', 'eventCode', errors),
+    title: asString(input.title, 'Le titre de l’évènement est obligatoire.', 'title', errors),
+    description: asOptionalString(input.description),
+    eventType: asString(input.eventType, 'Le type d’évènement est obligatoire.', 'eventType', errors),
+    startsOn: asDateString(input.startsOn, 'La date de début est invalide.', 'startsOn', errors),
+    endsOn: asDateString(input.endsOn, 'La date de fin est invalide.', 'endsOn', errors),
+    allDay: asOptionalBoolean(input.allDay, true),
+    audience: asOptionalString(input.audience) || 'all',
+    status: asEnum(input.status || 'planned', ['planned', 'published', 'completed', 'cancelled', 'archived'] as const, 'Le statut de l’évènement est invalide.', 'status', errors),
+  }
+  if (data.startsOn && data.endsOn && !isValidDateOrder(data.startsOn, data.endsOn)) {
+    errors.push({ path: 'endsOn', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360SchoolCalendarEventUpdateSchema = createSchema<Angelcare360SchoolCalendarEventUpdateInput>('school_calendar_event_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’évènement scolaire doit être un objet.' }] }
+  const parsed = angelcare360SchoolCalendarEventCreateSchema.safeParse(input)
+  if (!parsed.success) return { success: false, errors: parsed.errors }
+  const data: Angelcare360SchoolCalendarEventUpdateInput = {
+    ...parsed.data,
+    id: asString(input.id, 'L’identifiant de l’évènement est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceAuditFilterSchema = createSchema<Angelcare360AttendanceAuditFilterInput>('attendance_audit_filter', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit présence doit être un objet.' }] }
+  const data: Angelcare360AttendanceAuditFilterInput = {
+    search: asOptionalString(input.search),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    errors.push({ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AttendanceRecordSchema = angelcare360AttendanceRecordUpdateSchema
+export const angelcare360TimetableSlotSchema = angelcare360TimetableSlotCreateSchema
 
 export const angelcare360AssignmentSchema = buildSimpleSchema<Angelcare360AssignmentInput>('assignment', [
   ['schoolId', 'L’établissement est requis.', true],

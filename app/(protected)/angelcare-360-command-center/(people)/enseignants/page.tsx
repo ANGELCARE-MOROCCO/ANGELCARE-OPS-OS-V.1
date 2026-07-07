@@ -53,7 +53,7 @@ export default async function Angelcare360TeachersPage() {
   return (
     <Angelcare360PeopleHub
       config={config}
-      rows={rows as Array<Record<string, unknown>>}
+      rows={rows as unknown as Array<Record<string, unknown>>}
       contextRow={contextRow}
       canCreate={canCreate}
       canUpdate={canUpdate}

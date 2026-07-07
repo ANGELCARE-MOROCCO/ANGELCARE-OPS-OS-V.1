@@ -27,13 +27,15 @@ function stringify(value: unknown) {
 function matchesSearch(event: Angelcare360AuditRecord, keys: string[], query: string) {
   if (!query) return true
   const normalized = query.toLowerCase()
-  return keys.some((key) => stringify((event as Record<string, unknown>)[key]).toLowerCase().includes(normalized))
+  const eventRecord = event as unknown as Record<string, unknown>
+  return keys.some((key) => stringify(eventRecord[key]).toLowerCase().includes(normalized))
 }
 
 function matchesFilters(event: Angelcare360AuditRecord, filters: Array<{ definition: Angelcare360PeopleFilterDefinition; value: string }>) {
+  const eventRecord = event as unknown as Record<string, unknown>
   return filters.every(({ definition, value }) => {
     if (!value) return true
-    return stringify((event as Record<string, unknown>)[definition.name]) === value
+    return stringify(eventRecord[definition.name]) === value
   })
 }
 
@@ -102,10 +104,10 @@ export default function Angelcare360PeopleAuditWorkspace({
 
       <Angelcare360PeopleTable
         columns={config.columns}
-        rows={filteredEvents}
+        rows={filteredEvents as unknown as Array<Record<string, unknown>>}
         detailHrefKey={config.detailHrefKey || 'detail_href'}
         actions={[{ key: 'view', label: 'Consulter', kind: 'secondary' }]}
-        onRowAction={(_, row) => setSelectedEvent(row as Angelcare360AuditRecord)}
+        onRowAction={(_, row) => setSelectedEvent(row as unknown as Angelcare360AuditRecord)}
         emptyFallback={
           <Angelcare360EmptyState
             title={config.emptyTitle}

@@ -32,35 +32,36 @@ export default async function Angelcare360ParentDetailPage({ params }: { params:
   const parent = await getAngelcare360ParentById(id)
   if (!parent) notFound()
 
-  const metadata = (parent.metadata_json as Record<string, unknown> | undefined) || {}
-  const children = (parent.children as Array<Record<string, unknown>>) || []
-  const links = (parent.child_links as Array<Record<string, unknown>>) || []
-  const documents = (parent.documents as Array<Record<string, unknown>>) || []
-  const audits = (parent.latest_audit_events as Array<Record<string, unknown>>) || []
+  const parentRecord = parent as Record<string, unknown>
+  const metadata = (parentRecord.metadata_json as Record<string, unknown> | undefined) || {}
+  const children = (parent.children as unknown as Array<Record<string, unknown>>) || []
+  const links = (parent.child_links as unknown as Array<Record<string, unknown>>) || []
+  const documents = (parent.documents as unknown as Array<Record<string, unknown>>) || []
+  const audits = (parent.latest_audit_events as unknown as Array<Record<string, unknown>>) || []
 
   return (
     <Angelcare360PeopleDossier
-      title={asText(parent.full_name)}
-      subtitle={`Parent ${asText(parent.parent_code)} · ${asText(parent.relationship_type)} · ${asText(parent.status)}`}
+      title={asText(parentRecord.full_name)}
+      subtitle={`Parent ${asText(parentRecord.parent_code)} · ${asText(parentRecord.relationship_type)} · ${asText(parentRecord.status)}`}
       summaryItems={[
-        { label: 'Code parent', value: asText(parent.parent_code) },
-        { label: 'Relation', value: asText(parent.relationship_type) },
-        { label: 'Téléphone', value: asText(parent.phone) },
-        { label: 'Email', value: asText(parent.email) },
-        { label: 'Profession', value: asText(parent.occupation) },
-        { label: 'Langue préférée', value: asText(parent.preferred_language) },
-        { label: 'Adresse', value: asText(parent.address) },
-        { label: 'Statut', value: asText(parent.status) },
+        { label: 'Code parent', value: asText(parentRecord.parent_code) },
+        { label: 'Relation', value: asText(parentRecord.relationship_type) },
+        { label: 'Téléphone', value: asText(parentRecord.phone) },
+        { label: 'Email', value: asText(parentRecord.email) },
+        { label: 'Profession', value: asText(parentRecord.occupation) },
+        { label: 'Langue préférée', value: asText(parentRecord.preferred_language) },
+        { label: 'Adresse', value: asText(parentRecord.address) },
+        { label: 'Statut', value: asText(parentRecord.status) },
       ]}
       relatedPanels={[
         {
           title: 'Enfants liés',
           items: children.length
             ? children.map((child) => ({
-                label: asText(child.student_code || child.full_name),
+                label: asText((child as Record<string, unknown>).student_code || (child as Record<string, unknown>).full_name),
                 value: (
-                  <Link href={`/angelcare-360-command-center/eleves/${child.id}`}>
-                    {asText(child.full_name)} · {asText(child.status)}
+                  <Link href={`/angelcare-360-command-center/eleves/${(child as Record<string, unknown>).id}`}>
+                    {asText((child as Record<string, unknown>).full_name)} · {asText((child as Record<string, unknown>).status)}
                   </Link>
                 ),
               }))
@@ -86,8 +87,8 @@ export default async function Angelcare360ParentDetailPage({ params }: { params:
           title: 'Liens parent/enfant',
           items: links.length
             ? links.map((link) => ({
-                label: asText(link.relationship_type),
-                value: `${asText(link.is_primary ? 'Principal' : 'Secondaire')} · ${asText(link.is_guardian ? 'Responsable légal' : 'Non gardien')}`,
+                label: asText((link as Record<string, unknown>).relationship_type),
+                value: `${asText((link as Record<string, unknown>).is_primary ? 'Principal' : 'Secondaire')} · ${asText((link as Record<string, unknown>).is_guardian ? 'Responsable légal' : 'Non gardien')}`,
               }))
             : [{ label: 'Lien', value: 'Aucun lien enregistré' }],
         },

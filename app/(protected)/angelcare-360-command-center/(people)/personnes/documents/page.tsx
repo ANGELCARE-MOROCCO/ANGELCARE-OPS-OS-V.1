@@ -42,7 +42,7 @@ export default async function Angelcare360DocumentsPage() {
   return (
     <Angelcare360PeopleHub
       config={config}
-      rows={documents as Array<Record<string, unknown>>}
+      rows={documents as unknown as Array<Record<string, unknown>>}
       contextRow={contextRow}
       canCreate={canCreate}
       canUpdate={canUpdate}

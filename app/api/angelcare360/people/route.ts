@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: 'La requête personnes est incomplète.' }, { status: 422 })
     }
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...(body.payload || {}),
       id: body.id || body.payload?.id || null,
     }
@@ -105,4 +105,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 500 })
   }
 }
-

@@ -267,14 +267,18 @@ export default function Angelcare360CommandCenterView({
                       </Link>
                     </div>
 
-                    <button
-                      type="button"
-                      disabled
-                      style={moduleDisabledButtonStyle}
-                      title={module.disabledActionReason}
-                    >
-                      {module.disabledActionLabel}
-                    </button>
+                    {module.stage === 'actif' ? (
+                      <div style={moduleActiveStateStyle}>{module.disabledActionReason}</div>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        style={moduleDisabledButtonStyle}
+                        title={module.disabledActionReason}
+                      >
+                        {module.disabledActionLabel}
+                      </button>
+                    )}
                   </article>
                 ))}
               </div>
@@ -286,7 +290,7 @@ export default function Angelcare360CommandCenterView({
       <section style={footerNoteStyle}>
         <div style={footerNoteTitleStyle}>Couche de garde prête</div>
         <p style={footerNoteTextStyle}>
-          La session, le rôle et la navigation sont contrôlés côté route. La phase 2 branchera les mutations et la persistance sans modifier ce shell.
+          La session, le rôle et la navigation sont contrôlés côté route. Les modules actifs restent branchés sur des routes réelles, et les modules futurs demeurent verrouillés sans polluer ce shell.
         </p>
       </section>
 
@@ -689,6 +693,17 @@ const moduleDisabledButtonStyle: React.CSSProperties = {
   color: '#64748b',
   fontWeight: 800,
   cursor: 'not-allowed',
+}
+
+const moduleActiveStateStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  borderRadius: 14,
+  border: '1px solid #bbf7d0',
+  background: '#f0fdf4',
+  color: '#166534',
+  padding: '10px 14px',
+  fontWeight: 800,
 }
 
 const footerNoteStyle: React.CSSProperties = {

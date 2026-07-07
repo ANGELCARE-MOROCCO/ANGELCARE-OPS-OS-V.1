@@ -32,35 +32,42 @@ export default async function Angelcare360TeacherDetailPage({ params }: { params
   const teacher = await getAngelcare360TeacherById(id)
   if (!teacher) notFound()
 
-  const metadata = (teacher.metadata_json as Record<string, unknown> | undefined) || {}
-  const assignments = (teacher.assignments as Array<Record<string, unknown>>) || []
-  const contracts = (teacher.contracts as Array<Record<string, unknown>>) || []
-  const documents = (teacher.documents as Array<Record<string, unknown>>) || []
-  const contacts = (teacher.emergency_contacts as Array<Record<string, unknown>>) || []
-  const audits = (teacher.latest_audit_events as Array<Record<string, unknown>>) || []
+  const teacherRecord = teacher as Record<string, unknown>
+  const metadata = (teacherRecord.metadata_json as Record<string, unknown> | undefined) || {}
+  const assignments = (teacher.assignments as unknown as Array<Record<string, unknown>>) || []
+  const contracts = (teacher.contracts as unknown as Array<Record<string, unknown>>) || []
+  const documents = (teacher.documents as unknown as Array<Record<string, unknown>>) || []
+  const contacts = (teacher.emergency_contacts as unknown as Array<Record<string, unknown>>) || []
+  const audits = (teacher.latest_audit_events as unknown as Array<Record<string, unknown>>) || []
 
   return (
     <Angelcare360PeopleDossier
-      title={asText(teacher.full_name)}
-      subtitle={`Enseignant ${asText(teacher.staff_code)} · ${asText(teacher.department || metadata.speciality)} · ${asText(teacher.status)}`}
+      title={asText(teacherRecord.full_name)}
+      subtitle={`Enseignant ${asText(teacherRecord.staff_code)} · ${asText(teacherRecord.department || metadata.speciality)} · ${asText(teacherRecord.status)}`}
       summaryItems={[
-        { label: 'Matricule', value: asText(teacher.staff_code) },
-        { label: 'Fonction', value: asText(teacher.staff_type) },
-        { label: 'Département', value: asText(teacher.department) },
+        { label: 'Matricule', value: asText(teacherRecord.staff_code) },
+        { label: 'Fonction', value: asText(teacherRecord.staff_type) },
+        { label: 'Département', value: asText(teacherRecord.department) },
         { label: 'Spécialité', value: asText(metadata.speciality) },
-        { label: 'Email', value: asText(teacher.email) },
-        { label: 'Téléphone', value: asText(teacher.phone) },
-        { label: 'Date d’entrée', value: asText(teacher.hire_date) },
-        { label: 'Statut', value: asText(teacher.status) },
+        { label: 'Email', value: asText(teacherRecord.email) },
+        { label: 'Téléphone', value: asText(teacherRecord.phone) },
+        { label: 'Date d’entrée', value: asText(teacherRecord.hire_date) },
+        { label: 'Statut', value: asText(teacherRecord.status) },
       ]}
       relatedPanels={[
         {
           title: 'Affectations',
           items: assignments.length
-            ? assignments.map((assignment) => ({
-                label: asText(assignment.assignment_type || 'Affectation'),
-                value: `${asText(assignment.class?.name || assignment.class_name)} · ${asText(assignment.section?.name || assignment.section_name)} · ${asText(assignment.subject?.name || assignment.subject_name)}`,
-              }))
+            ? assignments.map((assignment) => {
+                const assignmentRecord = assignment as Record<string, unknown>
+                const classRecord = assignmentRecord.class as Record<string, unknown> | undefined
+                const sectionRecord = assignmentRecord.section as Record<string, unknown> | undefined
+                const subjectRecord = assignmentRecord.subject as Record<string, unknown> | undefined
+                return {
+                  label: asText(assignmentRecord.assignment_type || 'Affectation'),
+                  value: `${asText(classRecord?.name || assignmentRecord.class_name)} · ${asText(sectionRecord?.name || assignmentRecord.section_name)} · ${asText(subjectRecord?.name || assignmentRecord.subject_name)}`,
+                }
+              })
             : [{ label: 'Affectation', value: 'Aucune affectation active' }],
         },
         {
