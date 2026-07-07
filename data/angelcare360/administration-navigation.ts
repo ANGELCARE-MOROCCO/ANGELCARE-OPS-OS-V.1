@@ -1,0 +1,85 @@
+import type { Angelcare360AdministrationNavItem } from '@/types/angelcare360/administration'
+
+export const ANGELCARE360_ADMINISTRATION_NAVIGATION: Angelcare360AdministrationNavItem[] = [
+  {
+    key: 'overview',
+    label: 'Vue d’ensemble',
+    href: '/angelcare-360-command-center/administration',
+    summary: 'Pilotage global du setup, des risques et de la couverture fonctionnelle.',
+    permission: 'parametres.view',
+    badge: 'Hub',
+  },
+  {
+    key: 'etablissements',
+    label: 'Établissements',
+    href: '/angelcare-360-command-center/administration/etablissements',
+    summary: 'Créer, consulter et mettre à jour les écoles du command center.',
+    permission: 'parametres.view',
+    badge: 'Core',
+  },
+  {
+    key: 'annees-scolaires',
+    label: 'Années scolaires',
+    href: '/angelcare-360-command-center/administration/annees-scolaires',
+    summary: 'Gérer les cycles scolaires, les périodes actives et la chronologie.',
+    permission: 'annees_scolaires.view',
+    badge: 'Core',
+  },
+  {
+    key: 'periodes',
+    label: 'Périodes',
+    href: '/angelcare-360-command-center/administration/periodes',
+    summary: 'Trimestres, semestres et périodes de travail de l’année scolaire.',
+    permission: 'annees_scolaires.view',
+  },
+  {
+    key: 'classes',
+    label: 'Classes',
+    href: '/angelcare-360-command-center/administration/classes',
+    summary: 'Structurer les classes, niveaux et capacités par établissement.',
+    permission: 'classes.view',
+  },
+  {
+    key: 'sections',
+    label: 'Sections',
+    href: '/angelcare-360-command-center/administration/sections',
+    summary: 'Organiser les sections par classe, année et capacité.',
+    permission: 'classes.view',
+  },
+  {
+    key: 'matieres',
+    label: 'Matières',
+    href: '/angelcare-360-command-center/administration/matieres',
+    summary: 'Normaliser le catalogue de disciplines et les rattachements.',
+    permission: 'matieres.view',
+  },
+  {
+    key: 'affectations',
+    label: 'Affectations enseignants',
+    href: '/angelcare-360-command-center/administration/affectations',
+    summary: 'Attribuer les enseignants aux classes, sections et matières.',
+    permission: 'enseignants.view',
+  },
+  {
+    key: 'roles-permissions',
+    label: 'Rôles & permissions',
+    href: '/angelcare-360-command-center/administration/roles-permissions',
+    summary: 'Lire la matrice RBAC et gérer les permissions autorisées.',
+    permission: 'securite.view',
+  },
+  {
+    key: 'parametres',
+    label: 'Paramètres',
+    href: '/angelcare-360-command-center/administration/parametres',
+    summary: 'Configurer la langue, la devise, le fuseau horaire et les règles école.',
+    permission: 'parametres.view',
+  },
+  {
+    key: 'audit',
+    label: 'Audit administration',
+    href: '/angelcare-360-command-center/administration/audit',
+    summary: 'Consulter les mutations et événements critiques du setup.',
+    permission: 'audit.view',
+  },
+]
+

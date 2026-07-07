@@ -242,3 +242,10 @@ Do not move to the next phase until:
 - Added Supabase migrations, demo seed data, strict server-side helpers, validation schemas, audit persistence, and AngelCare 360 domain types.
 - Kept `app/(protected)/angelcare-360` isolated and untouched by the Phase 2 implementation.
 - Build validation was attempted with `npm run build`, but the Next.js build did not complete in this environment before being stopped to avoid a stale worker lock.
+
+## Phase 3 Administration Control Plane Note
+
+- Phase 3 implemented the isolated administration control plane under `app/(protected)/angelcare-360-command-center/administration`.
+- Added real French admin routes for établissements, années scolaires, périodes, classes, sections, matières, affectations enseignants, rôles & permissions, paramètres, and audit.
+- Added a generic authenticated mutation route at `POST /api/angelcare360/administration` plus server-side permission, validation, and audit wiring.
+- The latest `npm run build` run reached the production compile stage and then encountered TypeScript checks that were fixed during the phase; the final rerun was interrupted by the user before completion, so the last build result is incomplete and should be rerun to completion before Phase 4.

@@ -126,8 +126,11 @@ async function getRolesAndPermissions(userId: string, schoolId: string) {
     .eq('school_id', schoolId)
     .eq('status', 'active')
 
-  const roles = ((roleRows || []) as Array<{ role_id: string; role: Pick<Angelcare360RoleRecord, 'id' | 'role_key' | 'label' | 'scope' | 'school_id'> | null }>)
-    .map((item) => item.role)
+  const roles = ((roleRows || []) as Array<{
+    role_id: string
+    role: Pick<Angelcare360RoleRecord, 'id' | 'role_key' | 'label' | 'scope' | 'school_id'> | Array<Pick<Angelcare360RoleRecord, 'id' | 'role_key' | 'label' | 'scope' | 'school_id'>> | null
+  }>)
+    .map((item) => (Array.isArray(item.role) ? item.role[0] : item.role))
     .filter(Boolean) as Array<Pick<Angelcare360RoleRecord, 'id' | 'role_key' | 'label' | 'scope' | 'school_id'>>
 
   const roleIds = roles.map((role) => role.id)

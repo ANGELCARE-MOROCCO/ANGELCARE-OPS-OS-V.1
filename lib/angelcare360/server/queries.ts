@@ -30,7 +30,7 @@ export async function listAngelcare360Schools() {
   const supabase = await createClient()
   const { data } = await supabase
     .from('angelcare360_schools')
-    .select('id, school_code, name, legal_name, status, language, currency, timezone, city, created_at, updated_at')
+    .select('id, school_code, name, legal_name, school_type, country, city, address, phone, email, website, status, language, currency, timezone, metadata_json, created_at, updated_at')
     .order('name', { ascending: true })
 
   return (data || []) as Array<Record<string, unknown>>
@@ -42,7 +42,7 @@ export async function getAngelcare360ActiveSchool(explicitSchoolId?: string | nu
   if (explicitSchoolId) {
     const { data } = await supabase
       .from('angelcare360_schools')
-      .select('id, school_code, name, legal_name, status, language, currency, timezone, city')
+      .select('id, school_code, name, legal_name, school_type, country, city, address, phone, email, website, status, language, currency, timezone, metadata_json')
       .eq('id', explicitSchoolId)
       .maybeSingle()
 
@@ -51,7 +51,7 @@ export async function getAngelcare360ActiveSchool(explicitSchoolId?: string | nu
 
   const { data } = await supabase
     .from('angelcare360_schools')
-    .select('id, school_code, name, legal_name, status, language, currency, timezone, city')
+    .select('id, school_code, name, legal_name, school_type, country, city, address, phone, email, website, status, language, currency, timezone, metadata_json')
     .eq('status', 'active')
     .order('created_at', { ascending: true })
     .limit(1)
