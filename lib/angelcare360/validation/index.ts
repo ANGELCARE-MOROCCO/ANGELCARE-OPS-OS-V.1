@@ -755,3 +755,350 @@ export const angelcare360AuditFilterSchema = createSchema<Angelcare360AuditFilte
   }
   return errors.length ? { success: false, errors } : { success: true, data }
 })
+
+export type Angelcare360StudentPeopleInput = {
+  id?: string | null
+  schoolId: string
+  studentCode: string
+  firstName: string
+  lastName: string
+  fullName?: string | null
+  dateOfBirth?: string | null
+  gender?: string | null
+  nationalId?: string | null
+  nationality?: string | null
+  address?: string | null
+  administrativeNotes?: string | null
+  currentClassId?: string | null
+  currentSectionId?: string | null
+  academicYearId?: string | null
+  admissionStatus: string
+  status: 'active' | 'inactive' | 'archived'
+  transportRequired?: boolean
+  portalAppUserId?: string | null
+}
+
+export const angelcare360StudentPeopleSchema = createSchema<Angelcare360StudentPeopleInput>('student_people', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload élève doit être un objet.' }] }
+
+  const data: Angelcare360StudentPeopleInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    studentCode: asString(input.studentCode, 'Le matricule élève est obligatoire.', 'studentCode', errors),
+    firstName: asString(input.firstName, 'Le prénom de l’élève est obligatoire.', 'firstName', errors),
+    lastName: asString(input.lastName, 'Le nom de l’élève est obligatoire.', 'lastName', errors),
+    fullName: asOptionalString(input.fullName),
+    dateOfBirth: asOptionalString(input.dateOfBirth),
+    gender: asOptionalString(input.gender),
+    nationalId: asOptionalString(input.nationalId),
+    nationality: asOptionalString(input.nationality),
+    address: asOptionalString(input.address),
+    administrativeNotes: asOptionalString(input.administrativeNotes),
+    currentClassId: asOptionalString(input.currentClassId),
+    currentSectionId: asOptionalString(input.currentSectionId),
+    academicYearId: asOptionalString(input.academicYearId),
+    admissionStatus: asString(input.admissionStatus, 'Le statut d’admission est obligatoire.', 'admissionStatus', errors),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut de l’élève est invalide.', 'status', errors),
+    transportRequired: asOptionalBoolean(input.transportRequired, false),
+    portalAppUserId: asOptionalString(input.portalAppUserId),
+  }
+
+  if (data.dateOfBirth) {
+    const parsed = new Date(data.dateOfBirth)
+    if (Number.isNaN(parsed.getTime())) {
+      errors.push({ path: 'dateOfBirth', message: 'La date de naissance est invalide.' })
+    }
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ParentPeopleInput = {
+  id?: string | null
+  schoolId: string
+  parentCode: string
+  firstName: string
+  lastName: string
+  fullName?: string | null
+  relationshipType?: 'père' | 'mère' | 'tuteur' | 'autre' | string | null
+  email?: string | null
+  phone?: string | null
+  secondaryPhone?: string | null
+  whatsapp?: string | null
+  occupation?: string | null
+  preferredLanguage?: string | null
+  address?: string | null
+  administrativeNotes?: string | null
+  status: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360ParentPeopleSchema = createSchema<Angelcare360ParentPeopleInput>('parent_people', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload parent doit être un objet.' }] }
+
+  const data: Angelcare360ParentPeopleInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    parentCode: asString(input.parentCode, 'Le code parent est obligatoire.', 'parentCode', errors),
+    firstName: asString(input.firstName, 'Le prénom du parent est obligatoire.', 'firstName', errors),
+    lastName: asString(input.lastName, 'Le nom du parent est obligatoire.', 'lastName', errors),
+    fullName: asOptionalString(input.fullName),
+    relationshipType: asEnum(
+      input.relationshipType || 'tuteur',
+      ['père', 'mère', 'tuteur', 'autre'] as const,
+      'La relation du parent est invalide.',
+      'relationshipType',
+      errors,
+    ),
+    email: asOptionalString(input.email),
+    phone: asOptionalString(input.phone),
+    secondaryPhone: asOptionalString(input.secondaryPhone),
+    whatsapp: asOptionalString(input.whatsapp),
+    occupation: asOptionalString(input.occupation),
+    preferredLanguage: asOptionalString(input.preferredLanguage),
+    address: asOptionalString(input.address),
+    administrativeNotes: asOptionalString(input.administrativeNotes),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut du parent est invalide.', 'status', errors),
+  }
+
+  if (!data.email && !data.phone && !data.whatsapp) {
+    errors.push({ path: 'phone', message: 'Au moins un moyen de contact principal est requis.' })
+  }
+
+  if (data.email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailPattern.test(data.email)) {
+      errors.push({ path: 'email', message: 'L’adresse email est invalide.' })
+    }
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360StaffPeopleInput = {
+  id?: string | null
+  schoolId: string
+  staffCode: string
+  firstName: string
+  lastName: string
+  fullName?: string | null
+  email?: string | null
+  phone?: string | null
+  staffType: 'teacher' | 'personnel' | 'administration'
+  department?: string | null
+  hireDate?: string | null
+  endDate?: string | null
+  speciality?: string | null
+  contractType?: string | null
+  administrativeNotes?: string | null
+  status: 'active' | 'on_leave' | 'inactive' | 'archived'
+}
+
+export const angelcare360StaffPeopleSchema = createSchema<Angelcare360StaffPeopleInput>('staff_people', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload personnel doit être un objet.' }] }
+
+  const data: Angelcare360StaffPeopleInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    staffCode: asString(input.staffCode, 'Le matricule du personnel est obligatoire.', 'staffCode', errors),
+    firstName: asString(input.firstName, 'Le prénom est obligatoire.', 'firstName', errors),
+    lastName: asString(input.lastName, 'Le nom est obligatoire.', 'lastName', errors),
+    fullName: asOptionalString(input.fullName),
+    email: asOptionalString(input.email),
+    phone: asOptionalString(input.phone),
+    staffType: asEnum(input.staffType, ['teacher', 'personnel', 'administration'] as const, 'Le type de personnel est invalide.', 'staffType', errors),
+    department: asOptionalString(input.department),
+    hireDate: asOptionalString(input.hireDate),
+    endDate: asOptionalString(input.endDate),
+    speciality: asOptionalString(input.speciality),
+    contractType: asOptionalString(input.contractType),
+    administrativeNotes: asOptionalString(input.administrativeNotes),
+    status: asEnum(input.status, ['active', 'on_leave', 'inactive', 'archived'] as const, 'Le statut du personnel est invalide.', 'status', errors),
+  }
+
+  if (data.email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailPattern.test(data.email)) {
+      errors.push({ path: 'email', message: 'L’adresse email est invalide.' })
+    }
+  }
+
+  if (data.hireDate) {
+    const parsed = new Date(data.hireDate)
+    if (Number.isNaN(parsed.getTime())) {
+      errors.push({ path: 'hireDate', message: 'La date d’entrée est invalide.' })
+    }
+  }
+
+  if (data.endDate) {
+    const parsed = new Date(data.endDate)
+    if (Number.isNaN(parsed.getTime())) {
+      errors.push({ path: 'endDate', message: 'La date de sortie est invalide.' })
+    }
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360StudentParentLinkInput = {
+  id?: string | null
+  schoolId: string
+  studentId: string
+  parentId: string
+  relationshipType: string
+  isPrimary: boolean
+  isGuardian: boolean
+  canPickup: boolean
+  canReceiveMessages: boolean
+  canPayFees: boolean
+  status: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360StudentParentLinkSchema = createSchema<Angelcare360StudentParentLinkInput>('student_parent_link', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le lien parent/enfant doit être un objet.' }] }
+
+  const data: Angelcare360StudentParentLinkInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    parentId: asString(input.parentId, 'Le parent est requis.', 'parentId', errors),
+    relationshipType: asString(input.relationshipType, 'La relation est obligatoire.', 'relationshipType', errors),
+    isPrimary: asOptionalBoolean(input.isPrimary, false),
+    isGuardian: asOptionalBoolean(input.isGuardian, true),
+    canPickup: asOptionalBoolean(input.canPickup, true),
+    canReceiveMessages: asOptionalBoolean(input.canReceiveMessages, true),
+    canPayFees: asOptionalBoolean(input.canPayFees, true),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut du lien est invalide.', 'status', errors),
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360EmergencyContactInput = {
+  id?: string | null
+  schoolId: string
+  contactableType: 'student' | 'staff'
+  contactableId: string
+  contactName: string
+  relationshipType?: string | null
+  phone?: string | null
+  email?: string | null
+  priority: number
+  notes?: string | null
+  status: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360EmergencyContactSchema = createSchema<Angelcare360EmergencyContactInput>('emergency_contact', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le contact d’urgence doit être un objet.' }] }
+
+  const data: Angelcare360EmergencyContactInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    contactableType: asEnum(input.contactableType, ['student', 'staff'] as const, 'Le type de contact est invalide.', 'contactableType', errors),
+    contactableId: asString(input.contactableId, 'La personne liée est requise.', 'contactableId', errors),
+    contactName: asString(input.contactName, 'Le nom du contact est obligatoire.', 'contactName', errors),
+    relationshipType: asOptionalString(input.relationshipType),
+    phone: asOptionalString(input.phone),
+    email: asOptionalString(input.email),
+    priority: Math.max(1, asOptionalNumber(input.priority, 1)),
+    notes: asOptionalString(input.notes),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut du contact est invalide.', 'status', errors),
+  }
+
+  if (!data.phone && !data.email) {
+    errors.push({ path: 'phone', message: 'Au moins un moyen de contact est requis.' })
+  }
+  if (data.email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailPattern.test(data.email)) {
+      errors.push({ path: 'email', message: 'L’adresse email est invalide.' })
+    }
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360DocumentReferenceInput = {
+  id?: string | null
+  schoolId: string
+  documentCode: string
+  documentableType: 'student' | 'parent' | 'staff' | 'school'
+  documentableId: string
+  category: string
+  title: string
+  fileName?: string | null
+  filePath?: string | null
+  visibility: 'private' | 'school' | 'public' | 'restricted'
+  documentState: 'requis' | 'recu' | 'validé' | 'expire'
+  expiryDate?: string | null
+  notes?: string | null
+  status: 'active' | 'verified' | 'archived' | 'deleted'
+}
+
+export const angelcare360DocumentReferenceSchema = createSchema<Angelcare360DocumentReferenceInput>('document_reference', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le document doit être un objet.' }] }
+
+  const data: Angelcare360DocumentReferenceInput = {
+    id: asOptionalString(input.id),
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    documentCode: asString(input.documentCode, 'Le code document est obligatoire.', 'documentCode', errors),
+    documentableType: asEnum(input.documentableType, ['student', 'parent', 'staff', 'school'] as const, 'Le type de document est invalide.', 'documentableType', errors),
+    documentableId: asString(input.documentableId, 'La cible du document est requise.', 'documentableId', errors),
+    category: asString(input.category, 'La catégorie du document est obligatoire.', 'category', errors),
+    title: asString(input.title, 'Le titre du document est obligatoire.', 'title', errors),
+    fileName: asOptionalString(input.fileName),
+    filePath: asOptionalString(input.filePath),
+    visibility: asEnum(input.visibility, ['private', 'school', 'public', 'restricted'] as const, 'La visibilité est invalide.', 'visibility', errors),
+    documentState: asEnum(input.documentState, ['requis', 'recu', 'validé', 'expire'] as const, 'Le statut du document est invalide.', 'documentState', errors),
+    expiryDate: asOptionalString(input.expiryDate),
+    notes: asOptionalString(input.notes),
+    status: asEnum(
+      input.status,
+      ['requis', 'recu', 'validé', 'expire', 'archived'] as const,
+      'Le statut du document est invalide.',
+      'status',
+      errors,
+    ),
+  }
+
+  if (data.expiryDate) {
+    const parsed = new Date(data.expiryDate)
+    if (Number.isNaN(parsed.getTime())) {
+      errors.push({ path: 'expiryDate', message: 'La date d’expiration est invalide.' })
+    }
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360StudentClassAssignmentInput = {
+  schoolId: string
+  studentId: string
+  academicYearId: string
+  classId: string
+  sectionId?: string | null
+  enrollmentNumber?: string | null
+  status: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360StudentClassAssignmentSchema = createSchema<Angelcare360StudentClassAssignmentInput>('student_class_assignment', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’affectation classe doit être un objet.' }] }
+  const data: Angelcare360StudentClassAssignmentInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    classId: asString(input.classId, 'La classe est requise.', 'classId', errors),
+    sectionId: asOptionalString(input.sectionId),
+    enrollmentNumber: asOptionalString(input.enrollmentNumber),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut de l’inscription est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PeopleAuditFilterSchema = angelcare360AuditFilterSchema
