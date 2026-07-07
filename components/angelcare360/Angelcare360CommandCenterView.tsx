@@ -148,9 +148,9 @@ export default function Angelcare360CommandCenterView({
         </article>
         <article style={snapshotCardStyle}>
           <div style={snapshotLabelStyle}>Finance</div>
-          <h2 style={snapshotTitleStyle}>Chaîne paiement en attente</h2>
+          <h2 style={snapshotTitleStyle}>Chaîne finance active</h2>
           <p style={snapshotTextStyle}>
-            Frais, paiements, reçus et paie sont cartographiés mais volontairement verrouillés tant que le socle n’est pas posé.
+            Frais scolaires, factures, paiements, reçus, remises et soldes sont désormais branchés sur le socle financier réel.
           </p>
         </article>
         <article style={snapshotCardStyle}>

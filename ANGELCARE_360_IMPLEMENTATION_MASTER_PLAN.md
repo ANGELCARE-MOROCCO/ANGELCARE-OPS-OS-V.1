@@ -161,11 +161,11 @@ Acceptance criteria:
 - PDF/export readiness is locked unless a real export stack exists
 - audit events are written for critical academic mutations
 
-## Phase 8 - Finance
+## Phase 8 - Finance & Paiements
 
 Objective:
 
-- Billing and finance workflows.
+- Billing, receivables, payments, receipts, discounts, reminders, and balances.
 
 Scope:
 
@@ -175,39 +175,49 @@ Scope:
 - reçus
 - remises
 - relances
-- comptabilité
-- paie
+- soldes élèves
+- états de compte
+- dépenses financières
 
 Acceptance criteria:
 
 - invoicing and payment flows are functional
-- balances and reminders are visible
+- invoice totals and balances are computed server-side
+- receipts are only available for confirmed payments
+- discounts and reminders are permission-aware
 - finance actions are audited
-- export/report endpoints exist
+- PDF/export and online payment remain locked unless real infrastructure exists
 
-## Phase 9 - Extended Modules
+## Phase 9 - Payroll Control Plane
 
 Objective:
 
-- Operational extensions and communication.
+- Controlled staff payroll preparation, validation, and compensation tracking.
 
 Scope:
 
-- transport
-- bibliothèque
-- inventaire
-- messagerie
-- notifications
-- annonces
-- réclamations
-- rapports
+- périodes de paie
+- dossiers de paie
+- éléments de paie
+- primes
+- retenues
+- avances
+- ajustements
+- remboursements
+- validation
+- paiements internes
+- historique personnel
+- conformité verrouillée
+- audit paie
 
 Acceptance criteria:
 
-- each module has a real data contract
-- module actions are not dead buttons
+- payroll route tree exists under the command center shell
+- server-backed payroll period, record, item, validation, payment, compliance, and audit actions exist
+- gross/net readiness is explicit or locked when rules are not safe
+- payslip PDF, bank transfer, and compliance automation remain disabled unless real infrastructure exists
 - permissions are enforced
-- reporting/export surfaces exist
+- audit events are written for critical payroll mutations
 
 ## Phase 10 - Production Hardening
 

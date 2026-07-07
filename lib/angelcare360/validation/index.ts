@@ -1720,6 +1720,343 @@ export const angelcare360PayrollSchema = buildSimpleSchema<Angelcare360PayrollIn
   ['payrollNumber', 'Le numéro de paie est obligatoire.', true],
 ])
 
+export type Angelcare360PayrollPeriodCreateInput = {
+  schoolId: string
+  academicYearId: string
+  periodCode: string
+  label: string
+  startsOn: string
+  endsOn: string
+  paymentDate?: string | null
+  status?: 'draft' | 'planned' | 'open' | 'calculated' | 'validated' | 'paid' | 'closed' | 'cancelled' | 'archived'
+  idempotencyKey?: string | null
+}
+export type Angelcare360PayrollPeriodUpdateInput = Angelcare360PayrollPeriodCreateInput & { id: string; blockedReason?: string | null }
+export type Angelcare360PayrollPeriodStatusChangeInput = { schoolId: string; id: string; status: 'draft' | 'planned' | 'open' | 'calculated' | 'validated' | 'paid' | 'closed' | 'cancelled' | 'archived'; reason?: string | null }
+export type Angelcare360PayrollRecordPrepareInput = {
+  schoolId: string
+  payrollPeriodId: string
+  staffId: string
+  payrollNumber?: string | null
+  baseSalary?: number | null
+  status?: 'draft' | 'pending_review' | 'validated' | 'payment_pending' | 'paid' | 'blocked' | 'cancelled' | 'approved' | 'archived'
+  paymentStatus?: 'not_ready' | 'pending' | 'confirmed' | 'blocked' | 'cancelled' | 'partial' | 'paid' | 'failed'
+  idempotencyKey?: string | null
+}
+export type Angelcare360PayrollRecordUpdateInput = {
+  schoolId: string
+  id: string
+  payrollNumber?: string | null
+  baseSalary?: number | null
+  grossAmount?: number | null
+  deductionsTotal?: number | null
+  bonusesTotal?: number | null
+  netAmount?: number | null
+  paymentStatus?: 'not_ready' | 'pending' | 'confirmed' | 'blocked' | 'cancelled' | 'partial' | 'paid' | 'failed'
+  status?: 'draft' | 'pending_review' | 'validated' | 'payment_pending' | 'paid' | 'blocked' | 'cancelled' | 'approved' | 'archived'
+  blockedReason?: string | null
+  idempotencyKey?: string | null
+}
+export type Angelcare360PayrollRecordValidateInput = { schoolId: string; id: string; reason?: string | null }
+export type Angelcare360PayrollRecordBlockInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360PayrollRecordPaymentStatusInput = {
+  schoolId: string
+  id: string
+  status: 'not_ready' | 'pending' | 'confirmed' | 'blocked' | 'cancelled' | 'partial' | 'paid' | 'failed'
+  paymentDate?: string | null
+  paymentMethod?: string | null
+  paymentReference?: string | null
+  reason?: string | null
+}
+export type Angelcare360PayrollItemCreateInput = {
+  schoolId: string
+  payrollRecordId: string
+  itemCode?: string | null
+  itemType: 'base_salary' | 'bonus' | 'deduction' | 'advance' | 'adjustment' | 'reimbursement' | 'other' | 'earning' | 'allowance'
+  label: string
+  amount: number
+  notes?: string | null
+  status?: 'active' | 'archived'
+  idempotencyKey?: string | null
+}
+export type Angelcare360PayrollItemUpdateInput = Angelcare360PayrollItemCreateInput & { id: string }
+export type Angelcare360PayrollItemCancelInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360PayrollHistoryFiltersInput = {
+  schoolId?: string | null
+  staffId?: string | null
+  payrollPeriodId?: string | null
+  status?: string | null
+  search?: string | null
+  from?: string | null
+  to?: string | null
+}
+export type Angelcare360PayrollComplianceReadinessInput = {
+  schoolId?: string | null
+  payrollPeriodId?: string | null
+  staffId?: string | null
+}
+export type Angelcare360PayrollAuditQueryFiltersInput = {
+  schoolId?: string | null
+  module?: string | null
+  action?: string | null
+  severity?: string | null
+  entityType?: string | null
+  entityId?: string | null
+  actorUserId?: string | null
+  search?: string | null
+  from?: string | null
+  to?: string | null
+}
+
+export const angelcare360PayrollPeriodCreateSchema = createSchema<Angelcare360PayrollPeriodCreateInput>('payroll_period_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La période de paie doit être un objet.' }] }
+  const startsOn = asDateString(input.startsOn, 'La date de début est obligatoire.', 'startsOn', errors)
+  const endsOn = asDateString(input.endsOn, 'La date de fin est obligatoire.', 'endsOn', errors)
+  if (startsOn && endsOn && new Date(startsOn).getTime() > new Date(endsOn).getTime()) {
+    errors.push({ path: 'endsOn', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  const data: Angelcare360PayrollPeriodCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    periodCode: asString(input.periodCode, 'Le code de la période de paie est obligatoire.', 'periodCode', errors),
+    label: asString(input.label, 'Le libellé de la période de paie est obligatoire.', 'label', errors),
+    startsOn,
+    endsOn,
+    paymentDate: asOptionalString(input.paymentDate),
+    status: asEnum(input.status || 'planned', ['draft', 'planned', 'open', 'calculated', 'validated', 'paid', 'closed', 'cancelled', 'archived'] as const, 'Le statut de la période de paie est invalide.', 'status', errors),
+    idempotencyKey: asOptionalString(input.idempotencyKey),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollPeriodUpdateSchema = createSchema<Angelcare360PayrollPeriodUpdateInput>('payroll_period_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La mise à jour de période de paie doit être un objet.' }] }
+  const data = angelcare360PayrollPeriodCreateSchema.safeParse(input)
+  if (!data.success) return data
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la période de paie est requis.' }] }
+  }
+  return { success: true, data: { ...data.data, id: String((input as Record<string, unknown>).id).trim(), blockedReason: asOptionalString(input.blockedReason) } }
+})
+
+export const angelcare360PayrollPeriodStatusChangeSchema = createSchema<Angelcare360PayrollPeriodStatusChangeInput>('payroll_period_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut de période de paie doit être un objet.' }] }
+  const data: Angelcare360PayrollPeriodStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'La période de paie est requise.', 'id', errors),
+    status: asEnum(input.status, ['draft', 'planned', 'open', 'calculated', 'validated', 'paid', 'closed', 'cancelled', 'archived'] as const, 'Le statut de la période de paie est invalide.', 'status', errors),
+    reason: asOptionalString(input.reason),
+  }
+  if (data.status === 'cancelled' && !data.reason) {
+    errors.push({ path: 'reason', message: 'Le motif d’annulation est obligatoire.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+function validatePayrollItemAmount(itemType: Angelcare360PayrollItemCreateInput['itemType'], amount: number, errors: Angelcare360ValidationIssue[]) {
+  if (!Number.isFinite(amount)) {
+    errors.push({ path: 'amount', message: 'Le montant de l’élément de paie est invalide.' })
+    return
+  }
+  if (itemType === 'adjustment') {
+    if (amount === 0) {
+      errors.push({ path: 'amount', message: 'L’ajustement ne peut pas être nul.' })
+    }
+    return
+  }
+  if (amount < 0) {
+    errors.push({ path: 'amount', message: 'Le montant de l’élément de paie doit être positif.' })
+  }
+}
+
+export const angelcare360PayrollRecordPrepareSchema = createSchema<Angelcare360PayrollRecordPrepareInput>('payroll_record_prepare', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le dossier de paie doit être un objet.' }] }
+  const amount = asOptionalNumber(input.baseSalary, Number.NaN)
+  if (input.baseSalary !== undefined && !Number.isFinite(amount)) {
+    errors.push({ path: 'baseSalary', message: 'Le salaire de base est invalide.' })
+  }
+  const data: Angelcare360PayrollRecordPrepareInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    payrollPeriodId: asString(input.payrollPeriodId, 'La période de paie est requise.', 'payrollPeriodId', errors),
+    staffId: asString(input.staffId, 'Le membre du personnel est requis.', 'staffId', errors),
+    payrollNumber: asOptionalString(input.payrollNumber),
+    baseSalary: Number.isFinite(amount) ? amount : null,
+    status: asEnum(input.status || 'draft', ['draft', 'pending_review', 'validated', 'payment_pending', 'paid', 'blocked', 'cancelled', 'approved', 'archived'] as const, 'Le statut du dossier de paie est invalide.', 'status', errors),
+    paymentStatus: asEnum(input.paymentStatus || 'not_ready', ['not_ready', 'pending', 'confirmed', 'blocked', 'cancelled', 'partial', 'paid', 'failed'] as const, 'Le statut de paiement est invalide.', 'paymentStatus', errors),
+    idempotencyKey: asOptionalString(input.idempotencyKey),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollRecordUpdateSchema = createSchema<Angelcare360PayrollRecordUpdateInput>('payroll_record_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La mise à jour du dossier de paie doit être un objet.' }] }
+  const amount = asOptionalNumber(input.baseSalary, Number.NaN)
+  const grossAmount = asOptionalNumber(input.grossAmount, Number.NaN)
+  const deductionsTotal = asOptionalNumber(input.deductionsTotal, Number.NaN)
+  const bonusesTotal = asOptionalNumber(input.bonusesTotal, Number.NaN)
+  const netAmount = asOptionalNumber(input.netAmount, Number.NaN)
+  const data: Angelcare360PayrollRecordUpdateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le dossier de paie est requis.', 'id', errors),
+    payrollNumber: asOptionalString(input.payrollNumber),
+    baseSalary: Number.isFinite(amount) ? amount : null,
+    grossAmount: Number.isFinite(grossAmount) ? grossAmount : null,
+    deductionsTotal: Number.isFinite(deductionsTotal) ? deductionsTotal : null,
+    bonusesTotal: Number.isFinite(bonusesTotal) ? bonusesTotal : null,
+    netAmount: Number.isFinite(netAmount) ? netAmount : null,
+    paymentStatus: input.paymentStatus ? asEnum(input.paymentStatus, ['not_ready', 'pending', 'confirmed', 'blocked', 'cancelled', 'partial', 'paid', 'failed'] as const, 'Le statut de paiement est invalide.', 'paymentStatus', errors) : undefined,
+    status: input.status ? asEnum(input.status, ['draft', 'pending_review', 'validated', 'payment_pending', 'paid', 'blocked', 'cancelled', 'approved', 'archived'] as const, 'Le statut du dossier de paie est invalide.', 'status', errors) : undefined,
+    blockedReason: asOptionalString(input.blockedReason),
+    idempotencyKey: asOptionalString(input.idempotencyKey),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollRecordValidateSchema = createSchema<Angelcare360PayrollRecordValidateInput>('payroll_record_validate', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La validation du dossier de paie doit être un objet.' }] }
+  const data: Angelcare360PayrollRecordValidateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le dossier de paie est requis.', 'id', errors),
+    reason: asOptionalString(input.reason),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollRecordBlockSchema = createSchema<Angelcare360PayrollRecordBlockInput>('payroll_record_block', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le blocage du dossier de paie doit être un objet.' }] }
+  const data: Angelcare360PayrollRecordBlockInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le dossier de paie est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif de blocage est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollRecordPaymentStatusSchema = createSchema<Angelcare360PayrollRecordPaymentStatusInput>('payroll_record_payment_status', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le statut de paiement de la paie doit être un objet.' }] }
+  const status = asEnum(input.status, ['not_ready', 'pending', 'confirmed', 'blocked', 'cancelled', 'partial', 'paid', 'failed'] as const, 'Le statut de paiement est invalide.', 'status', errors)
+  const paymentDate = asOptionalString(input.paymentDate)
+  const paymentMethod = asOptionalString(input.paymentMethod)
+  const paymentReference = asOptionalString(input.paymentReference)
+  if ((status === 'confirmed' || status === 'paid') && !paymentDate) {
+    errors.push({ path: 'paymentDate', message: 'La date de paiement est obligatoire lorsque la paie est confirmée.' })
+  }
+  if ((status === 'confirmed' || status === 'paid') && !paymentMethod) {
+    errors.push({ path: 'paymentMethod', message: 'Le mode de paiement est obligatoire lorsque la paie est confirmée.' })
+  }
+  const data: Angelcare360PayrollRecordPaymentStatusInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le dossier de paie est requis.', 'id', errors),
+    status,
+    paymentDate,
+    paymentMethod,
+    paymentReference,
+    reason: asOptionalString(input.reason),
+  }
+  if (status === 'blocked' && !data.reason) {
+    errors.push({ path: 'reason', message: 'Le motif de blocage est obligatoire.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollItemCreateSchema = createSchema<Angelcare360PayrollItemCreateInput>('payroll_item_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’élément de paie doit être un objet.' }] }
+  const amount = asOptionalNumber(input.amount, Number.NaN)
+  if (!Number.isFinite(amount)) errors.push({ path: 'amount', message: 'Le montant de l’élément de paie est invalide.' })
+  const itemType = asEnum(input.itemType, ['base_salary', 'bonus', 'deduction', 'advance', 'adjustment', 'reimbursement', 'other', 'earning', 'allowance'] as const, 'Le type d’élément de paie est invalide.', 'itemType', errors)
+  validatePayrollItemAmount(itemType, amount, errors)
+  const data: Angelcare360PayrollItemCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    payrollRecordId: asString(input.payrollRecordId, 'Le dossier de paie est requis.', 'payrollRecordId', errors),
+    itemCode: asOptionalString(input.itemCode),
+    itemType,
+    label: asString(input.label, 'Le libellé de l’élément de paie est obligatoire.', 'label', errors),
+    amount,
+    notes: asOptionalString(input.notes),
+    status: asEnum(input.status || 'active', ['active', 'archived'] as const, 'Le statut de l’élément de paie est invalide.', 'status', errors),
+    idempotencyKey: asOptionalString(input.idempotencyKey),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollItemUpdateSchema = createSchema<Angelcare360PayrollItemUpdateInput>('payroll_item_update', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La mise à jour d’un élément de paie doit être un objet.' }] }
+  const create = angelcare360PayrollItemCreateSchema.safeParse(input)
+  if (!create.success) return create
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de l’élément de paie est requis.' }] }
+  }
+  return { success: true, data: { ...create.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360PayrollItemCancelSchema = createSchema<Angelcare360PayrollItemCancelInput>('payroll_item_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation d’un élément de paie doit être un objet.' }] }
+  const data: Angelcare360PayrollItemCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’élément de paie est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PayrollHistoryFiltersSchema = createSchema<Angelcare360PayrollHistoryFiltersInput>('payroll_history_filters', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Les filtres d’historique paie doivent être un objet.' }] }
+  return {
+    success: true,
+    data: {
+      schoolId: asOptionalString(input.schoolId),
+      staffId: asOptionalString(input.staffId),
+      payrollPeriodId: asOptionalString(input.payrollPeriodId),
+      status: asOptionalString(input.status),
+      search: asOptionalString(input.search),
+      from: asOptionalString(input.from),
+      to: asOptionalString(input.to),
+    },
+  }
+})
+
+export const angelcare360PayrollComplianceReadinessSchema = createSchema<Angelcare360PayrollComplianceReadinessInput>('payroll_compliance_readiness', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La vérification de conformité paie doit être un objet.' }] }
+  return {
+    success: true,
+    data: {
+      schoolId: asOptionalString(input.schoolId),
+      payrollPeriodId: asOptionalString(input.payrollPeriodId),
+      staffId: asOptionalString(input.staffId),
+    },
+  }
+})
+
+export const angelcare360PayrollAuditQueryFiltersSchema = createSchema<Angelcare360PayrollAuditQueryFiltersInput>('payroll_audit_filters', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Les filtres d’audit paie doivent être un objet.' }] }
+  return {
+    success: true,
+    data: {
+      schoolId: asOptionalString(input.schoolId),
+      module: asOptionalString(input.module),
+      action: asOptionalString(input.action),
+      severity: asOptionalString(input.severity),
+      entityType: asOptionalString(input.entityType),
+      entityId: asOptionalString(input.entityId),
+      actorUserId: asOptionalString(input.actorUserId),
+      search: asOptionalString(input.search),
+      from: asOptionalString(input.from),
+      to: asOptionalString(input.to),
+    },
+  }
+})
+
 export const angelcare360TransportRouteSchema = buildSimpleSchema<Angelcare360TransportRouteInput>('transport_route', [
   ['schoolId', 'L’établissement est requis.', true],
   ['routeCode', 'Le code de la route est obligatoire.', true],
@@ -2417,7 +2754,7 @@ export const angelcare360DocumentReferenceSchema = createSchema<Angelcare360Docu
     notes: asOptionalString(input.notes),
     status: asEnum(
       input.status,
-      ['requis', 'recu', 'validé', 'expire', 'archived'] as const,
+      ['active', 'verified', 'archived', 'deleted'] as const,
       'Le statut du document est invalide.',
       'status',
       errors,
@@ -2460,3 +2797,531 @@ export const angelcare360StudentClassAssignmentSchema = createSchema<Angelcare36
 })
 
 export const angelcare360PeopleAuditFilterSchema = angelcare360AuditFilterSchema
+
+function asOptionalPositiveNumber(value: unknown, fallback: number | null = null) {
+  const parsed = asOptionalNumber(value, Number.NaN)
+  if (Number.isFinite(parsed) && parsed >= 0) return parsed
+  return fallback
+}
+
+function asRequiredPositiveNumber(value: unknown, message: string, path: string, errors: Angelcare360ValidationIssue[]) {
+  const parsed = asOptionalNumber(value, Number.NaN)
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    errors.push({ path, message })
+    return 0
+  }
+  return parsed
+}
+
+function ensureRange(value: number, min: number, max: number, message: string, path: string, errors: Angelcare360ValidationIssue[]) {
+  if (value < min || value > max) {
+    errors.push({ path, message })
+  }
+}
+
+function ensureValidTransition(current: string | undefined | null, allowed: string[], message: string, path: string, errors: Angelcare360ValidationIssue[]) {
+  if (current && !allowed.includes(current)) {
+    errors.push({ path, message })
+  }
+}
+
+export type Angelcare360FeeStructureCreateInput = {
+  schoolId: string
+  academicYearId: string
+  feeCode?: string | null
+  label: string
+  description?: string | null
+  dueDayOfMonth?: number | null
+  currency?: string | null
+  appliesToLevel?: string | null
+  status?: 'draft' | 'active' | 'inactive' | 'archived'
+}
+
+export type Angelcare360FeeStructureUpdateInput = Angelcare360FeeStructureCreateInput & { id: string }
+
+export const angelcare360FeeStructureCreateSchema = createSchema<Angelcare360FeeStructureCreateInput>('fee_structure_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La structure de frais doit être un objet.' }] }
+  const dueDay = asOptionalInteger(input.dueDayOfMonth, null as unknown as number) as number | null
+  if (dueDay !== null && (dueDay < 1 || dueDay > 31)) errors.push({ path: 'dueDayOfMonth', message: 'Le jour d’échéance doit être compris entre 1 et 31.' })
+  const data: Angelcare360FeeStructureCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    feeCode: asOptionalString(input.feeCode),
+    label: asString(input.label, 'Le libellé de la structure de frais est obligatoire.', 'label', errors),
+    description: asOptionalString(input.description),
+    dueDayOfMonth: dueDay,
+    currency: asOptionalString(input.currency) || 'MAD',
+    appliesToLevel: asOptionalString(input.appliesToLevel),
+    status: asEnum(input.status, ['draft', 'active', 'inactive', 'archived'] as const, 'Le statut de la structure de frais est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360FeeStructureUpdateSchema = createSchema<Angelcare360FeeStructureUpdateInput>('fee_structure_update', (input) => {
+  const result = angelcare360FeeStructureCreateSchema.safeParse(input)
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La structure de frais doit être un objet.' }] }
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la structure de frais est requis.' }] }
+  }
+  return result.success ? { success: true, data: { ...(result.data as Angelcare360FeeStructureCreateInput), id: String((input as Record<string, unknown>).id).trim() } } : result
+})
+
+export type Angelcare360FeeItemCreateInput = {
+  schoolId: string
+  feeStructureId: string
+  itemCode?: string | null
+  label: string
+  feeType?: string | null
+  amount: number
+  dueOn?: string | null
+  isRequired?: boolean
+  status?: 'active' | 'inactive' | 'archived'
+}
+
+export type Angelcare360FeeItemUpdateInput = Angelcare360FeeItemCreateInput & { id: string }
+
+export const angelcare360FeeItemCreateSchema = createSchema<Angelcare360FeeItemCreateInput>('fee_item_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’article de frais doit être un objet.' }] }
+  const dueOn = asOptionalString(input.dueOn)
+  if (dueOn) {
+    const parsed = new Date(dueOn)
+    if (Number.isNaN(parsed.getTime())) errors.push({ path: 'dueOn', message: 'La date d’échéance est invalide.' })
+  }
+  const data: Angelcare360FeeItemCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    feeStructureId: asString(input.feeStructureId, 'La structure de frais est requise.', 'feeStructureId', errors),
+    itemCode: asOptionalString(input.itemCode),
+    label: asString(input.label, 'Le libellé de l’article est obligatoire.', 'label', errors),
+    feeType: asOptionalString(input.feeType) || 'tuition',
+    amount: asRequiredPositiveNumber(input.amount, 'Le montant de l’article doit être positif ou nul.', 'amount', errors),
+    dueOn,
+    isRequired: asOptionalBoolean(input.isRequired, true),
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut de l’article est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360FeeItemUpdateSchema = createSchema<Angelcare360FeeItemUpdateInput>('fee_item_update', (input) => {
+  const result = angelcare360FeeItemCreateSchema.safeParse(input)
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’article de frais doit être un objet.' }] }
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de l’article de frais est requis.' }] }
+  }
+  return result.success ? { success: true, data: { ...(result.data as Angelcare360FeeItemCreateInput), id: String((input as Record<string, unknown>).id).trim() } } : result
+})
+
+export type Angelcare360StudentFeeAssignmentCreateInput = {
+  schoolId: string
+  academicYearId: string
+  studentId: string
+  feeStructureId: string
+  classId?: string | null
+  sectionId?: string | null
+  assignedOn?: string | null
+  status?: 'active' | 'inactive' | 'archived'
+}
+
+export const angelcare360StudentFeeAssignmentCreateSchema = createSchema<Angelcare360StudentFeeAssignmentCreateInput>('student_fee_assignment_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’affectation de frais doit être un objet.' }] }
+  const assignedOn = asOptionalString(input.assignedOn)
+  if (assignedOn) {
+    const parsed = new Date(assignedOn)
+    if (Number.isNaN(parsed.getTime())) errors.push({ path: 'assignedOn', message: 'La date d’affectation est invalide.' })
+  }
+  const data: Angelcare360StudentFeeAssignmentCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    feeStructureId: asString(input.feeStructureId, 'La structure de frais est requise.', 'feeStructureId', errors),
+    classId: asOptionalString(input.classId),
+    sectionId: asOptionalString(input.sectionId),
+    assignedOn,
+    status: asEnum(input.status, ['active', 'inactive', 'archived'] as const, 'Le statut de l’affectation de frais est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360InvoiceCreateInput = {
+  schoolId: string
+  academicYearId: string
+  studentId: string
+  invoiceNumber?: string | null
+  invoiceType?: string | null
+  invoiceDate?: string | null
+  dueDate?: string | null
+  currency?: string | null
+  subtotalAmount?: number
+  discountTotal?: number
+  taxTotal?: number
+  totalAmount?: number
+  amountPaid?: number
+  status?: 'draft' | 'issued' | 'sent' | 'partial' | 'partially_paid' | 'paid' | 'overdue' | 'void' | 'cancelled' | 'archived'
+}
+
+export type Angelcare360InvoiceUpdateInput = Angelcare360InvoiceCreateInput & { id: string }
+export type Angelcare360InvoiceIssueInput = { schoolId: string; id: string; reason?: string | null }
+export type Angelcare360InvoiceCancelInput = { schoolId: string; id: string; reason: string }
+
+export type Angelcare360InvoiceLineCreateInput = {
+  schoolId: string
+  invoiceId: string
+  feeItemId?: string | null
+  lineCode?: string | null
+  label: string
+  quantity?: number
+  unitAmount: number
+  status?: 'active' | 'archived'
+}
+export type Angelcare360InvoiceLineUpdateInput = Angelcare360InvoiceLineCreateInput & { id: string }
+
+export const angelcare360InvoiceCreateSchema = createSchema<Angelcare360InvoiceCreateInput>('invoice_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La facture doit être un objet.' }] }
+  const invoiceDate = asOptionalString(input.invoiceDate)
+  const dueDate = asOptionalString(input.dueDate)
+  if (invoiceDate && Number.isNaN(new Date(invoiceDate).getTime())) errors.push({ path: 'invoiceDate', message: 'La date de facture est invalide.' })
+  if (dueDate && Number.isNaN(new Date(dueDate).getTime())) errors.push({ path: 'dueDate', message: 'La date d’échéance est invalide.' })
+  const data: Angelcare360InvoiceCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    invoiceNumber: asOptionalString(input.invoiceNumber),
+    invoiceType: asOptionalString(input.invoiceType) || 'tuition',
+    invoiceDate,
+    dueDate,
+    currency: asOptionalString(input.currency) || 'MAD',
+    subtotalAmount: asOptionalPositiveNumber(input.subtotalAmount, 0) ?? 0,
+    discountTotal: asOptionalPositiveNumber(input.discountTotal, 0) ?? 0,
+    taxTotal: asOptionalPositiveNumber(input.taxTotal, 0) ?? 0,
+    totalAmount: asOptionalPositiveNumber(input.totalAmount, 0) ?? 0,
+    amountPaid: asOptionalPositiveNumber(input.amountPaid, 0) ?? 0,
+    status: asEnum(input.status, ['draft', 'issued', 'sent', 'partial', 'partially_paid', 'paid', 'overdue', 'void', 'cancelled', 'archived'] as const, 'Le statut de facture est invalide.', 'status', errors),
+  }
+  const totalAmount = data.totalAmount ?? 0
+  if ((data.status === 'issued' || data.status === 'sent' || data.status === 'partial' || data.status === 'partially_paid' || data.status === 'paid' || data.status === 'overdue') && totalAmount <= 0) {
+    errors.push({ path: 'totalAmount', message: 'Une facture émise doit avoir un total strictement positif.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InvoiceUpdateSchema = createSchema<Angelcare360InvoiceUpdateInput>('invoice_update', (input) => {
+  const result = angelcare360InvoiceCreateSchema.safeParse(input)
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La facture doit être un objet.' }] }
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la facture est requis.' }] }
+  return result.success ? { success: true, data: { ...(result.data as Angelcare360InvoiceCreateInput), id: String((input as Record<string, unknown>).id).trim() } } : result
+})
+
+export const angelcare360InvoiceIssueSchema = createSchema<Angelcare360InvoiceIssueInput>('invoice_issue', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’émission de facture doit être un objet.' }] }
+  const data: Angelcare360InvoiceIssueInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'La facture est requise.', 'id', errors),
+    reason: asOptionalString(input.reason),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InvoiceCancelSchema = createSchema<Angelcare360InvoiceCancelInput>('invoice_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation de facture doit être un objet.' }] }
+  const data: Angelcare360InvoiceCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'La facture est requise.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InvoiceLineCreateSchema = createSchema<Angelcare360InvoiceLineCreateInput>('invoice_line_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La ligne de facture doit être un objet.' }] }
+  const data: Angelcare360InvoiceLineCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    invoiceId: asString(input.invoiceId, 'La facture est requise.', 'invoiceId', errors),
+    feeItemId: asOptionalString(input.feeItemId),
+    lineCode: asOptionalString(input.lineCode),
+    label: asString(input.label, 'Le libellé de la ligne est obligatoire.', 'label', errors),
+    quantity: asOptionalPositiveNumber(input.quantity, 1) ?? 1,
+    unitAmount: asRequiredPositiveNumber(input.unitAmount, 'Le montant unitaire doit être positif ou nul.', 'unitAmount', errors),
+    status: asEnum(input.status, ['active', 'archived'] as const, 'Le statut de la ligne est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InvoiceLineUpdateSchema = createSchema<Angelcare360InvoiceLineUpdateInput>('invoice_line_update', (input) => {
+  const result = angelcare360InvoiceLineCreateSchema.safeParse(input)
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La ligne de facture doit être un objet.' }] }
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la ligne est requis.' }] }
+  return result.success ? { success: true, data: { ...(result.data as Angelcare360InvoiceLineCreateInput), id: String((input as Record<string, unknown>).id).trim() } } : result
+})
+
+export type Angelcare360PaymentRecordInput = {
+  schoolId: string
+  academicYearId: string
+  invoiceId?: string | null
+  studentId?: string | null
+  paymentNumber?: string | null
+  paymentDate: string
+  method: string
+  amount: number
+  reference?: string | null
+  status?: 'pending' | 'confirmed' | 'failed' | 'rejected' | 'refunded' | 'cancelled'
+}
+export type Angelcare360PaymentConfirmInput = { schoolId: string; id: string; reference?: string | null }
+export type Angelcare360PaymentRejectInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360PaymentCancelInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360PaymentAllocationInput = { schoolId: string; paymentId: string; invoiceId: string; amount?: number | null }
+
+export const angelcare360PaymentRecordSchema = createSchema<Angelcare360PaymentRecordInput>('payment_record', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le paiement doit être un objet.' }] }
+  const paymentDate = asDateString(input.paymentDate, 'La date de paiement est obligatoire.', 'paymentDate', errors)
+  const data: Angelcare360PaymentRecordInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    invoiceId: asOptionalString(input.invoiceId),
+    studentId: asOptionalString(input.studentId),
+    paymentNumber: asOptionalString(input.paymentNumber),
+    paymentDate,
+    method: asString(input.method, 'Le mode de paiement est obligatoire.', 'method', errors),
+    amount: asRequiredPositiveNumber(input.amount, 'Le montant du paiement doit être strictement positif.', 'amount', errors),
+    reference: asOptionalString(input.reference),
+    status: asEnum(input.status, ['pending', 'confirmed', 'failed', 'rejected', 'refunded', 'cancelled'] as const, 'Le statut du paiement est invalide.', 'status', errors),
+  }
+  if (data.reference && data.reference.length < 2) errors.push({ path: 'reference', message: 'La référence de paiement est trop courte.' })
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PaymentConfirmSchema = createSchema<Angelcare360PaymentConfirmInput>('payment_confirm', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La confirmation de paiement doit être un objet.' }] }
+  const data: Angelcare360PaymentConfirmInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le paiement est requis.', 'id', errors),
+    reference: asOptionalString(input.reference),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PaymentRejectSchema = createSchema<Angelcare360PaymentRejectInput>('payment_reject', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le rejet de paiement doit être un objet.' }] }
+  const data: Angelcare360PaymentRejectInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le paiement est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif de rejet est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PaymentCancelSchema = createSchema<Angelcare360PaymentCancelInput>('payment_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation de paiement doit être un objet.' }] }
+  const data: Angelcare360PaymentCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le paiement est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360PaymentAllocationSchema = createSchema<Angelcare360PaymentAllocationInput>('payment_allocation', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’allocation de paiement doit être un objet.' }] }
+  const data: Angelcare360PaymentAllocationInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    paymentId: asString(input.paymentId, 'Le paiement est requis.', 'paymentId', errors),
+    invoiceId: asString(input.invoiceId, 'La facture est requise.', 'invoiceId', errors),
+    amount: asOptionalPositiveNumber(input.amount, null),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ReceiptCreateInput = { schoolId: string; paymentId: string; status?: 'draft' | 'issued' | 'void' | 'cancelled' | 'archived' }
+export type Angelcare360ReceiptCancelInput = { schoolId: string; id: string; reason: string }
+
+export const angelcare360ReceiptCreateSchema = createSchema<Angelcare360ReceiptCreateInput>('receipt_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le reçu doit être un objet.' }] }
+  const data: Angelcare360ReceiptCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    paymentId: asString(input.paymentId, 'Le paiement est requis.', 'paymentId', errors),
+    status: asEnum(input.status, ['draft', 'issued', 'void', 'cancelled', 'archived'] as const, 'Le statut du reçu est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ReceiptCancelSchema = createSchema<Angelcare360ReceiptCancelInput>('receipt_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation de reçu doit être un objet.' }] }
+  const data: Angelcare360ReceiptCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'Le reçu est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360DiscountCreateInput = {
+  schoolId: string
+  academicYearId?: string | null
+  studentId?: string | null
+  invoiceId?: string | null
+  discountCode?: string | null
+  discountType: string
+  amount: number
+  reason?: string | null
+  status?: 'requested' | 'approved' | 'rejected' | 'applied' | 'cancelled' | 'active' | 'inactive' | 'archived'
+}
+export type Angelcare360DiscountDecisionInput = { schoolId: string; id: string; decision: 'approved' | 'rejected' | 'cancelled'; reason?: string | null }
+export type Angelcare360DiscountApplyInput = { schoolId: string; id: string; invoiceId?: string | null }
+
+export const angelcare360DiscountCreateSchema = createSchema<Angelcare360DiscountCreateInput>('discount_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La remise doit être un objet.' }] }
+  const data: Angelcare360DiscountCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    studentId: asOptionalString(input.studentId),
+    invoiceId: asOptionalString(input.invoiceId),
+    discountCode: asOptionalString(input.discountCode),
+    discountType: asString(input.discountType, 'Le type de remise est obligatoire.', 'discountType', errors),
+    amount: asRequiredPositiveNumber(input.amount, 'Le montant de la remise doit être positif ou nul.', 'amount', errors),
+    reason: asOptionalString(input.reason),
+    status: asEnum(input.status, ['requested', 'approved', 'rejected', 'applied', 'cancelled', 'active', 'inactive', 'archived'] as const, 'Le statut de la remise est invalide.', 'status', errors),
+  }
+  if (input.discountType === 'percentage' && (data.amount < 0 || data.amount > 100)) {
+    errors.push({ path: 'amount', message: 'Le pourcentage de remise doit être compris entre 0 et 100.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360DiscountDecisionSchema = createSchema<Angelcare360DiscountDecisionInput>('discount_decision', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La décision de remise doit être un objet.' }] }
+  const data: Angelcare360DiscountDecisionInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'La remise est requise.', 'id', errors),
+    decision: asEnum(input.decision, ['approved', 'rejected', 'cancelled'] as const, 'La décision de remise est invalide.', 'decision', errors),
+    reason: asOptionalString(input.reason),
+  }
+  if (data.decision !== 'approved' && !data.reason) {
+    errors.push({ path: 'reason', message: 'Le motif de décision est obligatoire.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360DiscountApplySchema = createSchema<Angelcare360DiscountApplyInput>('discount_apply', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’application de remise doit être un objet.' }] }
+  const data: Angelcare360DiscountApplyInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'La remise est requise.', 'id', errors),
+    invoiceId: asOptionalString(input.invoiceId),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ReminderCreateInput = {
+  schoolId: string
+  invoiceId: string
+  studentId?: string | null
+  reminderCode?: string | null
+  reminderType: string
+  scheduledFor: string
+  channel?: string | null
+  status?: 'planned' | 'scheduled' | 'sent' | 'blocked' | 'failed' | 'cancelled' | 'archived'
+}
+export type Angelcare360ReminderBlockedInput = { schoolId: string; id: string; reason: string }
+
+export const angelcare360ReminderCreateSchema = createSchema<Angelcare360ReminderCreateInput>('reminder_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La relance doit être un objet.' }] }
+  const data: Angelcare360ReminderCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    invoiceId: asString(input.invoiceId, 'La facture est requise.', 'invoiceId', errors),
+    studentId: asOptionalString(input.studentId),
+    reminderCode: asOptionalString(input.reminderCode),
+    reminderType: asString(input.reminderType, 'Le type de relance est obligatoire.', 'reminderType', errors),
+    scheduledFor: asDateString(input.scheduledFor, 'La date de relance est invalide.', 'scheduledFor', errors),
+    channel: asOptionalString(input.channel) || 'email',
+    status: asEnum(input.status, ['planned', 'scheduled', 'sent', 'blocked', 'failed', 'cancelled', 'archived'] as const, 'Le statut de relance est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ReminderBlockedSchema = createSchema<Angelcare360ReminderBlockedInput>('reminder_blocked', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le blocage de relance doit être un objet.' }] }
+  const data: Angelcare360ReminderBlockedInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'La relance est requise.', 'id', errors),
+    reason: asString(input.reason, 'Le motif de blocage est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export type Angelcare360ExpenseCreateInput = {
+  schoolId: string
+  academicYearId?: string | null
+  expenseCode?: string | null
+  expenseDate?: string | null
+  category: string
+  vendorName: string
+  accountId?: string | null
+  amount: number
+  currency?: string | null
+  paymentMethod?: string | null
+  notes?: string | null
+  status?: 'draft' | 'approved' | 'paid' | 'cancelled' | 'archived'
+}
+export type Angelcare360ExpenseUpdateInput = Angelcare360ExpenseCreateInput & { id: string }
+
+export const angelcare360ExpenseCreateSchema = createSchema<Angelcare360ExpenseCreateInput>('expense_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La dépense doit être un objet.' }] }
+  const data: Angelcare360ExpenseCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    expenseCode: asOptionalString(input.expenseCode),
+    expenseDate: asDateString(input.expenseDate || new Date().toISOString().slice(0, 10), 'La date de dépense est invalide.', 'expenseDate', errors),
+    category: asString(input.category, 'La catégorie de dépense est obligatoire.', 'category', errors),
+    vendorName: asString(input.vendorName, 'Le fournisseur est obligatoire.', 'vendorName', errors),
+    accountId: asOptionalString(input.accountId),
+    amount: asRequiredPositiveNumber(input.amount, 'Le montant de la dépense doit être strictement positif.', 'amount', errors),
+    currency: asOptionalString(input.currency) || 'MAD',
+    paymentMethod: asOptionalString(input.paymentMethod) || 'cash',
+    notes: asOptionalString(input.notes),
+    status: asEnum(input.status, ['draft', 'approved', 'paid', 'cancelled', 'archived'] as const, 'Le statut de la dépense est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ExpenseUpdateSchema = createSchema<Angelcare360ExpenseUpdateInput>('expense_update', (input) => {
+  const result = angelcare360ExpenseCreateSchema.safeParse(input)
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La dépense doit être un objet.' }] }
+  if (!isNonEmptyString((input as Record<string, unknown>).id)) return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la dépense est requis.' }] }
+  return result.success ? { success: true, data: { ...(result.data as Angelcare360ExpenseCreateInput), id: String((input as Record<string, unknown>).id).trim() } } : result
+})
+
+export type Angelcare360FinanceAuditQueryInput = Angelcare360AuditFilterInput & {
+  module?: string | null
+  severity?: string | null
+  entityType?: string | null
+  entityId?: string | null
+  search?: string | null
+}
+
+export const angelcare360FinanceAuditQueryFiltersSchema = createSchema<Angelcare360FinanceAuditQueryInput>('finance_audit_query', (input) => {
+  const result = angelcare360AuditFilterSchema.safeParse(input)
+  if (!result.success) return result
+  const data = result.data as Angelcare360FinanceAuditQueryInput
+  if (data.search && data.search.length > 200) {
+    return { success: false, errors: [{ path: 'search', message: 'La recherche d’audit est trop longue.' }] }
+  }
+  return { success: true, data }
+})
