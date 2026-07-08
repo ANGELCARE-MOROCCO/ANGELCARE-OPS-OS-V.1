@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { ANGELCARE360_PRODUCT_NAME } from '@/lib/angelcare360/constants'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from '@/lib/angelcare360/server'
 
@@ -11,9 +12,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360DocumentsLayout({ children }: { children: React.ReactNode }) {
   const context = await getAngelcare360AccessContext()
-  if (context?.school) {
-    await requireAngelcare360Permission('documents.view', { context })
-  }
+  if (!context?.school) redirect('/angelcare-360-command-center')
+  await requireAngelcare360Permission('documents.view', { context })
   return <div style={layoutStyle}>{children}</div>
 }
 

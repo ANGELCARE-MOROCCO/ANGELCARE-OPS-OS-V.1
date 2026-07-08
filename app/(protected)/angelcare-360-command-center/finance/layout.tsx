@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { ANGELCARE360_PRODUCT_NAME } from '@/lib/angelcare360/constants'
+import { getAngelcare360AccessContext, requireAngelcare360Permission } from '@/lib/angelcare360/server'
 
 export const metadata: Metadata = {
   title: `Finance & Paiements · ${ANGELCARE360_PRODUCT_NAME}`,
@@ -13,5 +15,8 @@ export default async function Angelcare360FinanceLayout({
 }: {
   children: React.ReactNode
 }) {
+  const context = await getAngelcare360AccessContext()
+  if (!context?.school) redirect('/angelcare-360-command-center')
+  await requireAngelcare360Permission('finance.view', { context })
   return children
 }

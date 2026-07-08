@@ -400,3 +400,36 @@ Acceptance criteria:
 - `app/(protected)/angelcare-360` remains untouched
 - unrelated product areas remain untouched
 - TypeScript / static verification passes without running the production build
+
+## Phase 14 - Final Production Hardening, Security & Release Readiness
+
+Objective:
+
+- Verify and harden the full AngelCare 360 Command Center for a controlled customer pilot.
+
+Scope:
+
+- route protection review
+- API security review
+- RBAC review
+- validation review
+- audit review
+- secret / environment exposure review
+- locked feature register
+- pilot go / no-go documentation
+- deployment runbook
+- route access matrix
+- API security matrix
+
+Acceptance criteria:
+
+- every AngelCare 360 route is reviewed and documented
+- every AngelCare 360 API route is reviewed and documented
+- dangerous fake actions are disabled or explicitly locked
+- route-level protections are tightened where gaps exist
+- no client-side secret exposure is present in the namespace
+- locked features are clearly documented for the customer pilot
+- TypeScript / static verification passes without running the production build
+- `app/(protected)/angelcare-360` remains untouched
+- unrelated product areas remain untouched
+- the final release report states GO / CONDITIONAL GO / NO-GO with evidence
