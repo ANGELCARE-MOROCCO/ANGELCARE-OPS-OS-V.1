@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import type { Angelcare360AcademicOverviewRecord } from '@/types/angelcare360/academics'
 import Angelcare360AcademicRiskPanel from './Angelcare360AcademicRiskPanel'

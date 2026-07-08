@@ -28,7 +28,9 @@ async function createReportCardAction(formData: FormData) {
     reportCardCode: optionValue(formData.get('reportCardCode')),
     generatedOn: optionValue(formData.get('generatedOn')),
   })
-  if (!result.ok) throw new Error(result.error || 'Création du bulletin impossible.')
+  if (!result.ok) {
+    redirect(`/angelcare-360-command-center/academique/bulletins?error=${encodeURIComponent(result.error || 'Création du bulletin impossible.')}`)
+  }
   revalidatePath('/angelcare-360-command-center/academique/bulletins')
   redirect('/angelcare-360-command-center/academique/bulletins')
 }
@@ -43,6 +45,7 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
   const sectionId = optionValue(searchParams?.sectionId as FormDataEntryValue | null)
   const studentId = optionValue(searchParams?.studentId as FormDataEntryValue | null)
   const status = optionValue(searchParams?.status as FormDataEntryValue | null)
+  const errorMessage = optionValue(searchParams?.error as FormDataEntryValue | null)
 
   const [reportCards, years, classes, sections, terms] = await Promise.all([
     listAngelcare360ReportCards({ schoolId: context.school.id, academicYearId: academicYearId || null, termId, classId, sectionId, studentId, status }),
@@ -102,12 +105,17 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
           </div>
           <div style={panelMetaStyle}>Nécessite élève, classe et période</div>
         </div>
+        {errorMessage ? (
+          <div style={errorBannerStyle} role="alert">
+            {errorMessage}
+          </div>
+        ) : null}
         {years.length === 0 || classes.length === 0 || terms.length === 0 ? (
           <Angelcare360EmptyState title="Données de référence manquantes" description="Créez une année, une classe et une période avant d’ouvrir un bulletin." />
         ) : (
           <form action={createReportCardAction} style={formGridStyle}>
             <Select name="academicYearId" defaultValue={years[0]?.id || ''}>{years.map((year) => <option key={year.id} value={year.id}>{year.label}</option>)}</Select>
-            <Input name="studentId" placeholder="ID élève" />
+            <Input name="studentId" placeholder="ID élève" required />
             <Select name="classId" defaultValue={classes[0]?.id || ''}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="sectionId" defaultValue=""><option value="">Aucune section</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="termId" defaultValue={terms[0]?.id || ''}>{terms.map((term) => <option key={term.id} value={term.id}>{term.label}</option>)}</Select>
@@ -222,6 +230,18 @@ const panelMetaStyle: React.CSSProperties = {
   color: '#475569',
   fontSize: 13,
   fontWeight: 700,
+}
+
+const errorBannerStyle: React.CSSProperties = {
+  marginBottom: 16,
+  borderRadius: 16,
+  border: '1px solid #fecaca',
+  background: '#fef2f2',
+  color: '#991b1b',
+  padding: '12px 14px',
+  fontSize: 13,
+  fontWeight: 700,
+  lineHeight: 1.55,
 }
 
 const filterGridStyle: React.CSSProperties = {

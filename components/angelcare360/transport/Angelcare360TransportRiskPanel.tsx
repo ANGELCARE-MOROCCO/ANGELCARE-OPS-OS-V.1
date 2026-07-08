@@ -24,8 +24,8 @@ export default function Angelcare360TransportRiskPanel({
 
       {items.length > 0 ? (
         <ul style={listStyle}>
-          {items.map((item) => (
-            <li key={item} style={itemStyle}>{item}</li>
+          {items.map((item, index) => (
+            <li key={`${item}-${index}`} style={itemStyle}>{item}</li>
           ))}
         </ul>
       ) : (
@@ -82,4 +82,3 @@ const itemStyle: React.CSSProperties = {
   lineHeight: 1.5,
   fontWeight: 600,
 }
-
