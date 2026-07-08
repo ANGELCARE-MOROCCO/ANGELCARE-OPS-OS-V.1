@@ -15,7 +15,7 @@ export default async function Angelcare360FinanceReceiptsPage() {
     <Angelcare360FinancePageShell
       title="Reçus"
       subtitle="Reçus émis uniquement pour des paiements confirmés."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${receipts.length} reçu(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >

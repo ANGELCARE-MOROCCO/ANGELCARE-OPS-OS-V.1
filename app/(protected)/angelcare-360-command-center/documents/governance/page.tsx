@@ -16,7 +16,7 @@ export default async function Angelcare360DocumentGovernancePage() {
     return (
       <Angelcare360EmptyState
         title="Gouvernance documentaire indisponible"
-        description="Aucune readiness documentaire n’a pu être résolue."
+        description="Aucune préparation documentaire n’a pu être résolue."
         actionLabel="Retour aux documents"
         actionHref="/angelcare-360-command-center/documents"
       />

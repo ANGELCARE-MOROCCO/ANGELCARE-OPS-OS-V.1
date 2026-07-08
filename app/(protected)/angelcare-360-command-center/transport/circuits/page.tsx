@@ -16,7 +16,7 @@ export default async function Angelcare360TransportCircuitsPage() {
     <Angelcare360TransportPageShell
       title="Circuits"
       subtitle="Création, édition et lecture des circuits de transport avec contrôle de capacité et journal d’audit."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={`${routes.length} circuit(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

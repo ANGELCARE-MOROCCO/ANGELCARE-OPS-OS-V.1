@@ -94,7 +94,7 @@ export default async function Angelcare360ParentDetailPage({ params }: { params:
         },
       ]}
       lockedTabs={[
-        { label: 'Paiements', reason: 'Le suivi des paiements parentaux sera ouvert dans une phase dédiée.' },
+        { label: 'Paiements', reason: 'Le suivi des paiements parentaux sera ouvert après configuration.' },
         { label: 'Messages', reason: 'La messagerie parentale est verrouillée pour l’instant.' },
         { label: 'Historique', reason: 'L’historique métier complet sera ajouté plus tard.' },
       ]}

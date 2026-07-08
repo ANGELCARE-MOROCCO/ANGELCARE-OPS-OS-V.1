@@ -38,7 +38,7 @@ export default async function Angelcare360AttendanceJustificationsPage({
     <Angelcare360AttendancePageShell
       title="Justifications"
       subtitle="Saisie et décision des justificatifs d’absences et de retards."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${items.length} justificatif(s)`}
       contextRow={
         <>

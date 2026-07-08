@@ -109,10 +109,10 @@ export default async function Angelcare360StudentDetailPage({ params }: { params
         },
       ]}
       lockedTabs={[
-        { label: 'Présence', reason: 'Le suivi des présences sera ouvert dans la phase suivante.' },
+        { label: 'Présence', reason: 'Le suivi des présences sera ouvert après configuration.' },
         { label: 'Finance', reason: 'Les factures et paiements arrivent après la mise en place du socle humain.' },
         { label: 'Académique', reason: 'Notes, examens et bulletins sont verrouillés pour l’instant.' },
-        { label: 'Transport', reason: 'L’exploitation transport sera activée dans une phase dédiée.' },
+        { label: 'Transport', reason: 'L’exploitation transport sera activée après configuration.' },
       ]}
       timeline={audits.map((event) => ({
         label: `${asText(event.module)} · ${asText(event.action)}`,

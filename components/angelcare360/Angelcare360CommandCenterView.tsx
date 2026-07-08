@@ -71,9 +71,9 @@ export default function Angelcare360CommandCenterView({
   const cockpitModule = getAngelcare360ModuleById('cockpit-direction')
 
   const alerts = [
-    'Les modules Administration, Admissions et People Core sont désormais branchés au socle de données; les autres modules restent verrouillés.',
-    'Les mutations actives sont server-side, validées et auditées; les modules non livrés restent volontairement fermés.',
-    `La session active est contrôlée par le rôle ${session.roleLabel} et la route protégée.`,
+    'Les modules Administration, Admissions et Personnes sont désormais connectés au socle de données ; les autres modules restent verrouillés.',
+    'Les opérations actives sont validées et auditées ; les modules non livrés restent volontairement fermés.',
+    `La session active est contrôlée par le rôle ${session.roleLabel} et le périmètre sécurisé.`,
   ]
 
   const onOpenAuditDrawer = () => {
@@ -96,8 +96,8 @@ export default function Angelcare360CommandCenterView({
             <h1 style={titleStyle}>{ANGELCARE360_PRODUCT_NAME}</h1>
             <p style={subtitleStyle}>
               {variant === 'direction'
-                ? 'Cockpit de Direction, suivi des risques, et aperçu des modules à déployer en priorité.'
-                : 'Vue d’ensemble opérationnelle, cartographie des modules et accès contrôlés pour la phase 1.'}
+                ? 'Cockpit de Direction, suivi des risques et aperçu des modules à activer en priorité.'
+                : 'Vue d’ensemble opérationnelle, catalogue des modules et accès contrôlés selon le périmètre de l’établissement.'}
             </p>
           </div>
           <div style={titleActionsStyle}>
@@ -118,9 +118,9 @@ export default function Angelcare360CommandCenterView({
 
       <section style={kpiGridStyle}>
         {[
-          { label: 'Modules cartographiés', value: stats.mappedModules, note: 'Tous les futurs modules visibles dans la registry.' },
-          { label: 'Surfaces actives', value: stats.activeModules, note: 'Seul le cockpit de direction est actif en phase 1.' },
-          { label: 'Surfaces planifiées', value: stats.plannedModules, note: 'Les autres modules sont préparés mais verrouillés.' },
+          { label: 'Modules disponibles', value: stats.mappedModules, note: 'Tous les modules visibles dans le catalogue.' },
+          { label: 'Modules actifs', value: stats.activeModules, note: 'Le cockpit de direction est actif.' },
+          { label: 'Modules à configurer', value: stats.plannedModules, note: 'Les autres modules restent verrouillés tant que leur configuration n’est pas finalisée.' },
           { label: 'Familles fonctionnelles', value: stats.sectionGroups, note: 'Pilotage, Scolarité, Gestion, Services, Gouvernance.' },
         ].map((item) => (
           <article key={item.label} style={kpiCardStyle}>
@@ -136,28 +136,28 @@ export default function Angelcare360CommandCenterView({
           <div style={snapshotLabelStyle}>Admissions</div>
           <h2 style={snapshotTitleStyle}>Admissions & inscriptions actives</h2>
           <p style={snapshotTextStyle}>
-            Pipeline, suivi documentaire, suivi des décisions et conversion vers les dossiers personnes sont opérationnels dans un espace isolé.
+            Le pipeline, le suivi documentaire, les décisions et la conversion vers les dossiers personnes sont opérationnels dans un espace isolé.
           </p>
         </article>
         <article style={snapshotCardStyle}>
           <div style={snapshotLabelStyle}>Présences</div>
-          <h2 style={snapshotTitleStyle}>Suivi journalier à venir</h2>
+          <h2 style={snapshotTitleStyle}>Suivi journalier à configurer</h2>
           <p style={snapshotTextStyle}>
-            Le contrôle des présences, retards et justifications sera branché sur une base dédiée lors de la phase suivante.
+            Le contrôle des présences, retards et justifications sera activé dans un espace dédié lorsque le périmètre sera disponible.
           </p>
         </article>
         <article style={snapshotCardStyle}>
           <div style={snapshotLabelStyle}>Finance</div>
           <h2 style={snapshotTitleStyle}>Chaîne finance active</h2>
           <p style={snapshotTextStyle}>
-            Frais scolaires, factures, paiements, reçus, remises et soldes sont désormais branchés sur le socle financier réel.
+            Frais scolaires, factures, paiements, reçus, remises et soldes sont désormais connectés sur le socle financier réel.
           </p>
         </article>
         <article style={snapshotCardStyle}>
           <div style={snapshotLabelStyle}>Académique</div>
           <h2 style={snapshotTitleStyle}>Chaîne académique active</h2>
           <p style={snapshotTextStyle}>
-            Devoirs, examens, notes, bulletins et appréciations sont désormais branchés sur des entités réelles et auditées.
+            Devoirs, examens, notes, bulletins et appréciations sont désormais connectés sur des entités réelles et auditées.
           </p>
         </article>
       </section>
@@ -166,7 +166,7 @@ export default function Angelcare360CommandCenterView({
         <div style={panelHeaderStyle}>
           <div>
             <div style={panelEyebrowStyle}>Alertes / risques</div>
-            <h2 style={panelTitleStyle}>Points de vigilance pour le déploiement</h2>
+            <h2 style={panelTitleStyle}>Points de vigilance pour l’exploitation</h2>
           </div>
           <button type="button" onClick={onOpenAuditDrawer} style={panelButtonStyle}>
             Ouvrir l’audit
@@ -205,10 +205,10 @@ export default function Angelcare360CommandCenterView({
         <div style={modulesHeaderStyle}>
           <div>
             <div style={modulesEyebrowStyle}>Accès rapides</div>
-            <h2 style={modulesTitleStyle}>Modules cartographiés pour la phase 1</h2>
+            <h2 style={modulesTitleStyle}>Modules disponibles dans le catalogue</h2>
           </div>
           <div style={modulesHintStyle}>
-            Les boutons de création restent désactivés tant que la base métier n’est pas mise en place.
+            Les boutons de création restent désactivés tant que la configuration requise n’est pas finalisée.
           </div>
         </div>
 
@@ -290,7 +290,7 @@ export default function Angelcare360CommandCenterView({
       <section style={footerNoteStyle}>
         <div style={footerNoteTitleStyle}>Couche de garde prête</div>
         <p style={footerNoteTextStyle}>
-          La session, le rôle et la navigation sont contrôlés côté route. Les modules actifs restent branchés sur des routes réelles, et les modules futurs demeurent verrouillés sans polluer ce shell.
+          La session, le rôle et la navigation sont contrôlés dans un périmètre sécurisé. Les modules actifs restent connectés à des parcours réels, et les modules futurs demeurent verrouillés sans polluer cet espace.
         </p>
       </section>
 

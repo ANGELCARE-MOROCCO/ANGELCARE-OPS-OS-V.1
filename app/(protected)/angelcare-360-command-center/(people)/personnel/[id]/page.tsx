@@ -109,7 +109,7 @@ export default async function Angelcare360StaffDetailPage({ params }: { params: 
       ]}
       lockedTabs={[
         { label: 'Présence', reason: 'Le suivi des présences du personnel sera activé plus tard.' },
-        { label: 'Paie', reason: 'La paie du personnel sera ajoutée dans la phase finance.' },
+        { label: 'Paie', reason: 'La paie du personnel sera ajoutée après activation du périmètre financier.' },
         { label: 'Performance', reason: 'Le suivi RH avancé n’est pas encore ouvert.' },
       ]}
       timeline={audits.map((event) => ({

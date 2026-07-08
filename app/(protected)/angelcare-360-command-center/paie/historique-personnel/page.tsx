@@ -35,7 +35,7 @@ export default async function Angelcare360StaffPayrollHistoryPage({
     <Angelcare360PayrollPageShell
       title="Historique personnel"
       subtitle="Vue chronologique des dossiers de paie du personnel."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={`${records.length} dossier(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie/dossiers" style={payrollSecondaryLinkStyle}>Voir les dossiers</Link>}

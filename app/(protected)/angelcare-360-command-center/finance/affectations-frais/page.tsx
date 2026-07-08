@@ -16,7 +16,7 @@ export default async function Angelcare360FinanceAssignmentsPage() {
     <Angelcare360FinancePageShell
       title="Affectations frais"
       subtitle="Affectation des structures tarifaires aux élèves, classes et sections."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${assignments.length} affectation(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/finance" style={linkStyle}>Retour au cockpit</Link>}

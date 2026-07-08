@@ -9,7 +9,7 @@ export const ANGELCARE360_CLAIMS_NAVIGATION: Angelcare360ClaimsNavigationItem[] 
     href: '/angelcare-360-command-center/reclamations',
     summary: 'Cockpit réclamations, risques et priorités.',
     permission: 'reclamations.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'tickets',
@@ -36,9 +36,8 @@ export const ANGELCARE360_CLAIMS_NAVIGATION: Angelcare360ClaimsNavigationItem[] 
     key: 'audit',
     label: 'Audit réclamations',
     href: '/angelcare-360-command-center/reclamations/audit',
-    summary: 'Journal des mutations et blocages réclamations.',
+    summary: 'Journal des opérations et blocages des réclamations.',
     permission: 'audit.view',
     badge: 'Audit',
   },
 ]
-

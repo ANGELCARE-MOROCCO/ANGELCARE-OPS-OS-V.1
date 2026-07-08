@@ -16,7 +16,7 @@ export default async function Angelcare360TransportDropoffPage() {
     <Angelcare360TransportPageShell
       title="Dépôt"
       subtitle="Liste de dépôt dérivée des affectations transport actives."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={`${dropoffs.length} ligne(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

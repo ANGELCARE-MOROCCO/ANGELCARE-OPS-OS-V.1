@@ -81,7 +81,7 @@ export default function Angelcare360TransportHub({ overview }: Angelcare360Trans
               ))}
             </ul>
           ) : (
-            <Angelcare360EmptyState title="Aucun événement récent" description="Les mutations transport apparaîtront ici après les premières opérations." />
+            <Angelcare360EmptyState title="Aucun événement récent" description="Les opérations transport apparaîtront ici après les premières opérations." />
           )}
         </article>
       </section>

@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollDeductionsPage() {
     <Angelcare360PayrollPageShell
       title="Retenues"
       subtitle="Vue ciblée sur les déductions appliquées aux dossiers de paie."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={`${items.length} retenue(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie/elements" style={payrollSecondaryLinkStyle}>Voir tous les éléments</Link>}

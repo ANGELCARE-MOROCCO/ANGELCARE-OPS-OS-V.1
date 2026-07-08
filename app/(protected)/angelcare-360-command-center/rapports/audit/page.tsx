@@ -29,7 +29,7 @@ export default async function Angelcare360ReportAuditPage() {
   return (
     <Angelcare360ReportsPageShell
       title="Audit rapports"
-      subtitle="Journal des mutations, blocages et demandes liées au reporting."
+      subtitle="Journal des opérations, blocages et demandes liées au reporting."
       badge="Audit"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_REPORTS_NAVIGATION}

@@ -35,7 +35,7 @@ export default async function Angelcare360ReportsPage() {
     <Angelcare360ReportsPageShell
       title="Rapports, Exports & Documents"
       subtitle="Le cockpit de reporting consolide les catalogues, modèles, demandes, exports verrouillés et gouvernance documentaire."
-      badge="Phase 13"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle reporting prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_REPORTS_NAVIGATION}

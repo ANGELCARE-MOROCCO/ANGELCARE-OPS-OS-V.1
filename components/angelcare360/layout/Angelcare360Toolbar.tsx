@@ -80,10 +80,10 @@ export default function Angelcare360Toolbar({
         <button
           type="button"
           disabled
-          title="L’export de structure sera branché en phase 2."
+          title="L’export de structure reste verrouillé jusqu’à la configuration requise."
           style={disabledActionStyle}
         >
-          Export structure phase 2
+          Exporter la structure
         </button>
       </div>
     </section>

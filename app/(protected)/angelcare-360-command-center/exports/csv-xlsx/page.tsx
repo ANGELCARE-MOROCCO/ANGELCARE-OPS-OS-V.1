@@ -15,7 +15,7 @@ export default async function Angelcare360ExportCsvXlsxPage() {
     return (
       <Angelcare360EmptyState
         title="CSV / XLSX indisponibles"
-        description="Aucune readiness CSV/XLSX n’a pu être résolue."
+        description="Aucune préparation CSV/XLSX n’a pu être résolue."
         actionLabel="Retour aux exports"
         actionHref="/angelcare-360-command-center/exports"
       />

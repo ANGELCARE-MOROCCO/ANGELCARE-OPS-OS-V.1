@@ -34,8 +34,8 @@ export default async function Angelcare360ExportsPage() {
   return (
     <Angelcare360ExportsPageShell
       title="Exports"
-      subtitle="Le cockpit export conserve les readiness PDF A4, CSV/XLSX et l’historique des fichiers réels."
-      badge="Phase 13"
+      subtitle="Le cockpit export conserve l’état de préparation PDF A4, CSV/XLSX et l’historique des fichiers réels."
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle export prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_EXPORTS_NAVIGATION}

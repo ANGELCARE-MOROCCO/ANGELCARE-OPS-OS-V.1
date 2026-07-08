@@ -33,15 +33,15 @@ export default function Angelcare360ModuleDrawer({ module, onClose }: Angelcare3
         <div style={metaGridStyle}>
           <div style={metaCardStyle}>
             <div style={metaLabelStyle}>État</div>
-            <div style={metaValueStyle}>{module.stage === 'actif' ? 'Actif' : 'Prévu'}</div>
+            <div style={metaValueStyle}>{module.stage === 'actif' ? 'Disponible' : 'À configurer'}</div>
           </div>
           <div style={metaCardStyle}>
             <div style={metaLabelStyle}>Périmètre</div>
             <div style={metaValueStyle}>{module.group}</div>
           </div>
           <div style={metaCardStyle}>
-            <div style={metaLabelStyle}>Route</div>
-            <div style={metaValueStyle}>{module.href}</div>
+            <div style={metaLabelStyle}>Accès</div>
+            <div style={metaValueStyle}>{module.stage === 'actif' ? 'Disponible' : 'Verrouillé'}</div>
           </div>
         </div>
 

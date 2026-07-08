@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollCompliancePage() {
     <Angelcare360PayrollPageShell
       title="Conformité"
       subtitle="Verrouillage des règles sociales, fiscales, CNSS, export et virement bancaire."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={compliance.overallStatus}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie" style={payrollSecondaryLinkStyle}>Retour au cockpit</Link>}

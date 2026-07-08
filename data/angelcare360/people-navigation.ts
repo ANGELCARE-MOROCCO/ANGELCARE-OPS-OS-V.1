@@ -14,7 +14,7 @@ export const ANGELCARE360_PEOPLE_NAVIGATION: Angelcare360PeopleNavigationItem[] 
     href: '/angelcare-360-command-center/personnes',
     summary: 'Cockpit humain, complétude des dossiers et alertes de cohérence.',
     permission: 'eleves.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'eleves',
@@ -76,8 +76,7 @@ export const ANGELCARE360_PEOPLE_NAVIGATION: Angelcare360PeopleNavigationItem[] 
     key: 'audit',
     label: 'Audit personnes',
     href: '/angelcare-360-command-center/personnes/audit',
-    summary: 'Historique des mutations humaines sensibles.',
+    summary: 'Historique des opérations humaines sensibles.',
     permission: 'audit.view',
   },
 ]
-

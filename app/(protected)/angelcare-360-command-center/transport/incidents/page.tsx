@@ -15,7 +15,7 @@ export default async function Angelcare360TransportIncidentsPage() {
     <Angelcare360TransportPageShell
       title="Incidents"
       subtitle="Le registre des incidents transport reste verrouillé tant qu’aucun schéma d’incident n’est disponible."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel="Verrouillé"
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

@@ -84,7 +84,7 @@ export default function Angelcare360TransportAssignmentsWorkspace({
           <div style={detailsContentStyle}>
             <Angelcare360TransportMutationForm
               title="Modifier l’affectation"
-              description="La mise à jour respecte l’unicité élève/année et journalise la mutation."
+              description="La mise à jour respecte l’unicité élève/année et journalise l’opération."
               entity="assignment"
               operation="update"
               submitLabel="Enregistrer la modification"
@@ -177,4 +177,3 @@ const summaryStyle: React.CSSProperties = {
 const detailsContentStyle: React.CSSProperties = {
   marginTop: 12,
 }
-

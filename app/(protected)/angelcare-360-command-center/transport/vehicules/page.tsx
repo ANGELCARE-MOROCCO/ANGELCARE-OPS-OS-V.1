@@ -16,7 +16,7 @@ export default async function Angelcare360TransportVehiclesPage() {
     <Angelcare360TransportPageShell
       title="Véhicules"
       subtitle="Lecture et édition des véhicules scolaires, de leur capacité et de leur statut opérationnel."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={`${vehicles.length} véhicule(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

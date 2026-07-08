@@ -15,7 +15,7 @@ export default async function Angelcare360MessageriePage() {
     <Angelcare360CommunicationPageShell
       title="Messagerie, Notifications & Réclamations"
       subtitle="Le cockpit communication suit les conversations, annonces, modèles, audiences et verrouillages des canaux externes sans faux envoi."
-      badge="Phase 12"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle communication prêt'}
       contextRow={
         <>

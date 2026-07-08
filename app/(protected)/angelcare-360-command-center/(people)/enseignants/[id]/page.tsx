@@ -99,9 +99,9 @@ export default async function Angelcare360TeacherDetailPage({ params }: { params
         },
       ]}
       lockedTabs={[
-        { label: 'Emploi du temps', reason: 'Le planning pédagogique détaillé arrive dans la phase suivante.' },
+        { label: 'Emploi du temps', reason: 'Le planning pédagogique détaillé arrivera après configuration.' },
         { label: 'Présence', reason: 'Le suivi des présences des enseignants sera activé plus tard.' },
-        { label: 'Paie', reason: 'La paie est verrouillée jusqu’à la phase financière.' },
+        { label: 'Paie', reason: 'La paie est verrouillée jusqu’à activation du périmètre financier.' },
       ]}
       timeline={audits.map((event) => ({
         label: `${asText(event.module)} · ${asText(event.action)}`,

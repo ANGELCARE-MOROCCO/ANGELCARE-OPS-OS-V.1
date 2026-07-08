@@ -25,7 +25,7 @@ async function checkReadinessAction(formData: FormData) {
     studentId: optionValue(formData.get('studentId')),
     subjectId: optionValue(formData.get('subjectId')),
   })
-  if (!result.ok) throw new Error(result.error || 'Le contrôle de readiness a échoué.')
+  if (!result.ok) throw new Error(result.error || 'Le contrôle de préparation a échoué.')
   revalidatePath('/angelcare-360-command-center/academique/moyennes')
   redirect('/angelcare-360-command-center/academique/moyennes')
 }
@@ -108,7 +108,7 @@ export default async function Angelcare360MoyennesPage({ searchParams }: { searc
         <div style={panelHeaderStyle}>
           <div>
             <div style={panelEyebrowStyle}>État</div>
-            <h2 style={panelTitleStyle}>Readiness des moyennes</h2>
+            <h2 style={panelTitleStyle}>État de préparation des moyennes</h2>
           </div>
           <div style={panelMetaStyle}>{record?.reason || 'Contrôle non lancé'}</div>
         </div>

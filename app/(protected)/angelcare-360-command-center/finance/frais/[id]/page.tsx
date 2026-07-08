@@ -31,8 +31,8 @@ export default async function Angelcare360FinanceFeeDetailPage({ params }: { par
 
       <Angelcare360EmptyState
         title="Actions server-side"
-        description="La création et la mise à jour des structures de frais sont disponibles via les helpers serveur et l’API finance."
-        actionLabel="Voir l’API"
+        description="La création et la mise à jour des structures de frais sont disponibles dans le module financier."
+        actionLabel="Voir le détail"
         actionHref="/angelcare-360-command-center/finance/audit"
       />
     </Angelcare360FinancePageShell>

@@ -9,7 +9,7 @@ export const ANGELCARE360_REPORTS_NAVIGATION: Angelcare360ReportsNavigationItem[
     href: '/angelcare-360-command-center/rapports',
     summary: 'Cockpit rapports, risques et capacités verrouillées.',
     permission: 'rapports.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'catalogue',
@@ -43,7 +43,7 @@ export const ANGELCARE360_REPORTS_NAVIGATION: Angelcare360ReportsNavigationItem[
     key: 'audit',
     label: 'Audit rapports',
     href: '/angelcare-360-command-center/rapports/audit',
-    summary: 'Journal des mutations et blocages de reporting.',
+    summary: 'Journal des opérations et blocages de reporting.',
     permission: 'audit.view',
     badge: 'Audit',
   },

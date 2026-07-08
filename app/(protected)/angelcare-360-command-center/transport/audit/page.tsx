@@ -33,8 +33,8 @@ export default async function Angelcare360TransportAuditPage({
   return (
     <Angelcare360TransportPageShell
       title="Audit transport"
-      subtitle="Journal des mutations, des blocages et des événements de sécurité transport."
-      badge="Phase 10"
+      subtitle="Journal des opérations, des blocages et des événements de sécurité transport."
+      badge="Disponible"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}
@@ -52,10 +52,10 @@ export default async function Angelcare360TransportAuditPage({
 
       <Angelcare360TransportDataTable
         title="Événements transport"
-        description="Chaque mutation critique est journalisée côté serveur."
+      description="Chaque opération critique est journalisée côté serveur."
         rows={events}
         emptyTitle="Aucun événement"
-        emptyDescription="Aucune mutation transport n’a encore été enregistrée."
+      emptyDescription="Aucune opération transport n’a encore été enregistrée."
         columns={[
           { key: 'created', label: 'Date', render: (row) => new Date(row.created_at).toLocaleString('fr-FR') },
           { key: 'module', label: 'Module', render: (row) => row.module },
@@ -150,4 +150,3 @@ const linkStyle: React.CSSProperties = {
   textDecoration: 'none',
   fontWeight: 800,
 }
-

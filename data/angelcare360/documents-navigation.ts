@@ -9,7 +9,7 @@ export const ANGELCARE360_DOCUMENTS_NAVIGATION: Angelcare360DocumentsNavigationI
     href: '/angelcare-360-command-center/documents',
     summary: 'Cockpit documents, gouvernance et stockage.',
     permission: 'documents.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'generated',
@@ -36,7 +36,7 @@ export const ANGELCARE360_DOCUMENTS_NAVIGATION: Angelcare360DocumentsNavigationI
     key: 'audit',
     label: 'Audit documents',
     href: '/angelcare-360-command-center/documents/audit',
-    summary: 'Journal des mutations et blocages documentaires.',
+    summary: 'Journal des opérations et blocages documentaires.',
     permission: 'audit.view',
     badge: 'Audit',
   },

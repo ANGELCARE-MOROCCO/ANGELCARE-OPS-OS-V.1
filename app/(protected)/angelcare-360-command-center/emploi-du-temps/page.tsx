@@ -34,7 +34,7 @@ export default async function Angelcare360TimetablePage() {
     <Angelcare360TimetablePageShell
       title="Emploi du temps"
       subtitle="Planning hebdomadaire, conflits, créneaux et calendrier scolaire dans un même espace opérationnel."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${overview.slotCount} créneau(x)`}
       contextRow={
         <>

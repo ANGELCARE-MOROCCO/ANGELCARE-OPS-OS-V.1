@@ -72,7 +72,7 @@ export default function Angelcare360AdminAuditExplorer({
         <button
           type="button"
           disabled
-          title={disabledExportReason || 'L’export des journaux sera activé dans une phase ultérieure.'}
+          title={disabledExportReason || 'L’export des journaux reste verrouillé jusqu’à la configuration requise.'}
           style={disabledButtonStyle}
         >
           Exporter
@@ -131,7 +131,7 @@ export default function Angelcare360AdminAuditExplorer({
         emptyFallback={
           <Angelcare360EmptyState
             title="Aucun événement d’audit"
-            description="Les mutations administratives et événements critiques apparaîtront ici."
+            description="Les opérations administratives et événements critiques apparaîtront ici."
           />
         }
       />

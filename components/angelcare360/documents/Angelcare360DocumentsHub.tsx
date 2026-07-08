@@ -38,7 +38,7 @@ export default function Angelcare360DocumentsHub({ overview }: Props) {
           </div>
         </div>
         <div style={readinessStyle}>
-          <div style={readinessTitleStyle}>Readiness documentaire</div>
+          <div style={readinessTitleStyle}>État de préparation documentaire</div>
           <ul style={readinessListStyle}>
             <li>Templates: {overview.templateCount > 0 ? 'prêts' : 'verrouillés'}</li>
             <li>Stockage: {overview.storageReady ? 'prêt' : 'verrouillé'}</li>

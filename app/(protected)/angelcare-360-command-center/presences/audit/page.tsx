@@ -17,7 +17,7 @@ export default async function Angelcare360AttendanceAuditPage() {
     <Angelcare360AttendancePageShell
       title="Audit présences"
       subtitle="Traçabilité des sessions, saisies, justifications et conflits du quotidien."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${events.length} événement(s)`}
       contextRow={
         <>
@@ -30,7 +30,7 @@ export default async function Angelcare360AttendanceAuditPage() {
       {events.length === 0 ? (
         <Angelcare360EmptyState
           title="Aucun audit de présence"
-          description="Les mutations de présence apparaîtront ici après les premières opérations."
+          description="Les opérations de présence apparaîtront ici après les premières opérations."
         />
       ) : (
         <section style={tableShellStyle}>

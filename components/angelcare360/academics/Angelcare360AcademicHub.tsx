@@ -37,7 +37,7 @@ export default function Angelcare360AcademicHub({
           <div style={eyebrowStyle}>Académique & Évaluations</div>
           <h1 style={titleStyle}>Cockpit académique</h1>
           <p style={subtitleStyle}>
-            Le moteur académique orchestre les cours, devoirs, examens, notes, moyennes, bulletins et appréciations avec un audit serveur sur chaque mutation critique.
+            Le moteur académique orchestre les cours, devoirs, examens, notes, moyennes, bulletins et appréciations avec un audit serveur sur chaque opération critique.
           </p>
         </div>
         <div style={actionRowStyle}>

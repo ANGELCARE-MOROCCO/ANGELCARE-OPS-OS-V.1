@@ -16,7 +16,7 @@ export default async function Angelcare360FinancePaymentsPage() {
     <Angelcare360FinancePageShell
       title="Paiements"
       subtitle="Saisie, confirmation, rejet et allocation côté serveur."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${payments.length} paiement(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/finance" style={linkStyle}>Retour au cockpit</Link>}

@@ -5,9 +5,9 @@ export const ANGELCARE360_ADMINISTRATION_NAVIGATION: Angelcare360AdministrationN
     key: 'overview',
     label: 'Vue d’ensemble',
     href: '/angelcare-360-command-center/administration',
-    summary: 'Pilotage global du setup, des risques et de la couverture fonctionnelle.',
+    summary: 'Pilotage global du paramétrage, des risques et de la couverture fonctionnelle.',
     permission: 'parametres.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'etablissements',
@@ -78,8 +78,7 @@ export const ANGELCARE360_ADMINISTRATION_NAVIGATION: Angelcare360AdministrationN
     key: 'audit',
     label: 'Audit administration',
     href: '/angelcare-360-command-center/administration/audit',
-    summary: 'Consulter les mutations et événements critiques du setup.',
+    summary: 'Consulter les opérations et événements critiques du paramétrage.',
     permission: 'audit.view',
   },
 ]
-

@@ -16,7 +16,7 @@ export default async function Angelcare360FinanceFeesPage() {
     <Angelcare360FinancePageShell
       title="Frais scolaires"
       subtitle="Structures tarifaires, articles de frais et affectations associées à la scolarité."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${feeStructures.length} structure(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/finance" style={linkStyle}>Retour au cockpit</Link>}
@@ -24,7 +24,7 @@ export default async function Angelcare360FinanceFeesPage() {
       {feeStructures.length === 0 ? (
         <Angelcare360EmptyState
           title="Aucune structure de frais"
-          description="Créez une structure tarifaire via l’API finance ou la prochaine couche formulaire de production."
+          description="Créez une structure tarifaire via le module financier disponible."
           actionLabel="Voir le cockpit"
           actionHref="/angelcare-360-command-center/finance"
         />
@@ -89,4 +89,3 @@ const linkStyle: React.CSSProperties = {
   textDecoration: 'none',
   fontWeight: 800,
 }
-

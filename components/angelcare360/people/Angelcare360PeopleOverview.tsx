@@ -59,7 +59,7 @@ export default function Angelcare360PeopleOverview({ overview }: Angelcare360Peo
             { href: '/angelcare-360-command-center/personnes/contacts-urgence', label: 'Urgence', note: 'Contacts prioritaires.' },
             { href: '/angelcare-360-command-center/personnes/documents', label: 'Documents', note: 'Pièces administratives.' },
             { href: '/angelcare-360-command-center/personnes/affectations-classes', label: 'Affectations', note: 'Inscriptions classe/section.' },
-            { href: '/angelcare-360-command-center/personnes/audit', label: 'Audit', note: 'Traçabilité des mutations.' },
+            { href: '/angelcare-360-command-center/personnes/audit', label: 'Audit', note: 'Traçabilité des opérations.' },
           ].map((item) => (
             <Link key={item.href} href={item.href} style={quickLinkStyle}>
               <span style={quickLinkLabelStyle}>{item.label}</span>

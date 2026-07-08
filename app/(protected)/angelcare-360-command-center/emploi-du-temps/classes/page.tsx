@@ -19,7 +19,7 @@ export default async function Angelcare360TimetableClassesPage() {
     <Angelcare360TimetablePageShell
       title="Emploi du temps par classe"
       subtitle="Planning regroupé par classe avec détection des conflits et liens vers les créneaux."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${groups.length} classe(s)`}
       contextRow={<Badge label={`Établissement: ${context.school.name}`} />}
       navigationItems={ANGELCARE360_TIMETABLE_NAVIGATION}

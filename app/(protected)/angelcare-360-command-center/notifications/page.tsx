@@ -15,7 +15,7 @@ export default async function Angelcare360NotificationsPage() {
     <Angelcare360NotificationsPageShell
       title="Notifications"
       subtitle="Le cockpit notifications suit les notifications internes et verrouille les canaux externes tant qu’aucune infrastructure réelle n’est configurée."
-      badge="Phase 12"
+      badge="Disponible"
       statusLabel={overview.blockedExternalCount > 0 ? `${overview.blockedExternalCount} canal(aux) bloqués` : 'Canaux verrouillés'}
       contextRow={
         <>

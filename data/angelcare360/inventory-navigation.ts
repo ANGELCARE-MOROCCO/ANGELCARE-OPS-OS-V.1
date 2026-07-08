@@ -14,7 +14,7 @@ export const ANGELCARE360_INVENTORY_NAVIGATION: Angelcare360InventoryNavigationI
     href: '/angelcare-360-command-center/inventaire',
     summary: 'Cockpit inventaire, risques et actions clés.',
     permission: 'inventaire.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'categories',
@@ -55,7 +55,7 @@ export const ANGELCARE360_INVENTORY_NAVIGATION: Angelcare360InventoryNavigationI
     key: 'audit',
     label: 'Audit inventaire',
     href: '/angelcare-360-command-center/inventaire/audit',
-    summary: 'Journal des mutations et blocages.',
+    summary: 'Journal des opérations et blocages.',
     permission: 'audit.view',
     badge: 'Audit',
   },

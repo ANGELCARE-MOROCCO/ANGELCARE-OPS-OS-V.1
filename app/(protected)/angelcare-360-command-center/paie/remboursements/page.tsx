@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollReimbursementsPage() {
     <Angelcare360PayrollPageShell
       title="Remboursements"
       subtitle="Remboursements liés à la paie préparée."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={`${items.length} remboursement(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie/elements" style={payrollSecondaryLinkStyle}>Voir tous les éléments</Link>}

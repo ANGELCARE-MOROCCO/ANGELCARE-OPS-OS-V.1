@@ -15,7 +15,7 @@ export default async function Angelcare360ClaimsPage() {
     <Angelcare360ClaimsPageShell
       title="Messagerie, Notifications & Réclamations"
       subtitle="Le cockpit réclamations suit les tickets, les assignations, les priorités et les résolutions auditées."
-      badge="Phase 12"
+      badge="Disponible"
       statusLabel={overview.urgentOpenTickets > 0 ? `${overview.urgentOpenTickets} urgent(s)` : 'Flux contrôlé'}
       contextRow={
         <>

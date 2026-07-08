@@ -16,7 +16,7 @@ export default async function Angelcare360FinanceDiscountsPage() {
     <Angelcare360FinancePageShell
       title="Remises"
       subtitle="Demandes, approbations et application des remises."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${discounts.length} remise(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >

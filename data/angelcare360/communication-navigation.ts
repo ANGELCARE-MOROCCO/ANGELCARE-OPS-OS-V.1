@@ -9,7 +9,7 @@ export const ANGELCARE360_COMMUNICATION_NAVIGATION: Angelcare360CommunicationNav
     href: '/angelcare-360-command-center/messagerie',
     summary: 'Cockpit communication, risques et verrouillages.',
     permission: 'messagerie.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'conversations',
@@ -43,9 +43,8 @@ export const ANGELCARE360_COMMUNICATION_NAVIGATION: Angelcare360CommunicationNav
     key: 'audit',
     label: 'Audit messagerie',
     href: '/angelcare-360-command-center/messagerie/audit',
-    summary: 'Journal des mutations et blocages communication.',
+    summary: 'Journal des opérations et blocages de communication.',
     permission: 'audit.view',
     badge: 'Audit',
   },
 ]
-

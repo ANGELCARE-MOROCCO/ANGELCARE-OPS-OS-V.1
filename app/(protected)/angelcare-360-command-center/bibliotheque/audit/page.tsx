@@ -9,7 +9,7 @@ export default async function Angelcare360LibraryAuditPage() {
   const context = await getAngelcare360LibraryContext()
   const events = await listAngelcare360LibraryAuditEvents({ schoolId: context.school.id })
   return (
-    <Angelcare360LibrarySectionScreen title="Audit bibliothèque" description="Journal des mutations et blocages bibliothèque.">
+    <Angelcare360LibrarySectionScreen title="Audit bibliothèque" description="Journal des opérations et blocages bibliothèque.">
       <Angelcare360LibraryAuditDrawer events={events} />
     </Angelcare360LibrarySectionScreen>
   )

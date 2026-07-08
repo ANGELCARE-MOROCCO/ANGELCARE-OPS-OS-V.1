@@ -14,7 +14,7 @@ export default function Angelcare360FinanceHub({ overview }: Angelcare360Finance
           <div style={eyebrowStyle}>Finance & Paiements</div>
           <h2 style={titleStyle}>Vue d’ensemble du recouvrement scolaire</h2>
           <p style={subtitleStyle}>
-            Les structures de frais, factures, paiements, reçus, remises et relances sont branchés sur le socle de données. Les actions à risque restent verrouillées si le contexte métier ne le permet pas.
+            Les structures de frais, factures, paiements, reçus, remises et relances sont connectées au socle de données. Les actions à risque restent verrouillées si le contexte métier ne le permet pas.
           </p>
         </div>
         <div style={actionRowStyle}>
@@ -96,7 +96,7 @@ export default function Angelcare360FinanceHub({ overview }: Angelcare360Finance
             ))}
           </div>
         ) : (
-          <Angelcare360EmptyState title="Aucun événement récent" description="Les mutations financières apparaîtront ici après les premières opérations." />
+          <Angelcare360EmptyState title="Aucun événement récent" description="Les opérations financières apparaîtront ici après les premières opérations." />
         )}
       </section>
     </div>
@@ -332,4 +332,3 @@ const severityStyle: React.CSSProperties = {
   fontWeight: 900,
   alignSelf: 'center',
 }
-

@@ -29,7 +29,7 @@ export default async function Angelcare360DocumentAuditPage() {
   return (
     <Angelcare360DocumentsPageShell
       title="Audit documents"
-      subtitle="Journal des templates, readiness et gouvernance documentaire."
+      subtitle="Journal des modèles, de l’état de préparation et de la gouvernance documentaire."
       badge="Audit"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_DOCUMENTS_NAVIGATION}

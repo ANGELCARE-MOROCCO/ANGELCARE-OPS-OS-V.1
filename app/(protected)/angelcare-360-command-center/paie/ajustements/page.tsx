@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollAdjustmentsPage() {
     <Angelcare360PayrollPageShell
       title="Ajustements"
       subtitle="Ajustements positifs ou négatifs contrôlés côté serveur."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={`${items.length} ajustement(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie/elements" style={payrollSecondaryLinkStyle}>Voir tous les éléments</Link>}

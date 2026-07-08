@@ -9,10 +9,10 @@ export default function Angelcare360PayrollAuditDrawer({ events }: Props) {
   return (
     <Angelcare360PayrollDataTable
       title="Audit paie"
-      description="Journal des mutations sensibles et des blocages paie."
+      description="Journal des opérations sensibles et des blocages paie."
       rows={events}
       emptyTitle="Aucun événement"
-      emptyDescription="Les mutations paie apparaîtront ici dès qu’elles sont exécutées."
+      emptyDescription="Les opérations paie apparaîtront ici dès qu’elles sont exécutées."
       columns={[
         { key: 'action', label: 'Action', render: (row) => `${row.module} · ${row.action}` },
         { key: 'entity', label: 'Entité', render: (row) => row.entity_type || '—' },

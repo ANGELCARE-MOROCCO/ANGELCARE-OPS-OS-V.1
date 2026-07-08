@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollRecordsPage() {
     <Angelcare360PayrollPageShell
       title="Dossiers de paie"
       subtitle="Préparation, validation et confirmation des dossiers de rémunération."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={records.length > 0 ? `${records.length} dossier(s)` : 'Aucun dossier'}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie" style={payrollSecondaryLinkStyle}>Retour au cockpit</Link>}

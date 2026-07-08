@@ -13,8 +13,8 @@ export default async function Angelcare360FinanceAuditPage() {
   return (
     <Angelcare360FinancePageShell
       title="Audit finance"
-      subtitle="Journal des événements financiers, mutations sensibles et blocages d’export."
-      badge="Phase 8"
+      subtitle="Journal des événements financiers, opérations sensibles et blocages d’export."
+      badge="Disponible"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >
@@ -36,4 +36,3 @@ export default async function Angelcare360FinanceAuditPage() {
     </Angelcare360FinancePageShell>
   )
 }
-

@@ -71,7 +71,7 @@ export default function Angelcare360LibraryMutationForm({
     })
     const data = await response.json().catch(() => null)
     if (!response.ok || !data?.ok) {
-      setError(data?.error || 'La mutation bibliothèque a échoué.')
+      setError(data?.error || 'L’action bibliothèque a échoué.')
       return
     }
 

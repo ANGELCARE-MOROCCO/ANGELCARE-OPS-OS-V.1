@@ -38,7 +38,7 @@ export default async function Angelcare360AcademiquePage() {
     <Angelcare360AcademicPageShell
       title="Académique & Évaluations"
       subtitle="Le cockpit académique exécute les cours, devoirs, examens, notes, moyennes, bulletins et appréciations avec traçabilité serveur."
-      badge="Phase 7"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle académique prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}

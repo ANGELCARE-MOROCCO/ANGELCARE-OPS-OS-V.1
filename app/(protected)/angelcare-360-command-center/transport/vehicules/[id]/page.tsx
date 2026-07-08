@@ -27,7 +27,7 @@ export default async function Angelcare360TransportVehicleDetailPage({ params }:
     <Angelcare360TransportPageShell
       title={`Véhicule ${vehicle.vehicle_code}`}
       subtitle="Détail du véhicule, capacité, chauffeur et affectation du circuit."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={vehicle.status}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport/vehicules" style={secondaryLinkStyle}>Retour</Link>}

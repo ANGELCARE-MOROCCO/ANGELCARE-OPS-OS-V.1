@@ -30,7 +30,7 @@ export default async function Angelcare360AuditAcademiquePage({ searchParams }: 
   return (
     <Angelcare360AcademicPageShell
       title="Audit académique"
-      subtitle="Consultation des mutations, blocages et événements critiques du moteur académique."
+      subtitle="Consultation des opérations, blocages et événements critiques du moteur académique."
       badge="Audit"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}

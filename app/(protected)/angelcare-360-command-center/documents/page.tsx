@@ -35,7 +35,7 @@ export default async function Angelcare360DocumentsPage() {
     <Angelcare360DocumentsPageShell
       title="Documents"
       subtitle="Le cockpit documentaire regroupe les documents générés, les templates et la gouvernance de stockage."
-      badge="Phase 13"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle documentaire prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_DOCUMENTS_NAVIGATION}

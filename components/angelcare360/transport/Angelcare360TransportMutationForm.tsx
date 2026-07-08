@@ -78,7 +78,7 @@ export default function Angelcare360TransportMutationForm({
     })
     const data = await response.json().catch(() => null)
     if (!response.ok || !data?.ok) {
-      setError(data?.error || 'La mutation transport a échoué.')
+      setError(data?.error || 'L’action transport a échoué.')
       return
     }
 

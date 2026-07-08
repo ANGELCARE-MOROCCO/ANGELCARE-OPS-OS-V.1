@@ -40,7 +40,7 @@ export default async function Angelcare360AttendanceLatePage({
     <Angelcare360AttendancePageShell
       title="Retards"
       subtitle="Registre des retards observés sur la période sélectionnée avec accès direct aux justifications."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${rows.length} retard(s)`}
       contextRow={
         <>

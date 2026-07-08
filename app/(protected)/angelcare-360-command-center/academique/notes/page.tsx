@@ -86,7 +86,7 @@ export default async function Angelcare360NotesPage({ searchParams }: { searchPa
   return (
     <Angelcare360AcademicPageShell
       title="Notes"
-      subtitle="Workspace de saisie des notes avec contrôle de plage, état explicite et mutation serveur."
+      subtitle="Espace de saisie des notes avec contrôle de plage, état explicite et opération serveur."
       badge="Académique"
       statusLabel={classId ? `${sheet.students.length} élève(s)` : 'Sélection requise'}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}

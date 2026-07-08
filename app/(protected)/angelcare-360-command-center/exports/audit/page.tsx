@@ -29,7 +29,7 @@ export default async function Angelcare360ExportAuditPage() {
   return (
     <Angelcare360ExportsPageShell
       title="Audit exports"
-      subtitle="Journal des blocages, fichiers et readiness de sortie."
+      subtitle="Journal des blocages, fichiers et état de préparation de sortie."
       badge="Audit"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_EXPORTS_NAVIGATION}

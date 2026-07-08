@@ -14,7 +14,7 @@ export const ANGELCARE360_ATTENDANCE_NAVIGATION: Angelcare360AttendanceNavigatio
     href: '/angelcare-360-command-center/presences',
     summary: 'Cockpit opérationnel, risques et complétude de la journée.',
     permission: 'presences.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'jour',
@@ -69,7 +69,7 @@ export const ANGELCARE360_ATTENDANCE_NAVIGATION: Angelcare360AttendanceNavigatio
     key: 'audit',
     label: 'Audit présences',
     href: '/angelcare-360-command-center/presences/audit',
-    summary: 'Traçabilité des mutations et alertes de sécurité.',
+    summary: 'Traçabilité des opérations et alertes de sécurité.',
     permission: 'audit.view',
   },
 ]

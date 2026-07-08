@@ -9,7 +9,7 @@ export const ANGELCARE360_NOTIFICATIONS_NAVIGATION: Angelcare360NotificationsNav
     href: '/angelcare-360-command-center/notifications',
     summary: 'Cockpit notifications et état des canaux.',
     permission: 'notifications.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'internes',
@@ -36,9 +36,8 @@ export const ANGELCARE360_NOTIFICATIONS_NAVIGATION: Angelcare360NotificationsNav
     key: 'audit',
     label: 'Audit notifications',
     href: '/angelcare-360-command-center/notifications/audit',
-    summary: 'Journal des mutations et blocages notifications.',
+    summary: 'Journal des opérations et blocages des notifications.',
     permission: 'audit.view',
     badge: 'Audit',
   },
 ]
-

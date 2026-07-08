@@ -35,7 +35,7 @@ export default async function Angelcare360FinancePage() {
     <Angelcare360FinancePageShell
       title="Finance & Paiements"
       subtitle="Le cockpit finance suit les frais scolaires, les factures, les paiements, les reçus, les remises et les relances avec contrôle serveur."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle finance prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}

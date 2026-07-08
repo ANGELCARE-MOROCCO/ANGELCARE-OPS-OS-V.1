@@ -72,7 +72,7 @@ export default async function Angelcare360ExamDetailPage({ params }: { params: {
   return (
     <Angelcare360AcademicPageShell
       title={`Examen ${exam.exam_code}`}
-      subtitle="Détail de l’examen, sessions associées et mutation serveur contrôlée."
+      subtitle="Détail de l’examen, sessions associées et opération serveur contrôlée."
       badge="Examen"
       statusLabel={exam.status}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}

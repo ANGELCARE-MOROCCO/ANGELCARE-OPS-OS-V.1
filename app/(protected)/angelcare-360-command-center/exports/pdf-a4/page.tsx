@@ -15,7 +15,7 @@ export default async function Angelcare360ExportPdfA4Page() {
     return (
       <Angelcare360EmptyState
         title="PDF A4 indisponible"
-        description="Aucune readiness PDF n’a pu être résolue."
+        description="Aucune préparation PDF n’a pu être résolue."
         actionLabel="Retour aux exports"
         actionHref="/angelcare-360-command-center/exports"
       />

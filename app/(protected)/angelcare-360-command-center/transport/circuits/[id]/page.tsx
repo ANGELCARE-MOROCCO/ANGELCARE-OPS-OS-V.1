@@ -33,7 +33,7 @@ export default async function Angelcare360TransportRouteDetailPage({ params }: {
     <Angelcare360TransportPageShell
       title={`Circuit ${route.label}`}
       subtitle="Lecture détaillée du circuit, de ses arrêts et de son état de préparation."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={route.status}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport/circuits" style={secondaryLinkStyle}>Retour</Link>}

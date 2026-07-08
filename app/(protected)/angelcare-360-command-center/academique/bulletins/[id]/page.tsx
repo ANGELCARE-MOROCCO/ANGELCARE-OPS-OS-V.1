@@ -132,7 +132,7 @@ export default async function Angelcare360BulletinDetailPage({ params }: { param
             <div style={panelEyebrowStyle}>Export</div>
             <h2 style={panelTitleStyle}>PDF verrouillé</h2>
           </div>
-          <div style={panelMetaStyle}>Aucune infrastructure d’export PDF réelle n’est branchée</div>
+          <div style={panelMetaStyle}>Aucune infrastructure d’export PDF réelle n’est connectée</div>
         </div>
         <form action={blockExportAction} style={formGridStyle}>
           <input type="hidden" name="id" value={reportCard.id} />

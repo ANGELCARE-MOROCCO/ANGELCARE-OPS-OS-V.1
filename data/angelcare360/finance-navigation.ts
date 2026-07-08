@@ -78,7 +78,7 @@ export const ANGELCARE360_FINANCE_NAVIGATION: Angelcare360FinanceNavigationItem[
     key: 'audit',
     label: 'Audit finance',
     href: '/angelcare-360-command-center/finance/audit',
-    summary: 'Journal des mutations et événements sensibles.',
+    summary: 'Journal des opérations et événements sensibles.',
     badge: 'Audit',
   },
 ]

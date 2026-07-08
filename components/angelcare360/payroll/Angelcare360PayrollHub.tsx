@@ -99,7 +99,7 @@ export default function Angelcare360PayrollHub({ overview }: Angelcare360Payroll
             ))}
           </div>
         ) : (
-          <Angelcare360EmptyState title="Aucun événement récent" description="Les mutations de paie apparaîtront ici après les premières opérations." />
+          <Angelcare360EmptyState title="Aucun événement récent" description="Les opérations de paie apparaîtront ici après les premières opérations." />
         )}
       </section>
 

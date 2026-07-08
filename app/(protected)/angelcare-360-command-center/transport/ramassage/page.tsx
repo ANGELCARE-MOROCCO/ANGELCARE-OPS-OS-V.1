@@ -16,7 +16,7 @@ export default async function Angelcare360TransportPickupPage() {
     <Angelcare360TransportPageShell
       title="Ramassage"
       subtitle="Liste de ramassage dérivée des affectations transport actives."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={`${pickups.length} ligne(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

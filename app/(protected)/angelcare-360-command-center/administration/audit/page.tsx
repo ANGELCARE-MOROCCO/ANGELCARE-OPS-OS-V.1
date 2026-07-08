@@ -17,7 +17,7 @@ export default async function Angelcare360AuditPage() {
   return (
     <Angelcare360AdminAuditExplorer
       title="Audit administration"
-      subtitle="Journal des mutations, actions critiques et événements sensibles du setup."
+      subtitle="Journal des opérations, actions critiques et événements sensibles du paramétrage."
       badge="Sécurité"
       contextRow={(
         <Angelcare360AdministrationContextRow
@@ -32,8 +32,7 @@ export default async function Angelcare360AuditPage() {
       moduleOptions={moduleOptions}
       actionOptions={actionOptions}
       severityOptions={severityOptions}
-      disabledExportReason="L’export d’audit sera activé après la phase de conformité et de formats PDF."
+      disabledExportReason="L’export d’audit sera activé après validation de la conformité et des formats PDF."
     />
   )
 }
-

@@ -15,7 +15,7 @@ export default async function Angelcare360FinanceStatementsPage() {
     <Angelcare360FinancePageShell
       title="États de compte"
       subtitle="Relevés financiers et mouvements consolidés. L’export reste verrouillé tant que l’infrastructure n’est pas disponible."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel="Export verrouillé"
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >

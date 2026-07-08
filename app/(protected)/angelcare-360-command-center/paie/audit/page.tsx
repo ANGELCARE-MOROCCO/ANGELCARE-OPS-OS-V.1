@@ -37,8 +37,8 @@ export default async function Angelcare360PayrollAuditPage({
   return (
     <Angelcare360PayrollPageShell
       title="Audit paie"
-      subtitle="Journal des mutations sensibles et des blocages paie."
-      badge="Phase 9"
+      subtitle="Journal des opérations sensibles et des blocages paie."
+      badge="Disponible"
       statusLabel={`${events.length} événement(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie" style={payrollSecondaryLinkStyle}>Retour au cockpit</Link>}
@@ -51,7 +51,7 @@ export default async function Angelcare360PayrollAuditPage({
       }
     >
       {events.length === 0 ? (
-        <Angelcare360EmptyState title="Aucun événement" description="Les mutations paie apparaîtront ici dès qu’elles seront exécutées." />
+        <Angelcare360EmptyState title="Aucun événement" description="Les opérations paie apparaîtront ici dès qu’elles seront exécutées." />
       ) : (
         <Angelcare360PayrollAuditDrawer events={events} />
       )}

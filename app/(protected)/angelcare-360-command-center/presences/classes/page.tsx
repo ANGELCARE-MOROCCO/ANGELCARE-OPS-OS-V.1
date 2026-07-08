@@ -24,7 +24,7 @@ export default async function Angelcare360AttendanceClassesPage({
     <Angelcare360AttendancePageShell
       title="Feuilles par classe"
       subtitle="Vue structurée des classes, des feuilles ouvertes et du niveau de complétude pour la date sélectionnée."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${rows.length} classe(s) affichée(s)`}
       contextRow={
         <>

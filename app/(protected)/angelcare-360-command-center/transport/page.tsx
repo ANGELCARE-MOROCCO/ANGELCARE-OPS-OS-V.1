@@ -24,7 +24,7 @@ export default async function Angelcare360TransportPage() {
     <Angelcare360TransportPageShell
       title="Transport & Sécurité"
       subtitle="Le cockpit transport suit les circuits, les arrêts, les véhicules, les affectations élèves et les verrouillages de sécurité."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={overview.safety.overallStatus === 'ready' ? 'Prêt' : 'Contrôle requis'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}

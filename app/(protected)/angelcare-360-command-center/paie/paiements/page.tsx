@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollPaymentsPage() {
     <Angelcare360PayrollPageShell
       title="Paiements"
       subtitle="Suivi des confirmations de paiement internes, sans virement bancaire exécuté."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={`${overview.paidCount} payé(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie/dossiers" style={payrollSecondaryLinkStyle}>Voir les dossiers</Link>}

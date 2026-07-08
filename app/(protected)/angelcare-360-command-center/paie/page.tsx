@@ -35,7 +35,7 @@ export default async function Angelcare360PayrollPage() {
     <Angelcare360PayrollPageShell
       title="Paie & Rémunérations"
       subtitle="Le cockpit paie prépare les périodes, les dossiers et les validations internes sans prétendre exécuter la conformité légale ni le virement bancaire."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle paie prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}

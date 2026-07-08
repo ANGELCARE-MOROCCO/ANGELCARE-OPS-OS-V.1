@@ -23,7 +23,7 @@ export default async function Angelcare360AdmissionsAuditPage() {
         />
       )}
       title="Audit admissions"
-      subtitle="Traçabilité des mutations, décisions et conversions du module Admissions."
+      subtitle="Traçabilité des opérations, décisions et conversions du module Admissions."
       events={events}
     />
   )

@@ -14,7 +14,7 @@ export const ANGELCARE360_PAYROLL_NAVIGATION: Angelcare360PayrollNavigationItem[
     href: '/angelcare-360-command-center/paie',
     summary: 'Cockpit paie, risques et préparation des validations.',
     permission: 'paie.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'periods',
@@ -104,7 +104,7 @@ export const ANGELCARE360_PAYROLL_NAVIGATION: Angelcare360PayrollNavigationItem[
     key: 'audit',
     label: 'Audit paie',
     href: '/angelcare-360-command-center/paie/audit',
-    summary: 'Journal des mutations et blocages de paie.',
+    summary: 'Journal des opérations et blocages de paie.',
     permission: 'audit.view',
     badge: 'Audit',
   },

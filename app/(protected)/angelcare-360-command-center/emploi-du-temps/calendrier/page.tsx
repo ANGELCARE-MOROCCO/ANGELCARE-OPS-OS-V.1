@@ -21,7 +21,7 @@ export default async function Angelcare360SchoolCalendarPage() {
     <Angelcare360TimetablePageShell
       title="Calendrier scolaire"
       subtitle="Évènements, congés, activités et repères scolaires à jour."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${events.length} évènement(s)`}
       contextRow={<Badge label={`Établissement: ${context.school.name}`} />}
       navigationItems={ANGELCARE360_TIMETABLE_NAVIGATION}

@@ -69,7 +69,7 @@ export default function Angelcare360InventoryMutationForm({
     })
     const data = await response.json().catch(() => null)
     if (!response.ok || !data?.ok) {
-      setError(data?.error || 'La mutation inventaire a échoué.')
+      setError(data?.error || 'L’action inventaire a échoué.')
       return
     }
 

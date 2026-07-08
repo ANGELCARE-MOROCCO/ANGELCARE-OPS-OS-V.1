@@ -29,7 +29,7 @@ export default async function Angelcare360FinancePaymentDetailPage({ params }: {
         <Card title="Élève" lines={[payment.student_full_name || 'Aucun élève lié']} />
         <Card title="Reçu" lines={[payment.receipt_number || 'Aucun reçu']} />
       </section>
-      <Angelcare360EmptyState title="Actions serveur" description="La confirmation, le rejet, l’annulation et l’allocation sont centralisés dans le helper finance et exposés via l’API finance." />
+      <Angelcare360EmptyState title="Actions disponibles" description="La confirmation, le rejet, l’annulation et l’allocation sont centralisés dans le module financier." />
     </Angelcare360FinancePageShell>
   )
 }

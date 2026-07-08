@@ -7,7 +7,7 @@ export const ANGELCARE360_ADMISSIONS_NAVIGATION: Angelcare360AdmissionsNavigatio
     href: '/angelcare-360-command-center/admissions',
     summary: 'Cockpit admissions, préparation et risques opérationnels.',
     permission: 'admissions.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'pipeline',
@@ -55,7 +55,7 @@ export const ANGELCARE360_ADMISSIONS_NAVIGATION: Angelcare360AdmissionsNavigatio
     key: 'audit',
     label: 'Audit admissions',
     href: '/angelcare-360-command-center/admissions/audit',
-    summary: 'Traçabilité des mutations admissions.',
+    summary: 'Traçabilité des opérations admissions.',
     permission: 'audit.view',
   },
 ]
@@ -97,4 +97,3 @@ export const ANGELCARE360_ADMISSION_REQUIRED_DOCUMENT_TEMPLATES = [
   { documentKey: 'ancien-bulletin', title: 'Ancien bulletin', description: 'Bulletin antérieur si applicable.' },
   { documentKey: 'autorisation-sortie', title: 'Autorisation de sortie', description: 'Autorisation complémentaire si applicable.' },
 ]
-

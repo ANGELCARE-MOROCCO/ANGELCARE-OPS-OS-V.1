@@ -75,7 +75,7 @@ export default function Angelcare360PeopleAuditWorkspace({
         <button
           type="button"
           disabled
-          title={exportDisabledReason || 'L’export des audits sera activé dans une phase ultérieure.'}
+          title={exportDisabledReason || 'L’export des audits reste verrouillé jusqu’à la configuration requise.'}
           style={disabledButtonStyle}
         >
           Exporter les événements

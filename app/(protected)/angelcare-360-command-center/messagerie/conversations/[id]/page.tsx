@@ -43,7 +43,7 @@ export default async function Angelcare360ConversationDetailPage({ params }: { p
           />
           <Angelcare360CommunicationMutationForm
             title="Archiver la conversation"
-            description="L’archivage passe par une mutation réelle et auditable."
+            description="L’archivage passe par une opération réelle et auditable."
             entity="conversation"
             operation="archive"
             submitLabel="Archiver"

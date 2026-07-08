@@ -70,7 +70,7 @@ export default function Angelcare360LibraryHub({ overview }: Props) {
               {overview.latestAuditEvents.slice(0, 4).map((event) => <li key={event.id} style={auditItemStyle}>{event.module} · {event.action}</li>)}
             </ul>
           ) : (
-            <Angelcare360EmptyState title="Aucun événement récent" description="Les mutations bibliothèque apparaîtront ici après les premières opérations." />
+            <Angelcare360EmptyState title="Aucun événement récent" description="Les opérations bibliothèque apparaîtront ici après les premières opérations." />
           )}
         </article>
       </section>

@@ -15,7 +15,7 @@ export default async function Angelcare360FinanceExpensesPage() {
     <Angelcare360FinancePageShell
       title="Dépenses"
       subtitle="Dépenses opérationnelles enregistrées si le socle finance les supporte."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${expenses.length} dépense(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >

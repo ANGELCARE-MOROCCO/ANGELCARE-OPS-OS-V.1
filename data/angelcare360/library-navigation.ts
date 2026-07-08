@@ -14,7 +14,7 @@ export const ANGELCARE360_LIBRARY_NAVIGATION: Angelcare360LibraryNavigationItem[
     href: '/angelcare-360-command-center/bibliotheque',
     summary: 'Cockpit bibliothèque, prêts et disponibilité.',
     permission: 'bibliotheque.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'books',
@@ -62,7 +62,7 @@ export const ANGELCARE360_LIBRARY_NAVIGATION: Angelcare360LibraryNavigationItem[
     key: 'audit',
     label: 'Audit bibliothèque',
     href: '/angelcare-360-command-center/bibliotheque/audit',
-    summary: 'Journal des mutations et blocages.',
+    summary: 'Journal des opérations et blocages.',
     permission: 'audit.view',
     badge: 'Audit',
   },

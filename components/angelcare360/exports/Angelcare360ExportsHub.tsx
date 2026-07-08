@@ -37,7 +37,7 @@ export default function Angelcare360ExportsHub({ overview }: Props) {
           </div>
         </div>
         <div style={readinessStyle}>
-          <div style={readinessTitleStyle}>Readiness d’export</div>
+          <div style={readinessTitleStyle}>État de préparation des exports</div>
           <ul style={readinessListStyle}>
             <li>PDF A4: {overview.pdfA4Ready ? 'prêt' : 'verrouillé'}</li>
             <li>CSV / XLSX: {overview.csvXlsxReady ? 'prêt' : 'verrouillé'}</li>

@@ -24,7 +24,7 @@ export default async function Angelcare360PayrollValidationPage() {
     <Angelcare360PayrollPageShell
       title="Validation"
       subtitle="Préparation, blocage et validation des dossiers de paie."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={readiness.canCalculate ? 'Calcul exploitable' : 'Calcul verrouillé'}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie/dossiers" style={payrollSecondaryLinkStyle}>Voir les dossiers</Link>}

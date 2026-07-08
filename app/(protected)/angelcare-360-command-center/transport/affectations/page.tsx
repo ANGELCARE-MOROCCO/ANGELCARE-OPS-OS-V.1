@@ -37,7 +37,7 @@ export default async function Angelcare360TransportAssignmentsPage() {
     <Angelcare360TransportPageShell
       title="Affectations élèves"
       subtitle="Affectation, édition et annulation contrôlée des élèves aux circuits de transport."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={`${assignments.length} affectation(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

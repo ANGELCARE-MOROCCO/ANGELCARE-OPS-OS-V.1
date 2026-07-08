@@ -51,7 +51,7 @@ export default function Angelcare360AdmissionsAuditWorkspace({ contextRow, title
         <button
           type="button"
           disabled
-          title="L’export de l’audit sera activé lorsqu’un export contrôlé aura été branché."
+          title="L’export de l’audit sera activé lorsqu’un export contrôlé aura été connecté."
           style={disabledButtonStyle}
         >
           Exporter
@@ -99,7 +99,7 @@ export default function Angelcare360AdmissionsAuditWorkspace({ contextRow, title
           setSearch('')
           setFilterState({})
         }}
-        trailing={<div style={hintStyle}>Les mutations critiques admissions sont historisées côté serveur.</div>}
+        trailing={<div style={hintStyle}>Les opérations critiques admissions sont historisées côté serveur.</div>}
       />
 
       <Angelcare360AdmissionsTable
@@ -118,7 +118,7 @@ export default function Angelcare360AdmissionsAuditWorkspace({ contextRow, title
         emptyFallback={
           <Angelcare360EmptyState
             title="Aucun événement d’audit"
-            description="Aucune mutation admissions n’a encore été enregistrée dans cette fenêtre."
+            description="Aucune opération admissions n’a encore été enregistrée dans cette fenêtre."
           />
         }
       />

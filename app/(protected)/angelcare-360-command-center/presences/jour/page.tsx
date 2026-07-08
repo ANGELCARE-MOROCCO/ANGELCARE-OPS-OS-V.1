@@ -33,7 +33,7 @@ export default async function Angelcare360AttendanceDayPage({
     <Angelcare360AttendancePageShell
       title="Présence du jour"
       subtitle="Ouverture des sessions quotidiennes, complétude des feuilles et suivi des écarts du jour."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${dayState.totalCompletionRate}% de complétude`}
       contextRow={
         <>

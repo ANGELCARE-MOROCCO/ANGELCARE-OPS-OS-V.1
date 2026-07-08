@@ -16,7 +16,7 @@ export default async function Angelcare360FinanceInvoicesPage() {
     <Angelcare360FinancePageShell
       title="Factures"
       subtitle="Brouillons, émission, statut de paiement et lignes de facture liées au recouvrement scolaire."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${invoices.length} facture(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/finance" style={linkStyle}>Retour au cockpit</Link>}

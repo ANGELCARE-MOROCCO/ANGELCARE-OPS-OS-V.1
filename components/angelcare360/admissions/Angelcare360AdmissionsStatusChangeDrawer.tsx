@@ -72,7 +72,7 @@ export default function Angelcare360AdmissionsStatusChangeDrawer({
           <div>
             <div style={eyebrowStyle}>Changer le statut</div>
             <h3 style={titleStyle}>{title}</h3>
-            <p style={subtitleStyle}>{disabledReason || 'La mutation sera auditée côté serveur.'}</p>
+            <p style={subtitleStyle}>{disabledReason || 'L’opération sera auditée côté serveur.'}</p>
           </div>
           <button type="button" onClick={onClose} style={closeButtonStyle}>Fermer</button>
         </header>
@@ -231,4 +231,3 @@ const disabledButtonStyle: React.CSSProperties = {
   fontWeight: 800,
   cursor: 'not-allowed',
 }
-

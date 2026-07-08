@@ -13,11 +13,10 @@ export default async function Angelcare360ClaimAuditPage() {
   return (
     <Angelcare360ClaimsSectionScreen
       title="Audit réclamations"
-      description="Journal des mutations, assignations, résolutions et blocages de réclamations."
+      description="Journal des opérations, assignations, résolutions et blocages de réclamations."
       actions={<Link href="/angelcare-360-command-center/reclamations" style={secondaryLinkStyle}>Retour au cockpit</Link>}
     >
       <Angelcare360ClaimAuditDrawer events={events} />
     </Angelcare360ClaimsSectionScreen>
   )
 }
-

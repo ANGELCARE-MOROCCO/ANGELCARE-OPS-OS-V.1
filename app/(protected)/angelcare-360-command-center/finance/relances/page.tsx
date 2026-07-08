@@ -16,7 +16,7 @@ export default async function Angelcare360FinanceRemindersPage() {
     <Angelcare360FinancePageShell
       title="Relances"
       subtitle="Relances planifiées, envoyées ou bloquées selon la disponibilité du canal de notification."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${reminders.length} relance(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >

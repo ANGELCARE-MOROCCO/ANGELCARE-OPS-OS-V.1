@@ -43,7 +43,7 @@ export default async function Angelcare360AttendanceClassDetailPage({
     <Angelcare360AttendancePageShell
       title="Feuille de classe"
       subtitle="Saisie opérationnelle des présences, retards et justifications pour cette classe."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={sheet.isClosed ? 'Session clôturée' : 'Session ouverte ou à ouvrir'}
       contextRow={
         <>

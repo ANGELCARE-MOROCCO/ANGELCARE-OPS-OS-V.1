@@ -15,7 +15,7 @@ export default async function Angelcare360TransportNotificationsPage() {
     <Angelcare360TransportPageShell
       title="Notifications"
       subtitle="Les notifications parents restent verrouillées tant que le module Messagerie n’est pas actif."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={readiness.overallStatus}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

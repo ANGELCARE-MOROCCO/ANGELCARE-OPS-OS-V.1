@@ -14,7 +14,7 @@ export const ANGELCARE360_TRANSPORT_NAVIGATION: Angelcare360TransportNavigationI
     href: '/angelcare-360-command-center/transport',
     summary: 'Cockpit transport, risques, sécurité et verrouillages.',
     permission: 'transport.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'routes',
@@ -69,7 +69,7 @@ export const ANGELCARE360_TRANSPORT_NAVIGATION: Angelcare360TransportNavigationI
     key: 'incidents',
     label: 'Incidents',
     href: '/angelcare-360-command-center/transport/incidents',
-    summary: 'Incident readiness et verrouillage si le socle n’existe pas.',
+    summary: 'État de préparation des incidents et verrouillage si le socle n’existe pas.',
     permission: 'transport.view',
   },
   {
@@ -83,9 +83,8 @@ export const ANGELCARE360_TRANSPORT_NAVIGATION: Angelcare360TransportNavigationI
     key: 'audit',
     label: 'Audit transport',
     href: '/angelcare-360-command-center/transport/audit',
-    summary: 'Journal des mutations et blocages transport.',
+    summary: 'Journal des opérations et blocages transport.',
     permission: 'audit.view',
     badge: 'Audit',
   },
 ]
-

@@ -35,7 +35,7 @@ export default async function Angelcare360InventairePage() {
     <Angelcare360InventoryPageShell
       title="Bibliothèque & Inventaire"
       subtitle="Le cockpit inventaire suit les catégories, articles, quantités et mouvements sans export simulé ni lecture code-barres fictive."
-      badge="Phase 11"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle inventaire prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_INVENTORY_NAVIGATION}

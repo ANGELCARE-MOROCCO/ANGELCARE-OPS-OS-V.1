@@ -35,7 +35,7 @@ export default async function Angelcare360AttendanceJustificationDetailPage({
     <Angelcare360AttendancePageShell
       title="Justification"
       subtitle="Détail et traitement du justificatif sélectionné."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={selected.status}
       contextRow={
         <>

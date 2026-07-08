@@ -23,7 +23,7 @@ export default async function Angelcare360PayrollElementsPage() {
     <Angelcare360PayrollPageShell
       title="Éléments de paie"
       subtitle="Base salaire, primes, retenues, avances, ajustements et remboursements."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={`${items.length} élément(s)`}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/paie" style={payrollSecondaryLinkStyle}>Retour au cockpit</Link>}

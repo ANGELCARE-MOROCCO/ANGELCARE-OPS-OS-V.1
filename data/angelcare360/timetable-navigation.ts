@@ -14,7 +14,7 @@ export const ANGELCARE360_TIMETABLE_NAVIGATION: Angelcare360TimetableNavigationI
     href: '/angelcare-360-command-center/emploi-du-temps',
     summary: 'Créneaux, conflits et planning global.',
     permission: 'emploi_du_temps.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'classes',

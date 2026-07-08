@@ -59,7 +59,7 @@ export default function Angelcare360CommunicationMutationForm({ title, descripti
     })
     const data = await response.json().catch(() => null)
     if (!response.ok || !data?.ok) {
-      setError(data?.error || 'La mutation messagerie a échoué.')
+      setError(data?.error || 'L’action messagerie a échoué.')
       return
     }
     setMessage('Mutation enregistrée avec succès.')

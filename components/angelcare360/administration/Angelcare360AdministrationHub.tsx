@@ -22,8 +22,8 @@ export default function Angelcare360AdministrationHub({ overview }: Angelcare360
     <div style={shellStyle}>
       <section style={heroStyle}>
         <div>
-          <div style={eyebrowStyle}>Administration Control Plane</div>
-          <h2 style={titleStyle}>Vue d’ensemble du setup</h2>
+          <div style={eyebrowStyle}>Administration</div>
+          <h2 style={titleStyle}>Vue d’ensemble du paramétrage</h2>
           <p style={subtitleStyle}>
             La configuration administrative pilote les établissements, l’année scolaire, les classes, les sections, les matières et le socle RBAC.
           </p>
@@ -57,7 +57,7 @@ export default function Angelcare360AdministrationHub({ overview }: Angelcare360
       <section style={statusPanelStyle}>
         <div style={panelHeaderStyle}>
           <div>
-            <div style={panelEyebrowStyle}>Setup</div>
+            <div style={panelEyebrowStyle}>Paramétrage</div>
             <h3 style={panelTitleStyle}>Score de préparation</h3>
           </div>
           <div style={scoreBadgeStyle}>{overview.setupScore}/8</div>
@@ -89,7 +89,7 @@ export default function Angelcare360AdministrationHub({ overview }: Angelcare360
           ) : (
             <Angelcare360EmptyState
               title="Aucun risque bloquant détecté"
-              description="Le socle administratif est complet pour cette étape."
+              description="Le socle administratif est complet pour le périmètre actif."
             />
           )}
         </article>
@@ -145,7 +145,7 @@ export default function Angelcare360AdministrationHub({ overview }: Angelcare360
             ))}
           </div>
         ) : (
-          <Angelcare360EmptyState title="Aucun événement récent" description="Les mutations administratives apparaîtront ici après les premiers enregistrements." />
+          <Angelcare360EmptyState title="Aucun événement récent" description="Les opérations administratives apparaîtront ici après les premiers enregistrements." />
         )}
       </section>
 
@@ -401,4 +401,3 @@ const severityStyle: React.CSSProperties = {
   fontSize: 12,
   fontWeight: 900,
 }
-

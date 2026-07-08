@@ -50,7 +50,7 @@ export default async function Angelcare360AttendanceStudentsPage({
     <Angelcare360AttendancePageShell
       title="Présence par élève"
       subtitle="Vue consolidée des présences, retards, absences et excusés pour chaque élève."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${grouped.length} élève(s) affiché(s)`}
       contextRow={
         <>

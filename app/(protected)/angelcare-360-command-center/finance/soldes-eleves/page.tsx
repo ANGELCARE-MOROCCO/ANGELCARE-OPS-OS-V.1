@@ -15,7 +15,7 @@ export default async function Angelcare360FinanceBalancesPage() {
     <Angelcare360FinancePageShell
       title="Soldes élèves"
       subtitle="Vue consolidée des créances, paiements, remises et reste à payer."
-      badge="Phase 8"
+      badge="Disponible"
       statusLabel={`${balances.length} élève(s)`}
       navigationItems={ANGELCARE360_FINANCE_NAVIGATION}
     >

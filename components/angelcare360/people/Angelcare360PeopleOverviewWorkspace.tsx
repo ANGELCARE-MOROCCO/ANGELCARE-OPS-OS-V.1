@@ -22,7 +22,7 @@ export default function Angelcare360PeopleOverviewWorkspace({ overview }: Angelc
         <button
           type="button"
           disabled
-          title="L’export des dossiers humains sera activé dans une phase ultérieure."
+          title="L’export des dossiers humains reste verrouillé jusqu’à la configuration requise."
           style={disabledButtonStyle}
         >
           Exporter les dossiers
@@ -66,4 +66,3 @@ const disabledButtonStyle: React.CSSProperties = {
   fontWeight: 800,
   cursor: 'not-allowed',
 }
-

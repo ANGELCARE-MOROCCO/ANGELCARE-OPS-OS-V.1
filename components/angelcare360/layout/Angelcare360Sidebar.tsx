@@ -36,7 +36,7 @@ export default function Angelcare360Sidebar({ open, onClose, sections, pathname,
       </div>
 
       <div style={sidebarNoteStyle}>
-        Navigation française, isolation stricte, périmètres opérationnels alignés sur la phase 1.
+        Navigation française, isolation stricte et périmètres opérationnels contrôlés.
       </div>
 
       <nav style={navStyle}>

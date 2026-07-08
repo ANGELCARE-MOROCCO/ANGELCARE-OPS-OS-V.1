@@ -5,7 +5,7 @@ import { getAngelcare360AccessContext, requireAngelcare360Permission } from '@/l
 
 export const metadata: Metadata = {
   title: `Exports · ${ANGELCARE360_PRODUCT_NAME}`,
-  description: 'Espace de readiness export pour AngelCare 360.',
+  description: 'Espace de préparation des exports pour AngelCare 360.',
 }
 
 export const dynamic = 'force-dynamic'

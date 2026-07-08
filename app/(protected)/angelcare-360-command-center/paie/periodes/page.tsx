@@ -31,7 +31,7 @@ export default async function Angelcare360PayrollPeriodsPage() {
     <Angelcare360PayrollPageShell
       title="Périodes de paie"
       subtitle="Gestion des périodes préparées, ouvertes, calculées, validées et clôturées."
-      badge="Phase 9"
+      badge="Disponible"
       statusLabel={overview.openPeriodCount > 0 ? 'Période ouverte' : 'Aucune période ouverte'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_PAYROLL_NAVIGATION}

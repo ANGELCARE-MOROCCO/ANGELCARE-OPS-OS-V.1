@@ -14,7 +14,7 @@ export const ANGELCARE360_ACADEMICS_NAVIGATION: Angelcare360AcademicNavigationIt
     href: '/angelcare-360-command-center/academique',
     summary: 'Cockpit académique, risques et points d’exécution.',
     permission: 'academics.view',
-    badge: 'Hub',
+    badge: 'Centre',
   },
   {
     key: 'cours',
@@ -83,7 +83,7 @@ export const ANGELCARE360_ACADEMICS_NAVIGATION: Angelcare360AcademicNavigationIt
     key: 'audit',
     label: 'Audit académique',
     href: '/angelcare-360-command-center/academique/audit',
-    summary: 'Journal des mutations académiques et des blocages.',
+    summary: 'Journal des opérations académiques et des blocages.',
     permission: 'audit.view',
   },
 ]

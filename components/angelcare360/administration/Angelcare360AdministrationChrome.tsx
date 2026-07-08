@@ -19,7 +19,7 @@ export default function Angelcare360AdministrationChrome({ children, user, acces
     <div style={shellStyle}>
       <div style={topBarStyle}>
         <div>
-          <div style={eyebrowStyle}>Administration Control Plane</div>
+          <div style={eyebrowStyle}>Administration</div>
           <div style={titleStyle}>ANGELCARE 360 COMMAND CENTER</div>
           <div style={metaStyle}>
             {access.roleLabel} · {user.email || 'Session protégée'} · {access.scopeLabel}

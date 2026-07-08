@@ -40,7 +40,7 @@ export default async function Angelcare360AttendanceAbsencesPage({
     <Angelcare360AttendancePageShell
       title="Absences"
       subtitle="Registre des absences avec visibilité immédiate sur l’état des justifications."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${rows.length} absence(s)`}
       contextRow={
         <>

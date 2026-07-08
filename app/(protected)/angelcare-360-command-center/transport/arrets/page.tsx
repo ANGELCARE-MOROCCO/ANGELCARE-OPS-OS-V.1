@@ -21,7 +21,7 @@ export default async function Angelcare360TransportStopsPage() {
     <Angelcare360TransportPageShell
       title="Arrêts"
       subtitle="Création et édition des arrêts, de leur ordre de passage et de leur horaire prévu."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={`${stops.length} arrêt(s)`}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

@@ -15,7 +15,7 @@ export default async function Angelcare360TransportSafetyPage() {
     <Angelcare360TransportPageShell
       title="Sécurité"
       subtitle="Contrôle des chauffeurs, accompagnateurs, capacité, arrêt et verrous techniques."
-      badge="Phase 10"
+      badge="Disponible"
       statusLabel={safety.overallStatus}
       navigationItems={ANGELCARE360_TRANSPORT_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/transport" style={secondaryLinkStyle}>Retour au cockpit</Link>}

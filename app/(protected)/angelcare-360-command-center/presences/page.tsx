@@ -37,7 +37,7 @@ export default async function Angelcare360PresencesPage() {
     <Angelcare360AttendancePageShell
       title="Présences & Vie scolaire"
       subtitle="Pilotage quotidien des présences, retards, absences et justifications avec une traçabilité complète."
-      badge="Phase 6"
+      badge="Disponible"
       statusLabel={`${overview.activeStudents} élève(s) actifs`}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_ATTENDANCE_NAVIGATION}

@@ -14,7 +14,7 @@ export default function Angelcare360PeopleChrome({ children }: Angelcare360Peopl
     <div style={shellStyle}>
       <div style={topBarStyle}>
         <div>
-          <div style={eyebrowStyle}>People Core Operating Layer</div>
+          <div style={eyebrowStyle}>Espace personnes</div>
           <div style={titleStyle}>ANGELCARE 360 COMMAND CENTER</div>
           <div style={metaStyle}>Dossiers élèves, familles, enseignants et personnel, dans un espace français isolé.</div>
         </div>
@@ -104,4 +104,3 @@ const contentStyle: React.CSSProperties = {
   display: 'grid',
   gap: 18,
 }
-

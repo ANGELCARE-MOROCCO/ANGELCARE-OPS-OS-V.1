@@ -35,7 +35,7 @@ export default async function Angelcare360BibliothequePage() {
     <Angelcare360LibraryPageShell
       title="Bibliothèque & Inventaire"
       subtitle="Le cockpit bibliothèque suit les livres, exemplaires, prêts, retours et disponibilités sans export simulé ni code-barres fictif."
-      badge="Phase 11"
+      badge="Disponible"
       statusLabel={overview.risks.length > 0 ? `${overview.risks.length} risque(s)` : 'Socle bibliothèque prêt'}
       contextRow={contextRow}
       navigationItems={ANGELCARE360_LIBRARY_NAVIGATION}
