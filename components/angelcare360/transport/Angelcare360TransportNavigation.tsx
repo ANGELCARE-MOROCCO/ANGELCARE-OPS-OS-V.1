@@ -57,7 +57,7 @@ const linkStyle: React.CSSProperties = {
 }
 
 const activeLinkStyle: React.CSSProperties = {
-  borderColor: '#38bdf8',
+  border: '1px solid #38bdf8',
   background: '#f0f9ff',
   boxShadow: 'inset 0 0 0 1px rgba(56,189,248,.08)',
 }
@@ -88,4 +88,3 @@ const badgeStyle: React.CSSProperties = {
   fontSize: 11,
   fontWeight: 900,
 }
-

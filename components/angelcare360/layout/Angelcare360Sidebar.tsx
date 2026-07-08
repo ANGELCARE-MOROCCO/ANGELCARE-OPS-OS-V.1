@@ -179,7 +179,7 @@ const linkStyle: React.CSSProperties = {
 }
 
 const activeLinkStyle: React.CSSProperties = {
-  borderColor: '#93c5fd',
+  border: '1px solid #93c5fd',
   background: '#eff6ff',
   boxShadow: 'inset 0 0 0 1px rgba(59, 130, 246, 0.08)',
 }

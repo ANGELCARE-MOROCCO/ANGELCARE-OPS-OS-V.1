@@ -248,7 +248,7 @@ const roleButtonStyle: React.CSSProperties = {
 }
 
 const roleButtonActiveStyle: React.CSSProperties = {
-  borderColor: '#93c5fd',
+  border: '1px solid #93c5fd',
   background: '#eff6ff',
 }
 

@@ -30,7 +30,7 @@ export default function Angelcare360InventoryNavigation({ items }: Props) {
 
 const navStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 10 }
 const linkStyle: React.CSSProperties = { flex: '1 1 260px', display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', padding: '14px 16px', borderRadius: 18, border: '1px solid #dbe4ef', background: '#fff', color: '#0f172a', textDecoration: 'none', boxShadow: '0 14px 40px rgba(15,23,42,.04)' }
-const activeLinkStyle: React.CSSProperties = { borderColor: '#93c5fd', background: '#eff6ff', boxShadow: 'inset 0 0 0 1px rgba(59,130,246,.08)' }
+const activeLinkStyle: React.CSSProperties = { border: '1px solid #93c5fd', background: '#eff6ff', boxShadow: 'inset 0 0 0 1px rgba(59,130,246,.08)' }
 const contentStyle: React.CSSProperties = { display: 'grid', gap: 4 }
 const labelStyle: React.CSSProperties = { fontSize: 14, fontWeight: 900 }
 const summaryStyle: React.CSSProperties = { color: '#64748b', fontSize: 12, lineHeight: 1.45, fontWeight: 600 }

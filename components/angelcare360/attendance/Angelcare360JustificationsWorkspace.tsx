@@ -397,7 +397,7 @@ const tableRowStyle: React.CSSProperties = {
 }
 
 const selectedRowStyle: React.CSSProperties = {
-  borderColor: '#93c5fd',
+  border: '1px solid #93c5fd',
   background: '#eff6ff',
 }
 

@@ -268,7 +268,7 @@ const buttonStyle: React.CSSProperties = {
 
 const disabledButtonStyle: React.CSSProperties = {
   ...buttonStyle,
-  borderColor: '#cbd5e1',
+  border: '1px solid #cbd5e1',
   background: '#f8fafc',
   color: '#94a3b8',
   cursor: 'not-allowed',
@@ -283,4 +283,3 @@ const errorStyle: React.CSSProperties = {
   color: '#b91c1c',
   fontWeight: 700,
 }
-

@@ -163,7 +163,7 @@ const chipStyle: React.CSSProperties = {
 
 const activeChipStyle: React.CSSProperties = {
   background: '#eff6ff',
-  borderColor: '#93c5fd',
+  border: '1px solid #93c5fd',
   color: '#1d4ed8',
 }
 
@@ -194,4 +194,3 @@ const disabledActionStyle: React.CSSProperties = {
   fontWeight: 800,
   cursor: 'not-allowed',
 }
-
