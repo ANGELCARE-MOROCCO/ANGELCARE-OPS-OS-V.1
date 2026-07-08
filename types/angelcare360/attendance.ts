@@ -118,6 +118,7 @@ export interface Angelcare360AttendanceStatusHistoryRecord extends Angelcare360B
   changed_by?: Angelcare360UUID | null
   changed_at: string
   note?: string | null
+  status: string
 }
 
 export interface Angelcare360TimetableSlotRecord extends Angelcare360BaseRecord {
@@ -300,4 +301,3 @@ export interface Angelcare360AttendanceSheetResponse {
   isClosed: boolean
   risks: string[]
 }
-

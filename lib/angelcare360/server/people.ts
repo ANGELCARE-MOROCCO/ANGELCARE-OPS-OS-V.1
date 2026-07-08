@@ -32,6 +32,10 @@ import type {
 import type { Angelcare360AuditRecord } from '@/types/angelcare360/audit'
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>
+type Angelcare360AccessContext = NonNullable<Awaited<ReturnType<typeof getAngelcare360AccessContext>>>
+type Angelcare360AccessContextWithSchool = Angelcare360AccessContext & {
+  school: NonNullable<Angelcare360AccessContext['school']>
+}
 
 type QueryCountResult = {
   count: number
@@ -54,16 +58,20 @@ function uniqueStrings(values: Array<string | null | undefined>) {
   return Array.from(new Set(values.filter((value): value is string => Boolean(value && String(value).trim()))))
 }
 
-async function getContextOrThrow(permissionKey?: string, schoolId?: string | null) {
+async function getContextOrThrow(permissionKey?: string, schoolId?: string | null): Promise<Angelcare360AccessContextWithSchool> {
   if (permissionKey) {
-    return requireAngelcare360Permission(permissionKey, { schoolId })
+    const context = await requireAngelcare360Permission(permissionKey, { schoolId })
+    if (!context.school) {
+      throw new Error('Aucun établissement actif n’est disponible.')
+    }
+    return context as Angelcare360AccessContextWithSchool
   }
 
   const context = await getAngelcare360AccessContext({ schoolId: schoolId || undefined })
   if (!context?.school) {
     throw new Error('Aucun établissement actif n’est disponible.')
   }
-  return context
+  return context as Angelcare360AccessContextWithSchool
 }
 
 async function countRows(client: SupabaseClient, table: string, schoolId?: string | null, filters?: Array<[string, 'eq' | 'gte' | 'lte' | 'in', unknown]>) {
@@ -207,7 +215,7 @@ async function mapStudentRows(client: SupabaseClient, schoolId: string, academic
     enrollmentsByStudent.set(String((enrollment as Record<string, unknown>).student_id), current)
   }
 
-  return ((studentsResponse.data || []) as Array<Record<string, unknown>>).map((student) => {
+  return (((studentsResponse.data || []) as unknown) as Array<Record<string, unknown>>).map((student) => {
     const parents = (linksByStudent.get(String(student.id)) || []).map((link) => link.parent as Record<string, unknown> | undefined).filter(Boolean)
     const classRecord = (student.class as Record<string, unknown> | undefined) || null
     const sectionRecord = (student.section as Record<string, unknown> | undefined) || null
@@ -233,7 +241,7 @@ async function mapStudentRows(client: SupabaseClient, schoolId: string, academic
       enrollments: studentEnrollments,
       detail_href: buildDetailHref('/angelcare-360-command-center/eleves', String(student.id)),
     }
-  }) as Angelcare360StudentListRecord[]
+  }) as unknown as Angelcare360StudentListRecord[]
 }
 
 async function mapParentRows(client: SupabaseClient, schoolId: string) {
@@ -279,7 +287,7 @@ async function mapParentRows(client: SupabaseClient, schoolId: string) {
     documentsByParent.set(String((document as Record<string, unknown>).documentable_id), current)
   }
 
-  return ((parentsResponse.data || []) as Array<Record<string, unknown>>).map((parent) => {
+  return (((parentsResponse.data || []) as unknown) as Array<Record<string, unknown>>).map((parent) => {
     const metadata = (parent.metadata_json as Record<string, unknown> | undefined) || {}
     const childrenLinks = linksByParent.get(String(parent.id)) || []
     const childNames = uniqueStrings(
@@ -298,7 +306,7 @@ async function mapParentRows(client: SupabaseClient, schoolId: string) {
       documents: documentsByParent.get(String(parent.id)) || [],
       detail_href: buildDetailHref('/angelcare-360-command-center/parents', String(parent.id)),
     }
-  }) as Angelcare360ParentListRecord[]
+  }) as unknown as Angelcare360ParentListRecord[]
 }
 
 async function mapStaffRows(client: SupabaseClient, schoolId: string, staffType?: string | null) {
@@ -381,7 +389,7 @@ async function mapStaffRows(client: SupabaseClient, schoolId: string, staffType?
     contactsByStaff.set(String((contact as Record<string, unknown>).contactable_id), current)
   }
 
-  return ((staffResponse.data || []) as Array<Record<string, unknown>>).map((staff) => {
+  return (((staffResponse.data || []) as unknown) as Array<Record<string, unknown>>).map((staff) => {
     const assignments = assignmentsByStaff.get(String(staff.id)) || []
     const classes = uniqueStrings(
       assignments
@@ -406,7 +414,7 @@ async function mapStaffRows(client: SupabaseClient, schoolId: string, staffType?
       emergency_contacts: contactsByStaff.get(String(staff.id)) || [],
       detail_href: buildDetailHref('/angelcare-360-command-center/personnel', String(staff.id)),
     }
-  }) as Angelcare360StaffListRecord[]
+  }) as unknown as Angelcare360StaffListRecord[]
 }
 
 async function mapEmergencyContacts(client: SupabaseClient, schoolId: string) {
@@ -624,13 +632,16 @@ async function mapStudentDetail(client: SupabaseClient, schoolId: string, studen
   ])
 
   if (!studentResponse.data) return null
+  const studentRow = studentResponse.data as Record<string, unknown>
+  const studentClass = studentRow.class as Record<string, unknown> | undefined
+  const studentSection = studentRow.section as Record<string, unknown> | undefined
 
   return {
-    ...(studentResponse.data as Record<string, unknown>),
-    class_name: asString((studentResponse.data as Record<string, unknown>).class ? (studentResponse.data as Record<string, unknown>).class?.name : null),
-    class_code: asString((studentResponse.data as Record<string, unknown>).class ? (studentResponse.data as Record<string, unknown>).class?.class_code : null),
-    section_name: asString((studentResponse.data as Record<string, unknown>).section ? (studentResponse.data as Record<string, unknown>).section?.name : null),
-    section_code: asString((studentResponse.data as Record<string, unknown>).section ? (studentResponse.data as Record<string, unknown>).section?.section_code : null),
+    ...studentRow,
+    class_name: asString(studentClass?.name),
+    class_code: asString(studentClass?.class_code),
+    section_name: asString(studentSection?.name),
+    section_code: asString(studentSection?.section_code),
     parent_links: (linksResponse.data || []) as Array<Record<string, unknown>>,
     parents: ((linksResponse.data || []) as Array<Record<string, unknown>>).map((item) => item.parent).filter(Boolean),
     emergency_contacts: (contactsResponse.data || []) as Array<Record<string, unknown>>,

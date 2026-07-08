@@ -18,6 +18,8 @@ export type Angelcare360AuditCategory =
   | 'inventory'
   | 'messaging'
   | 'reports'
+  | 'documents'
+  | 'timetable'
   | 'settings'
   | 'security'
 
@@ -58,4 +60,3 @@ export interface Angelcare360AuditEventInput {
   afterData?: Record<string, unknown>
   metadata?: Record<string, unknown>
 }
-

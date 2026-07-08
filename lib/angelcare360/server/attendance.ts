@@ -658,6 +658,8 @@ export async function listAngelcare360ClassAttendanceSheet(options: { schoolId?:
   const filteredEnrollments = (enrollments || []).filter((row) => !academicYearId || asString((row as Row).academic_year_id) === academicYearId)
   const filteredBySection = options.sectionId ? filteredEnrollments.filter((row) => asString((row as Row).section_id) === options.sectionId) : filteredEnrollments
   const linkedRecords = (records || []).filter((row) => !sessionRecord || asString((row as Row).attendance_session_id) === asString(sessionRecord.id))
+  const sessionClass = sessionRecord?.class as Record<string, unknown> | undefined
+  const sessionSection = sessionRecord?.section as Record<string, unknown> | undefined
 
   const students: Angelcare360AttendanceSheetRecord[] = filteredBySection.map((enrollment) => {
     const student = ((enrollment as Row).student as Row | undefined) || {}
@@ -668,8 +670,8 @@ export async function listAngelcare360ClassAttendanceSheet(options: { schoolId?:
       studentId: asString((enrollment as Row).student_id),
       studentFullName: asString(student.full_name || ''),
       studentCode: student.student_code ? asString(student.student_code) : null,
-      className: sessionRecord?.class?.name ? asString((sessionRecord.class as Row).name) : null,
-      sectionName: sessionRecord?.section?.name ? asString((sessionRecord.section as Row).name) : null,
+      className: sessionClass?.name ? asString(sessionClass.name) : null,
+      sectionName: sessionSection?.name ? asString(sessionSection.name) : null,
       enrollmentStatus: asString((enrollment as Row).status),
       attendanceRecordId: record ? asString(record.id) : null,
       attendanceStatus: record ? asString(record.attendance_status) : 'unknown',
@@ -686,6 +688,7 @@ export async function listAngelcare360ClassAttendanceSheet(options: { schoolId?:
         changed_by: item.changed_by ? asString(item.changed_by) : null,
         changed_at: asString(item.changed_at),
         note: item.note ? asString(item.note) : null,
+        status: asString(item.status || item.to_status),
         created_at: asString(item.created_at),
         updated_at: asString(item.updated_at),
         metadata_json: (item.metadata_json as Record<string, unknown> | undefined) || {},

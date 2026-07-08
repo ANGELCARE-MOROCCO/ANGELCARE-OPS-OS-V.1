@@ -441,7 +441,6 @@ export function createEmergencyContactPeopleConfig(input: { schoolId: string }):
     createLabel: 'Créer un contact',
     editLabel: 'Modifier le contact',
     fixedValues: { schoolId: input.schoolId },
-    searchableKeys: ['contact_name', 'relationship_type', 'phone', 'email', 'status', 'linked_person_name'],
     detailHrefKey: 'detail_href',
     statusField: 'status',
     statusValues: ['active', 'inactive', 'archived'],
@@ -483,7 +482,6 @@ export function createEmergencyContactPeopleConfig(input: { schoolId: string }):
       ] },
     ],
     rowActions: baseRowActions(),
-    searchableKeys: ['contact_name', 'relationship_type', 'phone', 'email', 'linked_person_name', 'status'],
     normalizeInitialValues: mapEmergencyContactValues,
   }
 }
@@ -565,7 +563,6 @@ export function createDocumentPeopleConfig(input: { schoolId: string }): Angelca
       { name: 'category', label: 'Catégorie', options: [] },
     ],
     rowActions: baseRowActions(),
-    searchableKeys: ['document_code', 'title', 'category', 'documentable_type', 'linked_person_name', 'status'],
     normalizeInitialValues: mapDocumentValues,
   }
 }
@@ -631,7 +628,6 @@ export function createStudentParentLinkPeopleConfig(input: { schoolId: string; s
       ] },
     ],
     rowActions: baseRowActions(),
-    searchableKeys: ['student_full_name', 'student_code', 'parent_full_name', 'parent_code', 'relationship_type', 'status'],
     normalizeInitialValues: mapLinkValues,
   }
 }
@@ -684,7 +680,6 @@ export function createClassEnrollmentPeopleConfig(input: { schoolId: string; aca
       ] },
     ],
     rowActions: baseRowActions(),
-    searchableKeys: ['student_full_name', 'student_code', 'class_name', 'class_code', 'section_name', 'section_code', 'status'],
     normalizeInitialValues: mapEnrollmentValues,
   }
 }
@@ -701,6 +696,7 @@ export function createPeopleAuditConfig(): Angelcare360PeopleEntityConfig {
     emptyDescription: 'Les mutations sensibles apparaîtront ici dès qu’elles seront enregistrées.',
     createLabel: 'Filtrer',
     editLabel: 'Détail',
+    fields: [],
     searchableKeys: ['module', 'action', 'entity_type', 'entity_id', 'actor_role', 'actor_user_id', 'severity'],
     columns: [
       { key: 'created_at', label: 'Date', kind: 'datetime' },

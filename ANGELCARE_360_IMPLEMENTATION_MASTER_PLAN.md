@@ -219,7 +219,36 @@ Acceptance criteria:
 - permissions are enforced
 - audit events are written for critical payroll mutations
 
-## Phase 10 - Production Hardening
+## Phase 10 - Transport & Sécurité
+
+Objective:
+
+- Controlled transport planning, assignment, pickup/drop-off, capacity safety, and audit readiness.
+
+Scope:
+
+- circuits de transport
+- arrêts
+- véhicules
+- affectations élèves
+- ramassage
+- dépôt
+- sécurité transport
+- incidents locked unless a real schema exists
+- notifications parents locked unless real messaging exists
+- GPS and live tracking locked unless a real provider exists
+- audit transport
+
+Acceptance criteria:
+
+- transport route tree exists under the command center shell
+- server-backed transport route, stop, vehicle, assignment, safety, notification, and audit actions exist
+- capacity and emergency-contact readiness are explicit
+- GPS, live tracking, and parent notifications remain disabled unless real infrastructure exists
+- permissions are enforced
+- audit events are written for critical transport mutations
+
+## Phase 11 - Production Hardening
 
 Objective:
 

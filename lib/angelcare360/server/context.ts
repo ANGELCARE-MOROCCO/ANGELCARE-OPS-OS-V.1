@@ -145,7 +145,7 @@ async function getRolesAndPermissions(userId: string, schoolId: string) {
 
   const permissions = new Set<string>()
 
-  for (const row of (permissionRows || []) as Array<Angelcare360RolePermissionRow>) {
+  for (const row of ((permissionRows || []) as unknown) as Array<Angelcare360RolePermissionRow>) {
     if (row.permission_key) permissions.add(row.permission_key)
   }
 

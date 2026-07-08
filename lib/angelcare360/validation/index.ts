@@ -1,5 +1,12 @@
 import type { Angelcare360AuditEventInput } from '@/types/angelcare360/audit'
 import type { Angelcare360AdmissionsAuditFilter } from '@/types/angelcare360/admissions'
+import type {
+  Angelcare360TransportAssignmentStatus,
+  Angelcare360TransportAuditFilter,
+  Angelcare360TransportRouteStatus,
+  Angelcare360TransportStopStatus,
+  Angelcare360TransportVehicleStatus,
+} from '@/types/angelcare360/transport'
 
 export type Angelcare360ValidationIssue = {
   path: string
@@ -261,7 +268,6 @@ export type Angelcare360MarkInput = SimpleDomainInput & { studentId: string; sub
 export type Angelcare360InvoiceInput = SimpleDomainInput & { academicYearId: string; studentId: string; invoiceNumber: string; totalAmount: number }
 export type Angelcare360PaymentInput = SimpleDomainInput & { invoiceId: string; paymentNumber: string; amount: number; method: string }
 export type Angelcare360PayrollInput = SimpleDomainInput & { payrollPeriodId: string; staffId: string; payrollNumber: string; grossAmount: number }
-export type Angelcare360TransportRouteInput = SimpleDomainInput & { routeCode: string; label: string }
 export type Angelcare360LibraryBookInput = SimpleDomainInput & { bookCode: string; title: string; author?: string | null }
 export type Angelcare360InventoryItemInput = SimpleDomainInput & { categoryId: string; itemCode: string; label: string; currentStock: number }
 export type Angelcare360MessageInput = SimpleDomainInput & { messageCode: string; subject: string; body: string }
@@ -2057,11 +2063,289 @@ export const angelcare360PayrollAuditQueryFiltersSchema = createSchema<Angelcare
   }
 })
 
-export const angelcare360TransportRouteSchema = buildSimpleSchema<Angelcare360TransportRouteInput>('transport_route', [
-  ['schoolId', 'L’établissement est requis.', true],
-  ['routeCode', 'Le code de la route est obligatoire.', true],
-  ['label', 'Le libellé de la route est obligatoire.', true],
-])
+type TransportRouteStatus = Angelcare360TransportRouteStatus
+type TransportStopStatus = Angelcare360TransportStopStatus
+type TransportVehicleStatus = Angelcare360TransportVehicleStatus
+type TransportAssignmentStatus = Angelcare360TransportAssignmentStatus
+
+const TRANSPORT_ROUTE_STATUSES: TransportRouteStatus[] = ['draft', 'active', 'inactive', 'suspended', 'archived']
+const TRANSPORT_STOP_STATUSES: TransportStopStatus[] = ['active', 'inactive', 'suspended', 'archived']
+const TRANSPORT_VEHICLE_STATUSES: TransportVehicleStatus[] = ['active', 'inactive', 'maintenance', 'unavailable', 'archived']
+const TRANSPORT_ASSIGNMENT_STATUSES: TransportAssignmentStatus[] = ['active', 'inactive', 'pending', 'suspended', 'cancelled', 'archived']
+
+export type Angelcare360TransportRouteInput = {
+  schoolId: string
+  routeCode: string
+  label: string
+  routeType?: string | null
+  responsibleStaffId?: string | null
+  assistantStaffId?: string | null
+  vehicleId?: string | null
+  capacitySeats: number | null
+  status: TransportRouteStatus
+}
+
+export type Angelcare360TransportRouteUpdateInput = Angelcare360TransportRouteInput & { id: string }
+export type Angelcare360TransportRouteStatusChangeInput = { schoolId: string; id: string; status: TransportRouteStatus; reason?: string | null }
+
+export type Angelcare360TransportStopInput = {
+  schoolId: string
+  routeId: string
+  stopCode: string
+  label: string
+  orderIndex: number
+  latitude?: number | null
+  longitude?: number | null
+  plannedTime?: string | null
+  status: TransportStopStatus
+}
+
+export type Angelcare360TransportStopUpdateInput = Angelcare360TransportStopInput & { id: string }
+
+export type Angelcare360TransportVehicleInput = {
+  schoolId: string
+  vehicleCode: string
+  plateNumber: string
+  model?: string | null
+  capacitySeats: number
+  assignedDriverStaffId?: string | null
+  insuranceExpiresOn?: string | null
+  status: TransportVehicleStatus
+}
+
+export type Angelcare360TransportVehicleUpdateInput = Angelcare360TransportVehicleInput & { id: string }
+export type Angelcare360TransportVehicleStatusChangeInput = { schoolId: string; id: string; status: TransportVehicleStatus; reason?: string | null }
+
+export type Angelcare360TransportAssignmentInput = {
+  schoolId: string
+  academicYearId: string
+  routeId: string
+  studentId: string
+  vehicleId?: string | null
+  pickupStopId?: string | null
+  dropoffStopId?: string | null
+  assignedOn?: string | null
+  status: TransportAssignmentStatus
+}
+
+export type Angelcare360TransportAssignmentUpdateInput = Angelcare360TransportAssignmentInput & { id: string }
+export type Angelcare360TransportAssignmentCancelInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360TransportAuditQueryFiltersInput = Angelcare360TransportAuditFilter
+
+function parseNullableNumber(value: unknown, path: string, message: string, errors: Angelcare360ValidationIssue[]) {
+  if (value === undefined || value === null || value === '') return null
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) {
+    errors.push({ path, message })
+    return null
+  }
+  return parsed
+}
+
+function parseNullableInteger(value: unknown, path: string, message: string, errors: Angelcare360ValidationIssue[]) {
+  const parsed = parseNullableNumber(value, path, message, errors)
+  return parsed === null ? null : Math.trunc(parsed)
+}
+
+function parseNullableDate(value: unknown, path: string, message: string, errors: Angelcare360ValidationIssue[]) {
+  if (value === undefined || value === null || value === '') return null
+  if (typeof value !== 'string') {
+    errors.push({ path, message })
+    return null
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    errors.push({ path, message })
+    return null
+  }
+  return value.trim()
+}
+
+function parseNullableTime(value: unknown, path: string, message: string, errors: Angelcare360ValidationIssue[]) {
+  if (value === undefined || value === null || value === '') return null
+  if (typeof value !== 'string') {
+    errors.push({ path, message })
+    return null
+  }
+  const normalized = value.trim()
+  if (!/^\d{2}:\d{2}(:\d{2})?$/.test(normalized)) {
+    errors.push({ path, message })
+    return null
+  }
+  return normalized.length === 5 ? `${normalized}:00` : normalized
+}
+
+export const angelcare360TransportRouteSchema = createSchema<Angelcare360TransportRouteInput>('transport_route', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de circuit doit être un objet.' }] }
+
+  const data: Angelcare360TransportRouteInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    routeCode: asString(input.routeCode, 'Le code du circuit est obligatoire.', 'routeCode', errors),
+    label: asString(input.label, 'Le libellé du circuit est obligatoire.', 'label', errors),
+    routeType: asOptionalString(input.routeType),
+    responsibleStaffId: asOptionalString(input.responsibleStaffId),
+    assistantStaffId: asOptionalString(input.assistantStaffId),
+    vehicleId: asOptionalString(input.vehicleId),
+    capacitySeats: parseNullableInteger(input.capacitySeats, 'capacitySeats', 'La capacité du circuit doit être un nombre entier valide.', errors),
+    status: asEnum(input.status, TRANSPORT_ROUTE_STATUSES, 'Le statut du circuit est invalide.', 'status', errors),
+  }
+
+  if (data.capacitySeats !== null && data.capacitySeats < 0) {
+    errors.push({ path: 'capacitySeats', message: 'La capacité du circuit ne peut pas être négative.' })
+  }
+
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportRouteUpdateSchema = createSchema<Angelcare360TransportRouteUpdateInput>('transport_route_update', (input) => {
+  const base = angelcare360TransportRouteSchema.safeParse(input)
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de circuit doit être un objet.' }] }
+  const data = base.success ? { ...base.data, id: asString(input.id, 'L’identifiant du circuit est requis.', 'id', errors) } : null
+  return !data || errors.length ? { success: false, errors: [...(base.success ? [] : base.errors), ...errors] } : { success: true, data }
+})
+
+export const angelcare360TransportRouteStatusChangeSchema = createSchema<Angelcare360TransportRouteStatusChangeInput>('transport_route_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut du circuit doit être un objet.' }] }
+  const data: Angelcare360TransportRouteStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du circuit est requis.', 'id', errors),
+    status: asEnum(input.status, TRANSPORT_ROUTE_STATUSES, 'Le statut du circuit est invalide.', 'status', errors),
+    reason: asOptionalString(input.reason),
+  }
+  if (data.status === 'suspended' && !data.reason) {
+    errors.push({ path: 'reason', message: 'Un motif est requis pour suspendre un circuit.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportStopCreateSchema = createSchema<Angelcare360TransportStopInput>('transport_stop_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de stop doit être un objet.' }] }
+  const data: Angelcare360TransportStopInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    routeId: asString(input.routeId, 'Le circuit est requis.', 'routeId', errors),
+    stopCode: asString(input.stopCode, 'Le code de l’arrêt est obligatoire.', 'stopCode', errors),
+    label: asString(input.label, 'Le libellé de l’arrêt est obligatoire.', 'label', errors),
+    orderIndex: parseNullableInteger(input.orderIndex, 'orderIndex', 'L’ordre de l’arrêt doit être un entier valide.', errors) ?? 0,
+    latitude: parseNullableNumber(input.latitude, 'latitude', 'La latitude est invalide.', errors),
+    longitude: parseNullableNumber(input.longitude, 'longitude', 'La longitude est invalide.', errors),
+    plannedTime: parseNullableTime(input.plannedTime, 'plannedTime', 'L’heure prévue est invalide.', errors),
+    status: asEnum(input.status, TRANSPORT_STOP_STATUSES, 'Le statut de l’arrêt est invalide.', 'status', errors),
+  }
+  if (data.orderIndex < 1) {
+    errors.push({ path: 'orderIndex', message: 'L’ordre de l’arrêt doit être supérieur à zéro.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportStopUpdateSchema = createSchema<Angelcare360TransportStopUpdateInput>('transport_stop_update', (input) => {
+  const base = angelcare360TransportStopCreateSchema.safeParse(input)
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de stop doit être un objet.' }] }
+  const data = base.success ? { ...base.data, id: asString(input.id, 'L’identifiant de l’arrêt est requis.', 'id', errors) } : null
+  return !data || errors.length ? { success: false, errors: [...(base.success ? [] : base.errors), ...errors] } : { success: true, data }
+})
+
+export const angelcare360TransportVehicleCreateSchema = createSchema<Angelcare360TransportVehicleInput>('transport_vehicle_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de véhicule doit être un objet.' }] }
+  const data: Angelcare360TransportVehicleInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    vehicleCode: asString(input.vehicleCode, 'Le code du véhicule est obligatoire.', 'vehicleCode', errors),
+    plateNumber: asString(input.plateNumber, 'La plaque du véhicule est obligatoire.', 'plateNumber', errors),
+    model: asOptionalString(input.model),
+    capacitySeats: parseNullableInteger(input.capacitySeats, 'capacitySeats', 'La capacité du véhicule est invalide.', errors) ?? 0,
+    assignedDriverStaffId: asOptionalString(input.assignedDriverStaffId),
+    insuranceExpiresOn: parseNullableDate(input.insuranceExpiresOn, 'insuranceExpiresOn', 'La date d’assurance est invalide.', errors),
+    status: asEnum(input.status, TRANSPORT_VEHICLE_STATUSES, 'Le statut du véhicule est invalide.', 'status', errors),
+  }
+  if (data.capacitySeats < 1) {
+    errors.push({ path: 'capacitySeats', message: 'La capacité du véhicule doit être supérieure à zéro.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportVehicleUpdateSchema = createSchema<Angelcare360TransportVehicleUpdateInput>('transport_vehicle_update', (input) => {
+  const base = angelcare360TransportVehicleCreateSchema.safeParse(input)
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload de véhicule doit être un objet.' }] }
+  const data = base.success ? { ...base.data, id: asString(input.id, 'L’identifiant du véhicule est requis.', 'id', errors) } : null
+  return !data || errors.length ? { success: false, errors: [...(base.success ? [] : base.errors), ...errors] } : { success: true, data }
+})
+
+export const angelcare360TransportVehicleStatusChangeSchema = createSchema<Angelcare360TransportVehicleStatusChangeInput>('transport_vehicle_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut du véhicule doit être un objet.' }] }
+  const data: Angelcare360TransportVehicleStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du véhicule est requis.', 'id', errors),
+    status: asEnum(input.status, TRANSPORT_VEHICLE_STATUSES, 'Le statut du véhicule est invalide.', 'status', errors),
+    reason: asOptionalString(input.reason),
+  }
+  if (data.status === 'maintenance' || data.status === 'unavailable') {
+    if (!data.reason) errors.push({ path: 'reason', message: 'Un motif est requis pour basculer le véhicule dans cet état.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportAssignmentCreateSchema = createSchema<Angelcare360TransportAssignmentInput>('transport_assignment_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’affectation doit être un objet.' }] }
+  const data: Angelcare360TransportAssignmentInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    academicYearId: asString(input.academicYearId, 'L’année scolaire est requise.', 'academicYearId', errors),
+    routeId: asString(input.routeId, 'Le circuit est requis.', 'routeId', errors),
+    studentId: asString(input.studentId, 'L’élève est requis.', 'studentId', errors),
+    vehicleId: asOptionalString(input.vehicleId),
+    pickupStopId: asOptionalString(input.pickupStopId),
+    dropoffStopId: asOptionalString(input.dropoffStopId),
+    assignedOn: parseNullableDate(input.assignedOn, 'assignedOn', 'La date d’affectation est invalide.', errors) || undefined,
+    status: asEnum(input.status, TRANSPORT_ASSIGNMENT_STATUSES, 'Le statut d’affectation est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportAssignmentUpdateSchema = createSchema<Angelcare360TransportAssignmentUpdateInput>('transport_assignment_update', (input) => {
+  const base = angelcare360TransportAssignmentCreateSchema.safeParse(input)
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le payload d’affectation doit être un objet.' }] }
+  const data = base.success ? { ...base.data, id: asString(input.id, 'L’identifiant de l’affectation est requis.', 'id', errors) } : null
+  return !data || errors.length ? { success: false, errors: [...(base.success ? [] : base.errors), ...errors] } : { success: true, data }
+})
+
+export const angelcare360TransportAssignmentCancelSchema = createSchema<Angelcare360TransportAssignmentCancelInput>('transport_assignment_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation d’affectation doit être un objet.' }] }
+  const data: Angelcare360TransportAssignmentCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de l’affectation est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360TransportAuditQueryFiltersSchema = createSchema<Angelcare360TransportAuditQueryFiltersInput>('transport_audit_filters', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Les filtres d’audit transport doivent être un objet.' }] }
+  return {
+    success: true,
+    data: {
+      schoolId: asOptionalString(input.schoolId),
+      module: asOptionalString(input.module),
+      action: asOptionalString(input.action),
+      severity: asOptionalString(input.severity),
+      entityType: asOptionalString(input.entityType),
+      entityId: asOptionalString(input.entityId),
+      actorUserId: asOptionalString(input.actorUserId),
+      status: asOptionalString(input.status),
+      search: asOptionalString(input.search),
+      from: asOptionalString(input.from),
+      to: asOptionalString(input.to),
+    },
+  }
+})
 
 export const angelcare360LibraryBookSchema = buildSimpleSchema<Angelcare360LibraryBookInput>('library_book', [
   ['schoolId', 'L’établissement est requis.', true],
