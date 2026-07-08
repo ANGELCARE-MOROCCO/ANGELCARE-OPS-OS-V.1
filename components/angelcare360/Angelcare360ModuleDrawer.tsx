@@ -2,6 +2,11 @@
 
 import Link from 'next/link'
 import type { Angelcare360ModuleRecord } from '@/types/angelcare360/module'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360ButtonBaseStyle,
+  angelcare360ButtonSecondaryStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360ModuleDrawerProps = {
   module: Angelcare360ModuleRecord | null
@@ -72,11 +77,11 @@ const overlayStyle: React.CSSProperties = {
 
 const drawerStyle: React.CSSProperties = {
   width: 'min(720px, 100%)',
-  background: '#fff',
+  background: ANGELCARE360_COLORS.white,
   borderRadius: 28,
-  border: '1px solid #dbe4ef',
+  border: `1px solid ${ANGELCARE360_COLORS.border}`,
   boxShadow: '0 30px 90px rgba(15, 23, 42, 0.18)',
-  padding: 22,
+  padding: 24,
   display: 'grid',
   gap: 18,
 }
@@ -89,7 +94,7 @@ const headerStyle: React.CSSProperties = {
 }
 
 const eyebrowStyle: React.CSSProperties = {
-  color: '#2563eb',
+  color: ANGELCARE360_COLORS.blue,
   textTransform: 'uppercase',
   letterSpacing: 1.1,
   fontSize: 12,
@@ -98,26 +103,22 @@ const eyebrowStyle: React.CSSProperties = {
 
 const titleStyle: React.CSSProperties = {
   margin: '8px 0 0',
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
   fontSize: 24,
   fontWeight: 950,
+  letterSpacing: -0.5,
 }
 
 const purposeStyle: React.CSSProperties = {
   margin: '8px 0 0',
-  color: '#475569',
+  color: ANGELCARE360_COLORS.slate,
   fontWeight: 650,
   lineHeight: 1.55,
 }
 
 const closeButtonStyle: React.CSSProperties = {
-  border: '1px solid #cbd5e1',
-  borderRadius: 12,
+  ...angelcare360ButtonSecondaryStyle,
   padding: '8px 12px',
-  background: '#fff',
-  color: '#0f172a',
-  fontWeight: 800,
-  cursor: 'pointer',
 }
 
 const metaGridStyle: React.CSSProperties = {
@@ -127,14 +128,14 @@ const metaGridStyle: React.CSSProperties = {
 }
 
 const metaCardStyle: React.CSSProperties = {
-  border: '1px solid #e2e8f0',
+  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
   borderRadius: 18,
-  background: '#f8fafc',
-  padding: 14,
+  background: ANGELCARE360_COLORS.background,
+  padding: 16,
 }
 
 const metaLabelStyle: React.CSSProperties = {
-  color: '#64748b',
+  color: ANGELCARE360_COLORS.slateMuted,
   fontSize: 12,
   textTransform: 'uppercase',
   letterSpacing: 1,
@@ -143,7 +144,7 @@ const metaLabelStyle: React.CSSProperties = {
 
 const metaValueStyle: React.CSSProperties = {
   marginTop: 8,
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
   fontWeight: 800,
   lineHeight: 1.45,
   wordBreak: 'break-word',
@@ -156,20 +157,20 @@ const contentStyle: React.CSSProperties = {
 
 const descriptionStyle: React.CSSProperties = {
   margin: 0,
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
   lineHeight: 1.65,
   fontWeight: 600,
 }
 
 const reasonBoxStyle: React.CSSProperties = {
   borderRadius: 18,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: `1px solid ${ANGELCARE360_COLORS.blueBorder}`,
+  background: ANGELCARE360_COLORS.blueSoft,
   padding: 14,
 }
 
 const reasonTitleStyle: React.CSSProperties = {
-  color: '#1d4ed8',
+  color: ANGELCARE360_COLORS.blue,
   fontSize: 13,
   fontWeight: 900,
   textTransform: 'uppercase',
@@ -190,23 +191,17 @@ const actionRowStyle: React.CSSProperties = {
 }
 
 const linkStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 14,
-  background: '#0f172a',
-  color: '#fff',
+  ...angelcare360ButtonBaseStyle,
   textDecoration: 'none',
   padding: '10px 14px',
-  fontWeight: 800,
 }
 
 const disabledButtonStyle: React.CSSProperties = {
-  border: '1px dashed #cbd5e1',
+  border: `1px dashed ${ANGELCARE360_COLORS.border}`,
   borderRadius: 14,
   padding: '10px 14px',
-  background: '#f8fafc',
-  color: '#64748b',
+  background: ANGELCARE360_COLORS.background,
+  color: ANGELCARE360_COLORS.slateMuted,
   fontWeight: 800,
   cursor: 'not-allowed',
 }
-

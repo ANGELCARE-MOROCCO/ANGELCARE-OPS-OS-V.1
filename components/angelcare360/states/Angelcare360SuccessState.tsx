@@ -1,3 +1,5 @@
+import { ANGELCARE360_COLORS, angelcare360SuccessCardStyle } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+
 type Angelcare360SuccessStateProps = {
   title: string
   description: string
@@ -20,19 +22,15 @@ const shellStyle: React.CSSProperties = {
 }
 
 const cardStyle: React.CSSProperties = {
-  borderRadius: 24,
-  background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-  border: '1px solid #bbf7d0',
-  boxShadow: '0 20px 58px rgba(34, 197, 94, 0.08)',
-  padding: 20,
+  ...angelcare360SuccessCardStyle,
 }
 
 const badgeStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: 999,
-  background: '#dcfce7',
-  color: '#166534',
+  background: ANGELCARE360_COLORS.greenSoft,
+  color: ANGELCARE360_COLORS.green,
   fontWeight: 900,
   fontSize: 12,
   padding: '6px 10px',
@@ -40,15 +38,14 @@ const badgeStyle: React.CSSProperties = {
 
 const titleStyle: React.CSSProperties = {
   margin: '12px 0 0',
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
   fontSize: 20,
   fontWeight: 900,
 }
 
 const descriptionStyle: React.CSSProperties = {
   margin: '10px 0 0',
-  color: '#475569',
+  color: ANGELCARE360_COLORS.slate,
   lineHeight: 1.6,
   fontWeight: 600,
 }
-

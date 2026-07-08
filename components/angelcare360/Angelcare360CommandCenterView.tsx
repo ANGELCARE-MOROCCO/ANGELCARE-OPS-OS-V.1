@@ -318,10 +318,10 @@ const pageStyle: React.CSSProperties = {
 const heroStyle: React.CSSProperties = {
   borderRadius: 30,
   background:
-    'linear-gradient(135deg, rgba(255,255,255,.96) 0%, rgba(239,246,255,.94) 42%, rgba(248,250,252,.98) 100%)',
+    'linear-gradient(135deg, rgba(255,255,255,.98) 0%, rgba(239,246,255,.95) 42%, rgba(248,250,252,.99) 100%)',
   border: '1px solid #dbe4ef',
   boxShadow: '0 26px 88px rgba(15,23,42,.08)',
-  padding: 24,
+  padding: 26,
 }
 
 const eyebrowStyle: React.CSSProperties = {
@@ -343,9 +343,10 @@ const titleRowStyle: React.CSSProperties = {
 const titleStyle: React.CSSProperties = {
   margin: '10px 0 0',
   color: '#0f172a',
-  fontSize: 34,
+  fontSize: 36,
   lineHeight: 1.08,
   fontWeight: 950,
+  letterSpacing: -0.8,
 }
 
 const subtitleStyle: React.CSSProperties = {
@@ -397,7 +398,7 @@ const kpiCardStyle: React.CSSProperties = {
   background: '#fff',
   border: '1px solid #dbe4ef',
   boxShadow: '0 16px 42px rgba(15,23,42,.05)',
-  padding: 18,
+  padding: 20,
 }
 
 const kpiLabelStyle: React.CSSProperties = {
@@ -411,7 +412,7 @@ const kpiLabelStyle: React.CSSProperties = {
 const kpiValueStyle: React.CSSProperties = {
   marginTop: 10,
   color: '#0f172a',
-  fontSize: 30,
+  fontSize: 32,
   fontWeight: 950,
 }
 
@@ -432,7 +433,7 @@ const snapshotCardStyle: React.CSSProperties = {
   borderRadius: 24,
   background: '#fff',
   border: '1px solid #dbe4ef',
-  padding: 18,
+  padding: 20,
   boxShadow: '0 16px 42px rgba(15,23,42,.05)',
 }
 
@@ -536,7 +537,7 @@ const modulesEyebrowStyle: React.CSSProperties = {
 const modulesTitleStyle: React.CSSProperties = {
   margin: '8px 0 0',
   color: '#0f172a',
-  fontSize: 24,
+  fontSize: 25,
   fontWeight: 950,
 }
 

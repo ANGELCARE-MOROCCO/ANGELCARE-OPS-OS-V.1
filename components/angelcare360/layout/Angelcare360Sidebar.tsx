@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { Angelcare360ModuleSection } from '@/types/angelcare360/module'
+import { ANGELCARE360_COLORS } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360SidebarProps = {
   open: boolean
@@ -72,12 +73,12 @@ export default function Angelcare360Sidebar({ open, onClose, sections, pathname,
 }
 
 const sidebarStyle: React.CSSProperties = {
-  width: 320,
-  minWidth: 320,
-  background: 'rgba(255,255,255,.96)',
-  borderRight: '1px solid #e2e8f0',
+  width: 336,
+  minWidth: 336,
+  background: 'rgba(255,255,255,.97)',
+  borderRight: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
   backdropFilter: 'blur(16px)',
-  padding: 18,
+  padding: 20,
   position: 'sticky',
   top: 0,
   height: '100vh',
@@ -101,17 +102,17 @@ const sidebarEyebrowStyle: React.CSSProperties = {
 
 const sidebarTitleStyle: React.CSSProperties = {
   marginTop: 6,
-  fontSize: 20,
+  fontSize: 21,
   fontWeight: 900,
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
 }
 
 const closeButtonStyle: React.CSSProperties = {
-  border: '1px solid #cbd5e1',
+  border: `1px solid ${ANGELCARE360_COLORS.border}`,
   borderRadius: 12,
   padding: '8px 10px',
-  background: '#fff',
-  color: '#0f172a',
+  background: ANGELCARE360_COLORS.white,
+  color: ANGELCARE360_COLORS.navy,
   fontWeight: 800,
   cursor: 'pointer',
 }
@@ -123,7 +124,7 @@ const closeSpacerStyle: React.CSSProperties = {
 
 const sidebarNoteStyle: React.CSSProperties = {
   marginTop: 16,
-  background: '#eff6ff',
+  background: ANGELCARE360_COLORS.blueSoft,
   color: '#1e3a8a',
   borderRadius: 18,
   padding: 14,
@@ -148,13 +149,13 @@ const groupTitleStyle: React.CSSProperties = {
   fontWeight: 900,
   textTransform: 'uppercase',
   letterSpacing: 1.1,
-  color: '#475569',
+  color: ANGELCARE360_COLORS.slateMuted,
 }
 
 const groupSummaryStyle: React.CSSProperties = {
   fontSize: 13,
   lineHeight: 1.55,
-  color: '#64748b',
+  color: ANGELCARE360_COLORS.slateMuted,
   fontWeight: 600,
 }
 
@@ -168,19 +169,19 @@ const linkStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: 12,
-  padding: '11px 12px',
+  padding: '12px 13px',
   borderRadius: 14,
   textDecoration: 'none',
-  color: '#0f172a',
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
+  color: ANGELCARE360_COLORS.navy,
+  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
+  background: ANGELCARE360_COLORS.background,
   fontSize: 14,
   fontWeight: 750,
 }
 
 const activeLinkStyle: React.CSSProperties = {
-  border: '1px solid #93c5fd',
-  background: '#eff6ff',
+  border: `1px solid ${ANGELCARE360_COLORS.blueBorderActive}`,
+  background: ANGELCARE360_COLORS.blueSoft,
   boxShadow: 'inset 0 0 0 1px rgba(59, 130, 246, 0.08)',
 }
 
@@ -190,6 +191,6 @@ const badgeStyle: React.CSSProperties = {
   padding: '4px 8px',
   fontSize: 11,
   fontWeight: 900,
-  color: '#1d4ed8',
+  color: ANGELCARE360_COLORS.blue,
   background: '#dbeafe',
 }

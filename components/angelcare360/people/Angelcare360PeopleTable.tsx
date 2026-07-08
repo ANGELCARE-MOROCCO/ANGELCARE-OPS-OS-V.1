@@ -157,7 +157,7 @@ const tableStyle: React.CSSProperties = {
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left',
-  padding: '14px 16px',
+  padding: '15px 16px',
   fontSize: 12,
   textTransform: 'uppercase',
   letterSpacing: 1,
@@ -168,7 +168,7 @@ const thStyle: React.CSSProperties = {
 }
 
 const tdStyle: React.CSSProperties = {
-  padding: '14px 16px',
+  padding: '15px 16px',
   borderBottom: '1px solid #eef2f7',
   color: '#0f172a',
   fontSize: 14,
@@ -209,6 +209,7 @@ const actionRowStyle: React.CSSProperties = {
   display: 'flex',
   flexWrap: 'wrap',
   gap: 8,
+  alignItems: 'center',
 }
 
 const secondaryActionStyle: React.CSSProperties = {

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ANGELCARE360_COLORS, angelcare360ErrorCardStyle, angelcare360ButtonSecondaryStyle, angelcare360ButtonBaseStyle } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360ErrorStateProps = {
   title: string
@@ -41,19 +42,15 @@ const shellStyle: React.CSSProperties = {
 }
 
 const cardStyle: React.CSSProperties = {
-  borderRadius: 24,
-  background: '#fff',
-  border: '1px solid #fecaca',
-  boxShadow: '0 20px 58px rgba(239, 68, 68, 0.08)',
-  padding: 22,
+  ...angelcare360ErrorCardStyle,
 }
 
 const badgeStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: 999,
-  background: '#fef2f2',
-  color: '#b91c1c',
+  background: ANGELCARE360_COLORS.redSoft,
+  color: ANGELCARE360_COLORS.red,
   fontWeight: 900,
   fontSize: 12,
   padding: '6px 10px',
@@ -61,14 +58,14 @@ const badgeStyle: React.CSSProperties = {
 
 const titleStyle: React.CSSProperties = {
   margin: '12px 0 0',
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
   fontSize: 20,
   fontWeight: 900,
 }
 
 const descriptionStyle: React.CSSProperties = {
   margin: '10px 0 0',
-  color: '#475569',
+  color: ANGELCARE360_COLORS.slate,
   lineHeight: 1.6,
   fontWeight: 600,
 }
@@ -81,23 +78,11 @@ const actionsStyle: React.CSSProperties = {
 }
 
 const buttonStyle: React.CSSProperties = {
-  border: '1px solid #cbd5e1',
-  borderRadius: 14,
-  padding: '10px 14px',
-  background: '#fff',
-  color: '#0f172a',
-  fontWeight: 800,
-  cursor: 'pointer',
+  ...angelcare360ButtonSecondaryStyle,
 }
 
 const linkStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 14,
-  background: '#0f172a',
-  color: '#fff',
+  ...angelcare360ButtonBaseStyle,
   textDecoration: 'none',
   padding: '10px 14px',
-  fontWeight: 800,
 }
-

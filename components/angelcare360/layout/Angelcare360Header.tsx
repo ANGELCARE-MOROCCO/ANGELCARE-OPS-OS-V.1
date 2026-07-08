@@ -1,6 +1,11 @@
 import Link from 'next/link'
 import AngelCareLogo from '@/components/brand/AngelCareLogo'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360ButtonBaseStyle,
+  angelcare360ButtonSecondaryStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360HeaderProps = {
   user: Angelcare360SessionUser
@@ -54,10 +59,10 @@ export default function Angelcare360Header({ user, access, pathname, onToggleSid
 
 const headerStyle: React.CSSProperties = {
   display: 'grid',
-  gap: 12,
-  padding: '16px 22px',
-  background: 'rgba(255,255,255,.92)',
-  borderBottom: '1px solid #e2e8f0',
+  gap: 14,
+  padding: '18px 24px',
+  background: 'rgba(255,255,255,.94)',
+  borderBottom: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
   backdropFilter: 'blur(14px)',
 }
 
@@ -69,13 +74,8 @@ const brandRowStyle: React.CSSProperties = {
 }
 
 const menuButtonStyle: React.CSSProperties = {
-  border: '1px solid #cbd5e1',
-  borderRadius: 12,
+  ...angelcare360ButtonSecondaryStyle,
   padding: '8px 12px',
-  background: '#fff',
-  color: '#0f172a',
-  fontWeight: 800,
-  cursor: 'pointer',
 }
 
 const menuSpacerStyle: React.CSSProperties = {
@@ -97,14 +97,14 @@ const brandCopyStyle: React.CSSProperties = {
 }
 
 const brandTitleStyle: React.CSSProperties = {
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
   fontSize: 14,
   fontWeight: 950,
   letterSpacing: 0.4,
 }
 
 const brandSubtitleStyle: React.CSSProperties = {
-  color: '#64748b',
+  color: ANGELCARE360_COLORS.slateMuted,
   fontSize: 12,
   fontWeight: 650,
 }
@@ -118,7 +118,7 @@ const metaRowStyle: React.CSSProperties = {
 const routeChipStyle: React.CSSProperties = {
   borderRadius: 999,
   background: '#eff6ff',
-  color: '#1d4ed8',
+  color: ANGELCARE360_COLORS.blue,
   padding: '7px 10px',
   fontSize: 12,
   fontWeight: 900,
@@ -126,18 +126,18 @@ const routeChipStyle: React.CSSProperties = {
 
 const roleChipStyle: React.CSSProperties = {
   borderRadius: 999,
-  background: '#f8fafc',
-  color: '#334155',
+  background: ANGELCARE360_COLORS.background,
+  color: ANGELCARE360_COLORS.navy,
   padding: '7px 10px',
   fontSize: 12,
   fontWeight: 800,
-  border: '1px solid #e2e8f0',
+  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
 }
 
 const userChipStyle: React.CSSProperties = {
   borderRadius: 999,
-  background: '#0f172a',
-  color: '#fff',
+  background: ANGELCARE360_COLORS.navy,
+  color: ANGELCARE360_COLORS.white,
   padding: '7px 10px',
   fontSize: 12,
   fontWeight: 800,
@@ -150,25 +150,13 @@ const routeActionsStyle: React.CSSProperties = {
 }
 
 const actionLinkStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 12,
-  background: '#fff',
-  color: '#0f172a',
+  ...angelcare360ButtonSecondaryStyle,
   textDecoration: 'none',
   padding: '9px 12px',
-  border: '1px solid #cbd5e1',
-  fontWeight: 800,
 }
 
 const primaryActionLinkStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 12,
-  background: '#0f172a',
-  color: '#fff',
+  ...angelcare360ButtonBaseStyle,
   textDecoration: 'none',
   padding: '9px 12px',
-  border: '1px solid #0f172a',
-  fontWeight: 800,
 }

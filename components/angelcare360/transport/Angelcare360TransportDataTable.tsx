@@ -67,7 +67,7 @@ export default function Angelcare360TransportDataTable<T>({
 const cardStyle: React.CSSProperties = {
   display: 'grid',
   gap: 14,
-  padding: 18,
+  padding: 20,
   borderRadius: 24,
   border: '1px solid #dbe4ef',
   background: '#fff',
@@ -86,6 +86,7 @@ const titleStyle: React.CSSProperties = {
   color: '#0f172a',
   fontSize: 20,
   fontWeight: 950,
+  letterSpacing: -0.2,
 }
 
 const descriptionStyle: React.CSSProperties = {
@@ -108,7 +109,7 @@ const tableStyle: React.CSSProperties = {
 }
 
 const thStyle: React.CSSProperties = {
-  padding: '12px 14px',
+  padding: '13px 14px',
   background: '#f8fafc',
   color: '#0f172a',
   fontSize: 12,
@@ -119,7 +120,7 @@ const thStyle: React.CSSProperties = {
 }
 
 const tdStyle: React.CSSProperties = {
-  padding: '12px 14px',
+  padding: '13px 14px',
   color: '#334155',
   verticalAlign: 'top',
   borderBottom: '1px solid #e2e8f0',
@@ -148,4 +149,3 @@ const emptyDescriptionStyle: React.CSSProperties = {
   lineHeight: 1.6,
   fontWeight: 600,
 }
-

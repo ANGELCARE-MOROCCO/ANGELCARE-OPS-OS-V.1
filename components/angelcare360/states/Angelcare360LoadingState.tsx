@@ -1,3 +1,5 @@
+import { ANGELCARE360_COLORS } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+
 export default function Angelcare360LoadingState() {
   return (
     <div style={shellStyle}>
@@ -21,12 +23,12 @@ export default function Angelcare360LoadingState() {
 }
 
 const shellStyle: React.CSSProperties = {
-  padding: 24,
+  padding: 4,
 }
 
 const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #dbe4ef',
+  background: ANGELCARE360_COLORS.white,
+  border: `1px solid ${ANGELCARE360_COLORS.border}`,
   borderRadius: 28,
   boxShadow: '0 24px 72px rgba(15, 23, 42, 0.08)',
   padding: 24,
@@ -37,14 +39,14 @@ const eyebrowStyle: React.CSSProperties = {
   letterSpacing: 1.4,
   fontSize: 12,
   fontWeight: 900,
-  color: '#2563eb',
+  color: ANGELCARE360_COLORS.blue,
 }
 
 const titleStyle: React.CSSProperties = {
   marginTop: 10,
   fontSize: 24,
   fontWeight: 900,
-  color: '#0f172a',
+  color: ANGELCARE360_COLORS.navy,
 }
 
 const lineStyle: React.CSSProperties = {
@@ -59,7 +61,7 @@ const lineMutedStyle: React.CSSProperties = {
   width: '62%',
   height: 12,
   borderRadius: 999,
-  background: '#e2e8f0',
+  background: ANGELCARE360_COLORS.borderSoft,
 }
 
 const gridStyle: React.CSSProperties = {
@@ -70,8 +72,8 @@ const gridStyle: React.CSSProperties = {
 }
 
 const skeletonCardStyle: React.CSSProperties = {
-  background: '#f8fafc',
-  border: '1px solid #e2e8f0',
+  background: ANGELCARE360_COLORS.background,
+  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
   borderRadius: 22,
   padding: 18,
 }
@@ -80,7 +82,7 @@ const skeletonLabelStyle: React.CSSProperties = {
   width: '48%',
   height: 11,
   borderRadius: 999,
-  background: '#e2e8f0',
+  background: ANGELCARE360_COLORS.borderSoft,
 }
 
 const skeletonValueStyle: React.CSSProperties = {
@@ -88,7 +90,7 @@ const skeletonValueStyle: React.CSSProperties = {
   width: '78%',
   height: 24,
   borderRadius: 999,
-  background: '#dbe4ef',
+  background: ANGELCARE360_COLORS.border,
 }
 
 const skeletonTextStyle: React.CSSProperties = {
@@ -96,6 +98,5 @@ const skeletonTextStyle: React.CSSProperties = {
   width: '88%',
   height: 11,
   borderRadius: 999,
-  background: '#e2e8f0',
+  background: ANGELCARE360_COLORS.borderSoft,
 }
-

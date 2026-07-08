@@ -2,6 +2,13 @@
 
 import Link from 'next/link'
 import type { Angelcare360ToolbarScope } from '@/types/angelcare360/ui'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360ButtonBaseStyle,
+  angelcare360ButtonDisabledStyle,
+  angelcare360ButtonGhostStyle,
+  angelcare360InputStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360ToolbarProps = {
   query: string
@@ -86,8 +93,8 @@ export default function Angelcare360Toolbar({
 const toolbarStyle: React.CSSProperties = {
   display: 'grid',
   gap: 14,
-  background: '#fff',
-  border: '1px solid #dbe4ef',
+  background: ANGELCARE360_COLORS.white,
+  border: `1px solid ${ANGELCARE360_COLORS.border}`,
   borderRadius: 24,
   padding: 16,
   boxShadow: '0 18px 54px rgba(15,23,42,.05)',
@@ -114,34 +121,17 @@ const labelTextStyle: React.CSSProperties = {
 }
 
 const inputStyle: React.CSSProperties = {
-  width: '100%',
-  borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  padding: '11px 14px',
-  fontSize: 14,
-  color: '#0f172a',
-  background: '#fff',
-  outline: 'none',
+  ...angelcare360InputStyle,
 }
 
 const buttonStyle: React.CSSProperties = {
-  border: '1px solid #0f172a',
-  borderRadius: 14,
+  ...angelcare360ButtonBaseStyle,
   padding: '11px 14px',
-  background: '#0f172a',
-  color: '#fff',
-  fontWeight: 800,
-  cursor: 'pointer',
 }
 
 const ghostButtonStyle: React.CSSProperties = {
-  border: '1px solid #cbd5e1',
-  borderRadius: 14,
+  ...angelcare360ButtonGhostStyle,
   padding: '11px 14px',
-  background: '#fff',
-  color: '#0f172a',
-  fontWeight: 800,
-  cursor: 'pointer',
 }
 
 const chipRowStyle: React.CSSProperties = {
@@ -151,10 +141,10 @@ const chipRowStyle: React.CSSProperties = {
 }
 
 const chipStyle: React.CSSProperties = {
-  border: '1px solid #cbd5e1',
+  border: `1px solid ${ANGELCARE360_COLORS.border}`,
   borderRadius: 999,
-  background: '#fff',
-  color: '#0f172a',
+  background: ANGELCARE360_COLORS.white,
+  color: ANGELCARE360_COLORS.navy,
   padding: '8px 12px',
   fontSize: 13,
   fontWeight: 800,
@@ -162,9 +152,9 @@ const chipStyle: React.CSSProperties = {
 }
 
 const activeChipStyle: React.CSSProperties = {
-  background: '#eff6ff',
-  border: '1px solid #93c5fd',
-  color: '#1d4ed8',
+  background: ANGELCARE360_COLORS.blueSoft,
+  border: `1px solid ${ANGELCARE360_COLORS.blueBorderActive}`,
+  color: ANGELCARE360_COLORS.blue,
 }
 
 const actionRowStyle: React.CSSProperties = {
@@ -177,20 +167,15 @@ const routeLinkStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: 14,
-  background: '#eff6ff',
-  color: '#1d4ed8',
+  background: ANGELCARE360_COLORS.blueSoft,
+  color: ANGELCARE360_COLORS.blue,
   textDecoration: 'none',
   padding: '10px 14px',
-  border: '1px solid #93c5fd',
+  border: `1px solid ${ANGELCARE360_COLORS.blueBorderActive}`,
   fontWeight: 900,
 }
 
 const disabledActionStyle: React.CSSProperties = {
-  border: '1px dashed #cbd5e1',
-  borderRadius: 14,
+  ...angelcare360ButtonDisabledStyle,
   padding: '10px 14px',
-  background: '#f8fafc',
-  color: '#64748b',
-  fontWeight: 800,
-  cursor: 'not-allowed',
 }
