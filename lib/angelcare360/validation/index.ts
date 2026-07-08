@@ -3609,3 +3609,371 @@ export const angelcare360FinanceAuditQueryFiltersSchema = createSchema<Angelcare
   }
   return { success: true, data }
 })
+
+export type Angelcare360LibraryBookCreateInput = {
+  schoolId: string
+  bookCode: string
+  title: string
+  isbn?: string | null
+  author?: string | null
+  publisher?: string | null
+  category?: string | null
+  language?: string | null
+  status?: 'active' | 'archived'
+}
+
+export type Angelcare360LibraryBookUpdateInput = Angelcare360LibraryBookCreateInput & { id: string }
+export type Angelcare360LibraryBookStatusChangeInput = { schoolId: string; id: string; status: 'active' | 'archived' }
+
+export type Angelcare360LibraryCopyCreateInput = {
+  schoolId: string
+  bookId: string
+  copyCode: string
+  barcode?: string | null
+  acquisitionDate?: string | null
+  shelfLocation?: string | null
+  condition?: string | null
+  status?: 'available' | 'loaned' | 'damaged' | 'lost' | 'archived' | 'reserved'
+}
+
+export type Angelcare360LibraryCopyUpdateInput = Angelcare360LibraryCopyCreateInput & { id: string; reason?: string | null }
+export type Angelcare360LibraryCopyStatusChangeInput = { schoolId: string; id: string; status: 'available' | 'loaned' | 'damaged' | 'lost' | 'archived' | 'reserved'; reason?: string | null }
+
+export type Angelcare360LibraryLoanCreateInput = {
+  schoolId: string
+  copyId: string
+  borrowerType: 'student' | 'staff'
+  borrowerStudentId?: string | null
+  borrowerStaffId?: string | null
+  loanedAt?: string | null
+  dueAt: string
+  status?: 'open' | 'active'
+}
+
+export type Angelcare360LibraryLoanReturnInput = { schoolId: string; id: string; returnedAt?: string | null; notes?: string | null }
+export type Angelcare360LibraryLoanLostInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360LibraryLoanCancelInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360LibraryAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  actorUserId?: string | null
+  entityId?: string | null
+  search?: string | null
+  status?: string | null
+}
+
+function libraryCopyStatuses() {
+  return ['available', 'loaned', 'damaged', 'lost', 'archived', 'reserved'] as const
+}
+
+function libraryLoanStatuses() {
+  return ['open', 'active', 'returned', 'overdue', 'lost', 'cancelled', 'archived'] as const
+}
+
+export const angelcare360LibraryBookCreateSchema = createSchema<Angelcare360LibraryBookCreateInput>('library_book_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le livre doit être un objet.' }] }
+  const data: Angelcare360LibraryBookCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    bookCode: asString(input.bookCode, 'Le code du livre est obligatoire.', 'bookCode', errors),
+    title: asString(input.title, 'Le titre du livre est obligatoire.', 'title', errors),
+    isbn: asOptionalString(input.isbn),
+    author: asOptionalString(input.author),
+    publisher: asOptionalString(input.publisher),
+    category: asOptionalString(input.category),
+    language: asOptionalString(input.language) || 'fr',
+    status: asEnum(input.status || 'active', ['active', 'archived'] as const, 'Le statut du livre est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryBookUpdateSchema = createSchema<Angelcare360LibraryBookUpdateInput>('library_book_update', (input) => {
+  const parsed = angelcare360LibraryBookCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant du livre est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360LibraryBookStatusChangeSchema = createSchema<Angelcare360LibraryBookStatusChangeInput>('library_book_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut du livre doit être un objet.' }] }
+  const data: Angelcare360LibraryBookStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du livre est requis.', 'id', errors),
+    status: asEnum(input.status, ['active', 'archived'] as const, 'Le statut du livre est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryCopyCreateSchema = createSchema<Angelcare360LibraryCopyCreateInput>('library_copy_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’exemplaire doit être un objet.' }] }
+  const data: Angelcare360LibraryCopyCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    bookId: asString(input.bookId, 'Le livre est requis.', 'bookId', errors),
+    copyCode: asString(input.copyCode, 'Le code exemplaire est obligatoire.', 'copyCode', errors),
+    barcode: asOptionalString(input.barcode),
+    acquisitionDate: asOptionalString(input.acquisitionDate),
+    shelfLocation: asOptionalString(input.shelfLocation),
+    condition: asOptionalString(input.condition) || 'good',
+    status: asEnum(input.status || 'available', libraryCopyStatuses(), 'Le statut de l’exemplaire est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryCopyUpdateSchema = createSchema<Angelcare360LibraryCopyUpdateInput>('library_copy_update', (input) => {
+  const parsed = angelcare360LibraryCopyCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de l’exemplaire est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim(), reason: asOptionalString((input as Record<string, unknown>).reason) } }
+})
+
+export const angelcare360LibraryCopyStatusChangeSchema = createSchema<Angelcare360LibraryCopyStatusChangeInput>('library_copy_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut de l’exemplaire doit être un objet.' }] }
+  const data: Angelcare360LibraryCopyStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de l’exemplaire est requis.', 'id', errors),
+    status: asEnum(input.status, libraryCopyStatuses(), 'Le statut de l’exemplaire est invalide.', 'status', errors),
+    reason: asOptionalString(input.reason),
+  }
+  if ((data.status === 'damaged' || data.status === 'lost') && !data.reason) {
+    errors.push({ path: 'reason', message: 'Un motif est obligatoire pour marquer un exemplaire perdu ou endommagé.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryLoanCreateSchema = createSchema<Angelcare360LibraryLoanCreateInput>('library_loan_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le prêt doit être un objet.' }] }
+  const borrowerType = asEnum(input.borrowerType, ['student', 'staff'] as const, 'Le type d’emprunteur est invalide.', 'borrowerType', errors)
+  const loanedAt = asOptionalString(input.loanedAt) || new Date().toISOString()
+  const dueAt = asDateString(input.dueAt, 'La date d’échéance est obligatoire.', 'dueAt', errors)
+  if (loanedAt && dueAt && new Date(loanedAt).getTime() > new Date(dueAt).getTime()) {
+    errors.push({ path: 'dueAt', message: 'La date d’échéance doit être postérieure à la date d’emprunt.' })
+  }
+  const borrowerStudentId = asOptionalString(input.borrowerStudentId)
+  const borrowerStaffId = asOptionalString(input.borrowerStaffId)
+  if (borrowerType === 'student' && !borrowerStudentId) {
+    errors.push({ path: 'borrowerStudentId', message: 'L’élève emprunteur est requis.' })
+  }
+  if (borrowerType === 'staff' && !borrowerStaffId) {
+    errors.push({ path: 'borrowerStaffId', message: 'Le personnel emprunteur est requis.' })
+  }
+  const data: Angelcare360LibraryLoanCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    copyId: asString(input.copyId, 'L’exemplaire est requis.', 'copyId', errors),
+    borrowerType,
+    borrowerStudentId,
+    borrowerStaffId,
+    loanedAt,
+    dueAt,
+    status: asEnum(input.status || 'open', ['open', 'active'] as const, 'Le statut du prêt est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryLoanReturnSchema = createSchema<Angelcare360LibraryLoanReturnInput>('library_loan_return', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le retour doit être un objet.' }] }
+  const data: Angelcare360LibraryLoanReturnInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du prêt est requis.', 'id', errors),
+    returnedAt: asOptionalString(input.returnedAt),
+    notes: asOptionalString(input.notes),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryLoanLostSchema = createSchema<Angelcare360LibraryLoanLostInput>('library_loan_lost', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le marquage perdu doit être un objet.' }] }
+  const data: Angelcare360LibraryLoanLostInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du prêt est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryLoanCancelSchema = createSchema<Angelcare360LibraryLoanCancelInput>('library_loan_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation du prêt doit être un objet.' }] }
+  const data: Angelcare360LibraryLoanCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant du prêt est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360LibraryAuditQueryFiltersSchema = createSchema<Angelcare360LibraryAuditQueryFiltersInput>('library_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit bibliothèque doit être un objet.' }] }
+  const data: Angelcare360LibraryAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    status: asOptionalString(input.status),
+    search: asOptionalString(input.search),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export type Angelcare360InventoryCategoryCreateInput = {
+  schoolId: string
+  categoryCode: string
+  label: string
+  description?: string | null
+  status?: 'active' | 'inactive' | 'archived'
+}
+export type Angelcare360InventoryCategoryUpdateInput = Angelcare360InventoryCategoryCreateInput & { id: string }
+export type Angelcare360InventoryItemCreateInput = {
+  schoolId: string
+  categoryId: string
+  itemCode: string
+  label: string
+  unitOfMeasure?: string | null
+  barcode?: string | null
+  currentStock: number
+  reorderLevel?: number | null
+  purchasePrice?: number | null
+  responsibleStaffId?: string | null
+  status?: 'active' | 'low_stock' | 'out_of_stock' | 'damaged' | 'lost' | 'inactive' | 'archived'
+}
+export type Angelcare360InventoryItemUpdateInput = Angelcare360InventoryItemCreateInput & { id: string }
+export type Angelcare360InventoryMovementCreateInput = {
+  schoolId: string
+  itemId: string
+  movementCode: string
+  movementType: 'in' | 'out' | 'adjust' | 'transfer' | 'entry' | 'exit' | 'adjustment' | 'loss' | 'damage'
+  quantity: number
+  movementDate?: string | null
+  referenceType?: string | null
+  referenceId?: string | null
+  performedBy?: string | null
+  notes?: string | null
+  status?: 'active' | 'archived'
+}
+export type Angelcare360InventoryAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  actorUserId?: string | null
+  entityId?: string | null
+  search?: string | null
+  status?: string | null
+}
+
+export const angelcare360InventoryCategoryCreateSchema = createSchema<Angelcare360InventoryCategoryCreateInput>('inventory_category_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La catégorie inventaire doit être un objet.' }] }
+  const data: Angelcare360InventoryCategoryCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    categoryCode: asString(input.categoryCode, 'Le code de catégorie est obligatoire.', 'categoryCode', errors),
+    label: asString(input.label, 'Le libellé de la catégorie est obligatoire.', 'label', errors),
+    description: asOptionalString(input.description),
+    status: asEnum(input.status || 'active', ['active', 'inactive', 'archived'] as const, 'Le statut de la catégorie est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InventoryCategoryUpdateSchema = createSchema<Angelcare360InventoryCategoryUpdateInput>('inventory_category_update', (input) => {
+  const parsed = angelcare360InventoryCategoryCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la catégorie est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360InventoryItemCreateSchema = createSchema<Angelcare360InventoryItemCreateInput>('inventory_item_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’article inventaire doit être un objet.' }] }
+  const currentStock = asRequiredPositiveNumber(input.currentStock, 'Le stock actuel doit être positif ou nul.', 'currentStock', errors)
+  const reorderLevel = input.reorderLevel === undefined || input.reorderLevel === null ? 0 : asRequiredPositiveNumber(input.reorderLevel, 'Le seuil de réapprovisionnement doit être positif ou nul.', 'reorderLevel', errors)
+  const purchasePrice = input.purchasePrice === undefined || input.purchasePrice === null ? 0 : asRequiredPositiveNumber(input.purchasePrice, 'Le prix d’achat doit être positif ou nul.', 'purchasePrice', errors)
+  const data: Angelcare360InventoryItemCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    categoryId: asString(input.categoryId, 'La catégorie est requise.', 'categoryId', errors),
+    itemCode: asString(input.itemCode, 'Le code article est obligatoire.', 'itemCode', errors),
+    label: asString(input.label, 'Le libellé de l’article est obligatoire.', 'label', errors),
+    unitOfMeasure: asOptionalString(input.unitOfMeasure) || 'unit',
+    barcode: asOptionalString(input.barcode),
+    currentStock,
+    reorderLevel,
+    purchasePrice,
+    responsibleStaffId: asOptionalString(input.responsibleStaffId),
+    status: asEnum(input.status || 'active', ['active', 'low_stock', 'out_of_stock', 'damaged', 'lost', 'inactive', 'archived'] as const, 'Le statut de l’article est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InventoryItemUpdateSchema = createSchema<Angelcare360InventoryItemUpdateInput>('inventory_item_update', (input) => {
+  const parsed = angelcare360InventoryItemCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de l’article est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360InventoryMovementCreateSchema = createSchema<Angelcare360InventoryMovementCreateInput>('inventory_movement_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le mouvement de stock doit être un objet.' }] }
+  const quantity = asRequiredPositiveNumber(input.quantity, 'La quantité du mouvement doit être strictement positive.', 'quantity', errors)
+  const movementType = asEnum(
+    input.movementType,
+    ['in', 'out', 'adjust', 'transfer', 'entry', 'exit', 'adjustment', 'loss', 'damage'] as const,
+    'Le type de mouvement est invalide.',
+    'movementType',
+    errors,
+  )
+  const data: Angelcare360InventoryMovementCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    itemId: asString(input.itemId, 'L’article est requis.', 'itemId', errors),
+    movementCode: asString(input.movementCode, 'Le code du mouvement est obligatoire.', 'movementCode', errors),
+    movementType,
+    quantity,
+    movementDate: asOptionalString(input.movementDate),
+    referenceType: asOptionalString(input.referenceType),
+    referenceId: asOptionalString(input.referenceId),
+    performedBy: asOptionalString(input.performedBy),
+    notes: asOptionalString(input.notes),
+    status: asEnum(input.status || 'active', ['active', 'archived'] as const, 'Le statut du mouvement est invalide.', 'status', errors),
+  }
+  if (['adjust', 'adjustment', 'loss', 'damage'].includes(movementType) && !data.notes) {
+    errors.push({ path: 'notes', message: 'Un motif est requis pour un ajustement, une perte ou une dégradation.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InventoryAuditQueryFiltersSchema = createSchema<Angelcare360InventoryAuditQueryFiltersInput>('inventory_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit inventaire doit être un objet.' }] }
+  const data: Angelcare360InventoryAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    status: asOptionalString(input.status),
+    search: asOptionalString(input.search),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})

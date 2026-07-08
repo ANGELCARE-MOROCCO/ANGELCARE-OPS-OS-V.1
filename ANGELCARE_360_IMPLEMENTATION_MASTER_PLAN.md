@@ -321,3 +321,12 @@ Do not move to the next phase until:
 - Added the admissions mutation API at `POST /api/angelcare360/admissions`, plus server-side validation, duplicate detection, capacity checks, and critical audit logging.
 - The admissions conversion path now creates or reuses `Élève`, `Parent`, `Lien parent/enfant`, and `Inscription de classe` records safely when conversion prerequisites are satisfied.
 - `npm run build` was launched for validation, but the build remained on the optimized production build step for an extended time and was stopped with exit code `130` to avoid leaving a hanging process in this environment.
+
+## Phase 11 Library / Inventory Operating Engine Note
+
+- Phase 11 delivered the isolated `Bibliothèque & Inventaire` control plane under `app/(protected)/angelcare-360-command-center/bibliotheque` and `app/(protected)/angelcare-360-command-center/inventaire`.
+- Added French route trees, server-backed mutation helpers, API routes, validation schemas, audit exploration, and an additive migration for the library / inventory namespace.
+- Updated the AngelCare 360 module registry so `bibliotheque` and `inventaire` now resolve to active command-center routes.
+- TypeScript / static verification was run with `NODE_OPTIONS=--max-old-space-size=8192 ./node_modules/.bin/tsc --noEmit --pretty false` and passed.
+- Full production build was intentionally not run by Codex, per the phase restriction.
+- `app/(protected)/angelcare-360` remained untouched.
