@@ -3,19 +3,9 @@
 -- Additive widening only: no destructive rewrite of legacy AC360 tables.
 
 do $$
-declare
-  v_constraint text;
 begin
-  select conname
-    into v_constraint
-  from pg_constraint
-  where conrelid = 'public.angelcare360_library_copies'::regclass
-    and contype = 'c'
-    and pg_get_constraintdef(oid) ilike '%status in (%';
-
-  if v_constraint is not null then
-    execute format('alter table public.angelcare360_library_copies drop constraint %I', v_constraint);
-  end if;
+  alter table public.angelcare360_library_copies
+    drop constraint if exists angelcare360_library_copies_status_check;
 end $$;
 
 alter table public.angelcare360_library_copies
@@ -23,19 +13,9 @@ alter table public.angelcare360_library_copies
   check (status in ('available', 'loaned', 'damaged', 'lost', 'archived', 'reserved'));
 
 do $$
-declare
-  v_constraint text;
 begin
-  select conname
-    into v_constraint
-  from pg_constraint
-  where conrelid = 'public.angelcare360_library_loans'::regclass
-    and contype = 'c'
-    and pg_get_constraintdef(oid) ilike '%status in (%';
-
-  if v_constraint is not null then
-    execute format('alter table public.angelcare360_library_loans drop constraint %I', v_constraint);
-  end if;
+  alter table public.angelcare360_library_loans
+    drop constraint if exists angelcare360_library_loans_status_check;
 end $$;
 
 alter table public.angelcare360_library_loans
@@ -43,19 +23,9 @@ alter table public.angelcare360_library_loans
   check (status in ('open', 'active', 'returned', 'overdue', 'lost', 'cancelled', 'archived'));
 
 do $$
-declare
-  v_constraint text;
 begin
-  select conname
-    into v_constraint
-  from pg_constraint
-  where conrelid = 'public.angelcare360_inventory_items'::regclass
-    and contype = 'c'
-    and pg_get_constraintdef(oid) ilike '%status in (%';
-
-  if v_constraint is not null then
-    execute format('alter table public.angelcare360_inventory_items drop constraint %I', v_constraint);
-  end if;
+  alter table public.angelcare360_inventory_items
+    drop constraint if exists angelcare360_inventory_items_status_check;
 end $$;
 
 alter table public.angelcare360_inventory_items
@@ -68,19 +38,9 @@ alter table public.angelcare360_inventory_items
 create index if not exists idx_angelcare360_inventory_items_responsible_staff on public.angelcare360_inventory_items(school_id, responsible_staff_id);
 
 do $$
-declare
-  v_constraint text;
 begin
-  select conname
-    into v_constraint
-  from pg_constraint
-  where conrelid = 'public.angelcare360_inventory_movements'::regclass
-    and contype = 'c'
-    and pg_get_constraintdef(oid) ilike '%movement_type in (%';
-
-  if v_constraint is not null then
-    execute format('alter table public.angelcare360_inventory_movements drop constraint %I', v_constraint);
-  end if;
+  alter table public.angelcare360_inventory_movements
+    drop constraint if exists angelcare360_inventory_movements_type_check;
 end $$;
 
 alter table public.angelcare360_inventory_movements

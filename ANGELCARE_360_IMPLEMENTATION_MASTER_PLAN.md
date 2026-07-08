@@ -365,3 +365,38 @@ Acceptance criteria:
 - `app/(protected)/angelcare-360` remains untouched
 - unrelated product areas remain untouched
 - TypeScript / static verification passes without running the production build
+
+## Phase 13 Reports / Exports / Documents Note
+
+Objective:
+
+- Deliver the isolated reporting, export-readiness, PDF/A4-readiness, CSV/XLSX-readiness, and document governance control plane.
+
+Scope:
+
+- rapports
+- catalogue de rapports
+- modèles de rapports
+- demandes de rapports
+- historique rapports
+- exports readiness
+- PDF A4 readiness
+- CSV/XLSX readiness
+- documents générés readiness
+- templates documentaires
+- gouvernance documentaire
+- audit rapports
+- audit exports
+- audit documents
+
+Acceptance criteria:
+
+- isolated French route trees exist under the AngelCare 360 command center shell
+- server-backed reporting, export, and document helpers exist
+- API routes handle real mutations and audit critical changes
+- export and document generation remain locked unless real infrastructure exists
+- no fake PDF, CSV, XLSX, download, or generated document claims are exposed
+- permissions are enforced and audit events are written
+- `app/(protected)/angelcare-360` remains untouched
+- unrelated product areas remain untouched
+- TypeScript / static verification passes without running the production build

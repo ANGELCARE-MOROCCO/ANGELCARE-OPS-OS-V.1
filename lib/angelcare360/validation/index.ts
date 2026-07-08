@@ -1,6 +1,13 @@
 import type { Angelcare360AuditEventInput } from '@/types/angelcare360/audit'
 import type { Angelcare360AdmissionsAuditFilter } from '@/types/angelcare360/admissions'
 import type {
+  Angelcare360DocumentAuditFilter,
+  Angelcare360ExportAuditFilter,
+  Angelcare360ExportFormat,
+  Angelcare360ReportAuditFilter,
+  Angelcare360ReportRequestRecord,
+} from '@/types/angelcare360/reports'
+import type {
   Angelcare360TransportAssignmentStatus,
   Angelcare360TransportAuditFilter,
   Angelcare360TransportRouteStatus,
@@ -4387,6 +4394,258 @@ export const angelcare360ClaimAuditQueryFiltersSchema = createSchema<Angelcare36
     entityId: asOptionalString(input.entityId),
     actorUserId: asOptionalString(input.actorUserId),
     assignedStaffId: asOptionalString(input.assignedStaffId),
+    search: asOptionalString(input.search),
+    status: asOptionalString(input.status),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export type Angelcare360ReportTemplateCreateInput = {
+  schoolId: string
+  reportId: string
+  templateCode: string
+  label: string
+  moduleKey: string
+  reportFamily: string
+  outputFormat: Angelcare360ExportFormat
+  description?: string | null
+  configJson?: Record<string, unknown> | null
+  status?: 'draft' | 'active' | 'inactive' | 'archived'
+}
+export type Angelcare360ReportTemplateUpdateInput = Angelcare360ReportTemplateCreateInput & { id: string }
+export type Angelcare360ReportRequestCreateInput = {
+  schoolId: string
+  reportId: string
+  reportTemplateId?: string | null
+  requestCode: string
+  moduleKey?: string | null
+  dateFrom?: string | null
+  dateTo?: string | null
+  filtersJson?: Record<string, unknown> | null
+  metadataJson?: Record<string, unknown> | null
+  status?: 'draft' | 'requested' | 'processing_locked' | 'ready' | 'failed' | 'cancelled'
+}
+export type Angelcare360ReportRequestCancelInput = { schoolId: string; id: string; reason: string }
+export type Angelcare360ReportAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  reportCode?: string | null
+  search?: string | null
+  status?: string | null
+}
+export type Angelcare360ExportAuditQueryFiltersInput = Angelcare360ReportAuditQueryFiltersInput & {
+  format?: string | null
+}
+export type Angelcare360ExportAttemptBlockedInput = {
+  schoolId: string
+  exportCode?: string | null
+  format: Angelcare360ExportFormat
+  reason: string
+}
+export type Angelcare360DocumentTemplateCreateInput = {
+  schoolId: string
+  templateCode: string
+  label: string
+  documentType: string
+  outputFormat: Angelcare360ExportFormat
+  description?: string | null
+  retentionDays?: number | null
+  configJson?: Record<string, unknown> | null
+  status?: 'draft' | 'ready' | 'archived' | 'blocked_not_configured'
+}
+export type Angelcare360DocumentTemplateUpdateInput = Angelcare360DocumentTemplateCreateInput & { id: string }
+export type Angelcare360DocumentGovernanceCheckInput = { schoolId: string; scope?: string | null }
+export type Angelcare360DocumentAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  documentType?: string | null
+  search?: string | null
+  status?: string | null
+}
+
+export const angelcare360ReportTemplateCreateSchema = createSchema<Angelcare360ReportTemplateCreateInput>('report_template_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le modèle de rapport doit être un objet.' }] }
+  const data: Angelcare360ReportTemplateCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    reportId: asString(input.reportId, 'Le rapport catalogue est obligatoire.', 'reportId', errors),
+    templateCode: asString(input.templateCode, 'Le code du modèle est obligatoire.', 'templateCode', errors),
+    label: asString(input.label, 'Le libellé du modèle est obligatoire.', 'label', errors),
+    moduleKey: asString(input.moduleKey, 'Le module est obligatoire.', 'moduleKey', errors),
+    reportFamily: asString(input.reportFamily, 'La famille de rapport est obligatoire.', 'reportFamily', errors),
+    outputFormat: asEnum(input.outputFormat || 'pdf_a4', ['pdf_a4', 'csv', 'xlsx', 'json', 'print_view'] as const, 'Le format du modèle est invalide.', 'outputFormat', errors),
+    description: asOptionalString(input.description),
+    configJson: isRecord(input.configJson) ? (input.configJson as Record<string, unknown>) : null,
+    status: asEnum(input.status || 'draft', ['draft', 'active', 'inactive', 'archived'] as const, 'Le statut du modèle est invalide.', 'status', errors),
+  }
+  if (input.configJson !== undefined && input.configJson !== null && !isRecord(input.configJson)) {
+    errors.push({ path: 'configJson', message: 'La configuration du modèle doit être un objet.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ReportTemplateUpdateSchema = createSchema<Angelcare360ReportTemplateUpdateInput>('report_template_update', (input) => {
+  const parsed = angelcare360ReportTemplateCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant du modèle est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360ReportRequestCreateSchema = createSchema<Angelcare360ReportRequestCreateInput>('report_request_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La demande de rapport doit être un objet.' }] }
+  const data: Angelcare360ReportRequestCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    reportId: asString(input.reportId, 'Le rapport catalogue est obligatoire.', 'reportId', errors),
+    reportTemplateId: asOptionalString(input.reportTemplateId),
+    requestCode: asString(input.requestCode, 'Le code de demande est obligatoire.', 'requestCode', errors),
+    moduleKey: asOptionalString(input.moduleKey),
+    dateFrom: asOptionalString(input.dateFrom),
+    dateTo: asOptionalString(input.dateTo),
+    filtersJson: isRecord(input.filtersJson) ? (input.filtersJson as Record<string, unknown>) : null,
+    metadataJson: isRecord(input.metadataJson) ? (input.metadataJson as Record<string, unknown>) : null,
+    status: asEnum(input.status || 'requested', ['draft', 'requested', 'processing_locked', 'ready', 'failed', 'cancelled'] as const, 'Le statut de la demande est invalide.', 'status', errors),
+  }
+  if (input.filtersJson !== undefined && input.filtersJson !== null && !isRecord(input.filtersJson)) {
+    errors.push({ path: 'filtersJson', message: 'Les filtres de rapport doivent être un objet.' })
+  }
+  if (input.metadataJson !== undefined && input.metadataJson !== null && !isRecord(input.metadataJson)) {
+    errors.push({ path: 'metadataJson', message: 'Les métadonnées de rapport doivent être un objet.' })
+  }
+  if (data.dateFrom && data.dateTo && !isValidDateOrder(data.dateFrom, data.dateTo)) {
+    errors.push({ path: 'dateTo', message: 'La date de fin doit être postérieure à la date de début.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ReportRequestCancelSchema = createSchema<Angelcare360ReportRequestCancelInput>('report_request_cancel', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annulation de demande doit être un objet.' }] }
+  const data: Angelcare360ReportRequestCancelInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la demande est requis.', 'id', errors),
+    reason: asString(input.reason, 'Le motif d’annulation est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ReportAuditQueryFiltersSchema = createSchema<Angelcare360ReportAuditQueryFiltersInput>('report_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit rapports doit être un objet.' }] }
+  const data: Angelcare360ReportAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    reportCode: asOptionalString(input.reportCode),
+    search: asOptionalString(input.search),
+    status: asOptionalString(input.status),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export const angelcare360ExportAuditQueryFiltersSchema = createSchema<Angelcare360ExportAuditQueryFiltersInput>('export_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit exports doit être un objet.' }] }
+  const data: Angelcare360ExportAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    reportCode: asOptionalString(input.reportCode),
+    search: asOptionalString(input.search),
+    status: asOptionalString(input.status),
+    format: asOptionalString(input.format),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export const angelcare360ExportAttemptBlockedSchema = createSchema<Angelcare360ExportAttemptBlockedInput>('export_attempt_blocked', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le blocage d’export doit être un objet.' }] }
+  const data: Angelcare360ExportAttemptBlockedInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    exportCode: asOptionalString(input.exportCode),
+    format: asEnum(input.format || 'pdf_a4', ['pdf_a4', 'csv', 'xlsx', 'json', 'print_view'] as const, 'Le format d’export est invalide.', 'format', errors),
+    reason: asString(input.reason, 'Le motif de blocage est obligatoire.', 'reason', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360DocumentTemplateCreateSchema = createSchema<Angelcare360DocumentTemplateCreateInput>('document_template_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le template documentaire doit être un objet.' }] }
+  const data: Angelcare360DocumentTemplateCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    templateCode: asString(input.templateCode, 'Le code du template est obligatoire.', 'templateCode', errors),
+    label: asString(input.label, 'Le libellé du template est obligatoire.', 'label', errors),
+    documentType: asString(input.documentType, 'Le type de document est obligatoire.', 'documentType', errors),
+    outputFormat: asEnum(input.outputFormat || 'pdf_a4', ['pdf_a4', 'csv', 'xlsx', 'json', 'print_view'] as const, 'Le format du template est invalide.', 'outputFormat', errors),
+    description: asOptionalString(input.description),
+    retentionDays: input.retentionDays === undefined || input.retentionDays === null || input.retentionDays === '' ? null : asOptionalInteger(input.retentionDays, 0),
+    configJson: isRecord(input.configJson) ? (input.configJson as Record<string, unknown>) : null,
+    status: asEnum(input.status || 'draft', ['draft', 'ready', 'archived', 'blocked_not_configured'] as const, 'Le statut du template est invalide.', 'status', errors),
+  }
+  if (input.retentionDays !== undefined && input.retentionDays !== null && !Number.isFinite(Number(input.retentionDays))) {
+    errors.push({ path: 'retentionDays', message: 'La durée de rétention doit être un nombre.' })
+  } else if (data.retentionDays !== null && data.retentionDays !== undefined && data.retentionDays < 0) {
+    errors.push({ path: 'retentionDays', message: 'La durée de rétention doit être positive.' })
+  }
+  if (input.configJson !== undefined && input.configJson !== null && !isRecord(input.configJson)) {
+    errors.push({ path: 'configJson', message: 'La configuration du template doit être un objet.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360DocumentTemplateUpdateSchema = createSchema<Angelcare360DocumentTemplateUpdateInput>('document_template_update', (input) => {
+  const parsed = angelcare360DocumentTemplateCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant du template est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360DocumentGovernanceCheckSchema = createSchema<Angelcare360DocumentGovernanceCheckInput>('document_governance_check', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le contrôle de gouvernance documentaire doit être un objet.' }] }
+  const data: Angelcare360DocumentGovernanceCheckInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    scope: asOptionalString(input.scope),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360DocumentAuditQueryFiltersSchema = createSchema<Angelcare360DocumentAuditQueryFiltersInput>('document_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit documents doit être un objet.' }] }
+  const data: Angelcare360DocumentAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    documentType: asOptionalString(input.documentType),
     search: asOptionalString(input.search),
     status: asOptionalString(input.status),
     from: asOptionalString(input.from),

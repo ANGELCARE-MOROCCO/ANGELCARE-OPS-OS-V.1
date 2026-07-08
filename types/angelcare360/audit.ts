@@ -21,6 +21,7 @@ export type Angelcare360AuditCategory =
   | 'claims'
   | 'communication'
   | 'reports'
+  | 'exports'
   | 'documents'
   | 'timetable'
   | 'settings'

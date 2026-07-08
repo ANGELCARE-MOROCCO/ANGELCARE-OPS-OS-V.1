@@ -26,6 +26,7 @@ export type Angelcare360PermissionDomainKey =
   | 'reclamations'
   | 'documents'
   | 'rapports'
+  | 'exports'
   | 'parametres'
   | 'audit'
   | 'securite'
@@ -89,4 +90,3 @@ export interface Angelcare360AccessScopeRecord extends Angelcare360BaseRecord {
   label: string
   description?: string | null
 }
-
