@@ -68,8 +68,16 @@ export interface Angelcare360ModuleSection {
   items: Angelcare360ModuleRecord[]
 }
 
+export interface Angelcare360ModuleNavigationItem {
+  key: string
+  label: string
+  href: string
+  summary: string
+  permission: string
+  badge?: string
+}
+
 export interface Angelcare360ModuleDrawerState {
   moduleId: string | null
   isOpen: boolean
 }
-

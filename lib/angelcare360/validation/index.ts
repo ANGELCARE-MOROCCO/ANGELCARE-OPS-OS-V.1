@@ -2711,6 +2711,8 @@ export type Angelcare360AuditFilterInput = {
   action?: string | null
   severity?: string | null
   entityType?: string | null
+  entityId?: string | null
+  actorUserId?: string | null
   actorRole?: string | null
   from?: string | null
   to?: string | null
@@ -2725,6 +2727,8 @@ export const angelcare360AuditFilterSchema = createSchema<Angelcare360AuditFilte
     action: asOptionalString(input.action),
     severity: asOptionalString(input.severity),
     entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
     actorRole: asOptionalString(input.actorRole),
     from: asOptionalString(input.from),
     to: asOptionalString(input.to),
@@ -3969,6 +3973,422 @@ export const angelcare360InventoryAuditQueryFiltersSchema = createSchema<Angelca
     actorUserId: asOptionalString(input.actorUserId),
     status: asOptionalString(input.status),
     search: asOptionalString(input.search),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export type Angelcare360ConversationCreateInput = {
+  schoolId: string
+  conversationCode: string
+  subject: string
+  participantAppUserIds: string[]
+  participantStudentIds: string[]
+  participantParentIds: string[]
+  participantStaffIds: string[]
+  status?: 'open' | 'archived' | 'locked'
+}
+export type Angelcare360InternalMessageCreateInput = {
+  schoolId: string
+  conversationId: string
+  messageCode: string
+  subject?: string | null
+  body: string
+  recipientAppUserIds: string[]
+  recipientStudentIds: string[]
+  recipientParentIds: string[]
+  recipientStaffIds: string[]
+  status?: 'draft' | 'sent_internal' | 'read' | 'archived' | 'external_locked'
+}
+export type Angelcare360MessageReadInput = { schoolId: string; messageId: string; recipientAppUserId?: string | null }
+export type Angelcare360ConversationArchiveInput = { schoolId: string; id: string; reason?: string | null }
+export type Angelcare360AnnouncementCreateInput = {
+  schoolId: string
+  announcementCode: string
+  title: string
+  body: string
+  audience: string
+  academicYearId?: string | null
+  status?: 'draft' | 'published_internal' | 'archived' | 'external_locked'
+}
+export type Angelcare360AnnouncementUpdateInput = Angelcare360AnnouncementCreateInput & { id: string }
+export type Angelcare360AnnouncementPublishInternalInput = { schoolId: string; id: string; audience: string }
+export type Angelcare360MessageTemplateCreateInput = {
+  schoolId: string
+  templateCode: string
+  channel: string
+  name: string
+  content: string
+  audienceType?: string | null
+  status?: 'draft' | 'active' | 'archived' | 'external_locked'
+}
+export type Angelcare360MessageTemplateUpdateInput = Angelcare360MessageTemplateCreateInput & { id: string }
+export type Angelcare360CommunicationAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  conversationId?: string | null
+  search?: string | null
+  status?: string | null
+}
+export type Angelcare360InternalNotificationCreateInput = {
+  schoolId: string
+  notificationCode: string
+  title: string
+  body: string
+  recipientAppUserId?: string | null
+  recipientStudentId?: string | null
+  recipientParentId?: string | null
+  recipientStaffId?: string | null
+  recipientRole?: string | null
+  channel?: string | null
+  actionHref?: string | null
+  scheduledFor?: string | null
+  status?: 'pending' | 'delivered_internal' | 'read' | 'failed' | 'blocked_external' | 'archived'
+}
+export type Angelcare360NotificationReadInput = { schoolId: string; id: string }
+export type Angelcare360NotificationArchiveInput = { schoolId: string; id: string }
+export type Angelcare360NotificationAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  recipientRole?: string | null
+  search?: string | null
+  status?: string | null
+}
+export type Angelcare360ClaimTicketCreateInput = {
+  schoolId: string
+  reclamationCode: string
+  subject: string
+  description: string
+  priority: 'low' | 'normal' | 'high' | 'urgent'
+  category?: string | null
+  submittedByAppUserId?: string | null
+  submittedByParentId?: string | null
+  submittedByStudentId?: string | null
+  submittedByStaffId?: string | null
+  status?: 'new' | 'in_review' | 'assigned' | 'waiting_parent' | 'waiting_internal' | 'resolved' | 'closed' | 'archived'
+}
+export type Angelcare360ClaimTicketUpdateInput = Angelcare360ClaimTicketCreateInput & { id: string }
+export type Angelcare360ClaimTicketAssignInput = { schoolId: string; id: string; assignedStaffId: string; note?: string | null }
+export type Angelcare360ClaimTicketStatusChangeInput = { schoolId: string; id: string; status: 'new' | 'in_review' | 'assigned' | 'waiting_parent' | 'waiting_internal' | 'resolved' | 'closed' | 'archived'; note?: string | null }
+export type Angelcare360ClaimTicketResolveInput = { schoolId: string; id: string; resolutionSummary: string; note?: string | null }
+export type Angelcare360ClaimTicketCloseInput = { schoolId: string; id: string; resolutionSummary: string; note?: string | null }
+export type Angelcare360ClaimAuditQueryFiltersInput = Angelcare360AuditFilterInput & {
+  schoolId?: string | null
+  assignedStaffId?: string | null
+  search?: string | null
+  status?: string | null
+}
+
+export const angelcare360ConversationCreateSchema = createSchema<Angelcare360ConversationCreateInput>('conversation_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La conversation doit être un objet.' }] }
+  const participantAppUserIds = asOptionalStringArray(input.participantAppUserIds)
+  const participantStudentIds = asOptionalStringArray(input.participantStudentIds)
+  const participantParentIds = asOptionalStringArray(input.participantParentIds)
+  const participantStaffIds = asOptionalStringArray(input.participantStaffIds)
+  const data: Angelcare360ConversationCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    conversationCode: asString(input.conversationCode, 'Le code de conversation est obligatoire.', 'conversationCode', errors),
+    subject: asString(input.subject, 'Le sujet de conversation est obligatoire.', 'subject', errors),
+    participantAppUserIds,
+    participantStudentIds,
+    participantParentIds,
+    participantStaffIds,
+    status: asEnum(input.status || 'open', ['open', 'archived', 'locked'] as const, 'Le statut de conversation est invalide.', 'status', errors),
+  }
+  if (!participantAppUserIds.length && !participantStudentIds.length && !participantParentIds.length && !participantStaffIds.length) {
+    errors.push({ path: 'participants', message: 'Au moins un participant ou une audience doit être renseigné.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360InternalMessageCreateSchema = createSchema<Angelcare360InternalMessageCreateInput>('internal_message_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le message interne doit être un objet.' }] }
+  const recipientAppUserIds = asOptionalStringArray(input.recipientAppUserIds)
+  const recipientStudentIds = asOptionalStringArray(input.recipientStudentIds)
+  const recipientParentIds = asOptionalStringArray(input.recipientParentIds)
+  const recipientStaffIds = asOptionalStringArray(input.recipientStaffIds)
+  const data: Angelcare360InternalMessageCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    conversationId: asString(input.conversationId, 'La conversation est requise.', 'conversationId', errors),
+    messageCode: asString(input.messageCode, 'Le code du message est obligatoire.', 'messageCode', errors),
+    subject: asOptionalString(input.subject),
+    body: asString(input.body, 'Le contenu du message est obligatoire.', 'body', errors),
+    recipientAppUserIds,
+    recipientStudentIds,
+    recipientParentIds,
+    recipientStaffIds,
+    status: asEnum(input.status || 'sent_internal', ['draft', 'sent_internal', 'read', 'archived', 'external_locked'] as const, 'Le statut du message est invalide.', 'status', errors),
+  }
+  if (!data.body) {
+    errors.push({ path: 'body', message: 'Le contenu du message est obligatoire.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360MessageReadSchema = createSchema<Angelcare360MessageReadInput>('message_read', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La lecture du message doit être un objet.' }] }
+  const data: Angelcare360MessageReadInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    messageId: asString(input.messageId, 'L’identifiant du message est requis.', 'messageId', errors),
+    recipientAppUserId: asOptionalString(input.recipientAppUserId),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ConversationArchiveSchema = createSchema<Angelcare360ConversationArchiveInput>('conversation_archive', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’archivage de conversation doit être un objet.' }] }
+  const data: Angelcare360ConversationArchiveInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la conversation est requis.', 'id', errors),
+    reason: asOptionalString(input.reason),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AnnouncementCreateSchema = createSchema<Angelcare360AnnouncementCreateInput>('announcement_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’annonce doit être un objet.' }] }
+  const data: Angelcare360AnnouncementCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    announcementCode: asString(input.announcementCode, 'Le code d’annonce est obligatoire.', 'announcementCode', errors),
+    title: asString(input.title, 'Le titre est obligatoire.', 'title', errors),
+    body: asString(input.body, 'Le contenu est obligatoire.', 'body', errors),
+    audience: asString(input.audience, 'L’audience est obligatoire.', 'audience', errors),
+    academicYearId: asOptionalString(input.academicYearId),
+    status: asEnum(input.status || 'draft', ['draft', 'published_internal', 'archived', 'external_locked'] as const, 'Le statut de l’annonce est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360AnnouncementUpdateSchema = createSchema<Angelcare360AnnouncementUpdateInput>('announcement_update', (input) => {
+  const parsed = angelcare360AnnouncementCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de l’annonce est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360AnnouncementPublishInternalSchema = createSchema<Angelcare360AnnouncementPublishInternalInput>('announcement_publish_internal', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La publication d’annonce doit être un objet.' }] }
+  const data: Angelcare360AnnouncementPublishInternalInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de l’annonce est requis.', 'id', errors),
+    audience: asString(input.audience, 'L’audience est obligatoire.', 'audience', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360MessageTemplateCreateSchema = createSchema<Angelcare360MessageTemplateCreateInput>('message_template_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le modèle de message doit être un objet.' }] }
+  const data: Angelcare360MessageTemplateCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    templateCode: asString(input.templateCode, 'Le code du modèle est obligatoire.', 'templateCode', errors),
+    channel: asString(input.channel, 'Le canal est obligatoire.', 'channel', errors),
+    name: asString(input.name, 'Le nom du modèle est obligatoire.', 'name', errors),
+    content: asString(input.content, 'Le contenu du modèle est obligatoire.', 'content', errors),
+    audienceType: asOptionalString(input.audienceType),
+    status: asEnum(input.status || 'draft', ['draft', 'active', 'archived', 'external_locked'] as const, 'Le statut du modèle est invalide.', 'status', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360MessageTemplateUpdateSchema = createSchema<Angelcare360MessageTemplateUpdateInput>('message_template_update', (input) => {
+  const parsed = angelcare360MessageTemplateCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant du modèle est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360CommunicationAuditQueryFiltersSchema = createSchema<Angelcare360CommunicationAuditQueryFiltersInput>('communication_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit messagerie doit être un objet.' }] }
+  const data: Angelcare360CommunicationAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    search: asOptionalString(input.search),
+    status: asOptionalString(input.status),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export const angelcare360InternalNotificationCreateSchema = createSchema<Angelcare360InternalNotificationCreateInput>('internal_notification_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La notification interne doit être un objet.' }] }
+  const data: Angelcare360InternalNotificationCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    notificationCode: asString(input.notificationCode, 'Le code de notification est obligatoire.', 'notificationCode', errors),
+    title: asString(input.title, 'Le titre est obligatoire.', 'title', errors),
+    body: asString(input.body, 'Le contenu est obligatoire.', 'body', errors),
+    recipientAppUserId: asOptionalString(input.recipientAppUserId),
+    recipientStudentId: asOptionalString(input.recipientStudentId),
+    recipientParentId: asOptionalString(input.recipientParentId),
+    recipientStaffId: asOptionalString(input.recipientStaffId),
+    recipientRole: asOptionalString(input.recipientRole),
+    channel: asOptionalString(input.channel),
+    actionHref: asOptionalString(input.actionHref),
+    scheduledFor: asOptionalString(input.scheduledFor),
+    status: asEnum(input.status || 'pending', ['pending', 'delivered_internal', 'read', 'failed', 'blocked_external', 'archived'] as const, 'Le statut de la notification est invalide.', 'status', errors),
+  }
+  if (!data.recipientAppUserId && !data.recipientStudentId && !data.recipientParentId && !data.recipientStaffId && !data.recipientRole) {
+    errors.push({ path: 'recipient', message: 'Un destinataire ou une audience est requis.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360NotificationReadSchema = createSchema<Angelcare360NotificationReadInput>('notification_read', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La lecture de notification doit être un objet.' }] }
+  const data: Angelcare360NotificationReadInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la notification est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360NotificationArchiveSchema = createSchema<Angelcare360NotificationArchiveInput>('notification_archive', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’archivage de notification doit être un objet.' }] }
+  const data: Angelcare360NotificationArchiveInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la notification est requis.', 'id', errors),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360NotificationAuditQueryFiltersSchema = createSchema<Angelcare360NotificationAuditQueryFiltersInput>('notification_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit notifications doit être un objet.' }] }
+  const data: Angelcare360NotificationAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    recipientRole: asOptionalString(input.recipientRole),
+    search: asOptionalString(input.search),
+    status: asOptionalString(input.status),
+    from: asOptionalString(input.from),
+    to: asOptionalString(input.to),
+  }
+  if (data.from && data.to && !isValidDateOrder(data.from, data.to)) {
+    return { success: false, errors: [{ path: 'to', message: 'La date de fin doit être postérieure à la date de début.' }] }
+  }
+  return { success: true, data }
+})
+
+export const angelcare360ClaimTicketCreateSchema = createSchema<Angelcare360ClaimTicketCreateInput>('claim_ticket_create', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La réclamation doit être un objet.' }] }
+  const data: Angelcare360ClaimTicketCreateInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    reclamationCode: asString(input.reclamationCode, 'Le code de réclamation est obligatoire.', 'reclamationCode', errors),
+    subject: asString(input.subject, 'Le sujet de la réclamation est obligatoire.', 'subject', errors),
+    description: asString(input.description, 'La description de la réclamation est obligatoire.', 'description', errors),
+    priority: asEnum(input.priority || 'normal', ['low', 'normal', 'high', 'urgent'] as const, 'La priorité est invalide.', 'priority', errors),
+    category: asOptionalString(input.category),
+    submittedByAppUserId: asOptionalString(input.submittedByAppUserId),
+    submittedByParentId: asOptionalString(input.submittedByParentId),
+    submittedByStudentId: asOptionalString(input.submittedByStudentId),
+    submittedByStaffId: asOptionalString(input.submittedByStaffId),
+    status: asEnum(input.status || 'new', ['new', 'in_review', 'assigned', 'waiting_parent', 'waiting_internal', 'resolved', 'closed', 'archived'] as const, 'Le statut de la réclamation est invalide.', 'status', errors),
+  }
+  if (!data.submittedByAppUserId && !data.submittedByParentId && !data.submittedByStudentId && !data.submittedByStaffId) {
+    errors.push({ path: 'requester', message: 'Un demandeur parent, élève, personnel ou compte utilisateur est requis.' })
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ClaimTicketUpdateSchema = createSchema<Angelcare360ClaimTicketUpdateInput>('claim_ticket_update', (input) => {
+  const parsed = angelcare360ClaimTicketCreateSchema.safeParse(input)
+  if (!parsed.success) return parsed
+  if (!isRecord(input) || !isNonEmptyString((input as Record<string, unknown>).id)) {
+    return { success: false, errors: [{ path: 'id', message: 'L’identifiant de la réclamation est requis.' }] }
+  }
+  return { success: true, data: { ...parsed.data, id: String((input as Record<string, unknown>).id).trim() } }
+})
+
+export const angelcare360ClaimTicketAssignSchema = createSchema<Angelcare360ClaimTicketAssignInput>('claim_ticket_assign', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'L’assignation de réclamation doit être un objet.' }] }
+  const data: Angelcare360ClaimTicketAssignInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la réclamation est requis.', 'id', errors),
+    assignedStaffId: asString(input.assignedStaffId, 'Le personnel assigné est obligatoire.', 'assignedStaffId', errors),
+    note: asOptionalString(input.note),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ClaimTicketStatusChangeSchema = createSchema<Angelcare360ClaimTicketStatusChangeInput>('claim_ticket_status_change', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le changement de statut doit être un objet.' }] }
+  const data: Angelcare360ClaimTicketStatusChangeInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la réclamation est requis.', 'id', errors),
+    status: asEnum(input.status, ['new', 'in_review', 'assigned', 'waiting_parent', 'waiting_internal', 'resolved', 'closed', 'archived'] as const, 'Le statut de la réclamation est invalide.', 'status', errors),
+    note: asOptionalString(input.note),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ClaimTicketResolveSchema = createSchema<Angelcare360ClaimTicketResolveInput>('claim_ticket_resolve', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La résolution de réclamation doit être un objet.' }] }
+  const data: Angelcare360ClaimTicketResolveInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la réclamation est requis.', 'id', errors),
+    resolutionSummary: asString(input.resolutionSummary, 'Le résumé de résolution est obligatoire.', 'resolutionSummary', errors),
+    note: asOptionalString(input.note),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ClaimTicketCloseSchema = createSchema<Angelcare360ClaimTicketCloseInput>('claim_ticket_close', (input) => {
+  const errors: Angelcare360ValidationIssue[] = []
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'La clôture de réclamation doit être un objet.' }] }
+  const data: Angelcare360ClaimTicketCloseInput = {
+    schoolId: asString(input.schoolId, 'L’établissement est requis.', 'schoolId', errors),
+    id: asString(input.id, 'L’identifiant de la réclamation est requis.', 'id', errors),
+    resolutionSummary: asString(input.resolutionSummary, 'Le résumé de résolution est obligatoire.', 'resolutionSummary', errors),
+    note: asOptionalString(input.note),
+  }
+  return errors.length ? { success: false, errors } : { success: true, data }
+})
+
+export const angelcare360ClaimAuditQueryFiltersSchema = createSchema<Angelcare360ClaimAuditQueryFiltersInput>('claim_audit_query', (input) => {
+  if (!isRecord(input)) return { success: false, errors: [{ path: 'racine', message: 'Le filtre d’audit réclamations doit être un objet.' }] }
+  const data: Angelcare360ClaimAuditQueryFiltersInput = {
+    schoolId: asOptionalString(input.schoolId),
+    module: asOptionalString(input.module),
+    action: asOptionalString(input.action),
+    severity: asOptionalString(input.severity),
+    entityType: asOptionalString(input.entityType),
+    entityId: asOptionalString(input.entityId),
+    actorUserId: asOptionalString(input.actorUserId),
+    assignedStaffId: asOptionalString(input.assignedStaffId),
+    search: asOptionalString(input.search),
+    status: asOptionalString(input.status),
     from: asOptionalString(input.from),
     to: asOptionalString(input.to),
   }

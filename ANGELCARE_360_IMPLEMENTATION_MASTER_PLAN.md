@@ -330,3 +330,38 @@ Do not move to the next phase until:
 - TypeScript / static verification was run with `NODE_OPTIONS=--max-old-space-size=8192 ./node_modules/.bin/tsc --noEmit --pretty false` and passed.
 - Full production build was intentionally not run by Codex, per the phase restriction.
 - `app/(protected)/angelcare-360` remained untouched.
+
+## Phase 12 - Communication, Notifications & Réclamations
+
+Objective:
+
+- Deliver the controlled communication, notification-readiness, and claims/tickets control plane.
+
+Scope:
+
+- messagerie
+- conversations
+- messages internes
+- annonces
+- modèles de message
+- audiences
+- notifications internes
+- canaux verrouillés
+- réclamations / tickets
+- assignations
+- priorités
+- résolution auditable
+- audit communication / notifications / réclamations
+
+Acceptance criteria:
+
+- isolated French route trees exist under the AngelCare 360 command center shell
+- server-backed communication, notification, and claim helpers exist
+- API routes handle real mutations and audit critical changes
+- internal delivery persists server-side
+- external messaging channels remain locked unless real infrastructure exists
+- ticket resolution requires a summary
+- permissions are enforced and audit events are written
+- `app/(protected)/angelcare-360` remains untouched
+- unrelated product areas remain untouched
+- TypeScript / static verification passes without running the production build

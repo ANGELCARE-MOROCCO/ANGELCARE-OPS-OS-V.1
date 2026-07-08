@@ -1,0 +1,37 @@
+'use client'
+
+import type { Angelcare360ClaimTicketRecord } from '@/types/angelcare360/communications'
+
+type Props = {
+  tickets: Angelcare360ClaimTicketRecord[]
+}
+
+export default function Angelcare360ClaimTicketsWorkspace({ tickets }: Props) {
+  return (
+    <div style={listStyle}>
+      {tickets.length ? tickets.map((ticket) => (
+        <article key={ticket.id} style={cardStyle}>
+          <div style={headerStyle}>
+            <strong>{ticket.subject}</strong>
+            <span>{ticket.status}</span>
+          </div>
+          <p style={bodyStyle}>{ticket.description}</p>
+          <div style={footerStyle}>
+            <span>{ticket.priority}</span>
+            <span>{ticket.assigned_staff_label || 'Non assignée'}</span>
+          </div>
+        </article>
+      )) : (
+        <div style={emptyStyle}>Aucun ticket de réclamation.</div>
+      )}
+    </div>
+  )
+}
+
+const listStyle: React.CSSProperties = { display: 'grid', gap: 12 }
+const cardStyle: React.CSSProperties = { display: 'grid', gap: 8, padding: 14, borderRadius: 18, border: '1px solid #e2e8f0', background: '#fff' }
+const headerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }
+const bodyStyle: React.CSSProperties = { margin: 0, color: '#334155', lineHeight: 1.65 }
+const footerStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 12, color: '#64748b', fontSize: 12, fontWeight: 700 }
+const emptyStyle: React.CSSProperties = { padding: 16, borderRadius: 18, border: '1px dashed #cbd5e1', color: '#475569', fontWeight: 700 }
+
