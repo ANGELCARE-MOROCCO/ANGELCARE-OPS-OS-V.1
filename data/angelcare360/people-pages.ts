@@ -1,6 +1,7 @@
 import type {
   Angelcare360PeopleEntityConfig,
   Angelcare360PeopleFieldOption,
+  Angelcare360PeopleNormalizationKey,
 } from '@/types/angelcare360/people'
 
 export type Angelcare360PeopleSelectSource = Array<Record<string, unknown>>
@@ -176,6 +177,31 @@ function mapEnrollmentValues(row: Record<string, unknown>) {
   }
 }
 
+export function normalizeAngelcare360PeopleInitialValues(
+  normalizationKey: Angelcare360PeopleNormalizationKey | undefined,
+  row: Record<string, unknown>,
+) {
+  switch (normalizationKey) {
+    case 'student':
+      return mapStudentValues(row)
+    case 'parent':
+      return mapParentValues(row)
+    case 'staff':
+      return mapStaffValues(row)
+    case 'emergency-contact':
+      return mapEmergencyContactValues(row)
+    case 'document':
+      return mapDocumentValues(row)
+    case 'link':
+      return mapLinkValues(row)
+    case 'enrollment':
+      return mapEnrollmentValues(row)
+    case 'raw':
+    default:
+      return row
+  }
+}
+
 function baseRowActions() {
   return [
     { key: 'edit', label: 'Modifier', kind: 'secondary' as const },
@@ -274,7 +300,7 @@ export function createStudentPeopleConfig(input: {
       { key: 'status', label: 'Archiver', kind: 'danger', operation: 'status', value: 'archived', disabledReason: 'L’archivage est réservé aux dossiers obsolètes.' },
     ],
     searchableKeys: ['student_code', 'full_name', 'first_name', 'last_name', 'current_class_name', 'current_section_name', 'admission_status', 'status', 'parent_names'],
-    normalizeInitialValues: mapStudentValues,
+    normalizeInitialValuesKey: 'student',
   }
 }
 
@@ -349,7 +375,7 @@ export function createParentPeopleConfig(input: { schoolId: string }): Angelcare
     ],
     rowActions: baseRowActions(),
     searchableKeys: ['parent_code', 'full_name', 'first_name', 'last_name', 'email', 'phone', 'whatsapp', 'child_names', 'relationship_type', 'status'],
-    normalizeInitialValues: mapParentValues,
+    normalizeInitialValuesKey: 'parent',
   }
 }
 
@@ -422,7 +448,7 @@ export function createStaffPeopleConfig(input: { schoolId: string; staffType: 't
     ],
     rowActions: baseRowActions(),
     searchableKeys: ['staff_code', 'full_name', 'first_name', 'last_name', 'email', 'phone', 'department', 'class_names', 'subject_names', 'staff_type', 'status'],
-    normalizeInitialValues: mapStaffValues,
+    normalizeInitialValuesKey: 'staff',
   }
 }
 
@@ -482,7 +508,7 @@ export function createEmergencyContactPeopleConfig(input: { schoolId: string }):
       ] },
     ],
     rowActions: baseRowActions(),
-    normalizeInitialValues: mapEmergencyContactValues,
+    normalizeInitialValuesKey: 'emergency-contact',
   }
 }
 
@@ -563,7 +589,7 @@ export function createDocumentPeopleConfig(input: { schoolId: string }): Angelca
       { name: 'category', label: 'Catégorie', options: [] },
     ],
     rowActions: baseRowActions(),
-    normalizeInitialValues: mapDocumentValues,
+    normalizeInitialValuesKey: 'document',
   }
 }
 
@@ -628,7 +654,7 @@ export function createStudentParentLinkPeopleConfig(input: { schoolId: string; s
       ] },
     ],
     rowActions: baseRowActions(),
-    normalizeInitialValues: mapLinkValues,
+    normalizeInitialValuesKey: 'link',
   }
 }
 
@@ -680,7 +706,7 @@ export function createClassEnrollmentPeopleConfig(input: { schoolId: string; aca
       ] },
     ],
     rowActions: baseRowActions(),
-    normalizeInitialValues: mapEnrollmentValues,
+    normalizeInitialValuesKey: 'enrollment',
   }
 }
 
@@ -725,7 +751,7 @@ export function createPeopleAuditConfig(): Angelcare360PeopleEntityConfig {
       { key: 'view', label: 'Consulter', kind: 'secondary', disabledReason: 'La consultation s’effectue dans le panneau latéral.' },
     ],
     detailHrefKey: 'detail_href',
-    normalizeInitialValues: (row) => row,
+    normalizeInitialValuesKey: 'raw',
   }
 }
 

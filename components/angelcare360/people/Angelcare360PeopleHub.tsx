@@ -13,6 +13,7 @@ import Angelcare360PeopleToolbar from './Angelcare360PeopleToolbar'
 import Angelcare360PeopleTable from './Angelcare360PeopleTable'
 import Angelcare360PeopleDrawer from './Angelcare360PeopleDrawer'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { normalizeAngelcare360PeopleInitialValues } from '@/data/angelcare360/people-pages'
 
 type Angelcare360PeopleHubProps = {
   config: Angelcare360PeopleEntityConfig
@@ -169,7 +170,9 @@ export default function Angelcare360PeopleHub({
   const createReason = !canCreate ? createDisabledReason || 'Vous n’avez pas l’autorisation de créer un enregistrement.' : config.disabledCreateReason
   const normalizedInitialValues = useMemo(() => {
     if (!selectedRecord) return {}
-    return config.normalizeInitialValues ? config.normalizeInitialValues(selectedRecord) : selectedRecord
+    return config.normalizeInitialValuesKey
+      ? normalizeAngelcare360PeopleInitialValues(config.normalizeInitialValuesKey, selectedRecord)
+      : selectedRecord
   }, [config, selectedRecord])
 
   return (

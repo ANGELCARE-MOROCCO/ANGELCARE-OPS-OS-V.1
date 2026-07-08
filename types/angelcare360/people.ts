@@ -4,6 +4,15 @@ import type { Angelcare360AuditRecord } from './audit'
 export type Angelcare360PeopleStatus = Extract<Angelcare360EntityStatus, 'active' | 'inactive' | 'archived' | 'suspended'> | string
 export type Angelcare360PeopleRecordStatus = 'active' | 'inactive' | 'archived'
 export type Angelcare360DocumentLifecycleStatus = 'requis' | 'recu' | 'validé' | 'expire' | 'archived'
+export type Angelcare360PeopleNormalizationKey =
+  | 'student'
+  | 'parent'
+  | 'staff'
+  | 'emergency-contact'
+  | 'document'
+  | 'link'
+  | 'enrollment'
+  | 'raw'
 
 export interface Angelcare360StudentRecord extends Angelcare360BaseRecord {
   student_code: string
@@ -325,5 +334,5 @@ export interface Angelcare360PeopleEntityConfig {
   fixedValues?: Record<string, string | number | boolean | null>
   searchableKeys?: string[]
   detailHrefKey?: string
-  normalizeInitialValues?: (row: Record<string, unknown>) => Record<string, unknown>
+  normalizeInitialValuesKey?: Angelcare360PeopleNormalizationKey
 }

@@ -112,13 +112,12 @@ export default function Angelcare360PeopleDrawer({
           {fieldList.map((field) => {
             const currentValue = formState[field.name]
             const commonProps = {
-              key: field.name,
               style: fieldShellStyle,
             }
 
             if (field.kind === 'switch') {
               return (
-                <label {...commonProps}>
+                <label key={field.name} {...commonProps}>
                   <span style={labelStyle}>{field.label}</span>
                   <input
                     type="checkbox"
@@ -131,7 +130,7 @@ export default function Angelcare360PeopleDrawer({
 
             if (field.kind === 'select') {
               return (
-                <label {...commonProps}>
+                <label key={field.name} {...commonProps}>
                   <span style={labelStyle}>{field.label}</span>
                   <select
                     value={valueToString(currentValue)}
@@ -155,7 +154,7 @@ export default function Angelcare360PeopleDrawer({
             if (field.kind === 'multi-select') {
               const currentValues = Array.isArray(currentValue) ? currentValue.map(String) : []
               return (
-                <div {...commonProps}>
+                <div key={field.name} {...commonProps}>
                   <span style={labelStyle}>{field.label}</span>
                   <div style={multiSelectGridStyle}>
                     {field.options?.map((option) => {
@@ -187,7 +186,7 @@ export default function Angelcare360PeopleDrawer({
 
             if (field.kind === 'textarea') {
               return (
-                <label {...commonProps}>
+                <label key={field.name} {...commonProps}>
                   <span style={labelStyle}>{field.label}</span>
                   <textarea
                     value={valueToString(currentValue)}
@@ -203,7 +202,7 @@ export default function Angelcare360PeopleDrawer({
             }
 
             return (
-              <label {...commonProps}>
+              <label key={field.name} {...commonProps}>
                 <span style={labelStyle}>{field.label}</span>
                 <input
                   type={field.kind === 'email' || field.kind === 'tel' || field.kind === 'date' || field.kind === 'number' ? field.kind : 'text'}
@@ -397,4 +396,3 @@ const saveButtonStyle: React.CSSProperties = {
   fontWeight: 800,
   cursor: 'pointer',
 }
-
