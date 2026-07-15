@@ -1,40 +1,35 @@
-node_modules
-.next
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Web build
+.next/
+**/.next/
+.turbo/
+**/.turbo/
+
+# Android build
+**/android/app/build/
+**/android/.gradle/
+**/android/build/
+*.apk
+*.aab
+
+# Local env
 .env
-.env.local
-.env.*.local
-dist
-build
-coverage
-.DS_Store
+.env.*
+!.env.example
+
+# Logs / noise
 *.log
-
-# Local patch backups
-*.bak
-*.bak-*
-*.broken-*
-*.broken-*-current
-*.broken-jsx-current
-*.before-*
-*.tsbuildinfo
-.vercel
-.env*
-
-# Local/generated/backup artifacts
-.vercel/
-.angelcare_backups/
-.patch-backups-*/
-.rollback-*/
-carelink-p*.patch
-tsconfig.tsbuildinfo
-*.backup-*
-
-# Local AI patch packs / temporary generated patch folders
-*-patch-pack/
-*_patch_pack/
-carelink-*-patch-pack/
-carelink_*_patch_pack/
 *.patch
 *.diff
 *.zip
+*debug*.txt
 *audit*.txt
+.angelcare_backups/
+carelink-*-patch-pack/
+*_patch_pack/
+
+# OS
+.DS_Store

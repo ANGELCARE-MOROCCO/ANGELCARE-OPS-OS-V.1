@@ -1,0 +1,40 @@
+node_modules
+.next
+.env
+.env.local
+.env.*.local
+dist
+build
+coverage
+.DS_Store
+*.log
+
+# Local patch backups
+*.bak
+*.bak-*
+*.broken-*
+*.broken-*-current
+*.broken-jsx-current
+*.before-*
+*.tsbuildinfo
+.vercel
+.env*
+
+# Local/generated/backup artifacts
+.vercel/
+.angelcare_backups/
+.patch-backups-*/
+.rollback-*/
+carelink-p*.patch
+tsconfig.tsbuildinfo
+*.backup-*
+
+# Local AI patch packs / temporary generated patch folders
+*-patch-pack/
+*_patch_pack/
+carelink-*-patch-pack/
+carelink_*_patch_pack/
+*.patch
+*.diff
+*.zip
+*audit*.txt
