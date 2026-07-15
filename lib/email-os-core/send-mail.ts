@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer"
-import { resolveEmailOSMailboxIdentity } from "@/lib/email-os-core/multi-mailbox-resolver"
+import { resolveEmailOSMailboxIdentity, resolveEmailOSMailboxIdentityFromDb } from "@/lib/email-os-core/multi-mailbox-resolver"
 
 const sendLocks = new Map<string, Promise<void>>()
 const lastSendAt = new Map<string, number>()
@@ -59,7 +59,7 @@ function bridgeUrl() {
 }
 
 function bridgeToken() {
-  return clean(process.env.EMAIL_OS_BRIDGE_TOKEN || process.env.EMAIL_OS_INTERNAL_TOKEN || process.env.EMAIL_OS_CRON_SECRET)
+  return clean(process.env.EMAIL_OS_BRIDGE_TOKEN)
 }
 
 async function sendViaBridge(identity: any, input: EmailOSSendInput) {
@@ -77,7 +77,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput) {
       smtpPort: identity.smtp.port,
       smtpSecure: identity.smtp.secure,
       username: identity.smtp.user,
-      password: identity.smtp.pass,
+      password: identity.smtp.pass || identity.credential?.passwordRef || "",
       fromEmail: identity.smtp.from,
       diagnostics: {
         source: "angelcare-email-os",
@@ -87,7 +87,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput) {
         smtpHost: identity.smtp.host,
         smtpPort: identity.smtp.port,
         smtpUser: identity.smtp.user,
-        passwordConfigured: Boolean(identity.smtp.pass)
+        passwordConfigured: Boolean(identity.credential?.passwordRef || identity.smtp.pass)
       },
       toEmail: input.toEmail,
       cc: clean(input.ccEmail) || undefined,
@@ -124,13 +124,27 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
     throw new Error("Recipient is required")
   }
 
-  const identity = resolveEmailOSMailboxIdentity({
+  const dbIdentity = await resolveEmailOSMailboxIdentityFromDb({
     mailboxId,
     fromEmail,
     selectedEmail: fromEmail
   })
 
-  if (!identity || !identity.smtp.host || !identity.smtp.port || !identity.smtp.user || !identity.smtp.pass) {
+  const identity =
+    dbIdentity ||
+    resolveEmailOSMailboxIdentity({
+      mailboxId,
+      fromEmail,
+      selectedEmail: fromEmail
+    })
+
+  if (
+    !identity ||
+    !identity.smtp.host ||
+    !identity.smtp.port ||
+    !identity.smtp.user ||
+    !(identity.smtp.pass || identity.credential?.passwordRef)
+  ) {
     throw new Error(
       `SMTP is not configured for selected mailbox. mailboxId=${mailboxId || "none"} from=${fromEmail || "none"}`
     )
@@ -152,7 +166,7 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
       secure: identity.smtp.secure,
       auth: {
         user: identity.smtp.user,
-        pass: identity.smtp.pass
+        pass: identity.smtp.pass || identity.credential?.passwordRef || ""
       },
       pool: false,
       tls: {
