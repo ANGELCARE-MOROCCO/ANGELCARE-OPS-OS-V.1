@@ -1,4 +1,7 @@
-import { ANGELCARE360_COLORS, angelcare360SuccessCardStyle } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360SuccessCardStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360SuccessStateProps = {
   title: string

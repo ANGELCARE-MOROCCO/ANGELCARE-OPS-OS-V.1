@@ -1,39 +1,23 @@
-import { NextResponse } from "next/server"
-import { buildCsv, datedFilename } from "@/lib/market-os/ambassadors/validation"
+import { ambassadorJson, readBody } from "@/lib/market-os/ambassadors/api"
+import { generateAmbassadorReport } from "@/lib/market-os/ambassadors/server"
 
-type AnyRecord = Record<string, any>
+export const dynamic = "force-dynamic"
 
-function normalizeRows(payload: any): AnyRecord[] {
-  if (Array.isArray(payload)) return payload
-  if (Array.isArray(payload?.rows)) return payload.rows
-  if (Array.isArray(payload?.records)) return payload.records
-  if (Array.isArray(payload?.data)) return payload.data
-  return []
-}
-
-export async function GET() {
-  const rows: AnyRecord[] = []
-  const csv = buildCsv(rows)
-
+export async function GET(request: Request) {
+  const url = new URL(request.url)
+  const reportType = url.searchParams.get("report_type") || "ambassadors"
+  const result = await generateAmbassadorReport({ report_type: reportType, title: `Ambassador ${reportType} export` })
+  const csv = result.data?.csv || ""
+  const filename = result.data?.filename || `angelcare-ambassadors-${new Date().toISOString().slice(0, 10)}.csv`
   return new Response(csv, {
     status: 200,
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${datedFilename("ambassadors-report", "csv")}"`,
+      "Content-Disposition": `attachment; filename="${filename}"`,
     },
   })
 }
 
 export async function POST(request: Request) {
-  const payload = await request.json().catch(() => ({}))
-  const rows = normalizeRows(payload)
-  const csv = buildCsv(rows)
-
-  return NextResponse.json({
-    ok: true,
-    source: "ambassador-report-export-compat",
-    filename: datedFilename("ambassadors-report", "csv"),
-    data: csv,
-    rows: rows.length,
-  })
+  return ambassadorJson(await generateAmbassadorReport(await readBody(request)))
 }

@@ -43,16 +43,20 @@ function firstEnv(names: string[]) {
   return ""
 }
 
-function passwordFromEnv(email: string) {
+function passwordEnvKeys(email: string) {
   const key = mailboxEnvKey(email)
-  return firstEnv([
+  return [
     `EMAIL_OS_${key}_PASSWORD`,
     `EMAIL_OS_${key}_SMTP_PASSWORD`,
     `MAILBOX_${key}_PASSWORD`,
     `MAILBOX_${key}_SMTP_PASSWORD`,
     `${key}_PASSWORD`,
     `${key}_SMTP_PASSWORD`,
-  ])
+  ]
+}
+
+function passwordFromEnv(email: string) {
+  return firstEnv(passwordEnvKeys(email))
 }
 
 function normalizeEmail(email: string) {
@@ -63,15 +67,45 @@ function normalizeEmail(email: string) {
 export async function POST() {
   try {
     const db = createEmailOSCoreDb()
+    const smtpHost = process.env.GLOBAL_SMTP_HOST || "smtp-auth.menara.ma"
+    const smtpPort = Number(process.env.GLOBAL_SMTP_PORT || 587)
+    const smtpSecure = String(process.env.GLOBAL_SMTP_SECURE || "false").toLowerCase() === "true"
+
+    const accountDiagnostics = accounts.map((account) => {
+      const email = normalizeEmail(account.email)
+      const envPassword = passwordFromEnv(account.email)
+      const accountPassword = String(account.password || "").trim()
+      const passwordConfigured = Boolean(envPassword || accountPassword)
+      const acceptedEnvKeys = passwordEnvKeys(account.email)
+
+      return {
+        mailboxId: mailboxId(email),
+        email,
+        owner: account.owner,
+        passwordConfigured,
+        acceptedEnvKeys,
+      }
+    })
+
+    const configuredCredentials = accountDiagnostics.filter((account) => account.passwordConfigured).length
+    const missingCredentials = accountDiagnostics.length - configuredCredentials
+    const missing = accountDiagnostics
+      .filter((account) => !account.passwordConfigured)
+      .map(({ mailboxId, email, owner, acceptedEnvKeys }) => ({
+        mailboxId,
+        email,
+        owner,
+        expectedEnvKeys: acceptedEnvKeys,
+      }))
 
     await db.from("email_os_core_provider_profiles").upsert({
       id: "provider_menara_default",
       name: "Menara Maroc Telecom",
       provider_key: "menara",
       provider_mode: "smtp_imap",
-      smtp_host: process.env.GLOBAL_SMTP_HOST || "smtp-out9.menara.ma",
-      smtp_port: Number(process.env.GLOBAL_SMTP_PORT || 587),
-      smtp_secure: String(process.env.GLOBAL_SMTP_SECURE || "false").toLowerCase() === "true",
+      smtp_host: smtpHost,
+      smtp_port: smtpPort,
+      smtp_secure: smtpSecure,
       imap_host: process.env.GLOBAL_POP_HOST || process.env.EMAIL_OS_POP_HOST || "pop.menara.ma",
       imap_port: Number(process.env.GLOBAL_POP_PORT || process.env.EMAIL_OS_POP_PORT || 110),
       imap_secure: String(process.env.GLOBAL_POP_SECURE || process.env.EMAIL_OS_POP_SECURE || "false").toLowerCase() === "true",
@@ -92,7 +126,7 @@ export async function POST() {
     }))
 
     const credentials = accounts.map((account) => ({
-      id: credentialId(account.email),
+      id: credentialId(normalizeEmail(account.email)),
       mailbox_id: mailboxId(normalizeEmail(account.email)),
       provider_profile_id: "provider_menara_default",
       email_address: normalizeEmail(account.email),
@@ -116,7 +150,22 @@ export async function POST() {
       data: {
         provider: "provider_menara_default",
         mailboxes: mailboxes.length,
-        credentials: credentials.length
+        credentials: credentials.length,
+        smtpHost,
+        smtpPort,
+        smtpSecure,
+        ready: missingCredentials === 0,
+        ...(missingCredentials > 0
+          ? {
+              warning: "Some mailbox passwords are missing; credentials rows were installed but not usable.",
+            }
+          : {}),
+        diagnostics: {
+          configuredCredentials,
+          missingCredentials,
+          missing,
+          accounts: accountDiagnostics,
+        },
       }
     })
   } catch (error) {

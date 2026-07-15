@@ -1,5 +1,6 @@
 "use client"
 import { safeUiInterval } from '@/lib/runtime/client-live-governor'
+import { usePathname } from 'next/navigation'
 
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -157,6 +158,8 @@ function getRouteLabel(route: AppRoute) {
 }
 
 export default function OverheadPanel() {
+  const pathname = usePathname()
+  const isAngelcareRoute = pathname.startsWith('/angelcare-360') || pathname.startsWith('/angelcare-360-operator')
   const [now, setNow] = useState<Date | null>(null)
   const [online, setOnline] = useState(true)
   const [status, setStatus] = useState<AttendanceStatus>("none")
@@ -287,6 +290,8 @@ export default function OverheadPanel() {
   }
 
   async function refreshPersonalCommandAlerts() {
+    if (isAngelcareRoute) return
+
     try {
       const endpoints = ["/api/dashboard/broadcast-notifications"]
       const responses = await Promise.allSettled(
@@ -332,6 +337,8 @@ export default function OverheadPanel() {
   }
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     let alive = true
 
     const refresh = () => {
@@ -356,7 +363,7 @@ export default function OverheadPanel() {
       window.removeEventListener("focus", onFocus)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
-  }, [])
+  }, [isAngelcareRoute])
 
   useEffect(() => {
     if (!alertsOpen) return

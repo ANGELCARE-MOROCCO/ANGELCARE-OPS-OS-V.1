@@ -16,11 +16,11 @@ export default async function Angelcare360AttendanceStudentsPage({
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  const params = (await searchParams) || {}
+  const query = (await searchParams) || {}
   const summary = await getAngelcare360StudentAttendanceSummary({
     schoolId: context.school.id,
-    from: params.from || null,
-    to: params.to || null,
+    from: query.from || null,
+    to: query.to || null,
   })
   if (!summary.ok) {
     return (
@@ -44,7 +44,7 @@ export default async function Angelcare360AttendanceStudentsPage({
     )
   }
 
-  const grouped = groupAttendanceRows(summary.record.rows as unknown as Array<Record<string, unknown>>, params)
+  const grouped = groupAttendanceRows(summary.record.rows as unknown as Array<Record<string, unknown>>, query)
 
   return (
     <Angelcare360AttendancePageShell
@@ -56,18 +56,18 @@ export default async function Angelcare360AttendanceStudentsPage({
         <>
           <Badge label={`Établissement: ${context.school.name}`} />
           <Badge label={`Année: ${context.academicYear?.label || 'Non résolue'}`} />
-          <Badge label={`Période: ${params.from || 'Début'} → ${params.to || 'Aujourd’hui'}`} />
+          <Badge label={`Période: ${query.from || 'Début'} → ${query.to || 'Aujourd’hui'}`} />
         </>
       }
       navigationItems={ANGELCARE360_ATTENDANCE_NAVIGATION}
     >
       <form style={toolbarStyle} method="get">
-        <input name="search" defaultValue={params.search || ''} placeholder="Rechercher un élève" style={searchStyle} />
-        <input name="from" type="date" defaultValue={params.from || ''} style={searchStyle} />
-        <input name="to" type="date" defaultValue={params.to || ''} style={searchStyle} />
-        <input name="status" defaultValue={params.status || ''} placeholder="Statut" style={searchStyle} />
-        <input name="classId" defaultValue={params.classId || ''} placeholder="ID classe" style={searchStyle} />
-        <input name="sectionId" defaultValue={params.sectionId || ''} placeholder="ID section" style={searchStyle} />
+        <input name="search" defaultValue={query.search || ''} placeholder="Rechercher un élève" style={searchStyle} />
+        <input name="from" type="date" defaultValue={query.from || ''} style={searchStyle} />
+        <input name="to" type="date" defaultValue={query.to || ''} style={searchStyle} />
+        <input name="status" defaultValue={query.status || ''} placeholder="Statut" style={searchStyle} />
+        <input name="classId" defaultValue={query.classId || ''} placeholder="ID classe" style={searchStyle} />
+        <input name="sectionId" defaultValue={query.sectionId || ''} placeholder="ID section" style={searchStyle} />
         <button type="submit" style={primaryButtonStyle}>
           Filtrer
         </button>
@@ -129,11 +129,11 @@ type GroupedAttendance = {
   excused: number
 }
 
-function groupAttendanceRows(rows: Array<Record<string, unknown>>, params: Record<string, string | undefined>) {
-  const search = (params.search || '').trim().toLowerCase()
-  const status = (params.status || '').trim().toLowerCase()
-  const classId = (params.classId || '').trim()
-  const sectionId = (params.sectionId || '').trim()
+function groupAttendanceRows(rows: Array<Record<string, unknown>>, query: Record<string, string | undefined>) {
+  const search = (query.search || '').trim().toLowerCase()
+  const status = (query.status || '').trim().toLowerCase()
+  const classId = (query.classId || '').trim()
+  const sectionId = (query.sectionId || '').trim()
   const map = new Map<string, GroupedAttendance>()
 
   for (const row of rows) {

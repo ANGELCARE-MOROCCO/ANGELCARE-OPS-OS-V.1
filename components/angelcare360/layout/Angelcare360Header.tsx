@@ -5,6 +5,8 @@ import {
   ANGELCARE360_COLORS,
   angelcare360ButtonBaseStyle,
   angelcare360ButtonSecondaryStyle,
+  angelcare360PillBlueStyle,
+  angelcare360PillStyle,
 } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360HeaderProps = {
@@ -32,7 +34,7 @@ export default function Angelcare360Header({ user, access, pathname, onToggleSid
           <AngelCareLogo size="sm" showText />
           <div style={brandCopyStyle}>
             <div style={brandTitleStyle}>ANGELCARE 360 COMMAND CENTER</div>
-            <div style={brandSubtitleStyle}>Pilotage scolaire français</div>
+            <div style={brandSubtitleStyle}>Pilotage scolaire français, lecture consolidée et contrôle des accès</div>
           </div>
         </Link>
       </div>
@@ -59,11 +61,11 @@ export default function Angelcare360Header({ user, access, pathname, onToggleSid
 
 const headerStyle: React.CSSProperties = {
   display: 'grid',
-  gap: 14,
-  padding: '18px 24px',
-  background: 'rgba(255,255,255,.94)',
+  gap: 16,
+  padding: '20px 28px',
+  background: 'rgba(255,255,255,.95)',
   borderBottom: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
-  backdropFilter: 'blur(14px)',
+  backdropFilter: 'blur(16px)',
 }
 
 const brandRowStyle: React.CSSProperties = {
@@ -107,6 +109,8 @@ const brandSubtitleStyle: React.CSSProperties = {
   color: ANGELCARE360_COLORS.slateMuted,
   fontSize: 12,
   fontWeight: 650,
+  lineHeight: 1.45,
+  maxWidth: 520,
 }
 
 const metaRowStyle: React.CSSProperties = {
@@ -116,31 +120,21 @@ const metaRowStyle: React.CSSProperties = {
 }
 
 const routeChipStyle: React.CSSProperties = {
-  borderRadius: 999,
-  background: '#eff6ff',
-  color: ANGELCARE360_COLORS.blue,
+  ...angelcare360PillBlueStyle,
   padding: '7px 10px',
-  fontSize: 12,
-  fontWeight: 900,
 }
 
 const roleChipStyle: React.CSSProperties = {
-  borderRadius: 999,
-  background: ANGELCARE360_COLORS.background,
-  color: ANGELCARE360_COLORS.navy,
+  ...angelcare360PillStyle,
   padding: '7px 10px',
-  fontSize: 12,
-  fontWeight: 800,
-  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
 }
 
 const userChipStyle: React.CSSProperties = {
-  borderRadius: 999,
-  background: ANGELCARE360_COLORS.navy,
+  ...angelcare360PillStyle,
+  background: `linear-gradient(180deg, ${ANGELCARE360_COLORS.navy} 0%, ${ANGELCARE360_COLORS.navyDeep} 100%)`,
   color: ANGELCARE360_COLORS.white,
+  borderColor: ANGELCARE360_COLORS.navy,
   padding: '7px 10px',
-  fontSize: 12,
-  fontWeight: 800,
 }
 
 const routeActionsStyle: React.CSSProperties = {

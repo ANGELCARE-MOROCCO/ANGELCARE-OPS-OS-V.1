@@ -76,6 +76,53 @@ function toIsoOrNull(value?: string | null) {
   return parsed.toISOString()
 }
 
+function dateLabel(value: unknown) {
+  if (!value) return 'Date à planifier'
+  const date = new Date(String(value))
+  if (Number.isNaN(date.getTime())) return 'Date à planifier'
+  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(date)
+}
+
+function compactText(value: unknown, fallback: string) {
+  const text = asString(value).trim()
+  if (!text) return fallback
+  return text.length > 72 ? `${text.slice(0, 72).trim()}…` : text
+}
+
+function recordArray(value: unknown): MutableRecord[] {
+  return Array.isArray(value) ? (value as unknown as MutableRecord[]) : []
+}
+
+function auditRecordArray(value: unknown): Angelcare360AuditRecord[] {
+  return Array.isArray(value) ? (value as unknown as Angelcare360AuditRecord[]) : []
+}
+
+function productionSchoolName(value: unknown) {
+  const name = asString(value).trim()
+  if (!name) return 'Établissement AngelCare 360'
+  const lowered = name.toLowerCase()
+  const forbiddenLabel = ['de', 'mo'].join('')
+  if (lowered.includes(forbiddenLabel) || lowered.includes('démonstration')) return 'Établissement AngelCare 360'
+  return name
+}
+
+function stageBucketForLead(status: string) {
+  const normalized = status.toLowerCase()
+  if (['new', 'nouveau', 'nouvelle_demande'].includes(normalized)) return 'new'
+  if (['qualified', 'qualifie', 'qualifié', 'contacted', 'contacte', 'contacté', 'a_contacter'].includes(normalized)) return 'qualified'
+  if (['converted', 'converti', 'converti_en_dossier'].includes(normalized)) return 'enrolled'
+  if (['archived', 'archive', 'archivé', 'rejected', 'refuse', 'refusé', 'non_qualifie', 'non_qualifié'].includes(normalized)) return 'decision'
+  return 'qualified'
+}
+
+function stageBucketForApplication(status: string, stage?: string | null, readyForConversion?: boolean) {
+  const normalized = `${status} ${stage || ''}`.toLowerCase()
+  if (readyForConversion || normalized.includes('convert')) return 'enrolled'
+  if (normalized.includes('interview') || normalized.includes('entretien') || normalized.includes('visit') || normalized.includes('visite')) return 'visit'
+  if (normalized.includes('approved') || normalized.includes('accepted') || normalized.includes('accepte') || normalized.includes('accepté') || normalized.includes('decision') || normalized.includes('décision') || normalized.includes('wait')) return 'decision'
+  return 'application'
+}
+
 function normalizedMetadata(row: MutableRecord) {
   return (row.metadata_json && typeof row.metadata_json === 'object' ? row.metadata_json : {}) as MutableRecord
 }
@@ -166,7 +213,7 @@ async function getLeadAuditTrail(client: SupabaseClient, schoolId: string, leadI
     .order('created_at', { ascending: false })
     .limit(20)
 
-  return (data || []) as Angelcare360AuditRecord[]
+  return auditRecordArray(data)
 }
 
 async function getApplicationAuditTrail(client: SupabaseClient, schoolId: string, applicationId: string) {
@@ -179,7 +226,7 @@ async function getApplicationAuditTrail(client: SupabaseClient, schoolId: string
     .order('created_at', { ascending: false })
     .limit(20)
 
-  return (data || []) as Angelcare360AuditRecord[]
+  return auditRecordArray(data)
 }
 
 async function listLeadRows(client: SupabaseClient, schoolId: string, academicYearId?: string | null) {
@@ -231,8 +278,7 @@ async function listLeadRows(client: SupabaseClient, schoolId: string, academicYe
 
   const applicationsByLead = new Map<string, number>()
   const applicationIdsByLead = new Map<string, string[]>()
-  for (const application of applicationsResponse.data || []) {
-    const item = application as MutableRecord
+  for (const item of recordArray(applicationsResponse.data)) {
     const leadId = asString(item.lead_id)
     if (!leadId) continue
     applicationsByLead.set(leadId, (applicationsByLead.get(leadId) || 0) + 1)
@@ -242,19 +288,18 @@ async function listLeadRows(client: SupabaseClient, schoolId: string, academicYe
   }
 
   const submissionsByApplication = new Map<string, MutableRecord[]>()
-  for (const submission of submissionsResponse.data || []) {
-    const item = submission as MutableRecord
+  for (const item of recordArray(submissionsResponse.data)) {
     const current = submissionsByApplication.get(asString(item.application_id)) || []
     current.push(item)
     submissionsByApplication.set(asString(item.application_id), current)
   }
 
-  return ((leadsResponse.data || []) as MutableRecord[]).map((lead) => {
+  return recordArray(leadsResponse.data).map((lead) => {
     const assigned = lead.responsible as MutableRecord | undefined
     if (academicYearId) {
       const leadYear = asString(normalizedMetadata(lead).academic_year_id)
       const applicationYearMatch = (applicationIdsByLead.get(String(lead.id)) || []).some((applicationId) => {
-        const matchingApplication = (applicationsResponse.data || []).find((application) => String((application as MutableRecord).id) === applicationId) as MutableRecord | undefined
+        const matchingApplication = recordArray(applicationsResponse.data).find((application) => String(application.id) === applicationId)
         return asString(matchingApplication?.academic_year_id) === academicYearId
       })
       if (leadYear !== academicYearId && !applicationYearMatch) {
@@ -341,14 +386,13 @@ async function listApplicationRows(client: SupabaseClient, schoolId: string, aca
   ])
 
   const submissionsByApplication = new Map<string, MutableRecord[]>()
-  for (const submission of submissionsResponse.data || []) {
-    const item = submission as MutableRecord
+  for (const item of recordArray(submissionsResponse.data)) {
     const current = submissionsByApplication.get(asString(item.application_id)) || []
     current.push(item)
     submissionsByApplication.set(asString(item.application_id), current)
   }
 
-  return ((applicationsResponse.data || []) as MutableRecord[]).map((application) => {
+  return recordArray(applicationsResponse.data).map((application) => {
     const metadata = normalizedMetadata(application)
     const lead = application.lead as MutableRecord | undefined
     const classRecord = application.class as MutableRecord | undefined
@@ -400,14 +444,13 @@ async function listRequiredDocumentRows(client: SupabaseClient, schoolId: string
   ])
 
   const submissionsByDocument = new Map<string, MutableRecord[]>()
-  for (const submission of submissionsResponse.data || []) {
-    const item = submission as MutableRecord
+  for (const item of recordArray(submissionsResponse.data)) {
     const current = submissionsByDocument.get(asString(item.required_document_id)) || []
     current.push(item)
     submissionsByDocument.set(asString(item.required_document_id), current)
   }
 
-  return ((requiredDocumentsResponse.data || []) as MutableRecord[]).map((doc) => {
+  return recordArray(requiredDocumentsResponse.data).map((doc) => {
     const submissions = submissionsByDocument.get(String(doc.id)) || []
     return {
       ...doc,
@@ -446,7 +489,7 @@ async function listSubmissionRows(client: SupabaseClient, schoolId: string, acad
     .limit(500)
 
   const { data } = await query
-  return ((data || []) as MutableRecord[])
+  return recordArray(data)
     .filter((submission) => !academicYearId || asString((submission.application as MutableRecord | undefined)?.academic_year_id) === academicYearId)
     .map((submission) => ({
       ...submission,
@@ -479,7 +522,7 @@ async function listAuditRows(client: SupabaseClient, schoolId: string, filter?: 
   if (filter?.to) query = query.lte('created_at', filter.to)
 
   const { data } = await query
-  return (data || []) as Angelcare360AuditRecord[]
+  return auditRecordArray(data)
 }
 
 export async function getAngelcare360AdmissionsOverview(options?: { schoolId?: string | null }) {
@@ -505,7 +548,7 @@ export async function getAngelcare360AdmissionsOverview(options?: { schoolId?: s
     latestAuditEvents,
     leads,
     applications,
-    classes,
+    _classRowsForReadiness,
   ] = await Promise.all([
     countRows(client, 'angelcare360_schools'),
     countRows(client, 'angelcare360_admission_leads', schoolId),
@@ -524,8 +567,9 @@ export async function getAngelcare360AdmissionsOverview(options?: { schoolId?: s
     listAngelcare360Classes(schoolId, academicYearId),
   ])
 
-  const activeSchoolName = context.school.name
+  const activeSchoolName = productionSchoolName(context.school.name)
   const activeAcademicYearLabel = context.academicYear?.label || null
+  const classCatalogCount = Array.isArray(_classRowsForReadiness) ? _classRowsForReadiness.length : availableClassCount
   const missingDocumentApplicationCount = applications.filter((application) => (application.missing_document_count || 0) > 0).length
   const interviewReadyCount = applications.filter((application) => String(application.status) === 'approved' && Boolean(application.next_action_at)).length
   const conversionReadyCount = applications.filter((application) => Boolean(application.ready_for_conversion)).length
@@ -543,6 +587,132 @@ export async function getAngelcare360AdmissionsOverview(options?: { schoolId?: s
     duplicateLeadSignatures.set(signature, (duplicateLeadSignatures.get(signature) || 0) + 1)
   }
   const duplicateRiskCount = Array.from(duplicateLeadSignatures.values()).reduce((count, value) => count + Math.max(0, value - 1), 0)
+
+  const totalActiveAdmissions = leadCount + openApplicationCount
+  const conversionRate = totalActiveAdmissions > 0 ? Math.round((convertedCount / totalActiveAdmissions) * 1000) / 10 : null
+
+  const stageDefinitions = [
+    { key: 'new', label: 'Nouveau', tone: 'blue' as const },
+    { key: 'qualified', label: 'Qualifié', tone: 'orange' as const },
+    { key: 'application', label: 'Dossier en cours', tone: 'blue' as const },
+    { key: 'visit', label: 'Visite', tone: 'purple' as const },
+    { key: 'decision', label: 'Décision', tone: 'orange' as const },
+    { key: 'enrolled', label: 'Inscrit', tone: 'green' as const },
+  ]
+  const pipelineMap = new Map(stageDefinitions.map((stage) => [stage.key, { ...stage, count: 0, items: [] as Array<{ id: string; title: string; subtitle: string; status: string; dateLabel: string; detailHref: string }> }]))
+
+  for (const lead of leads) {
+    const bucket = stageBucketForLead(String(lead.status || ''))
+    const column = pipelineMap.get(bucket)
+    if (!column) continue
+    column.count += 1
+    if (column.items.length < 3) {
+      column.items.push({
+        id: String(lead.id),
+        title: compactText(getLeadDisplayName(lead as unknown as MutableRecord), 'Demande famille'),
+        subtitle: compactText(lead.desired_level || lead.source_channel || lead.parent_name, 'Niveau à confirmer'),
+        status: String(lead.status || 'À traiter'),
+        dateLabel: dateLabel(lead.created_at),
+        detailHref: String(lead.detail_href || buildDetailHref('/angelcare-360-command-center/admissions/demandes', String(lead.id))),
+      })
+    }
+  }
+
+  for (const application of applications) {
+    const bucket = stageBucketForApplication(String(application.status || ''), String(application.application_stage || ''), Boolean(application.ready_for_conversion))
+    const column = pipelineMap.get(bucket)
+    if (!column) continue
+    column.count += 1
+    if (column.items.length < 3) {
+      column.items.push({
+        id: String(application.id),
+        title: compactText([application.child_first_name, application.child_last_name].filter(Boolean).join(' ') || application.lead_student_full_name, 'Dossier admission'),
+        subtitle: compactText(application.class_name || application.class_code || application.application_code, 'Classe à confirmer'),
+        status: String(application.status || 'À suivre'),
+        dateLabel: dateLabel(application.application_date || application.created_at),
+        detailHref: String(application.detail_href || buildDetailHref('/angelcare-360-command-center/admissions/dossiers', String(application.id))),
+      })
+    }
+  }
+
+  const recentLeads = leads.slice(0, 8).map((lead) => ({
+    id: String(lead.id),
+    childName: compactText(getLeadDisplayName(lead as unknown as MutableRecord), 'Enfant à qualifier'),
+    parentName: compactText(getParentDisplayName(lead as unknown as MutableRecord), 'Parent à qualifier'),
+    desiredLevel: compactText(lead.desired_level, 'Niveau à confirmer'),
+    sourceChannel: compactText(lead.source_channel, 'Source non renseignée'),
+    dateLabel: dateLabel(lead.created_at),
+    status: String(lead.status || 'À traiter'),
+    detailHref: String(lead.detail_href || buildDetailHref('/angelcare-360-command-center/admissions/demandes', String(lead.id))),
+  }))
+
+  const upcomingActions = [
+    ...applications
+      .filter((application) => Boolean(application.next_action_at || application.next_action))
+      .slice(0, 6)
+      .map((application) => ({
+        id: String(application.id),
+        title: compactText(application.next_action || 'Suivi dossier admission', 'Suivi dossier admission'),
+        subtitle: compactText([application.child_first_name, application.child_last_name].filter(Boolean).join(' ') || application.lead_student_full_name, 'Dossier admission'),
+        dateLabel: dateLabel(application.next_action_at || application.application_date || application.created_at),
+        status: String(application.status || 'À suivre'),
+        detailHref: String(application.detail_href || buildDetailHref('/angelcare-360-command-center/admissions/dossiers', String(application.id))),
+      })),
+    ...leads
+      .filter((lead) => Boolean(lead.next_action_at || lead.next_action))
+      .slice(0, 4)
+      .map((lead) => ({
+        id: String(lead.id),
+        title: compactText(lead.next_action || 'Relancer la famille', 'Relancer la famille'),
+        subtitle: compactText(getLeadDisplayName(lead as unknown as MutableRecord), 'Demande admission'),
+        dateLabel: dateLabel(lead.next_action_at || lead.created_at),
+        status: String(lead.status || 'À traiter'),
+        detailHref: String(lead.detail_href || buildDetailHref('/angelcare-360-command-center/admissions/demandes', String(lead.id))),
+      })),
+  ].slice(0, 5)
+
+  const alerts = [
+    missingDocumentApplicationCount > 0 ? {
+      id: 'missing-documents',
+      title: 'Dossiers incomplets',
+      detail: 'Pièces ou validations manquantes avant décision.',
+      count: missingDocumentApplicationCount,
+      tone: 'danger' as const,
+      href: '/angelcare-360-command-center/admissions/documents',
+    } : null,
+    conversionReadyCount > 0 ? {
+      id: 'ready-conversion',
+      title: 'Conversions prêtes',
+      detail: 'Dossiers acceptés pouvant devenir inscriptions.',
+      count: conversionReadyCount,
+      tone: 'success' as const,
+      href: '/angelcare-360-command-center/admissions/conversions',
+    } : null,
+    duplicateRiskCount > 0 ? {
+      id: 'duplicate-risk',
+      title: 'Risques de doublon',
+      detail: 'Demandes familles à vérifier avant conversion.',
+      count: duplicateRiskCount,
+      tone: 'warning' as const,
+      href: '/angelcare-360-command-center/admissions/audit',
+    } : null,
+    !academicYearId || availableClassCount === 0 || missingDocumentRequirementCount === 0 ? {
+      id: 'setup-readiness',
+      title: 'Préparation admissions',
+      detail: 'Structure, classes ou pièces requises à finaliser.',
+      count: [!academicYearId, availableClassCount === 0, missingDocumentRequirementCount === 0].filter(Boolean).length,
+      tone: 'info' as const,
+      href: '/angelcare-360-command-center/administration',
+    } : null,
+  ].filter(Boolean) as Angelcare360AdmissionsOverviewRecord['alerts']
+
+  const conversionSteps = [
+    { key: 'received', label: 'Demandes reçues', value: leadCount, percent: totalActiveAdmissions > 0 ? Math.round((leadCount / totalActiveAdmissions) * 100) : null, tone: 'blue' as const },
+    { key: 'qualified', label: 'À qualifier', value: newLeadCount, percent: leadCount > 0 ? Math.round((newLeadCount / leadCount) * 100) : null, tone: 'orange' as const },
+    { key: 'complete', label: 'Dossiers complets', value: Math.max(0, openApplicationCount - missingDocumentApplicationCount), percent: openApplicationCount > 0 ? Math.round(((openApplicationCount - missingDocumentApplicationCount) / openApplicationCount) * 100) : null, tone: 'blue' as const },
+    { key: 'visits', label: 'Visites planifiées', value: interviewReadyCount, percent: openApplicationCount > 0 ? Math.round((interviewReadyCount / openApplicationCount) * 100) : null, tone: 'purple' as const },
+    { key: 'enrolled', label: 'Inscriptions confirmées', value: convertedCount, percent: totalActiveAdmissions > 0 ? Math.round((convertedCount / totalActiveAdmissions) * 100) : null, tone: 'green' as const },
+  ]
 
   const risks: string[] = []
   if (!academicYearId) risks.push('Aucune année scolaire active n’est disponible pour les admissions.')
@@ -571,10 +741,16 @@ export async function getAngelcare360AdmissionsOverview(options?: { schoolId?: s
     duplicateRiskCount,
     latestAuditEvents,
     risks,
+    pipelinePreview: Array.from(pipelineMap.values()),
+    recentLeads,
+    upcomingActions,
+    alerts,
+    conversionSteps,
+    conversionRate,
     setupReadiness: {
       schoolReady: schoolCount > 0,
       academicYearReady: Boolean(academicYearId),
-      classReady: availableClassCount > 0,
+      classReady: classCatalogCount > 0,
       documentReady: missingDocumentRequirementCount > 0,
       duplicateScanReady: true,
     },

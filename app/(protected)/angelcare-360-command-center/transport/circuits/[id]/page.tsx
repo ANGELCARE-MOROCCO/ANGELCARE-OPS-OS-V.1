@@ -10,12 +10,17 @@ import { listAngelcare360TransportAssignments } from '@/lib/angelcare360/server/
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360TransportRouteDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360TransportRouteDetailPage({ params }: PageProps) {
   const context = await getAngelcare360TransportContext()
+  const { id } = await params
   const [route, stops, assignments] = await Promise.all([
-    getAngelcare360TransportRouteById(params.id),
-    listAngelcare360TransportStops({ schoolId: context.school.id, routeId: params.id }),
-    listAngelcare360TransportAssignments({ schoolId: context.school.id, routeId: params.id }),
+    getAngelcare360TransportRouteById(id),
+    listAngelcare360TransportStops({ schoolId: context.school.id, routeId: id }),
+    listAngelcare360TransportAssignments({ schoolId: context.school.id, routeId: id }),
   ])
 
   if (!route) {
@@ -70,4 +75,3 @@ const secondaryLinkStyle: React.CSSProperties = {
   textDecoration: 'none',
   fontWeight: 800,
 }
-

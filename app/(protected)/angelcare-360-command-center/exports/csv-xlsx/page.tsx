@@ -25,7 +25,7 @@ export default async function Angelcare360ExportCsvXlsxPage() {
   return (
     <Angelcare360ExportsPageShell
       title="CSV / XLSX"
-      subtitle="Les exports tabulaires restent verrouillés tant qu’un moteur de sortie réel n’est pas disponible."
+      subtitle="Les sorties CSV sont actives sur les familles supportées; XLSX reste verrouillé faute de moteur tableur."
       badge="Exports"
       statusLabel={readiness.ready ? 'Prêt' : 'Verrouillé'}
       navigationItems={ANGELCARE360_EXPORTS_NAVIGATION}

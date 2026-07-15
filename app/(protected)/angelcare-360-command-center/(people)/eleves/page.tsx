@@ -1,15 +1,16 @@
 import { redirect } from 'next/navigation'
 import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare360ErrorState'
-import Angelcare360PeopleHub from '@/components/angelcare360/people/Angelcare360PeopleHub'
-import Angelcare360AdministrationContextRow from '@/components/angelcare360/administration/Angelcare360AdministrationContextRow'
+import Angelcare360StudentsOverview from '@/components/angelcare360/people/Angelcare360StudentsOverview'
 import { getAngelcare360AccessContext, listAngelcare360Classes } from '@/lib/angelcare360/server'
 import { listAngelcare360Sections } from '@/lib/angelcare360/server/administration'
 import { listAngelcare360Students } from '@/lib/angelcare360/server/people'
+import { getAngelcare360StudentsOverviewData } from '@/lib/angelcare360/server/students-overview'
 import {
   createClassOptions,
   createSectionOptions,
   createStudentPeopleConfig,
 } from '@/data/angelcare360/people-pages'
+import type { Angelcare360StudentListRecord } from '@/types/angelcare360/people'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +35,12 @@ export default async function Angelcare360StudentsPage() {
     listAngelcare360Sections(context.school.id, context.academicYear?.id || null),
   ])
 
+  const typedRows = rows as unknown as Angelcare360StudentListRecord[]
+  const overview = await getAngelcare360StudentsOverviewData({
+    schoolId: context.school.id,
+    students: typedRows,
+  })
+
   const config = createStudentPeopleConfig({
     schoolId: context.school.id,
     academicYearId: context.academicYear?.id || null,
@@ -46,23 +53,13 @@ export default async function Angelcare360StudentsPage() {
   const canCreate = context.access.accessLevel === 'super_admin' || context.permissions.has('eleves.create')
   const canUpdate = context.access.accessLevel === 'super_admin' || context.permissions.has('eleves.update')
 
-  const assigned = rows.filter((row) => Boolean(row.current_class_id) && Boolean(row.current_section_id)).length
-  const contextRow = (
-    <Angelcare360AdministrationContextRow
-      items={[
-        { label: 'Établissement', value: context.school.name },
-        { label: 'Année active', value: context.academicYear?.label || 'Non définie' },
-        { label: 'Élèves', value: String(rows.length) },
-        { label: 'Affectés', value: `${rows.length ? Math.round((assigned / rows.length) * 100) : 0}%` },
-      ]}
-    />
-  )
-
   return (
-    <Angelcare360PeopleHub
+    <Angelcare360StudentsOverview
       config={config}
-      rows={rows as unknown as Array<Record<string, unknown>>}
-      contextRow={contextRow}
+      rows={typedRows as unknown as Array<Record<string, unknown>>}
+      overview={overview}
+      schoolName={context.school.name}
+      academicYearLabel={context.academicYear?.label || 'Année scolaire à configurer'}
       canCreate={canCreate}
       canUpdate={canUpdate}
       createDisabledReason="La création d’un élève est réservée aux rôles autorisés."

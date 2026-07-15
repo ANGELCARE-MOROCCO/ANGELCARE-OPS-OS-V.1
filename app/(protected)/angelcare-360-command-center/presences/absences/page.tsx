@@ -16,13 +16,13 @@ export default async function Angelcare360AttendanceAbsencesPage({
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  const params = (await searchParams) || {}
+  const query = (await searchParams) || {}
   const rows = await listAngelcare360AbsenceRecords({
     schoolId: context.school.id,
-    classId: params.classId || null,
-    studentId: params.studentId || null,
-    from: params.from || null,
-    to: params.to || null,
+    classId: query.classId || null,
+    studentId: query.studentId || null,
+    from: query.from || null,
+    to: query.to || null,
   })
 
   if (!Array.isArray(rows)) {
@@ -51,10 +51,10 @@ export default async function Angelcare360AttendanceAbsencesPage({
       navigationItems={ANGELCARE360_ATTENDANCE_NAVIGATION}
     >
       <form style={toolbarStyle} method="get">
-        <input name="from" type="date" defaultValue={params.from || ''} style={searchStyle} />
-        <input name="to" type="date" defaultValue={params.to || ''} style={searchStyle} />
-        <input name="classId" defaultValue={params.classId || ''} placeholder="ID classe" style={searchStyle} />
-        <input name="studentId" defaultValue={params.studentId || ''} placeholder="ID élève" style={searchStyle} />
+        <input name="from" type="date" defaultValue={query.from || ''} style={searchStyle} />
+        <input name="to" type="date" defaultValue={query.to || ''} style={searchStyle} />
+        <input name="classId" defaultValue={query.classId || ''} placeholder="ID classe" style={searchStyle} />
+        <input name="studentId" defaultValue={query.studentId || ''} placeholder="ID élève" style={searchStyle} />
         <button type="submit" style={primaryButtonStyle}>
           Filtrer
         </button>

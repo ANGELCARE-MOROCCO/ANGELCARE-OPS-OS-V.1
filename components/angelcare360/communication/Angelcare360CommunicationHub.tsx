@@ -3,6 +3,13 @@
 import Link from 'next/link'
 import type { Angelcare360CommunicationOverviewRecord } from '@/types/angelcare360/communications'
 import Angelcare360CommunicationRiskPanel from './Angelcare360CommunicationRiskPanel'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360HeroBackdropStyle,
+  angelcare360MetricCardStyle,
+  angelcare360PageShellStyle,
+  angelcare360SectionBackdropStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Props = {
   overview: Angelcare360CommunicationOverviewRecord
@@ -41,11 +48,11 @@ function Metric({ label, value }: { label: string; value: number }) {
   )
 }
 
-const stackStyle: React.CSSProperties = { display: 'grid', gap: 16 }
+const stackStyle: React.CSSProperties = { ...angelcare360PageShellStyle }
 const gridStyle: React.CSSProperties = { display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))' }
-const metricStyle: React.CSSProperties = { display: 'grid', gap: 6, padding: 16, borderRadius: 20, border: '1px solid #dbe4ef', background: '#fff' }
-const metricLabelStyle: React.CSSProperties = { color: '#64748b', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.7, fontWeight: 900 }
-const metricValueStyle: React.CSSProperties = { color: '#0f172a', fontSize: 24, fontWeight: 950 }
+const metricStyle: React.CSSProperties = { ...angelcare360MetricCardStyle, display: 'grid', gap: 6, padding: 16, borderRadius: 22 }
+const metricLabelStyle: React.CSSProperties = { color: ANGELCARE360_COLORS.slateMuted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.7, fontWeight: 900 }
+const metricValueStyle: React.CSSProperties = { color: ANGELCARE360_COLORS.navy, fontSize: 24, fontWeight: 950 }
 const actionsRowStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 10 }
-const primaryActionStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 14, border: '1px solid #0f172a', background: '#0f172a', color: '#fff', padding: '10px 14px', textDecoration: 'none', fontWeight: 800 }
-const secondaryActionStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 14, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a', padding: '10px 14px', textDecoration: 'none', fontWeight: 800 }
+const primaryActionStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 14, borderWidth: 1, borderStyle: 'solid', borderColor: ANGELCARE360_COLORS.navy, background: `linear-gradient(180deg, ${ANGELCARE360_COLORS.navy} 0%, ${ANGELCARE360_COLORS.navyDeep} 100%)`, color: ANGELCARE360_COLORS.white, padding: '10px 14px', textDecoration: 'none', fontWeight: 800 }
+const secondaryActionStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 14, borderWidth: 1, borderStyle: 'solid', borderColor: ANGELCARE360_COLORS.borderStrong, background: `linear-gradient(180deg, ${ANGELCARE360_COLORS.white} 0%, ${ANGELCARE360_COLORS.background} 100%)`, color: ANGELCARE360_COLORS.navy, padding: '10px 14px', textDecoration: 'none', fontWeight: 800 }

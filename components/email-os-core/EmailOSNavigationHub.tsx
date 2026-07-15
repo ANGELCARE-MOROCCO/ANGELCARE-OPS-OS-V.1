@@ -1,8 +1,9 @@
 import Link from "next/link"
-import { Activity, BarChart3, CheckSquare, FileText, Mail, ShieldCheck } from "lucide-react"
+import { Activity, BarChart3, CheckSquare, FileText, Mail, Server, ShieldCheck } from "lucide-react"
 
 const links = [
   { href: "/email-os", label: "Workspace", text: "Main Email-OS execution workspace", icon: Mail },
+  { href: "/email-os/server-control", label: "Server control", text: "Windows Menara bridge operations center", icon: Server },
   { href: "/email-os/admin", label: "Admin analytics", text: "Executive operational KPIs", icon: BarChart3 },
   { href: "/email-os/deployment-readiness", label: "Deployment readiness", text: "Exports, provider status, backups", icon: ShieldCheck },
   { href: "/email-os/production-checklist", label: "Production checklist", text: "Pre-deployment operational checklist", icon: CheckSquare },

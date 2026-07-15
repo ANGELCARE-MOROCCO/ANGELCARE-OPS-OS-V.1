@@ -25,7 +25,7 @@ export default async function Angelcare360ExportPdfA4Page() {
   return (
     <Angelcare360ExportsPageShell
       title="PDF A4"
-      subtitle="La génération PDF A4 reste verrouillée tant qu’un moteur d’export réel n’est pas configuré."
+      subtitle="Le moteur PDF A4 navigateur est actif et les sorties imprimables suivent le socle documentaire réel."
       badge="Exports"
       statusLabel={readiness.ready ? 'Prêt' : 'Verrouillé'}
       navigationItems={ANGELCARE360_EXPORTS_NAVIGATION}

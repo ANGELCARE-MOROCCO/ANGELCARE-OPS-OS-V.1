@@ -16,8 +16,8 @@ export default async function Angelcare360AttendanceClassesPage({
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  const params = (await searchParams) || {}
-  const date = params.date || new Date().toISOString().slice(0, 10)
+  const query = (await searchParams) || {}
+  const date = query.date || new Date().toISOString().slice(0, 10)
   const rows = await listAngelcare360AttendanceDayClasses({ schoolId: context.school.id, date })
 
   return (

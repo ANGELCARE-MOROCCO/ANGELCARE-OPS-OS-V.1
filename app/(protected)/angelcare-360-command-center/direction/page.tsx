@@ -1,17 +1,25 @@
-import Angelcare360CommandCenterView from '@/components/angelcare360/Angelcare360CommandCenterView'
-import { requireUser } from '@/lib/auth/session'
-import { buildAngelcare360AccessProfile, normalizeAngelcare360User } from '@/lib/angelcare360/permissions'
+import { redirect } from 'next/navigation'
+import Angelcare360DirectionCockpit from '@/components/angelcare360/direction/Angelcare360DirectionCockpit'
+import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { getAngelcare360DirectionCockpitData } from '@/lib/angelcare360/server/direction'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360DirectionPage() {
-  const rawUser = await requireUser()
-  const user = normalizeAngelcare360User(rawUser)
+  const data = await getAngelcare360DirectionCockpitData()
 
-  if (!user) return null
+  if (!data) {
+    return (
+      <Angelcare360EmptyState
+        title="Cockpit de Direction indisponible"
+        description="Aucun établissement actif n’a pu être résolu pour afficher la vue direction."
+        actionLabel="Retour au command center"
+        actionHref="/angelcare-360-command-center"
+      />
+    )
+  }
 
-  const access = buildAngelcare360AccessProfile(user)
+  if (!data.school.id) redirect('/angelcare-360-command-center')
 
-  return <Angelcare360CommandCenterView user={user} access={access} variant="direction" />
+  return <Angelcare360DirectionCockpit data={data} />
 }
-

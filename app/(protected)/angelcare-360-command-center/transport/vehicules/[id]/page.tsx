@@ -8,9 +8,14 @@ import { getAngelcare360TransportContext } from '../../_utils'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360TransportVehicleDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360TransportVehicleDetailPage({ params }: PageProps) {
   const context = await getAngelcare360TransportContext()
-  const vehicle = await getAngelcare360TransportVehicleById(params.id)
+  const { id } = await params
+  const vehicle = await getAngelcare360TransportVehicleById(id)
 
   if (!vehicle) {
     return (
@@ -64,4 +69,3 @@ const secondaryLinkStyle: React.CSSProperties = {
   textDecoration: 'none',
   fontWeight: 800,
 }
-

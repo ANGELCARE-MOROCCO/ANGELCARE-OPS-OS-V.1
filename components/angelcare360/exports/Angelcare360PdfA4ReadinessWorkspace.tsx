@@ -18,7 +18,7 @@ export default function Angelcare360PdfA4ReadinessWorkspace({ readiness }: Props
       <h2 style={titleStyle}>PDF A4</h2>
       <p style={textStyle}>{readiness.reason}</p>
       <ul style={listStyle}>
-        <li>Moteur PDF: {readiness.pdfEngineReady ? 'prêt' : 'verrouillé'}</li>
+        <li>Moteur PDF: {readiness.pdfEngineReady ? 'actif' : 'verrouillé'}</li>
         <li>Modèle A4: {readiness.a4TemplateReady ? 'prêt' : 'verrouillé'}</li>
         <li>Stockage: {readiness.storageReady ? 'prêt' : 'verrouillé'}</li>
         <li>Permission: {readiness.permissionReady ? 'ok' : 'manquante'}</li>

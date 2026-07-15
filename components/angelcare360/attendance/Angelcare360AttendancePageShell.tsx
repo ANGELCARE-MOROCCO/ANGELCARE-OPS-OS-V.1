@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react'
 import Angelcare360AttendanceNavigation from './Angelcare360AttendanceNavigation'
 import type { Angelcare360AttendanceNavigationItem } from '@/data/angelcare360/attendance-navigation'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360HeroBackdropStyle,
+  angelcare360PageShellStyle,
+  angelcare360PillBlueStyle,
+  angelcare360PillStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360AttendancePageShellProps = {
   title: string
@@ -48,16 +55,17 @@ export default function Angelcare360AttendancePageShell({
 }
 
 const shellStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 18,
+  ...angelcare360PageShellStyle,
 }
 
 const headerStyle: React.CSSProperties = {
+  ...angelcare360HeroBackdropStyle,
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'start',
   justifyContent: 'space-between',
-  gap: 16,
+  gap: 18,
+  padding: 22,
 }
 
 const headingStyle: React.CSSProperties = {
@@ -72,40 +80,27 @@ const eyebrowRowStyle: React.CSSProperties = {
 }
 
 const badgeStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  padding: '6px 10px',
-  background: '#dbeafe',
-  color: '#1d4ed8',
-  fontSize: 12,
-  fontWeight: 900,
+  ...angelcare360PillBlueStyle,
+  width: 'fit-content',
 }
 
 const statusStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  padding: '6px 10px',
-  background: '#eff6ff',
-  color: '#1e40af',
-  fontSize: 12,
-  fontWeight: 900,
+  ...angelcare360PillStyle,
 }
 
 const titleStyle: React.CSSProperties = {
   margin: 0,
-  color: '#0f172a',
-  fontSize: 28,
-  lineHeight: 1.1,
+  color: ANGELCARE360_COLORS.navy,
+  fontSize: 30,
+  lineHeight: 1.08,
   fontWeight: 950,
 }
 
 const subtitleStyle: React.CSSProperties = {
   margin: 0,
   maxWidth: 980,
-  color: '#475569',
-  fontSize: 15,
+  color: ANGELCARE360_COLORS.slate,
+  fontSize: 15.5,
   lineHeight: 1.65,
   fontWeight: 600,
 }
@@ -120,6 +115,11 @@ const contextStyle: React.CSSProperties = {
   display: 'flex',
   flexWrap: 'wrap',
   gap: 10,
+  padding: 16,
+  borderRadius: 22,
+  background: ANGELCARE360_COLORS.white,
+  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
+  boxShadow: '0 14px 32px rgba(15,23,42,.04)',
 }
 
 const contentStyle: React.CSSProperties = {

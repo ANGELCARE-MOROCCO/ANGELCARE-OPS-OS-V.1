@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}))
 
     const mailboxId = clean(body.mailboxId || body.mailbox_id)
-    const toEmail = clean(body.toEmail || body.to_email)
+    const toEmail = clean(body.toEmail || body.to_email || body.recipient || body.to)
     const ccEmail = clean(body.ccEmail || body.cc_email)
     const bccEmail = clean(body.bccEmail || body.bcc_email)
     const subject = clean(body.subject) || "(Sans objet)"
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
         requestedMailboxId: mailboxId,
         requestedFrom,
         route: "send-direct",
-        transport: "central-send-mail"
+        transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail"
       },
       queue_id: null,
       from_email: requestedFrom || null,
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
           resolvedMailboxId: identity.mailboxId,
           actualFrom: identity.smtp.from,
           smtpUser: identity.smtp.user,
-          transport: "central-send-mail",
+          transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
           accepted: info.accepted || [],
           rejected: info.rejected || []
         },

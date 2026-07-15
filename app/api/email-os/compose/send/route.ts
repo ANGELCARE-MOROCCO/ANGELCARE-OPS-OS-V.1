@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         priority: body.priority || "normal",
         provider_message_id: null,
         queue_id: null,
-        diagnostics: { route: "compose/send", transport: "central-send-mail", ac360Guarded: true },
+        diagnostics: { route: "compose/send", transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail", ac360Guarded: true },
         created_at: now,
         updated_at: now,
         sent_at: null,
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
         last_error: null,
         diagnostics: {
           route: "compose/send",
-          transport: "central-send-mail",
+          transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
           resolvedMailboxKey: identity.key,
           resolvedMailboxId: identity.mailboxId,
           smtpUser: identity.smtp.user,

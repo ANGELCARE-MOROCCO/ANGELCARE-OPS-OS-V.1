@@ -1,7 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, BarChart3, Building2, MapPin, Plus, Route, ShieldCheck, Sparkles, Target, Users } from "lucide-react"
+import {
+  ArrowLeft,
+  BarChart3,
+  Building2,
+  ClipboardCheck,
+  MapPin,
+  Plus,
+  Route,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  Users,
+} from "lucide-react";
 
 const territories = [
   { city: "Casablanca", ambassadors: 42, leads: 318, conversion: "18%", priority: "Core growth" },

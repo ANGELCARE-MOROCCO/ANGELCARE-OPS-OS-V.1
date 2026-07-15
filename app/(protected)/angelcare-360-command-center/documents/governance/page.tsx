@@ -26,7 +26,7 @@ export default async function Angelcare360DocumentGovernancePage() {
   return (
     <Angelcare360DocumentsPageShell
       title="Gouvernance documentaire"
-      subtitle="Règles de stockage, rétention et verrouillage documentaire."
+      subtitle="Règles de stockage, rétention et diffusion pour les A4 navigateur, les documents générés et les sorties CSV réelles."
       badge="Documents"
       statusLabel={readiness.templateReady ? 'Prêt' : 'Verrouillé'}
       navigationItems={ANGELCARE360_DOCUMENTS_NAVIGATION}

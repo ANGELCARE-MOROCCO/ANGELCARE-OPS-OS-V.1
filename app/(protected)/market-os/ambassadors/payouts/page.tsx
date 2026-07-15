@@ -3,5 +3,5 @@ import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/am
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <AmbassadorProductionWorkspace mode="incentives" />
+  return <AmbassadorProductionWorkspace mode="payouts" />
 }

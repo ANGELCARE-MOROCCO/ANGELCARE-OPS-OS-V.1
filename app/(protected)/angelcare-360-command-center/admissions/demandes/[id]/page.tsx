@@ -7,8 +7,12 @@ import { getAngelcare360AccessContext, getAngelcare360AdmissionLeadById } from '
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360AdmissionLeadDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360AdmissionLeadDetailPage({ params }: PageProps) {
+  const { id } = await params
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center/admissions')
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import VoicePhoneWidget from './VoicePhoneWidget'
 
@@ -13,9 +14,13 @@ type RuntimeFlagPayload = {
 }
 
 export default function VoicePhoneWidgetGate() {
+  const pathname = usePathname()
+  const isAngelcareRoute = pathname.startsWith('/angelcare-360') || pathname.startsWith('/angelcare-360-operator')
   const [enabled, setEnabled] = useState(true)
 
   async function refreshFlag() {
+    if (isAngelcareRoute) return
+
     try {
       const response = await fetch('/api/system-control/module-flags/voice_terminal', {
         cache: 'no-store',
@@ -37,6 +42,11 @@ export default function VoicePhoneWidgetGate() {
   }
 
   useEffect(() => {
+    if (isAngelcareRoute) {
+      setEnabled(false)
+      return
+    }
+
     void refreshFlag()
 
     const timer = window.setInterval(() => {
@@ -44,8 +54,9 @@ export default function VoicePhoneWidgetGate() {
     }, 15000)
 
     return () => window.clearInterval(timer)
-  }, [])
+  }, [isAngelcareRoute])
 
+  if (isAngelcareRoute) return null
   if (!enabled) return null
 
   return <VoicePhoneWidget />

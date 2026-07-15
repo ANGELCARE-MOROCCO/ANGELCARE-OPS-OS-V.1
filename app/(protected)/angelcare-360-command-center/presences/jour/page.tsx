@@ -16,8 +16,8 @@ export default async function Angelcare360AttendanceDayPage({
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  const params = (await searchParams) || {}
-  const dayState = await getAngelcare360DailyAttendanceState({ schoolId: context.school.id, date: params.date || null })
+  const query = (await searchParams) || {}
+  const dayState = await getAngelcare360DailyAttendanceState({ schoolId: context.school.id, date: query.date || null })
   if (!dayState) {
     return (
       <Angelcare360EmptyState

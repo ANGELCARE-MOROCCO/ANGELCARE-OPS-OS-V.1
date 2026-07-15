@@ -1,5 +1,9 @@
 import Link from 'next/link'
-import { ANGELCARE360_COLORS, angelcare360LockedCardStyle, angelcare360ButtonBaseStyle } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360ButtonBaseStyle,
+  angelcare360LockedCardStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360EmptyStateProps = {
   title: string
@@ -42,8 +46,8 @@ const badgeStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: 999,
-  background: ANGELCARE360_COLORS.blueSoft,
-  color: ANGELCARE360_COLORS.blue,
+  background: ANGELCARE360_COLORS.blueTint,
+  color: ANGELCARE360_COLORS.blueDeep,
   fontWeight: 900,
   fontSize: 12,
   padding: '6px 10px',

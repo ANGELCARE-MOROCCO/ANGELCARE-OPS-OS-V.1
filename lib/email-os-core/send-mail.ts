@@ -22,12 +22,12 @@ function sleep(ms: number) {
 async function runLocked<T>(key: string, task: () => Promise<T>) {
   const previous = sendLocks.get(key) || Promise.resolve()
   let release!: () => void
+
   const current = new Promise<void>((resolve) => {
     release = resolve
   })
 
   sendLocks.set(key, previous.then(() => current))
-
   await previous
 
   try {
@@ -54,6 +54,67 @@ function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
 }
 
+function bridgeUrl() {
+  return clean(process.env.EMAIL_OS_BRIDGE_URL).replace(/\/+$/, "")
+}
+
+function bridgeToken() {
+  return clean(process.env.EMAIL_OS_BRIDGE_TOKEN || process.env.EMAIL_OS_INTERNAL_TOKEN || process.env.EMAIL_OS_CRON_SECRET)
+}
+
+async function sendViaBridge(identity: any, input: EmailOSSendInput) {
+  const url = bridgeUrl()
+  if (!url) return null
+
+  const response = await fetch(`${url}/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-email-os-token": bridgeToken()
+    },
+    body: JSON.stringify({
+      smtpHost: identity.smtp.host,
+      smtpPort: identity.smtp.port,
+      smtpSecure: identity.smtp.secure,
+      username: identity.smtp.user,
+      password: identity.smtp.pass,
+      fromEmail: identity.smtp.from,
+      diagnostics: {
+        source: "angelcare-email-os",
+        transport: "angelcare-windows-email-bridge",
+        mailboxId: identity.mailboxId,
+        mailboxKey: identity.key,
+        smtpHost: identity.smtp.host,
+        smtpPort: identity.smtp.port,
+        smtpUser: identity.smtp.user,
+        passwordConfigured: Boolean(identity.smtp.pass)
+      },
+      toEmail: input.toEmail,
+      cc: clean(input.ccEmail) || undefined,
+      bcc: clean(input.bccEmail) || undefined,
+      subject: input.subject || "(Sans objet)",
+      text: input.body || "",
+      html: String(input.body || "").replace(/\n/g, "<br />"),
+      replyTo: input.headers?.["Reply-To"] || undefined
+    })
+  })
+
+  const payload = await response.json().catch(() => null)
+
+  if (!response.ok || !payload?.ok) {
+    const error = payload?.error || `Email bridge failed with HTTP ${response.status}`
+    throw new Error(error)
+  }
+
+  return {
+    messageId: payload?.data?.messageId || null,
+    accepted: payload?.data?.accepted || [],
+    rejected: payload?.data?.rejected || [],
+    bridge: true,
+    bridgeUrl: url
+  }
+}
+
 export async function sendEmailOSDirect(input: EmailOSSendInput) {
   const toEmail = clean(input.toEmail)
   const fromEmail = clean(input.fromEmail)
@@ -78,6 +139,13 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
   const lockKey = identity.smtp.user || identity.email || identity.key
 
   const info = await runLocked(lockKey, async () => {
+    const bridged = await sendViaBridge(identity, input)
+    if (bridged) return bridged
+
+    if (String(process.env.EMAIL_OS_FORCE_BRIDGE || "").toLowerCase() === "true") {
+      throw new Error("Email-OS bridge is required but EMAIL_OS_BRIDGE_URL is missing or bridge send did not execute")
+    }
+
     const transporter = nodemailer.createTransport({
       host: identity.smtp.host,
       port: identity.smtp.port,
@@ -96,10 +164,6 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
     } as any)
 
     try {
-      /*
-        Do not pre-verify before send.
-        Menara counts greetings aggressively and can return 421.
-      */
       return await transporter.sendMail({
         from: identity.smtp.from,
         to: toEmail,

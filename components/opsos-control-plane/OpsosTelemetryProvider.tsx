@@ -97,6 +97,7 @@ function detectModalName(element: Element) {
 
 export default function OpsosTelemetryProvider({ children }: Props) {
   const pathname = usePathname()
+  const isAngelcareRoute = pathname.startsWith('/angelcare-360') || pathname.startsWith('/angelcare-360-operator')
   const queueRef = useRef<Partial<OpsosTelemetryEvent>[]>([])
   const routeStartRef = useRef<number>(typeof performance !== 'undefined' ? performance.now() : Date.now())
   const openModalsRef = useRef<Map<Element, { name: string; openedAt: number; memoryMb: number | null }>>(new Map())
@@ -104,6 +105,13 @@ export default function OpsosTelemetryProvider({ children }: Props) {
   const sessionId = useMemo(() => getSessionId(), [])
 
   useEffect(() => {
+    if (isAngelcareRoute) {
+      window.__opsosTelemetryPush = undefined
+      return () => {
+        window.__opsosTelemetryPush = undefined
+      }
+    }
+
     const push = (event: Partial<OpsosTelemetryEvent>) => {
       queueRef.current.push({
         ...event,
@@ -133,14 +141,17 @@ export default function OpsosTelemetryProvider({ children }: Props) {
     window.addEventListener('beforeunload', flush)
 
     return () => {
+      window.__opsosTelemetryPush = undefined
       window.clearInterval(interval)
       window.removeEventListener('pagehide', flush)
       window.removeEventListener('beforeunload', flush)
       flush()
     }
-  }, [pathname, sessionId])
+  }, [pathname, sessionId, isAngelcareRoute])
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     const now = performance.now()
     const duration = Math.round(now - routeStartRef.current)
     routeStartRef.current = now
@@ -162,9 +173,11 @@ export default function OpsosTelemetryProvider({ children }: Props) {
         durationMs: Math.round(performance.now() - now),
       })
     }
-  }, [pathname])
+  }, [pathname, isAngelcareRoute])
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     if (typeof PerformanceObserver === 'undefined') return
 
     let longTaskObserver: PerformanceObserver | null = null
@@ -186,9 +199,11 @@ export default function OpsosTelemetryProvider({ children }: Props) {
     } catch {}
 
     return () => longTaskObserver?.disconnect()
-  }, [])
+  }, [isAngelcareRoute])
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     const errorHandler = (event: ErrorEvent) => {
       window.__opsosTelemetryPush?.({
         eventType: 'client_error',
@@ -222,9 +237,11 @@ export default function OpsosTelemetryProvider({ children }: Props) {
       window.removeEventListener('error', errorHandler)
       window.removeEventListener('unhandledrejection', rejectionHandler)
     }
-  }, [])
+  }, [isAngelcareRoute])
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     if (window.__opsosFetchPatched) return
     window.__opsosFetchPatched = true
 
@@ -264,9 +281,11 @@ export default function OpsosTelemetryProvider({ children }: Props) {
         throw error
       }
     }
-  }, [])
+  }, [isAngelcareRoute])
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     const inspectNode = (node: Node) => {
       if (!(node instanceof Element)) return
 
@@ -303,9 +322,11 @@ export default function OpsosTelemetryProvider({ children }: Props) {
 
     observer.observe(document.body, { childList: true, subtree: true })
     return () => observer.disconnect()
-  }, [])
+  }, [isAngelcareRoute])
 
   useEffect(() => {
+    if (isAngelcareRoute) return
+
     const interval = window.setInterval(() => {
       window.__opsosTelemetryPush?.({ eventType: 'memory_sample', route: window.location.pathname, memoryMb: getMemoryMb() })
     }, 30000)
@@ -321,7 +342,7 @@ export default function OpsosTelemetryProvider({ children }: Props) {
       window.clearInterval(interval)
       document.removeEventListener('visibilitychange', visibility)
     }
-  }, [])
+  }, [isAngelcareRoute])
 
   return <>{children}</>
 }

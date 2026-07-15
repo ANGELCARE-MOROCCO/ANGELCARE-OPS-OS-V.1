@@ -1,4 +1,7 @@
-import { ANGELCARE360_COLORS } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360SectionBackdropStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 export default function Angelcare360LoadingState() {
   return (
@@ -27,10 +30,8 @@ const shellStyle: React.CSSProperties = {
 }
 
 const cardStyle: React.CSSProperties = {
-  background: ANGELCARE360_COLORS.white,
-  border: `1px solid ${ANGELCARE360_COLORS.border}`,
-  borderRadius: 28,
-  boxShadow: '0 24px 72px rgba(15, 23, 42, 0.08)',
+  ...angelcare360SectionBackdropStyle,
+  borderRadius: 30,
   padding: 24,
 }
 
@@ -51,9 +52,9 @@ const titleStyle: React.CSSProperties = {
 
 const lineStyle: React.CSSProperties = {
   marginTop: 18,
-  height: 14,
+  height: 15,
   borderRadius: 999,
-  background: 'linear-gradient(90deg,#e2e8f0,#f8fafc,#e2e8f0)',
+  background: 'linear-gradient(90deg,#dbe4ef,#f8fafc,#dbe4ef)',
 }
 
 const lineMutedStyle: React.CSSProperties = {

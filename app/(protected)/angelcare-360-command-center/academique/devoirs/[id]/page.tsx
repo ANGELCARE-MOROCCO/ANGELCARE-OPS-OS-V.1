@@ -52,11 +52,15 @@ async function changeStatusAction(formData: FormData) {
   redirect(`/angelcare-360-command-center/academique/devoirs/${String(formData.get('id') || '')}`)
 }
 
-export default async function Angelcare360DevoirDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360DevoirDetailPage({ params }: PageProps) {
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
-
-  const detail = await getAngelcare360AssignmentById({ schoolId: context.school.id, id: params.id })
+  const { id } = await params
+  const detail = await getAngelcare360AssignmentById({ schoolId: context.school.id, id })
   if (!detail) notFound()
 
   const assignment = detail.assignment

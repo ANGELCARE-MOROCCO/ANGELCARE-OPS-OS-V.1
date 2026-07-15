@@ -1,5 +1,10 @@
 import Link from 'next/link'
-import { ANGELCARE360_COLORS, angelcare360ErrorCardStyle, angelcare360ButtonSecondaryStyle, angelcare360ButtonBaseStyle } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360ButtonBaseStyle,
+  angelcare360ButtonSecondaryStyle,
+  angelcare360ErrorCardStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360ErrorStateProps = {
   title: string

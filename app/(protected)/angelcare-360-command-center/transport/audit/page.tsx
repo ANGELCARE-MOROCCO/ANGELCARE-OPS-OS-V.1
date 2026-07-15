@@ -8,26 +8,27 @@ import { getAngelcare360TransportContext } from '../_utils'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360TransportAuditPage({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>
-}) {
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function Angelcare360TransportAuditPage({ searchParams }: PageProps) {
   const context = await getAngelcare360TransportContext()
+  const resolvedSearchParams = (await searchParams) || {}
   const filters = {
-    module: toStringParam(searchParams.module),
-    action: toStringParam(searchParams.action),
-    severity: toStringParam(searchParams.severity),
-    entityType: toStringParam(searchParams.entityType),
-    entityId: toStringParam(searchParams.entityId),
-    actorUserId: toStringParam(searchParams.actorUserId),
-    status: toStringParam(searchParams.status),
-    search: toStringParam(searchParams.search),
-    from: toStringParam(searchParams.from),
-    to: toStringParam(searchParams.to),
+    module: toStringParam(resolvedSearchParams.module),
+    action: toStringParam(resolvedSearchParams.action),
+    severity: toStringParam(resolvedSearchParams.severity),
+    entityType: toStringParam(resolvedSearchParams.entityType),
+    entityId: toStringParam(resolvedSearchParams.entityId),
+    actorUserId: toStringParam(resolvedSearchParams.actorUserId),
+    status: toStringParam(resolvedSearchParams.status),
+    search: toStringParam(resolvedSearchParams.search),
+    from: toStringParam(resolvedSearchParams.from),
+    to: toStringParam(resolvedSearchParams.to),
   }
   const events = await listAngelcare360TransportAuditEvents({ schoolId: context.school.id, filters })
-  const selectedId = toStringParam(searchParams.selected)
+  const selectedId = toStringParam(resolvedSearchParams.selected)
   const selectedEvent = events.find((event) => event.id === selectedId) || events[0] || null
 
   return (

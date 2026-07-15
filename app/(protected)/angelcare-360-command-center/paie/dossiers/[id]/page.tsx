@@ -9,9 +9,14 @@ import { getAngelcare360PayrollContext, payrollBadgeStyle, payrollSecondaryLinkS
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360PayrollRecordDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360PayrollRecordDetailPage({ params }: PageProps) {
   const context = await getAngelcare360PayrollContext()
-  const record = await getAngelcare360PayrollRecordById(params.id)
+  const { id } = await params
+  const record = await getAngelcare360PayrollRecordById(id)
   if (!record) notFound()
 
   return (

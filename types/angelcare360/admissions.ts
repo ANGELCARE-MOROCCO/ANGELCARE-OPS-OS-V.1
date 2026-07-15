@@ -250,6 +250,61 @@ export interface Angelcare360AdmissionDocumentSubmissionListRecord extends Angel
   detail_href?: string
 }
 
+
+export interface Angelcare360AdmissionsPipelinePreviewItem {
+  id: string
+  title: string
+  subtitle: string
+  status: string
+  dateLabel: string
+  detailHref: string
+}
+
+export interface Angelcare360AdmissionsPipelinePreviewColumn {
+  key: string
+  label: string
+  count: number
+  tone: 'blue' | 'orange' | 'green' | 'purple' | 'red' | 'slate'
+  items: Angelcare360AdmissionsPipelinePreviewItem[]
+}
+
+export interface Angelcare360AdmissionsOverviewLeadPreview {
+  id: string
+  childName: string
+  parentName: string
+  desiredLevel: string
+  sourceChannel: string
+  dateLabel: string
+  status: string
+  detailHref: string
+}
+
+export interface Angelcare360AdmissionsOverviewActionPreview {
+  id: string
+  title: string
+  subtitle: string
+  dateLabel: string
+  status: string
+  detailHref: string
+}
+
+export interface Angelcare360AdmissionsOverviewAlert {
+  id: string
+  title: string
+  detail: string
+  count: number
+  tone: 'danger' | 'warning' | 'info' | 'success'
+  href: string
+}
+
+export interface Angelcare360AdmissionsConversionStep {
+  key: string
+  label: string
+  value: number
+  percent: number | null
+  tone: 'blue' | 'orange' | 'green' | 'purple' | 'slate'
+}
+
 export interface Angelcare360AdmissionsOverviewRecord {
   schoolCount: number
   activeSchoolName?: string | null
@@ -269,6 +324,12 @@ export interface Angelcare360AdmissionsOverviewRecord {
   duplicateRiskCount: number
   latestAuditEvents: Angelcare360AuditRecord[]
   risks: string[]
+  pipelinePreview: Angelcare360AdmissionsPipelinePreviewColumn[]
+  recentLeads: Angelcare360AdmissionsOverviewLeadPreview[]
+  upcomingActions: Angelcare360AdmissionsOverviewActionPreview[]
+  alerts: Angelcare360AdmissionsOverviewAlert[]
+  conversionSteps: Angelcare360AdmissionsConversionStep[]
+  conversionRate: number | null
   setupReadiness: {
     schoolReady: boolean
     academicYearReady: boolean

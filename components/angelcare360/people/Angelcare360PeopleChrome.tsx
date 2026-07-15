@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import type { ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
+import type { CSSProperties, ReactNode } from 'react'
 import Angelcare360PeopleNavigation from './Angelcare360PeopleNavigation'
 import { ANGELCARE360_PEOPLE_NAVIGATION } from '@/data/angelcare360/people-navigation'
 
@@ -9,7 +10,17 @@ type Angelcare360PeopleChromeProps = {
   children: ReactNode
 }
 
+const ROUTES_WITH_DEDICATED_FIGMA_BODY = new Set([
+  '/angelcare-360-command-center/eleves',
+])
+
 export default function Angelcare360PeopleChrome({ children }: Angelcare360PeopleChromeProps) {
+  const pathname = usePathname()
+
+  if (ROUTES_WITH_DEDICATED_FIGMA_BODY.has(pathname)) {
+    return <main style={dedicatedRouteStyle}>{children}</main>
+  }
+
   return (
     <div style={shellStyle}>
       <div style={topBarStyle}>
@@ -33,12 +44,20 @@ export default function Angelcare360PeopleChrome({ children }: Angelcare360Peopl
   )
 }
 
-const shellStyle: React.CSSProperties = {
+const dedicatedRouteStyle: CSSProperties = {
+  display: 'block',
+  width: '100%',
+  maxWidth: '100%',
+  minWidth: 0,
+  overflowX: 'hidden',
+}
+
+const shellStyle: CSSProperties = {
   display: 'grid',
   gap: 18,
 }
 
-const topBarStyle: React.CSSProperties = {
+const topBarStyle: CSSProperties = {
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
@@ -51,7 +70,7 @@ const topBarStyle: React.CSSProperties = {
   boxShadow: '0 18px 54px rgba(15,23,42,.05)',
 }
 
-const eyebrowStyle: React.CSSProperties = {
+const eyebrowStyle: CSSProperties = {
   color: '#2563eb',
   textTransform: 'uppercase',
   letterSpacing: 1.1,
@@ -59,14 +78,14 @@ const eyebrowStyle: React.CSSProperties = {
   fontWeight: 900,
 }
 
-const titleStyle: React.CSSProperties = {
+const titleStyle: CSSProperties = {
   marginTop: 8,
   color: '#0f172a',
   fontSize: 18,
   fontWeight: 950,
 }
 
-const metaStyle: React.CSSProperties = {
+const metaStyle: CSSProperties = {
   marginTop: 6,
   color: '#475569',
   fontSize: 13,
@@ -74,14 +93,14 @@ const metaStyle: React.CSSProperties = {
   fontWeight: 600,
 }
 
-const actionsStyle: React.CSSProperties = {
+const actionsStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   flexWrap: 'wrap',
   gap: 10,
 }
 
-const secondaryLinkStyle: React.CSSProperties = {
+const secondaryLinkStyle: CSSProperties = {
   border: '1px solid #cbd5e1',
   borderRadius: 14,
   padding: '10px 14px',
@@ -91,7 +110,7 @@ const secondaryLinkStyle: React.CSSProperties = {
   fontWeight: 800,
 }
 
-const statusStyle: React.CSSProperties = {
+const statusStyle: CSSProperties = {
   borderRadius: 999,
   padding: '8px 12px',
   background: '#eff6ff',
@@ -100,7 +119,7 @@ const statusStyle: React.CSSProperties = {
   fontWeight: 900,
 }
 
-const contentStyle: React.CSSProperties = {
+const contentStyle: CSSProperties = {
   display: 'grid',
   gap: 18,
 }

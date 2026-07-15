@@ -8,22 +8,23 @@ import { getAngelcare360PayrollContext, payrollBadgeStyle, payrollSecondaryLinkS
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360StaffPayrollHistoryPage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | string[] | undefined>
-}) {
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function Angelcare360StaffPayrollHistoryPage({ searchParams }: PageProps) {
   const context = await getAngelcare360PayrollContext()
+  const resolvedSearchParams = (await searchParams) || {}
   const [overview, records] = await Promise.all([
     getAngelcare360PayrollOverview({ schoolId: context.school.id }),
     listAngelcare360StaffPayrollHistory({
       schoolId: context.school.id,
-      staffId: typeof searchParams?.staffId === 'string' ? searchParams.staffId : null,
-      payrollPeriodId: typeof searchParams?.payrollPeriodId === 'string' ? searchParams.payrollPeriodId : null,
-      status: typeof searchParams?.status === 'string' ? searchParams.status : null,
-      search: typeof searchParams?.search === 'string' ? searchParams.search : null,
-      from: typeof searchParams?.from === 'string' ? searchParams.from : null,
-      to: typeof searchParams?.to === 'string' ? searchParams.to : null,
+      staffId: typeof resolvedSearchParams.staffId === 'string' ? resolvedSearchParams.staffId : null,
+      payrollPeriodId: typeof resolvedSearchParams.payrollPeriodId === 'string' ? resolvedSearchParams.payrollPeriodId : null,
+      status: typeof resolvedSearchParams.status === 'string' ? resolvedSearchParams.status : null,
+      search: typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : null,
+      from: typeof resolvedSearchParams.from === 'string' ? resolvedSearchParams.from : null,
+      to: typeof resolvedSearchParams.to === 'string' ? resolvedSearchParams.to : null,
     }),
   ])
 

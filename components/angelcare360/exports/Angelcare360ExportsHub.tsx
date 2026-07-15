@@ -27,9 +27,9 @@ export default function Angelcare360ExportsHub({ overview }: Props) {
 
       <section style={controlStyle}>
         <div>
-          <h2 style={sectionTitleStyle}>Sorties verrouillées</h2>
+          <h2 style={sectionTitleStyle}>Sorties documentaires</h2>
           <p style={sectionTextStyle}>
-            La génération PDF A4 et les exports CSV/XLSX restent désactivés tant qu’un moteur de sortie réel n’est pas déployé.
+            La génération PDF A4 navigateur est active, les exports CSV sont disponibles quand la définition le permet, et XLSX reste verrouillé tant qu’un moteur tableur n’est pas branché.
           </p>
           <div style={actionRowStyle}>
             <Link href="/angelcare-360-command-center/exports/files" style={actionLinkStyle}>Voir les fichiers</Link>
@@ -40,8 +40,8 @@ export default function Angelcare360ExportsHub({ overview }: Props) {
           <div style={readinessTitleStyle}>État de préparation des exports</div>
           <ul style={readinessListStyle}>
             <li>PDF A4: {overview.pdfA4Ready ? 'prêt' : 'verrouillé'}</li>
-            <li>CSV / XLSX: {overview.csvXlsxReady ? 'prêt' : 'verrouillé'}</li>
-            <li>Stockage fichier: {overview.fileStorageReady ? 'prêt' : 'verrouillé'}</li>
+            <li>CSV / XLSX: {overview.csvXlsxReady ? 'CSV prêt · XLSX verrouillé' : 'verrouillé'}</li>
+            <li>Stockage fichier: {overview.fileStorageReady ? 'prêt' : 'à compléter'}</li>
           </ul>
         </div>
       </section>

@@ -1,12 +1,25 @@
-"use client"
+"use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react"
-import type { ComponentType, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react"
+import Link from "next/link";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentType,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from "react";
+
 import {
   AlertTriangle,
   Archive,
   BadgeCheck,
   BarChart3,
+  Bell,
+  Calendar,
   CheckCircle2,
   ChevronDown,
   ClipboardCheck,
@@ -14,24 +27,37 @@ import {
   Eye,
   FileText,
   Filter,
+  Flag,
   Gift,
   GraduationCap,
+  LayoutDashboard,
   Loader2,
+  Mail,
+  Map,
   MapPinned,
+  MessageCircle,
+  MoreHorizontal,
   Pencil,
+  Phone,
   Plus,
   RefreshCw,
   Search,
   Settings,
   ShieldCheck,
+  Sparkles,
+  Star,
   Target,
   Trash2,
+  TrendingDown,
+  TrendingUp,
   UserPlus,
   Users,
   Wallet,
   X,
-} from "lucide-react"
+} from "lucide-react";
+
 import AmbassadorMarketSidebar from "./ambassador-market-sidebar"
+import AmbassadorCockpitRoute from "./routes/AmbassadorCockpitRoute"
 import type {
   Ambassador,
   AmbassadorAuditLog,
@@ -1268,6 +1294,42 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
       headers: ["Name", "Email", "Phone", "City", "Region", "Territory", "Status", "Lifecycle", "Performance", "KPI", "Missions", "Incentives"],
       rows: filteredAmbassadors.map((item) => [item.full_name, item.email, item.phone, item.city, item.region, item.territory_name, item.status, item.lifecycle_stage, item.performance_score, item.kpi_score, `${item.missions_completed}/${item.missions_assigned}`, item.incentives_balance]),
     }
+  }
+
+  if (mode === "overview") {
+    return (
+      <div className="flex min-h-screen bg-slate-50 text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 bg-slate-50">
+          <AmbassadorCockpitRoute
+            snapshot={snapshot}
+            kpis={kpis as Record<string, number>}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            diagnostics={snapshot.diagnostics}
+            onRefresh={() => void load(true)}
+            onCreateMission={() => openModal("mission")}
+            onCreateCandidate={() => openModal("recruitment")}
+            onExportReport={() => exportCurrentView("ambassadors-overview")}
+          />
+          {modal ? renderModal() : null}
+          {detail ? (
+            <DetailDrawer
+              ambassador={snapshot.ambassadors.find((item) => item.id === detail.id) || detail}
+              snapshot={snapshot}
+              onClose={() => setDetail(null)}
+              onEdit={() => openModal("ambassador", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onAssign={() => openModal("assignTerritory", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onMission={() => openModal("mission", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onArchive={() => openArchiveConfirm("ambassadors", detail.id, detail.full_name)}
+            />
+          ) : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
   }
 
   return (

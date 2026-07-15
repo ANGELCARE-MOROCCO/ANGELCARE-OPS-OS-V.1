@@ -13,8 +13,12 @@ function asText(value: unknown) {
   return String(value)
 }
 
-export default async function Angelcare360TeacherDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360TeacherDetailPage({ params }: PageProps) {
+  const { id } = await params
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

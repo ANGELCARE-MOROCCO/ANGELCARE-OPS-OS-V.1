@@ -1,0 +1,141 @@
+{
+  "appliedAt": "2026-07-09T19:58:12.926Z",
+  "mode": "market-os-ambassador-replaced-by-refferq",
+  "activeEntry": "app/(protected)/market-os/ambassadors/page.tsx",
+  "refferqEntry": "app/(protected)/market-os/ambassadors/refferq/page.tsx",
+  "backupRoot": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z",
+  "retired": [
+    {
+      "relativePath": "app/(protected)/market-os/ambassadors",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/app/(protected)/market-os/ambassadors"
+    },
+    {
+      "relativePath": "app/api/ambassadors",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/app/api/ambassadors"
+    },
+    {
+      "relativePath": "app/api/market-os/ambassadors",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/app/api/market-os/ambassadors"
+    },
+    {
+      "relativePath": "components/market-os/ambassadors",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/components/market-os/ambassadors"
+    },
+    {
+      "relativePath": "lib/market-os/ambassadors",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/lib/market-os/ambassadors"
+    },
+    {
+      "relativePath": "database/20260709_market_os_ambassador_module_completion.sql",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/database/20260709_market_os_ambassador_module_completion.sql"
+    },
+    {
+      "relativePath": "MARKET_OS_AMBASSADOR_COMPLETION_REPORT.md",
+      "status": "missing"
+    },
+    {
+      "relativePath": "MARKET_OS_AMBASSADOR_SCHEMA_HOTFIX_REPORT.md",
+      "status": "missing"
+    },
+    {
+      "relativePath": "MARKET_OS_AMBASSADOR_UUID_SETTINGS_HOTFIX_REPORT.md",
+      "status": "missing"
+    },
+    {
+      "relativePath": "tsconfig.tsbuildinfo",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/tsconfig.tsbuildinfo"
+    },
+    {
+      "relativePath": "scripts/ambassador-os-duplicate-risk-scan.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/ambassador-os-duplicate-risk-scan.mjs"
+    },
+    {
+      "relativePath": "scripts/ambassador-os-final-duplicate-scan.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/ambassador-os-final-duplicate-scan.mjs"
+    },
+    {
+      "relativePath": "scripts/ambassador-os-final-route-registry.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/ambassador-os-final-route-registry.mjs"
+    },
+    {
+      "relativePath": "scripts/ambassador-os-route-smoke-check.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/ambassador-os-route-smoke-check.mjs"
+    },
+    {
+      "relativePath": "scripts/final-force-fix-recruitment-import-header.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/final-force-fix-recruitment-import-header.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassador-add-modal-profile-mode.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassador-add-modal-profile-mode.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassador-main-activity-import.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassador-main-activity-import.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassador-main-overview-button-label.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassador-main-overview-button-label.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassador-main-overview-reactnode.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassador-main-overview-reactnode.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassador-main-overview-tuple-label-value.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassador-main-overview-tuple-label-value.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassador-performance-profile-mode.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassador-performance-profile-mode.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-ambassadors-directory-tuple-key.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-ambassadors-directory-tuple-key.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-onboarding-imports-surgical.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-onboarding-imports-surgical.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-onboarding-sidebar-import.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-onboarding-sidebar-import.mjs"
+    },
+    {
+      "relativePath": "scripts/fix-recruitment-imports-surgical.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/fix-recruitment-imports-surgical.mjs"
+    },
+    {
+      "relativePath": "scripts/force-fix-recruitment-crown.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/force-fix-recruitment-crown.mjs"
+    },
+    {
+      "relativePath": "scripts/verify-market-os-ambassadors-completion.mjs",
+      "status": "retired",
+      "backup": "backups/market-os-ambassadors-retired-2026-07-09T19-58-11-642Z/scripts/verify-market-os-ambassadors-completion.mjs"
+    }
+  ]
+}

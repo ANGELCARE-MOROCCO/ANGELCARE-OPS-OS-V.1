@@ -8,9 +8,14 @@ import { getAngelcare360ClaimsContext, secondaryLinkStyle } from '../../_utils'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360ClaimTicketDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360ClaimTicketDetailPage({ params }: PageProps) {
   const context = await getAngelcare360ClaimsContext()
-  const ticket = await getAngelcare360ClaimTicketById(params.id, { schoolId: context.school.id })
+  const { id } = await params
+  const ticket = await getAngelcare360ClaimTicketById(id, { schoolId: context.school.id })
   if (!ticket) notFound()
 
   return (
@@ -81,4 +86,3 @@ export default async function Angelcare360ClaimTicketDetailPage({ params }: { pa
 }
 
 const stackStyle: React.CSSProperties = { display: 'grid', gap: 12 }
-

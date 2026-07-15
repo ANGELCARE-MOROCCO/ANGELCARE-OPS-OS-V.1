@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 next build --webpack",
     "start": "next start",
+    "bridge:check": "node --check bridge/windows-email-bridge/server.js",
+    "bridge:start": "node bridge/windows-email-bridge/server.js",
     "scan:routes": "node scripts/scan-app-routes.mjs",
     "verify:email-os": "node scripts/verify-email-os-production.mjs",
     "audit:email-os": "node scripts/audit-email-os-routes.mjs",

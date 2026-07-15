@@ -36,11 +36,15 @@ async function updateLessonAction(formData: FormData) {
   redirect(`/angelcare-360-command-center/academique/cours/${String(formData.get('id') || '')}`)
 }
 
-export default async function Angelcare360LessonDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360LessonDetailPage({ params }: PageProps) {
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
-
-  const detail = await getAngelcare360LessonById({ schoolId: context.school.id, id: params.id })
+  const { id } = await params
+  const detail = await getAngelcare360LessonById({ schoolId: context.school.id, id })
   if (!detail) notFound()
 
   const [years, classes, sections, subjects, assignments] = await Promise.all([

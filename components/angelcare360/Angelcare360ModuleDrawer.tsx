@@ -6,6 +6,9 @@ import {
   ANGELCARE360_COLORS,
   angelcare360ButtonBaseStyle,
   angelcare360ButtonSecondaryStyle,
+  angelcare360HeroBackdropStyle,
+  angelcare360PillBlueStyle,
+  angelcare360SectionBackdropStyle,
 } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360ModuleDrawerProps = {
@@ -77,10 +80,8 @@ const overlayStyle: React.CSSProperties = {
 
 const drawerStyle: React.CSSProperties = {
   width: 'min(720px, 100%)',
-  background: ANGELCARE360_COLORS.white,
-  borderRadius: 28,
-  border: `1px solid ${ANGELCARE360_COLORS.border}`,
-  boxShadow: '0 30px 90px rgba(15, 23, 42, 0.18)',
+  ...angelcare360SectionBackdropStyle,
+  borderRadius: 30,
   padding: 24,
   display: 'grid',
   gap: 18,
@@ -94,17 +95,18 @@ const headerStyle: React.CSSProperties = {
 }
 
 const eyebrowStyle: React.CSSProperties = {
-  color: ANGELCARE360_COLORS.blue,
+  ...angelcare360PillBlueStyle,
   textTransform: 'uppercase',
   letterSpacing: 1.1,
   fontSize: 12,
   fontWeight: 900,
+  width: 'fit-content',
 }
 
 const titleStyle: React.CSSProperties = {
   margin: '8px 0 0',
   color: ANGELCARE360_COLORS.navy,
-  fontSize: 24,
+  fontSize: 25,
   fontWeight: 950,
   letterSpacing: -0.5,
 }
@@ -128,9 +130,8 @@ const metaGridStyle: React.CSSProperties = {
 }
 
 const metaCardStyle: React.CSSProperties = {
-  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
-  borderRadius: 18,
-  background: ANGELCARE360_COLORS.background,
+  ...angelcare360HeroBackdropStyle,
+  borderRadius: 20,
   padding: 16,
 }
 
@@ -165,7 +166,7 @@ const descriptionStyle: React.CSSProperties = {
 const reasonBoxStyle: React.CSSProperties = {
   borderRadius: 18,
   border: `1px solid ${ANGELCARE360_COLORS.blueBorder}`,
-  background: ANGELCARE360_COLORS.blueSoft,
+  background: ANGELCARE360_COLORS.blueTint,
   padding: 14,
 }
 
@@ -197,7 +198,9 @@ const linkStyle: React.CSSProperties = {
 }
 
 const disabledButtonStyle: React.CSSProperties = {
-  border: `1px dashed ${ANGELCARE360_COLORS.border}`,
+  borderWidth: 1,
+  borderStyle: 'dashed',
+  borderColor: ANGELCARE360_COLORS.borderStrong,
   borderRadius: 14,
   padding: '10px 14px',
   background: ANGELCARE360_COLORS.background,

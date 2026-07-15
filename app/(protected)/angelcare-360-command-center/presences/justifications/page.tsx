@@ -16,11 +16,11 @@ export default async function Angelcare360AttendanceJustificationsPage({
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  const params = (await searchParams) || {}
+  const query = (await searchParams) || {}
   const items = await listAngelcare360AttendanceJustifications({
     schoolId: context.school.id,
-    status: params.status || null,
-    search: params.search || null,
+    status: query.status || null,
+    search: query.search || null,
   })
 
   if (!Array.isArray(items)) {

@@ -7,8 +7,12 @@ import { getAngelcare360InventoryContext, inventoryPrimaryLinkStyle } from '../.
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360InventoryItemDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360InventoryItemDetailPage({ params }: PageProps) {
+  const { id } = await params
   const context = await getAngelcare360InventoryContext()
   const item = await getAngelcare360InventoryItemById(id, { schoolId: context.school.id })
   if (!item) {

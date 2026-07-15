@@ -8,6 +8,7 @@ import {
   angelcare360ButtonDisabledStyle,
   angelcare360ButtonGhostStyle,
   angelcare360InputStyle,
+  angelcare360SectionBackdropStyle,
 } from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Angelcare360ToolbarProps = {
@@ -93,11 +94,8 @@ export default function Angelcare360Toolbar({
 const toolbarStyle: React.CSSProperties = {
   display: 'grid',
   gap: 14,
-  background: ANGELCARE360_COLORS.white,
-  border: `1px solid ${ANGELCARE360_COLORS.border}`,
-  borderRadius: 24,
-  padding: 16,
-  boxShadow: '0 18px 54px rgba(15,23,42,.05)',
+  ...angelcare360SectionBackdropStyle,
+  padding: 18,
 }
 
 const searchShellStyle: React.CSSProperties = {
@@ -141,20 +139,23 @@ const chipRowStyle: React.CSSProperties = {
 }
 
 const chipStyle: React.CSSProperties = {
-  border: `1px solid ${ANGELCARE360_COLORS.border}`,
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: ANGELCARE360_COLORS.borderStrong,
   borderRadius: 999,
-  background: ANGELCARE360_COLORS.white,
+  background: `linear-gradient(180deg, ${ANGELCARE360_COLORS.white} 0%, ${ANGELCARE360_COLORS.background} 100%)`,
   color: ANGELCARE360_COLORS.navy,
   padding: '8px 12px',
   fontSize: 13,
   fontWeight: 800,
   cursor: 'pointer',
+  boxShadow: '0 10px 22px rgba(15,23,42,.04)',
 }
 
 const activeChipStyle: React.CSSProperties = {
-  background: ANGELCARE360_COLORS.blueSoft,
-  border: `1px solid ${ANGELCARE360_COLORS.blueBorderActive}`,
-  color: ANGELCARE360_COLORS.blue,
+  background: ANGELCARE360_COLORS.blueTint,
+  borderColor: ANGELCARE360_COLORS.blueBorderActive,
+  color: ANGELCARE360_COLORS.blueDeep,
 }
 
 const actionRowStyle: React.CSSProperties = {
@@ -167,11 +168,13 @@ const routeLinkStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: 14,
-  background: ANGELCARE360_COLORS.blueSoft,
-  color: ANGELCARE360_COLORS.blue,
+  background: ANGELCARE360_COLORS.blueTint,
+  color: ANGELCARE360_COLORS.blueDeep,
   textDecoration: 'none',
   padding: '10px 14px',
-  border: `1px solid ${ANGELCARE360_COLORS.blueBorderActive}`,
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: ANGELCARE360_COLORS.blueBorderActive,
   fontWeight: 900,
 }
 

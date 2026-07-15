@@ -34,7 +34,7 @@ const MAILBOXES = [
   ["IT_SUPPORT", "IT Support", ["IT_SUPPORT"]],
   ["HOMESERVICE", "Homeservice", ["HOMESERVICE", "HOME_SERVICE"]],
   ["EVENTS", "Events", ["EVENTS"]],
-  ["EXCURSIONS", "Exursions", ["EXCURSIONS", "EXCURSIONS"]],
+  ["EXCURSIONS", "Excursions", ["EXCURSIONS", "EXURSIONS"]],
   ["B2B", "B2B", ["B2B"]],
   ["PARTENAIRES", "Partenaires", ["PARTENAIRES", "PARTNERS"]]
 ] as const
@@ -84,7 +84,7 @@ export function listEmailOSMultiMailboxes(): ResolvedEmailOSMailbox[] {
     env("GLOBAL_SMTP_HOST") ||
     env("EMAIL_OS_SMTP_HOST") ||
     env("MENARA_SMTP_HOST") ||
-    "smtp-out9.menara.ma"
+    "smtp-auth.menara.ma"
 
   const globalSmtpPort = toNumber(
     env("GLOBAL_SMTP_PORT") || env("EMAIL_OS_SMTP_PORT") || env("MENARA_SMTP_PORT"),
@@ -100,7 +100,7 @@ export function listEmailOSMultiMailboxes(): ResolvedEmailOSMailbox[] {
     env("GLOBAL_POP_HOST") ||
     env("EMAIL_OS_POP_HOST") ||
     env("MENARA_POP_HOST") ||
-    "mail.angelcare.ma"
+    "pop.menara.ma"
 
   const globalPopPort = toNumber(
     env("GLOBAL_POP_PORT") || env("EMAIL_OS_POP_PORT") || env("MENARA_POP_PORT"),

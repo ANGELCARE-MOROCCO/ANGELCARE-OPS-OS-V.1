@@ -1,6 +1,12 @@
 import Link from 'next/link'
 import type { Angelcare360ReportsOverviewRecord } from '@/types/angelcare360/reports'
 import Angelcare360ReportsRiskPanel from './Angelcare360ReportsRiskPanel'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360MetricCardStyle,
+  angelcare360PageShellStyle,
+  angelcare360SectionBackdropStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Props = {
   overview: Angelcare360ReportsOverviewRecord
@@ -30,9 +36,9 @@ export default function Angelcare360ReportsHub({ overview }: Props) {
 
       <section style={controlStyle}>
         <div>
-          <h2 style={sectionTitleStyle}>Capacités verrouillées</h2>
+          <h2 style={sectionTitleStyle}>Capacités documentaires</h2>
           <p style={sectionTextStyle}>
-            La génération PDF A4, les exports CSV/XLSX et les téléchargements réels restent bloqués tant que le moteur de sortie n’est pas configuré.
+            La génération PDF A4 navigateur est active, les exports CSV existent sur les familles supportées, et XLSX reste verrouillé tant qu’un moteur tableur n’est pas branché.
           </p>
           <div style={actionRowStyle}>
             <Link href="/angelcare-360-command-center/rapports/catalogue" style={actionLinkStyle}>Ouvrir le catalogue</Link>
@@ -44,11 +50,11 @@ export default function Angelcare360ReportsHub({ overview }: Props) {
           <div style={readinessTitleStyle}>Lecture de disponibilité</div>
           <ul style={readinessListStyle}>
             <li>Catalogue: {overview.readiness.reportCatalogueReady ? 'prêt' : 'incomplet'}</li>
-            <li>Modèles: {overview.readiness.reportTemplateReady ? 'prêts' : 'verrouillés'}</li>
-            <li>Demandes: {overview.readiness.reportRequestReady ? 'prêtes' : 'verrouillées'}</li>
+            <li>Modèles: {overview.readiness.reportTemplateReady ? 'prêts' : 'à compléter'}</li>
+            <li>Demandes: {overview.readiness.reportRequestReady ? 'prêtes' : 'à compléter'}</li>
             <li>PDF A4: {overview.readiness.pdfA4Ready ? 'prêt' : 'verrouillé'}</li>
-            <li>CSV / XLSX: {overview.readiness.csvXlsxReady ? 'prêt' : 'verrouillé'}</li>
-            <li>Documents: {overview.readiness.documentReady ? 'prêts' : 'verrouillés'}</li>
+            <li>CSV / XLSX: {overview.readiness.csvXlsxReady ? 'CSV prêt · XLSX verrouillé' : 'verrouillé'}</li>
+            <li>Documents: {overview.readiness.documentReady ? 'prêts' : 'à compléter'}</li>
           </ul>
         </div>
       </section>
@@ -58,17 +64,17 @@ export default function Angelcare360ReportsHub({ overview }: Props) {
   )
 }
 
-const layoutStyle: React.CSSProperties = { display: 'grid', gap: 16 }
+const layoutStyle: React.CSSProperties = { ...angelcare360PageShellStyle }
 const gridStyle: React.CSSProperties = { display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }
-const cardStyle: React.CSSProperties = { borderRadius: 22, border: '1px solid #dbe4ef', background: '#fff', padding: 16, boxShadow: '0 18px 48px rgba(15,23,42,.05)' }
-const labelStyle: React.CSSProperties = { color: '#64748b', fontSize: 12, textTransform: 'uppercase', letterSpacing: .8, fontWeight: 900 }
-const valueStyle: React.CSSProperties = { marginTop: 8, color: '#0f172a', fontSize: 28, fontWeight: 950 }
-const detailStyle: React.CSSProperties = { margin: '8px 0 0', color: '#475569', lineHeight: 1.5, fontWeight: 600 }
-const controlStyle: React.CSSProperties = { display: 'grid', gap: 16, gridTemplateColumns: '1.4fr .8fr', padding: 18, borderRadius: 24, border: '1px solid #dbe4ef', background: 'linear-gradient(135deg,#fff 0%,#f8fbff 100%)' }
-const sectionTitleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 18, fontWeight: 950 }
-const sectionTextStyle: React.CSSProperties = { margin: '10px 0 0', color: '#475569', lineHeight: 1.65, fontWeight: 600 }
+const cardStyle: React.CSSProperties = { ...angelcare360MetricCardStyle, borderRadius: 22, padding: 16 }
+const labelStyle: React.CSSProperties = { color: ANGELCARE360_COLORS.slateMuted, fontSize: 12, textTransform: 'uppercase', letterSpacing: .8, fontWeight: 900 }
+const valueStyle: React.CSSProperties = { marginTop: 8, color: ANGELCARE360_COLORS.navy, fontSize: 28, fontWeight: 950 }
+const detailStyle: React.CSSProperties = { margin: '8px 0 0', color: ANGELCARE360_COLORS.slate, lineHeight: 1.5, fontWeight: 600 }
+const controlStyle: React.CSSProperties = { display: 'grid', gap: 16, gridTemplateColumns: '1.4fr .8fr', padding: 18, ...angelcare360SectionBackdropStyle }
+const sectionTitleStyle: React.CSSProperties = { margin: 0, color: ANGELCARE360_COLORS.navy, fontSize: 18, fontWeight: 950 }
+const sectionTextStyle: React.CSSProperties = { margin: '10px 0 0', color: ANGELCARE360_COLORS.slate, lineHeight: 1.65, fontWeight: 600 }
 const actionRowStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 14 }
-const actionLinkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 14, border: '1px solid #0f172a', background: '#0f172a', color: '#fff', padding: '10px 14px', textDecoration: 'none', fontWeight: 800 }
-const readinessStyle: React.CSSProperties = { borderRadius: 18, border: '1px solid #dbe4ef', background: '#fff', padding: 16 }
-const readinessTitleStyle: React.CSSProperties = { color: '#0f172a', fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: .8 }
-const readinessListStyle: React.CSSProperties = { margin: '10px 0 0', paddingLeft: 18, display: 'grid', gap: 8, color: '#334155', fontWeight: 600 }
+const actionLinkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 14, borderWidth: 1, borderStyle: 'solid', borderColor: ANGELCARE360_COLORS.navy, background: `linear-gradient(180deg, ${ANGELCARE360_COLORS.navy} 0%, ${ANGELCARE360_COLORS.navyDeep} 100%)`, color: ANGELCARE360_COLORS.white, padding: '10px 14px', textDecoration: 'none', fontWeight: 800 }
+const readinessStyle: React.CSSProperties = { ...angelcare360SectionBackdropStyle, padding: 16 }
+const readinessTitleStyle: React.CSSProperties = { color: ANGELCARE360_COLORS.navy, fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: .8 }
+const readinessListStyle: React.CSSProperties = { margin: '10px 0 0', paddingLeft: 18, display: 'grid', gap: 8, color: ANGELCARE360_COLORS.slate, fontWeight: 600 }

@@ -24,6 +24,8 @@ import {
   angelcare360ReportTemplateCreateSchema,
   angelcare360ReportTemplateUpdateSchema,
 } from '@/lib/angelcare360/validation'
+import { listAngelcare360DocumentTemplates as listAngelcare360DocumentTemplatesRegistry } from '@/lib/angelcare360/documents/template-registry'
+import { listAngelcare360ExportDefinitions } from '@/lib/angelcare360/exports/export-registry'
 import type {
   Angelcare360DocumentAuditFilter,
   Angelcare360DocumentGovernanceReadinessRecord,
@@ -232,8 +234,8 @@ export async function getAngelcare360ReportsOverview(options?: { schoolId?: stri
     reportTemplateReady: templateCount > 0,
     reportRequestReady: requestCount > 0,
     exportReady: false,
-    pdfA4Ready: false,
-    csvXlsxReady: false,
+    pdfA4Ready: true,
+    csvXlsxReady: true,
     documentReady: documentCount > 0,
     storageReady: documentCount > 0,
   }
@@ -242,8 +244,8 @@ export async function getAngelcare360ReportsOverview(options?: { schoolId?: stri
     reportCount === 0 ? 'Aucun rapport catalogue n’est encore enregistré.' : null,
     templateCount === 0 ? 'Les modèles de rapport ne sont pas encore configurés.' : null,
     requestCount === 0 ? 'Aucune demande de rapport n’est en attente.' : null,
-    readiness.pdfA4Ready ? null : PDF_LOCK_REASON,
-    readiness.csvXlsxReady ? null : CSV_XLSX_LOCK_REASON,
+    readiness.pdfA4Ready ? null : 'A4 / PDF navigateur actif.',
+    readiness.csvXlsxReady ? null : 'CSV prêt, XLSX verrouillé.',
     readiness.documentReady ? null : DOCUMENT_LOCK_REASON,
   ].filter(Boolean) as string[]
 
@@ -575,12 +577,12 @@ export async function getAngelcare360ExportOverview(options?: { schoolId?: strin
     exportHistoryCount,
     reportExportCount,
     blockedExportAttemptCount: blockedCount,
-    pdfA4Ready: false,
-    csvXlsxReady: false,
+    pdfA4Ready: true,
+    csvXlsxReady: true,
     fileStorageReady: exportFileCount > 0,
     risks: [
-      PDF_LOCK_REASON,
-      CSV_XLSX_LOCK_REASON,
+      'A4 / PDF navigateur actif.',
+      'CSV prêt, XLSX verrouillé.',
       FILE_DOWNLOAD_LOCK_REASON,
       exportFileCount === 0 ? 'Aucun fichier d’export réel n’est disponible.' : null,
     ].filter(Boolean) as string[],
@@ -592,12 +594,12 @@ export async function getAngelcare360PdfA4Readiness(options?: { schoolId?: strin
   const context = await getCurrentSchoolContext(options?.schoolId)
   if (!context?.school) return null
   return {
-    ready: false,
-    pdfEngineReady: false,
-    a4TemplateReady: false,
-    storageReady: false,
+    ready: true,
+    pdfEngineReady: true,
+    a4TemplateReady: (await listAngelcare360DocumentTemplatesRegistry()).length > 0,
+    storageReady: true,
     permissionReady: true,
-    reason: PDF_LOCK_REASON,
+    reason: 'Impression PDF navigateur / A4 entreprise active.',
   }
 }
 
@@ -605,12 +607,12 @@ export async function getAngelcare360CsvXlsxReadiness(options?: { schoolId?: str
   const context = await getCurrentSchoolContext(options?.schoolId)
   if (!context?.school) return null
   return {
-    ready: false,
-    csvReady: false,
+    ready: true,
+    csvReady: listAngelcare360ExportDefinitions().some((definition) => definition.csvAvailable),
     xlsxReady: false,
-    storageReady: false,
+    storageReady: true,
     permissionReady: true,
-    reason: CSV_XLSX_LOCK_REASON,
+    reason: 'CSV actif. XLSX verrouillé : moteur tableur requis.',
   }
 }
 
@@ -859,10 +861,38 @@ export async function getAngelcare360DocumentGovernanceReadiness(options?: { sch
     storageReady: documentCount > 0,
     retentionReady: templateCount > 0,
     auditReady: auditCount > 0,
-    exportReady: false,
+    exportReady: true,
     permissionReady: true,
-    reason: DOCUMENT_LOCK_REASON,
+    reason: 'Gouvernance documentaire active pour les A4 navigateur et les sorties CSV disponibles.',
   }
+}
+
+export async function getAngelcare360GeneratedDocumentById(options: { schoolId?: string | null; id: string }) {
+  const context = await getCurrentSchoolContext(options.schoolId)
+  if (!context?.school) return null
+  const supabase = await createClient()
+  const school = context.school
+  const { data } = await supabase
+    .from('angelcare360_documents')
+    .select('*')
+    .eq('school_id', school.id)
+    .eq('id', options.id)
+    .maybeSingle()
+  return data ? (data as Row) : null
+}
+
+export async function getAngelcare360ExportFileById(options: { schoolId?: string | null; id: string }) {
+  const context = await getCurrentSchoolContext(options.schoolId)
+  if (!context?.school) return null
+  const supabase = await createClient()
+  const school = context.school
+  const { data } = await supabase
+    .from('angelcare360_export_files')
+    .select('*, report_export:angelcare360_report_exports(id, export_code, export_format, requested_at, completed_at, status, report:angelcare360_reports(id, report_code, label, report_family, status))')
+    .eq('school_id', school.id)
+    .eq('id', options.id)
+    .maybeSingle()
+  return data ? (data as Row) : null
 }
 
 export async function listAngelcare360DocumentAuditEvents(options: { schoolId?: string | null; filters?: Angelcare360DocumentAuditFilter }) {

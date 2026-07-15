@@ -9,7 +9,7 @@ export default function Angelcare360DocumentsHub({ overview }: Props) {
   const cards = [
     { label: 'Documents générés', value: overview.generatedDocumentCount.toString(), detail: 'Fichiers réellement persistés' },
     { label: 'Templates', value: overview.templateCount.toString(), detail: 'Templates documentaires' },
-    { label: 'Gouvernance', value: overview.governanceReady ? 'OK' : 'Verrouillée', detail: 'Règles et rétention' },
+    { label: 'Gouvernance', value: overview.governanceReady ? 'OK' : 'À compléter', detail: 'Règles et rétention' },
     { label: 'Audit', value: overview.latestAuditEvents.length.toString(), detail: 'Événements journalisés' },
   ]
 
@@ -29,7 +29,7 @@ export default function Angelcare360DocumentsHub({ overview }: Props) {
         <div>
           <h2 style={sectionTitleStyle}>Gouvernance documentaire</h2>
           <p style={sectionTextStyle}>
-            Les documents générés ne sont pas simulés. Les templates sont contrôlés côté serveur et l’export reste verrouillé.
+            Les documents générés ne sont pas simulés. Les templates sont contrôlés côté serveur et les sorties A4 ou CSV suivent l’état réel du moteur.
           </p>
           <div style={actionRowStyle}>
             <Link href="/angelcare-360-command-center/documents/generated" style={actionLinkStyle}>Documents générés</Link>
@@ -40,8 +40,8 @@ export default function Angelcare360DocumentsHub({ overview }: Props) {
         <div style={readinessStyle}>
           <div style={readinessTitleStyle}>État de préparation documentaire</div>
           <ul style={readinessListStyle}>
-            <li>Templates: {overview.templateCount > 0 ? 'prêts' : 'verrouillés'}</li>
-            <li>Stockage: {overview.storageReady ? 'prêt' : 'verrouillé'}</li>
+            <li>Templates: {overview.templateCount > 0 ? 'prêts' : 'à compléter'}</li>
+            <li>Stockage: {overview.storageReady ? 'prêt' : 'à compléter'}</li>
             <li>Audit: {overview.auditReady ? 'ok' : 'à activer'}</li>
           </ul>
         </div>

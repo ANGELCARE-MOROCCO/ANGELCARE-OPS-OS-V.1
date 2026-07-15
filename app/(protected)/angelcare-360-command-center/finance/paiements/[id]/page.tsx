@@ -8,8 +8,12 @@ import { getAngelcare360PaymentById } from '@/lib/angelcare360/server/finance'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360FinancePaymentDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360FinancePaymentDetailPage({ params }: PageProps) {
+  const { id } = await params
   const context = await getAngelcare360FinanceContext()
   const payment = await getAngelcare360PaymentById({ schoolId: context.school!.id, id })
   if (!payment) notFound()

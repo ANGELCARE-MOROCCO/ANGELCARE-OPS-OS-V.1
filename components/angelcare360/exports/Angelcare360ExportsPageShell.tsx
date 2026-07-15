@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react'
 import Angelcare360ExportsNavigation from './Angelcare360ExportsNavigation'
 import type { Angelcare360ExportsNavigationItem } from '@/data/angelcare360/exports-navigation'
+import {
+  ANGELCARE360_COLORS,
+  angelcare360HeroBackdropStyle,
+  angelcare360PageShellStyle,
+  angelcare360PillBlueStyle,
+  angelcare360PillStyle,
+} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
 
 type Props = {
   title: string
@@ -48,14 +55,14 @@ export default function Angelcare360ExportsPageShell({
   )
 }
 
-const shellStyle: React.CSSProperties = { display: 'grid', gap: 18 }
-const headerStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 16, alignItems: 'start' }
+const shellStyle: React.CSSProperties = { ...angelcare360PageShellStyle }
+const headerStyle: React.CSSProperties = { ...angelcare360HeroBackdropStyle, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 18, alignItems: 'start', padding: 22 }
 const headingStyle: React.CSSProperties = { display: 'grid', gap: 10 }
 const badgeRowStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8 }
-const badgeStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 999, padding: '6px 10px', background: '#fef3c7', color: '#b45309', fontSize: 12, fontWeight: 900 }
-const statusStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 999, padding: '6px 10px', background: '#f8fafc', color: '#0f172a', fontSize: 12, fontWeight: 900, border: '1px solid #e2e8f0' }
-const titleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 30, lineHeight: 1.08, fontWeight: 950 }
-const subtitleStyle: React.CSSProperties = { margin: 0, maxWidth: 980, color: '#475569', fontSize: 15, lineHeight: 1.65, fontWeight: 600 }
-const contextStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8 }
+const badgeStyle: React.CSSProperties = { ...angelcare360PillBlueStyle, width: 'fit-content' }
+const statusStyle: React.CSSProperties = { ...angelcare360PillStyle }
+const titleStyle: React.CSSProperties = { margin: 0, color: ANGELCARE360_COLORS.navy, fontSize: 30, lineHeight: 1.08, fontWeight: 950 }
+const subtitleStyle: React.CSSProperties = { margin: 0, maxWidth: 980, color: ANGELCARE360_COLORS.slate, fontSize: 15.5, lineHeight: 1.65, fontWeight: 600 }
+const contextStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8, padding: 14, borderRadius: 20, border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`, background: ANGELCARE360_COLORS.white, boxShadow: '0 14px 32px rgba(15,23,42,.04)' }
 const actionsStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'end' }
 const contentStyle: React.CSSProperties = { display: 'grid', gap: 16 }

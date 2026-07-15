@@ -8,25 +8,26 @@ import { getAngelcare360PayrollContext, payrollBadgeStyle, payrollSecondaryLinkS
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360PayrollAuditPage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | string[] | undefined>
-}) {
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function Angelcare360PayrollAuditPage({ searchParams }: PageProps) {
   const context = await getAngelcare360PayrollContext()
+  const resolvedSearchParams = (await searchParams) || {}
   const [overview, events] = await Promise.all([
     getAngelcare360PayrollOverview({ schoolId: context.school.id }),
     listAngelcare360PayrollAuditEvents({
       schoolId: context.school.id,
-      module: typeof searchParams?.module === 'string' ? searchParams.module : null,
-      action: typeof searchParams?.action === 'string' ? searchParams.action : null,
-      entityType: typeof searchParams?.entityType === 'string' ? searchParams.entityType : null,
-      entityId: typeof searchParams?.entityId === 'string' ? searchParams.entityId : null,
-      severity: typeof searchParams?.severity === 'string' ? searchParams.severity : null,
-      actorUserId: typeof searchParams?.actorUserId === 'string' ? searchParams.actorUserId : null,
-      search: typeof searchParams?.search === 'string' ? searchParams.search : null,
-      from: typeof searchParams?.from === 'string' ? searchParams.from : null,
-      to: typeof searchParams?.to === 'string' ? searchParams.to : null,
+      module: typeof resolvedSearchParams.module === 'string' ? resolvedSearchParams.module : null,
+      action: typeof resolvedSearchParams.action === 'string' ? resolvedSearchParams.action : null,
+      entityType: typeof resolvedSearchParams.entityType === 'string' ? resolvedSearchParams.entityType : null,
+      entityId: typeof resolvedSearchParams.entityId === 'string' ? resolvedSearchParams.entityId : null,
+      severity: typeof resolvedSearchParams.severity === 'string' ? resolvedSearchParams.severity : null,
+      actorUserId: typeof resolvedSearchParams.actorUserId === 'string' ? resolvedSearchParams.actorUserId : null,
+      search: typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : null,
+      from: typeof resolvedSearchParams.from === 'string' ? resolvedSearchParams.from : null,
+      to: typeof resolvedSearchParams.to === 'string' ? resolvedSearchParams.to : null,
     }),
   ])
 

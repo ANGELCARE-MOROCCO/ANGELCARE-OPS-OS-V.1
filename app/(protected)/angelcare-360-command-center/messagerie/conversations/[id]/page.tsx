@@ -9,9 +9,14 @@ import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare36
 
 export const dynamic = 'force-dynamic'
 
-export default async function Angelcare360ConversationDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{ id: string }>
+}
+
+export default async function Angelcare360ConversationDetailPage({ params }: PageProps) {
   const context = await getAngelcare360CommunicationContext()
-  const detail = await getAngelcare360ConversationById(params.id, { schoolId: context.school.id })
+  const { id } = await params
+  const detail = await getAngelcare360ConversationById(id, { schoolId: context.school.id })
   if (!detail) notFound()
 
   return (
