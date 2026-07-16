@@ -10,7 +10,16 @@ import {
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
-import { syncEmailOSMailbox } from "@/lib/email-os-core/inbound-sync"
+import {
+  EmailOSInboundPersistenceError,
+  persistEmailOSBridgeInboundMessages,
+  syncEmailOSMailbox
+} from "@/lib/email-os-core/inbound-sync"
+import {
+  EmailOSInboundBridgeError,
+  fetchEmailOSInboundBridgeMessages,
+  isInboundBridgeUnavailableError
+} from "@/lib/email-os-core/inbound-bridge"
 
 function parseLimit(value: unknown) {
   const parsed = Number(value)
@@ -20,6 +29,96 @@ function parseLimit(value: unknown) {
 
 function normalize(value: unknown) {
   return String(value || "").trim().toLowerCase()
+}
+
+function clean(value: unknown) {
+  return String(value || "").trim()
+}
+
+function parseBoolean(value: unknown, fallback = false) {
+  const text = clean(value).toLowerCase()
+  if (!text) return fallback
+  if (["true", "1", "yes", "on"].includes(text)) return true
+  if (["false", "0", "no", "off"].includes(text)) return false
+  return fallback
+}
+
+function shouldAllowDirectInboundSync() {
+  return parseBoolean(process.env.EMAIL_OS_ALLOW_DIRECT_INBOUND_SYNC, false)
+}
+
+function resolvePassword(mailbox: ResolvedEmailOSMailbox) {
+  return clean(
+    mailbox.password ||
+      mailbox.incoming.pass ||
+      mailbox.smtp?.pass ||
+      mailbox.credential?.passwordRef ||
+      ""
+  )
+}
+
+function resolveBridgeIncoming(mailbox: ResolvedEmailOSMailbox) {
+  const providerMode = clean(mailbox.provider?.providerMode).toLowerCase()
+  const providerKey = clean(mailbox.provider?.providerKey).toLowerCase()
+  const incomingHost = clean(mailbox.incoming.host).toLowerCase()
+  const forceMenaraPop = incomingHost === "pop.menara.ma" || providerMode.includes("smtp_imap") || providerKey.includes("menara")
+
+  if (forceMenaraPop) {
+    return {
+      protocol: "pop3" as const,
+      host: "pop.menara.ma",
+      port: 110,
+      secure: false
+    }
+  }
+
+  return {
+    protocol: "pop3" as const,
+    host: mailbox.incoming.host,
+    port: mailbox.incoming.port,
+    secure: mailbox.incoming.secure
+  }
+}
+
+function mapSyncErrorResponse(error: unknown) {
+  if (error instanceof EmailOSInboundBridgeError) {
+    const status =
+      error.code === "POP_TIMEOUT"
+        ? 504
+        : error.code === "BRIDGE_UNAVAILABLE"
+            ? 503
+            : 502
+
+    return NextResponse.json(
+      {
+        ok: false,
+        error: error.message,
+        code: error.code,
+        diagnostics: error.diagnostics
+      },
+      { status }
+    )
+  }
+
+  if (error instanceof EmailOSInboundPersistenceError) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Database insert failed",
+        code: "DB_INSERT_FAILED"
+      },
+      { status: 500 }
+    )
+  }
+
+  return NextResponse.json(
+    {
+      ok: false,
+      error: error instanceof Error ? error.message : "Email sync failed",
+      code: "DB_INSERT_FAILED"
+    },
+    { status: 500 }
+  )
 }
 
 async function resolveSyncMailboxes(): Promise<ResolvedEmailOSMailbox[]> {
@@ -50,15 +149,31 @@ async function logSync(input: {
 }
 
 async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
+  const allowDirectFallback = shouldAllowDirectInboundSync()
+  const incoming = resolveBridgeIncoming(mailbox)
+  const password = resolvePassword(mailbox)
+
   try {
-    const result = await syncEmailOSMailbox(mailbox, limit)
+    const bridgeResult = await fetchEmailOSInboundBridgeMessages({
+      mailboxId: mailbox.mailboxId,
+      email: mailbox.email,
+      username: mailbox.incoming.user || mailbox.smtp.user || mailbox.email,
+      password,
+      incoming,
+      limit
+    })
+
+    const persistResult = await persistEmailOSBridgeInboundMessages(mailbox, bridgeResult.messages)
+
+    const count = persistResult.inserted + persistResult.updated
+    const skipped = bridgeResult.skipped + persistResult.skipped
 
     await logSync({
       mailboxId: mailbox.mailboxId,
-      provider: mailbox.incoming.protocol,
-      syncedCount: result.inserted,
+      provider: incoming.protocol,
+      syncedCount: count,
       status: "completed",
-      message: `POP3 inbound sync completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}`
+      message: `Windows bridge inbound sync completed. fetched=${bridgeResult.fetched}, inserted=${persistResult.inserted}, updated=${persistResult.updated}, skipped=${skipped}`
     })
 
     return {
@@ -66,35 +181,50 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
       mailboxId: mailbox.mailboxId,
       mailboxKey: mailbox.key,
       email: mailbox.email,
-      incoming: {
-        protocol: mailbox.incoming.protocol,
-        host: mailbox.incoming.host,
-        port: mailbox.incoming.port,
-        secure: mailbox.incoming.secure
-      },
-      count: result.inserted,
-      fetched: result.fetched,
-      skipped: result.skipped,
-      synced: result.synced
+      incoming,
+      count,
+      fetched: bridgeResult.fetched,
+      skipped,
+      synced: persistResult.synced,
+      source: "windows-bridge-pop3"
     }
   } catch (error) {
+    if (allowDirectFallback && isInboundBridgeUnavailableError(error)) {
+      const result = await syncEmailOSMailbox(mailbox, limit)
+
+      await logSync({
+        mailboxId: mailbox.mailboxId,
+        provider: mailbox.incoming.protocol,
+        syncedCount: result.inserted,
+        status: "completed",
+        message: `Direct POP3 inbound sync fallback completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}`
+      })
+
+      return {
+        ok: true,
+        mailboxId: mailbox.mailboxId,
+        mailboxKey: mailbox.key,
+        email: mailbox.email,
+        incoming,
+        count: result.inserted,
+        fetched: result.fetched,
+        skipped: result.skipped,
+        synced: result.synced,
+        source: "direct-pop3"
+      }
+    }
+
     const message = error instanceof Error ? error.message : "Email sync failed"
 
     await logSync({
       mailboxId: mailbox.mailboxId,
-      provider: mailbox.incoming.protocol,
+      provider: incoming.protocol,
       syncedCount: 0,
       status: "failed",
       message
     })
 
-    return {
-      ok: false,
-      mailboxId: mailbox.mailboxId,
-      mailboxKey: mailbox.key,
-      email: mailbox.email,
-      error: message
-    }
+    throw error
   }
 }
 
@@ -188,12 +318,6 @@ export async function POST(request: Request) {
       }
     }, { status: result.ok ? 200 : 500 })
   } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : "Email sync failed"
-      },
-      { status: 500 }
-    )
+    return mapSyncErrorResponse(error)
   }
 }

@@ -1,5 +1,6 @@
 const http = require("http")
 const net = require("net")
+const tls = require("tls")
 const os = require("os")
 const fs = require("fs")
 const path = require("path")
@@ -8,6 +9,7 @@ const dns = require("dns").promises
 const { execFile } = require("child_process")
 const { promisify } = require("util")
 const nodemailer = require("nodemailer")
+const { simpleParser } = require("mailparser")
 
 const execFileAsync = promisify(execFile)
 
@@ -26,6 +28,8 @@ const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 30
 const MAX_LOG_LINES = 1000
 const MAX_BACKUP_COUNT = 50
+const MAX_POP_MESSAGE_BYTES = 10 * 1024 * 1024
+const POP_TIMEOUT_MS = 25_000
 
 const LOG_OUT = path.join(LOG_DIR, "email-bridge-out.log")
 const LOG_ERROR = path.join(LOG_DIR, "email-bridge-error.log")
@@ -642,6 +646,460 @@ function createTransport(config) {
   })
 }
 
+function parseBoolean(value, fallback = false) {
+  const text = clean(value).toLowerCase()
+  if (!text) return fallback
+  if (["true", "1", "yes", "on"].includes(text)) return true
+  if (["false", "0", "no", "off"].includes(text)) return false
+  return fallback
+}
+
+function parsePositiveInteger(value, fallback) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallback
+  return Math.floor(parsed)
+}
+
+function normalizeAddressList(value) {
+  return Array.isArray(value) ? value.map((item) => clean(item)).filter(Boolean) : []
+}
+
+function previewMessage(text, html, snippet) {
+  const source = clean(snippet) || clean(text) || (typeof html === "string" ? html.replace(/<[^>]+>/g, " ") : "") || ""
+  return source.replace(/\s+/g, " ").trim().slice(0, 280)
+}
+
+function normalizeHeaders(headers) {
+  const output = {}
+  try {
+    if (!headers) return output
+    for (const [key, value] of headers) {
+      if (typeof value === "string") output[key] = value
+      else if (Array.isArray(value)) output[key] = value.map((item) => String(item)).join(", ")
+      else if (value) output[key] = String(value)
+    }
+  } catch {}
+  return output
+}
+
+function normalizePop3Body(body) {
+  return {
+    mailboxId: clean(body.mailboxId || body.mailbox_id),
+    email: clean(body.email).toLowerCase(),
+    username: clean(body.username || body.user || body.login || body.email).toLowerCase(),
+    password: clean(body.password),
+    host: clean(body.host || body.incoming?.host),
+    port: parsePositiveInteger(body.port || body.incoming?.port, 110),
+    secure: parseBoolean(body.secure ?? body.incoming?.secure, false),
+    limit: Math.min(100, Math.max(1, parsePositiveInteger(body.limit, 25)))
+  }
+}
+
+function pop3Error(code, message, status = 502, diagnostics = {}) {
+  const error = new Error(message)
+  error.code = code
+  error.status = status
+  error.diagnostics = diagnostics
+  return error
+}
+
+function mapPop3Error(error, context) {
+  const code = clean(error && error.code).toUpperCase()
+  const diagnostics = {
+    mailboxId: context.mailboxId,
+    email: context.email,
+    incoming: context.incoming,
+    limit: context.limit
+  }
+
+  if (code === "POP_AUTH_FAILED") return pop3Error("POP_AUTH_FAILED", "POP3 authentication failed", 502, diagnostics)
+  if (code === "POP_PARSE_FAILED") return pop3Error("POP_PARSE_FAILED", "POP3 parse failed", 502, diagnostics)
+  if (code === "POP_HOST_UNREACHABLE") return pop3Error("POP_HOST_UNREACHABLE", "POP3 host unreachable from Windows bridge", 502, diagnostics)
+  if (code === "POP_TIMEOUT") return pop3Error("POP_TIMEOUT", "POP3 connection timed out from Windows bridge", 504, diagnostics)
+  if (["ENOTFOUND", "EAI_AGAIN", "ECONNREFUSED", "ECONNRESET", "EHOSTUNREACH", "ENETUNREACH"].includes(code)) {
+    return pop3Error("POP_HOST_UNREACHABLE", "POP3 host unreachable from Windows bridge", 502, diagnostics)
+  }
+  if (code === "ETIMEDOUT") return pop3Error("POP_TIMEOUT", "POP3 connection timed out from Windows bridge", 504, diagnostics)
+  return pop3Error("BRIDGE_UNAVAILABLE", "Windows inbound bridge unavailable", 502, {
+    ...diagnostics,
+    reason: error instanceof Error ? error.message : String(error || "POP3 request failed")
+  })
+}
+
+class Pop3Client {
+  constructor(config) {
+    this.config = config
+    this.socket = null
+    this.buffer = ""
+  }
+
+  connectSocket() {
+    const { host, port, secure } = this.config
+    return secure
+      ? tls.connect({ host, port, servername: host, rejectUnauthorized: false })
+      : net.connect({ host, port })
+  }
+
+  async connect() {
+    const { timeoutMs = POP_TIMEOUT_MS } = this.config
+    this.socket = this.connectSocket()
+    this.socket.setTimeout(timeoutMs)
+
+    await new Promise((resolve, reject) => {
+      const onReady = () => {
+        cleanup()
+        resolve()
+      }
+      const onError = (error) => {
+        cleanup()
+        reject(error)
+      }
+      const cleanup = () => {
+        this.socket.off("connect", onReady)
+        this.socket.off("secureConnect", onReady)
+        this.socket.off("error", onError)
+      }
+      this.socket.once(this.config.secure ? "secureConnect" : "connect", onReady)
+      this.socket.once("error", onError)
+    })
+
+    await this.readResponse()
+  }
+
+  readLine() {
+    return new Promise((resolve, reject) => {
+      const tryRead = () => {
+        const index = this.buffer.indexOf("\r\n")
+        if (index >= 0) {
+          const line = this.buffer.slice(0, index)
+          this.buffer = this.buffer.slice(index + 2)
+          cleanup()
+          resolve(line)
+          return true
+        }
+        return false
+      }
+
+      const onData = (chunk) => {
+        this.buffer += chunk.toString("binary")
+        tryRead()
+      }
+      const onError = (error) => {
+        cleanup()
+        reject(error)
+      }
+      const onTimeout = () => {
+        cleanup()
+        reject(pop3Error("POP_TIMEOUT", "POP3 connection timed out from Windows bridge", 504))
+      }
+      const cleanup = () => {
+        this.socket.off("data", onData)
+        this.socket.off("error", onError)
+        this.socket.off("timeout", onTimeout)
+      }
+
+      if (tryRead()) return
+      this.socket.on("data", onData)
+      this.socket.once("error", onError)
+      this.socket.once("timeout", onTimeout)
+    })
+  }
+
+  async readResponse() {
+    const line = await this.readLine()
+    if (line.startsWith("+OK")) return line
+    if (/auth|password|login|credentials?/i.test(line) || line.startsWith("-ERR")) {
+      throw pop3Error("POP_AUTH_FAILED", "POP3 authentication failed", 502, { response: line })
+    }
+    throw pop3Error("POP_HOST_UNREACHABLE", "POP3 host unreachable from Windows bridge", 502, { response: line })
+  }
+
+  async readMultiline() {
+    const first = await this.readLine()
+    if (!first.startsWith("+OK")) {
+      if (/auth|password|login|credentials?/i.test(first) || first.startsWith("-ERR")) {
+        throw pop3Error("POP_AUTH_FAILED", "POP3 authentication failed", 502, { response: first })
+      }
+      throw pop3Error("POP_HOST_UNREACHABLE", "POP3 host unreachable from Windows bridge", 502, { response: first })
+    }
+
+    const lines = []
+    while (true) {
+      const line = await this.readLine()
+      if (line === ".") break
+      lines.push(line.startsWith("..") ? line.slice(1) : line)
+    }
+    return lines
+  }
+
+  async command(command) {
+    if (!this.socket) throw pop3Error("BRIDGE_UNAVAILABLE", "Windows inbound bridge unavailable", 502)
+    this.socket.write(`${command}\r\n`, "binary")
+    return this.readResponse()
+  }
+
+  async multiline(command) {
+    if (!this.socket) throw pop3Error("BRIDGE_UNAVAILABLE", "Windows inbound bridge unavailable", 502)
+    this.socket.write(`${command}\r\n`, "binary")
+    return this.readMultiline()
+  }
+
+  async login(user, pass) {
+    await this.command(`USER ${clean(user)}`)
+    await this.command(`PASS ${clean(pass)}`)
+  }
+
+  async listMessages() {
+    let uidLines = []
+    try {
+      uidLines = await this.multiline("UIDL")
+    } catch {}
+
+    const listLines = await this.multiline("LIST")
+    const sizes = new Map()
+
+    for (const line of listLines) {
+      const [numberText, sizeText] = String(line || "").trim().split(/\s+/)
+      const number = Number(numberText)
+      const size = Number(sizeText)
+      if (Number.isFinite(number) && Number.isFinite(size)) {
+        sizes.set(number, size)
+      }
+    }
+
+    if (uidLines.length) {
+      return uidLines
+        .map((line) => {
+          const [numberText, uid] = String(line || "").trim().split(/\s+/)
+          const number = Number(numberText)
+          return Number.isFinite(number) && uid ? { number, uid, size: sizes.get(number) || 0 } : null
+        })
+        .filter(Boolean)
+    }
+
+    return listLines
+      .map((line) => {
+        const [numberText, sizeText] = String(line || "").trim().split(/\s+/)
+        const number = Number(numberText)
+        const size = Number(sizeText)
+        return Number.isFinite(number) ? { number, uid: String(number), size: Number.isFinite(size) ? size : 0 } : null
+      })
+      .filter(Boolean)
+  }
+
+  async retrieve(number) {
+    return this.multiline(`RETR ${number}`)
+  }
+
+  async quit() {
+    try {
+      await this.command("QUIT")
+    } catch {}
+    try {
+      this.socket && this.socket.destroy()
+    } catch {}
+  }
+}
+
+async function handleAdminInboundSync(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, code: "BRIDGE_UNAVAILABLE" } }
+  }
+
+  const input = normalizePop3Body(body || {})
+  if (!input.mailboxId || !input.email || !input.username || !input.password || !input.host) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Missing required fields",
+        code: "INVALID_REQUEST"
+      }
+    }
+  }
+
+  const incoming = {
+    protocol: "pop3",
+    host: input.host,
+    port: input.port,
+    secure: input.secure
+  }
+  const started = Date.now()
+  const client = new Pop3Client({
+    host: input.host,
+    port: input.port,
+    secure: input.secure,
+    timeoutMs: POP_TIMEOUT_MS
+  })
+
+  auditAction({
+    action: "INBOUND_POP3_SYNC",
+    actor: clean(request.headers["x-angelcare-operator"]) || "system",
+    ip: getRequestIp(request),
+    params: {
+      mailboxId: input.mailboxId,
+      email: input.email,
+      incoming,
+      limit: input.limit
+    },
+    result: "running",
+    durationMs: 0
+  })
+
+  try {
+    await client.connect()
+    await client.login(input.username, input.password)
+
+    const refs = await client.listMessages()
+    const selected = refs.slice(-Math.max(1, Math.min(input.limit, 100)))
+    const messages = []
+    let skipped = 0
+
+    for (const ref of selected) {
+      if (Number.isFinite(ref.size) && ref.size > MAX_POP_MESSAGE_BYTES) {
+        skipped += 1
+        continue
+      }
+
+      const rawLines = await client.retrieve(ref.number)
+      const rawText = rawLines.join("\r\n")
+      if (Buffer.byteLength(rawText, "utf8") > MAX_POP_MESSAGE_BYTES) {
+        skipped += 1
+        continue
+      }
+
+      let parsed
+      try {
+        parsed = await simpleParser(Buffer.from(rawText, "utf8"))
+      } catch (error) {
+        throw pop3Error("POP_PARSE_FAILED", "POP3 parse failed", 502, {
+          mailboxId: input.mailboxId,
+          email: input.email,
+          reason: error instanceof Error ? error.message : String(error || "parse failed")
+        })
+      }
+
+      const from = parsed.from?.value?.[0] || null
+      const to = normalizeAddressList(parsed.to?.value?.map((item) => item.address))
+      const cc = normalizeAddressList(parsed.cc?.value?.map((item) => item.address))
+      const attachments = Array.isArray(parsed.attachments)
+        ? parsed.attachments.map((attachment) => ({
+            filename: attachment.filename || null,
+            contentType: attachment.contentType || null,
+            size: Number.isFinite(Number(attachment.size)) ? Number(attachment.size) : 0
+          }))
+        : []
+      const receivedAt = parsed.date ? parsed.date.toISOString() : new Date().toISOString()
+      const subject = parsed.subject || "(Sans objet)"
+
+      messages.push({
+        externalId: String(ref.uid || ref.number),
+        messageId: parsed.messageId || null,
+        subject,
+        fromEmail: from?.address || "",
+        fromName: from?.name || null,
+        to,
+        cc,
+        date: receivedAt,
+        text: parsed.text || null,
+        html: typeof parsed.html === "string" ? parsed.html : null,
+        snippet: previewMessage(parsed.text, parsed.html, null),
+        hasAttachments: attachments.length > 0,
+        attachments,
+        rawHeaders: normalizeHeaders(parsed.headers)
+      })
+    }
+
+    const durationMs = Date.now() - started
+    auditAction({
+      action: "INBOUND_POP3_SYNC",
+      actor: clean(request.headers["x-angelcare-operator"]) || "system",
+      ip: getRequestIp(request),
+      params: {
+        mailboxId: input.mailboxId,
+        email: input.email,
+        incoming,
+        limit: input.limit
+      },
+      result: "ok",
+      durationMs,
+      after: {
+        fetched: messages.length,
+        skipped
+      }
+    })
+
+    return {
+      status: 200,
+      payload: {
+        ok: true,
+        mailboxId: input.mailboxId,
+        email: input.email,
+        incoming,
+        fetched: messages.length,
+        skipped,
+        messages,
+        diagnostics: {
+          mailboxId: input.mailboxId,
+          incoming,
+          limit: input.limit,
+          messageCount: refs.length,
+          parsedCount: messages.length,
+          skipped
+        }
+      }
+    }
+  } catch (error) {
+    const mapped = mapPop3Error(error, {
+      mailboxId: input.mailboxId,
+      email: input.email,
+      incoming,
+      limit: input.limit
+    })
+    const durationMs = Date.now() - started
+
+    auditAction({
+      action: "INBOUND_POP3_SYNC_ERROR",
+      actor: clean(request.headers["x-angelcare-operator"]) || "system",
+      ip: getRequestIp(request),
+      params: {
+        mailboxId: input.mailboxId,
+        email: input.email,
+        incoming,
+        limit: input.limit
+      },
+      result: "error",
+      durationMs,
+      error: mapped.message
+    })
+
+    logStructured(LOG_ERROR, {
+      event: "INBOUND_POP3_SYNC_ERROR",
+      level: "error",
+      message: mapped.message,
+      error: mapped.code,
+      diagnostics: sanitizeLogEntryValue({
+        mailboxId: input.mailboxId,
+        email: input.email,
+        incoming,
+        limit: input.limit
+      })
+    })
+
+    return {
+      status: mapped.status || 502,
+      payload: {
+        ok: false,
+        error: mapped.message,
+        code: mapped.code,
+        diagnostics: mapped.diagnostics
+      }
+    }
+  } finally {
+    await client.quit()
+  }
+}
 
 const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
 const MAX_TOTAL_ATTACHMENT_BYTES = 15 * 1024 * 1024
@@ -2782,6 +3240,12 @@ async function handleRequest(request, response) {
   if (pathname === "/admin/audit/event" && request.method === "POST") {
     const body = await readJsonBody(request)
     const result = await handleAdminAuditEvent(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/inbound/sync" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleAdminInboundSync(request, body)
     return writeJson(response, result.status, result.payload)
   }
 

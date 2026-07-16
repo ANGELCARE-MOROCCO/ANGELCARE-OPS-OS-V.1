@@ -31,11 +31,15 @@ export async function POST(
     })
     let count = 0
     let errorMessage: string | null = null
+    let errorCode: string | null = null
 
     if (syncResult) {
       const json = await syncResult.json()
       count = Number(json?.data?.count || 0)
-      if (!json?.ok) errorMessage = json?.error || "Sync failed"
+      if (!json?.ok) {
+        errorCode = json?.code || json?.data?.code || null
+        errorMessage = errorCode ? `Inbound sync failed: ${errorCode}` : json?.error || "Sync failed"
+      }
     } else {
       errorMessage = "Sync endpoint unreachable"
     }
@@ -63,7 +67,7 @@ export async function POST(
       created_at: nowIso()
     })
 
-    return NextResponse.json({ ok: !errorMessage, data: { status: finalStatus, messagesSynced: count, error: errorMessage } })
+    return NextResponse.json({ ok: !errorMessage, data: { status: finalStatus, messagesSynced: count, error: errorMessage, code: errorCode } })
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Sync job run failed" }, { status: 500 })
   }

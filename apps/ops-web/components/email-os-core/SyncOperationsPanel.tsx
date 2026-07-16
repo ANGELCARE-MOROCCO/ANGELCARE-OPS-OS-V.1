@@ -5,7 +5,14 @@ import { Play, Plus, RefreshCw, RotateCw } from "lucide-react"
 
 async function api(path: string, options?: RequestInit) {
   const res = await fetch(path, { ...options, headers: { "Content-Type": "application/json", ...(options?.headers || {}) } })
-  return res.json()
+  const json = await res.json().catch(() => null)
+  return {
+    ok: res.ok && json?.ok !== false,
+    data: json?.data ?? json,
+    error: json?.error || (!res.ok ? `HTTP ${res.status}` : null),
+    code: json?.code || json?.data?.code || null,
+    status: res.status
+  }
 }
 
 export default function SyncOperationsPanel() {
@@ -52,7 +59,7 @@ export default function SyncOperationsPanel() {
 
   async function runJob(id: string) {
     const result = await api(`/api/email-os/sync-jobs/${id}/run`, { method: "POST" })
-    setStatus(result.ok ? "Sync job completed" : result.error || "Sync failed")
+    setStatus(result.ok ? "Sync job completed" : result.data?.code ? `Inbound sync failed: ${result.data.code}` : result.data?.error ? String(result.data.error) : result.code ? `Inbound sync failed: ${result.code}` : result.error || "Sync failed")
     await load()
   }
 

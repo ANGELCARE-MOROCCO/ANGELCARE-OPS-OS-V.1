@@ -1,3 +1,4 @@
+import crypto from "crypto"
 import net from "node:net"
 import tls from "node:tls"
 import { simpleParser } from "mailparser"
@@ -25,6 +26,55 @@ type EmailOSInboundSyncResult = {
     fromEmail: string
     receivedAt: string
   }>
+}
+
+export type EmailOSBridgeInboundAttachment = {
+  filename: string | null
+  contentType: string | null
+  size: number | null
+}
+
+export type EmailOSBridgeInboundMessage = {
+  externalId?: string | null
+  messageId?: string | null
+  subject?: string | null
+  fromEmail?: string | null
+  fromName?: string | null
+  to?: string[] | null
+  cc?: string[] | null
+  date?: string | null
+  text?: string | null
+  html?: string | null
+  snippet?: string | null
+  hasAttachments?: boolean | null
+  attachments?: EmailOSBridgeInboundAttachment[] | null
+  rawHeaders?: Record<string, string> | null
+}
+
+export type EmailOSBridgeInboundPersistResult = {
+  mailboxId: string
+  mailboxKey: string
+  email: string
+  provider: string
+  fetched: number
+  inserted: number
+  updated: number
+  skipped: number
+  synced: Array<{
+    providerUid: string
+    subject: string
+    fromEmail: string
+    receivedAt: string
+  }>
+}
+
+export class EmailOSInboundPersistenceError extends Error {
+  code = "DB_INSERT_FAILED"
+
+  constructor(message: string) {
+    super(message)
+    this.name = "EmailOSInboundPersistenceError"
+  }
 }
 
 type ParsedMailAddress = {
@@ -64,6 +114,11 @@ function previewFrom(text: string | undefined | null, html: string | false | und
   return source.replace(/\s+/g, " ").trim().slice(0, 280)
 }
 
+function previewFromBridgeMessage(message: EmailOSBridgeInboundMessage) {
+  const source = message.snippet || message.text || (typeof message.html === "string" ? message.html.replace(/<[^>]+>/g, " ") : "") || ""
+  return source.replace(/\s+/g, " ").trim().slice(0, 280)
+}
+
 function headersToObject(headers: Iterable<[string, unknown]> | null | undefined) {
   const output: Record<string, string> = {}
   try {
@@ -75,6 +130,177 @@ function headersToObject(headers: Iterable<[string, unknown]> | null | undefined
     }
   } catch {}
   return output
+}
+
+function normalizeBridgeList(values: unknown) {
+  if (!Array.isArray(values)) return []
+  return values
+    .map((value) => String(value || "").trim())
+    .filter(Boolean)
+}
+
+function normalizeBridgeDate(value: unknown) {
+  const text = String(value || "").trim()
+  if (!text) return nowIso()
+  const date = new Date(text)
+  return Number.isNaN(date.getTime()) ? nowIso() : date.toISOString()
+}
+
+function buildBridgeProviderUid(mailbox: ResolvedEmailOSMailbox, message: EmailOSBridgeInboundMessage, index: number) {
+  const externalId = String(message.externalId || message.messageId || "").trim()
+  if (externalId) return externalId
+
+  return crypto
+    .createHash("sha256")
+    .update([
+      mailbox.mailboxId,
+      mailbox.email,
+      normalizeBridgeList(message.to).join(","),
+      normalizeBridgeList(message.cc).join(","),
+      String(message.subject || ""),
+      String(message.date || ""),
+      String(message.fromEmail || ""),
+      String(message.text || ""),
+      String(index)
+    ].join("|"))
+    .digest("hex")
+}
+
+function buildBridgeRawPayload(mailbox: ResolvedEmailOSMailbox, providerUid: string, message: EmailOSBridgeInboundMessage, receivedAt: string, fromEmail: string, toEmail: string, ccEmail: string[]) {
+  const toList = normalizeBridgeList(message.to)
+  return {
+    source: "windows-bridge-pop3",
+    mailboxKey: mailbox.key,
+    mailboxEmail: mailbox.email,
+    providerUid,
+    externalId: providerUid,
+    messageId: message.messageId || null,
+    fromName: message.fromName || null,
+    fromEmail: fromEmail || null,
+    to: toList.length ? toList : (toEmail ? [toEmail] : []),
+    cc: ccEmail,
+    subject: String(message.subject || "(Sans objet)"),
+    text: message.text || null,
+    html: typeof message.html === "string" ? message.html : null,
+    date: receivedAt,
+    headers: { ...(message.rawHeaders || {}) },
+    attachments: Array.isArray(message.attachments)
+      ? message.attachments.map((attachment) => ({
+          filename: attachment?.filename || null,
+          contentType: attachment?.contentType || null,
+          size: Number.isFinite(Number(attachment?.size)) ? Number(attachment?.size) : 0
+        }))
+      : [],
+    hasAttachments: Boolean(message.hasAttachments),
+    bridge: {
+      protocol: "pop3",
+      host: mailbox.incoming.host,
+      port: mailbox.incoming.port,
+      secure: mailbox.incoming.secure
+    }
+  }
+}
+
+export async function persistEmailOSBridgeInboundMessages(
+  mailbox: ResolvedEmailOSMailbox,
+  messages: EmailOSBridgeInboundMessage[]
+): Promise<EmailOSBridgeInboundPersistResult> {
+  const db = createEmailOSCoreDb()
+  const synced: EmailOSBridgeInboundPersistResult["synced"] = []
+  let inserted = 0
+  let updated = 0
+  let skipped = 0
+
+  for (const [index, message] of messages.entries()) {
+    const providerUid = buildBridgeProviderUid(mailbox, message, index)
+    if (!providerUid) {
+      skipped += 1
+      continue
+    }
+
+    const fromEmail = String(message.fromEmail || "").trim().toLowerCase() || mailbox.email
+    const toEmails = normalizeBridgeList(message.to)
+    const ccEmails = normalizeBridgeList(message.cc)
+    const toEmail = toEmails.join(", ") || mailbox.email
+    const receivedAt = normalizeBridgeDate(message.date)
+    const subject = String(message.subject || "(Sans objet)")
+    const preview = previewFromBridgeMessage(message)
+
+    const { data: existing, error: lookupError } = await db
+      .from("email_os_core_inbox")
+      .select("id")
+      .eq("mailbox_id", mailbox.mailboxId)
+      .eq("provider_uid", providerUid)
+      .maybeSingle()
+
+    if (lookupError) {
+      throw new EmailOSInboundPersistenceError(lookupError.message)
+    }
+
+    const payload = {
+      id: makeEmailOSId(),
+      mailbox_id: mailbox.mailboxId,
+      provider_uid: providerUid,
+      subject,
+      from_email: fromEmail,
+      to_email: toEmail,
+      preview,
+      status: "received",
+      label: mailbox.label,
+      folder: "inbox",
+      raw: buildBridgeRawPayload(mailbox, providerUid, message, receivedAt, fromEmail, toEmail, ccEmails),
+      created_at: receivedAt,
+      updated_at: nowIso()
+    }
+
+    if (existing?.id) {
+      const { error: updateError } = await db
+        .from("email_os_core_inbox")
+        .update({
+          subject: payload.subject,
+          from_email: payload.from_email,
+          to_email: payload.to_email,
+          preview: payload.preview,
+          status: payload.status,
+          label: payload.label,
+          folder: payload.folder,
+          raw: payload.raw,
+          updated_at: payload.updated_at
+        })
+        .eq("id", existing.id)
+
+      if (updateError) {
+        throw new EmailOSInboundPersistenceError(updateError.message)
+      }
+
+      updated += 1
+    } else {
+      const { error: insertError } = await db.from("email_os_core_inbox").insert(payload)
+      if (insertError) {
+        throw new EmailOSInboundPersistenceError(insertError.message)
+      }
+      inserted += 1
+    }
+
+    synced.push({
+      providerUid,
+      subject,
+      fromEmail,
+      receivedAt
+    })
+  }
+
+  return {
+    mailboxId: mailbox.mailboxId,
+    mailboxKey: mailbox.key,
+    email: mailbox.email,
+    provider: "pop3",
+    fetched: messages.length,
+    inserted,
+    updated,
+    skipped,
+    synced
+  }
 }
 
 class Pop3Client {

@@ -8,7 +8,13 @@ import InboxActionToolbar from "@/components/email-os-core/InboxActionToolbar"
 async function api(path: string, options?: RequestInit) {
   const res = await fetch(path, { ...options, headers: { "Content-Type": "application/json", ...(options?.headers || {}) } })
   const json = await res.json().catch(() => null)
-  return { ok: res.ok && json?.ok !== false, data: json?.data ?? json, error: json?.error || (!res.ok ? `HTTP ${res.status}` : null) }
+  return {
+    ok: res.ok && json?.ok !== false,
+    data: json?.data ?? json,
+    error: json?.error || (!res.ok ? `HTTP ${res.status}` : null),
+    code: json?.code || json?.data?.code || null,
+    status: res.status
+  }
 }
 
 function asArray(payload: any) { return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [] }
@@ -280,8 +286,8 @@ function EmailOSSyncControlPanel({ mailboxes, selectedMailboxId, onSynced, onSta
     const count = Number(payload.count ?? fetched ?? 0)
 
     if (!result.ok) {
-      patchResult(mailbox, { status: "failed", error: result.error || "Sync failed", fetched: 0, inserted: 0, skipped: 0, count: 0, at: new Date().toISOString() })
-      return { ok: false, error: result.error }
+      patchResult(mailbox, { status: "failed", error: result.code || result.error || "Sync failed", fetched: 0, inserted: 0, skipped: 0, count: 0, at: new Date().toISOString() })
+      return { ok: false, error: result.error, code: result.code }
     }
 
     patchResult(mailbox, { status: inserted > 0 || fetched > 0 ? "success" : "empty", fetched, inserted, skipped, count, error: undefined, at: new Date().toISOString() })
@@ -293,12 +299,12 @@ function EmailOSSyncControlPanel({ mailboxes, selectedMailboxId, onSynced, onSta
     setSyncing(true)
     setLastStartedAt(new Date().toISOString())
     onStatus(`Force sync started · ${selectedMailbox.name || selectedMailbox.email}`)
-    await syncMailbox(selectedMailbox)
+    const result = await syncMailbox(selectedMailbox)
     setActiveKey(null)
     setLastCompletedAt(new Date().toISOString())
     setSyncing(false)
     await onSynced()
-    onStatus(`Force sync completed · ${selectedMailbox.name || selectedMailbox.email}`)
+    onStatus(result?.ok ? `Force sync completed · ${selectedMailbox.name || selectedMailbox.email}` : `Inbound sync failed: ${result?.code || result?.error || "SYNC_FAILED"}`)
   }
 
   async function runAllSync() {
@@ -306,14 +312,16 @@ function EmailOSSyncControlPanel({ mailboxes, selectedMailboxId, onSynced, onSta
     setSyncing(true)
     setLastStartedAt(new Date().toISOString())
     onStatus(`Sync all started · ${mailboxes.length} mailbox(es)`)
+    let failedResult: { ok: false; error?: string; code?: string } | null = null
     for (const mailbox of mailboxes) {
-      await syncMailbox(mailbox)
+      const result = await syncMailbox(mailbox)
+      if (!result?.ok && !failedResult) failedResult = result as { ok: false; error?: string; code?: string }
     }
     setActiveKey(null)
     setLastCompletedAt(new Date().toISOString())
     setSyncing(false)
     await onSynced()
-    onStatus(`Sync all completed · fetched ${summary.fetched} · inserted ${summary.inserted}`)
+    onStatus(failedResult ? `Inbound sync failed: ${failedResult.code || failedResult.error || "SYNC_FAILED"}` : `Sync all completed · fetched ${summary.fetched} · inserted ${summary.inserted}`)
   }
 
   return (
