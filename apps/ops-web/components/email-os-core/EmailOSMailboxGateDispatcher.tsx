@@ -7,6 +7,10 @@ import { ArrowRight, LockKeyhole, RefreshCw, Shield, ShieldAlert, ShieldCheck } 
 
 type MailboxSummary = {
   id: string
+  assignmentId: string
+  mailboxId: string
+  mailboxEmail: string | null
+  mailboxName: string | null
   mailbox_id: string
   mailbox?: {
     id: string
@@ -18,12 +22,16 @@ type MailboxSummary = {
   } | null
   role: string
   permissions: Record<string, boolean>
+  pinConfigured?: boolean
+  pinStatus?: string
   pin_status: string
+  assignmentStatus?: string
   status: string
   failed_pin_attempts: number
   locked_until?: string | null
   assigned_by?: string | null
   assigned_at?: string | null
+  sessionStatus?: string
   session_status: string
   session?: {
     id: string
@@ -103,7 +111,7 @@ export default function EmailOSMailboxGateDispatcher() {
   const [state, setState] = useState<LoadState>({ summary: { assigned_mailboxes_count: 0, active_sessions_count: 0, locked_assignments_count: 0, last_activity_at: null, security_status: "Needs PIN" }, assignments: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selected, setSelected] = useState<MailboxSummary | null>(null)
+  const [selectedMailbox, setSelectedMailbox] = useState<MailboxSummary | null>(null)
   const [pin, setPin] = useState("")
   const [busy, setBusy] = useState(false)
   const [unlockError, setUnlockError] = useState<string | null>(null)
@@ -130,7 +138,7 @@ export default function EmailOSMailboxGateDispatcher() {
   const redirectReason = searchParams.get("reason")
   const securityTone = useMemo(() => {
     const text = clean(state.summary.security_status).toLowerCase()
-    if (text.includes("healthy")) return "green"
+    if (text.includes("healthy") || text.includes("ready") || text.includes("pin active")) return "green"
     if (text.includes("locked")) return "red"
     if (text.includes("needs")) return "amber"
     if (text.includes("revoked")) return "red"
@@ -138,7 +146,7 @@ export default function EmailOSMailboxGateDispatcher() {
   }, [state.summary.security_status])
 
   async function unlockMailbox() {
-    if (!selected) return
+    if (!selectedMailbox) return
     if (!/^\d{6}$/.test(pin)) {
       setUnlockError("PIN must contain exactly 6 digits.")
       return
@@ -148,31 +156,31 @@ export default function EmailOSMailboxGateDispatcher() {
     setUnlockError(null)
     const result = await api("/api/email-os/access/unlock", {
       method: "POST",
-      body: JSON.stringify({ mailboxId: selected.mailbox_id, pin }),
+      body: JSON.stringify({ mailboxId: selectedMailbox.mailboxId, pin }),
     })
     setBusy(false)
 
     if (!result.ok) {
       setUnlockError(result.error || "Unlock failed")
       if (result.status === 423) {
-        setPinLockedUntil(selected?.locked_until || null)
+        setPinLockedUntil(selectedMailbox?.locked_until || null)
       }
       return
     }
 
     setPin("")
-    setSelected(null)
-    router.push(`/email-os/mailboxes/${encodeURIComponent(selected.mailbox_id)}`)
+    setSelectedMailbox(null)
+    router.push(`/email-os/mailboxes/${encodeURIComponent(selectedMailbox.mailboxId)}`)
   }
 
   const openMailbox = (assignment: MailboxSummary) => {
-    const sessionStatus = clean(assignment.session_status).toLowerCase()
+    const sessionStatus = clean(assignment.sessionStatus || assignment.session_status).toLowerCase()
     const isUnlocked = sessionStatus === "active" && assignment.session?.expires_at && new Date(assignment.session.expires_at).getTime() > Date.now()
     if (isUnlocked) {
-      router.push(`/email-os/mailboxes/${encodeURIComponent(assignment.mailbox_id)}`)
+      router.push(`/email-os/mailboxes/${encodeURIComponent(assignment.mailboxId)}`)
       return
     }
-    setSelected(assignment)
+    setSelectedMailbox(assignment)
     setPin("")
     setUnlockError(null)
     setPinLockedUntil(assignment.locked_until || null)
@@ -233,14 +241,14 @@ export default function EmailOSMailboxGateDispatcher() {
           <section className="grid gap-4">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {state.assignments.map((assignment) => {
-                const isUnlocked = clean(assignment.session_status).toLowerCase() === "active" && assignment.session?.expires_at && new Date(assignment.session.expires_at).getTime() > Date.now()
+                const isUnlocked = clean(assignment.sessionStatus || assignment.session_status).toLowerCase() === "active" && assignment.session?.expires_at && new Date(assignment.session.expires_at).getTime() > Date.now()
                 return (
                   <article key={assignment.id} className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">{assignment.role}</div>
-                        <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">{assignment.mailbox?.name || assignment.mailbox_id}</h2>
-                        <p className="mt-2 text-sm font-semibold text-slate-500">{assignment.mailbox?.address || '—'}</p>
+                        <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">{assignment.mailboxName || assignment.mailbox?.name || assignment.mailboxId || assignment.mailbox_id}</h2>
+                        <p className="mt-2 text-sm font-semibold text-slate-500">{assignment.mailboxEmail || assignment.mailbox?.address || '—'}</p>
                       </div>
                       <Badge label={assignment.row_state} tone={statusTone(assignment.row_state)} />
                     </div>
@@ -250,8 +258,8 @@ export default function EmailOSMailboxGateDispatcher() {
                         <Badge label={permissionSummary(assignment.permissions)} tone="blue" />
                       </div>
                       <div className="grid grid-cols-2 gap-3 text-sm font-semibold text-slate-600">
-                        <Meta label="PIN" value={assignment.pin_status.replaceAll('_', ' ')} tone={pinTone(assignment.pin_status)} />
-                        <Meta label="Session" value={assignment.session_status.replaceAll('_', ' ')} tone={sessionTone(assignment.session_status)} />
+                        <Meta label="PIN" value={(assignment.pinStatus || assignment.pin_status).replaceAll('_', ' ')} tone={pinTone(assignment.pinStatus || assignment.pin_status)} />
+                        <Meta label="Session" value={(assignment.sessionStatus || assignment.session_status).replaceAll('_', ' ')} tone={sessionTone(assignment.sessionStatus || assignment.session_status)} />
                         <Meta label="Last activity" value={shortDate(assignment.last_activity_at)} />
                         <Meta label="Failed attempts" value={String(assignment.failed_pin_attempts || 0)} />
                       </div>
@@ -275,13 +283,13 @@ export default function EmailOSMailboxGateDispatcher() {
         )}
       </div>
 
-      {selected ? (
+      {selectedMailbox ? (
         <div className="fixed inset-0 z-[1000] grid place-items-center bg-slate-950/55 p-4 backdrop-blur-md">
           <div className="w-full max-w-xl overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-2xl">
             <div className="border-b border-slate-200 px-6 py-5">
               <div className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">PIN Unlock</div>
-              <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">{selected.mailbox?.name || selected.mailbox_id}</h3>
-              <p className="mt-2 text-sm font-semibold text-slate-500">{selected.mailbox?.address || '—'}</p>
+              <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">{selectedMailbox.mailboxName || selectedMailbox.mailbox?.name || selectedMailbox.mailboxId || selectedMailbox.mailbox_id}</h3>
+              <p className="mt-2 text-sm font-semibold text-slate-500">{selectedMailbox.mailboxEmail || selectedMailbox.mailbox?.address || '—'}</p>
             </div>
             <div className="grid gap-4 px-6 py-6">
               {pinLockedUntil ? (
@@ -306,7 +314,7 @@ export default function EmailOSMailboxGateDispatcher() {
               </div>
             </div>
             <div className="flex flex-wrap justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-5">
-              <button type="button" onClick={() => { setSelected(null); setPin(""); setUnlockError(null); setPinLockedUntil(null) }} className="h-11 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-black text-slate-700">
+              <button type="button" onClick={() => { setSelectedMailbox(null); setPin(""); setUnlockError(null); setPinLockedUntil(null) }} className="h-11 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-black text-slate-700">
                 Cancel
               </button>
               <button type="button" onClick={() => void unlockMailbox()} disabled={busy} className="h-11 rounded-2xl bg-slate-950 px-6 text-sm font-black text-white disabled:opacity-50">

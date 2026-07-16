@@ -123,7 +123,7 @@ function shortDate(value?: string | null) {
 
 function toneForStatus(value: string): Tone {
   const text = clean(value).toLowerCase()
-  if (text.includes('healthy') || text.includes('active')) return 'green'
+  if (text.includes('healthy') || text.includes('active') || text.includes('ready') || text.includes('pin active')) return 'green'
   if (text.includes('revoked') || text.includes('blocked') || text.includes('expired') || text.includes('locked')) return 'red'
   if (text.includes('needs')) return 'amber'
   if (text.includes('session')) return 'blue'
@@ -475,7 +475,14 @@ export default function EmailOSMailboxAccessSection({
   }
 
   const rowCount = assignments.length
-  const securityTone = summary.security_status === 'Healthy' ? 'green' : summary.security_status === 'Needs PIN' ? 'amber' : summary.security_status === 'Locked' ? 'red' : 'red'
+  const securityText = clean(summary.security_status).toLowerCase()
+  const securityTone = securityText.includes('ready') || securityText.includes('healthy') || securityText.includes('pin active')
+    ? 'green'
+    : securityText.includes('needs')
+      ? 'amber'
+      : securityText.includes('locked') || securityText.includes('revoked')
+        ? 'red'
+        : 'slate'
 
   return (
     <section style={panelStyle}>

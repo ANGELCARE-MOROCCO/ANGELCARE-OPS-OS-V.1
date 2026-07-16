@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
-import { getUserEmailOSMailboxAssignments } from '@/lib/email-os-core/access-governance'
+import { getMailboxAccessSummaryFromAssignments, getUserEmailOSMailboxAssignments } from '@/lib/email-os-core/access-governance'
 
 export async function GET() {
   const user = await getCurrentAppUser()
@@ -16,7 +16,7 @@ export async function GET() {
       data: {
         userId: user.id,
         summary: {
-          ...result.summary,
+          ...getMailboxAccessSummaryFromAssignments(assignments),
           assigned_mailboxes_count: assignments.length,
         },
         assignments,

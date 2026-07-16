@@ -6,6 +6,15 @@ export type EmailOSMailboxRole = 'viewer' | 'operator' | 'sender' | 'manager' | 
 export type EmailOSMailboxAssignmentStatus = 'active' | 'suspended' | 'revoked'
 export type EmailOSMailboxPinStatus = 'not_configured' | 'active' | 'reset_required' | 'locked' | 'revoked'
 export type EmailOSMailboxSessionStatus = 'active' | 'expired' | 'revoked'
+export type EmailOSMailboxPinDiagnostics = {
+  resolvedUserId: string
+  requestedMailboxId: string
+  assignmentFound: boolean
+  assignmentStatus: EmailOSMailboxAssignmentStatus | string | null
+  pinStatus: EmailOSMailboxPinStatus | string | null
+  pinConfigured: boolean
+  mailboxIdSource: string
+}
 
 export type EmailOSPermissionSet = {
   can_read: boolean
@@ -25,11 +34,13 @@ export type EmailOSMailboxAccessErrorPayload = {
 
 export class EmailOSMailboxAccessError extends Error {
   status: number
+  diagnostics?: EmailOSMailboxPinDiagnostics
 
-  constructor(message: string, status = 403) {
+  constructor(message: string, status = 403, diagnostics?: EmailOSMailboxPinDiagnostics) {
     super(message)
     this.name = 'EmailOSMailboxAccessError'
     this.status = status
+    this.diagnostics = diagnostics
   }
 }
 
@@ -379,9 +390,11 @@ function assignmentSecurityLabel(assignment: AssignmentRow, session?: SessionRow
   if (assignment.pin_status === 'locked') return 'Locked'
   if (assignment.pin_status === 'not_configured') return 'Needs PIN'
   if (assignment.pin_status === 'reset_required') return 'Needs PIN'
-  if (sessionStateForRow(session) === 'expired') return 'Needs PIN'
+  if (sessionStateForRow(session) === 'active') return 'Ready'
+  if (assignment.pin_status === 'active') return 'PIN active'
+  if (sessionStateForRow(session) === 'expired') return 'PIN active'
   if (sessionStateForRow(session) === 'revoked') return 'Locked'
-  return 'Healthy'
+  return 'PIN active'
 }
 
 function rowStateLabel(assignment: AssignmentRow, session?: SessionRow | null) {
@@ -398,10 +411,18 @@ function rowStateLabel(assignment: AssignmentRow, session?: SessionRow | null) {
 }
 
 function toSafeAssignmentSummary(assignment: AssignmentRow, mailbox: SafeMailbox | null, session?: SessionRow | null) {
+  const pinConfigured = Boolean((assignment as AnyRecord).pin_hash)
+  const assignmentStatus = normalizeAssignmentStatus(assignment.status)
+  const pinStatus = normalizePinStatus(assignment.pin_status)
+  const sessionStatus = sessionStateForRow(session)
   return {
+    assignmentId: assignment.id,
     id: assignment.id,
     user_id: assignment.user_id,
+    mailboxId: assignment.mailbox_id,
     mailbox_id: assignment.mailbox_id,
+    mailboxEmail: mailbox?.address || null,
+    mailboxName: mailbox?.name || null,
     mailbox,
     role: normalizeRole(assignment.role),
     permissions: {
@@ -414,8 +435,11 @@ function toSafeAssignmentSummary(assignment: AssignmentRow, mailbox: SafeMailbox
       can_view_logs: safeBool(assignment.can_view_logs),
       can_manage_mailbox_settings: safeBool(assignment.can_manage_mailbox_settings),
     },
-    pin_status: normalizePinStatus(assignment.pin_status),
-    status: normalizeAssignmentStatus(assignment.status),
+    pinConfigured,
+    pinStatus,
+    pin_status: pinStatus,
+    assignmentStatus,
+    status: assignmentStatus,
     failed_pin_attempts: Number(assignment.failed_pin_attempts || 0),
     locked_until: assignment.locked_until || null,
     assigned_by: assignment.assigned_by || null,
@@ -424,11 +448,12 @@ function toSafeAssignmentSummary(assignment: AssignmentRow, mailbox: SafeMailbox
     revoked_at: assignment.revoked_at || null,
     revoke_reason: assignment.revoke_reason || null,
     notes: assignment.notes || null,
-    session_status: sessionStateForRow(session),
+    sessionStatus,
+    session_status: sessionStatus,
     session: session
       ? {
           id: session.id,
-          status: sessionStateForRow(session),
+          status: sessionStatus,
           unlocked_at: session.unlocked_at || null,
           expires_at: session.expires_at,
           last_activity_at: session.last_activity_at || null,
@@ -442,6 +467,25 @@ function toSafeAssignmentSummary(assignment: AssignmentRow, mailbox: SafeMailbox
     row_state: rowStateLabel(assignment, session),
     security_status: assignmentSecurityLabel(assignment, session),
   }
+}
+
+function mailboxAccessSummaryStatus(rows: Array<{
+  assignmentStatus?: string
+  pinConfigured?: boolean
+  pinStatus?: string
+  sessionStatus?: string
+  session_status?: string
+  security_status?: string
+}>) {
+  const isActive = (value: unknown) => cleanLower(value) === 'active'
+  const activeRows = rows.filter((row) => isActive(row.assignmentStatus))
+  if (rows.some((row) => row.security_status === 'Revoked')) return 'Revoked'
+  if (rows.some((row) => row.security_status === 'Locked')) return 'Locked'
+  if (activeRows.some((row) => cleanLower(row.pinStatus) === 'locked')) return 'Locked'
+  if (activeRows.some((row) => cleanLower(row.pinStatus) === 'not_configured' || cleanLower(row.pinStatus) === 'reset_required')) return 'Needs PIN'
+  if (activeRows.some((row) => isActive(row.sessionStatus || row.session_status))) return 'Ready'
+  if (activeRows.some((row) => row.pinConfigured && cleanLower(row.pinStatus) === 'active')) return 'PIN active'
+  return 'Needs PIN'
 }
 
 export async function auditMailboxAccessEvent(payload: {
@@ -516,11 +560,7 @@ export async function getUserEmailOSMailboxAssignments(userId: string) {
     .sort()
     .at(-1) || null
 
-  const securityStatus =
-    rows.some((row) => row.security_status === 'Revoked') ? 'Revoked' :
-    rows.some((row) => row.security_status === 'Locked') ? 'Locked' :
-    rows.some((row) => row.security_status === 'Needs PIN') ? 'Needs PIN' :
-    rows.some((row) => row.session_status === 'active') ? 'Healthy' : 'Needs PIN'
+  const securityStatus = mailboxAccessSummaryStatus(rows)
 
   return {
     user_id: resolvedUserId,
@@ -998,12 +1038,39 @@ export async function verifyMailboxPin(params: {
   const userId = clean(params.userId)
   const mailboxId = clean(params.mailboxId)
   const pin = clean(params.pin)
+  const diagnosticsBase: EmailOSMailboxPinDiagnostics = {
+    resolvedUserId: userId,
+    requestedMailboxId: mailboxId,
+    assignmentFound: false,
+    assignmentStatus: null,
+    pinStatus: null,
+    pinConfigured: false,
+    mailboxIdSource: 'request.body.mailboxId',
+  }
 
   if (!userId || !mailboxId) throw new EmailOSMailboxAccessError('Mailbox not assigned to this user.', 403)
   if (!isPin(pin)) throw new EmailOSMailboxAccessError('PIN must contain exactly 6 digits.', 400)
 
-  const context = await getAssignmentContext(userId, mailboxId)
-  if (!context) {
+  const { data: assignmentData, error: assignmentError } = await db
+    .from('email_os_mailbox_user_assignments')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('mailbox_id', mailboxId)
+    .eq('status', 'active')
+    .maybeSingle()
+
+  if (assignmentError) throw assignmentError
+
+  const assignment = assignmentData ? normalizeAssignmentRow(assignmentData) : null
+  const diagnostics: EmailOSMailboxPinDiagnostics = {
+    ...diagnosticsBase,
+    assignmentFound: Boolean(assignment),
+    assignmentStatus: assignment ? assignment.status : null,
+    pinStatus: assignment ? assignment.pin_status : null,
+    pinConfigured: Boolean(assignmentData?.pin_hash),
+  }
+
+  if (!assignment) {
     await auditMailboxAccessEvent({
       actor_user_id: userId,
       target_user_id: userId,
@@ -1014,14 +1081,15 @@ export async function verifyMailboxPin(params: {
       request: params.request || null,
       metadata_json: { reason: 'mailbox not assigned' },
     }).catch(() => null)
-    throw new EmailOSMailboxAccessError('Mailbox not assigned to this user.', 403)
+    throw new EmailOSMailboxAccessError('Mailbox is not assigned to this user.', 403, diagnostics)
   }
 
-  const { assignment, mailbox } = context
+  const { data: mailboxData } = await db.from('email_os_core_mailboxes').select('*').eq('id', assignment.mailbox_id).maybeSingle()
+  const mailbox = normalizeMailboxRow(mailboxData)
   const now = Date.now()
   const lockedUntil = assignment.locked_until ? new Date(assignment.locked_until).getTime() : 0
 
-  if (assignment.status !== 'active' || assignment.pin_status === 'revoked' || assignment.pin_status === 'not_configured') {
+  if (assignment.pin_status === 'locked' || (assignment.locked_until && lockedUntil > now)) {
     await auditMailboxAccessEvent({
       actor_user_id: userId,
       target_user_id: userId,
@@ -1031,27 +1099,12 @@ export async function verifyMailboxPin(params: {
       event_result: 'denied',
       severity: 'warning',
       request: params.request || null,
-      metadata_json: { reason: assignment.status !== 'active' ? 'assignment inactive' : 'pin unavailable' },
+      metadata_json: { reason: 'pin locked', locked_until: assignment.locked_until || null },
     }).catch(() => null)
-    throw new EmailOSMailboxAccessError('Mailbox not assigned to this user.', 403)
+    throw new EmailOSMailboxAccessError('Mailbox PIN is temporarily locked. Please try again later or contact an administrator.', 423, diagnostics)
   }
 
-  if (lockedUntil > now) {
-    await auditMailboxAccessEvent({
-      actor_user_id: userId,
-      target_user_id: userId,
-      mailbox_id: mailboxId,
-      assignment_id: assignment.id,
-      event_type: 'mailbox_unlock_locked',
-      event_result: 'locked',
-      severity: 'warning',
-      request: params.request || null,
-      metadata_json: { locked_until: assignment.locked_until },
-    }).catch(() => null)
-    throw new EmailOSMailboxAccessError('Mailbox PIN is temporarily locked. Please try again later or contact an administrator.', 423)
-  }
-
-  if (!assignment.pin_hash) {
+  if (assignment.pin_status === 'not_configured' || !assignment.pin_hash) {
     await auditMailboxAccessEvent({
       actor_user_id: userId,
       target_user_id: userId,
@@ -1062,7 +1115,22 @@ export async function verifyMailboxPin(params: {
       severity: 'warning',
       request: params.request || null,
     }).catch(() => null)
-    throw new EmailOSMailboxAccessError('Mailbox PIN is not configured.', 400)
+    throw new EmailOSMailboxAccessError('Mailbox PIN is not configured.', 400, diagnostics)
+  }
+
+  if (assignment.pin_status !== 'active') {
+    await auditMailboxAccessEvent({
+      actor_user_id: userId,
+      target_user_id: userId,
+      mailbox_id: mailboxId,
+      assignment_id: assignment.id,
+      event_type: 'mailbox_unlock_failed',
+      event_result: 'denied',
+      severity: 'warning',
+      request: params.request || null,
+      metadata_json: { reason: 'pin status not active', pin_status: assignment.pin_status },
+    }).catch(() => null)
+    throw new EmailOSMailboxAccessError('Mailbox PIN status is not active.', 400, diagnostics)
   }
 
   const pinOk = await bcrypt.compare(pin, assignment.pin_hash)
@@ -1070,7 +1138,7 @@ export async function verifyMailboxPin(params: {
     const attempts = Number(assignment.failed_pin_attempts || 0) + 1
     const shouldLock = attempts >= PIN_ATTEMPT_LIMIT
     const nextLockedUntil = shouldLock ? new Date(Date.now() + PIN_LOCKOUT_MS).toISOString() : null
-    const nextStatus: EmailOSMailboxPinStatus = shouldLock ? 'locked' : assignment.pin_status === 'reset_required' ? 'reset_required' : 'active'
+    const nextStatus: EmailOSMailboxPinStatus = shouldLock ? 'locked' : 'active'
 
     await db
       .from('email_os_mailbox_user_assignments')
@@ -1099,7 +1167,8 @@ export async function verifyMailboxPin(params: {
       shouldLock
         ? 'Mailbox PIN is temporarily locked. Please try again later or contact an administrator.'
         : 'Invalid mailbox PIN.',
-      shouldLock ? 423 : 400
+      shouldLock ? 423 : 400,
+      diagnostics
     )
   }
 
@@ -1134,7 +1203,7 @@ export async function verifyMailboxPin(params: {
   await db.from('email_os_mailbox_user_assignments').update({
     failed_pin_attempts: 0,
     locked_until: null,
-    pin_status: assignment.pin_status === 'revoked' ? 'revoked' : 'active',
+    pin_status: 'active',
     updated_at: nowIso(),
   }).eq('id', assignment.id).then(() => null, () => null)
 
@@ -1363,18 +1432,23 @@ export async function getMailboxAccessAssignmentById(assignmentId: string) {
   return toSafeAssignmentSummary(assignment, mailbox, session)
 }
 
-export function getMailboxAccessSummaryFromAssignments(assignments: Array<{ session_status: string; row_state: string; last_activity_at?: string | null; security_status: string }>) {
-  const activeSessionsCount = assignments.filter((row) => row.session_status === 'active').length
-  const lockedAssignmentsCount = assignments.filter((row) => ['PIN not configured', 'PIN reset required', 'Temporarily locked', 'Access revoked'].includes(row.row_state)).length
+export function getMailboxAccessSummaryFromAssignments(assignments: Array<{
+  session_status?: string
+  sessionStatus?: string
+  row_state?: string
+  last_activity_at?: string | null
+  security_status?: string
+  assignmentStatus?: string
+  pinConfigured?: boolean
+  pinStatus?: string
+}>) {
+  const activeSessionsCount = assignments.filter((row) => cleanLower(row.sessionStatus || row.session_status) === 'active').length
+  const lockedAssignmentsCount = assignments.filter((row) => ['PIN not configured', 'PIN reset required', 'Temporarily locked', 'Access revoked'].includes(clean(row.row_state))).length
   const lastActivityAt = assignments
     .map((row) => row.last_activity_at)
     .filter(Boolean)
     .sort()
     .at(-1) || null
-  const securityStatus =
-    assignments.some((row) => row.security_status === 'Revoked') ? 'Revoked' :
-    assignments.some((row) => row.security_status === 'Locked') ? 'Locked' :
-    assignments.some((row) => row.security_status === 'Needs PIN') ? 'Needs PIN' :
-    assignments.some((row) => row.session_status === 'active') ? 'Healthy' : 'Needs PIN'
+  const securityStatus = mailboxAccessSummaryStatus(assignments)
   return { activeSessionsCount, lockedAssignmentsCount, lastActivityAt, securityStatus }
 }
