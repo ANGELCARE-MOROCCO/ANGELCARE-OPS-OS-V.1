@@ -422,6 +422,52 @@ export async function resolveEmailOSMailboxIdentityFromDb(input: {
   }
 }
 
+
+export async function listEmailOSMultiMailboxesFromDb(): Promise<ResolvedEmailOSMailbox[]> {
+  try {
+    const db = createEmailOSCoreDb()
+
+    const [{ data: credentials }, { data: providers }] = await Promise.all([
+      db
+        .from("email_os_core_mailbox_credentials")
+        .select("*")
+        .eq("status", "active")
+        .order("updated_at", { ascending: false }),
+      db
+        .from("email_os_core_provider_profiles")
+        .select("*")
+        .order("updated_at", { ascending: false })
+    ])
+
+    const providerMap = new Map<string, DbProviderProfile>()
+    for (const provider of providers || []) {
+      providerMap.set(normalizeText(provider?.id || ""), provider as DbProviderProfile)
+    }
+
+    const rows: ResolvedEmailOSMailbox[] = []
+    const seen = new Set<string>()
+
+    for (const credential of credentials || []) {
+      const row = credential as DbMailboxCredential
+      const mailboxId = normalizeText(row.mailbox_id || "")
+      const email = normalizeText(row.email_address || row.username || "").toLowerCase()
+      const passwordRef = normalizeText(row.password_ref || "")
+
+      if (!mailboxId || !email || !passwordRef) continue
+      if (seen.has(mailboxId)) continue
+
+      const provider = providerMap.get(normalizeText(row.provider_profile_id || "")) || null
+      rows.push(buildResolvedMailboxFromDb(row, provider, { mailboxId, fromEmail: email, selectedEmail: email }))
+      seen.add(mailboxId)
+    }
+
+    return rows
+  } catch {
+    return []
+  }
+}
+
+
 export async function listEmailOSMailboxConfigStatusFromDb() {
   const db = createEmailOSCoreDb()
 

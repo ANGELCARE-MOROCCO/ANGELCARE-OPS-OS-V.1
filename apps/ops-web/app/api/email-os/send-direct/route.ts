@@ -9,6 +9,17 @@ function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
 }
 
+function normalizeAttachmentsForSend(value: any) {
+  const rows = Array.isArray(value) ? value : []
+  return rows.slice(0, 10)
+    .map((item: any) => ({
+      filename: clean(item.filename || item.name),
+      contentType: clean(item.contentType || item.content_type || item.mimeType) || "application/octet-stream",
+      contentBase64: clean(item.contentBase64 || item.content_base64 || item.base64 || item.content),
+    }))
+    .filter((item: any) => item.filename && item.contentBase64)
+}
+
 export async function POST(request: Request) {
   let outboxId = ""
   let db: any = null
@@ -29,12 +40,14 @@ export async function POST(request: Request) {
     const subject = clean(body.subject) || "(Sans objet)"
     const messageBody = clean(body.body || body.message)
     const priority = clean(body.priority) || "normal"
+    const attachments = normalizeAttachmentsForSend(body.attachments)
 
     if (!toEmail) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
     }
 
     db = createEmailOSCoreDb()
+
     const mailboxScope = await resolveMailboxScopeForUser(user.id, requestedMailboxId || null)
     const access = await requireUnlockedMailboxAccess({
       userId: user.id,
@@ -42,8 +55,10 @@ export async function POST(request: Request) {
       requiredPermission: "can_send",
       request,
     })
+
     const resolvedFrom = clean(access.mailbox?.address || access.mailbox?.name || "")
     const requestedFrom = clean(body.fromEmail || body.from_email)
+
     if (requestedFrom && requestedFrom.toLowerCase() !== resolvedFrom.toLowerCase()) {
       await auditMailboxAccessEvent({
         actor_user_id: user.id,
@@ -57,8 +72,10 @@ export async function POST(request: Request) {
         request,
         metadata_json: { reason: "fromEmail mismatch", requested_from: requestedFrom, resolved_from: resolvedFrom },
       }).catch(() => null)
+
       return NextResponse.json({ ok: false, error: "Permission denied for this mailbox action." }, { status: 403 })
     }
+
     const now = nowIso()
     outboxId = makeEmailOSId()
 
@@ -81,11 +98,12 @@ export async function POST(request: Request) {
         ...(body.diagnostics || {}),
         requestedMailboxId: mailboxScope.mailboxId,
         route: "send-direct",
-        transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail"
+        transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
+        attachmentCount: attachments.length,
       },
       queue_id: null,
       from_email: resolvedFrom || null,
-      last_error: null
+      last_error: null,
     }).then(() => null, () => null)
 
     const { identity, info } = await sendEmailOSDirect({
@@ -95,7 +113,8 @@ export async function POST(request: Request) {
       ccEmail,
       bccEmail,
       subject,
-      body: messageBody
+      body: messageBody,
+      attachments,
     })
 
     const sentAt = nowIso()
@@ -117,10 +136,11 @@ export async function POST(request: Request) {
           actualFrom: identity.smtp.from,
           smtpUser: identity.smtp.user,
           transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
+          attachmentCount: attachments.length,
           accepted: info.accepted || [],
-          rejected: info.rejected || []
+          rejected: info.rejected || [],
         },
-        last_error: null
+        last_error: null,
       })
       .eq("id", outboxId)
       .then(() => null, () => null)
@@ -137,21 +157,23 @@ export async function POST(request: Request) {
         resolvedMailboxId: identity.mailboxId,
         from: identity.smtp.from,
         smtpUser: identity.smtp.user,
-        messageId: info.messageId || null
+        messageId: info.messageId || null,
+        attachmentCount: attachments.length,
       },
-      created_at: sentAt
+      created_at: sentAt,
     }).then(() => null, () => null)
 
     return NextResponse.json({
-        ok: true,
-        data: {
-          sent: true,
-          outboxId,
-          messageId: info.messageId || null,
-          mailboxId: identity.mailboxId,
+      ok: true,
+      data: {
+        sent: true,
+        outboxId,
+        messageId: info.messageId || null,
+        mailboxId: identity.mailboxId,
         mailboxKey: identity.key,
-        from: identity.smtp.from
-      }
+        from: identity.smtp.from,
+        attachmentCount: attachments.length,
+      },
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Direct send failed"
@@ -170,10 +192,10 @@ export async function POST(request: Request) {
                   ...(body?.diagnostics || {}),
                   route: "send-direct",
                   transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
-                  ...bridgeDiagnostics
-                }
+                  ...bridgeDiagnostics,
+                },
               }
-            : {})
+            : {}),
         })
         .eq("id", outboxId)
         .then(() => null, () => null)
@@ -188,7 +210,7 @@ export async function POST(request: Request) {
           ? "Selected mailbox credentials were rejected. Confirm the selected compose mailbox matches the configured mailbox email/password."
           : message.includes("421")
             ? "Menara throttled SMTP. Wait 60 seconds and retry without liveness/diagnostics refreshing."
-            : null
+            : null,
       },
       { status: bridgeDiagnostics ? 502 : 500 }
     )

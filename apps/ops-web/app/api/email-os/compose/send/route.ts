@@ -10,6 +10,17 @@ function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
 }
 
+function normalizeAttachmentsForSend(value: any) {
+  const rows = Array.isArray(value) ? value : []
+  return rows.slice(0, 10)
+    .map((item: any) => ({
+      filename: clean(item.filename || item.name),
+      contentType: clean(item.contentType || item.content_type || item.mimeType) || "application/octet-stream",
+      contentBase64: clean(item.contentBase64 || item.content_base64 || item.base64 || item.content),
+    }))
+    .filter((item: any) => item.filename && item.contentBase64)
+}
+
 export async function POST(request: Request) {
   const db = createEmailOSCoreDb()
   let outboxId = ""
@@ -17,6 +28,7 @@ export async function POST(request: Request) {
 
   try {
     body = await request.json().catch(() => ({}))
+
     const user = await getCurrentAppUser()
     if (!user) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
@@ -29,6 +41,7 @@ export async function POST(request: Request) {
     const bccEmail = clean(body.bccEmail || body.bcc_email || body.bcc)
     const subject = clean(body.subject) || "(Sans objet)"
     const message = clean(body.body || body.message || body.text || body.html)
+    const attachments = normalizeAttachmentsForSend(body.attachments)
 
     if (!toEmail) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
@@ -41,6 +54,7 @@ export async function POST(request: Request) {
       requiredPermission: "can_send",
       request,
     })
+
     const resolvedFrom = clean(access.mailbox?.address || access.mailbox?.name || "")
     if (fromEmail && fromEmail.toLowerCase() !== resolvedFrom.toLowerCase()) {
       await auditMailboxAccessEvent({
@@ -55,11 +69,13 @@ export async function POST(request: Request) {
         request,
         metadata_json: { reason: "fromEmail mismatch", requested_from: fromEmail, resolved_from: resolvedFrom },
       }).catch(() => null)
+
       return NextResponse.json({ ok: false, error: "Permission denied for this mailbox action." }, { status: 403 })
     }
 
     const recipientCount = countEmailRecipients(toEmail, ccEmail, bccEmail)
-    const guarded = await runAc360WiredAction('email_os.compose_send', async () => {
+
+    const guarded = await runAc360WiredAction("email_os.compose_send", async () => {
       const now = nowIso()
       outboxId = makeEmailOSId()
 
@@ -76,11 +92,16 @@ export async function POST(request: Request) {
         priority: body.priority || "normal",
         provider_message_id: null,
         queue_id: null,
-        diagnostics: { route: "compose/send", transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail", ac360Guarded: true },
+        diagnostics: {
+          route: "compose/send",
+          transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
+          attachmentCount: attachments.length,
+          ac360Guarded: true,
+        },
         created_at: now,
         updated_at: now,
         sent_at: null,
-        last_error: null
+        last_error: null,
       }).then(() => null, () => null)
 
       const { identity, info } = await sendEmailOSDirect({
@@ -90,7 +111,8 @@ export async function POST(request: Request) {
         ccEmail,
         bccEmail,
         subject,
-        body: message
+        body: message,
+        attachments,
       })
 
       const sentAt = nowIso()
@@ -106,13 +128,14 @@ export async function POST(request: Request) {
         diagnostics: {
           route: "compose/send",
           transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
+          attachmentCount: attachments.length,
           resolvedMailboxKey: identity.key,
           resolvedMailboxId: identity.mailboxId,
           smtpUser: identity.smtp.user,
           accepted: info.accepted || [],
           rejected: info.rejected || [],
           ac360Guarded: true,
-        }
+        },
       }).eq("id", outboxId).then(() => null, () => null)
 
       return {
@@ -121,13 +144,24 @@ export async function POST(request: Request) {
         messageId: info.messageId || null,
         mailboxId: identity.mailboxId,
         mailboxKey: identity.key,
-        from: identity.smtp.from
+        from: identity.smtp.from,
+        attachmentCount: attachments.length,
       }
     }, {
       orgId: body.orgId || body.org_id,
       quantity: recipientCount,
-      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('email.compose.send', `${mailboxScope.mailboxId || resolvedFrom || 'mailbox'}:${toEmail}:${subject}`),
-      metadata: { mailboxId: mailboxScope.mailboxId, fromEmail: resolvedFrom, toEmail, ccEmail, bccEmail, subject, recipientCount, source: 'api.email-os.compose.send.POST' },
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey("email.compose.send", `${mailboxScope.mailboxId || resolvedFrom || "mailbox"}:${toEmail}:${subject}`),
+      metadata: {
+        mailboxId: mailboxScope.mailboxId,
+        fromEmail: resolvedFrom,
+        toEmail,
+        ccEmail,
+        bccEmail,
+        subject,
+        recipientCount,
+        attachmentCount: attachments.length,
+        source: "api.email-os.compose.send.POST",
+      },
     })
 
     if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
@@ -135,7 +169,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       data: guarded.data,
-      ac360: { guard: guarded.guard, usage: guarded.usage }
+      ac360: { guard: guarded.guard, usage: guarded.usage },
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Compose send failed"
@@ -152,10 +186,10 @@ export async function POST(request: Request) {
                 ...(body?.diagnostics || {}),
                 route: "compose/send",
                 transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
-                ...bridgeDiagnostics
-              }
+                ...bridgeDiagnostics,
+              },
             }
-          : {})
+          : {}),
       }).eq("id", outboxId).then(() => null, () => null)
     }
 
@@ -163,7 +197,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error: message,
-        ...(bridgeDiagnostics || {})
+        ...(bridgeDiagnostics || {}),
       },
       { status: bridgeDiagnostics ? 502 : 500 }
     )

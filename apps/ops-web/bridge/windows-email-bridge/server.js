@@ -642,6 +642,57 @@ function createTransport(config) {
   })
 }
 
+
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
+const MAX_TOTAL_ATTACHMENT_BYTES = 15 * 1024 * 1024
+const MAX_ATTACHMENT_COUNT = 10
+
+function sanitizeAttachmentFilename(value) {
+  const raw = clean(value).replace(/[\\/:*?"<>|]/g, "_")
+  return raw.slice(0, 160) || "attachment"
+}
+
+function estimateBase64Bytes(value) {
+  const cleanValue = String(value || "").replace(/\s/g, "")
+  const padding = cleanValue.endsWith("==") ? 2 : cleanValue.endsWith("=") ? 1 : 0
+  return Math.max(0, Math.floor(cleanValue.length * 3 / 4) - padding)
+}
+
+function normalizeBridgeAttachments(input) {
+  const rows = Array.isArray(input) ? input.slice(0, MAX_ATTACHMENT_COUNT) : []
+  let totalBytes = 0
+
+  return rows.map((item) => {
+    const filename = sanitizeAttachmentFilename(item && (item.filename || item.name))
+    const contentType = clean(item && (item.contentType || item.content_type || item.mimeType)) || "application/octet-stream"
+    const rawBase64 = clean(item && (item.contentBase64 || item.content_base64 || item.base64 || item.content))
+
+    if (!rawBase64) {
+      throw new Error(`Attachment ${filename} has no file content.`)
+    }
+
+    if (!/^[A-Za-z0-9+/=\r\n]+$/.test(rawBase64)) {
+      throw new Error(`Attachment ${filename} is not valid base64.`)
+    }
+
+    const bytes = estimateBase64Bytes(rawBase64)
+    if (bytes > MAX_ATTACHMENT_BYTES) {
+      throw new Error(`Attachment ${filename} exceeds the 8 MB limit.`)
+    }
+
+    totalBytes += bytes
+    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+      throw new Error("Total attachments exceed the 15 MB limit.")
+    }
+
+    return {
+      filename,
+      contentType,
+      content: Buffer.from(rawBase64, "base64")
+    }
+  })
+}
+
 function configSafe(config) {
   return {
     host: config.host,
@@ -664,6 +715,7 @@ async function sendMail(config, input, diagnostics) {
       subject: input.subject || "(Sans objet)",
       text: input.text || "",
       html: input.html || String(input.text || "").replace(/\n/g, "<br />"),
+      attachments: normalizeBridgeAttachments(input.attachments || []),
       replyTo: input.replyTo || undefined,
       headers: {
         "X-AngelCare-Mailbox": diagnostics.mailbox || "",
@@ -1467,12 +1519,13 @@ async function handleSend(request, body) {
       {
         host: smtpHost,
         port: smtpPort,
+        attachmentCount: Array.isArray(attachments) ? attachments.length : 0,
         secure: smtpSecure,
         user: username,
         pass: password,
         fromEmail
       },
-      { fromEmail, toEmail, cc, bcc, subject, text, html, replyTo },
+      { fromEmail, toEmail, cc, bcc, subject, text, html, replyTo, attachments },
       { mailbox, mailboxId }
     )
     const latencyMs = Date.now() - started
@@ -1490,7 +1543,8 @@ async function handleSend(request, body) {
         from: fromEmail,
         to: toEmail,
         host: smtpHost,
-        port: smtpPort
+        port: smtpPort,
+        attachmentCount: Array.isArray(attachments) ? attachments.length : 0
       }
     }
     runtimeState.lastSendSuccess = {

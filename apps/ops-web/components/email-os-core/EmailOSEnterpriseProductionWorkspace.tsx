@@ -125,7 +125,7 @@ function isInView(row: any, view: WorkspaceView) {
 
 const views: Array<{ key: WorkspaceView; label: string; icon: any }> = [
   { key: "inbox", label: "Inbox", icon: Inbox },
-  { key: "sent", label: "Sent", icon: Send },
+  { key: "sent", label: "Outbox / Sent", icon: Send },
   { key: "drafts", label: "Drafts", icon: FileText },
   { key: "all", label: "All Mail", icon: MailOpen },
   { key: "archived", label: "Archived", icon: Archive },
@@ -302,15 +302,32 @@ export default function EmailOSEnterpriseProductionWorkspace({ mailboxId: scoped
 
   async function load() {
     setLoading(true)
-      const result = await api(`/api/email-os/enterprise-workspace${scopedMailboxId ? `?mailboxId=${encodeURIComponent(scopedMailboxId)}` : ""}`)
-      if (result.ok) {
-        setMailboxes(asArray(result.data?.mailboxes).map(normalizeMailbox))
-        setInbox(asArray(result.data?.inbox))
+
+    let syncSummary = ""
+    if (scopedMailboxId) {
+      setStatus("Syncing inbound messages for this mailbox...")
+      const syncResult = await api("/api/email-os/sync", {
+        method: "POST",
+        body: JSON.stringify({ mailboxId: scopedMailboxId, limit: 25 })
+      })
+
+      if (syncResult.ok) {
+        const data = syncResult.data || {}
+        syncSummary = ` · inbound fetched ${data.fetched || 0}, inserted ${data.count || 0}, skipped ${data.skipped || 0}`
+      } else {
+        syncSummary = ` · inbound sync skipped: ${syncResult.error || "failed"}`
+      }
+    }
+
+    const result = await api(`/api/email-os/enterprise-workspace${scopedMailboxId ? `?mailboxId=${encodeURIComponent(scopedMailboxId)}` : ""}`)
+    if (result.ok) {
+      setMailboxes(asArray(result.data?.mailboxes).map(normalizeMailbox))
+      setInbox(asArray(result.data?.inbox))
       setOutbox(asArray(result.data?.outbox))
       setDrafts(asArray(result.data?.drafts))
       setTemplates(asArray(result.data?.templates))
       setAudit(asArray(result.data?.audit))
-      setStatus(`Synced ${nowLabel()} · ${result.data?.diagnostics?.finalMailboxCount || 0} mailboxes`)
+      setStatus(`Synced ${nowLabel()} · ${result.data?.diagnostics?.finalMailboxCount || 0} mailbox(es)${syncSummary}`)
     } else {
       setStatus(result.error || "Workspace load failed")
     }
@@ -345,8 +362,21 @@ export default function EmailOSEnterpriseProductionWorkspace({ mailboxId: scoped
   }
 
   function openCompose(mode: ComposeMode) { setComposeMode(mode); setComposeOpen(true); setComposeMenuOpen(false) }
+
+  async function lockCurrentMailbox() {
+    if (!scopedMailboxId) return
+    setStatus("Locking mailbox session...")
+    await api("/api/email-os/access/logout-mailbox", {
+      method: "POST",
+      body: JSON.stringify({ mailboxId: scopedMailboxId })
+    })
+    window.location.href = "/email-os/gate"
+  }
+
   const scopedMailbox = Boolean(mailboxId)
   const visibleViews = scopedMailbox ? views.filter((item) => item.key !== "settings") : views
+  const scopedMailboxRecords = mailboxes.filter((mailbox) => mailbox.id === selectedMailbox || mailbox.mailbox_id === selectedMailbox)
+  const composeMailboxes = scopedMailbox ? (scopedMailboxRecords.length ? scopedMailboxRecords : mailboxes.slice(0, 1)) : mailboxes
 
   return (
     <div className="min-h-screen bg-[#f7f8ff] text-slate-950">
@@ -354,7 +384,46 @@ export default function EmailOSEnterpriseProductionWorkspace({ mailboxId: scoped
         <aside className="border-r border-violet-100 bg-white/90 p-5 shadow-sm">
           <div className="mb-6 flex items-center justify-between"><div><div className="text-xs font-black uppercase tracking-[0.25em] text-violet-600">AngelCare</div><h1 className="text-2xl font-black">Email-OS</h1></div><button onClick={load} className="rounded-2xl bg-violet-50 p-3 text-violet-700"><RefreshCw className={`h-5 w-5 ${loading ? "animate-spin" : ""}`} /></button></div>
           <div className="relative mb-5"><button onClick={() => setComposeMenuOpen((v) => !v)} className="flex h-14 w-full items-center justify-between rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 text-sm font-black text-white shadow-lg shadow-violet-200"><span className="flex items-center gap-3"><Pencil className="h-5 w-5" />Compose</span><ChevronDown className="h-4 w-4" /></button>{composeMenuOpen ? <div className="absolute left-0 right-0 top-16 z-50 rounded-3xl border border-violet-100 bg-white p-2 shadow-2xl"><button onClick={() => openCompose("compose")} className="flex h-12 w-full items-center gap-3 rounded-2xl px-4 text-sm font-black hover:bg-violet-50"><Send className="h-4 w-4 text-violet-600" />Compose email</button><button onClick={() => openCompose("schedule")} className="flex h-12 w-full items-center gap-3 rounded-2xl px-4 text-sm font-black hover:bg-violet-50"><Clock3 className="h-4 w-4 text-violet-600" />Schedule email</button></div> : null}</div>
-          {!scopedMailbox ? <><div className="mb-5 rounded-3xl border border-violet-100 bg-violet-50 p-3"><select value={selectedMailbox} onChange={(e) => { setSelectedMailbox(e.target.value); setSelectedId(null) }} className="h-11 w-full rounded-2xl border border-violet-100 bg-white px-3 text-sm font-black outline-none"><option value="all">All department mailboxes</option>{mailboxes.map((mailbox) => <option key={mailbox.id} value={mailbox.id}>{mailbox.name} · {mailbox.email}</option>)}</select></div><nav className="space-y-1">{visibleViews.map((item) => { const Icon = item.icon; return <button key={item.key} onClick={() => { setView(item.key); setSelectedId(null) }} className={`flex h-11 w-full items-center justify-between rounded-xl px-4 text-sm font-bold ${view === item.key ? "bg-violet-100 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`}><span className="flex items-center gap-3"><Icon className="h-4 w-4" />{item.label}</span><span className="rounded-full bg-white px-2 py-0.5 text-xs text-slate-500">{counts[item.key] || 0}</span></button> })}</nav><div className="mt-7"><div className="mb-2 text-xs font-black uppercase tracking-wide text-slate-400">Department workspaces</div><div className="max-h-[270px] space-y-2 overflow-y-auto pr-1">{mailboxMetrics.map((mailbox) => <button key={mailbox.id} onClick={() => { setSelectedMailbox(mailbox.id); setView("inbox") }} className="w-full rounded-2xl border border-slate-100 bg-white p-3 text-left hover:border-violet-200 hover:bg-violet-50"><div className="flex items-center justify-between"><div className="min-w-0"><div className="truncate text-sm font-black">{mailbox.name}</div><div className="truncate text-xs font-semibold text-slate-500">{mailbox.email}</div></div><span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">{mailbox.status}</span></div><div className="mt-3 grid grid-cols-4 gap-1 text-center text-[10px] font-black text-slate-500"><span>In {mailbox.inbox}</span><span>Sent {mailbox.sent}</span><span>Dr {mailbox.drafts}</span><span>Urg {mailbox.urgent}</span></div></button>)}</div></div></> : <div className="mb-5 rounded-3xl border border-violet-100 bg-violet-50 p-4"><div className="text-xs font-black uppercase tracking-wide text-violet-700">Mailbox scope locked</div><div className="mt-1 text-sm font-black text-slate-900">{mailboxes[0]?.name || mailboxId}</div><div className="text-xs font-semibold text-slate-500">{mailboxes[0]?.email || ''}</div></div>}
+          {!scopedMailbox ? <><div className="mb-5 rounded-3xl border border-violet-100 bg-violet-50 p-3"><select value={selectedMailbox} onChange={(e) => { setSelectedMailbox(e.target.value); setSelectedId(null) }} className="h-11 w-full rounded-2xl border border-violet-100 bg-white px-3 text-sm font-black outline-none"><option value="all">All department mailboxes</option>{mailboxes.map((mailbox) => <option key={mailbox.id} value={mailbox.id}>{mailbox.name} · {mailbox.email}</option>)}</select></div><nav className="space-y-1">{visibleViews.map((item) => { const Icon = item.icon; return <button key={item.key} onClick={() => { setView(item.key); setSelectedId(null) }} className={`flex h-11 w-full items-center justify-between rounded-xl px-4 text-sm font-bold ${view === item.key ? "bg-violet-100 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`}><span className="flex items-center gap-3"><Icon className="h-4 w-4" />{item.label}</span><span className="rounded-full bg-white px-2 py-0.5 text-xs text-slate-500">{counts[item.key] || 0}</span></button> })}</nav><div className="mt-7"><div className="mb-2 text-xs font-black uppercase tracking-wide text-slate-400">Department workspaces</div><div className="max-h-[270px] space-y-2 overflow-y-auto pr-1">{mailboxMetrics.map((mailbox) => <button key={mailbox.id} onClick={() => { setSelectedMailbox(mailbox.id); setView("inbox") }} className="w-full rounded-2xl border border-slate-100 bg-white p-3 text-left hover:border-violet-200 hover:bg-violet-50"><div className="flex items-center justify-between"><div className="min-w-0"><div className="truncate text-sm font-black">{mailbox.name}</div><div className="truncate text-xs font-semibold text-slate-500">{mailbox.email}</div></div><span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">{mailbox.status}</span></div><div className="mt-3 grid grid-cols-4 gap-1 text-center text-[10px] font-black text-slate-500"><span>In {mailbox.inbox}</span><span>Sent {mailbox.sent}</span><span>Dr {mailbox.drafts}</span><span>Urg {mailbox.urgent}</span></div></button>)}</div></div></> : <><div className="mb-5 rounded-3xl border border-violet-100 bg-violet-50 p-4"><div className="text-xs font-black uppercase tracking-wide text-violet-700">Mailbox scope locked</div><div className="mt-1 text-sm font-black text-slate-900">{mailboxes[0]?.name || mailboxId}</div><div className="text-xs font-semibold text-slate-500">{mailboxes[0]?.email || ''}</div></div>
+            <nav className="space-y-1">
+              {visibleViews.map((item) => {
+                const Icon = item.icon
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => { setView(item.key); setSelectedId(null) }}
+                    className={`flex h-11 w-full items-center justify-between rounded-xl px-4 text-sm font-bold ${view === item.key ? "bg-violet-100 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`}
+                  >
+                    <span className="flex items-center gap-3"><Icon className="h-4 w-4" />{item.label}</span>
+                    <span className="rounded-full bg-white px-2 py-0.5 text-xs text-slate-500">{counts[item.key] || 0}</span>
+                  </button>
+                )
+              })}
+            </nav>
+            <div className="mt-5 grid gap-2">
+              <button
+                type="button"
+                onClick={() => openCompose("compose")}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 text-sm font-black text-white"
+              >
+                <Send className="h-4 w-4" /> Compose from this mailbox
+              </button>
+              <button
+                type="button"
+                onClick={() => { window.location.href = "/email-os/gate" }}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-violet-100 bg-white px-4 text-sm font-black text-violet-700"
+              >
+                <Mail className="h-4 w-4" /> Return to mailbox gate
+              </button>
+              <button
+                type="button"
+                onClick={lockCurrentMailbox}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-rose-100 bg-rose-50 px-4 text-sm font-black text-rose-700"
+              >
+                <ShieldCheck className="h-4 w-4" /> Lock mailbox session
+              </button>
+            </div></>}
+
         </aside>
 
         <section className="border-r border-violet-100 bg-white p-6">
@@ -374,7 +443,7 @@ export default function EmailOSEnterpriseProductionWorkspace({ mailboxId: scoped
         </aside>
       </div>
 
-      <EnterpriseComposeModal open={composeOpen} mode={composeMode} mailboxes={mailboxes} selectedEmail={selected} onClose={() => setComposeOpen(false)} onDone={load} />
+      <EnterpriseComposeModal open={composeOpen} mode={composeMode} mailboxes={composeMailboxes} selectedEmail={{ ...(selected || {}), mailbox_id: selectedMailbox }} mailboxScopeLocked={scopedMailbox} onClose={() => setComposeOpen(false)} onDone={load} />
       <EnterpriseActionModal mode={actionMode} selected={selected} mailboxes={mailboxes} onClose={() => setActionMode(null)} onSaved={(message) => { setStatus(message); load() }} />
       <MailboxModal open={mailboxModalOpen} mailbox={editingMailbox} onClose={() => setMailboxModalOpen(false)} onSaved={load} />
     </div>

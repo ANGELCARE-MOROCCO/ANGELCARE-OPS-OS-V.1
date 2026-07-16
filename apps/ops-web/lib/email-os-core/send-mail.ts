@@ -4,6 +4,12 @@ import { resolveEmailOSMailboxIdentity, resolveEmailOSMailboxIdentityFromDb } fr
 const sendLocks = new Map<string, Promise<void>>()
 const lastSendAt = new Map<string, number>()
 
+export type EmailOSAttachmentInput = {
+  filename: string
+  contentType?: string | null
+  contentBase64: string
+}
+
 export type EmailOSSendInput = {
   mailboxId?: string | null
   fromEmail?: string | null
@@ -13,6 +19,7 @@ export type EmailOSSendInput = {
   subject: string
   body: string
   headers?: Record<string, string>
+  attachments?: EmailOSAttachmentInput[]
 }
 
 export type EmailOSBridgeFetchDiagnostics = {
@@ -109,6 +116,57 @@ function getBridgeUrlHost(bridgeUrl: string) {
   } catch {
     return ""
   }
+}
+
+
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
+const MAX_TOTAL_ATTACHMENT_BYTES = 15 * 1024 * 1024
+const MAX_ATTACHMENT_COUNT = 10
+
+function sanitizeAttachmentFilename(value: unknown) {
+  const raw = clean(value).replace(/[\\/:*?"<>|]/g, "_")
+  return raw.slice(0, 160) || "attachment"
+}
+
+function estimateBase64Bytes(value: string) {
+  const cleanValue = value.replace(/\s/g, "")
+  const padding = cleanValue.endsWith("==") ? 2 : cleanValue.endsWith("=") ? 1 : 0
+  return Math.max(0, Math.floor(cleanValue.length * 3 / 4) - padding)
+}
+
+function normalizeEmailAttachments(input: unknown) {
+  const rows = Array.isArray(input) ? input.slice(0, MAX_ATTACHMENT_COUNT) : []
+  let totalBytes = 0
+
+  return rows.map((item: any) => {
+    const filename = sanitizeAttachmentFilename(item?.filename || item?.name)
+    const contentType = clean(item?.contentType || item?.content_type || item?.mimeType) || "application/octet-stream"
+    const rawBase64 = clean(item?.contentBase64 || item?.content_base64 || item?.base64 || item?.content)
+
+    if (!rawBase64) {
+      throw new Error(`Attachment ${filename} has no file content.`)
+    }
+
+    if (!/^[A-Za-z0-9+/=\r\n]+$/.test(rawBase64)) {
+      throw new Error(`Attachment ${filename} is not valid base64.`)
+    }
+
+    const bytes = estimateBase64Bytes(rawBase64)
+    if (bytes > MAX_ATTACHMENT_BYTES) {
+      throw new Error(`Attachment ${filename} exceeds the 8 MB limit.`)
+    }
+
+    totalBytes += bytes
+    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+      throw new Error("Total attachments exceed the 15 MB limit.")
+    }
+
+    return {
+      filename,
+      contentType,
+      content: Buffer.from(rawBase64, "base64")
+    }
+  })
 }
 
 function safePreview(input: unknown, maxLength = 260) {
@@ -248,7 +306,12 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput) {
         subject: input.subject || "(Sans objet)",
         text: input.body || "",
         html: String(input.body || "").replace(/\n/g, "<br />"),
-        replyTo: input.headers?.["Reply-To"] || undefined
+        replyTo: input.headers?.["Reply-To"] || undefined,
+        attachments: normalizeEmailAttachments(input.attachments || []).map((item) => ({
+          filename: item.filename,
+          contentType: item.contentType,
+          contentBase64: item.content.toString("base64")
+        }))
       }),
       cache: "no-store"
     })
@@ -377,6 +440,7 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
         subject: input.subject || "(Sans objet)",
         text: input.body || "",
         html: String(input.body || "").replace(/\n/g, "<br />"),
+        attachments: normalizeEmailAttachments(input.attachments || []),
         headers: {
           "X-AngelCare-Mailbox-Key": identity.key,
           "X-AngelCare-Mailbox-ID": identity.mailboxId,

@@ -35,6 +35,7 @@ type Props = {
   mode: "compose" | "reply" | "schedule"
   mailboxes?: any[]
   selectedEmail?: any
+  mailboxScopeLocked?: boolean
   onClose: () => void
   onDone?: () => void
 }
@@ -82,6 +83,22 @@ function niceName(email: string) {
   return base.split(/[._-]+/).filter(Boolean).map((x) => x[0]?.toUpperCase() + x.slice(1)).join(" ")
 }
 
+
+function fileToBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error(`Unable to read attachment: ${file.name}`))
+    reader.onload = () => {
+      const raw = String(reader.result || "")
+      resolve(raw.includes(",") ? raw.split(",").pop() || "" : raw)
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
+const MAX_TOTAL_ATTACHMENT_BYTES = 15 * 1024 * 1024
+
 function attachmentIcon(name: string) {
   const lower = name.toLowerCase()
   if (lower.endsWith(".xlsx") || lower.endsWith(".xls")) return FileSpreadsheet
@@ -89,11 +106,52 @@ function attachmentIcon(name: string) {
   return FileArchive
 }
 
+function mailboxSignature(mailbox?: ComposeMailbox | null) {
+  const identity = `${mailbox?.id || ""} ${mailbox?.email || ""} ${mailbox?.name || ""}`.toLowerCase()
+
+  if (identity.includes("academy")) {
+    return { unit: "ACADEMY", line1: "Empowering Education.", line2: "Transforming Futures." }
+  }
+  if (identity.includes("partenaires") || identity.includes("partner")) {
+    return { unit: "PARTNERSHIPS", line1: "Building trusted partnerships.", line2: "Advancing quality childcare and education." }
+  }
+  if (identity.includes("commercial")) {
+    return { unit: "COMMERCIAL", line1: "Business development.", line2: "Client relations and growth coordination." }
+  }
+  if (identity.includes("support")) {
+    return { unit: "SUPPORT", line1: "Client support.", line2: "Responsive service coordination." }
+  }
+  if (identity.includes("ops") || identity.includes("operations")) {
+    return { unit: "OPERATIONS", line1: "Operational coordination.", line2: "Field execution and service continuity." }
+  }
+  if (identity.includes("rh") || identity.includes("hr")) {
+    return { unit: "HR", line1: "Human resources.", line2: "Team coordination and people operations." }
+  }
+  if (identity.includes("homeservice") || identity.includes("home")) {
+    return { unit: "HOME SERVICE", line1: "Premium home childcare.", line2: "Family support and field excellence." }
+  }
+  if (identity.includes("b2b")) {
+    return { unit: "B2B", line1: "Institutional partnerships.", line2: "Professional childcare solutions." }
+  }
+  if (identity.includes("montessori")) {
+    return { unit: "MONTESSORI", line1: "Structured learning.", line2: "Purposeful development through practice." }
+  }
+  if (identity.includes("events") || identity.includes("excursions")) {
+    return { unit: "EVENTS", line1: "Experiential coordination.", line2: "Safe and memorable children activities." }
+  }
+  if (identity.includes("it.support")) {
+    return { unit: "IT SUPPORT", line1: "Digital operations.", line2: "Infrastructure and system continuity." }
+  }
+
+  return { unit: "", line1: "Professional communication.", line2: "Operational excellence." }
+}
+
 export default function EnterpriseComposeModal({
   open,
   mode,
   mailboxes = [],
   selectedEmail,
+  mailboxScopeLocked = false,
   onClose,
   onDone
 }: Props) {
@@ -129,12 +187,19 @@ export default function EnterpriseComposeModal({
       ? `Dear ${niceName(replyTo)},\n\nThank you for your message.\n\nWe confirm that AngelCare has received your request and we will review the details internally before sharing the next operational step.\n\nBest regards,\nAngelCare`
       : ""
   )
-  const [attachments, setAttachments] = useState<Array<{ name: string; size: string; source?: string }>>([])
+  const [attachments, setAttachments] = useState<Array<{
+    name: string
+    size: string
+    sizeBytes?: number
+    source?: string
+    mimeType?: string
+    contentBase64?: string
+  }>>([])
 
   const resourceMailboxes = useMemo(() => {
     const normalizedProps = mailboxes.map((row: any) => ({
-      id: row.id,
-      name: row.name || row.label || row.email_address || row.address || row.email || row.id,
+      id: row.id || row.mailbox_id,
+      name: row.name || row.label || row.email_address || row.address || row.email || row.id || row.mailbox_id,
       email: row.email_address || row.address || row.email || row.from_email || row.username || "",
       status: row.status || "active",
       department: row.department || row.owner || "operations",
@@ -142,14 +207,19 @@ export default function EnterpriseComposeModal({
       raw: row
     }))
 
+    if (mailboxScopeLocked) {
+      return normalizedProps.slice(0, 1)
+    }
+
     const byId = new Map<string, ComposeMailbox>()
     for (const row of [...normalizedProps, ...liveMailboxes]) {
       if (row?.id) byId.set(row.id, row)
     }
     return Array.from(byId.values())
-  }, [mailboxes, liveMailboxes])
+  }, [mailboxes, liveMailboxes, mailboxScopeLocked])
 
   const activeMailbox = resourceMailboxes.find((item) => item.id === mailboxId) || resourceMailboxes[0] || null
+  const activeSignature = mailboxSignature(activeMailbox)
   const toEmail = recipients.map((r) => r.email).join(", ")
 
   const filteredTemplates = templates.filter((template) => {
@@ -168,14 +238,20 @@ export default function EnterpriseComposeModal({
       if (cancelled) return
 
       if (result.ok) {
-        const nextMailboxes = result.data?.mailboxes || []
+        const nextMailboxes = mailboxScopeLocked ? [] : (result.data?.mailboxes || [])
         const nextTemplates = result.data?.templates || []
 
         setLiveMailboxes(nextMailboxes)
         setTemplates(nextTemplates)
 
-        setMailboxId((current: string) => current || selectedEmail?.mailbox_id || nextMailboxes[0]?.id || mailboxes[0]?.id || "")
-        setStatus(`Live resources loaded: ${nextMailboxes.length} mailbox(es), ${nextTemplates.length} template(s)`)
+        setMailboxId((current: string) => {
+          if (mailboxScopeLocked) return selectedEmail?.mailbox_id || mailboxes[0]?.id || current || ""
+          return current || selectedEmail?.mailbox_id || nextMailboxes[0]?.id || mailboxes[0]?.id || ""
+        })
+        setStatus(mailboxScopeLocked
+          ? `Mailbox sender locked · ${nextTemplates.length} template(s) loaded`
+          : `Live resources loaded: ${nextMailboxes.length} mailbox(es), ${nextTemplates.length} template(s)`
+        )
       } else {
         setStatus(result.error || "Unable to load compose resources")
       }
@@ -186,7 +262,7 @@ export default function EnterpriseComposeModal({
     return () => {
       cancelled = true
     }
-  }, [open, selectedEmail?.mailbox_id])
+  }, [open, selectedEmail?.mailbox_id, mailboxScopeLocked, mailboxes])
 
   useEffect(() => {
     if (mode === "schedule") {
@@ -223,18 +299,37 @@ export default function EnterpriseComposeModal({
     audit("apply_template", { templateId: template.id, templateName: template.name })
   }
 
-  function addLocalFiles(files: FileList | null) {
+  async function addLocalFiles(files: FileList | null) {
     if (!files) return
 
-    const next = Array.from(files).map((file) => ({
+    const selected = Array.from(files)
+    const existingTotal = attachments.reduce((sum, item) => sum + Number(item.sizeBytes || 0), 0)
+    const selectedTotal = selected.reduce((sum, file) => sum + file.size, 0)
+
+    if (selected.some((file) => file.size > MAX_ATTACHMENT_BYTES)) {
+      setStatus("Attachment blocked: each file must be 8 MB or less.")
+      return
+    }
+
+    if (existingTotal + selectedTotal > MAX_TOTAL_ATTACHMENT_BYTES) {
+      setStatus("Attachment blocked: total attachments must be 15 MB or less.")
+      return
+    }
+
+    setStatus("Reading attachment file(s)...")
+
+    const next = await Promise.all(selected.map(async (file) => ({
       name: file.name,
       size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
-      source: "local"
-    }))
+      sizeBytes: file.size,
+      source: "local",
+      mimeType: file.type || "application/octet-stream",
+      contentBase64: await fileToBase64(file)
+    })))
 
     setAttachments((current) => [...current, ...next])
-    setStatus(`${next.length} attachment(s) added`)
-    audit("attach_files", { files: next })
+    setStatus(`${next.length} real attachment(s) added`)
+    audit("attach_files", { files: next.map(({ name, size, sizeBytes, mimeType, source }) => ({ name, size, sizeBytes, mimeType, source })) })
   }
 
   function addDriveLink() {
@@ -295,7 +390,8 @@ export default function EnterpriseComposeModal({
         priority,
         status: statusValue,
         scheduledAt: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null,
-        diagnostics: { tracking, readReceipt, attachments, mode }
+        attachments: attachments.filter((item) => item.source === "local" && item.contentBase64).map(({ name, mimeType, contentBase64 }) => ({ filename: name, contentType: mimeType, contentBase64 })),
+        diagnostics: { tracking, readReceipt, attachments: attachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
 
@@ -335,7 +431,8 @@ export default function EnterpriseComposeModal({
         subject,
         body,
         priority,
-        diagnostics: { tracking, readReceipt, attachments, mode }
+        attachments: attachments.filter((item) => item.source === "local" && item.contentBase64).map(({ name, mimeType, contentBase64 }) => ({ filename: name, contentType: mimeType, contentBase64 })),
+        diagnostics: { tracking, readReceipt, attachments: attachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
 
@@ -374,11 +471,13 @@ export default function EnterpriseComposeModal({
                 <span className="text-xs font-black uppercase tracking-wide text-slate-500">Send from / Outbox mailbox</span>
                 <select
                   value={mailboxId}
+                  disabled={mailboxScopeLocked}
                   onChange={(event) => {
+                    if (mailboxScopeLocked) return
                     setMailboxId(event.target.value)
                     audit("select_mailbox", { mailboxId: event.target.value })
                   }}
-                  className="mt-2 h-12 w-full rounded-2xl border border-violet-100 bg-white px-4 text-sm font-black outline-none"
+                  className="mt-2 h-12 w-full rounded-2xl border border-violet-100 bg-white px-4 text-sm font-black outline-none disabled:cursor-not-allowed disabled:bg-violet-50 disabled:text-violet-800"
                 >
                   {resourceMailboxes.length === 0 ? <option value="">No mailbox registered</option> : null}
                   {resourceMailboxes.map((mailbox) => (
@@ -387,6 +486,11 @@ export default function EnterpriseComposeModal({
                     </option>
                   ))}
                 </select>
+                {mailboxScopeLocked ? (
+                  <div className="mt-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-black uppercase tracking-wide text-emerald-700">
+                    Sender locked by mailbox PIN session
+                  </div>
+                ) : null}
               </label>
 
               <div className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3">
@@ -511,11 +615,11 @@ export default function EnterpriseComposeModal({
 
               <div className="mx-6 mb-6 rounded-2xl bg-violet-50 p-4">
                 <div className="flex items-center gap-5">
-                  <div className="text-xl font-black text-slate-900">ANGELCARE<br /><span className="text-sm text-amber-500">ACADEMY</span></div>
+                  <div className="text-xl font-black text-slate-900">ANGELCARE<br />{activeSignature.unit ? <span className="text-sm text-amber-500">{activeSignature.unit}</span> : null}</div>
                   <div className="h-14 w-px bg-violet-200" />
                   <div>
-                    <div className="font-black text-slate-900">Empowering Education.</div>
-                    <div className="font-black text-slate-900">Transforming Futures.</div>
+                    <div className="font-black text-slate-900">{activeSignature.line1}</div>
+                    <div className="font-black text-slate-900">{activeSignature.line2}</div>
                   </div>
                 </div>
               </div>
@@ -552,7 +656,7 @@ export default function EnterpriseComposeModal({
               <label className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-violet-50 px-5 text-sm font-black text-violet-700">
                 <Paperclip className="h-4 w-4" />
                 Attach files
-                <input type="file" multiple className="hidden" onChange={(event) => addLocalFiles(event.target.files)} />
+                <input type="file" multiple className="hidden" onChange={(event) => void addLocalFiles(event.target.files)} />
               </label>
               <button type="button" onClick={addDriveLink} className="inline-flex h-12 items-center gap-2 rounded-2xl bg-violet-50 px-5 text-sm font-black text-slate-900">
                 <Globe2 className="h-4 w-4" />

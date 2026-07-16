@@ -1,13 +1,30 @@
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
-import { resolveEmailOSMailboxIdentity, listEmailOSMultiMailboxes } from "@/lib/email-os-core/multi-mailbox-resolver"
+import {
+  listEmailOSMultiMailboxes,
+  listEmailOSMultiMailboxesFromDb,
+  resolveEmailOSMailboxIdentity,
+  resolveEmailOSMailboxIdentityFromDb,
+  type ResolvedEmailOSMailbox
+} from "@/lib/email-os-core/multi-mailbox-resolver"
 import { syncEmailOSMailbox } from "@/lib/email-os-core/inbound-sync"
 
 function parseLimit(value: unknown) {
   const parsed = Number(value)
   if (!Number.isFinite(parsed) || parsed <= 0) return 25
   return Math.max(1, Math.min(100, Math.floor(parsed)))
+}
+
+function normalize(value: unknown) {
+  return String(value || "").trim().toLowerCase()
+}
+
+async function resolveSyncMailboxes(): Promise<ResolvedEmailOSMailbox[]> {
+  const dbMailboxes = await listEmailOSMultiMailboxesFromDb().catch(() => [])
+  if (dbMailboxes.length) return dbMailboxes
+
+  return listEmailOSMultiMailboxes()
 }
 
 async function logSync(input: {
@@ -31,69 +48,84 @@ async function logSync(input: {
   } catch {}
 }
 
+async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
+  try {
+    const result = await syncEmailOSMailbox(mailbox, limit)
+
+    await logSync({
+      mailboxId: mailbox.mailboxId,
+      provider: mailbox.incoming.protocol,
+      syncedCount: result.inserted,
+      status: "completed",
+      message: `POP3 inbound sync completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}`
+    })
+
+    return {
+      ok: true,
+      mailboxId: mailbox.mailboxId,
+      mailboxKey: mailbox.key,
+      email: mailbox.email,
+      incoming: {
+        protocol: mailbox.incoming.protocol,
+        host: mailbox.incoming.host,
+        port: mailbox.incoming.port,
+        secure: mailbox.incoming.secure
+      },
+      count: result.inserted,
+      fetched: result.fetched,
+      skipped: result.skipped,
+      synced: result.synced
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Email sync failed"
+
+    await logSync({
+      mailboxId: mailbox.mailboxId,
+      provider: mailbox.incoming.protocol,
+      syncedCount: 0,
+      status: "failed",
+      message
+    })
+
+    return {
+      ok: false,
+      mailboxId: mailbox.mailboxId,
+      mailboxKey: mailbox.key,
+      email: mailbox.email,
+      error: message
+    }
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}))
     const mailboxId = String(body.mailboxId || body.mailbox_id || "").trim()
     const limit = parseLimit(body.limit)
-    const mailboxes = listEmailOSMultiMailboxes()
-
-    if (!mailboxes.length) {
-      return NextResponse.json({ ok: false, error: "No mailbox configured" }, { status: 500 })
-    }
-
     const shouldSyncAll = !mailboxId || mailboxId.toLowerCase() === "all"
+
+    const configuredMailboxes = await resolveSyncMailboxes()
+
+    if (!configuredMailboxes.length) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "No mailbox configured for inbound sync",
+          diagnostics: {
+            dbResolver: "empty",
+            envResolver: "empty",
+            expectedSource: "email_os_core_mailbox_credentials"
+          }
+        },
+        { status: 500 }
+      )
+    }
 
     if (shouldSyncAll) {
       const results = []
 
-      for (const mailbox of mailboxes) {
-        try {
-          const result = await syncEmailOSMailbox(mailbox, limit)
-
-          await logSync({
-            mailboxId: mailbox.mailboxId,
-            provider: mailbox.incoming.protocol,
-            syncedCount: result.inserted,
-            status: "completed",
-            message: `POP3 inbound sync completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}`
-          })
-
-          results.push({
-            ok: true,
-            mailboxId: mailbox.mailboxId,
-            mailboxKey: mailbox.key,
-            email: mailbox.email,
-            incoming: {
-              protocol: mailbox.incoming.protocol,
-              host: mailbox.incoming.host,
-              port: mailbox.incoming.port,
-              secure: mailbox.incoming.secure
-            },
-            count: result.inserted,
-            fetched: result.fetched,
-            skipped: result.skipped,
-            synced: result.synced
-          })
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "Email sync failed"
-
-          await logSync({
-            mailboxId: mailbox.mailboxId,
-            provider: mailbox.incoming.protocol,
-            syncedCount: 0,
-            status: "failed",
-            message
-          })
-
-          results.push({
-            ok: false,
-            mailboxId: mailbox.mailboxId,
-            mailboxKey: mailbox.key,
-            email: mailbox.email,
-            error: message
-          })
-        }
+      for (const mailbox of configuredMailboxes) {
+        results.push(await syncOneMailbox(mailbox, limit))
       }
 
       const completed = results.filter((item) => item.ok).length
@@ -114,41 +146,35 @@ export async function POST(request: Request) {
       }, { status: failed === 0 ? 200 : 207 })
     }
 
-    const selected = resolveEmailOSMailboxIdentity({ mailboxId }) || mailboxes[0] || null
+    const selected =
+      (await resolveEmailOSMailboxIdentityFromDb({ mailboxId })) ||
+      resolveEmailOSMailboxIdentity({ mailboxId }) ||
+      configuredMailboxes.find((mailbox) => normalize(mailbox.mailboxId) === normalize(mailboxId)) ||
+      null
 
     if (!selected) {
-      return NextResponse.json({ ok: false, error: "No mailbox configured" }, { status: 500 })
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Requested mailbox is not configured for inbound sync",
+          diagnostics: {
+            requestedMailboxId: mailboxId,
+            configuredMailboxes: configuredMailboxes.map((mailbox) => mailbox.mailboxId)
+          }
+        },
+        { status: 404 }
+      )
     }
 
-    const result = await syncEmailOSMailbox(selected, limit)
-
-    await logSync({
-      mailboxId: selected.mailboxId,
-      provider: selected.incoming.protocol,
-      syncedCount: result.inserted,
-      status: "completed",
-      message: `POP3 inbound sync completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}`
-    })
+    const result = await syncOneMailbox(selected, limit)
 
     return NextResponse.json({
-      ok: true,
+      ok: result.ok,
       data: {
         mode: "single",
-        mailboxId: selected.mailboxId,
-        mailboxKey: selected.key,
-        email: selected.email,
-        incoming: {
-          protocol: selected.incoming.protocol,
-          host: selected.incoming.host,
-          port: selected.incoming.port,
-          secure: selected.incoming.secure
-        },
-        count: result.inserted,
-        fetched: result.fetched,
-        skipped: result.skipped,
-        synced: result.synced
+        ...result
       }
-    })
+    }, { status: result.ok ? 200 : 500 })
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error instanceof Error ? error.message : "Email sync failed" },
