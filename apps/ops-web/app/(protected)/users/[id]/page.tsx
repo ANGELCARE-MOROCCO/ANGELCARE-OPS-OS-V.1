@@ -3,6 +3,8 @@ import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
+import EmailOSMailboxAccessSection from '@/app/(protected)/users/_components/EmailOSMailboxAccessSection'
+import { getMailboxAccessAudit, getUserEmailOSMailboxAssignments } from '@/lib/email-os-core/access-governance'
 
 type Tone = 'green' | 'red' | 'blue' | 'purple' | 'amber' | 'slate'
 type AnyRecord = Record<string, any>
@@ -631,6 +633,17 @@ export default async function UserProfilePage({
   const userStatus = String(userRecord.status || '').toLowerCase()
   const isAccessSuspended = userStatus.includes('suspend') || userStatus.includes('blocked') || userStatus.includes('inactive') || userStatus.includes('disabled')
   const isLiveLoggedIn = activeSessions > 0
+  const emailOSAccess = await getUserEmailOSMailboxAssignments(resolvedUserId)
+  const emailOSAudit = await getMailboxAccessAudit(resolvedUserId, null, 100)
+  const { data: mailboxRows } = await supabase.from('email_os_core_mailboxes').select('*').order('name', { ascending: true })
+  const safeMailboxes = (mailboxRows || []).map((row: AnyRecord) => ({
+    id: String(row.id || ''),
+    name: String(row.name || row.label || row.address || row.email_address || row.email || row.id || 'Mailbox'),
+    address: String(row.address || row.email_address || row.email || row.from_email || row.username || ''),
+    status: String(row.status || 'active'),
+    owner: row.owner ? String(row.owner) : null,
+    provider: row.provider ? String(row.provider) : null,
+  }))
 
   return (
     <AppShell
@@ -753,6 +766,16 @@ export default async function UserProfilePage({
               <Empty icon="🔒" text="Aucune permission détaillée définie pour cet utilisateur." />
             )}
           </section>
+
+          <div style={{ gridColumn: '1 / -1' }}>
+            <EmailOSMailboxAccessSection
+              userId={resolvedUserId}
+              initialSummary={emailOSAccess.summary}
+              initialAssignments={emailOSAccess.assignments}
+              initialMailboxes={safeMailboxes}
+              initialAudit={emailOSAudit}
+            />
+          </div>
 
           <section style={widePanelStyle}>
             <Header eyebrow="Connexions" title="Sessions récentes" subtitle="Historique de connexion synchronisé avec filtres serveur et lecture visuelle." />

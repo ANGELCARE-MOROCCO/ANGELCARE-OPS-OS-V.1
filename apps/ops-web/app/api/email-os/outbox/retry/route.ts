@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { requireUnlockedMailboxAccess } from "@/lib/email-os-core/access-governance"
 import { nowIso } from "@/lib/email-os-core/schema"
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await request.json().catch(() => ({}))
     const outboxId = body.outboxId
 
@@ -20,6 +27,12 @@ export async function POST(request: Request) {
       .single()
 
     if (loadError) throw loadError
+    await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: outbox?.mailbox_id,
+      requiredPermission: "can_send",
+      request,
+    })
 
     if (outbox?.queue_id) {
       const { error: queueError } = await db

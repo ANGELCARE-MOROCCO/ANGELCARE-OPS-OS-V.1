@@ -393,13 +393,15 @@ export async function loginCareLinkMobileAgent(args: { identifier: string; passw
     throw new CareLinkMobileLoginError('CareLink Mobile app user sync failed.', 'carelink_mobile_app_user_missing', 500)
   }
 
-  await createCareLinkMobileAppSession({ supabase, appUserId: String(appUser.id) })
+  const session = await createCareLinkMobileAppSession({ supabase, appUserId: String(appUser.id) })
 
   return {
     ok: true,
     redirectTo: '/carelink',
     caregiverId,
     appUserId: String(appUser.id),
+    sessionToken: session.token,
+    sessionExpiresAt: session.expiresAt.toISOString(),
   }
 }
 

@@ -3,6 +3,7 @@ const net = require("net")
 const os = require("os")
 const fs = require("fs")
 const path = require("path")
+const crypto = require("crypto")
 const dns = require("dns").promises
 const { execFile } = require("child_process")
 const { promisify } = require("util")
@@ -17,17 +18,24 @@ const VERSION = safeVersion()
 const PORT = Number(process.env.PORT || 3005)
 const HOST = "127.0.0.1"
 const LOG_DIR = clean(process.env.ANGELCARE_LOG_DIR || "C:\\AngelCare\\logs") || "C:\\AngelCare\\logs"
+const STATUS_DIR = clean(process.env.ANGELCARE_STATUS_DIR || "C:\\AngelCare\\status") || "C:\\AngelCare\\status"
+const BACKUP_ROOT = clean(process.env.ANGELCARE_BACKUP_DIR || "C:\\AngelCare\\backups") || "C:\\AngelCare\\backups"
 const CADDYFILE_PATH = clean(process.env.CADDYFILE_PATH || "C:\\AngelCare\\caddy\\Caddyfile") || "C:\\AngelCare\\caddy\\Caddyfile"
 const DUCKDNS_UPDATE_SCRIPT = clean(process.env.DUCKDNS_UPDATE_SCRIPT || "C:\\AngelCare\\duckdns\\update-duckdns.ps1") || "C:\\AngelCare\\duckdns\\update-duckdns.ps1"
 const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 30
 const MAX_LOG_LINES = 1000
+const MAX_BACKUP_COUNT = 50
 
 const LOG_OUT = path.join(LOG_DIR, "email-bridge-out.log")
 const LOG_ERROR = path.join(LOG_DIR, "email-bridge-error.log")
 const LOG_CADDY_OUT = path.join(LOG_DIR, "caddy-out.log")
 const LOG_CADDY_ERROR = path.join(LOG_DIR, "caddy-error.log")
+const LOG_DUCKDNS = path.join(LOG_DIR, "duckdns.log")
+const LOG_SERVICE = path.join(LOG_DIR, "service-actions.jsonl")
 const AUDIT_FILE = path.join(LOG_DIR, "email-bridge-audit.jsonl")
+const MAINTENANCE_STATE_FILE = path.join(STATUS_DIR, "maintenance.json")
+const BACKUP_MANIFEST_NAME = "backup-manifest.json"
 const SAFE_STATUSES = new Set(["running", "stopped", "unknown", "failed", "degraded"])
 
 const runtimeState = {
@@ -37,7 +45,9 @@ const runtimeState = {
   lastCaddyValidation: null,
   lastCaddyReload: null,
   lastSendSuccess: null,
-  lastSendError: null
+  lastSendError: null,
+  maintenance: loadMaintenanceState(),
+  lastBackup: null
 }
 
 const buckets = new Map()
@@ -132,6 +142,288 @@ function logStructured(filePath, entry) {
     timestamp: nowIso(),
     ...entry
   })
+}
+
+function readJsonFile(filePath, fallback) {
+  try {
+    if (!fs.existsSync(filePath)) return fallback
+    const raw = fs.readFileSync(filePath, "utf8")
+    if (!raw.trim()) return fallback
+    return JSON.parse(raw)
+  } catch {
+    return fallback
+  }
+}
+
+function writeJsonFile(filePath, value) {
+  ensureDir(filePath)
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8")
+}
+
+function loadMaintenanceState() {
+  const state = readJsonFile(MAINTENANCE_STATE_FILE, null)
+  if (!state || typeof state !== "object") {
+    return {
+      enabled: false,
+      reason: "",
+      expectedDuration: "",
+      startedAt: "",
+      startedBy: "",
+      message: ""
+    }
+  }
+  return {
+    enabled: Boolean(state.enabled),
+    reason: clean(state.reason),
+    expectedDuration: clean(state.expectedDuration || state.expected_duration),
+    startedAt: clean(state.startedAt || state.started_at),
+    startedBy: clean(state.startedBy || state.started_by),
+    message: clean(state.message)
+  }
+}
+
+function saveMaintenanceState(state) {
+  runtimeState.maintenance = {
+    enabled: Boolean(state.enabled),
+    reason: clean(state.reason),
+    expectedDuration: clean(state.expectedDuration),
+    startedAt: clean(state.startedAt),
+    startedBy: clean(state.startedBy),
+    message: clean(state.message)
+  }
+  writeJsonFile(MAINTENANCE_STATE_FILE, runtimeState.maintenance)
+  return runtimeState.maintenance
+}
+
+function safeDate(value) {
+  const text = clean(value)
+  if (!text) return ""
+  const date = new Date(text)
+  return Number.isNaN(date.getTime()) ? text : date.toISOString()
+}
+
+function formatBytes(bytes) {
+  const value = Number(bytes)
+  if (!Number.isFinite(value) || value <= 0) return "0 B"
+  const units = ["B", "KB", "MB", "GB", "TB"]
+  let current = value
+  let index = 0
+  while (current >= 1024 && index < units.length - 1) {
+    current /= 1024
+    index += 1
+  }
+  return `${current.toFixed(index === 0 ? 0 : 1)} ${units[index]}`
+}
+
+function getDirectorySize(filePath) {
+  if (!fs.existsSync(filePath)) return 0
+  const stat = fs.statSync(filePath)
+  if (stat.isFile()) return stat.size
+  let total = 0
+  for (const entry of fs.readdirSync(filePath)) {
+    total += getDirectorySize(path.join(filePath, entry))
+  }
+  return total
+}
+
+function getPathStats(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) return null
+    const stat = fs.statSync(filePath)
+    return {
+      exists: true,
+      isDirectory: stat.isDirectory(),
+      sizeBytes: stat.size,
+      modifiedAt: stat.mtime.toISOString(),
+      createdAt: stat.birthtime.toISOString()
+    }
+  } catch {
+    return null
+  }
+}
+
+function getLatestChildDirectory(rootPath) {
+  if (!fs.existsSync(rootPath)) return null
+  const entries = fs.readdirSync(rootPath, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => {
+      const fullPath = path.join(rootPath, entry.name)
+      const stat = fs.statSync(fullPath)
+      return {
+        name: entry.name,
+        path: fullPath,
+        mtimeMs: stat.mtimeMs
+      }
+    })
+    .sort((left, right) => right.mtimeMs - left.mtimeMs)
+  return entries[0] || null
+}
+
+function getFileNameSafe(filePath) {
+  return path.basename(filePath)
+}
+
+function buildSafeManifestSummary(manifest) {
+  if (!manifest || typeof manifest !== "object") return ""
+  const files = Array.isArray(manifest.files) ? manifest.files : []
+  const warnings = Array.isArray(manifest.warnings) ? manifest.warnings : []
+  const assetCount = files.length
+  const warningText = warnings.length ? ` warnings=${warnings.length}` : ""
+  return `backupId=${clean(manifest.backupId)} assets=${assetCount}${warningText}`.trim()
+}
+
+function computeCpuSnapshot() {
+  const cpus = os.cpus() || []
+  const totals = cpus.reduce((acc, cpu) => {
+    acc.user += cpu.times.user
+    acc.nice += cpu.times.nice
+    acc.sys += cpu.times.sys
+    acc.idle += cpu.times.idle
+    acc.irq += cpu.times.irq
+    return acc
+  }, { user: 0, nice: 0, sys: 0, idle: 0, irq: 0 })
+
+  return {
+    model: cpus[0]?.model || "unknown",
+    cores: cpus.length,
+    loadAverage: os.loadavg().map((item) => item.toFixed(2)).join(" / "),
+    processCpuUserMs: Math.round(process.cpuUsage().user / 1000),
+    processCpuSystemMs: Math.round(process.cpuUsage().system / 1000),
+    totalCpuTimes: totals
+  }
+}
+
+function computeMemorySnapshot() {
+  const memory = process.memoryUsage()
+  const total = os.totalmem()
+  const used = total - os.freemem()
+  return {
+    rss: memory.rss,
+    heapUsed: memory.heapUsed,
+    heapTotal: memory.heapTotal,
+    external: memory.external,
+    systemUsed: used,
+    systemTotal: total
+  }
+}
+
+function computeDiskSnapshot(rootPath) {
+  try {
+    if (!fs.existsSync(rootPath)) {
+      return {
+        availableBytes: 0,
+        totalBytes: 0,
+        usedBytes: 0,
+        usedPercent: 0,
+        rootPath
+      }
+    }
+    const stat = fs.statfsSync(rootPath)
+    const totalBytes = stat.bsize * stat.blocks
+    const availableBytes = stat.bsize * stat.bavail
+    const usedBytes = totalBytes - availableBytes
+    const usedPercent = totalBytes > 0 ? Math.round((usedBytes / totalBytes) * 100) : 0
+    return {
+      availableBytes,
+      totalBytes,
+      usedBytes,
+      usedPercent,
+      rootPath
+    }
+  } catch {
+    return {
+      availableBytes: 0,
+      totalBytes: 0,
+      usedBytes: 0,
+      usedPercent: 0,
+      rootPath
+    }
+  }
+}
+
+function backupCandidateFiles() {
+  return [
+    "C:\\AngelCare\\email-bridge\\.env",
+    "C:\\AngelCare\\email-bridge\\server.js",
+    "C:\\AngelCare\\email-bridge\\package.json",
+    "C:\\AngelCare\\caddy\\Caddyfile",
+    clean(process.env.DUCKDNS_UPDATE_SCRIPT || "C:\\AngelCare\\duckdns\\update-duckdns.ps1") || "C:\\AngelCare\\duckdns\\update-duckdns.ps1",
+  ]
+}
+
+function getBackupDirectories() {
+  if (!fs.existsSync(BACKUP_ROOT)) return []
+  return fs.readdirSync(BACKUP_ROOT)
+    .map((name) => path.join(BACKUP_ROOT, name))
+    .filter((item) => {
+      try {
+        return fs.statSync(item).isDirectory()
+      } catch {
+        return false
+      }
+    })
+    .sort((left, right) => {
+      try {
+        return fs.statSync(right).mtimeMs - fs.statSync(left).mtimeMs
+      } catch {
+        return 0
+      }
+    })
+}
+
+function summarizeBackupStatus() {
+  const directories = getBackupDirectories()
+  const latest = directories[0] || ""
+  const manifestPath = latest ? path.join(latest, BACKUP_MANIFEST_NAME) : ""
+  const manifest = manifestPath ? readJsonFile(manifestPath, null) : null
+  const latestStats = latest ? getPathStats(latest) : null
+  const protectedAssets = backupCandidateFiles().map((assetPath) => ({
+    name: getFileNameSafe(assetPath),
+    path: assetPath,
+    present: fs.existsSync(assetPath)
+  }))
+
+  return {
+    directoryExists: fs.existsSync(BACKUP_ROOT),
+    latestBackupAt: latestStats ? latestStats.modifiedAt : "",
+    latestBackupName: latest ? path.basename(latest) : "",
+    latestBackupPath: latest,
+    latestManifestPath: manifestPath,
+    backupCount: directories.length,
+    folderSizeBytes: getDirectorySize(BACKUP_ROOT),
+    latestManifestSummary: buildSafeManifestSummary(manifest),
+    protectedAssets,
+    warnings: Array.isArray(manifest?.warnings) ? manifest.warnings.slice(0, 10).map((item) => clean(item)) : [],
+    lastCheckedAt: nowIso()
+  }
+}
+
+function sanitizeLogEntryValue(value) {
+  if (typeof value === "string") {
+    return redactText(maskTokenValue(value))
+  }
+  if (Array.isArray(value)) {
+    return value.slice(0, 50).map((item) => sanitizeLogEntryValue(item))
+  }
+  if (value && typeof value === "object") {
+    const out = {}
+    for (const [key, current] of Object.entries(value)) {
+      if (/password|pass|token|secret|authorization|cookie|auth/i.test(key)) {
+        out[key] = "***REDACTED***"
+      } else {
+        out[key] = sanitizeLogEntryValue(current)
+      }
+    }
+    return out
+  }
+  return value
+}
+
+function maskTokenValue(text) {
+  return String(text || "")
+    .replace(/([A-Fa-f0-9]{24,})/g, "***REDACTED***")
+    .replace(/(eyJ[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+){1,2})/g, "***REDACTED***")
+    .replace(/\b([A-Za-z0-9_\-]{32,})\b/g, "***REDACTED***")
 }
 
 function auditAction(record) {
@@ -246,9 +538,9 @@ function parseLine(line) {
   if (!trimmed) return null
   try {
     const json = JSON.parse(trimmed)
-    return normalizeStructuredLog(json, trimmed)
+    return sanitizeLogEntryValue(normalizeStructuredLog(json, trimmed))
   } catch {
-    return normalizeFreeformLog(trimmed)
+    return sanitizeLogEntryValue(normalizeFreeformLog(trimmed))
   }
 }
 
@@ -310,7 +602,7 @@ function readTailJsonl(filePath, maxLines) {
     filePath,
     totalLines: listLines(filePath).length,
     returnedLines: lines.length,
-    lines: lines.map(parseLine).filter(Boolean)
+    lines: lines.map(parseLine).filter(Boolean).map((entry) => sanitizeLogEntryValue(entry))
   }
 }
 
@@ -488,6 +780,18 @@ async function getServiceStatus(service) {
     command
   })
   safe.detail = detail
+  safe.serviceName = service
+  safe.role = service === SERVICE_NAME ? "Email bridge NSSM service" : service === CADDY_SERVICE_NAME ? "Caddy HTTPS reverse proxy" : "Windows service"
+  safe.serviceState = status
+  safe.processStatus = status
+  safe.lastCheckedAt = nowIso()
+  safe.port = service === SERVICE_NAME ? PORT : service === CADDY_SERVICE_NAME ? 443 : null
+  safe.endpoint = service === SERVICE_NAME ? `http://${HOST}:${PORT}/health` : service === CADDY_SERVICE_NAME ? `https://${PUBLIC_DOMAIN}` : ""
+  safe.logAvailability = service === SERVICE_NAME ? LOG_OUT : service === CADDY_SERVICE_NAME ? LOG_CADDY_OUT : LOG_SERVICE
+  safe.lastAction = ""
+  safe.lastActionAt = ""
+  safe.lastRestartAt = ""
+  safe.recommendedAction = ok ? "No action required" : `Investigate ${service} status`
   return safe
 }
 
@@ -790,6 +1094,7 @@ function classifyStatus(snapshot) {
   if (!["ok", "running"].includes(ports[80])) issues.push("Port 80 unavailable")
   if (!["ok", "running"].includes(ports[443])) issues.push("Port 443 unavailable")
   if (!["ok", "running"].includes(ports[3005])) issues.push("Port 3005 unavailable")
+  if (!["ok", "running"].includes(ports[587])) issues.push("Port 587 unavailable")
   if (safeStatusValue(caddyLocalHttp.status) !== "running") issues.push("Caddy HTTP local check failed")
 
   if (critical.length) {
@@ -814,13 +1119,14 @@ function classifyStatus(snapshot) {
 
 async function buildNetworkSnapshot() {
   try {
-    const [localBridgeHealth, caddyLocalHttp, publicHealth, duckdnsResolved, publicIp, smtpResolved, port80, port443, port3005, lanIp, caddyPreview, caddyValidation, bridgeService, caddyService] = await Promise.all([
+    const [localBridgeHealth, caddyLocalHttp, publicHealth, duckdnsResolved, publicIp, smtpResolved, smtpPort, port80, port443, port3005, lanIp, caddyPreview, caddyValidation, bridgeService, caddyService] = await Promise.all([
       checkHttp(`http://${HOST}:${PORT}/health`, 5000),
       checkHttp("http://127.0.0.1:80/health", 5000),
       checkHttp(`https://${PUBLIC_DOMAIN}/health`, 5000),
       resolveDuckDns(),
       getPublicIp(),
       resolveHostStatus("smtp-auth.menara.ma", "Menara SMTP"),
+      checkTcp("smtp-auth.menara.ma", 587, 4000),
       checkTcp("127.0.0.1", 80, 2000),
       checkTcp("127.0.0.1", 443, 2000),
       checkTcp("127.0.0.1", PORT, 2000),
@@ -898,6 +1204,7 @@ async function buildNetworkSnapshot() {
         ipMatch: duckdnsSync,
         lanIp,
         ports: {
+          587: smtpPort.ok ? "running" : "failed",
           80: port80.ok ? "running" : "failed",
           443: port443.ok ? "running" : "failed",
           3005: port3005.ok ? "running" : "failed"
@@ -905,7 +1212,8 @@ async function buildNetworkSnapshot() {
         caddyLocalHttp: normalizeHealth(caddyLocalHttp),
         diagnosticTree: [],
         smtpHostResolution: smtpResolved.ok ? smtpResolved.address : "",
-        smtpHostResolutionStatus: smtpResolved.ok ? "running" : "failed"
+        smtpHostResolutionStatus: smtpResolved.ok ? "running" : "failed",
+        smtpPortStatus: smtpPort.ok ? "running" : "failed"
       },
       smtp: {
         host: smtpConfig.host,
@@ -913,7 +1221,10 @@ async function buildNetworkSnapshot() {
         secure: smtpConfig.secure,
         user: maskEmail(smtpConfig.user),
         authStatus: smtpAuth,
-        lastTest: runtimeState.lastSmtpTest
+        lastTest: runtimeState.lastSmtpTest,
+        dnsResolutionStatus: smtpResolved.ok ? "running" : "failed",
+        tcpConnectivityStatus: smtpPort.ok ? "running" : "failed",
+        lastProofEmail: runtimeState.lastSendSuccess || null
       },
       duckdns: {
         ok: duckdnsStatus === "running",
@@ -966,9 +1277,9 @@ async function buildNetworkSnapshot() {
         message: smtpResolved.ok ? smtpResolved.address : smtpResolved.error || "smtp-auth.menara.ma resolution failed"
       },
       {
-        step: "TCP 80 / 443 / 3005",
-        status: [port80.ok, port443.ok, port3005.ok].every(Boolean) ? "running" : "degraded",
-        message: `80=${port80.ok ? "ok" : "failed"} 443=${port443.ok ? "ok" : "failed"} 3005=${port3005.ok ? "ok" : "failed"}`
+        step: "TCP 587 / 80 / 443 / 3005",
+        status: [smtpPort.ok, port80.ok, port443.ok, port3005.ok].every(Boolean) ? "running" : "degraded",
+        message: `587=${smtpPort.ok ? "ok" : "failed"} 80=${port80.ok ? "ok" : "failed"} 443=${port443.ok ? "ok" : "failed"} 3005=${port3005.ok ? "ok" : "failed"}`
       }
     ]
 
@@ -1011,7 +1322,7 @@ async function buildNetworkSnapshot() {
         publicIp: "",
         ipMatch: false,
         lanIp: detectLanIp(),
-        ports: { 80: "failed", 443: "failed", 3005: "failed" },
+        ports: { 587: "failed", 80: "failed", 443: "failed", 3005: "failed" },
         caddyLocalHttp: fallbackHealthResult("caddy local http", message),
         diagnosticTree: [
           { step: "Bridge local health", status: "failed", message },
@@ -1022,7 +1333,8 @@ async function buildNetworkSnapshot() {
           { step: "Menara host resolution", status: "failed", message }
         ],
         smtpHostResolution: "",
-        smtpHostResolutionStatus: "failed"
+        smtpHostResolutionStatus: "failed",
+        smtpPortStatus: "failed"
       },
       smtp: {
         host: getDefaultSmtpConfig().host,
@@ -1030,7 +1342,10 @@ async function buildNetworkSnapshot() {
         secure: getDefaultSmtpConfig().secure,
         user: maskEmail(getDefaultSmtpConfig().user),
         authStatus: fallbackHealthResult("smtp", message),
-        lastTest: runtimeState.lastSmtpTest || null
+        lastTest: runtimeState.lastSmtpTest || null,
+        dnsResolutionStatus: "failed",
+        tcpConnectivityStatus: "failed",
+        lastProofEmail: runtimeState.lastSendSuccess || null
       },
       duckdns: {
         ok: false,
@@ -1286,33 +1601,107 @@ async function handleAdminStatus(request) {
   } else if (!snapshot.caddy.configPreview) {
     snapshot.caddy.configPreview = ""
   }
+  const backupStatus = summarizeBackupStatus()
+  const maintenanceMode = runtimeState.maintenance || loadMaintenanceState()
+  const auditTail = readTailJsonl(AUDIT_FILE, 300)
+  const auditEntries = Array.isArray(auditTail.lines) ? auditTail.lines : []
+  const lastAuditEvent = auditEntries[auditEntries.length - 1] || null
+  const serviceActionEntries = auditEntries.filter((entry) => String(entry.action || "").startsWith("SERVICE_"))
+  const unauthorizedAttempts = auditEntries.filter((entry) => String(entry.action || "").includes("ACCESS_BLOCKED") || String(entry.result || "").toLowerCase() === "blocked").length
+  const failedSmtpAuth = auditEntries.filter((entry) => String(entry.action || "").includes("SMTP") && String(entry.result || "").toLowerCase() === "error").length
+  const failedApiCalls = auditEntries.filter((entry) => String(entry.action || "").includes("ERROR") || String(entry.result || "").toLowerCase() === "error").length
+  const bridgeLastRestart = await findLatestEvent((entry) => String(entry.action || "") === "SERVICE_RESTART" && String(entry.params?.service || entry.after?.service || entry.before?.service || "").includes(SERVICE_NAME))
+  const caddyLastRestart = await findLatestEvent((entry) => String(entry.action || "") === "SERVICE_RESTART" && String(entry.params?.service || entry.after?.service || entry.before?.service || "").includes(CADDY_SERVICE_NAME))
+  const bridgeService = {
+    ...snapshot.bridgeService,
+    lastAction: clean(runtimeState.lastAdminAction?.action || ""),
+    lastActionAt: clean(runtimeState.lastAdminAction?.timestamp || ""),
+    lastRestartAt: clean(bridgeLastRestart?.timestamp || ""),
+  }
+  const caddyService = {
+    ...snapshot.caddyService,
+    lastAction: clean(runtimeState.lastAdminAction?.action || ""),
+    lastActionAt: clean(runtimeState.lastAdminAction?.timestamp || ""),
+    lastRestartAt: clean(caddyLastRestart?.timestamp || ""),
+  }
   return {
     status: 200,
     payload: {
       ok: true,
       data: {
         serviceName: SERVICE_NAME,
+        caddyServiceName: CADDY_SERVICE_NAME,
         version: VERSION,
         purpose: "Production email relay for Email-OS -> Menara SMTP",
         status: snapshot.classification,
         globalStatus: snapshot.classification,
+        hostname: os.hostname(),
+        processId: process.pid,
+        nodeVersion: process.version,
+        workingDirectory: process.cwd(),
+        localTime: nowIso(),
+        uptimeSeconds: Math.floor(process.uptime()),
         process: snapshot.process,
-        services: snapshot.services,
-        bridgeService: snapshot.bridgeService,
-        caddyService: snapshot.caddyService,
+        services: {
+          bridge: bridgeService,
+          caddy: caddyService
+        },
+        bridgeService,
+        caddyService,
         localHealth: snapshot.localHealth,
         publicHealth: snapshot.publicHealth,
         network: snapshot.network,
         smtp: snapshot.smtp,
-        duckdns: snapshot.duckdns,
+        duckdns: {
+          ...snapshot.duckdns,
+          lastUpdatedAt: runtimeState.lastDuckDnsUpdate?.timestamp || ""
+        },
         menara: snapshot.menara,
         caddy: snapshot.caddy,
         classification: snapshot.classification,
         recommendedAction: snapshot.recommendedAction,
         publicDomain: PUBLIC_DOMAIN,
         publicPurpose: "Production email relay for Email-OS",
-        lastSendSuccess: snapshot.lastSendSuccess,
+        lastSendSuccess: runtimeState.lastSendSuccess || snapshot.lastSendSuccess,
+        lastProofEmail: runtimeState.lastSendSuccess || snapshot.lastSendSuccess,
         lastError: snapshot.lastError,
+        lastAdminAction: runtimeState.lastAdminAction,
+        backups: backupStatus,
+        maintenanceMode,
+        auditSummary: {
+          totalEvents: auditTail.totalLines || auditEntries.length,
+          recentEvents: auditEntries.length,
+          unauthorizedAttempts,
+          lastEventAt: clean(lastAuditEvent?.timestamp || ""),
+          lastEventAction: clean(lastAuditEvent?.action || "")
+        },
+        security: {
+          adminTokenConfigured: Boolean(clean(process.env.EMAIL_BRIDGE_ADMIN_TOKEN)),
+          bridgeTokenConfigured: Boolean(clean(process.env.EMAIL_BRIDGE_TOKEN)),
+          envPresent: fs.existsSync(path.join(process.cwd(), ".env")) || fs.existsSync(path.join(process.cwd(), ".env.local")) || fs.existsSync("C:\\AngelCare\\email-bridge\\.env"),
+          maskedSecrets: true,
+          recentUnauthorizedAttempts: unauthorizedAttempts,
+          recentTokenMismatchSuspicion: auditEntries.filter((entry) => String(entry.error || entry.message || "").toLowerCase().includes("unauthorized") || String(entry.action || "").includes("BLOCKED")).length,
+          recentFailedSmtpAuth: failedSmtpAuth,
+          recentFailedApiCalls: failedApiCalls,
+          lastAdminAction: clean(runtimeState.lastAdminAction?.action || "")
+        },
+        cpuSnapshot: computeCpuSnapshot(),
+        memory: computeMemorySnapshot(),
+        disk: computeDiskSnapshot("C:\\AngelCare"),
+        bridgeFiles: {
+          serverJsModifiedAt: getPathStats(path.join(process.cwd(), "server.js"))?.modifiedAt || "",
+          packageJsonModifiedAt: getPathStats(path.join(process.cwd(), "package.json"))?.modifiedAt || ""
+        },
+        updateReadiness: {
+          bridgeVersion: VERSION,
+          serverJsModifiedAt: getPathStats(path.join(process.cwd(), "server.js"))?.modifiedAt || "",
+          packageJsonModifiedAt: getPathStats(path.join(process.cwd(), "package.json"))?.modifiedAt || "",
+          nodeVersion: process.version,
+          npmDependenciesStatus: "unknown",
+          lastSyntaxCheck: runtimeState.lastAdminAction?.action === "BRIDGE_SYNTAX_CHECK" ? runtimeState.lastAdminAction.timestamp : "",
+          lastRestartAfterUpdate: bridgeLastRestart?.timestamp || ""
+        },
         technical: {
           bridgeProcessStatus: snapshot.bridgeService?.status || "unknown",
           serviceName: SERVICE_NAME,
@@ -1321,7 +1710,8 @@ async function handleAdminStatus(request) {
           localTime: nowIso(),
           nodeVersion: process.version,
           workingDirectory: process.cwd()
-        }
+        },
+        auditServiceActions: serviceActionEntries.slice(-20)
       }
     }
   }
@@ -1335,7 +1725,9 @@ async function handleAdminLogs(request, url) {
     "bridge-error": LOG_ERROR,
     caddy: LOG_CADDY_OUT,
     "caddy-error": LOG_CADDY_ERROR,
-    audit: AUDIT_FILE
+    duckdns: LOG_DUCKDNS,
+    audit: AUDIT_FILE,
+    service: LOG_SERVICE
   }
   return buildLogsResponse(kind, mapping[kind] || LOG_OUT, lines)
 }
@@ -1344,21 +1736,357 @@ async function handleAdminAudit(request, url) {
   return buildLogsResponse("audit", AUDIT_FILE, readMaxLinesFromUrl(url, 200))
 }
 
+async function handleAdminAuditEvent(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const event = body?.event && typeof body.event === "object" ? body.event : body
+  const action = clean(event?.action)
+  if (!action) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Audit event action is required",
+        errorName: "AuditEventInvalid",
+        errorMessage: "Audit event action is required"
+      }
+    }
+  }
+
+  const record = {
+    timestamp: clean(event?.timestamp) || nowIso(),
+    actor: clean(event?.actor) || "operator",
+    action,
+    target: clean(event?.target) || "/opsos/infrastructure/windows-node",
+    result: clean(event?.result) || "unknown",
+    reason: clean(event?.reason),
+    severity: clean(event?.severity) || "info",
+    metadataSummary: clean(event?.metadataSummary) || "",
+  }
+
+  auditAction({
+    action: record.action,
+    actor: record.actor,
+    ip: getRequestIp(request),
+    params: record,
+    result: record.result,
+    before: null,
+    after: record
+  })
+  logStructured(LOG_SERVICE, {
+    event: "AUDIT_EVENT",
+    level: "info",
+    message: record.action,
+    ...record
+  })
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: record
+    }
+  }
+}
+
+async function handleBackupCreate(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const reason = clean(body.reason)
+  if (!reason) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Backup reason is required",
+        errorName: "BackupReasonRequired",
+        errorMessage: "Backup reason is required"
+      }
+    }
+  }
+
+  const backupId = `backup-${new Date().toISOString().replace(/[:.]/g, "-")}-${crypto.randomUUID().slice(0, 8)}`
+  const destination = path.join(BACKUP_ROOT, backupId)
+  const assets = backupCandidateFiles()
+  const manifest = {
+    backupId,
+    createdAt: nowIso(),
+    reason,
+    operator: clean(request.headers["x-angelcare-operator"]) || "system",
+    files: [],
+    warnings: [],
+  }
+
+  ensureDir(path.join(destination, BACKUP_MANIFEST_NAME))
+  fs.mkdirSync(destination, { recursive: true })
+
+  for (const source of assets) {
+    const entry = {
+      source,
+      name: getFileNameSafe(source),
+      present: fs.existsSync(source),
+      copied: false,
+      relativePath: getFileNameSafe(source),
+    }
+
+    if (entry.present) {
+      try {
+        const target = path.join(destination, entry.relativePath)
+        fs.mkdirSync(path.dirname(target), { recursive: true })
+        fs.cpSync(source, target, { recursive: true })
+        entry.copied = true
+      } catch (error) {
+        entry.copied = false
+        manifest.warnings.push(`Failed to copy ${entry.name}: ${error instanceof Error ? error.message : String(error || "copy failed")}`)
+      }
+    } else {
+      manifest.warnings.push(`Missing asset: ${entry.name}`)
+    }
+
+    manifest.files.push(entry)
+  }
+
+  const notesFile = path.join(destination, "backup-notes.txt")
+  fs.writeFileSync(notesFile, [
+    `Backup ID: ${backupId}`,
+    `Created At: ${manifest.createdAt}`,
+    `Reason: ${reason}`,
+    `Operator: ${manifest.operator}`,
+    `Files: ${manifest.files.length}`,
+  ].join("\n"), "utf8")
+
+  fs.writeFileSync(path.join(destination, BACKUP_MANIFEST_NAME), `${JSON.stringify(manifest, null, 2)}\n`, "utf8")
+  runtimeState.lastBackup = {
+    timestamp: manifest.createdAt,
+    backupId,
+    backupPath: destination,
+    manifestSummary: buildSafeManifestSummary(manifest)
+  }
+
+  auditAction({
+    action: "BACKUP_CREATE",
+    actor: manifest.operator,
+    ip: getRequestIp(request),
+    params: { reason, backupId },
+    result: "ok",
+    after: runtimeState.lastBackup
+  })
+  logStructured(LOG_SERVICE, {
+    event: "BACKUP_CREATE",
+    level: "info",
+    message: `Backup created: ${backupId}`,
+    backupId,
+    files: manifest.files.length,
+    warnings: manifest.warnings.length
+  })
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: {
+        backupId,
+        timestamp: manifest.createdAt,
+        includedAssets: manifest.files.map((entry) => ({
+          name: entry.name,
+          present: entry.present,
+          copied: entry.copied,
+        })),
+        missingAssets: manifest.files.filter((entry) => !entry.present).map((entry) => entry.name),
+        warnings: manifest.warnings.slice(0, 20),
+        manifestSummary: buildSafeManifestSummary(manifest)
+      }
+    }
+  }
+}
+
+async function handleBackupStatus(request) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+  const status = summarizeBackupStatus()
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: {
+        directoryExists: status.directoryExists,
+        latestBackupAt: status.latestBackupAt,
+        latestBackupName: status.latestBackupName,
+        backupCount: status.backupCount,
+        folderSizeBytes: status.folderSizeBytes,
+        latestManifestSummary: status.latestManifestSummary,
+        protectedAssets: status.protectedAssets.map((item) => ({
+          name: item.name,
+          present: item.present,
+        })),
+        warnings: status.warnings,
+        lastCheckedAt: status.lastCheckedAt
+      }
+    }
+  }
+}
+
+function setMaintenanceState(enabled, body, request) {
+  const current = runtimeState.maintenance || loadMaintenanceState()
+  const next = {
+    enabled,
+    reason: clean(body.reason) || current.reason,
+    expectedDuration: clean(body.expectedDuration || body.expected_duration) || current.expectedDuration,
+    startedAt: enabled ? current.startedAt || nowIso() : "",
+    startedBy: enabled ? (clean(request.headers["x-angelcare-operator"]) || current.startedBy || "system") : "",
+    message: clean(body.message) || (enabled ? `Maintenance mode enabled: ${clean(body.reason)}` : "Maintenance mode disabled")
+  }
+  saveMaintenanceState(next)
+  return next
+}
+
+async function handleMaintenanceStatus(request) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: runtimeState.maintenance || loadMaintenanceState()
+    }
+  }
+}
+
+async function handleMaintenanceChange(request, enabled, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+  const reason = clean(body.reason)
+  const expectedDuration = clean(body.expectedDuration || body.expected_duration)
+
+  if (enabled && !reason) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Maintenance reason is required",
+        errorName: "MaintenanceReasonRequired",
+        errorMessage: "Maintenance reason is required"
+      }
+    }
+  }
+
+  if (enabled && !expectedDuration) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Maintenance expected duration is required",
+        errorName: "MaintenanceDurationRequired",
+        errorMessage: "Maintenance expected duration is required"
+      }
+    }
+  }
+
+  const state = setMaintenanceState(enabled, body, request)
+  const action = enabled ? "MAINTENANCE_ENABLE" : "MAINTENANCE_DISABLE"
+  auditAction({
+    action,
+    actor: clean(request.headers["x-angelcare-operator"]) || "system",
+    ip: getRequestIp(request),
+    params: { reason, expectedDuration },
+    result: "ok",
+    after: state
+  })
+  logStructured(LOG_SERVICE, {
+    event: action,
+    level: "info",
+    message: state.message,
+    state
+  })
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: state
+    }
+  }
+}
+
+async function handleMaintenanceExtend(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+  const current = runtimeState.maintenance || loadMaintenanceState()
+  if (!current.enabled) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Maintenance mode is not enabled",
+        errorName: "MaintenanceNotEnabled",
+        errorMessage: "Maintenance mode is not enabled"
+      }
+    }
+  }
+
+  const next = setMaintenanceState(true, {
+    reason: clean(body.reason) || current.reason,
+    expectedDuration: clean(body.expectedDuration || body.expected_duration) || current.expectedDuration,
+    message: clean(body.message) || current.message,
+  }, request)
+
+  auditAction({
+    action: "MAINTENANCE_EXTEND",
+    actor: clean(request.headers["x-angelcare-operator"]) || "system",
+    ip: getRequestIp(request),
+    params: { reason: next.reason, expectedDuration: next.expectedDuration },
+    result: "ok",
+    after: next
+  })
+  logStructured(LOG_SERVICE, {
+    event: "MAINTENANCE_EXTEND",
+    level: "info",
+    message: next.message,
+    state: next
+  })
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: next
+    }
+  }
+}
+
 async function handleAdminService(request, action, body) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const service = clean(body.service)
   const confirmation = clean(body.confirmation)
+  const reason = clean(body.reason)
   if (![SERVICE_NAME, CADDY_SERVICE_NAME].includes(service)) {
-    return { status: 400, payload: { ok: false, error: "Unsupported service" } }
+    return { status: 400, payload: { ok: false, error: "Unsupported service", errorName: "ServiceUnsupported", errorMessage: "Unsupported service" } }
+  }
+  if (!reason) {
+    return { status: 400, payload: { ok: false, error: "Action reason is required", errorName: "ActionReasonRequired", errorMessage: "Action reason is required" } }
   }
   if (action === "stop" && !confirmation) {
-    return { status: 400, payload: { ok: false, error: "Stopping a service requires confirmation" } }
+    return { status: 400, payload: { ok: false, error: "Stopping a service requires confirmation", errorName: "ActionConfirmationRequired", errorMessage: "Stopping a service requires confirmation" } }
   }
   if (action === "stop" && service === CADDY_SERVICE_NAME && !/CONFIRM/i.test(confirmation)) {
-    return { status: 400, payload: { ok: false, error: "Stopping Caddy requires explicit confirmation" } }
+    return { status: 400, payload: { ok: false, error: "Stopping Caddy requires explicit confirmation", errorName: "ActionConfirmationRequired", errorMessage: "Stopping Caddy requires explicit confirmation" } }
   }
 
   const started = Date.now()
@@ -1381,15 +2109,22 @@ async function handleAdminService(request, action, body) {
     action: `SERVICE_${action.toUpperCase()}`,
     actor: clean(request.headers["x-angelcare-operator"]) || "system",
     ip: getRequestIp(request),
-    params: { service, confirmation: confirmation ? "***REDACTED***" : "" },
+    params: { service, confirmation: confirmation ? "***REDACTED***" : "", reason },
     result: ok ? "ok" : "error",
     durationMs,
     before,
     after,
     error
   }
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: record.action,
+    target: service,
+    reason,
+    result: record.result
+  }
   auditAction(record)
-  logStructured(ok ? LOG_OUT : LOG_ERROR, {
+  logStructured(ok ? LOG_SERVICE : LOG_ERROR, {
     event: record.action,
     level: ok ? "info" : "error",
     message: ok ? `${service} ${action} completed` : error,
@@ -1416,10 +2151,10 @@ async function handleAdminService(request, action, body) {
   }
 }
 
-async function handleAdminCaddy(request, action) {
+async function handleAdminCaddy(request, action, body = {}) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const started = Date.now()
   const before = await getServiceStatus(CADDY_SERVICE_NAME)
@@ -1435,7 +2170,7 @@ async function handleAdminCaddy(request, action) {
     } else if (action === "reload") {
       outcome = await reloadCaddy()
     } else {
-      return { status: 400, payload: { ok: false, error: "Unsupported caddy action" } }
+      return { status: 400, payload: { ok: false, error: "Unsupported caddy action", errorName: "CaddyActionUnsupported", errorMessage: "Unsupported caddy action" } }
     }
   } catch (err) {
     error = err instanceof Error ? err.message : String(err || "Caddy action failed")
@@ -1447,13 +2182,20 @@ async function handleAdminCaddy(request, action) {
     action: `CADDY_${action.toUpperCase()}`,
     actor: clean(request.headers["x-angelcare-operator"]) || "system",
     ip: getRequestIp(request),
-    params: {},
+    params: { reason: clean(body.reason || "") },
     result: ok ? "ok" : "error",
     durationMs,
     before,
     after,
     error
   })
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: `CADDY_${action.toUpperCase()}`,
+    target: CADDY_SERVICE_NAME,
+    reason: clean(body.reason || ""),
+    result: ok ? "ok" : "error"
+  }
   logStructured(ok ? LOG_CADDY_OUT : LOG_CADDY_ERROR, {
     event: `CADDY_${action.toUpperCase()}`,
     level: ok ? "info" : "error",
@@ -1462,6 +2204,15 @@ async function handleAdminCaddy(request, action) {
     after,
     output: outcome ? outcome.output || outcome.commandUsed || "" : ""
   })
+  if (ok) {
+    logStructured(LOG_SERVICE, {
+      event: `CADDY_${action.toUpperCase()}`,
+      level: "info",
+      message: `Caddy ${action} completed`,
+      before,
+      after
+    })
+  }
   return {
     status: ok ? 200 : 500,
     payload: {
@@ -1482,7 +2233,7 @@ async function handleAdminCaddy(request, action) {
 async function handleDuckDnsUpdate(request) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const started = Date.now()
   const before = await resolveDuckDns()
@@ -1512,6 +2263,13 @@ async function handleDuckDnsUpdate(request) {
     publicIp: publicIp.ok ? publicIp.ip : "",
     error
   }
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: "DUCKDNS_UPDATE",
+    target: PUBLIC_DOMAIN,
+    reason: "Refresh DuckDNS mapping",
+    result: error ? "error" : "ok"
+  }
   auditAction({
     action: "DUCKDNS_UPDATE",
     actor: clean(request.headers["x-angelcare-operator"]) || "system",
@@ -1523,7 +2281,7 @@ async function handleDuckDnsUpdate(request) {
     after,
     error
   })
-  logStructured(error ? LOG_ERROR : LOG_OUT, {
+  logStructured(error ? LOG_ERROR : LOG_DUCKDNS, {
     event: "DUCKDNS_UPDATE",
     level: error ? "error" : "info",
     message: error || "DuckDNS update executed",
@@ -1553,7 +2311,7 @@ async function handleDuckDnsUpdate(request) {
 async function handleSmtpTest(request) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const started = Date.now()
   const config = getDefaultSmtpConfig()
@@ -1562,7 +2320,9 @@ async function handleSmtpTest(request) {
       status: 400,
       payload: {
         ok: false,
-        error: "Default SMTP configuration is incomplete"
+        error: "Default SMTP configuration is incomplete",
+        errorName: "SmtpConfigIncomplete",
+        errorMessage: "Default SMTP configuration is incomplete"
       }
     }
   }
@@ -1586,6 +2346,13 @@ async function handleSmtpTest(request) {
     user: maskEmail(config.user),
     durationMs
   }
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: error ? "SMTP_TEST_ERROR" : "SMTP_TEST_OK",
+    target: `${config.host}:${config.port}`,
+    reason: "Validate SMTP auth and connectivity",
+    result: error ? "error" : "ok"
+  }
   auditAction({
     action: "SMTP_TEST",
     actor: clean(request.headers["x-angelcare-operator"]) || "system",
@@ -1596,7 +2363,7 @@ async function handleSmtpTest(request) {
     after: runtimeState.lastSmtpTest,
     error
   })
-  logStructured(error ? LOG_ERROR : LOG_OUT, {
+  logStructured(error ? LOG_ERROR : LOG_SERVICE, {
     event: error ? "SMTP_TEST_ERROR" : "SMTP_TEST_OK",
     level: error ? "error" : "info",
     message: error || "SMTP verify successful",
@@ -1629,14 +2396,18 @@ async function handleSmtpTest(request) {
 async function handleSendTest(request, body) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const config = getDefaultSmtpConfig()
   const toEmail = clean(body.toEmail)
   const subject = clean(body.subject) || "AngelCare - preuve de livraison Menara"
   const text = clean(body.text) || "Email de test"
+  const reason = clean(body.reason)
   if (!toEmail || !text) {
-    return { status: 400, payload: { ok: false, error: "toEmail and text are required" } }
+    return { status: 400, payload: { ok: false, error: "toEmail and text are required", errorName: "ProofSendMissingFields", errorMessage: "toEmail and text are required" } }
+  }
+  if (!reason) {
+    return { status: 400, payload: { ok: false, error: "Reason is required", errorName: "ReasonRequired", errorMessage: "Reason is required" } }
   }
   const started = Date.now()
   const mailbox = maskEmail(config.user || config.fromEmail)
@@ -1668,13 +2439,20 @@ async function handleSendTest(request, body) {
     action: error ? "SEND_TEST_ERROR" : "SEND_TEST_OK",
     actor: clean(request.headers["x-angelcare-operator"]) || "system",
     ip: getRequestIp(request),
-    params: { toEmail, subject, textLength: text.length, mailbox: maskEmail(config.user) },
+    params: { toEmail, subject, textLength: text.length, mailbox: maskEmail(config.user), reason },
     result: error ? "error" : "ok",
     durationMs,
     after: payloadData,
     error
   })
-  logStructured(error ? LOG_ERROR : LOG_OUT, {
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: error ? "SEND_TEST_ERROR" : "SEND_TEST_OK",
+    target: toEmail,
+    reason,
+    result: error ? "error" : "ok"
+  }
+  logStructured(error ? LOG_ERROR : LOG_SERVICE, {
     event: error ? "SEND_TEST_ERROR" : "SEND_TEST_OK",
     level: error ? "error" : "info",
     message: error || "Delivery proof email sent",
@@ -1705,7 +2483,7 @@ async function handleSendTest(request, body) {
 async function handleNetworkTest(request) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const started = Date.now()
   const snapshot = await buildNetworkSnapshot()
@@ -1724,7 +2502,14 @@ async function handleNetworkTest(request) {
     durationMs: Date.now() - started,
     after: runtimeState.lastNetworkTest
   })
-  logStructured(LOG_OUT, {
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: "NETWORK_TEST",
+    target: PUBLIC_DOMAIN,
+    reason: "Run network diagnostic",
+    result: "ok"
+  }
+  logStructured(LOG_SERVICE, {
     event: "NETWORK_TEST",
     level: "info",
     message: "Network diagnostic executed",
@@ -1752,37 +2537,48 @@ async function handleNetworkTest(request) {
   }
 }
 
-async function handleSystemCommand(request, kind, confirmation) {
+async function handleSystemCommand(request, kind, confirmation, reason = "") {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
-  if (kind === "reboot" && confirmation !== "CONFIRM SERVER RESTART") {
-    return { status: 400, payload: { ok: false, error: "Invalid restart confirmation" } }
+  if (!reason) {
+    return { status: 400, payload: { ok: false, error: "Reason is required", errorName: "ReasonRequired", errorMessage: "Reason is required" } }
+  }
+  if ((kind === "reboot" || kind === "restart") && confirmation !== "CONFIRM SERVER RESTART") {
+    return { status: 400, payload: { ok: false, error: "Invalid restart confirmation", errorName: "ActionConfirmationRequired", errorMessage: "Invalid restart confirmation" } }
   }
   if (kind === "shutdown" && confirmation !== "CONFIRM SERVER SHUTDOWN") {
-    return { status: 400, payload: { ok: false, error: "Invalid shutdown confirmation" } }
+    return { status: 400, payload: { ok: false, error: "Invalid shutdown confirmation", errorName: "ActionConfirmationRequired", errorMessage: "Invalid shutdown confirmation" } }
   }
-  const command = kind === "reboot"
-    ? ["shutdown", ["/r", "/t", "30", "/c", "AngelCare controlled restart"]]
-    : ["shutdown", ["/s", "/t", "30", "/c", "AngelCare controlled shutdown"]]
+  const command = kind === "reboot" || kind === "restart"
+    ? ["shutdown", ["/r", "/t", "30", "/c", "AngelCare controlled Windows bridge restart"]]
+    : ["shutdown", ["/s", "/t", "30", "/c", "AngelCare controlled Windows bridge shutdown"]]
   const commandText = `${command[0]} ${command[1].join(" ")}`
   const started = Date.now()
   auditAction({
-    action: kind === "reboot" ? "SYSTEM_REBOOT" : "SYSTEM_SHUTDOWN",
+    action: kind === "reboot" || kind === "restart" ? "SYSTEM_REBOOT" : "SYSTEM_SHUTDOWN",
     actor: clean(request.headers["x-angelcare-operator"]) || "system",
     ip: getRequestIp(request),
-    params: { confirmation: "***REDACTED***" },
+    params: { confirmation: "***REDACTED***", reason },
     result: "accepted",
     durationMs: 0
   })
+  runtimeState.lastAdminAction = {
+    timestamp: nowIso(),
+    action: kind === "reboot" || kind === "restart" ? "SYSTEM_RESTART" : "SYSTEM_SHUTDOWN",
+    target: "windows-node",
+    reason,
+    result: "accepted"
+  }
   try {
     await runCommand(command[0], command[1], 30000)
-    logStructured(LOG_OUT, {
-      event: kind === "reboot" ? "SYSTEM_REBOOT_ACCEPTED" : "SYSTEM_SHUTDOWN_ACCEPTED",
+    logStructured(LOG_SERVICE, {
+      event: kind === "reboot" || kind === "restart" ? "SYSTEM_REBOOT_ACCEPTED" : "SYSTEM_SHUTDOWN_ACCEPTED",
       level: "info",
-      message: "Shutdown command accepted",
-      command: commandText
+      message: kind === "reboot" || kind === "restart" ? "Restart command accepted" : "Shutdown command accepted",
+      command: commandText,
+      reason
     })
     return {
       status: 200,
@@ -1799,16 +2595,17 @@ async function handleSystemCommand(request, kind, confirmation) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error || "system command failed")
     logStructured(LOG_ERROR, {
-      event: kind === "reboot" ? "SYSTEM_REBOOT_ERROR" : "SYSTEM_SHUTDOWN_ERROR",
+      event: kind === "reboot" || kind === "restart" ? "SYSTEM_REBOOT_ERROR" : "SYSTEM_SHUTDOWN_ERROR",
       level: "error",
       message,
-      command: commandText
+      command: commandText,
+      reason
     })
     auditAction({
-      action: kind === "reboot" ? "SYSTEM_REBOOT_ERROR" : "SYSTEM_SHUTDOWN_ERROR",
+      action: kind === "reboot" || kind === "restart" ? "SYSTEM_REBOOT_ERROR" : "SYSTEM_SHUTDOWN_ERROR",
       actor: clean(request.headers["x-angelcare-operator"]) || "system",
       ip: getRequestIp(request),
-      params: { confirmation: "***REDACTED***" },
+      params: { confirmation: "***REDACTED***", reason },
       result: "error",
       durationMs: Date.now() - started,
       error: message
@@ -1817,7 +2614,9 @@ async function handleSystemCommand(request, kind, confirmation) {
       status: 500,
       payload: {
         ok: false,
-        error: message
+        error: message,
+        errorName: "SystemCommandFailed",
+        errorMessage: message
       }
     }
   }
@@ -1826,7 +2625,7 @@ async function handleSystemCommand(request, kind, confirmation) {
 async function handleCancelShutdown(request) {
   const auth = requireAdminToken(request)
   if (!auth.ok) {
-    return { status: auth.status, payload: { ok: false, error: auth.error } }
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
   }
   const started = Date.now()
   try {
@@ -1839,7 +2638,14 @@ async function handleCancelShutdown(request) {
       result: "ok",
       durationMs: Date.now() - started
     })
-    logStructured(LOG_OUT, {
+    runtimeState.lastAdminAction = {
+      timestamp: nowIso(),
+      action: "SYSTEM_CANCEL_SHUTDOWN",
+      target: "windows-node",
+      reason: "Cancel scheduled shutdown",
+      result: "ok"
+    }
+    logStructured(LOG_SERVICE, {
       event: "SYSTEM_CANCEL_SHUTDOWN",
       level: "info",
       message: "Shutdown cancelled"
@@ -1871,7 +2677,7 @@ async function handleCancelShutdown(request) {
       level: "error",
       message
     })
-    return { status: 500, payload: { ok: false, error: message } }
+    return { status: 500, payload: { ok: false, error: message, errorName: "CancelShutdownFailed", errorMessage: message } }
   }
 }
 
@@ -1900,23 +2706,29 @@ async function handleRequest(request, response) {
 
   if (pathname === "/admin/status" && request.method === "GET") {
     const auth = requireAdminToken(request)
-    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error })
+    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error })
     const result = await handleAdminStatus(request)
     return writeJson(response, result.status, result.payload)
   }
 
   if (pathname.startsWith("/admin/logs/") && request.method === "GET") {
     const auth = requireAdminToken(request)
-    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error })
+    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error })
     const result = await handleAdminLogs(request, url)
     return writeJson(response, result.ok ? 200 : 404, result.payload)
   }
 
   if (pathname === "/admin/audit" && request.method === "GET") {
     const auth = requireAdminToken(request)
-    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error })
+    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error })
     const result = await handleAdminAudit(request, url)
     return writeJson(response, result.ok ? 200 : 404, result.payload)
+  }
+
+  if (pathname === "/admin/audit/event" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleAdminAuditEvent(request, body)
+    return writeJson(response, result.status, result.payload)
   }
 
   if (pathname === "/admin/service/start" && request.method === "POST") {
@@ -1938,18 +2750,20 @@ async function handleRequest(request, response) {
   }
 
   if (pathname === "/admin/caddy/validate" && request.method === "POST") {
-    const result = await handleAdminCaddy(request, "validate")
+    const body = await readJsonBody(request)
+    const result = await handleAdminCaddy(request, "validate", body)
     return writeJson(response, result.status, result.payload)
   }
 
   if (pathname === "/admin/caddy/reload" && request.method === "POST") {
-    const result = await handleAdminCaddy(request, "reload")
+    const body = await readJsonBody(request)
+    const result = await handleAdminCaddy(request, "reload", body)
     return writeJson(response, result.status, result.payload)
   }
 
   if (pathname === "/admin/caddy/config" && request.method === "GET") {
     const auth = requireAdminToken(request)
-    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error })
+    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error })
     const config = readCaddyConfig()
     if (!config.ok) return writeJson(response, 404, { ok: false, error: config.error })
     return writeJson(response, 200, {
@@ -1964,7 +2778,7 @@ async function handleRequest(request, response) {
 
   if (pathname === "/admin/duckdns/status" && request.method === "GET") {
     const auth = requireAdminToken(request)
-    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error })
+    if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error })
     const [resolved, publicIp] = await Promise.all([resolveDuckDns(), getPublicIp()])
     return writeJson(response, 200, {
       ok: true,
@@ -1984,6 +2798,40 @@ async function handleRequest(request, response) {
     return writeJson(response, result.status, result.payload)
   }
 
+  if (pathname === "/admin/backup/create" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleBackupCreate(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/backup/status" && request.method === "GET") {
+    const result = await handleBackupStatus(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/maintenance/status" && request.method === "GET") {
+    const result = await handleMaintenanceStatus(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/maintenance/enable" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleMaintenanceChange(request, true, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/maintenance/disable" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleMaintenanceChange(request, false, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/maintenance/extend" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleMaintenanceExtend(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
   if (pathname === "/admin/test/smtp" && request.method === "POST") {
     const result = await handleSmtpTest(request)
     return writeJson(response, result.status, result.payload)
@@ -2000,15 +2848,21 @@ async function handleRequest(request, response) {
     return writeJson(response, result.status, result.payload)
   }
 
+  if (pathname === "/admin/system/restart" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleSystemCommand(request, "restart", clean(body.confirmation), clean(body.reason))
+    return writeJson(response, result.status, result.payload)
+  }
+
   if (pathname === "/admin/system/reboot" && request.method === "POST") {
     const body = await readJsonBody(request)
-    const result = await handleSystemCommand(request, "reboot", clean(body.confirmation))
+    const result = await handleSystemCommand(request, "reboot", clean(body.confirmation), clean(body.reason))
     return writeJson(response, result.status, result.payload)
   }
 
   if (pathname === "/admin/system/shutdown" && request.method === "POST") {
     const body = await readJsonBody(request)
-    const result = await handleSystemCommand(request, "shutdown", clean(body.confirmation))
+    const result = await handleSystemCommand(request, "shutdown", clean(body.confirmation), clean(body.reason))
     return writeJson(response, result.status, result.payload)
   }
 

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
 type MessageAction =
@@ -119,6 +121,12 @@ function fallbackPatches(action: MessageAction, patch: Record<string, any>) {
   return [patch, minimal, ultraMinimal].filter((item) => Object.keys(item).length > 0)
 }
 
+function requiredPermissionForAction(action: MessageAction) {
+  if (action === "delete") return "can_delete" as const
+  if (action === "archive" || action === "restore" || action === "spam") return "can_archive" as const
+  return "can_read" as const
+}
+
 function debug(error: unknown) {
   if (error && typeof error === "object") {
     const e = error as Record<string, unknown>
@@ -132,13 +140,13 @@ function debug(error: unknown) {
   return { message: error instanceof Error ? error.message : "Unknown error" }
 }
 
-async function tryUpdate(db: ReturnType<typeof createEmailOSCoreDb>, tables: string[], id: string, action: MessageAction, patch: Record<string, any>) {
+async function tryUpdate(db: ReturnType<typeof createEmailOSCoreDb>, tables: string[], id: string, action: MessageAction, patch: Record<string, any>, mailboxId: string) {
   let lastError: unknown = null
   const attempts: any[] = []
 
   for (const table of tables) {
     for (const candidate of fallbackPatches(action, patch)) {
-      const result = await db.from(table).update(candidate).eq("id", id).select("*").maybeSingle()
+      const result = await db.from(table).update(candidate).eq("id", id).eq("mailbox_id", mailboxId).select("*").maybeSingle()
       attempts.push({ table, keys: Object.keys(candidate), ok: !result.error && Boolean(result.data), error: result.error ? debug(result.error) : null })
       if (!result.error && result.data) {
         return { table, data: { ...result.data, ...candidate }, patch: candidate, attempts }
@@ -152,12 +160,16 @@ async function tryUpdate(db: ReturnType<typeof createEmailOSCoreDb>, tables: str
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await request.json().catch(() => ({}))
     const messageId = body.messageId || body.targetId || body.id
     const action = String(body.action || "")
     const payload = body.payload || {}
     const source = normalizeSource(body.source || body.targetType || payload.source || payload.targetType)
-
     if (!messageId || !action) {
       return NextResponse.json({ ok: false, error: "messageId and action are required" }, { status: 400 })
     }
@@ -166,9 +178,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: `Unsupported Email-OS message action: ${action}` }, { status: 400 })
     }
 
+    const mailboxScope = await resolveMailboxScopeForUser(user.id, body.mailboxId || body.mailbox_id || payload.mailboxId || payload.mailbox_id || null)
+    await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: mailboxScope.mailboxId,
+      requiredPermission: requiredPermissionForAction(action as MessageAction),
+      request,
+    })
+
     const db = createEmailOSCoreDb()
     const patch = actionPatch(action, payload, source)
-    const result = await tryUpdate(db, candidateTables(source), messageId, action, patch)
+    const result = await tryUpdate(db, candidateTables(source), messageId, action, patch, mailboxScope.mailboxId)
 
     if (!result.data || !result.table || !result.patch) {
       const d = debug(result.error)
@@ -181,7 +201,7 @@ export async function POST(request: Request) {
       target_type: source,
       target_id: messageId,
       severity: action === "delete" || action === "spam" ? "warning" : "info",
-      details: { ...payload, intendedPatch: patch, appliedPatch: result.patch, table: result.table, attempts: result.attempts },
+      details: { ...payload, mailboxId: mailboxScope.mailboxId, intendedPatch: patch, appliedPatch: result.patch, table: result.table, attempts: result.attempts, actorUserId: user.id },
       created_at: nowIso()
     }).then(() => null, () => null)
 

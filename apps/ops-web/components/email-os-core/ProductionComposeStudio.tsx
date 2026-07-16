@@ -245,7 +245,7 @@ export default function ProductionComposeStudio() {
     if (result.ok && attachments.length > 0) {
       await api("/api/email-os/compose/attachments", {
         method: "POST",
-        body: JSON.stringify({ draftId: result.data?.id, attachments })
+        body: JSON.stringify({ mailboxId, draftId: result.data?.id, attachments })
       })
     }
 
@@ -293,6 +293,7 @@ export default function ProductionComposeStudio() {
       await api("/api/email-os/compose/attachments", {
         method: "POST",
         body: JSON.stringify({
+          mailboxId,
           outboxId: result.data?.outboxId || result.data?.id,
           attachments
         })

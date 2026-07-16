@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, countEmailRecipients, runAc360WiredAction } from "@/lib/ac360/action-wiring"
@@ -15,7 +17,12 @@ export async function POST(request: Request) {
 
   try {
     body = await request.json().catch(() => ({}))
-    const mailboxId = clean(body.mailboxId || body.mailbox_id)
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
+    const requestedMailboxId = clean(body.mailboxId || body.mailbox_id)
     const fromEmail = clean(body.fromEmail || body.from_email)
     const toEmail = clean(body.toEmail || body.to_email || body.to)
     const ccEmail = clean(body.ccEmail || body.cc_email || body.cc)
@@ -27,6 +34,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
     }
 
+    const mailboxScope = await resolveMailboxScopeForUser(user.id, requestedMailboxId || null)
+    const access = await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: mailboxScope.mailboxId,
+      requiredPermission: "can_send",
+      request,
+    })
+    const resolvedFrom = clean(access.mailbox?.address || access.mailbox?.name || "")
+    if (fromEmail && fromEmail.toLowerCase() !== resolvedFrom.toLowerCase()) {
+      await auditMailboxAccessEvent({
+        actor_user_id: user.id,
+        target_user_id: user.id,
+        mailbox_id: mailboxScope.mailboxId,
+        assignment_id: access.assignment.id,
+        session_id: access.session.id,
+        event_type: "spoofed_mailbox_payload_blocked",
+        event_result: "denied",
+        severity: "warning",
+        request,
+        metadata_json: { reason: "fromEmail mismatch", requested_from: fromEmail, resolved_from: resolvedFrom },
+      }).catch(() => null)
+      return NextResponse.json({ ok: false, error: "Permission denied for this mailbox action." }, { status: 403 })
+    }
+
     const recipientCount = countEmailRecipients(toEmail, ccEmail, bccEmail)
     const guarded = await runAc360WiredAction('email_os.compose_send', async () => {
       const now = nowIso()
@@ -34,8 +65,8 @@ export async function POST(request: Request) {
 
       await db.from("email_os_core_outbox").insert({
         id: outboxId,
-        mailbox_id: mailboxId || null,
-        from_email: fromEmail || null,
+        mailbox_id: mailboxScope.mailboxId,
+        from_email: resolvedFrom || null,
         to_email: toEmail,
         cc_email: ccEmail || null,
         bcc_email: bccEmail || null,
@@ -53,8 +84,8 @@ export async function POST(request: Request) {
       }).then(() => null, () => null)
 
       const { identity, info } = await sendEmailOSDirect({
-        mailboxId,
-        fromEmail,
+        mailboxId: mailboxScope.mailboxId,
+        fromEmail: resolvedFrom,
         toEmail,
         ccEmail,
         bccEmail,
@@ -95,8 +126,8 @@ export async function POST(request: Request) {
     }, {
       orgId: body.orgId || body.org_id,
       quantity: recipientCount,
-      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('email.compose.send', `${mailboxId || fromEmail || 'mailbox'}:${toEmail}:${subject}`),
-      metadata: { mailboxId, fromEmail, toEmail, ccEmail, bccEmail, subject, recipientCount, source: 'api.email-os.compose.send.POST' },
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('email.compose.send', `${mailboxScope.mailboxId || resolvedFrom || 'mailbox'}:${toEmail}:${subject}`),
+      metadata: { mailboxId: mailboxScope.mailboxId, fromEmail: resolvedFrom, toEmail, ccEmail, bccEmail, subject, recipientCount, source: 'api.email-os.compose.send.POST' },
     })
 
     if (!guarded.ok) return ac360GuardBlockedResponse(guarded)

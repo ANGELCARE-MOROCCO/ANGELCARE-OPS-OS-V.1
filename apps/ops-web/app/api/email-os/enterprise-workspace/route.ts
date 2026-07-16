@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { requireUnlockedMailboxAccess } from "@/lib/email-os-core/access-governance"
 import { listEmailOSMultiMailboxes } from "@/lib/email-os-core/multi-mailbox-resolver"
 
-async function safeSelect(db: any, table: string, limit = 500) {
+async function safeSelect(db: any, table: string, limit = 500, mailboxId?: string | null) {
   try {
-    const { data, error } = await db.from(table).select("*").order("created_at", { ascending: false }).limit(limit)
+    let query = db.from(table).select("*").order("created_at", { ascending: false }).limit(limit)
+    if (mailboxId && ['email_os_core_inbox', 'email_os_core_outbox', 'email_os_core_drafts', 'email_os_core_saved_drafts', 'email_os_core_threads', 'email_os_core_attachments', 'email_os_core_notes', 'email_os_core_comments'].includes(table)) {
+      query = query.eq('mailbox_id', mailboxId)
+    }
+    const { data, error } = await query
     if (error) return []
     return data || []
   } catch {
@@ -100,26 +106,44 @@ function templateFrom(row: any) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const url = new URL(request.url)
+    const mailboxId = String(url.searchParams.get("mailboxId") || "").trim()
+    if (!mailboxId) {
+      return NextResponse.json({ ok: false, error: 'Mailbox scope required.' }, { status: 403 })
+    }
+
+    await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId,
+      requiredPermission: 'can_read',
+      request,
+    })
+
     const db = createEmailOSCoreDb()
     const envRows = listEmailOSMultiMailboxes()
     const [dbMailboxes, inbox, outbox, draftsA, draftsB, templatesA, entities, audit, notes, comments, savedViews] = await Promise.all([
       safeSelect(db, "email_os_core_mailboxes"),
-      safeSelect(db, "email_os_core_inbox", 600),
-      safeSelect(db, "email_os_core_outbox", 600),
-      safeSelect(db, "email_os_core_drafts", 300),
-      safeSelect(db, "email_os_core_saved_drafts", 300),
+      safeSelect(db, "email_os_core_inbox", 600, mailboxId),
+      safeSelect(db, "email_os_core_outbox", 600, mailboxId),
+      safeSelect(db, "email_os_core_drafts", 300, mailboxId),
+      safeSelect(db, "email_os_core_saved_drafts", 300, mailboxId),
       safeSelect(db, "email_os_core_templates", 400),
       safeSelect(db, "email_os_core_entities", 400),
-      safeSelect(db, "email_os_core_audit", 120),
-      safeSelect(db, "email_os_core_notes", 120),
-      safeSelect(db, "email_os_core_comments", 120),
+      safeSelect(db, "email_os_core_audit", 120, mailboxId),
+      safeSelect(db, "email_os_core_notes", 120, mailboxId),
+      safeSelect(db, "email_os_core_comments", 120, mailboxId),
       safeSelect(db, "email_os_core_saved_views", 120)
     ])
 
     const entityTemplates = (entities || []).filter((row: any) => String(row?.entity || row?.type || row?.kind || row?.category || "").toLowerCase().includes("template"))
-    const mailboxes = mergeMailboxes(dbMailboxes || [], envRows || [])
+    const mailboxes = mergeMailboxes(dbMailboxes || [], envRows || []).filter((item) => !mailboxId || item.id === mailboxId || item.mailbox_id === mailboxId)
     const templates = [...(templatesA || []), ...entityTemplates].map(templateFrom)
 
     return NextResponse.json({

@@ -1,4 +1,4 @@
-package com.angelcarecarelinkandroid
+package com.angelcare.carelink
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

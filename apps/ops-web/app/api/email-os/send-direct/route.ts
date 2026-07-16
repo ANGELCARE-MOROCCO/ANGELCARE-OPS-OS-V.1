@@ -1,33 +1,12 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 
 function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
-}
-
-async function resolveMailboxEmailFromDb(db: any, mailboxId: string) {
-  if (!mailboxId) return ""
-
-  try {
-    const { data } = await db
-      .from("email_os_core_mailboxes")
-      .select("*")
-      .eq("id", mailboxId)
-      .maybeSingle()
-
-    return (
-      data?.email_address ||
-      data?.address ||
-      data?.email ||
-      data?.from_email ||
-      data?.username ||
-      ""
-    )
-  } catch {
-    return ""
-  }
 }
 
 export async function POST(request: Request) {
@@ -38,7 +17,12 @@ export async function POST(request: Request) {
   try {
     body = await request.json().catch(() => ({}))
 
-    const mailboxId = clean(body.mailboxId || body.mailbox_id)
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
+    const requestedMailboxId = clean(body.mailboxId || body.mailbox_id)
     const toEmail = clean(body.toEmail || body.to_email || body.recipient || body.to)
     const ccEmail = clean(body.ccEmail || body.cc_email)
     const bccEmail = clean(body.bccEmail || body.bcc_email)
@@ -51,15 +35,36 @@ export async function POST(request: Request) {
     }
 
     db = createEmailOSCoreDb()
-
-    const dbMailboxEmail = await resolveMailboxEmailFromDb(db, mailboxId)
-    const requestedFrom = clean(body.fromEmail || body.from_email) || dbMailboxEmail
+    const mailboxScope = await resolveMailboxScopeForUser(user.id, requestedMailboxId || null)
+    const access = await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: mailboxScope.mailboxId,
+      requiredPermission: "can_send",
+      request,
+    })
+    const resolvedFrom = clean(access.mailbox?.address || access.mailbox?.name || "")
+    const requestedFrom = clean(body.fromEmail || body.from_email)
+    if (requestedFrom && requestedFrom.toLowerCase() !== resolvedFrom.toLowerCase()) {
+      await auditMailboxAccessEvent({
+        actor_user_id: user.id,
+        target_user_id: user.id,
+        mailbox_id: mailboxScope.mailboxId,
+        assignment_id: access.assignment.id,
+        session_id: access.session.id,
+        event_type: "spoofed_mailbox_payload_blocked",
+        event_result: "denied",
+        severity: "warning",
+        request,
+        metadata_json: { reason: "fromEmail mismatch", requested_from: requestedFrom, resolved_from: resolvedFrom },
+      }).catch(() => null)
+      return NextResponse.json({ ok: false, error: "Permission denied for this mailbox action." }, { status: 403 })
+    }
     const now = nowIso()
     outboxId = makeEmailOSId()
 
     await db.from("email_os_core_outbox").insert({
       id: outboxId,
-      mailbox_id: mailboxId || null,
+      mailbox_id: mailboxScope.mailboxId,
       to_email: toEmail,
       cc_email: ccEmail || null,
       bcc_email: bccEmail || null,
@@ -74,19 +79,18 @@ export async function POST(request: Request) {
       template_key: body.templateKey || body.template_key || null,
       diagnostics: {
         ...(body.diagnostics || {}),
-        requestedMailboxId: mailboxId,
-        requestedFrom,
+        requestedMailboxId: mailboxScope.mailboxId,
         route: "send-direct",
         transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail"
       },
       queue_id: null,
-      from_email: requestedFrom || null,
+      from_email: resolvedFrom || null,
       last_error: null
     }).then(() => null, () => null)
 
     const { identity, info } = await sendEmailOSDirect({
-      mailboxId,
-      fromEmail: requestedFrom,
+      mailboxId: mailboxScope.mailboxId,
+      fromEmail: resolvedFrom,
       toEmail,
       ccEmail,
       bccEmail,
@@ -128,7 +132,7 @@ export async function POST(request: Request) {
       target_id: outboxId,
       severity: "info",
       details: {
-        mailboxId,
+        mailboxId: mailboxScope.mailboxId,
         resolvedMailboxKey: identity.key,
         resolvedMailboxId: identity.mailboxId,
         from: identity.smtp.from,
@@ -139,12 +143,12 @@ export async function POST(request: Request) {
     }).then(() => null, () => null)
 
     return NextResponse.json({
-      ok: true,
-      data: {
-        sent: true,
-        outboxId,
-        messageId: info.messageId || null,
-        mailboxId: identity.mailboxId,
+        ok: true,
+        data: {
+          sent: true,
+          outboxId,
+          messageId: info.messageId || null,
+          mailboxId: identity.mailboxId,
         mailboxKey: identity.key,
         from: identity.smtp.from
       }

@@ -1,13 +1,32 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { nowIso } from "@/lib/email-os-core/schema"
 import { audit } from "@/lib/email-os-core/audit"
 
+function requiredPermissionForThreadAction(action: string) {
+  if (action === "archive") return "can_archive" as const
+  return "can_read" as const
+}
+
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await request.json().catch(() => ({}))
     const threadId = body.threadId
     const action = body.action
+    const mailboxScope = await resolveMailboxScopeForUser(user.id, body.mailboxId || body.mailbox_id || null)
+    await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: mailboxScope.mailboxId,
+      requiredPermission: requiredPermissionForThreadAction(String(action || "")),
+      request,
+    })
 
     if (!threadId || !action) {
       return NextResponse.json({ ok: false, error: "Missing threadId or action" }, { status: 400 })
@@ -46,6 +65,7 @@ export async function POST(request: Request) {
       .from("email_os_core_threads")
       .update(updates)
       .eq("id", threadId)
+      .eq("mailbox_id", mailboxScope.mailboxId)
       .select("*")
       .single()
 
@@ -55,7 +75,7 @@ export async function POST(request: Request) {
       targetType: "thread",
       targetId: threadId,
       severity: action === "escalate" ? "critical" : "info",
-      updates
+      updates: { ...updates, mailboxId: mailboxScope.mailboxId, actorUserId: user.id }
     })
     return NextResponse.json({ ok: true, data })
   } catch (error) {

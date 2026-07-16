@@ -1,8 +1,8 @@
-import EmailOSServerControlCenter from "@/components/email-os-core/EmailOSServerControlCenter"
+import { redirect } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <EmailOSServerControlCenter />
+  redirect("/opsos/infrastructure/windows-node")
 }
 

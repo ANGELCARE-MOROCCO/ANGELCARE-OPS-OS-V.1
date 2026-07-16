@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
 type MessageAction =
@@ -139,12 +141,18 @@ function debug(error: unknown) {
   return { message: error instanceof Error ? error.message : "Unknown error" }
 }
 
-async function tryPermanentDelete(db: ReturnType<typeof createEmailOSCoreDb>, tables: string[], id: string) {
+function requiredPermissionForAction(action: MessageAction) {
+  if (action === "delete" || action === "permanent_delete") return "can_delete" as const
+  if (action === "archive" || action === "restore" || action === "spam") return "can_archive" as const
+  return "can_read" as const
+}
+
+async function tryPermanentDelete(db: ReturnType<typeof createEmailOSCoreDb>, tables: string[], id: string, mailboxId: string) {
   let lastError: unknown = null
   const attempts: any[] = []
 
   for (const table of tables) {
-    const result = await db.from(table).delete().eq("id", id).select("id").maybeSingle()
+    const result = await db.from(table).delete().eq("id", id).eq("mailbox_id", mailboxId).select("id").maybeSingle()
     attempts.push({ table, operation: "delete", ok: !result.error && Boolean(result.data), error: result.error ? debug(result.error) : null })
     if (!result.error && result.data) return { table, data: { id }, patch: { permanentlyDeleted: true }, attempts }
     lastError = result.error || { message: `No row matched id ${id} in ${table}` }
@@ -153,13 +161,13 @@ async function tryPermanentDelete(db: ReturnType<typeof createEmailOSCoreDb>, ta
   return { table: null, data: null, patch: null, attempts, error: lastError }
 }
 
-async function tryUpdate(db: ReturnType<typeof createEmailOSCoreDb>, tables: string[], id: string, action: MessageAction, patch: Record<string, any>) {
+async function tryUpdate(db: ReturnType<typeof createEmailOSCoreDb>, tables: string[], id: string, action: MessageAction, patch: Record<string, any>, mailboxId: string) {
   let lastError: unknown = null
   const attempts: any[] = []
 
   for (const table of tables) {
     for (const candidate of fallbackPatches(action, patch)) {
-      const result = await db.from(table).update(candidate).eq("id", id).select("*").maybeSingle()
+      const result = await db.from(table).update(candidate).eq("id", id).eq("mailbox_id", mailboxId).select("*").maybeSingle()
       attempts.push({ table, keys: Object.keys(candidate), ok: !result.error && Boolean(result.data), error: result.error ? debug(result.error) : null })
       if (!result.error && result.data) {
         return { table, data: { ...result.data, ...candidate }, patch: candidate, attempts }
@@ -173,12 +181,16 @@ async function tryUpdate(db: ReturnType<typeof createEmailOSCoreDb>, tables: str
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await request.json().catch(() => ({}))
     const messageId = body.messageId || body.targetId || body.id
     const action = String(body.action || "")
     const payload = body.payload || {}
     const source = normalizeSource(body.source || body.targetType || payload.source || payload.targetType)
-
     if (!messageId || !action) {
       return NextResponse.json({ ok: false, error: "messageId and action are required" }, { status: 400 })
     }
@@ -187,11 +199,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: `Unsupported Email-OS message action: ${action}` }, { status: 400 })
     }
 
+    const mailboxScope = await resolveMailboxScopeForUser(user.id, body.mailboxId || body.mailbox_id || payload.mailboxId || payload.mailbox_id || null)
+    const access = await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: mailboxScope.mailboxId,
+      requiredPermission: requiredPermissionForAction(action as MessageAction),
+      request,
+    })
+
     const db = createEmailOSCoreDb()
     const patch = actionPatch(action, payload, source)
     const result = action === "permanent_delete"
-      ? await tryPermanentDelete(db, candidateTables(source), messageId)
-      : await tryUpdate(db, candidateTables(source), messageId, action, patch)
+      ? await tryPermanentDelete(db, candidateTables(source), messageId, mailboxScope.mailboxId)
+      : await tryUpdate(db, candidateTables(source), messageId, action, patch, mailboxScope.mailboxId)
 
     if (!result.data || !result.table || !result.patch) {
       const d = debug(result.error)
@@ -204,7 +224,7 @@ export async function POST(request: Request) {
       target_type: source,
       target_id: messageId,
       severity: action === "delete" || action === "spam" ? "warning" : "info",
-      details: { ...payload, intendedPatch: patch, appliedPatch: result.patch, table: result.table, attempts: result.attempts },
+      details: { ...payload, mailboxId: mailboxScope.mailboxId, intendedPatch: patch, appliedPatch: result.patch, table: result.table, attempts: result.attempts, actorUserId: user.id, accessSessionId: access.session.id },
       created_at: nowIso()
     }).then(() => null, () => null)
 
