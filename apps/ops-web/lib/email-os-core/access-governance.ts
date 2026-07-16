@@ -261,9 +261,8 @@ function normalizeMailboxRow(row: AnyRecord | null | undefined): SafeMailbox | n
 }
 
 function normalizeAssignmentRow(row: AnyRecord): AssignmentRow {
-  const { pin_hash: _pinHash, ...safeRow } = row
   return {
-    ...safeRow,
+    ...row,
     id: clean(row.id),
     user_id: clean(row.user_id),
     mailbox_id: clean(row.mailbox_id),
