@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
-import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
-import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
+import { getCurrentAppUser } from "@/lib/auth/session"
 import {
   listEmailOSMultiMailboxes,
   listEmailOSMultiMailboxesFromDb,
@@ -8,6 +7,9 @@ import {
   resolveEmailOSMailboxIdentityFromDb,
   type ResolvedEmailOSMailbox
 } from "@/lib/email-os-core/multi-mailbox-resolver"
+import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
+import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { syncEmailOSMailbox } from "@/lib/email-os-core/inbound-sync"
 
 function parseLimit(value: unknown) {
@@ -23,7 +25,6 @@ function normalize(value: unknown) {
 async function resolveSyncMailboxes(): Promise<ResolvedEmailOSMailbox[]> {
   const dbMailboxes = await listEmailOSMultiMailboxesFromDb().catch(() => [])
   if (dbMailboxes.length) return dbMailboxes
-
   return listEmailOSMultiMailboxes()
 }
 
@@ -99,10 +100,43 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentAppUser()
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await request.json().catch(() => ({}))
-    const mailboxId = String(body.mailboxId || body.mailbox_id || "").trim()
+    const requestedMailboxId = String(body.mailboxId || body.mailbox_id || "").trim()
     const limit = parseLimit(body.limit)
-    const shouldSyncAll = !mailboxId || mailboxId.toLowerCase() === "all"
+    const shouldSyncAll = !requestedMailboxId || requestedMailboxId.toLowerCase() === "all"
+
+    /*
+      Production safety rule:
+      - Scoped mailbox users may sync only the mailbox they unlocked with PIN.
+      - Global/all sync must not be triggered from the mailbox workspace.
+      - CEO/admin all-mailbox sync can be reintroduced later through a separate admin endpoint.
+    */
+    if (shouldSyncAll) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Mailbox-scoped sync requires a mailboxId.",
+          diagnostics: {
+            mode: "blocked_global_sync",
+            reason: "Use a specific unlocked mailbox session for staff sync."
+          }
+        },
+        { status: 403 }
+      )
+    }
+
+    const mailboxScope = await resolveMailboxScopeForUser(user.id, requestedMailboxId)
+    await requireUnlockedMailboxAccess({
+      userId: user.id,
+      mailboxId: mailboxScope.mailboxId,
+      requiredPermission: "can_read",
+      request,
+    })
 
     const configuredMailboxes = await resolveSyncMailboxes()
 
@@ -121,35 +155,10 @@ export async function POST(request: Request) {
       )
     }
 
-    if (shouldSyncAll) {
-      const results = []
-
-      for (const mailbox of configuredMailboxes) {
-        results.push(await syncOneMailbox(mailbox, limit))
-      }
-
-      const completed = results.filter((item) => item.ok).length
-      const failed = results.length - completed
-
-      return NextResponse.json({
-        ok: failed === 0,
-        data: {
-          mode: "all",
-          total: results.length,
-          completed,
-          failed,
-          inserted: results.reduce((sum, item: any) => sum + Number(item.count || 0), 0),
-          fetched: results.reduce((sum, item: any) => sum + Number(item.fetched || 0), 0),
-          skipped: results.reduce((sum, item: any) => sum + Number(item.skipped || 0), 0),
-          results
-        }
-      }, { status: failed === 0 ? 200 : 207 })
-    }
-
     const selected =
-      (await resolveEmailOSMailboxIdentityFromDb({ mailboxId })) ||
-      resolveEmailOSMailboxIdentity({ mailboxId }) ||
-      configuredMailboxes.find((mailbox) => normalize(mailbox.mailboxId) === normalize(mailboxId)) ||
+      (await resolveEmailOSMailboxIdentityFromDb({ mailboxId: mailboxScope.mailboxId })) ||
+      resolveEmailOSMailboxIdentity({ mailboxId: mailboxScope.mailboxId }) ||
+      configuredMailboxes.find((mailbox) => normalize(mailbox.mailboxId) === normalize(mailboxScope.mailboxId)) ||
       null
 
     if (!selected) {
@@ -158,7 +167,8 @@ export async function POST(request: Request) {
           ok: false,
           error: "Requested mailbox is not configured for inbound sync",
           diagnostics: {
-            requestedMailboxId: mailboxId,
+            requestedMailboxId,
+            scopedMailboxId: mailboxScope.mailboxId,
             configuredMailboxes: configuredMailboxes.map((mailbox) => mailbox.mailboxId)
           }
         },
@@ -172,12 +182,17 @@ export async function POST(request: Request) {
       ok: result.ok,
       data: {
         mode: "single",
+        requestedMailboxId,
+        scopedMailboxId: mailboxScope.mailboxId,
         ...result
       }
     }, { status: result.ok ? 200 : 500 })
   } catch (error) {
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "Email sync failed" },
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : "Email sync failed"
+      },
       { status: 500 }
     )
   }
