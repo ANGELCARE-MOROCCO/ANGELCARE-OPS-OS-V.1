@@ -675,99 +675,84 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
       }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#f8fafc_34%,#ffffff_100%)] text-slate-950">
-      <div className="flex min-h-screen w-full flex-col gap-6 px-4 py-4 lg:px-6 xl:px-8">
-        <section className="overflow-hidden rounded-[36px] border border-white/80 bg-white/95 shadow-[0_30px_100px_rgba(15,23,42,.10)] ring-1 ring-sky-100">
-          <div className="grid gap-6 bg-gradient-to-br from-white via-sky-50/70 to-indigo-50 px-6 py-6 lg:grid-cols-[minmax(0,1.2fr)_460px] lg:px-8 lg:py-8">
-            <div className="space-y-4">
-              <div className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">AngelCare Email-OS</div>
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-4xl font-black tracking-[-0.06em] text-slate-950 lg:text-5xl">{mailboxHeader.name}</h1>
-                <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-black text-slate-600">{mailboxHeader.lockLabel}</span>
-                <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-black text-sky-700">{mailboxHeader.source}</span>
+    <div className="min-h-screen bg-[#f6f9fc] text-slate-950">
+      <div className="flex h-screen w-full flex-col overflow-hidden px-3 py-3 lg:px-4">
+        <section className="shrink-0 rounded-[26px] border border-slate-200/80 bg-white/95 px-4 py-3 shadow-[0_18px_50px_rgba(15,23,42,.06)]">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="truncate text-2xl font-black tracking-[-0.05em] text-slate-950 lg:text-3xl">{mailboxHeader.name}</h1>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-black text-emerald-700">{mailboxHeader.lockLabel}</span>
+                <span className="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-[11px] font-black text-sky-700">{mailboxHeader.source}</span>
               </div>
-              <p className="max-w-4xl text-sm font-semibold leading-7 text-slate-600 lg:text-base">
-                {scoped
-                  ? "Espace boîte unique. Les actions sont limitées à cette boîte verrouillée par PIN et tout envoi reste scoping-safe."
-                  : "Cockpit global pour supervision CEO/admin. Les statistiques agrègent les boîtes et le fil d’activité global."}
-              </p>
-              <div className="flex flex-wrap gap-2 text-sm font-semibold text-slate-600">
-                <span className="rounded-full bg-white px-3 py-1 shadow-sm">Utilisateur: {currentUser?.name || currentUser?.email || currentUser?.id || "—"}</span>
-                <span className="rounded-full bg-white px-3 py-1 shadow-sm">Source: windows-bridge-pop3</span>
-                <span className="rounded-full bg-white px-3 py-1 shadow-sm">Dernière synchro: {formatDate(syncHistory?.[0]?.created_at || data?.metrics?.lastSync?.created_at || null)}</span>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button type="button" onClick={() => void syncNow()} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-sky-600 px-4 text-sm font-black text-white disabled:opacity-50" disabled={busyAction === "sync"}>
-                  <RefreshCw className={`h-4 w-4 ${busyAction === "sync" ? "animate-spin" : ""}`} />
-                  Sync now
-                </button>
-                <button type="button" onClick={() => { setComposeMode("compose"); setComposeSeed({ initialMailboxId: mailboxId || selected?.mailboxId || scopeMailbox?.id || "" }); setComposeOpen(true) }} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
-                  <PencilLine className="h-4 w-4" />
-                  Compose
-                </button>
-                <button type="button" onClick={() => setTemplateOpen(true)} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
-                  <FileText className="h-4 w-4" />
-                  Create template
-                </button>
-                <button type="button" onClick={exportCurrentView} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
-                  <Download className="h-4 w-4" />
-                  Export current view
-                </button>
-                {scoped ? (
-                  <button type="button" onClick={() => void lockMailbox()} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-black text-rose-700">
-                    <LockKeyhole className="h-4 w-4" />
-                    Lock mailbox
-                  </button>
-                ) : null}
+              <div className="mt-1 flex flex-wrap gap-2 text-[12px] font-semibold text-slate-500">
+                <span>{mailboxHeader.email || "Vue globale"}</span>
+                <span>•</span>
+                <span>{currentUser?.name || currentUser?.email || currentUser?.id || "Utilisateur"}</span>
+                <span>•</span>
+                <span>Dernière synchro {formatDate(syncHistory?.[0]?.created_at || data?.metrics?.lastSync?.created_at || null)}</span>
               </div>
             </div>
-
-            <div className="grid gap-3 rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="grid grid-cols-2 gap-3">
-                <Kpi label="Inbox" value={String(aggregateStats.inbox)} tone="blue" />
-                <Kpi label="Unread" value={String(aggregateStats.unread)} tone="amber" />
-                <Kpi label="Drafts" value={String(aggregateStats.drafts)} tone="slate" />
-                <Kpi label="Outbox" value={String(aggregateStats.outbox)} tone="green" />
-                <Kpi label="Failed" value={String(aggregateStats.failed)} tone="rose" />
-                <Kpi label="Assigned" value={String(aggregateStats.assigned_to_me)} tone="blue" />
-                <Kpi label="Overdue" value={String(aggregateStats.overdue)} tone="rose" />
-                <Kpi label="Waiting" value={String(aggregateStats.waiting)} tone="amber" />
-              </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" onClick={() => void syncNow()} className="inline-flex h-10 items-center gap-2 rounded-2xl bg-sky-600 px-4 text-sm font-black text-white disabled:opacity-50" disabled={busyAction === "sync"}>
+                <RefreshCw className={`h-4 w-4 ${busyAction === "sync" ? "animate-spin" : ""}`} />
+                Sync now
+              </button>
+              <button type="button" onClick={() => { setComposeMode("compose"); setComposeSeed({ initialMailboxId: mailboxId || selected?.mailboxId || scopeMailbox?.id || "" }); setComposeOpen(true) }} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
+                <PencilLine className="h-4 w-4" />
+                Compose
+              </button>
+              <button type="button" onClick={() => setTemplateOpen(true)} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
+                <FileText className="h-4 w-4" />
+                Templates
+              </button>
+              <button type="button" onClick={exportCurrentView} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
+                <Download className="h-4 w-4" />
+                Export
+              </button>
+              {scoped ? (
+                <button type="button" onClick={() => void lockMailbox()} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-black text-rose-700">
+                  <LockKeyhole className="h-4 w-4" />
+                  Lock
+                </button>
+              ) : null}
             </div>
+          </div>
+          <div className="mt-3 grid gap-2 sm:grid-cols-4 lg:grid-cols-8">
+            <MiniMetric label="Inbox" value={String(aggregateStats.inbox)} />
+            <MiniMetric label="Unread" value={String(aggregateStats.unread)} />
+            <MiniMetric label="Drafts" value={String(aggregateStats.drafts)} />
+            <MiniMetric label="Outbox" value={String(aggregateStats.outbox)} />
+            <MiniMetric label="Failed" value={String(aggregateStats.failed)} />
+            <MiniMetric label="Mine" value={String(aggregateStats.assigned_to_me)} />
+            <MiniMetric label="Overdue" value={String(aggregateStats.overdue)} tone="danger" />
+            <MiniMetric label="Waiting" value={String(aggregateStats.waiting)} />
           </div>
         </section>
 
-        {/* Production readiness strip */}
-        <section className="grid gap-3 rounded-[28px] border border-sky-100 bg-white/90 p-4 shadow-sm md:grid-cols-4">
-          <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-black text-emerald-700">Infrastructure: Windows POP3 + Storage Node</div>
-          <div className="rounded-2xl bg-sky-50 p-4 text-sm font-black text-sky-700">Scope: {scoped ? "Single mailbox locked" : "CEO global oversight"}</div>
-          <div className="rounded-2xl bg-indigo-50 p-4 text-sm font-black text-indigo-700">Workflow: Notes · Tasks · SLA · Audit</div>
-          <div className="rounded-2xl bg-amber-50 p-4 text-sm font-black text-amber-700">Storage: metadata in Supabase, files on Windows</div>
-        </section>
+        {error ? <div className="mt-3 shrink-0 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{error}</div> : null}
 
-        {error ? <div className="rounded-[24px] border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-bold text-rose-700">{error}</div> : null}
-
-        <section className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)_480px]">
-          <aside className="space-y-4 rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,.06)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Triage</div>
-                <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Boîte opérationnelle</h2>
+        <section className="mt-3 grid min-h-0 flex-1 gap-3 xl:grid-cols-[340px_minmax(0,1fr)_300px]">
+          <aside className="flex min-h-0 flex-col rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,.05)]">
+            <div className="border-b border-slate-100 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Inbox</div>
+                  <h2 className="text-xl font-black tracking-[-0.04em] text-slate-950">Messages</h2>
+                </div>
+                <button type="button" onClick={() => void load(selected?.id || null)} className="rounded-2xl bg-slate-50 p-2.5 text-slate-600">
+                  <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                </button>
               </div>
-              <button type="button" onClick={() => void load(selected?.id || null)} className="rounded-2xl bg-slate-50 p-3 text-slate-600">
-                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              </button>
-            </div>
-
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-                <Search className="h-4 w-4" />
-                Recherche
+              <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4 text-slate-400" />
+                  <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search sender, subject, body..." className="h-8 flex-1 bg-transparent text-sm font-semibold outline-none" />
+                </div>
               </div>
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="sender, subject, body, category..." className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold outline-none" />
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-2 flex items-center gap-2">
                 <Filter className="h-4 w-4 text-slate-400" />
-                <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="h-10 flex-1 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-black outline-none">
+                <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="h-9 flex-1 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black outline-none">
                   <option value="newest">Newest</option>
                   <option value="oldest">Oldest</option>
                   <option value="priority">Priority</option>
@@ -775,60 +760,58 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
                   <option value="unassigned_first">Unassigned first</option>
                 </select>
               </div>
+              <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+                {[
+                  ["all", "All"],
+                  ["unread", "Unread"],
+                  ["unassigned", "Unassigned"],
+                  ["assigned_to_me", "Mine"],
+                  ["overdue", "Overdue"],
+                  ["has_attachments", "Files"],
+                  ["complaints", "Complaints"],
+                  ["partnerships", "Partners"],
+                  ["b2b", "B2B"],
+                  ["finance_payment", "Finance"],
+                  ["recruitment", "Hiring"],
+                  ["archived_resolved", "Done"]
+                ].map(([key, label]) => (
+                  <button key={key} type="button" onClick={() => setFilter(key as FilterKey)} className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-black ${filter === key ? "bg-sky-600 text-white" : "bg-slate-50 text-slate-600 hover:bg-sky-50 hover:text-sky-700"}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {[
-                ["all", "All"],
-                ["unread", "Unread"],
-                ["unassigned", "Unassigned"],
-                ["assigned_to_me", "Assigned to me"],
-                ["overdue", "Overdue"],
-                ["has_attachments", "Has attachments"],
-                ["complaints", "Complaints"],
-                ["partnerships", "Partnerships"],
-                ["b2b", "B2B"],
-                ["finance_payment", "Finance/payment"],
-                ["recruitment", "Recruitment"],
-                ["archived_resolved", "Archived/resolved"]
-              ].map(([key, label]) => (
-                <button key={key} type="button" onClick={() => setFilter(key as FilterKey)} className={`rounded-2xl px-3 py-2 text-xs font-black ${filter === key ? "bg-sky-600 text-white" : "bg-slate-50 text-slate-600 hover:bg-sky-50 hover:text-sky-700"}`}>
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            <div className="space-y-3">
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
               {messages.map((row) => (
-                <button key={row.id} type="button" onClick={() => setSelectedId(row.id)} className={`w-full rounded-[24px] border p-4 text-left transition ${selected?.id === row.id ? "border-sky-200 bg-sky-50 shadow-sm" : "border-slate-100 bg-white hover:bg-slate-50"}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
-                        <span className="rounded-full bg-slate-100 px-2 py-1">{row.mailboxName || row.mailboxId}</span>
-                        {isUnread(row) ? <span className="rounded-full bg-sky-100 px-2 py-1 text-sky-700">Unread</span> : <span className="rounded-full bg-slate-100 px-2 py-1">Read</span>}
-                        {hasAttachments(row) ? <span className="rounded-full bg-amber-100 px-2 py-1 text-amber-700">Attach</span> : null}
+                <button key={row.id} type="button" onClick={() => setSelectedId(row.id)} className={`group w-full rounded-2xl border p-3 text-left transition ${selected?.id === row.id ? "border-sky-300 bg-sky-50 shadow-sm" : "border-transparent bg-white hover:border-slate-200 hover:bg-slate-50"}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        {isUnread(row) ? <span className="h-2.5 w-2.5 rounded-full bg-sky-600" /> : <span className="h-2.5 w-2.5 rounded-full bg-slate-200" />}
+                        <div className="truncate text-sm font-black text-slate-950">{getRowSender(row)}</div>
                       </div>
-                      <div className="mt-2 truncate text-sm font-black text-slate-900">{getRowSubject(row)}</div>
-                      <div className="mt-1 truncate text-xs font-semibold text-slate-500">{getRowSender(row)} · {getRowSenderEmail(row)}</div>
-                      <div className="mt-2 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{row.preview}</div>
+                      <div className="mt-1 truncate text-sm font-black text-slate-800">{getRowSubject(row)}</div>
+                      <div className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{row.preview || getRowBody(row)}</div>
+                      <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-black uppercase tracking-[0.08em]">
+                        <span className={`rounded-full border px-2 py-1 ${priorityTone(row.priority)}`}>{clean(row.priority) || "normal"}</span>
+                        <span className={`rounded-full border px-2 py-1 ${statusTone(row.status)}`}>{clean(row.status) || "new"}</span>
+                        {hasAttachments(row) ? <span className="rounded-full bg-amber-50 px-2 py-1 text-amber-700"><Paperclip className="inline h-3 w-3" /> File</span> : null}
+                      </div>
                     </div>
-                    <div className="flex shrink-0 flex-col items-end gap-2 text-[11px] font-black uppercase tracking-[0.12em]">
-                      <span className={`rounded-full border px-2 py-1 ${priorityTone(row.priority)}`}>{clean(row.priority)}</span>
-                      <span className={`rounded-full border px-2 py-1 ${statusTone(row.status)}`}>{clean(row.status)}</span>
-                      <span className="rounded-full border border-slate-200 bg-white px-2 py-1 text-slate-500">{formatRelativeMinutes(row.sla?.dueInMinutes)}</span>
-                    </div>
+                    <div className="shrink-0 text-right text-[11px] font-bold text-slate-400">{formatDate(row.receivedAt || row.createdAt)}</div>
                   </div>
                 </button>
               ))}
               {messages.length === 0 ? (
-                <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
-                  <Inbox className="mx-auto h-10 w-10 text-slate-300" />
-                  <div className="mt-3 text-base font-black text-slate-900">No new inbound messages</div>
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+                  <Inbox className="mx-auto h-9 w-9 text-slate-300" />
+                  <div className="mt-3 text-base font-black text-slate-900">No new emails</div>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
-                    {scoped ? `Last sync source: windows-bridge-pop3. Send to ${mailboxHeader.email || "this mailbox"}, wait 60 seconds, then sync.` : "Global view has no messages in the current filter."}
+                    {scoped ? `Send a test email to ${mailboxHeader.email || "this mailbox"}, wait 60 seconds, then sync.` : "No messages in this filter."}
                   </p>
                   {scoped ? (
-                    <button type="button" onClick={() => void syncNow()} className="mt-4 inline-flex h-11 items-center gap-2 rounded-2xl bg-sky-600 px-4 text-sm font-black text-white">
+                    <button type="button" onClick={() => void syncNow()} className="mt-4 inline-flex h-10 items-center gap-2 rounded-2xl bg-sky-600 px-4 text-sm font-black text-white">
                       <RefreshCw className="h-4 w-4" />
                       Sync now
                     </button>
@@ -838,283 +821,120 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
             </div>
           </aside>
 
-          <main className="space-y-4 rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,.06)]">
+          <main className="min-h-0 overflow-y-auto rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,.05)]">
             {selected ? (
-              <>
-                <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap gap-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">
-                        <span className="rounded-full bg-sky-50 px-2 py-1 text-sky-700">{selected.mailboxName || selected.mailboxId}</span>
-                        <span className={`rounded-full border px-2 py-1 ${statusTone(selected.status)}`}>{clean(selected.status)}</span>
-                        <span className={`rounded-full border px-2 py-1 ${priorityTone(selected.priority)}`}>{clean(selected.priority)}</span>
-                        <span className="rounded-full bg-slate-50 px-2 py-1 text-slate-600">{categoryLabel(selected.category)}</span>
-                        {selected.linkedEntityLabel ? <span className="rounded-full bg-emerald-50 px-2 py-1 text-emerald-700">{selected.linkedEntityLabel}</span> : null}
-                      </div>
-                      <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-slate-950">{getRowSubject(selected)}</h2>
-                      <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
-                        {getRowSender(selected)} <span className="text-slate-400">·</span> {getRowSenderEmail(selected)} <span className="text-slate-400">·</span> {formatDate(selected.receivedAt)}
-                      </p>
-                      <div className="mt-3 flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">
-                        <span className="rounded-full bg-slate-50 px-2 py-1">Owner: {selected.ownerUserId || "unassigned"}</span>
-                        <span className="rounded-full bg-slate-50 px-2 py-1">Due: {formatDate(selected.firstResponseDueAt)}</span>
-                        <span className="rounded-full bg-slate-50 px-2 py-1">{selected.sla?.overdue ? "Overdue" : `Due in ${formatRelativeMinutes(selected.sla?.dueInMinutes)}`}</span>
-                      </div>
+              <div className="p-5">
+                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap gap-2 text-[11px] font-black uppercase tracking-[0.10em] text-slate-500">
+                      <span className="rounded-full bg-sky-50 px-2 py-1 text-sky-700">{selected.mailboxName || selected.mailboxId}</span>
+                      <span className={`rounded-full border px-2 py-1 ${statusTone(selected.status)}`}>{clean(selected.status) || "new"}</span>
+                      <span className={`rounded-full border px-2 py-1 ${priorityTone(selected.priority)}`}>{clean(selected.priority) || "normal"}</span>
+                      <span className="rounded-full bg-slate-50 px-2 py-1 text-slate-600">{categoryLabel(selected.category)}</span>
+                      {selected.sla?.overdue ? <span className="rounded-full bg-rose-50 px-2 py-1 text-rose-700">Overdue</span> : null}
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button type="button" onClick={openReply} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-sky-600 px-4 text-sm font-black text-white">
-                        <Reply className="h-4 w-4" />
-                        Reply
-                      </button>
-                      <button type="button" onClick={openForward} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
-                        <Forward className="h-4 w-4" />
-                        Forward
-                      </button>
-                      <button type="button" onClick={() => void runAction("archive")} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
-                        <Archive className="h-4 w-4" />
-                        Archive
-                      </button>
-                      <button type="button" onClick={() => void runAction(isUnread(selected) ? "mark_read" : "mark_unread")} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700">
-                        <MailOpen className="h-4 w-4" />
-                        {isUnread(selected) ? "Mark read" : "Mark unread"}
-                      </button>
-                    </div>
+                    <h2 className="mt-3 text-2xl font-black tracking-[-0.04em] text-slate-950 lg:text-3xl">{getRowSubject(selected)}</h2>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
+                      {getRowSender(selected)} <span className="text-slate-400">·</span> {getRowSenderEmail(selected)} <span className="text-slate-400">·</span> {formatDate(selected.receivedAt)}
+                    </p>
                   </div>
-
-                  <div className="mt-5 grid gap-2 md:grid-cols-4 xl:grid-cols-8">
-                    <ActionButton label="Status" icon={Settings2} onClick={() => void runAction("set_status", { status: "in_progress" })} busy={busyAction === "set_status"} />
-                    <ActionButton label="Priority" icon={Clock3} onClick={() => void runAction("set_priority", { priority: "high" })} busy={busyAction === "set_priority"} />
-                    <ActionButton label="Category" icon={Tag} onClick={() => void runAction("set_category", { category: "other" })} busy={busyAction === "set_category"} />
-                    <ActionButton label="Assign" icon={UserCheck} onClick={() => void runAction("assign_owner", { ownerUserId: currentUser?.id || "" })} busy={busyAction === "assign_owner"} />
-                    <ActionButton label="Note" icon={PencilLine} onClick={() => setNotesOpen(true)} busy={busyAction === "note"} />
-                    <ActionButton label="Task" icon={CheckCircle2} onClick={() => setTaskOpen(true)} busy={busyAction === "task"} />
-                    <ActionButton label="Link" icon={Link2} onClick={() => setLinkOpen(true)} busy={busyAction === "link"} />
-                    <ActionButton label="Resolve" icon={RotateCcw} onClick={() => void runAction("resolve")} busy={busyAction === "resolve"} />
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" onClick={openReply} className="inline-flex h-10 items-center gap-2 rounded-2xl bg-sky-600 px-4 text-sm font-black text-white"><Reply className="h-4 w-4" />Reply</button>
+                    <button type="button" onClick={openForward} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700"><Forward className="h-4 w-4" />Forward</button>
+                    <button type="button" onClick={() => void runAction("archive")} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700"><Archive className="h-4 w-4" />Archive</button>
+                    <button type="button" onClick={() => void runAction(isUnread(selected) ? "mark_read" : "mark_unread")} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700"><MailOpen className="h-4 w-4" />{isUnread(selected) ? "Mark read" : "Mark unread"}</button>
                   </div>
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-                  <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                    <div className="mb-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm font-black text-slate-700">
-                        <Eye className="h-4 w-4" />
-                        Body viewer
-                      </div>
-                      <div className="flex gap-2">
-                        <button type="button" onClick={() => setBodyMode("clean")} className={`rounded-xl px-3 py-2 text-xs font-black ${bodyMode === "clean" ? "bg-sky-600 text-white" : "bg-slate-50 text-slate-600"}`}>Clean</button>
-                        <button type="button" onClick={() => setBodyMode("plain")} className={`rounded-xl px-3 py-2 text-xs font-black ${bodyMode === "plain" ? "bg-sky-600 text-white" : "bg-slate-50 text-slate-600"}`}>Plain</button>
-                        <button type="button" onClick={() => setBodyMode("original")} className={`rounded-xl px-3 py-2 text-xs font-black ${bodyMode === "original" ? "bg-sky-600 text-white" : "bg-slate-50 text-slate-600"}`}>Original</button>
-                      </div>
-                    </div>
-                    {selected.bodyHtml && bodyMode === "original" ? (
-                      <div className="prose max-w-none rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                        <div dangerouslySetInnerHTML={{ __html: safeHtml(String(selected.bodyHtml)) }} />
-                      </div>
-                    ) : (
-                      <pre className="whitespace-pre-wrap rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm leading-7 text-slate-700">{bodyView(selected, bodyMode)}</pre>
-                    )}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <ActionButton label="Change status" icon={Settings2} onClick={() => void runAction("set_status", { status: "in_progress" })} busy={busyAction === "set_status"} />
+                  <ActionButton label="Set priority" icon={Clock3} onClick={() => void runAction("set_priority", { priority: "high" })} busy={busyAction === "set_priority"} />
+                  <ActionButton label="Set category" icon={Tag} onClick={() => void runAction("set_category", { category: "other" })} busy={busyAction === "set_category"} />
+                  <ActionButton label="Assign" icon={UserCheck} onClick={() => void runAction("assign_owner", { ownerUserId: currentUser?.id || "" })} busy={busyAction === "assign_owner"} />
+                  <ActionButton label="Add note" icon={PencilLine} onClick={() => setNotesOpen(true)} busy={busyAction === "note"} />
+                  <ActionButton label="Create task" icon={CheckCircle2} onClick={() => setTaskOpen(true)} busy={busyAction === "task"} />
+                  <ActionButton label="Link record" icon={Link2} onClick={() => setLinkOpen(true)} busy={busyAction === "link"} />
+                  <ActionButton label="Resolve" icon={RotateCcw} onClick={() => void runAction("resolve")} busy={busyAction === "resolve"} />
+                </div>
 
-                    <div className="mt-5">
-                      <div className="mb-3 flex items-center gap-2 text-sm font-black text-slate-700">
-                        <Paperclip className="h-4 w-4" />
-                        Attachments
-                      </div>
-                      {selected.attachments?.length ? (
-                        <div className="grid gap-3 md:grid-cols-2">
-                          {selected.attachments.map((attachment: any) => (
-                            <div key={`${attachment.filename}-${attachment.size}`} className="rounded-2xl border border-slate-200 bg-white p-4">
-                              <div className="font-black text-slate-900">{attachment.filename}</div>
-                              <div className="mt-1 text-xs font-semibold text-slate-500">{attachment.contentType} · {attachment.size ? `${attachment.size} bytes` : "size unknown"}</div>
-                              <div className="mt-2 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
-                                {attachment.storageStatus ? `Storage ${attachment.storageStatus}` : "Legacy inline attachment"}
-                              </div>
-                              {attachment.storageFileId ? (
-                                <a
-                                  href={`/api/storage/download/${attachment.storageFileId}?mailboxId=${encodeURIComponent(selected.mailboxId || mailboxId || "")}`}
-                                  className="mt-3 inline-flex h-9 items-center gap-2 rounded-xl bg-slate-950 px-3 text-xs font-black text-white"
-                                >
-                                  <Download className="h-3.5 w-3.5" />
-                                  Download
-                                </a>
-                              ) : (
-                                <button type="button" disabled className="mt-3 inline-flex h-9 items-center gap-2 rounded-xl bg-slate-50 px-3 text-xs font-black text-slate-400" title="Legacy inline attachment">
-                                  <Download className="h-3.5 w-3.5" />
-                                  Open/download unavailable
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-500">Aucune pièce jointe enregistrée dans ce message.</div>
-                      )}
+                <div className="mt-5 rounded-[24px] border border-slate-200 bg-slate-50/70 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-black text-slate-700"><Eye className="h-4 w-4" />Message</div>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => setBodyMode("clean")} className={`rounded-xl px-3 py-2 text-xs font-black ${bodyMode === "clean" ? "bg-sky-600 text-white" : "bg-white text-slate-600"}`}>Clean</button>
+                      <button type="button" onClick={() => setBodyMode("plain")} className={`rounded-xl px-3 py-2 text-xs font-black ${bodyMode === "plain" ? "bg-sky-600 text-white" : "bg-white text-slate-600"}`}>Plain</button>
+                      <button type="button" onClick={() => setBodyMode("original")} className={`rounded-xl px-3 py-2 text-xs font-black ${bodyMode === "original" ? "bg-sky-600 text-white" : "bg-white text-slate-600"}`}>Original</button>
                     </div>
                   </div>
-
-                  <aside className="space-y-4">
-                    <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-black text-slate-950">Notes</h3>
-                        <button type="button" onClick={() => setNotesOpen(true)} className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Add</button>
-                      </div>
-                      <div className="mt-4 space-y-3">
-                        {notes.map((note: any) => (
-                          <div key={note.id} className="rounded-2xl bg-slate-50 p-3">
-                            <div className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{note.author_name || note.author_user_id || "internal"} · {formatDate(note.created_at)}</div>
-                            <div className="mt-2 text-sm leading-6 text-slate-700">{note.body}</div>
-                          </div>
-                        ))}
-                        {!notes.length ? <div className="text-sm font-semibold text-slate-500">Aucune note interne.</div> : null}
-                      </div>
-                    </div>
-
-                    <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-black text-slate-950">Tasks</h3>
-                        <button type="button" onClick={() => setTaskOpen(true)} className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Create</button>
-                      </div>
-                      <div className="mt-4 space-y-3">
-                        {tasks.map((task: any) => (
-                          <div key={task.id} className="rounded-2xl bg-slate-50 p-3">
-                            <div className="font-black text-slate-900">{task.title}</div>
-                            <div className="mt-1 text-xs font-semibold text-slate-500">{task.priority} · {formatDate(task.due_at)}</div>
-                            <div className="mt-2 text-sm leading-6 text-slate-700">{task.description || task.note || "—"}</div>
-                          </div>
-                        ))}
-                        {!tasks.length ? <div className="text-sm font-semibold text-slate-500">Aucune tâche ouverte.</div> : null}
-                      </div>
-                    </div>
-
-                    <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-black text-slate-950">Entity links</h3>
-                        <button type="button" onClick={() => setLinkOpen(true)} className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Link</button>
-                      </div>
-                      <div className="mt-4 space-y-2">
-                        {links.map((link: any) => (
-                          <div key={link.id} className="rounded-2xl bg-slate-50 p-3">
-                            <div className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{link.entity_type}</div>
-                            <div className="mt-1 font-black text-slate-900">{link.entity_label || link.entity_id}</div>
-                          </div>
-                        ))}
-                        {!links.length ? <div className="text-sm font-semibold text-slate-500">Aucun lien d’entité.</div> : null}
-                      </div>
-                    </div>
-
-                    <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-black text-slate-950">Diagnostics</h3>
-                        <button type="button" onClick={() => setDiagnosticsOpen((v) => !v)} className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Toggle</button>
-                      </div>
-                      {diagnosticsOpen ? (
-                        <div className="mt-4 space-y-2 text-xs font-semibold text-slate-500">
-                          <div>Message ID: {selected.id}</div>
-                          <div>External ID: {selected.externalId || "—"}</div>
-                          <div>Sync source: windows-bridge-pop3</div>
-                          <div>Mailbox ID: {selected.mailboxId}</div>
-                          <div>Inserted/synced: {formatDate(selected.receivedAt || selected.createdAt)}</div>
-                          <div>Workflow status: {selected.status}</div>
-                          <div>Priority: {selected.priority}</div>
-                          <div>Category: {selected.category}</div>
-                        </div>
-                      ) : (
-                        <div className="mt-3 text-sm font-semibold text-slate-500">Hidden by default.</div>
-                      )}
-                    </div>
-                  </aside>
+                  {selected.bodyHtml && bodyMode === "original" ? (
+                    <div className="prose max-w-none rounded-2xl border border-slate-200 bg-white p-5"><div dangerouslySetInnerHTML={{ __html: safeHtml(String(selected.bodyHtml)) }} /></div>
+                  ) : (
+                    <pre className="min-h-[240px] whitespace-pre-wrap rounded-2xl border border-slate-200 bg-white p-5 text-sm leading-7 text-slate-700">{bodyView(selected, bodyMode)}</pre>
+                  )}
                 </div>
-              </>
+
+                <div className="mt-4 rounded-[24px] border border-slate-200 bg-white p-4">
+                  <div className="mb-3 flex items-center gap-2 text-sm font-black text-slate-700"><Paperclip className="h-4 w-4" />Attachments</div>
+                  {selected.attachments?.length ? (
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {selected.attachments.map((attachment: any) => (
+                        <div key={`${attachment.filename}-${attachment.size}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                          <div className="font-black text-slate-900">{attachment.filename}</div>
+                          <div className="mt-1 text-xs font-semibold text-slate-500">{attachment.contentType} · {attachment.size ? `${attachment.size} bytes` : "size unknown"}</div>
+                          <div className="mt-2 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-700">{attachment.storageFileId ? "Stored on AngelCare Windows Node" : "Legacy attachment — send supported"}</div>
+                          {attachment.storageFileId ? (
+                            <a href={`/api/storage/download/${attachment.storageFileId}?mailboxId=${encodeURIComponent(selected.mailboxId || mailboxId || "")}`} className="mt-3 inline-flex h-9 items-center gap-2 rounded-xl bg-slate-950 px-3 text-xs font-black text-white"><Download className="h-3.5 w-3.5" />Download</a>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-500">No attachment recorded for this message.</div>
+                  )}
+                </div>
+              </div>
             ) : (
-              <div className="flex min-h-[50vh] items-center justify-center rounded-[28px] border border-dashed border-slate-200 bg-slate-50 p-10 text-center">
+              <div className="flex h-full min-h-[50vh] items-center justify-center p-10 text-center">
                 <div>
                   <MailOpen className="mx-auto h-12 w-12 text-slate-300" />
-                  <div className="mt-4 text-xl font-black text-slate-900">Sélectionnez un message</div>
-                  <p className="mt-2 text-sm font-semibold text-slate-500">Les opérations, le triage et le dossier apparaissent ici.</p>
+                  <div className="mt-4 text-xl font-black text-slate-900">Select a message</div>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">The conversation, reply tools, and context will appear here.</p>
                 </div>
               </div>
             )}
           </main>
 
-          <aside className="space-y-4 rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,.06)]">
-            <div className="rounded-[28px] border border-sky-100 bg-sky-50/60 p-5">
-              <div className="flex items-center gap-2 font-black text-sky-700">
-                <Sparkles className="h-5 w-5" />
-                Live operations
-              </div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">Toutes les actions ci-dessous sont réelles. Elles écrivent via les APIs Email-OS et respectent le scope de boîte.</p>
-              <div className="mt-4 space-y-2">
-                <button type="button" onClick={openReply} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Reply with context</button>
-                <button type="button" onClick={openForward} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Forward message</button>
-                <button type="button" onClick={() => setNotesOpen(true)} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Add internal note</button>
-                <button type="button" onClick={() => setTaskOpen(true)} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Create follow-up task</button>
-                <button type="button" onClick={() => setLinkOpen(true)} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Link entity</button>
-                <button type="button" onClick={() => void runAction("resolve")} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Resolve</button>
-                <button type="button" onClick={() => void runAction("reopen")} className="h-11 w-full rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Reopen</button>
+          <aside className="min-h-0 overflow-y-auto rounded-[26px] border border-slate-200 bg-white p-4 shadow-[0_18px_60px_rgba(15,23,42,.05)]">
+            <div className="rounded-2xl border border-sky-100 bg-sky-50/70 p-4">
+              <div className="flex items-center gap-2 font-black text-sky-700"><Sparkles className="h-5 w-5" />Actions</div>
+              <div className="mt-3 grid gap-2">
+                <button type="button" onClick={openReply} className="h-10 rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Reply</button>
+                <button type="button" onClick={openForward} className="h-10 rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Forward</button>
+                <button type="button" onClick={() => setNotesOpen(true)} className="h-10 rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Add note</button>
+                <button type="button" onClick={() => setTaskOpen(true)} className="h-10 rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Create task</button>
+                <button type="button" onClick={() => void runAction("resolve")} className="h-10 rounded-2xl bg-white text-sm font-black text-slate-800 shadow-sm">Resolve</button>
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-              <div className="flex items-center gap-2 font-black text-slate-950">
-                <LayoutGrid className="h-5 w-5 text-sky-700" />
-                Mailbox health
-              </div>
-              <div className="mt-4 space-y-3 text-sm font-semibold text-slate-600">
-                <div className="rounded-2xl bg-slate-50 p-3">Mailbox: {mailboxHeader.name}</div>
-                <div className="rounded-2xl bg-slate-50 p-3">Email: {mailboxHeader.email || "—"}</div>
-                <div className="rounded-2xl bg-slate-50 p-3">Sync source: windows-bridge-pop3</div>
-                <div className="rounded-2xl bg-slate-50 p-3">Waiting conversations: {stats?.waiting || 0}</div>
-                <div className="rounded-2xl bg-slate-50 p-3">High priority queue: {messages.filter((row) => ["vip", "urgent", "high"].includes(clean(row.priority).toLowerCase())).length}</div>
-              </div>
+            <div className="mt-4 space-y-3">
+              <ContextCard title="Notes" action="Add" onAction={() => setNotesOpen(true)} empty="No internal notes yet." items={notes.map((note: any) => ({ id: note.id, title: note.author_name || note.author_user_id || "internal", body: note.body, meta: formatDate(note.created_at) }))} />
+              <ContextCard title="Tasks" action="Create" onAction={() => setTaskOpen(true)} empty="No open tasks." items={tasks.map((task: any) => ({ id: task.id, title: task.title, body: task.description || task.note || "—", meta: `${task.priority} · ${formatDate(task.due_at)}` }))} />
+              <ContextCard title="Links" action="Link" onAction={() => setLinkOpen(true)} empty="No linked record." items={links.map((link: any) => ({ id: link.id, title: link.entity_label || link.entity_id, body: link.entity_type, meta: "Linked" }))} />
             </div>
 
-            {!mailboxId ? <StorageHealthPanel /> : null}
-
-            <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="font-black text-slate-950">Audit trail</h3>
-                <button type="button" onClick={() => setDiagnosticsOpen(true)} className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">Diagnostics</button>
+            <details className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <summary className="cursor-pointer text-sm font-black text-slate-800">System health & diagnostics</summary>
+              <div className="mt-3 space-y-2 text-xs font-semibold text-slate-500">
+                <div>Mailbox: {mailboxHeader.name}</div>
+                <div>Email: {mailboxHeader.email || "—"}</div>
+                <div>Sync source: windows-bridge-pop3</div>
+                <div>Waiting: {stats?.waiting || 0}</div>
+                <div>High priority: {messages.filter((row) => ["vip", "urgent", "high"].includes(clean(row.priority).toLowerCase())).length}</div>
+                {selected ? <div>Message ID: {selected.id}</div> : null}
+                <div>Status: {status}</div>
               </div>
-              <div className="mt-4 space-y-2">
-                {audit.slice(0, 6).map((event: any) => (
-                  <div key={event.id} className="rounded-2xl bg-slate-50 p-3">
-                    <div className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{event.action}</div>
-                    <div className="mt-1 text-sm font-semibold text-slate-700">{formatDate(event.created_at)}</div>
-                  </div>
-                ))}
-                {!audit.length ? <div className="text-sm font-semibold text-slate-500">No audit events yet.</div> : null}
-              </div>
-            </div>
-
-            {!scoped ? (
-              <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-                <h3 className="font-black text-slate-950">Mailbox health cards</h3>
-                <div className="mt-4 space-y-3">
-                  {(data?.stats || []).slice?.(0, 8).map((row: any) => (
-                    <div key={row.mailboxId} className="rounded-2xl bg-slate-50 p-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-black text-slate-900">{row.mailboxName}</div>
-                          <div className="text-xs font-semibold text-slate-500">{row.mailboxEmail}</div>
-                        </div>
-                        <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-slate-600">{row.total}</span>
-                      </div>
-                      <div className="mt-2 grid grid-cols-4 gap-1 text-[10px] font-black uppercase text-slate-500">
-                        <span>Inbox {row.inbox}</span>
-                        <span>Unread {row.unread}</span>
-                        <span>Overdue {row.overdue}</span>
-                        <span>Waiting {row.waiting}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            <div className="rounded-[28px] border border-slate-200 bg-white p-5">
-              <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Operational status</div>
-              <div className="mt-2 text-sm font-semibold text-slate-600">{status}</div>
-              {metrics?.lastSync ? <div className="mt-2 text-xs font-semibold text-slate-500">Last sync source: {metrics.lastSync.message || "windows-bridge-pop3"}</div> : null}
-            </div>
+            </details>
+            {!mailboxId ? <div className="mt-4"><StorageHealthPanel /></div> : null}
           </aside>
         </section>
 
@@ -1254,13 +1074,40 @@ function Kpi({ label, value, tone }: { label: string; value: string; tone: "blue
 
 function ActionButton({ label, icon: Icon, onClick, busy }: { label: string; icon: any; onClick: () => void; busy?: boolean }) {
   return (
-    <button type="button" onClick={onClick} className="rounded-2xl border border-slate-200 bg-white p-3 text-left transition hover:bg-slate-50">
-      <div className="flex items-center gap-2 text-sm font-black text-slate-900">
-        <Icon className={`h-4 w-4 ${busy ? "animate-pulse" : ""}`} />
-        {label}
-      </div>
-      <div className="mt-1 text-xs font-semibold text-slate-500">{busy ? "Exécution..." : "Action persistée"}</div>
+    <button type="button" onClick={onClick} className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-black text-slate-700 transition hover:bg-slate-50">
+      <Icon className={`h-4 w-4 ${busy ? "animate-pulse" : ""}`} />
+      {busy ? "Saving..." : label}
     </button>
+  )
+}
+
+function MiniMetric({ label, value, tone = "neutral" }: { label: string; value: string; tone?: "neutral" | "danger" }) {
+  return (
+    <div className={`rounded-2xl border px-3 py-2 ${tone === "danger" ? "border-rose-200 bg-rose-50 text-rose-700" : "border-slate-200 bg-slate-50 text-slate-700"}`}>
+      <div className="text-[10px] font-black uppercase tracking-[0.14em] opacity-60">{label}</div>
+      <div className="text-lg font-black tracking-[-0.03em]">{value}</div>
+    </div>
+  )
+}
+
+function ContextCard({ title, action, onAction, empty, items }: { title: string; action: string; onAction: () => void; empty: string; items: Array<{ id: string; title: string; body?: string; meta?: string }> }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-black text-slate-950">{title}</h3>
+        <button type="button" onClick={onAction} className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">{action}</button>
+      </div>
+      <div className="mt-3 space-y-2">
+        {items.slice(0, 3).map((item) => (
+          <div key={item.id} className="rounded-xl bg-slate-50 p-3">
+            <div className="text-sm font-black text-slate-900">{item.title}</div>
+            {item.meta ? <div className="mt-1 text-[11px] font-bold text-slate-400">{item.meta}</div> : null}
+            {item.body ? <div className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-600">{item.body}</div> : null}
+          </div>
+        ))}
+        {!items.length ? <div className="text-sm font-semibold text-slate-500">{empty}</div> : null}
+      </div>
+    </div>
   )
 }
 
