@@ -187,15 +187,15 @@ export default function EmailOSMailboxGateDispatcher() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f8ff] text-slate-950">
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-6 lg:px-8">
-        <section className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,.08)]">
-          <div className="grid gap-6 bg-gradient-to-br from-white via-[#f8fbff] to-[#eef2ff] px-6 py-6 lg:grid-cols-[minmax(0,1.15fr)_380px] lg:px-8 lg:py-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#f8fafc_34%,#ffffff_100%)] text-slate-950">
+      <div className="flex min-h-screen w-full flex-col gap-6 px-4 py-6 lg:px-8 xl:px-10">
+        <section className="overflow-hidden rounded-[36px] border border-white/80 bg-white/95 shadow-[0_30px_100px_rgba(15,23,42,.10)] ring-1 ring-sky-100">
+          <div className="grid gap-6 bg-gradient-to-br from-white via-sky-50/70 to-indigo-50 px-6 py-6 lg:grid-cols-[minmax(0,1.15fr)_380px] lg:px-8 lg:py-8">
             <div>
               <div className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">AngelCare Email-OS</div>
-              <h1 className="mt-4 text-4xl font-black tracking-[-0.06em] text-slate-950 lg:text-5xl">Mailbox Gate Dispatcher</h1>
+              <h1 className="mt-4 text-4xl font-black tracking-[-0.06em] text-slate-950 lg:text-5xl">Email-OS Secure Mailbox Gate</h1>
               <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-slate-600 lg:text-base">
-                Select one of your assigned production mailboxes, unlock it with the mailbox-specific PIN, and enter a mailbox-scoped workspace.
+                Sélectionnez une boîte assignée, déverrouillez-la par PIN, puis entrez dans un espace strictement scellé à cette boîte. Aucun envoi ne peut sortir du périmètre autorisé.
               </p>
             </div>
             <div className="grid gap-3 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">

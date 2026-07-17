@@ -44,8 +44,12 @@ function templateTitle(template: any) {
   return template.name || template.title || template.subject || "Modèle sans titre"
 }
 
+function normalizeTemplateText(value: unknown) {
+  return String(value || "").replace(/\\n/g, "\n").replace(/\r\n/g, "\n")
+}
+
 function templateBody(template: any) {
-  return template.body || template.content || ""
+  return normalizeTemplateText(template.body || template.content || "")
 }
 
 function templateSubject(template: any) {
@@ -106,6 +110,7 @@ export default function ProductionComposeStudio() {
   const [priority, setPriority] = useState("normal")
   const [templateKey, setTemplateKey] = useState("")
   const [attachments, setAttachments] = useState<any[]>([])
+  const safeAttachments = Array.isArray(attachments) ? attachments : []
   const [diagnostics, setDiagnostics] = useState<any>(null)
   const [status, setStatus] = useState("Prêt")
   const [busy, setBusy] = useState(false)
@@ -299,17 +304,17 @@ export default function ProductionComposeStudio() {
         body,
         priority,
         templateKey,
-        diagnostics: { attachmentCount: attachments.length }
+        diagnostics: { attachmentCount: safeAttachments.length }
       })
     })
 
-    if (result.ok && attachments.length > 0) {
+    if (result.ok && safeAttachments.length > 0) {
       await api("/api/email-os/compose/attachments", {
         method: "POST",
         body: JSON.stringify({
           mailboxId,
           draftId: result.data?.id,
-          attachments: attachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
+          attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
             filename: item.filename,
             mimeType: item.mimeType,
             fileId: item.fileId,
@@ -358,17 +363,17 @@ export default function ProductionComposeStudio() {
         body,
         priority,
         templateKey,
-        diagnostics: { attachmentCount: attachments.length }
+        diagnostics: { attachmentCount: safeAttachments.length }
       })
     })
 
-    if (result.ok && attachments.length > 0) {
+    if (result.ok && safeAttachments.length > 0) {
       await api("/api/email-os/compose/attachments", {
         method: "POST",
         body: JSON.stringify({
           mailboxId,
           outboxId: result.data?.outboxId || result.data?.id,
-          attachments: attachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
+          attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
             filename: item.filename,
             mimeType: item.mimeType,
             fileId: item.fileId,
@@ -591,11 +596,11 @@ export default function ProductionComposeStudio() {
                 </button>
               </div>
 
-              {attachments.length > 0 ? (
+              {safeAttachments.length > 0 ? (
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <div className="text-sm font-black text-slate-900">Pièces jointes enregistrées</div>
                   <div className="mt-3 space-y-2">
-                    {attachments.map((file) => (
+                    {safeAttachments.map((file) => (
                       <div key={file.id} className="flex items-center justify-between rounded-xl bg-white p-3 text-sm">
                         <div className="min-w-0">
                           <div className="font-bold text-slate-700">{file.filename}</div>
@@ -638,7 +643,7 @@ export default function ProductionComposeStudio() {
 
         <aside className="space-y-6">
           {showTemplates ? (
-            <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_80px_rgba(15,23,42,.08)]">
               <div className="flex items-center gap-3">
                 <Search className="h-5 w-5 text-slate-500" />
                 <h2 className="text-lg font-black text-slate-950">Modèles opérationnels</h2>
@@ -667,7 +672,7 @@ export default function ProductionComposeStudio() {
             </div>
           ) : null}
 
-          <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_80px_rgba(15,23,42,.08)]">
             <div className="flex items-center gap-3">
               <Sparkles className="h-5 w-5 text-slate-500" />
               <h2 className="text-lg font-black text-slate-950">Assistant IA</h2>
@@ -691,7 +696,7 @@ export default function ProductionComposeStudio() {
             </div>
           </div>
 
-          <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_80px_rgba(15,23,42,.08)]">
             <h2 className="text-lg font-black text-slate-950">Execution Control</h2>
 
             <div className="mt-4 space-y-3 text-sm">
@@ -703,7 +708,7 @@ export default function ProductionComposeStudio() {
           </div>
 
           {lastResult ? (
-            <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_80px_rgba(15,23,42,.08)]">
               <h2 className="text-lg font-black text-slate-950">Dernier résultat</h2>
               <pre className="mt-4 max-h-[260px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-white">{JSON.stringify(lastResult, null, 2)}</pre>
             </div>

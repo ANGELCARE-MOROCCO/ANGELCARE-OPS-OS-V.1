@@ -286,7 +286,7 @@ function renderTemplate(template: TemplateRow, mailboxName: string, operatorName
     "{{city}}": "Casablanca"
   }
   const subject = clean(template?.subject || template?.subject_template || template?.name || "")
-  const body = clean(template?.body || template?.body_template || "")
+  const body = clean(template?.body || template?.body_template || "").replace(/\\n/g, "\n")
   return {
     subject: Object.entries(replacements).reduce((value, [needle, replacement]) => value.replaceAll(needle, replacement), subject),
     body: Object.entries(replacements).reduce((value, [needle, replacement]) => value.replaceAll(needle, replacement), body)
@@ -668,17 +668,17 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
         lockLabel: data?.mailboxScope?.session?.status === "active" ? "Déverrouillée" : "Verrouillée"
       }
     : {
-        name: "AngleCare Email-OS",
+        name: "AngelCare Email-OS",
         email: "Vue globale",
         source: "Global oversight",
         lockLabel: "Admin"
       }
 
   return (
-    <div className="min-h-screen bg-[#f7faff] text-slate-950">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1800px] flex-col gap-6 px-4 py-4 lg:px-6">
-        <section className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,.08)]">
-          <div className="grid gap-6 bg-gradient-to-br from-white via-[#f8fbff] to-[#eef6ff] px-6 py-6 lg:grid-cols-[minmax(0,1.2fr)_460px] lg:px-8 lg:py-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#f8fafc_34%,#ffffff_100%)] text-slate-950">
+      <div className="flex min-h-screen w-full flex-col gap-6 px-4 py-4 lg:px-6 xl:px-8">
+        <section className="overflow-hidden rounded-[36px] border border-white/80 bg-white/95 shadow-[0_30px_100px_rgba(15,23,42,.10)] ring-1 ring-sky-100">
+          <div className="grid gap-6 bg-gradient-to-br from-white via-sky-50/70 to-indigo-50 px-6 py-6 lg:grid-cols-[minmax(0,1.2fr)_460px] lg:px-8 lg:py-8">
             <div className="space-y-4">
               <div className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">AngelCare Email-OS</div>
               <div className="flex flex-wrap items-center gap-3">
@@ -737,10 +737,18 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
           </div>
         </section>
 
+        {/* Production readiness strip */}
+        <section className="grid gap-3 rounded-[28px] border border-sky-100 bg-white/90 p-4 shadow-sm md:grid-cols-4">
+          <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-black text-emerald-700">Infrastructure: Windows POP3 + Storage Node</div>
+          <div className="rounded-2xl bg-sky-50 p-4 text-sm font-black text-sky-700">Scope: {scoped ? "Single mailbox locked" : "CEO global oversight"}</div>
+          <div className="rounded-2xl bg-indigo-50 p-4 text-sm font-black text-indigo-700">Workflow: Notes · Tasks · SLA · Audit</div>
+          <div className="rounded-2xl bg-amber-50 p-4 text-sm font-black text-amber-700">Storage: metadata in Supabase, files on Windows</div>
+        </section>
+
         {error ? <div className="rounded-[24px] border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-bold text-rose-700">{error}</div> : null}
 
-        <section className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)_420px]">
-          <aside className="space-y-4 rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)_480px]">
+          <aside className="space-y-4 rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,.06)]">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Triage</div>
@@ -830,7 +838,7 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
             </div>
           </aside>
 
-          <main className="space-y-4 rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+          <main className="space-y-4 rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,.06)]">
             {selected ? (
               <>
                 <div className="rounded-[28px] border border-slate-200 bg-white p-5">
@@ -1027,7 +1035,7 @@ export default function ScopedMailboxCommandCenter({ mailboxId }: { mailboxId?: 
             )}
           </main>
 
-          <aside className="space-y-4 rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
+          <aside className="space-y-4 rounded-[32px] border border-slate-200 bg-white/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,.06)]">
             <div className="rounded-[28px] border border-sky-100 bg-sky-50/60 p-5">
               <div className="flex items-center gap-2 font-black text-sky-700">
                 <Sparkles className="h-5 w-5" />
@@ -1251,7 +1259,7 @@ function ActionButton({ label, icon: Icon, onClick, busy }: { label: string; ico
         <Icon className={`h-4 w-4 ${busy ? "animate-pulse" : ""}`} />
         {label}
       </div>
-      <div className="mt-1 text-xs font-semibold text-slate-500">{busy ? "Exécution..." : "Real action"}</div>
+      <div className="mt-1 text-xs font-semibold text-slate-500">{busy ? "Exécution..." : "Action persistée"}</div>
     </button>
   )
 }

@@ -90,6 +90,10 @@ function niceName(email: string) {
   return base.split(/[._-]+/).filter(Boolean).map((x) => x[0]?.toUpperCase() + x.slice(1)).join(" ")
 }
 
+function normalizeTemplateText(value: unknown) {
+  return String(value || "").replace(/\\n/g, "\n").replace(/\r\n/g, "\n")
+}
+
 function quoteOriginal(selectedEmail: any) {
   const body = selectedEmail?.body || selectedEmail?.bodyText || selectedEmail?.preview || ""
   const lines = [
@@ -261,6 +265,7 @@ export default function EnterpriseComposeModal({
     storageStatus?: string
     downloadUrl?: string
   }>>([])
+  const safeAttachments = Array.isArray(attachments) ? attachments : []
 
   useEffect(() => {
     if (!open) return
@@ -389,7 +394,7 @@ export default function EnterpriseComposeModal({
 
   function applyTemplate(template: ComposeTemplate) {
     setSubject(template.subject || template.name || subject)
-    setBody(template.body || body)
+    setBody(normalizeTemplateText(template.body || body))
     if (template.priority) setPriority(template.priority)
     setTemplateMenuOpen(false)
     setStatus(`Template applied: ${template.name}`)
@@ -400,7 +405,7 @@ export default function EnterpriseComposeModal({
     if (!files) return
 
     const selected = Array.from(files)
-    const existingTotal = attachments.reduce((sum, item) => sum + Number(item.sizeBytes || 0), 0)
+    const existingTotal = safeAttachments.reduce((sum, item) => sum + Number(item.sizeBytes || 0), 0)
     const selectedTotal = selected.reduce((sum, file) => sum + file.size, 0)
 
     if (selected.some((file) => file.size > MAX_ATTACHMENT_BYTES)) {
@@ -512,12 +517,12 @@ export default function EnterpriseComposeModal({
         priority,
         status: statusValue,
         scheduledAt: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null,
-        attachments: attachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
-        diagnostics: { tracking, readReceipt, attachments: attachments.map(({ contentBase64, ...safe }) => safe), mode }
+        attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
+        diagnostics: { tracking, readReceipt, attachments: safeAttachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
 
-    await audit(statusValue === "scheduled" ? "schedule_email" : "save_draft", { result, attachments, scheduledDate, scheduledTime })
+    await audit(statusValue === "scheduled" ? "schedule_email" : "save_draft", { result, attachments: safeAttachments, scheduledDate, scheduledTime })
 
     setBusy(false)
     setStatus(result.ok ? (statusValue === "scheduled" ? "Scheduled email saved" : "Draft saved") : result.error || "Draft failed")
@@ -553,12 +558,12 @@ export default function EnterpriseComposeModal({
         subject,
         body,
         priority,
-        attachments: attachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
-        diagnostics: { tracking, readReceipt, attachments: attachments.map(({ contentBase64, ...safe }) => safe), mode }
+        attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
+        diagnostics: { tracking, readReceipt, attachments: safeAttachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
 
-    await audit("send_email", { result, attachments })
+    await audit("send_email", { result, attachments: safeAttachments })
 
     setBusy(false)
     setStatus(result.ok ? "Sent" : result.error || "Send failed")
@@ -575,11 +580,11 @@ export default function EnterpriseComposeModal({
   }
 
   return (
-    <div className="fixed left-0 right-0 bottom-0 top-[86px] z-[80] flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm">
-      <div className="grid h-[calc(100vh-118px)] w-full max-w-[1580px] grid-cols-[minmax(0,1fr)_400px] overflow-hidden rounded-[28px] border border-violet-100 bg-white shadow-2xl">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/55 p-3 backdrop-blur-xl">
+      <div className="grid h-[calc(100vh-28px)] w-full max-w-[1920px] grid-cols-[minmax(0,1fr)_440px] overflow-hidden rounded-[34px] border border-white/70 bg-white shadow-[0_30px_120px_rgba(15,23,42,.32)] ring-1 ring-sky-100">
         <section className="flex min-h-0 flex-col">
-          <header className="flex h-16 items-center justify-between border-b border-violet-100 px-7">
-            <h2 className="text-2xl font-black text-slate-950">New Message</h2>
+          <header className="flex h-20 items-center justify-between border-b border-slate-200/80 bg-gradient-to-r from-white via-sky-50/60 to-indigo-50/60 px-8">
+            <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">New Message</h2>
             <div className="flex items-center gap-5 text-slate-700">
               <button type="button" className="text-xl leading-none">−</button>
               <button type="button" className="text-lg">↗</button>
@@ -748,10 +753,10 @@ export default function EnterpriseComposeModal({
             </div>
 
             <div className="mt-5">
-              <div className="mb-3 text-sm font-black text-slate-800">Attachments ({attachments.length})</div>
-              {attachments.length > 0 ? (
+              <div className="mb-3 text-sm font-black text-slate-800">Attachments ({safeAttachments.length})</div>
+              {safeAttachments.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-4">
-                  {attachments.map((attachment) => (
+                  {safeAttachments.map((attachment) => (
                     <div key={`${attachment.name}-${attachment.source || "local"}`} className="flex h-16 items-center gap-3 rounded-2xl border border-violet-100 bg-white px-4">
                       <div className="rounded-xl bg-red-50 p-2 text-red-600"><AttachmentIcon name={attachment.name} /></div>
                       <div className="min-w-0 flex-1">
@@ -834,8 +839,8 @@ export default function EnterpriseComposeModal({
           </footer>
         </section>
 
-        <aside className="space-y-5 overflow-y-auto border-l border-violet-100 bg-[#fbfaff] p-6">
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+        <aside className="space-y-5 overflow-y-auto border-l border-slate-200 bg-gradient-to-b from-slate-50 via-white to-sky-50/50 p-6">
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center gap-3 font-black">
               <Sparkles className="h-5 w-5 text-violet-700" />
               AI Assistant
@@ -850,7 +855,7 @@ export default function EnterpriseComposeModal({
             <button type="button" onClick={fixTone} className="mt-2 h-12 w-full rounded-2xl bg-slate-50 text-sm font-black text-slate-700">Fix grammar & tone</button>
           </div>
 
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex justify-between">
               <h3 className="font-black">Live Templates</h3>
               <button type="button" onClick={() => setTemplateMenuOpen(true)} className="text-sm font-black text-blue-500">View all</button>
@@ -866,14 +871,17 @@ export default function EnterpriseComposeModal({
             ))}
           </div>
 
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex justify-between">
               <h3 className="font-black">Attachments</h3>
               <button type="button" onClick={() => setStatus("Manage attachments panel ready")} className="text-sm font-black text-blue-500">Manage all</button>
             </div>
-            <div className="text-sm font-semibold text-slate-500">{attachments.length} files attached</div>
+            <div className="text-sm font-semibold text-slate-500">{safeAttachments.length} files attached</div>
+            {safeAttachments.length === 0 ? (
+              <div className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-500">Attachment status ready. Files will be stored through AngelCare Windows Node when attached.</div>
+            ) : null}
             <div className="mt-4 grid grid-cols-4 gap-3">
-              {attachments.slice(0, 4).map((attachment) => (
+              {safeAttachments.slice(0, 4).map((attachment) => (
                 <div key={attachment.name} className="rounded-2xl bg-slate-50 p-4 text-center text-xs font-black">
                   <AttachmentIcon name={attachment.name} />
                 </div>
@@ -881,7 +889,7 @@ export default function EnterpriseComposeModal({
             </div>
           </div>
 
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="mb-4 font-black">Schedule & Options</h3>
             <div className="grid grid-cols-2 gap-3">
               <input type="date" value={scheduledDate} onChange={(event) => setScheduledDate(event.target.value)} className="h-11 rounded-xl border border-slate-100 px-3 text-sm" />
