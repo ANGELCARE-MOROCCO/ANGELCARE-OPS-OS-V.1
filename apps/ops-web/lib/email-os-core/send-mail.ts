@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer"
+import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { resolveEmailOSMailboxIdentity, resolveEmailOSMailboxIdentityFromDb } from "@/lib/email-os-core/multi-mailbox-resolver"
+import { downloadStorageFileFromBridge, loadStorageFileMetadata } from "@/lib/email-os-core/storage-gateway"
 
 const sendLocks = new Map<string, Promise<void>>()
 const lastSendAt = new Map<string, number>()
@@ -7,7 +9,11 @@ const lastSendAt = new Map<string, number>()
 export type EmailOSAttachmentInput = {
   filename: string
   contentType?: string | null
-  contentBase64: string
+  contentBase64?: string | null
+  fileId?: string | null
+  storageFileId?: string | null
+  storageBucket?: string | null
+  storageKey?: string | null
 }
 
 export type EmailOSSendInput = {
@@ -134,14 +140,46 @@ function estimateBase64Bytes(value: string) {
   return Math.max(0, Math.floor(cleanValue.length * 3 / 4) - padding)
 }
 
-function normalizeEmailAttachments(input: unknown) {
+async function normalizeEmailAttachments(input: unknown) {
   const rows = Array.isArray(input) ? input.slice(0, MAX_ATTACHMENT_COUNT) : []
   let totalBytes = 0
+  const db = createEmailOSCoreDb()
 
-  return rows.map((item: any) => {
+  async function resolveStorageAttachment(fileId: string, fallbackFilename: string, fallbackContentType: string) {
+    const metadata = await loadStorageFileMetadata(db, fileId)
+    const response = await downloadStorageFileFromBridge(fileId)
+    const buffer = Buffer.from(await response.arrayBuffer())
+    if (!buffer.length) {
+      throw new Error(`Attachment ${fallbackFilename} has no file content.`)
+    }
+    const contentType = clean(metadata?.content_type || fallbackContentType) || "application/octet-stream"
+    const filename = sanitizeAttachmentFilename(metadata?.original_filename || fallbackFilename)
+    return { filename, contentType, content: buffer }
+  }
+
+  const normalized: Array<{ filename: string; contentType: string; content: Buffer }> = []
+
+  for (const item of rows) {
     const filename = sanitizeAttachmentFilename(item?.filename || item?.name)
     const contentType = clean(item?.contentType || item?.content_type || item?.mimeType) || "application/octet-stream"
+    const fileId = clean(item?.fileId || item?.file_id || item?.storageFileId || item?.storage_file_id)
     const rawBase64 = clean(item?.contentBase64 || item?.content_base64 || item?.base64 || item?.content)
+
+    if (fileId) {
+      const resolved = await resolveStorageAttachment(fileId, filename, contentType)
+      const bytes = resolved.content.length
+      if (bytes > MAX_ATTACHMENT_BYTES) {
+        throw new Error(`Attachment ${resolved.filename} exceeds the 8 MB limit.`)
+      }
+
+      totalBytes += bytes
+      if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+        throw new Error("Total attachments exceed the 15 MB limit.")
+      }
+
+      normalized.push(resolved)
+      continue
+    }
 
     if (!rawBase64) {
       throw new Error(`Attachment ${filename} has no file content.`)
@@ -161,12 +199,14 @@ function normalizeEmailAttachments(input: unknown) {
       throw new Error("Total attachments exceed the 15 MB limit.")
     }
 
-    return {
+    normalized.push({
       filename,
       contentType,
       content: Buffer.from(rawBase64, "base64")
-    }
-  })
+    })
+  }
+
+  return normalized
 }
 
 function safePreview(input: unknown, maxLength = 260) {
@@ -307,7 +347,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput) {
         text: input.body || "",
         html: String(input.body || "").replace(/\n/g, "<br />"),
         replyTo: input.headers?.["Reply-To"] || undefined,
-        attachments: normalizeEmailAttachments(input.attachments || []).map((item) => ({
+        attachments: (await normalizeEmailAttachments(input.attachments || [])).map((item) => ({
           filename: item.filename,
           contentType: item.contentType,
           contentBase64: item.content.toString("base64")
@@ -440,7 +480,7 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
         subject: input.subject || "(Sans objet)",
         text: input.body || "",
         html: String(input.body || "").replace(/\n/g, "<br />"),
-        attachments: normalizeEmailAttachments(input.attachments || []),
+        attachments: await normalizeEmailAttachments(input.attachments || []),
         headers: {
           "X-AngelCare-Mailbox-Key": identity.key,
           "X-AngelCare-Mailbox-ID": identity.mailboxId,

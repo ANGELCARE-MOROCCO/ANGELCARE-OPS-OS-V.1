@@ -6,6 +6,7 @@ import {
   Bot,
   CheckCircle2,
   Copy,
+  Download,
   FileText,
   Inbox,
   Loader2,
@@ -49,6 +50,29 @@ function templateBody(template: any) {
 
 function templateSubject(template: any) {
   return template.subject || template.name || template.title || ""
+}
+
+async function uploadAttachmentToGateway(file: File, mailboxId: string) {
+  const formData = new FormData()
+  formData.append("file", file)
+  formData.append("moduleKey", "email_os")
+  formData.append("mailboxId", mailboxId)
+  formData.append("entityType", "compose_attachment")
+  formData.append("direction", "outbound")
+  formData.append("createdBy", "production-compose-studio")
+  formData.append("metadata", JSON.stringify({ source: "production-compose-studio" }))
+
+  const res = await fetch("/api/storage/upload", {
+    method: "POST",
+    body: formData
+  })
+
+  const json = await res.json().catch(() => null)
+  return {
+    ok: res.ok && json?.ok !== false,
+    data: json?.data ?? json,
+    error: json?.error || (!res.ok ? `HTTP ${res.status}` : null)
+  }
 }
 
 function lifecycleLabel(lifecycle: SendLifecycle) {
@@ -163,18 +187,55 @@ export default function ProductionComposeStudio() {
     setStatus(`Modèle appliqué : ${templateTitle(template)}`)
   }
 
-  function registerLocalAttachments(files: FileList | null) {
+  async function registerLocalAttachments(files: FileList | null) {
     if (!files) return
 
-    const next = Array.from(files).map((file) => ({
-      id: `${file.name}-${file.size}-${Date.now()}`,
-      filename: file.name,
-      size: file.size,
-      mimeType: file.type
+    const next = await Promise.all(Array.from(files).map(async (file) => {
+      const mimeType = file.type || "application/octet-stream"
+      if (mailboxId) {
+        try {
+          const uploaded = await uploadAttachmentToGateway(file, mailboxId)
+          if (uploaded.ok && uploaded.data?.id) {
+            return {
+              id: uploaded.data.id,
+              filename: uploaded.data.original_filename || file.name,
+              size: file.size,
+              mimeType,
+              fileId: uploaded.data.id,
+              storageBucket: uploaded.data.storage_bucket,
+              storageKey: uploaded.data.storage_key,
+              storageStatus: uploaded.data.status || "active",
+              downloadUrl: `/api/storage/download/${uploaded.data.id}?mailboxId=${encodeURIComponent(mailboxId)}`
+            }
+          }
+        } catch {
+          // Legacy fallback below.
+        }
+      }
+
+      return {
+        id: `${file.name}-${file.size}-${Date.now()}`,
+        filename: file.name,
+        size: file.size,
+        mimeType,
+        contentBase64: await fileToDataUrl(file)
+      }
     }))
 
     setAttachments((prev) => [...prev, ...next])
     setStatus(`${next.length} pièce(s) jointe(s) ajoutée(s)`)
+  }
+
+  function fileToDataUrl(file: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onerror = () => reject(new Error(`Unable to read attachment: ${file.name}`))
+      reader.onload = () => {
+        const raw = String(reader.result || "")
+        resolve(raw.includes(",") ? raw.split(",").pop() || "" : raw)
+      }
+      reader.readAsDataURL(file)
+    })
   }
 
   function resetCompose() {
@@ -245,7 +306,19 @@ export default function ProductionComposeStudio() {
     if (result.ok && attachments.length > 0) {
       await api("/api/email-os/compose/attachments", {
         method: "POST",
-        body: JSON.stringify({ mailboxId, draftId: result.data?.id, attachments })
+        body: JSON.stringify({
+          mailboxId,
+          draftId: result.data?.id,
+          attachments: attachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
+            filename: item.filename,
+            mimeType: item.mimeType,
+            fileId: item.fileId,
+            contentBase64: item.contentBase64,
+            size: item.size,
+            storageBucket: item.storageBucket,
+            storageKey: item.storageKey
+          }))
+        })
       })
     }
 
@@ -295,7 +368,15 @@ export default function ProductionComposeStudio() {
         body: JSON.stringify({
           mailboxId,
           outboxId: result.data?.outboxId || result.data?.id,
-          attachments
+          attachments: attachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
+            filename: item.filename,
+            mimeType: item.mimeType,
+            fileId: item.fileId,
+            contentBase64: item.contentBase64,
+            size: item.size,
+            storageBucket: item.storageBucket,
+            storageKey: item.storageKey
+          }))
         })
       })
     }
@@ -516,10 +597,20 @@ export default function ProductionComposeStudio() {
                   <div className="mt-3 space-y-2">
                     {attachments.map((file) => (
                       <div key={file.id} className="flex items-center justify-between rounded-xl bg-white p-3 text-sm">
-                        <span className="font-bold text-slate-700">{file.filename}</span>
-                        <button type="button" onClick={() => setAttachments((prev) => prev.filter((item) => item.id !== file.id))} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-900">
-                          <X className="h-4 w-4" />
-                        </button>
+                        <div className="min-w-0">
+                          <div className="font-bold text-slate-700">{file.filename}</div>
+                          <div className="text-xs font-semibold text-slate-500">{file.mimeType || "application/octet-stream"} · {file.fileId ? `Storage ${file.storageStatus || "active"}` : "Legacy inline"}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {file.downloadUrl ? (
+                            <a href={file.downloadUrl} className="rounded-lg border border-slate-200 px-2 py-1 text-[11px] font-black text-slate-700 hover:bg-slate-50">
+                              <Download className="h-3.5 w-3.5" />
+                            </a>
+                          ) : null}
+                          <button type="button" onClick={() => setAttachments((prev) => prev.filter((item) => item.id !== file.id))} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-900">
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

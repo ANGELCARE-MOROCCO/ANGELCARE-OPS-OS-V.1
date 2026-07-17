@@ -97,9 +97,10 @@ export async function GET() {
 
     const envMailboxes = listEmailOSMultiMailboxes().map(normalizeEnvMailbox)
 
-    const [dbMailboxesRaw, coreTemplatesRaw, entityTemplatesRaw] = await Promise.all([
+    const [dbMailboxesRaw, coreTemplatesRaw, responseTemplatesRaw, entityTemplatesRaw] = await Promise.all([
       safeSelect(db, "email_os_core_mailboxes"),
       safeSelect(db, "email_os_core_templates"),
+      safeSelect(db, "email_os_response_templates"),
       safeSelect(db, "email_os_core_entities")
     ])
 
@@ -134,7 +135,17 @@ export async function GET() {
       return type.includes("template")
     })
 
-    const templates = [...(coreTemplatesRaw || []), ...templatesFromEntities].map(normalizeTemplate)
+    const responseTemplates = (responseTemplatesRaw || []).map((row: any) => ({
+      ...normalizeTemplate(row),
+      subject: row?.subject_template || row?.subject || "",
+      body: row?.body_template || row?.body || row?.content || "",
+      category: row?.category || row?.department || row?.type || "General",
+      mailbox_id: row?.mailbox_id || null,
+      language: row?.language || "fr",
+      status: row?.status || "active"
+    }))
+
+    const templates = [...responseTemplates, ...(coreTemplatesRaw || []), ...templatesFromEntities].map(normalizeTemplate)
 
     const mailboxes = Array.from(byEmail.values()).sort((a, b) => {
       const aName = String(a.name || a.email || "")

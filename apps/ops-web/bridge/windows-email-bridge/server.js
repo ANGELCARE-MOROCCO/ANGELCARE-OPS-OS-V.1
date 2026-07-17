@@ -22,6 +22,7 @@ const HOST = "127.0.0.1"
 const LOG_DIR = clean(process.env.ANGELCARE_LOG_DIR || "C:\\AngelCare\\logs") || "C:\\AngelCare\\logs"
 const STATUS_DIR = clean(process.env.ANGELCARE_STATUS_DIR || "C:\\AngelCare\\status") || "C:\\AngelCare\\status"
 const BACKUP_ROOT = clean(process.env.ANGELCARE_BACKUP_DIR || "C:\\AngelCare\\backups") || "C:\\AngelCare\\backups"
+const STORAGE_ROOT = clean(process.env.ANGELCARE_STORAGE_ROOT || "C:\\AngelCare\\storage") || "C:\\AngelCare\\storage"
 const CADDYFILE_PATH = clean(process.env.CADDYFILE_PATH || "C:\\AngelCare\\caddy\\Caddyfile") || "C:\\AngelCare\\caddy\\Caddyfile"
 const DUCKDNS_UPDATE_SCRIPT = clean(process.env.DUCKDNS_UPDATE_SCRIPT || "C:\\AngelCare\\duckdns\\update-duckdns.ps1") || "C:\\AngelCare\\duckdns\\update-duckdns.ps1"
 const RATE_LIMIT_WINDOW_MS = 60_000
@@ -30,6 +31,11 @@ const MAX_LOG_LINES = 1000
 const MAX_BACKUP_COUNT = 50
 const MAX_POP_MESSAGE_BYTES = 10 * 1024 * 1024
 const POP_TIMEOUT_MS = 25_000
+const STORAGE_BUCKET = "email-os-attachments"
+const STORAGE_NODE = "angelcare-windows-node-01"
+const STORAGE_MAX_FILE_BYTES = 8 * 1024 * 1024
+const STORAGE_WARNING_FREE_BYTES = 40 * 1024 * 1024 * 1024
+const STORAGE_CRITICAL_FREE_BYTES = 25 * 1024 * 1024 * 1024
 
 const LOG_OUT = path.join(LOG_DIR, "email-bridge-out.log")
 const LOG_ERROR = path.join(LOG_DIR, "email-bridge-error.log")
@@ -38,6 +44,7 @@ const LOG_CADDY_ERROR = path.join(LOG_DIR, "caddy-error.log")
 const LOG_DUCKDNS = path.join(LOG_DIR, "duckdns.log")
 const LOG_SERVICE = path.join(LOG_DIR, "service-actions.jsonl")
 const AUDIT_FILE = path.join(LOG_DIR, "email-bridge-audit.jsonl")
+const STORAGE_EVENT_FILE = path.join(LOG_DIR, "storage-events.jsonl")
 const MAINTENANCE_STATE_FILE = path.join(STATUS_DIR, "maintenance.json")
 const BACKUP_MANIFEST_NAME = "backup-manifest.json"
 const SAFE_STATUSES = new Set(["running", "stopped", "unknown", "failed", "degraded"])
@@ -50,6 +57,9 @@ const runtimeState = {
   lastCaddyReload: null,
   lastSendSuccess: null,
   lastSendError: null,
+  lastStorageUpload: null,
+  lastStorageDownload: null,
+  lastStorageError: null,
   maintenance: loadMaintenanceState(),
   lastBackup: null
 }
@@ -274,6 +284,201 @@ function buildSafeManifestSummary(manifest) {
   const assetCount = files.length
   const warningText = warnings.length ? ` warnings=${warnings.length}` : ""
   return `backupId=${clean(manifest.backupId)} assets=${assetCount}${warningText}`.trim()
+}
+
+function ensureStorageDirectories() {
+  const directories = [
+    path.join(STORAGE_ROOT, "email-os", "attachments", "inbound"),
+    path.join(STORAGE_ROOT, "email-os", "attachments", "outbound"),
+    path.join(STORAGE_ROOT, "email-os", "attachments", "temp"),
+    path.join(STORAGE_ROOT, "email-os", "attachments", "archive")
+  ]
+
+  for (const directory of directories) {
+    fs.mkdirSync(directory, { recursive: true })
+  }
+
+  return directories
+}
+
+function getStorageDirectories() {
+  const [inbound, outbound, temp, archive] = ensureStorageDirectories()
+  return { inbound, outbound, temp, archive }
+}
+
+function sanitizeStoragePart(value) {
+  const raw = clean(value).replace(/[\\/:*?"<>|]+/g, "_")
+  return raw.replace(/\s+/g, "_").replace(/_+/g, "_").replace(/^_+|_+$/g, "").slice(0, 80) || "item"
+}
+
+function sanitizeStorageFilename(value) {
+  const raw = clean(value).replace(/[\\/:*?"<>|]+/g, "_")
+  return raw.replace(/\s+/g, "_").replace(/_+/g, "_").replace(/^_+|_+$/g, "").slice(0, 160) || "attachment"
+}
+
+function normalizeStorageDirection(value) {
+  const direction = clean(value).toLowerCase()
+  if (direction === "inbound" || direction === "temp" || direction === "archive") return direction
+  return "outbound"
+}
+
+function buildStorageFolder(direction, moduleKey, entityType, fileId) {
+  const dirs = getStorageDirectories()
+  const base = normalizeStorageDirection(direction)
+  const root = base === "inbound" ? dirs.inbound : base === "temp" ? dirs.temp : base === "archive" ? dirs.archive : dirs.outbound
+  return path.join(root, sanitizeStoragePart(moduleKey), sanitizeStoragePart(entityType), clean(fileId))
+}
+
+function buildStorageFilePath(direction, moduleKey, entityType, fileId, filename) {
+  return path.join(buildStorageFolder(direction, moduleKey, entityType, fileId), sanitizeStorageFilename(filename))
+}
+
+function buildStorageMetaPath(direction, moduleKey, entityType, fileId, filename) {
+  return path.join(buildStorageFolder(direction, moduleKey, entityType, fileId), "_metadata.json")
+}
+
+function isWithinRoot(candidate, rootPath) {
+  const resolvedCandidate = path.resolve(candidate)
+  const resolvedRoot = path.resolve(rootPath)
+  return resolvedCandidate === resolvedRoot || resolvedCandidate.startsWith(`${resolvedRoot}${path.sep}`)
+}
+
+function storageEventAction(label) {
+  return String(label || "").trim().toUpperCase() || "STORAGE_EVENT"
+}
+
+function logStorageEvent(record) {
+  appendJsonl(STORAGE_EVENT_FILE, {
+    timestamp: nowIso(),
+    action: storageEventAction(record.action),
+    moduleKey: sanitizeStoragePart(record.moduleKey || "email_os"),
+    fileId: clean(record.fileId) || "",
+    mailboxId: clean(record.mailboxId) || "",
+    entityType: sanitizeStoragePart(record.entityType || "attachment"),
+    direction: normalizeStorageDirection(record.direction || "outbound"),
+    status: clean(record.status) || "unknown",
+    message: clean(record.message) || "",
+    freeBytes: Number.isFinite(Number(record.freeBytes)) ? Math.round(Number(record.freeBytes)) : 0,
+    usedBytes: Number.isFinite(Number(record.usedBytes)) ? Math.round(Number(record.usedBytes)) : 0,
+    metadata: safeSummary(record.metadata || {})
+  })
+}
+
+function storageDiskSnapshot() {
+  const snapshot = computeDiskSnapshot(STORAGE_ROOT)
+  const freeBytes = Number(snapshot.availableBytes || 0)
+  const usedBytes = Number(snapshot.usedBytes || 0)
+  const totalBytes = Number(snapshot.totalBytes || 0)
+  const warning = freeBytes > 0 && freeBytes < STORAGE_WARNING_FREE_BYTES
+  const critical = freeBytes > 0 && freeBytes < STORAGE_CRITICAL_FREE_BYTES
+  return {
+    ...snapshot,
+    freeBytes,
+    usedBytes,
+    totalBytes,
+    warning,
+    critical,
+    rootPath: STORAGE_ROOT
+  }
+}
+
+function readStorageMeta(metaPath) {
+  return readJsonFile(metaPath, null)
+}
+
+function readStorageDirectoryFile(directory) {
+  if (!fs.existsSync(directory)) return null
+  const entries = fs.readdirSync(directory)
+  const fileName = entries.find((item) => item !== "." && item !== ".." && !item.endsWith(".meta.json")) || ""
+  if (!fileName) return null
+  return path.join(directory, fileName)
+}
+
+function findStorageRecordById(fileId) {
+  const id = clean(fileId)
+  if (!id) return null
+  const dirs = getStorageDirectories()
+  const searchRoots = [dirs.inbound, dirs.outbound, dirs.temp, dirs.archive]
+
+  for (const root of searchRoots) {
+    const stack = [root]
+    while (stack.length) {
+      const current = stack.pop()
+      if (!current || !fs.existsSync(current)) continue
+      const entries = fs.readdirSync(current, { withFileTypes: true })
+      for (const entry of entries) {
+        const fullPath = path.join(current, entry.name)
+        if (entry.isDirectory()) {
+          if (entry.name === id) {
+            const metaPath = path.join(fullPath, "_metadata.json")
+            const meta = readStorageMeta(metaPath) || {}
+            const filePath = readStorageDirectoryFile(fullPath)
+            return {
+              directory: fullPath,
+              filePath,
+              metaPath,
+              meta
+            }
+          }
+          stack.push(fullPath)
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+function buildStorageResponseData(meta, extra = {}) {
+  const disk = storageDiskSnapshot()
+  return {
+    ok: true,
+    data: {
+      ...meta,
+      ...extra,
+      freeBytes: disk.freeBytes,
+      usedBytes: disk.usedBytes,
+      totalBytes: disk.totalBytes,
+      warning: disk.warning,
+      critical: disk.critical
+    }
+  }
+}
+
+function writeBinary(res, status, body, headers = {}) {
+  const payload = Buffer.isBuffer(body) ? body : Buffer.from(body || "")
+  res.writeHead(status, {
+    "Content-Type": headers["Content-Type"] || headers["content-type"] || "application/octet-stream",
+    "Content-Length": payload.length,
+    ...headers
+  })
+  res.end(payload)
+}
+
+function storageHealthPayload(extra = {}) {
+  const disk = storageDiskSnapshot()
+  return {
+    ok: true,
+    data: {
+      rootDirectory: "storage-root",
+      bucket: STORAGE_BUCKET,
+      node: STORAGE_NODE,
+      usedBytes: disk.usedBytes,
+      freeBytes: disk.freeBytes,
+      totalBytes: disk.totalBytes,
+      warning: disk.warning,
+      critical: disk.critical,
+      warningThresholdBytes: STORAGE_WARNING_FREE_BYTES,
+      criticalThresholdBytes: STORAGE_CRITICAL_FREE_BYTES,
+      directories: {
+        inbound: "email-os/attachments/inbound",
+        outbound: "email-os/attachments/outbound",
+        temp: "email-os/attachments/temp",
+        archive: "email-os/attachments/archive"
+      },
+      ...extra
+    }
+  }
 }
 
 function computeCpuSnapshot() {
@@ -983,13 +1188,86 @@ async function handleAdminInboundSync(request, body) {
       const from = parsed.from?.value?.[0] || null
       const to = normalizeAddressList(parsed.to?.value?.map((item) => item.address))
       const cc = normalizeAddressList(parsed.cc?.value?.map((item) => item.address))
-      const attachments = Array.isArray(parsed.attachments)
-        ? parsed.attachments.map((attachment) => ({
-            filename: attachment.filename || null,
-            contentType: attachment.contentType || null,
-            size: Number.isFinite(Number(attachment.size)) ? Number(attachment.size) : 0
-          }))
-        : []
+      const attachments = []
+      if (Array.isArray(parsed.attachments)) {
+        for (const attachment of parsed.attachments) {
+          const filename = sanitizeStorageFilename(attachment.filename || attachment.name || "attachment")
+          const contentType = clean(attachment.contentType || attachment.content_type || "application/octet-stream") || "application/octet-stream"
+          const size = Number.isFinite(Number(attachment.size)) ? Number(attachment.size) : 0
+          const buffer = Buffer.isBuffer(attachment.content)
+            ? attachment.content
+            : attachment.content
+              ? Buffer.from(attachment.content)
+              : Buffer.alloc(0)
+
+          let storageFileId = ""
+          let storageBucket = ""
+          let storageKey = ""
+          let storageStatus = "metadata_only"
+
+          if (buffer.length && buffer.length <= STORAGE_MAX_FILE_BYTES) {
+            storageFileId = crypto.randomUUID()
+            storageBucket = STORAGE_BUCKET
+            storageKey = path.posix.join("email-os", "attachments", "inbound", sanitizeStoragePart(mailbox.key || mailbox.mailboxId || mailbox.email || "email_os"), "pop3-message", storageFileId, filename)
+            const storagePath = path.join(STORAGE_ROOT, storageKey)
+            const metaPath = buildStorageMetaPath("inbound", mailbox.key || mailbox.mailboxId || mailbox.email || "email_os", "pop3-message", storageFileId, filename)
+            if (isWithinRoot(storagePath, STORAGE_ROOT)) {
+              fs.mkdirSync(path.dirname(storagePath), { recursive: true })
+              fs.writeFileSync(storagePath, buffer)
+              fs.writeFileSync(metaPath, `${JSON.stringify({
+                id: storageFileId,
+                module_key: "email_os",
+                mailbox_id: mailbox.mailboxId,
+                entity_type: "pop3_message",
+                entity_id: String(ref.uid || ref.number),
+                original_filename: filename,
+                safe_filename: filename,
+                content_type: contentType,
+                size_bytes: buffer.length,
+                sha256_hash: crypto.createHash("sha256").update(buffer).digest("hex"),
+                storage_provider: "windows_node",
+                storage_node: STORAGE_NODE,
+                storage_bucket: storageBucket,
+                storage_key: storageKey,
+                status: "active",
+                created_by: "windows_bridge_pop3",
+                created_at: nowIso(),
+                updated_at: nowIso(),
+                deleted_at: null,
+                metadata: {
+                  source: "pop3",
+                  mailboxKey: mailbox.key,
+                  providerUid: String(ref.uid || ref.number)
+                }
+              }, null, 2)}\n`, "utf8")
+              storageStatus = "active"
+              logStorageEvent({
+                action: "STORAGE_INBOUND_SYNC",
+                moduleKey: "email_os",
+                fileId: storageFileId,
+                mailboxId: mailbox.mailboxId,
+                entityType: "pop3_message",
+                direction: "inbound",
+                status: "ok",
+                freeBytes: storageDiskSnapshot().freeBytes,
+                usedBytes: storageDiskSnapshot().usedBytes,
+                metadata: { filename, contentType, sizeBytes: buffer.length, storageBucket, storageKey }
+              })
+            }
+          }
+
+          attachments.push({
+            filename,
+            contentType,
+            size,
+            storageFileId: storageFileId || null,
+            storageBucket: storageBucket || null,
+            storageKey: storageKey || null,
+            storageStatus,
+            sha256Hash: storageFileId ? crypto.createHash("sha256").update(buffer).digest("hex") : null
+          })
+        }
+      }
       const receivedAt = parsed.date ? parsed.date.toISOString() : new Date().toISOString()
       const subject = parsed.subject || "(Sans objet)"
 
@@ -2200,7 +2478,10 @@ async function handleAdminStatus(request) {
         },
         cpuSnapshot: computeCpuSnapshot(),
         memory: computeMemorySnapshot(),
-        disk: computeDiskSnapshot("C:\\AngelCare"),
+        disk: {
+          ...computeDiskSnapshot(STORAGE_ROOT),
+          rootPath: "storage-root"
+        },
         bridgeFiles: {
           serverJsModifiedAt: getPathStats(path.join(process.cwd(), "server.js"))?.modifiedAt || "",
           packageJsonModifiedAt: getPathStats(path.join(process.cwd(), "package.json"))?.modifiedAt || ""
@@ -2224,6 +2505,422 @@ async function handleAdminStatus(request) {
           workingDirectory: process.cwd()
         },
         auditServiceActions: serviceActionEntries.slice(-20)
+      }
+    }
+  }
+}
+
+async function handleStorageUpload(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const originalFilename = sanitizeStorageFilename(body.originalFilename || body.filename || "attachment")
+  const contentType = clean(body.contentType || body.content_type || body.mimeType) || "application/octet-stream"
+  const rawBase64 = clean(body.contentBase64 || body.content_base64 || body.base64 || body.content)
+  const moduleKey = sanitizeStoragePart(body.moduleKey || body.module_key || "email_os")
+  const entityType = sanitizeStoragePart(body.entityType || body.entity_type || "attachment")
+  const entityId = clean(body.entityId || body.entity_id) || null
+  const mailboxId = clean(body.mailboxId || body.mailbox_id) || null
+  const createdBy = clean(body.createdBy || body.created_by) || null
+  const direction = normalizeStorageDirection(body.direction || "outbound")
+  const metadata = body.metadata && typeof body.metadata === "object" ? body.metadata : {}
+
+  if (!rawBase64) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "contentBase64 is required",
+        errorName: "StorageUploadInvalid",
+        errorMessage: "contentBase64 is required"
+      }
+    }
+  }
+
+  const content = Buffer.from(rawBase64.replace(/^data:[^,]+,/, ""), "base64")
+  if (!content.length) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Attachment content is empty",
+        errorName: "StorageUploadInvalid",
+        errorMessage: "Attachment content is empty"
+      }
+    }
+  }
+
+  if (content.length > STORAGE_MAX_FILE_BYTES) {
+    return {
+      status: 413,
+      payload: {
+        ok: false,
+        error: `Attachment exceeds the ${Math.floor(STORAGE_MAX_FILE_BYTES / (1024 * 1024))} MB limit.`,
+        errorName: "StorageUploadTooLarge",
+        errorMessage: `Attachment exceeds the ${Math.floor(STORAGE_MAX_FILE_BYTES / (1024 * 1024))} MB limit.`
+      }
+    }
+  }
+
+  const fileId = clean(body.id || body.fileId || body.file_id) || crypto.randomUUID()
+  const folder = buildStorageFolder(direction, moduleKey, entityType, fileId)
+  const filePath = buildStorageFilePath(direction, moduleKey, entityType, fileId, originalFilename)
+  const metaPath = buildStorageMetaPath(direction, moduleKey, entityType, fileId, originalFilename)
+  const storageKey = path.posix.join("email-os", "attachments", direction, moduleKey, entityType, fileId, sanitizeStorageFilename(originalFilename))
+  const storageBucket = STORAGE_BUCKET
+  const sha256Hash = crypto.createHash("sha256").update(content).digest("hex")
+  const createdAt = nowIso()
+
+  if (!isWithinRoot(filePath, STORAGE_ROOT)) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "Invalid storage path",
+        errorName: "StorageUploadInvalid",
+        errorMessage: "Invalid storage path"
+      }
+    }
+  }
+
+  fs.mkdirSync(folder, { recursive: true })
+  fs.writeFileSync(filePath, content)
+
+  const record = {
+    id: fileId,
+    module_key: moduleKey,
+    mailbox_id: mailboxId,
+    entity_type: entityType,
+    entity_id: entityId,
+    original_filename: originalFilename,
+    safe_filename: sanitizeStorageFilename(originalFilename),
+    content_type: contentType,
+    size_bytes: content.length,
+    sha256_hash: sha256Hash,
+    storage_provider: "windows_node",
+    storage_node: STORAGE_NODE,
+    storage_bucket: storageBucket,
+    storage_key: storageKey,
+    status: "active",
+    created_by: createdBy,
+    created_at: createdAt,
+    updated_at: createdAt,
+    deleted_at: null,
+    metadata: safeSummary(metadata)
+  }
+
+  fs.writeFileSync(metaPath, `${JSON.stringify(record, null, 2)}\n`, "utf8")
+
+  const disk = storageDiskSnapshot()
+  const event = {
+    action: "STORAGE_UPLOAD",
+    moduleKey: moduleKey,
+    fileId,
+    mailboxId,
+    entityType,
+    direction,
+    status: "ok",
+    freeBytes: disk.freeBytes,
+    usedBytes: disk.usedBytes,
+    metadata: {
+      originalFilename,
+      contentType,
+      sizeBytes: content.length,
+      storageBucket,
+      storageKey
+    }
+  }
+  logStorageEvent(event)
+  runtimeState.lastStorageUpload = {
+    timestamp: createdAt,
+    ...event
+  }
+
+  return {
+    status: 200,
+    payload: buildStorageResponseData(record, {
+      direction,
+      storageBucket,
+      storageKey,
+      freeBytes: disk.freeBytes,
+      usedBytes: disk.usedBytes,
+      totalBytes: disk.totalBytes,
+      warning: disk.warning,
+      critical: disk.critical
+    })
+  }
+}
+
+async function handleStorageHealth(request) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const disk = storageDiskSnapshot()
+  const eventTail = readTailJsonl(STORAGE_EVENT_FILE, 100)
+  const events = Array.isArray(eventTail.lines) ? eventTail.lines : []
+  const lastUpload = events.filter((entry) => String(entry.action || "") === "STORAGE_UPLOAD").at(-1) || null
+  const lastDownload = events.filter((entry) => String(entry.action || "") === "STORAGE_DOWNLOAD").at(-1) || null
+  const lastError = events.filter((entry) => String(entry.action || "").includes("STORAGE_") && String(entry.result || "").toLowerCase() === "error").at(-1) || null
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: {
+        bucket: STORAGE_BUCKET,
+        node: STORAGE_NODE,
+        usedBytes: disk.usedBytes,
+        freeBytes: disk.freeBytes,
+        totalBytes: disk.totalBytes,
+        warning: disk.warning,
+        critical: disk.critical,
+        warningThresholdBytes: STORAGE_WARNING_FREE_BYTES,
+        criticalThresholdBytes: STORAGE_CRITICAL_FREE_BYTES,
+        directoryLabels: {
+          inbound: "email-os/attachments/inbound",
+          outbound: "email-os/attachments/outbound",
+          temp: "email-os/attachments/temp",
+          archive: "email-os/attachments/archive"
+        },
+        lastUpload: lastUpload ? sanitizeLogEntryValue(lastUpload) : null,
+        lastDownload: lastDownload ? sanitizeLogEntryValue(lastDownload) : null,
+        lastError: lastError ? sanitizeLogEntryValue(lastError) : null,
+        lastCheckedAt: nowIso()
+      }
+    }
+  }
+}
+
+async function handleStorageUsage(request) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const disk = storageDiskSnapshot()
+  const eventTail = readTailJsonl(STORAGE_EVENT_FILE, 200)
+  const events = Array.isArray(eventTail.lines) ? eventTail.lines : []
+  const lastUpload = events.filter((entry) => String(entry.action || "").includes("UPLOAD")).at(-1) || null
+  const lastDownload = events.filter((entry) => String(entry.action || "").includes("DOWNLOAD")).at(-1) || null
+  const lastError = events.filter((entry) => String(entry.action || "").includes("ERROR") || String(entry.result || "").toLowerCase() === "error").at(-1) || null
+  const storageFilesSize = getDirectorySize(path.join(STORAGE_ROOT, "email-os", "attachments"))
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: {
+        bucket: STORAGE_BUCKET,
+        node: STORAGE_NODE,
+        usedBytes: storageFilesSize || disk.usedBytes,
+        freeBytes: disk.freeBytes,
+        totalBytes: disk.totalBytes,
+        warning: disk.warning,
+        critical: disk.critical,
+        warningThresholdBytes: STORAGE_WARNING_FREE_BYTES,
+        criticalThresholdBytes: STORAGE_CRITICAL_FREE_BYTES,
+        fileCount: events.filter((entry) => String(entry.action || "").includes("UPLOAD")).length,
+        eventCount: events.length,
+        lastUpload: lastUpload ? sanitizeLogEntryValue(lastUpload) : null,
+        lastDownload: lastDownload ? sanitizeLogEntryValue(lastDownload) : null,
+        lastError: lastError ? sanitizeLogEntryValue(lastError) : null,
+        lastCheckedAt: nowIso()
+      }
+    }
+  }
+}
+
+async function handleStorageDownload(request, url, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const fileId = clean(url?.pathname?.split("/").pop() || body?.fileId || body?.file_id)
+  if (!fileId) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "fileId is required",
+        errorName: "StorageFileRequired",
+        errorMessage: "fileId is required"
+      }
+    }
+  }
+
+  const found = findStorageRecordById(fileId)
+  if (!found || !found.filePath || !fs.existsSync(found.filePath)) {
+    return {
+      status: 404,
+      payload: {
+        ok: false,
+        error: "Storage file not found",
+        errorName: "StorageFileNotFound",
+        errorMessage: "Storage file not found"
+      }
+    }
+  }
+
+  const meta = found.meta && typeof found.meta === "object" ? found.meta : {}
+  if (String(meta.status || "").toLowerCase() === "deleted") {
+    return {
+      status: 410,
+      payload: {
+        ok: false,
+        error: "Storage file has been deleted",
+        errorName: "StorageFileDeleted",
+        errorMessage: "Storage file has been deleted"
+      }
+    }
+  }
+  const buffer = fs.readFileSync(found.filePath)
+  const contentType = clean(meta.content_type || meta.contentType) || "application/octet-stream"
+  const safeFilename = sanitizeStorageFilename(meta.safe_filename || meta.original_filename || path.basename(found.filePath))
+
+  const disk = storageDiskSnapshot()
+  const event = {
+    action: "STORAGE_DOWNLOAD",
+    moduleKey: meta.module_key || "email_os",
+    fileId,
+    mailboxId: meta.mailbox_id || null,
+    entityType: meta.entity_type || "attachment",
+    direction: found.directory.includes(`${path.sep}archive${path.sep}`) ? "archive" : found.directory.includes(`${path.sep}inbound${path.sep}`) ? "inbound" : "outbound",
+    status: "ok",
+    freeBytes: disk.freeBytes,
+    usedBytes: disk.usedBytes,
+    metadata: {
+      originalFilename: meta.original_filename || safeFilename,
+      contentType,
+      sizeBytes: buffer.length
+    }
+  }
+  logStorageEvent(event)
+  runtimeState.lastStorageDownload = {
+    timestamp: nowIso(),
+    ...event
+  }
+
+  return {
+    status: 200,
+    binary: {
+      status: 200,
+      body: buffer,
+      headers: {
+        "Content-Type": contentType,
+        "Content-Disposition": `attachment; filename="${safeFilename.replace(/"/g, "_")}"`,
+        "X-AngelCare-Storage-File-Id": fileId,
+        "X-AngelCare-Storage-Bucket": clean(meta.storage_bucket || STORAGE_BUCKET),
+        "X-AngelCare-Storage-Key": clean(meta.storage_key || ""),
+        "X-AngelCare-Storage-Status": clean(meta.status || "active"),
+        "X-AngelCare-Storage-Size-Bytes": String(buffer.length),
+        "X-Content-Type-Options": "nosniff"
+      }
+    }
+  }
+}
+
+async function handleStorageDelete(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const fileId = clean(body.fileId || body.file_id)
+  const reason = clean(body.reason) || "requested_delete"
+  if (!fileId) {
+    return {
+      status: 400,
+      payload: {
+        ok: false,
+        error: "fileId is required",
+        errorName: "StorageFileRequired",
+        errorMessage: "fileId is required"
+      }
+    }
+  }
+
+  const found = findStorageRecordById(fileId)
+  if (!found || !found.directory || !fs.existsSync(found.directory)) {
+    return {
+      status: 404,
+      payload: {
+        ok: false,
+        error: "Storage file not found",
+        errorName: "StorageFileNotFound",
+        errorMessage: "Storage file not found"
+      }
+    }
+  }
+
+  const meta = found.meta && typeof found.meta === "object" ? found.meta : {}
+  const currentDirection = found.directory.includes(`${path.sep}archive${path.sep}`) ? "archive" : found.directory.includes(`${path.sep}inbound${path.sep}`) ? "inbound" : found.directory.includes(`${path.sep}temp${path.sep}`) ? "temp" : "outbound"
+  const targetFolder = buildStorageFolder("archive", meta.module_key || "email_os", meta.entity_type || "attachment", fileId)
+  if (currentDirection === "archive" && found.directory === targetFolder) {
+    const archivedMeta = {
+      ...meta,
+      status: "deleted",
+      deleted_at: meta.deleted_at || nowIso(),
+      updated_at: nowIso()
+    }
+    fs.writeFileSync(path.join(targetFolder, "_metadata.json"), `${JSON.stringify(archivedMeta, null, 2)}\n`, "utf8")
+    return {
+      status: 200,
+      payload: {
+        ok: true,
+        data: {
+          fileId,
+          status: "deleted",
+          deletedAt: archivedMeta.deleted_at,
+          reason
+        }
+      }
+    }
+  }
+  fs.mkdirSync(path.dirname(targetFolder), { recursive: true })
+  if (fs.existsSync(targetFolder)) {
+    fs.rmSync(targetFolder, { recursive: true, force: true })
+  }
+  fs.renameSync(found.directory, targetFolder)
+
+  const safeFilename = sanitizeStorageFilename(meta.safe_filename || meta.original_filename || path.basename(found.filePath || "attachment"))
+  const archivedMeta = {
+    ...meta,
+    status: "deleted",
+    deleted_at: nowIso(),
+    updated_at: nowIso(),
+    storage_key: path.posix.join("email-os", "attachments", "archive", sanitizeStoragePart(meta.module_key || "email_os"), sanitizeStoragePart(meta.entity_type || "attachment"), fileId, safeFilename)
+  }
+  fs.writeFileSync(path.join(targetFolder, "_metadata.json"), `${JSON.stringify(archivedMeta, null, 2)}\n`, "utf8")
+
+  const disk = storageDiskSnapshot()
+  logStorageEvent({
+    action: "STORAGE_DELETE",
+    moduleKey: meta.module_key || "email_os",
+    fileId,
+    mailboxId: meta.mailbox_id || null,
+    entityType: meta.entity_type || "attachment",
+    direction: currentDirection,
+    status: "ok",
+    freeBytes: disk.freeBytes,
+    usedBytes: disk.usedBytes,
+    metadata: { reason }
+  })
+  runtimeState.lastStorageError = null
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      data: {
+        fileId,
+        status: "deleted",
+        deletedAt: archivedMeta.deleted_at,
+        reason
       }
     }
   }
@@ -3220,6 +3917,37 @@ async function handleRequest(request, response) {
     const auth = requireAdminToken(request)
     if (!auth.ok) return writeJson(response, auth.status, { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error })
     const result = await handleAdminStatus(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/health" && request.method === "GET") {
+    const result = await handleStorageHealth(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/usage" && request.method === "GET") {
+    const result = await handleStorageUsage(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/upload" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageUpload(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if ((pathname === "/admin/storage/download" || pathname.startsWith("/admin/storage/download/")) && (request.method === "GET" || request.method === "POST")) {
+    const body = request.method === "POST" ? await readJsonBody(request) : {}
+    const result = await handleStorageDownload(request, url, body)
+    if (result.binary) {
+      return writeBinary(response, result.binary.status, result.binary.body, result.binary.headers)
+    }
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/delete" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDelete(request, body)
     return writeJson(response, result.status, result.payload)
   }
 

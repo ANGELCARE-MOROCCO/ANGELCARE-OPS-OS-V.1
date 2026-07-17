@@ -4,6 +4,7 @@ import tls from "node:tls"
 import { simpleParser } from "mailparser"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
+import { recordStorageEvent, upsertStorageFileMetadata } from "@/lib/email-os-core/storage-gateway"
 import type { ResolvedEmailOSMailbox } from "@/lib/email-os-core/multi-mailbox-resolver"
 
 type Pop3MessageRef = {
@@ -31,7 +32,19 @@ type EmailOSInboundSyncResult = {
 export type EmailOSBridgeInboundAttachment = {
   filename: string | null
   contentType: string | null
+  content_type?: string | null
   size: number | null
+  size_bytes?: number | null
+  storageFileId?: string | null
+  storage_file_id?: string | null
+  storageBucket?: string | null
+  storage_bucket?: string | null
+  storageKey?: string | null
+  storage_key?: string | null
+  storageStatus?: string | null
+  storage_status?: string | null
+  sha256Hash?: string | null
+  sha256_hash?: string | null
 }
 
 export type EmailOSBridgeInboundMessage = {
@@ -107,6 +120,10 @@ type ParsedInboundMessage = {
 
 function cleanLine(value: string) {
   return String(value || "").replace(/[\r\n]+/g, " ").trim()
+}
+
+function clean(value: unknown) {
+  return typeof value === "string" ? value.trim() : ""
 }
 
 function previewFrom(text: string | undefined | null, html: string | false | undefined) {
@@ -188,7 +205,12 @@ function buildBridgeRawPayload(mailbox: ResolvedEmailOSMailbox, providerUid: str
       ? message.attachments.map((attachment) => ({
           filename: attachment?.filename || null,
           contentType: attachment?.contentType || null,
-          size: Number.isFinite(Number(attachment?.size)) ? Number(attachment?.size) : 0
+          size: Number.isFinite(Number(attachment?.size)) ? Number(attachment?.size) : 0,
+          storageFileId: attachment?.storageFileId || attachment?.storage_file_id || null,
+          storageBucket: attachment?.storageBucket || attachment?.storage_bucket || null,
+          storageKey: attachment?.storageKey || attachment?.storage_key || null,
+          storageStatus: attachment?.storageStatus || attachment?.storage_status || null,
+          sha256Hash: attachment?.sha256Hash || attachment?.sha256_hash || null
         }))
       : [],
     hasAttachments: Boolean(message.hasAttachments),
@@ -237,6 +259,10 @@ export async function persistEmailOSBridgeInboundMessages(
       throw new EmailOSInboundPersistenceError(lookupError.message)
     }
 
+    const attachmentRows = Array.isArray(message.attachments)
+      ? message.attachments.filter((attachment) => clean(attachment?.storageFileId || attachment?.storage_file_id || ""))
+      : []
+
     const payload = {
       id: makeEmailOSId(),
       mailbox_id: mailbox.mailboxId,
@@ -280,6 +306,53 @@ export async function persistEmailOSBridgeInboundMessages(
         throw new EmailOSInboundPersistenceError(insertError.message)
       }
       inserted += 1
+    }
+
+    for (const attachment of attachmentRows) {
+      const fileId = clean(attachment?.storageFileId || attachment?.storage_file_id)
+      if (!fileId) continue
+      await upsertStorageFileMetadata(db, {
+        id: fileId,
+        module_key: "email_os",
+        mailbox_id: mailbox.mailboxId,
+        entity_type: "pop3_message",
+        entity_id: providerUid,
+        original_filename: clean(attachment?.filename || "attachment"),
+        safe_filename: clean(attachment?.filename || "attachment"),
+        content_type: clean(attachment?.contentType || attachment?.content_type || "application/octet-stream") || "application/octet-stream",
+        size_bytes: Number(attachment?.size || attachment?.size_bytes || 0),
+        sha256_hash: clean(attachment?.sha256Hash || attachment?.sha256_hash || ""),
+        storage_provider: "windows_node",
+        storage_node: "angelcare-windows-node-01",
+        storage_bucket: clean(attachment?.storageBucket || attachment?.storage_bucket || "email-os-attachments") || "email-os-attachments",
+        storage_key: clean(attachment?.storageKey || attachment?.storage_key || ""),
+        status: clean(attachment?.storageStatus || attachment?.storage_status || "active") || "active",
+        created_by: "windows_bridge_pop3",
+        created_at: receivedAt,
+        updated_at: nowIso(),
+        deleted_at: null,
+        metadata: {
+          source: "windows-bridge-pop3",
+          providerUid,
+          mailboxKey: mailbox.key
+        }
+      })
+
+      await recordStorageEvent(db, {
+        fileId,
+        action: "inbound_sync",
+        moduleKey: "email_os",
+        actorUserId: null,
+        ipAddress: null,
+        userAgent: null,
+        metadata: {
+          providerUid,
+          mailboxId: mailbox.mailboxId,
+          filename: clean(attachment?.filename || "attachment"),
+          storageBucket: clean(attachment?.storageBucket || attachment?.storage_bucket || "email-os-attachments") || "email-os-attachments",
+          storageKey: clean(attachment?.storageKey || attachment?.storage_key || "")
+        }
+      })
     }
 
     synced.push({

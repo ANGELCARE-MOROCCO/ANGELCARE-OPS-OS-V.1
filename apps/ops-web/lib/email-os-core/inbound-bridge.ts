@@ -31,6 +31,10 @@ export type EmailOSInboundBridgeMessage = {
     filename: string | null
     contentType: string | null
     size: number | null
+    storageFileId?: string | null
+    storageBucket?: string | null
+    storageKey?: string | null
+    storageStatus?: string | null
   }>
   rawHeaders: Record<string, string>
 }

@@ -13,6 +13,7 @@ import {
   Globe2,
   ImageIcon,
   Italic,
+  Download,
   Link2,
   List,
   MailCheck,
@@ -32,10 +33,16 @@ import {
 
 type Props = {
   open: boolean
-  mode: "compose" | "reply" | "schedule"
+  mode: "compose" | "reply" | "forward" | "schedule"
   mailboxes?: any[]
   selectedEmail?: any
   mailboxScopeLocked?: boolean
+  initialMailboxId?: string
+  initialRecipients?: Array<{ name?: string; email: string }>
+  initialSubject?: string
+  initialBody?: string
+  initialCc?: string
+  initialBcc?: string
   onClose: () => void
   onDone?: () => void
 }
@@ -83,6 +90,19 @@ function niceName(email: string) {
   return base.split(/[._-]+/).filter(Boolean).map((x) => x[0]?.toUpperCase() + x.slice(1)).join(" ")
 }
 
+function quoteOriginal(selectedEmail: any) {
+  const body = selectedEmail?.body || selectedEmail?.bodyText || selectedEmail?.preview || ""
+  const lines = [
+    "",
+    "---------- Message d'origine ----------",
+    `De: ${senderOf(selectedEmail) || "inconnu"}`,
+    `Objet: ${subjectOf(selectedEmail) || "(Sans objet)"}`,
+    "",
+    String(body)
+  ]
+  return lines.join("\n")
+}
+
 
 function fileToBase64(file: File) {
   return new Promise<string>((resolve, reject) => {
@@ -94,6 +114,29 @@ function fileToBase64(file: File) {
     }
     reader.readAsDataURL(file)
   })
+}
+
+async function uploadAttachmentToGateway(file: File, mailboxId: string, entityType: string) {
+  const formData = new FormData()
+  formData.append("file", file)
+  formData.append("moduleKey", "email_os")
+  formData.append("mailboxId", mailboxId)
+  formData.append("entityType", entityType)
+  formData.append("direction", "outbound")
+  formData.append("createdBy", "enterprise-compose-modal")
+  formData.append("metadata", JSON.stringify({ source: "enterprise-compose-modal" }))
+
+  const res = await fetch("/api/storage/upload", {
+    method: "POST",
+    body: formData
+  })
+
+  const json = await res.json().catch(() => null)
+  return {
+    ok: res.ok && json?.ok !== false,
+    data: json?.data ?? json,
+    error: json?.error || (!res.ok ? `HTTP ${res.status}` : null)
+  }
 }
 
 const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
@@ -152,6 +195,12 @@ export default function EnterpriseComposeModal({
   mailboxes = [],
   selectedEmail,
   mailboxScopeLocked = false,
+  initialMailboxId,
+  initialRecipients,
+  initialSubject,
+  initialBody,
+  initialCc,
+  initialBcc,
   onClose,
   onDone
 }: Props) {
@@ -175,17 +224,29 @@ export default function EnterpriseComposeModal({
   const [bccEmail, setBccEmail] = useState("")
   const [driveUrl, setDriveUrl] = useState("")
   const [showDriveBox, setShowDriveBox] = useState(false)
-  const [mailboxId, setMailboxId] = useState(selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
-  const [recipients, setRecipients] = useState(
-    mode === "reply" && replyTo
-      ? [{ name: niceName(replyTo), email: replyTo }]
-      : []
+  const [mailboxId, setMailboxId] = useState(initialMailboxId || selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
+  const [recipients, setRecipients] = useState<Array<{ name?: string; email: string }>>(
+    initialRecipients?.length
+      ? initialRecipients
+      : mode === "reply" && replyTo
+        ? [{ name: niceName(replyTo), email: replyTo }]
+        : []
   )
-  const [subject, setSubject] = useState(mode === "reply" ? `Re: ${subjectOf(selectedEmail)}` : "")
+  const [subject, setSubject] = useState(
+    initialSubject ||
+    (mode === "reply"
+      ? `Re: ${subjectOf(selectedEmail)}`
+      : mode === "forward"
+        ? `Fwd: ${subjectOf(selectedEmail)}`
+        : "")
+  )
   const [body, setBody] = useState(
-    mode === "reply"
-      ? `Dear ${niceName(replyTo)},\n\nThank you for your message.\n\nWe confirm that AngelCare has received your request and we will review the details internally before sharing the next operational step.\n\nBest regards,\nAngelCare`
-      : ""
+    initialBody ||
+    (mode === "reply"
+      ? `Bonjour ${niceName(replyTo)},\n\nMerci pour votre message.\n\nNous avons bien reçu votre demande et nous revenons vers vous dès que possible avec la suite opérationnelle.\n\nCordialement,\nAngelCare${quoteOriginal(selectedEmail)}`
+      : mode === "forward"
+        ? `Bonjour,\n\nVeuillez trouver ci-dessous le message transféré et le contexte associé.\n\n${quoteOriginal(selectedEmail)}`
+        : "")
   )
   const [attachments, setAttachments] = useState<Array<{
     name: string
@@ -194,7 +255,43 @@ export default function EnterpriseComposeModal({
     source?: string
     mimeType?: string
     contentBase64?: string
+    fileId?: string
+    storageBucket?: string
+    storageKey?: string
+    storageStatus?: string
+    downloadUrl?: string
   }>>([])
+
+  useEffect(() => {
+    if (!open) return
+
+    setMailboxId(initialMailboxId || selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
+    setRecipients(
+      initialRecipients?.length
+        ? initialRecipients
+        : mode === "reply" && replyTo
+          ? [{ name: niceName(replyTo), email: replyTo }]
+          : []
+    )
+    setSubject(
+      initialSubject ||
+      (mode === "reply"
+        ? `Re: ${subjectOf(selectedEmail)}`
+        : mode === "forward"
+          ? `Fwd: ${subjectOf(selectedEmail)}`
+          : "")
+    )
+    setBody(
+      initialBody ||
+      (mode === "reply"
+        ? `Bonjour ${niceName(replyTo)},\n\nMerci pour votre message.\n\nNous avons bien reçu votre demande et nous revenons vers vous dès que possible avec la suite opérationnelle.\n\nCordialement,\nAngelCare${quoteOriginal(selectedEmail)}`
+        : mode === "forward"
+          ? `Bonjour,\n\nVeuillez trouver ci-dessous le message transféré et le contexte associé.\n\n${quoteOriginal(selectedEmail)}`
+          : "")
+    )
+    setCcEmail(initialCc || "")
+    setBccEmail(initialBcc || "")
+  }, [open, mode, selectedEmail?.mailbox_id, mailboxes, replyTo, initialMailboxId, initialRecipients, initialSubject, initialBody, initialCc, initialBcc])
 
   const resourceMailboxes = useMemo(() => {
     const normalizedProps = mailboxes.map((row: any) => ({
@@ -318,18 +415,43 @@ export default function EnterpriseComposeModal({
 
     setStatus("Reading attachment file(s)...")
 
-    const next = await Promise.all(selected.map(async (file) => ({
-      name: file.name,
-      size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
-      sizeBytes: file.size,
-      source: "local",
-      mimeType: file.type || "application/octet-stream",
-      contentBase64: await fileToBase64(file)
-    })))
+    const next = await Promise.all(selected.map(async (file) => {
+      const mimeType = file.type || "application/octet-stream"
+      if (mailboxId) {
+        try {
+          const uploaded = await uploadAttachmentToGateway(file, mailboxId, mode === "reply" || mode === "forward" ? "reply_attachment" : "compose_attachment")
+          if (uploaded.ok && uploaded.data?.id) {
+            return {
+              name: uploaded.data.original_filename || file.name,
+              size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
+              sizeBytes: file.size,
+              source: "storage",
+              mimeType,
+              fileId: uploaded.data.id,
+              storageBucket: uploaded.data.storage_bucket,
+              storageKey: uploaded.data.storage_key,
+              storageStatus: uploaded.data.status || "active",
+              downloadUrl: `/api/storage/download/${uploaded.data.id}?mailboxId=${encodeURIComponent(mailboxId)}`
+            }
+          }
+        } catch {
+          // Fall back to legacy inline attachment behavior below.
+        }
+      }
+
+      return {
+        name: file.name,
+        size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
+        sizeBytes: file.size,
+        source: "legacy",
+        mimeType,
+        contentBase64: await fileToBase64(file)
+      }
+    }))
 
     setAttachments((current) => [...current, ...next])
-    setStatus(`${next.length} real attachment(s) added`)
-    audit("attach_files", { files: next.map(({ name, size, sizeBytes, mimeType, source }) => ({ name, size, sizeBytes, mimeType, source })) })
+    setStatus(`${next.length} attachment(s) added`)
+    audit("attach_files", { files: next.map(({ name, size, sizeBytes, mimeType, source, fileId, storageStatus }) => ({ name, size, sizeBytes, mimeType, source, fileId, storageStatus })) })
   }
 
   function addDriveLink() {
@@ -390,7 +512,7 @@ export default function EnterpriseComposeModal({
         priority,
         status: statusValue,
         scheduledAt: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null,
-        attachments: attachments.filter((item) => item.source === "local" && item.contentBase64).map(({ name, mimeType, contentBase64 }) => ({ filename: name, contentType: mimeType, contentBase64 })),
+        attachments: attachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
         diagnostics: { tracking, readReceipt, attachments: attachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
@@ -431,7 +553,7 @@ export default function EnterpriseComposeModal({
         subject,
         body,
         priority,
-        attachments: attachments.filter((item) => item.source === "local" && item.contentBase64).map(({ name, mimeType, contentBase64 }) => ({ filename: name, contentType: mimeType, contentBase64 })),
+        attachments: attachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
         diagnostics: { tracking, readReceipt, attachments: attachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
@@ -505,7 +627,7 @@ export default function EnterpriseComposeModal({
               <div className="flex min-h-12 flex-1 flex-wrap items-center gap-3">
                 {recipients.map((recipient) => (
                   <span key={recipient.email} className="inline-flex h-12 items-center gap-3 rounded-2xl border border-violet-100 bg-violet-50 px-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-200 text-xs font-black text-violet-800">{recipient.name[0]}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-200 text-xs font-black text-violet-800">{(recipient.name || recipient.email || "?")[0]}</span>
                     <span className="leading-tight">
                       <span className="block text-sm font-black text-slate-800">{recipient.name}</span>
                       <span className="block text-xs font-semibold text-slate-500">{recipient.email}</span>
@@ -634,9 +756,19 @@ export default function EnterpriseComposeModal({
                       <div className="rounded-xl bg-red-50 p-2 text-red-600"><AttachmentIcon name={attachment.name} /></div>
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-xs font-black text-slate-800">{attachment.name}</div>
-                        <div className="text-xs font-semibold text-slate-500">{attachment.size}</div>
+                        <div className="text-xs font-semibold text-slate-500">{attachment.size} · {attachment.mimeType || "unknown"}</div>
+                        <div className="mt-1 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+                          {attachment.fileId ? `Storage ${attachment.storageStatus || "active"}` : "Legacy inline"}
+                        </div>
                       </div>
-                      <button type="button" onClick={() => setAttachments((current) => current.filter((item) => item !== attachment))}><X className="h-4 w-4 text-slate-400" /></button>
+                      <div className="flex items-center gap-2">
+                        {attachment.downloadUrl ? (
+                          <a href={attachment.downloadUrl} className="rounded-lg border border-slate-200 px-2 py-1 text-[11px] font-black text-slate-700 hover:bg-slate-50">
+                            <Download className="inline h-3.5 w-3.5" />
+                          </a>
+                        ) : null}
+                        <button type="button" onClick={() => setAttachments((current) => current.filter((item) => item !== attachment))}><X className="h-4 w-4 text-slate-400" /></button>
+                      </div>
                     </div>
                   ))}
                 </div>

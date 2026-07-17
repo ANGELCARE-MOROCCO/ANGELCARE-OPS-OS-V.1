@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getCurrentAppUser } from '@/lib/auth/session'
 import { requireUnlockedMailboxAccess } from '@/lib/email-os-core/access-governance'
 import EmailOSErrorBoundary from '@/components/email-os-core/EmailOSErrorBoundary'
-import EmailOSEnterpriseProductionWorkspace from '@/components/email-os-core/EmailOSEnterpriseProductionWorkspace'
+import ScopedMailboxCommandCenter from '@/components/email-os-core/ScopedMailboxCommandCenter'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ mailboxId: st
 
   return (
     <EmailOSErrorBoundary>
-      <EmailOSEnterpriseProductionWorkspace mailboxId={mailboxId} />
+      <ScopedMailboxCommandCenter mailboxId={mailboxId} />
     </EmailOSErrorBoundary>
   )
 }
