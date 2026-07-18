@@ -184,6 +184,8 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
       incoming,
       count,
       fetched: bridgeResult.fetched,
+      inserted: persistResult.inserted,
+      updated: persistResult.updated,
       skipped,
       synced: persistResult.synced,
       source: "windows-bridge-pop3"
@@ -208,6 +210,8 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
         incoming,
         count: result.inserted,
         fetched: result.fetched,
+        inserted: result.inserted,
+        updated: result.updated || 0,
         skipped: result.skipped,
         synced: result.synced,
         source: "direct-pop3"

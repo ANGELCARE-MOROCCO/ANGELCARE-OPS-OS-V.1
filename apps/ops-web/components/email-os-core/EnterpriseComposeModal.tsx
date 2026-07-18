@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   Bold,
   Bot,
@@ -44,7 +44,7 @@ type Props = {
   initialCc?: string
   initialBcc?: string
   onClose: () => void
-  onDone?: () => void
+  onDone?: (event?: { type: "sent" | "draft" | "scheduled" }) => void
 }
 
 type ComposeTemplate = {
@@ -92,6 +92,57 @@ function niceName(email: string) {
 
 function normalizeTemplateText(value: unknown) {
   return String(value || "").replace(/\\n/g, "\n").replace(/\r\n/g, "\n")
+}
+
+function safeComposeStatus(value: unknown) {
+  const text = String(value || "Ready").trim()
+  if (!text) return "Ready"
+  if (/attachments?\s+is\s+not\s+defined/i.test(text)) {
+    return "Attachment system ready. You can send with or without files."
+  }
+  if (/referenceerror|typeerror|syntaxerror/i.test(text)) {
+    return "Compose status unavailable. Please refresh or retry."
+  }
+  return text
+}
+
+function titleCaseWords(value: string) {
+  return value
+    .replace(/[._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+function inferFirstName(value: string) {
+  const cleaned = value.replace(/<[^>]+>/g, " ").replace(/["']/g, " ").trim()
+  const local = cleaned.includes("@") ? cleaned.split("@")[0] : cleaned
+  const first = local.split(/[.\s_-]+/).filter(Boolean)[0] || ""
+  return titleCaseWords(first) || "Madame, Monsieur"
+}
+
+function renderComposeTemplateText(input: unknown, context: {
+  firstName: string
+  operator: string
+  mailbox: string
+  service: string
+  city: string
+}) {
+  const text = normalizeTemplateText(input)
+  const replacements: Record<string, string> = {
+    "{{first_name}}": context.firstName || "Madame, Monsieur",
+    "{{company}}": "AngelCare",
+    "{{mailbox}}": context.mailbox || "AngelCare",
+    "{{operator}}": context.operator || "AngelCare",
+    "{{date}}": new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" }).format(new Date()),
+    "{{service}}": context.service || "votre demande",
+    "{{city}}": context.city || "Maroc"
+  }
+
+  return Object.entries(replacements).reduce(
+    (current, [token, value]) => current.replaceAll(token, value),
+    text
+  )
 }
 
 function quoteOriginal(selectedEmail: any) {
@@ -209,6 +260,59 @@ export default function EnterpriseComposeModal({
   onDone
 }: Props) {
   const replyTo = senderOf(selectedEmail)
+  const composeIdentity = [
+    mode,
+    initialMailboxId || selectedEmail?.mailbox_id || selectedEmail?.mailboxId || "",
+    selectedEmail?.id || selectedEmail?.messageId || selectedEmail?.provider_uid || "new",
+    initialSubject || ""
+  ].join(":")
+  const draftStorageKey = `email-os-compose-draft:${composeIdentity}`
+  const initializedIdentityRef = useRef<string | null>(null)
+
+  function initialRecipientsValue() {
+    return initialRecipients?.length
+      ? initialRecipients
+      : mode === "reply" && replyTo
+        ? [{ name: niceName(replyTo), email: replyTo }]
+        : []
+  }
+
+  function initialSubjectValue() {
+    return initialSubject ||
+      (mode === "reply"
+        ? `Re: ${subjectOf(selectedEmail)}`
+        : mode === "forward"
+          ? `Fwd: ${subjectOf(selectedEmail)}`
+          : "")
+  }
+
+  function initialBodyValue() {
+    return initialBody ||
+      (mode === "reply"
+        ? `Bonjour ${niceName(replyTo)},\n\nMerci pour votre message.\n\nNous avons bien reçu votre demande et nous revenons vers vous dès que possible avec la suite opérationnelle.\n\nCordialement,\nAngelCare${quoteOriginal(selectedEmail)}`
+        : mode === "forward"
+          ? `Bonjour,\n\nVeuillez trouver ci-dessous le message transféré et le contexte associé.\n\n${quoteOriginal(selectedEmail)}`
+          : "")
+  }
+
+  function readStoredDraft() {
+    if (typeof window === "undefined") return null
+    try {
+      const raw = window.sessionStorage.getItem(draftStorageKey)
+      return raw ? JSON.parse(raw) : null
+    } catch {
+      return null
+    }
+  }
+
+  function clearStoredDraft() {
+    if (typeof window === "undefined") return
+    try {
+      window.sessionStorage.removeItem(draftStorageKey)
+    } catch {
+      // ignore storage cleanup failures
+    }
+  }
 
   const [liveMailboxes, setLiveMailboxes] = useState<ComposeMailbox[]>([])
   const [templates, setTemplates] = useState<ComposeTemplate[]>([])
@@ -228,30 +332,14 @@ export default function EnterpriseComposeModal({
   const [bccEmail, setBccEmail] = useState("")
   const [driveUrl, setDriveUrl] = useState("")
   const [showDriveBox, setShowDriveBox] = useState(false)
-  const [mailboxId, setMailboxId] = useState(initialMailboxId || selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
+  const storedDraft = readStoredDraft()
+  const [mailboxId, setMailboxId] = useState<string>(storedDraft?.mailboxId || initialMailboxId || selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
   const [recipients, setRecipients] = useState<Array<{ name?: string; email: string }>>(
-    initialRecipients?.length
-      ? initialRecipients
-      : mode === "reply" && replyTo
-        ? [{ name: niceName(replyTo), email: replyTo }]
-        : []
+    Array.isArray(storedDraft?.recipients) ? storedDraft.recipients : initialRecipientsValue()
   )
-  const [subject, setSubject] = useState(
-    initialSubject ||
-    (mode === "reply"
-      ? `Re: ${subjectOf(selectedEmail)}`
-      : mode === "forward"
-        ? `Fwd: ${subjectOf(selectedEmail)}`
-        : "")
-  )
-  const [body, setBody] = useState(
-    initialBody ||
-    (mode === "reply"
-      ? `Bonjour ${niceName(replyTo)},\n\nMerci pour votre message.\n\nNous avons bien reçu votre demande et nous revenons vers vous dès que possible avec la suite opérationnelle.\n\nCordialement,\nAngelCare${quoteOriginal(selectedEmail)}`
-      : mode === "forward"
-        ? `Bonjour,\n\nVeuillez trouver ci-dessous le message transféré et le contexte associé.\n\n${quoteOriginal(selectedEmail)}`
-        : "")
-  )
+  const [recipientInput, setRecipientInput] = useState<string>(storedDraft?.recipientInput || "")
+  const [subject, setSubject] = useState<string>(storedDraft?.subject ?? initialSubjectValue())
+  const [body, setBody] = useState<string>(storedDraft?.body ?? initialBodyValue())
   const [attachments, setAttachments] = useState<Array<{
     name: string
     size: string
@@ -268,35 +356,42 @@ export default function EnterpriseComposeModal({
   const safeAttachments = Array.isArray(attachments) ? attachments : []
 
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      initializedIdentityRef.current = null
+      return
+    }
 
-    setMailboxId(initialMailboxId || selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
-    setRecipients(
-      initialRecipients?.length
-        ? initialRecipients
-        : mode === "reply" && replyTo
-          ? [{ name: niceName(replyTo), email: replyTo }]
-          : []
-    )
-    setSubject(
-      initialSubject ||
-      (mode === "reply"
-        ? `Re: ${subjectOf(selectedEmail)}`
-        : mode === "forward"
-          ? `Fwd: ${subjectOf(selectedEmail)}`
-          : "")
-    )
-    setBody(
-      initialBody ||
-      (mode === "reply"
-        ? `Bonjour ${niceName(replyTo)},\n\nMerci pour votre message.\n\nNous avons bien reçu votre demande et nous revenons vers vous dès que possible avec la suite opérationnelle.\n\nCordialement,\nAngelCare${quoteOriginal(selectedEmail)}`
-        : mode === "forward"
-          ? `Bonjour,\n\nVeuillez trouver ci-dessous le message transféré et le contexte associé.\n\n${quoteOriginal(selectedEmail)}`
-          : "")
-    )
-    setCcEmail(initialCc || "")
-    setBccEmail(initialBcc || "")
-  }, [open, mode, selectedEmail?.mailbox_id, mailboxes, replyTo, initialMailboxId, initialRecipients, initialSubject, initialBody, initialCc, initialBcc])
+    if (initializedIdentityRef.current === composeIdentity) return
+    initializedIdentityRef.current = composeIdentity
+
+    const stored = readStoredDraft()
+    setMailboxId(stored?.mailboxId || initialMailboxId || selectedEmail?.mailbox_id || mailboxes[0]?.id || "")
+    setRecipients(Array.isArray(stored?.recipients) ? stored.recipients : initialRecipientsValue())
+    setRecipientInput(stored?.recipientInput || "")
+    setSubject(stored?.subject ?? initialSubjectValue())
+    setBody(stored?.body ?? initialBodyValue())
+    setCcEmail(stored?.ccEmail ?? initialCc ?? "")
+    setBccEmail(stored?.bccEmail ?? initialBcc ?? "")
+  }, [open, composeIdentity])
+
+  useEffect(() => {
+    if (!open || typeof window === "undefined") return
+    try {
+      window.sessionStorage.setItem(draftStorageKey, JSON.stringify({
+        mailboxId,
+        recipients,
+        recipientInput,
+        subject,
+        body,
+        ccEmail,
+        bccEmail,
+        updatedAt: new Date().toISOString()
+      }))
+    } catch {
+      // session draft persistence is best-effort only
+    }
+  }, [open, draftStorageKey, mailboxId, recipients, recipientInput, subject, body, ccEmail, bccEmail])
+
 
   const resourceMailboxes = useMemo(() => {
     const normalizedProps = mailboxes.map((row: any) => ({
@@ -322,7 +417,12 @@ export default function EnterpriseComposeModal({
 
   const activeMailbox = resourceMailboxes.find((item) => item.id === mailboxId) || resourceMailboxes[0] || null
   const activeSignature = mailboxSignature(activeMailbox)
-  const toEmail = recipients.map((r) => r.email).join(", ")
+  const pendingRecipients = recipientInput
+    .split(/[;,\s]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .filter((item) => item.includes("@"))
+  const toEmail = [...recipients.map((r) => r.email), ...pendingRecipients].filter(Boolean).join(", ")
 
   const filteredTemplates = templates.filter((template) => {
     const q = templateSearch.toLowerCase().trim()
@@ -387,14 +487,47 @@ export default function EnterpriseComposeModal({
   }
 
   function addRecipient(email: string) {
-    const value = email.trim()
-    if (!value) return
-    setRecipients((current) => [...current, { name: niceName(value), email: value }])
+    const values = String(email || "")
+      .split(/[;,\s]+/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .filter((item) => item.includes("@"))
+
+    if (!values.length) return false
+
+    setRecipients((current) => {
+      const existing = new Set(current.map((item) => item.email.toLowerCase()))
+      const next = [...current]
+      for (const value of values) {
+        const key = value.toLowerCase()
+        if (!existing.has(key)) {
+          existing.add(key)
+          next.push({ name: niceName(value), email: value })
+        }
+      }
+      return next
+    })
+
+    setRecipientInput("")
+    return true
+  }
+
+  function commitRecipientInput() {
+    return addRecipient(recipientInput)
   }
 
   function applyTemplate(template: ComposeTemplate) {
-    setSubject(template.subject || template.name || subject)
-    setBody(normalizeTemplateText(template.body || body))
+    const firstRecipient = recipients[0]?.email || recipients[0]?.name || toEmail || selectedEmail?.from_email || ""
+    const templateContext = {
+      firstName: inferFirstName(firstRecipient),
+      operator: activeMailbox?.name || activeMailbox?.email || "AngelCare",
+      mailbox: activeMailbox?.name || activeMailbox?.email || "AngelCare",
+      service: selectedEmail?.subject || template.category || activeSignature.unit || "votre demande",
+      city: "Maroc"
+    }
+
+    setSubject(renderComposeTemplateText(template.subject || template.name || subject, templateContext))
+    setBody(renderComposeTemplateText(template.body || body, templateContext))
     if (template.priority) setPriority(template.priority)
     setTemplateMenuOpen(false)
     setStatus(`Template applied: ${template.name}`)
@@ -504,7 +637,7 @@ export default function EnterpriseComposeModal({
     setBusy(true)
     setStatus(statusValue === "scheduled" ? "Saving scheduled email..." : "Saving draft...")
 
-    const result = await api("/api/email-os/entities/drafts", {
+    const result = await api("/api/email-os/compose/draft", {
       method: "POST",
       body: JSON.stringify({
         mailboxId,
@@ -518,6 +651,8 @@ export default function EnterpriseComposeModal({
         status: statusValue,
         scheduledAt: scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}` : null,
         attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
+        tracking,
+        readReceipt,
         diagnostics: { tracking, readReceipt, attachments: safeAttachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
@@ -528,8 +663,9 @@ export default function EnterpriseComposeModal({
     setStatus(result.ok ? (statusValue === "scheduled" ? "Scheduled email saved" : "Draft saved") : result.error || "Draft failed")
 
     if (result.ok) {
-      onDone?.()
-      if (statusValue === "scheduled") onClose()
+      onDone?.({ type: statusValue === "scheduled" ? "scheduled" : "draft" })
+      clearStoredDraft()
+      setTimeout(() => onClose(), 350)
     }
   }
 
@@ -559,6 +695,8 @@ export default function EnterpriseComposeModal({
         body,
         priority,
         attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId })),
+        tracking,
+        readReceipt,
         diagnostics: { tracking, readReceipt, attachments: safeAttachments.map(({ contentBase64, ...safe }) => safe), mode }
       })
     })
@@ -569,8 +707,9 @@ export default function EnterpriseComposeModal({
     setStatus(result.ok ? "Sent" : result.error || "Send failed")
 
     if (result.ok) {
-      onDone?.()
-      onClose()
+      clearStoredDraft()
+      onDone?.({ type: "sent" })
+      setTimeout(() => onClose(), 550)
     }
   }
 
@@ -580,8 +719,8 @@ export default function EnterpriseComposeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/55 p-3 backdrop-blur-xl">
-      <div className="grid h-[calc(100vh-28px)] w-full max-w-[1920px] grid-cols-[minmax(0,1fr)_440px] overflow-hidden rounded-[34px] border border-white/70 bg-white shadow-[0_30px_120px_rgba(15,23,42,.32)] ring-1 ring-sky-100">
+    <div className="fixed left-0 right-0 bottom-0 top-[92px] z-[2147483647] flex items-start justify-center bg-slate-950/55 p-4 backdrop-blur-xl">
+      <div className="grid h-[calc(100vh-120px)] w-full max-w-[1920px] grid-cols-[minmax(0,1fr)_440px] overflow-hidden rounded-[34px] border border-white/70 bg-white shadow-[0_30px_120px_rgba(15,23,42,.32)] ring-1 ring-sky-100">
         <section className="flex min-h-0 flex-col">
           <header className="flex h-20 items-center justify-between border-b border-slate-200/80 bg-gradient-to-r from-white via-sky-50/60 to-indigo-50/60 px-8">
             <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">New Message</h2>
@@ -641,13 +780,18 @@ export default function EnterpriseComposeModal({
                   </span>
                 ))}
                 <input
+                  value={recipientInput}
+                  onChange={(event) => setRecipientInput(event.target.value)}
                   onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      addRecipient(event.currentTarget.value)
-                      event.currentTarget.value = ""
+                    if (["Enter", "Tab", ",", ";"].includes(event.key)) {
+                      const committed = commitRecipientInput()
+                      if (committed) event.preventDefault()
                     }
                   }}
-                  placeholder="+ add recipient then press Enter"
+                  onBlur={() => {
+                    commitRecipientInput()
+                  }}
+                  placeholder="+ add recipient, press Enter or click outside"
                   className="h-10 min-w-[190px] flex-1 bg-transparent text-sm font-semibold outline-none"
                 />
               </div>
@@ -874,7 +1018,7 @@ export default function EnterpriseComposeModal({
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex justify-between">
               <h3 className="font-black">Attachments</h3>
-              <button type="button" onClick={() => setStatus("Manage attachments panel ready")} className="text-sm font-black text-blue-500">Manage all</button>
+              <button type="button" onClick={() => setStatus("Attachment manager opened")} className="text-sm font-black text-blue-500">Manage all</button>
             </div>
             <div className="text-sm font-semibold text-slate-500">{safeAttachments.length} files attached</div>
             {safeAttachments.length === 0 ? (
@@ -906,7 +1050,7 @@ export default function EnterpriseComposeModal({
                 <option value="low">Low</option>
               </select>
             </label>
-            <div className="mt-4 rounded-xl bg-slate-50 p-3 text-xs font-bold text-slate-500">{status}</div>
+            <div className="mt-4 rounded-xl bg-slate-50 p-3 text-xs font-bold text-slate-500">{safeComposeStatus(status)}</div>
           </div>
         </aside>
       </div>

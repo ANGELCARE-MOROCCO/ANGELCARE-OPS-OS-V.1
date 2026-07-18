@@ -13,12 +13,50 @@ function normalizeAttachmentsForSend(value: any) {
   const rows = Array.isArray(value) ? value : []
   return rows.slice(0, 10)
     .map((item: any) => ({
-      filename: clean(item.filename || item.name),
+      filename: clean(item.filename || item.name || item.original_filename),
       contentType: clean(item.contentType || item.content_type || item.mimeType) || "application/octet-stream",
       contentBase64: clean(item.contentBase64 || item.content_base64 || item.base64 || item.content),
+      fileId: clean(item.fileId || item.file_id || item.storageFileId || item.storage_file_id),
+      storageFileId: clean(item.storageFileId || item.storage_file_id || item.fileId || item.file_id),
     }))
-    .filter((item: any) => item.filename && item.contentBase64)
+    .filter((item: any) => item.filename && (item.contentBase64 || item.fileId || item.storageFileId))
 }
+
+function absoluteBaseUrl(request: Request) {
+  const explicitPublic = clean(process.env.EMAIL_OS_PUBLIC_APP_URL)
+  if (explicitPublic) return explicitPublic.startsWith("http") ? explicitPublic.replace(/\/+$/, "") : `https://${explicitPublic.replace(/\/+$/, "")}`
+
+  const appUrl = clean(process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL)
+  if (appUrl) return appUrl.startsWith("http") ? appUrl.replace(/\/+$/, "") : `https://${appUrl.replace(/\/+$/, "")}`
+
+  const origin = clean(request.headers.get("origin"))
+  if (origin) return origin.replace(/\/+$/, "")
+
+  const forwardedHost = clean(request.headers.get("x-forwarded-host"))
+  const forwardedProto = clean(request.headers.get("x-forwarded-proto")) || "https"
+  if (forwardedHost) return `${forwardedProto}://${forwardedHost}`.replace(/\/+$/, "")
+
+  const host = clean(request.headers.get("host"))
+  if (host) {
+    const proto = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https"
+    return `${proto}://${host}`.replace(/\/+$/, "")
+  }
+
+  return ""
+}
+
+function trackingPixelUrl(baseUrl: string, trackingId: string) {
+  if (!trackingId || !baseUrl) return ""
+  return `${baseUrl}/api/email-os/tracking/open/${encodeURIComponent(trackingId)}.gif`
+}
+
+function withTrackingPixel(message: string, baseUrl: string, trackingId: string) {
+  const src = trackingPixelUrl(baseUrl, trackingId)
+  if (!trackingId || !src) return message || ""
+  const pixel = `<img src="${src}" width="1" height="1" alt="" border="0" />`
+  return `${message || ""}\n\n${pixel}`
+}
+
 
 export async function POST(request: Request) {
   let outboxId = ""
@@ -41,6 +79,11 @@ export async function POST(request: Request) {
     const messageBody = clean(body.body || body.message)
     const priority = clean(body.priority) || "normal"
     const attachments = normalizeAttachmentsForSend(body.attachments)
+    const trackingEnabled = body.tracking !== false && body.tracking !== "false"
+    const trackingId = trackingEnabled ? makeEmailOSId() : ""
+    const trackingBaseUrl = absoluteBaseUrl(request)
+    const trackingUrl = trackingPixelUrl(trackingBaseUrl, trackingId)
+    const sendBody = trackingEnabled ? withTrackingPixel(messageBody, trackingBaseUrl, trackingId) : messageBody
 
     if (!toEmail) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
@@ -89,6 +132,11 @@ export async function POST(request: Request) {
       body: messageBody,
       status: "sending",
       provider_message_id: null,
+      tracking_id: trackingId || null,
+      tracking_enabled: trackingEnabled,
+      first_opened_at: null,
+      last_opened_at: null,
+      open_count: 0,
       created_at: now,
       updated_at: now,
       sent_at: null,
@@ -100,6 +148,14 @@ export async function POST(request: Request) {
         route: "send-direct",
         transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
         attachmentCount: attachments.length,
+        tracking: {
+          enabled: trackingEnabled,
+          trackingId: trackingId || null,
+          status: trackingEnabled ? "active_not_opened" : "off",
+          url: trackingUrl || null,
+          baseUrl: trackingBaseUrl || null,
+          bodyPreview: sendBody.slice(-500)
+        },
       },
       queue_id: null,
       from_email: resolvedFrom || null,
@@ -113,7 +169,7 @@ export async function POST(request: Request) {
       ccEmail,
       bccEmail,
       subject,
-      body: messageBody,
+      body: sendBody,
       attachments,
     })
 
@@ -137,6 +193,11 @@ export async function POST(request: Request) {
           smtpUser: identity.smtp.user,
           transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
           attachmentCount: attachments.length,
+          tracking: {
+            enabled: trackingEnabled,
+            trackingId: trackingId || null,
+            status: trackingEnabled ? "active_not_opened" : "off"
+          },
           accepted: info.accepted || [],
           rejected: info.rejected || [],
         },
@@ -159,6 +220,14 @@ export async function POST(request: Request) {
         smtpUser: identity.smtp.user,
         messageId: info.messageId || null,
         attachmentCount: attachments.length,
+        tracking: {
+          enabled: trackingEnabled,
+          trackingId: trackingId || null,
+          status: trackingEnabled ? "active_not_opened" : "off",
+          url: trackingUrl || null,
+          baseUrl: trackingBaseUrl || null,
+          bodyPreview: sendBody.slice(-500)
+        },
       },
       created_at: sentAt,
     }).then(() => null, () => null)

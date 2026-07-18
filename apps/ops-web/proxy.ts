@@ -25,6 +25,7 @@ function hasCareLinkOpsSession(request: NextRequest) {
     'angelcare_token',
     'app_session',
     'app_token',
+    'angelcare_ops_session',
     'sb-access-token',
     'supabase-auth-token',
   ])

@@ -28,6 +28,14 @@ export type EmailOSSendInput = {
   attachments?: EmailOSAttachmentInput[]
 }
 
+export type EmailOSSendInfo = {
+  messageId: string | null
+  accepted: unknown[]
+  rejected: unknown[]
+  bridge: boolean
+  bridgeUrl?: string
+}
+
 export type EmailOSBridgeFetchDiagnostics = {
   bridgeFetchFailed: true
   bridgeUrlHost: string
@@ -209,6 +217,18 @@ async function normalizeEmailAttachments(input: unknown) {
   return normalized
 }
 
+function htmlFromBody(value: unknown) {
+  const raw = String(value || "")
+  if (/<[a-z][\s\S]*>/i.test(raw)) return raw.replace(/\n/g, "<br />")
+  return raw.replace(/\n/g, "<br />")
+}
+
+function textFromBody(value: unknown) {
+  return String(value || "")
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+}
+
 function safePreview(input: unknown, maxLength = 260) {
   if (input === null || input === undefined) return ""
 
@@ -270,7 +290,7 @@ function getBridgeFailureMessage(reason: string, bridgeUrl: string) {
   return `${reason}${host ? ` (${host})` : ""}`
 }
 
-async function sendViaBridge(identity: any, input: EmailOSSendInput) {
+async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<EmailOSSendInfo | null> {
   const { bridgeUrl, bridgeToken, forceBridge, hasBridgeUrl, hasBridgeToken } = getBridgeConfig()
 
   if (!hasBridgeUrl || !bridgeUrl.startsWith("http://") && !bridgeUrl.startsWith("https://")) {
@@ -344,8 +364,9 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput) {
         cc: clean(input.ccEmail) || undefined,
         bcc: clean(input.bccEmail) || undefined,
         subject: input.subject || "(Sans objet)",
-        text: input.body || "",
-        html: String(input.body || "").replace(/\n/g, "<br />"),
+        body: input.body || "",
+        text: textFromBody(input.body),
+        html: htmlFromBody(input.body),
         replyTo: input.headers?.["Reply-To"] || undefined,
         attachments: (await normalizeEmailAttachments(input.attachments || [])).map((item) => ({
           filename: item.filename,
@@ -409,7 +430,7 @@ export function getEmailOSBridgeFailureDiagnostics(error: unknown) {
   return null
 }
 
-export async function sendEmailOSDirect(input: EmailOSSendInput) {
+export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ identity: any; info: EmailOSSendInfo }> {
   const toEmail = clean(input.toEmail)
   const fromEmail = clean(input.fromEmail)
   const mailboxId = clean(input.mailboxId)
@@ -446,7 +467,7 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
 
   const lockKey = identity.smtp.user || identity.email || identity.key
 
-  const info = await runLocked(lockKey, async () => {
+  const info = await runLocked<EmailOSSendInfo>(lockKey, async () => {
     const bridged = await sendViaBridge(identity, input)
     if (bridged) return bridged
 
@@ -472,14 +493,14 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
     } as any)
 
     try {
-      return await transporter.sendMail({
+      const sent = await transporter.sendMail({
         from: identity.smtp.from,
         to: toEmail,
         cc: clean(input.ccEmail) || undefined,
         bcc: clean(input.bccEmail) || undefined,
         subject: input.subject || "(Sans objet)",
-        text: input.body || "",
-        html: String(input.body || "").replace(/\n/g, "<br />"),
+        text: textFromBody(input.body),
+        html: htmlFromBody(input.body),
         attachments: await normalizeEmailAttachments(input.attachments || []),
         headers: {
           "X-AngelCare-Mailbox-Key": identity.key,
@@ -488,6 +509,13 @@ export async function sendEmailOSDirect(input: EmailOSSendInput) {
           ...(input.headers || {})
         }
       })
+
+      return {
+        messageId: clean((sent as any)?.messageId) || null,
+        accepted: Array.isArray((sent as any)?.accepted) ? (sent as any).accepted : [],
+        rejected: Array.isArray((sent as any)?.rejected) ? (sent as any).rejected : [],
+        bridge: false
+      }
     } finally {
       transporter.close()
     }

@@ -14,11 +14,30 @@ function normalizeAttachmentsForSend(value: any) {
   const rows = Array.isArray(value) ? value : []
   return rows.slice(0, 10)
     .map((item: any) => ({
-      filename: clean(item.filename || item.name),
+      filename: clean(item.filename || item.name || item.original_filename),
       contentType: clean(item.contentType || item.content_type || item.mimeType) || "application/octet-stream",
       contentBase64: clean(item.contentBase64 || item.content_base64 || item.base64 || item.content),
+      fileId: clean(item.fileId || item.file_id || item.storageFileId || item.storage_file_id),
+      storageFileId: clean(item.storageFileId || item.storage_file_id || item.fileId || item.file_id),
     }))
-    .filter((item: any) => item.filename && item.contentBase64)
+    .filter((item: any) => item.filename && (item.contentBase64 || item.fileId || item.storageFileId))
+}
+
+function absoluteBaseUrl(request: Request) {
+  const configured = clean(process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL)
+  if (configured) return configured.startsWith("http") ? configured.replace(/\/+$/, "") : `https://${configured.replace(/\/+$/, "")}`
+  const origin = request.headers.get("origin")
+  if (origin) return origin.replace(/\/+$/, "")
+  const host = request.headers.get("host") || ""
+  const proto = host.includes("localhost") ? "http" : "https"
+  return host ? `${proto}://${host}` : ""
+}
+
+function withTrackingPixel(message: string, baseUrl: string, trackingId: string) {
+  if (!trackingId || !baseUrl) return message
+  const src = `${baseUrl}/api/email-os/tracking/open/${encodeURIComponent(trackingId)}.gif`
+  const pixel = `<img src="${src}" width="1" height="1" alt="" style="display:none;opacity:0;width:1px;height:1px" />`
+  return `${message || ""}\n\n${pixel}`
 }
 
 export async function POST(request: Request) {
@@ -42,6 +61,10 @@ export async function POST(request: Request) {
     const subject = clean(body.subject) || "(Sans objet)"
     const message = clean(body.body || body.message || body.text || body.html)
     const attachments = normalizeAttachmentsForSend(body.attachments)
+    const trackingEnabled = body.tracking !== false && body.tracking !== "false"
+    const trackingId = trackingEnabled ? makeEmailOSId() : ""
+    const trackingBaseUrl = absoluteBaseUrl(request)
+    const sendBody = trackingEnabled ? withTrackingPixel(message, trackingBaseUrl, trackingId) : message
 
     if (!toEmail) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
@@ -92,10 +115,20 @@ export async function POST(request: Request) {
         priority: body.priority || "normal",
         provider_message_id: null,
         queue_id: null,
+        tracking_id: trackingId || null,
+        tracking_enabled: trackingEnabled,
+        first_opened_at: null,
+        last_opened_at: null,
+        open_count: 0,
         diagnostics: {
           route: "compose/send",
           transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
           attachmentCount: attachments.length,
+          tracking: {
+            enabled: trackingEnabled,
+            trackingId: trackingId || null,
+            status: trackingEnabled ? "active_not_opened" : "off"
+          },
           ac360Guarded: true,
         },
         created_at: now,
@@ -111,7 +144,7 @@ export async function POST(request: Request) {
         ccEmail,
         bccEmail,
         subject,
-        body: message,
+        body: sendBody,
         attachments,
       })
 
@@ -129,6 +162,11 @@ export async function POST(request: Request) {
           route: "compose/send",
           transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
           attachmentCount: attachments.length,
+          tracking: {
+            enabled: trackingEnabled,
+            trackingId: trackingId || null,
+            status: trackingEnabled ? "active_not_opened" : "off"
+          },
           resolvedMailboxKey: identity.key,
           resolvedMailboxId: identity.mailboxId,
           smtpUser: identity.smtp.user,
@@ -146,6 +184,11 @@ export async function POST(request: Request) {
         mailboxKey: identity.key,
         from: identity.smtp.from,
         attachmentCount: attachments.length,
+        tracking: {
+          enabled: trackingEnabled,
+          trackingId: trackingId || null,
+          status: trackingEnabled ? "active_not_opened" : "off"
+        },
       }
     }, {
       orgId: body.orgId || body.org_id,

@@ -9,6 +9,7 @@ import {
   resolveMailboxScopeForUser
 } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
+import { deleteStorageFileFromBridge } from "@/lib/email-os-core/storage-gateway"
 
 type WorkflowAction =
   | "mark_read"
@@ -24,6 +25,9 @@ type WorkflowAction =
   | "link_entity"
   | "resolve"
   | "reopen"
+  | "move_trash"
+  | "mark_spam"
+  | "delete_permanent"
 
 type MessageSource = "inbox" | "outbox" | "drafts" | "saved_drafts"
 
@@ -35,7 +39,11 @@ const MESSAGE_STATUSES = new Set([
   "waiting_client",
   "waiting_internal",
   "resolved",
-  "archived"
+  "archived",
+  "trash",
+  "trashed",
+  "spam",
+  "deleted"
 ])
 
 const PRIORITIES = new Set(["low", "normal", "high", "urgent", "vip"])
@@ -84,7 +92,10 @@ function parseAction(value: unknown): WorkflowAction | null {
     action === "create_followup_task" ||
     action === "link_entity" ||
     action === "resolve" ||
-    action === "reopen"
+    action === "reopen" ||
+    action === "move_trash" ||
+    action === "mark_spam" ||
+    action === "delete_permanent"
   ) {
     return action
   }
@@ -297,7 +308,9 @@ function mergeWorkflowMessage(row: any, workflow: any, mailbox: any) {
     attachments: safeAttachmentList(row),
     readAt: row?.read_at || workflow?.read_at || null,
     archivedAt: row?.archived_at || workflow?.archived_at || null,
-    deletedAt: row?.deleted_at || null,
+    deletedAt: row?.deleted_at || workflow?.deleted_at || null,
+    spamAt: row?.spam_at || workflow?.spam_at || null,
+    permanentlyDeletedAt: row?.permanently_deleted_at || workflow?.permanently_deleted_at || null,
     status: workflowStatus,
     priority,
     category,
@@ -313,6 +326,11 @@ function mergeWorkflowMessage(row: any, workflow: any, mailbox: any) {
     linkedEntityType: workflow?.linked_entity_type || null,
     linkedEntityId: workflow?.linked_entity_id || null,
     linkedEntityLabel: workflow?.linked_entity_label || null,
+    trackingEnabled: Boolean(row?.tracking_enabled || row?.diagnostics?.tracking?.enabled),
+    trackingId: clean(row?.tracking_id || row?.diagnostics?.tracking?.trackingId || row?.diagnostics?.tracking?.tracking_id || ""),
+    firstOpenedAt: row?.first_opened_at || row?.diagnostics?.tracking?.firstOpenedAt || row?.diagnostics?.tracking?.first_opened_at || null,
+    lastOpenedAt: row?.last_opened_at || row?.diagnostics?.tracking?.lastOpenedAt || row?.diagnostics?.tracking?.last_opened_at || null,
+    openCount: Number(row?.open_count || row?.diagnostics?.tracking?.openCount || row?.diagnostics?.tracking?.open_count || 0),
     mailboxName: getMailboxLabel(mailbox),
     mailboxEmail: getMailboxEmail(mailbox),
     sla: {
@@ -321,6 +339,11 @@ function mergeWorkflowMessage(row: any, workflow: any, mailbox: any) {
       dueInMinutes: Math.max(0, Math.floor((new Date(firstResponseDueAt).getTime() - Date.now()) / 60000))
     }
   }
+}
+
+function isHardDeletedMergedMessage(row: any) {
+  const status = cleanLower(row?.status || row?.workflowStatus || row?.state)
+  return Boolean(row?.permanentlyDeletedAt || row?.permanently_deleted_at) || status === "deleted" || status === "deleted_permanent" || status === "permanently_deleted"
 }
 
 function computeStats(messages: any[], workflowRows: any[], mailboxId?: string | null) {
@@ -443,8 +466,167 @@ async function updateSourceRow(
   return { data, error: null }
 }
 
+function collectStorageFileIdsFromValue(value: any, ids = new Set<string>()) {
+  if (!value) return ids
+
+  if (Array.isArray(value)) {
+    for (const item of value) collectStorageFileIdsFromValue(item, ids)
+    return ids
+  }
+
+  if (typeof value === "object") {
+    const candidates = [
+      value.storageFileId,
+      value.storage_file_id,
+      value.fileId,
+      value.file_id,
+      value.storageId,
+      value.storage_id,
+      value.id && (value.storage_provider || value.storage_key || value.storageBucket) ? value.id : ""
+    ]
+
+    for (const candidate of candidates) {
+      const id = clean(candidate)
+      if (id) ids.add(id)
+    }
+
+    for (const nested of Object.values(value)) {
+      if (nested && (Array.isArray(nested) || typeof nested === "object")) {
+        collectStorageFileIdsFromValue(nested, ids)
+      }
+    }
+  }
+
+  return ids
+}
+
+function collectMessageStorageFileIds(row: any) {
+  const ids = new Set<string>()
+  collectStorageFileIdsFromValue(row?.attachments, ids)
+  collectStorageFileIdsFromValue(row?.raw?.attachments, ids)
+  collectStorageFileIdsFromValue(row?.metadata, ids)
+  collectStorageFileIdsFromValue(row?.metadata_json, ids)
+  return Array.from(ids)
+}
+
+async function deleteMessageStorageFiles(params: {
+  db: ReturnType<typeof createEmailOSCoreDb>
+  mailboxId: string
+  messageId: string
+  row: any
+  actorUserId: string
+}) {
+  const ids = new Set<string>(collectMessageStorageFileIds(params.row))
+
+  const { data: metadataRows } = await params.db
+    .from("angelcare_storage_files")
+    .select("id")
+    .eq("module_key", "email_os")
+    .eq("mailbox_id", params.mailboxId)
+    .or(`entity_id.eq.${params.messageId},metadata->>messageId.eq.${params.messageId},metadata->>message_id.eq.${params.messageId}`)
+    .then((result: any) => result, () => ({ data: [] }))
+
+  for (const row of metadataRows || []) {
+    const id = clean(row?.id)
+    if (id) ids.add(id)
+  }
+
+  const deleted: string[] = []
+  const failed: Array<{ id: string; error: string }> = []
+
+  for (const fileId of ids) {
+    try {
+      await deleteStorageFileFromBridge({
+        fileId,
+        reason: "email_os_permanent_message_delete",
+        actorUserId: params.actorUserId,
+        mailboxId: params.mailboxId,
+        moduleKey: "email_os"
+      })
+      deleted.push(fileId)
+    } catch (error) {
+      failed.push({ id: fileId, error: error instanceof Error ? error.message : "storage delete failed" })
+    }
+  }
+
+  if (ids.size > 0) {
+    await params.db
+      .from("angelcare_storage_files")
+      .delete()
+      .in("id", Array.from(ids))
+      .then(() => null, () => null)
+
+    await params.db
+      .from("angelcare_storage_events")
+      .delete()
+      .in("file_id", Array.from(ids))
+      .then(() => null, () => null)
+  }
+
+  return { requested: Array.from(ids), deleted, failed }
+}
+
+async function eraseEmailMessageCompletely(params: {
+  db: ReturnType<typeof createEmailOSCoreDb>
+  mailboxId: string
+  messageId: string
+  sourceTable: string
+  sourceRow: any
+  actorUserId: string
+}) {
+  const storage = await deleteMessageStorageFiles({
+    db: params.db,
+    mailboxId: params.mailboxId,
+    messageId: params.messageId,
+    row: params.sourceRow,
+    actorUserId: params.actorUserId
+  })
+
+  const ids = Array.from(new Set([
+    clean(params.messageId),
+    clean(params.sourceRow?.id),
+    clean(params.sourceRow?.message_id),
+    clean(params.sourceRow?.source_id),
+    clean(params.sourceRow?.external_id),
+    clean(params.sourceRow?.provider_uid),
+    clean(params.sourceRow?.provider_message_id),
+    clean(params.sourceRow?.tracking_id)
+  ].filter(Boolean)))
+
+  const workflowTables = [
+    "email_os_message_notes",
+    "email_os_message_tasks",
+    "email_os_message_entity_links",
+    "email_os_message_assignments",
+    "email_os_message_audit_events",
+    "email_os_message_workflow"
+  ]
+
+  for (const table of workflowTables) {
+    for (const id of ids) {
+      await params.db.from(table).delete().eq("mailbox_id", params.mailboxId).eq("message_id", id).then(() => null, () => null)
+      await params.db.from(table).delete().eq("mailbox_id", params.mailboxId).eq("external_id", id).then(() => null, () => null)
+    }
+  }
+
+  for (const table of WORKFLOW_SOURCE_TABLES) {
+    for (const id of ids) {
+      await params.db.from(table).delete().eq("mailbox_id", params.mailboxId).eq("id", id).then(() => null, () => null)
+      await params.db.from(table).delete().eq("mailbox_id", params.mailboxId).eq("provider_uid", id).then(() => null, () => null)
+      await params.db.from(table).delete().eq("mailbox_id", params.mailboxId).eq("provider_message_id", id).then(() => null, () => null)
+      await params.db.from(table).delete().eq("mailbox_id", params.mailboxId).eq("tracking_id", id).then(() => null, () => null)
+    }
+  }
+
+  for (const id of ids) {
+    await params.db.from("email_os_tracking_events").delete().eq("tracking_id", id).then(() => null, () => null)
+  }
+
+  return { ...storage, erasedIds: ids }
+}
+
 function requiredPermission(action: WorkflowAction) {
-  if (action === "archive" || action === "restore" || action === "resolve" || action === "reopen") return "can_archive" as const
+  if (action === "archive" || action === "restore" || action === "resolve" || action === "reopen" || action === "move_trash" || action === "mark_spam" || action === "delete_permanent") return "can_archive" as const
   return "can_read" as const
 }
 
@@ -467,10 +649,28 @@ function sourcePatchForAction(action: WorkflowAction, workflow: any) {
     patch.archived_at = now
   }
 
+  if (action === "move_trash") {
+    patch.status = "trash"
+    patch.deleted_at = now
+  }
+
+  if (action === "mark_spam") {
+    patch.status = "spam"
+    patch.spam_at = now
+  }
+
+  if (action === "delete_permanent") {
+    patch.status = "deleted"
+    patch.deleted_at = now
+    patch.permanently_deleted_at = now
+  }
+
   if (action === "restore") {
     patch.status = workflow?.source_table === "email_os_core_outbox" ? "sent" : workflow?.source_table === "email_os_core_drafts" || workflow?.source_table === "email_os_core_saved_drafts" ? "draft" : "received"
     patch.archived_at = null
     patch.deleted_at = null
+    patch.spam_at = null
+    patch.permanently_deleted_at = null
   }
 
   return patch
@@ -543,9 +743,31 @@ async function applyWorkflowAction(params: {
     workflowPatch.archived_at = now
   }
 
+  if (action === "move_trash") {
+    // Keep status inside the original DB check constraint; folder projection uses deleted_at.
+    workflowPatch.status = "archived"
+    workflowPatch.deleted_at = now
+  }
+
+  if (action === "mark_spam") {
+    // Keep status inside the original DB check constraint; folder projection uses spam_at.
+    workflowPatch.status = "archived"
+    workflowPatch.spam_at = now
+  }
+
+  if (action === "delete_permanent") {
+    // Keep status inside the original DB check constraint; folder projection uses permanently_deleted_at.
+    workflowPatch.status = "archived"
+    workflowPatch.deleted_at = now
+    workflowPatch.permanently_deleted_at = now
+  }
+
   if (action === "restore") {
     workflowPatch.status = "triaged"
     workflowPatch.archived_at = null
+    workflowPatch.deleted_at = null
+    workflowPatch.spam_at = null
+    workflowPatch.permanently_deleted_at = null
   }
 
   if (action === "set_status") {
@@ -575,6 +797,27 @@ async function applyWorkflowAction(params: {
     workflowPatch.assigned_by = params.userId
     workflowPatch.assigned_at = now
     workflowPatch.status = "assigned"
+
+    if (ownerUserId) {
+      await params.db.from("email_os_message_assignments").insert({
+        id: makeEmailOSId(),
+        mailbox_id: params.mailboxId,
+        message_id: params.messageId,
+        external_id: clean(workflow?.external_id || params.sourceRow?.provider_uid || params.sourceRow?.external_id || ""),
+        thread_id: clean(workflow?.thread_id || params.sourceRow?.thread_id || ""),
+        assignee_user_id: ownerUserId,
+        assigned_by: params.userId,
+        status: "active",
+        note: clean(params.payload.note || params.payload.reason || ""),
+        metadata_json: {
+          source: clean(params.payload.source || "team-operations"),
+          handoff: Boolean(params.payload.handoff)
+        },
+        assigned_at: now,
+        created_at: now,
+        updated_at: now
+      }).then(() => null, () => null)
+    }
   }
 
   if (action === "resolve") {
@@ -678,7 +921,25 @@ async function applyWorkflowAction(params: {
     return { workflowPatch, sourcePatch, extra: { task: taskData } }
   }
 
-  if (action === "set_status" || action === "set_priority" || action === "set_category" || action === "assign_owner" || action === "resolve" || action === "reopen" || action === "link_entity" || action === "archive" || action === "restore" || action === "mark_read" || action === "mark_unread") {
+  if (action === "set_status" || action === "set_priority" || action === "set_category" || action === "assign_owner" || action === "resolve" || action === "reopen" || action === "link_entity" || action === "archive" || action === "restore" || action === "mark_read" || action === "mark_unread" || action === "move_trash" || action === "mark_spam" || action === "delete_permanent") {
+    const workflowNote = clean(params.payload.note || params.payload.reason || "")
+    if (workflowNote) {
+      await params.db.from("email_os_message_notes").insert({
+        id: makeEmailOSId(),
+        mailbox_id: params.mailboxId,
+        message_id: params.messageId,
+        external_id: workflow?.external_id || clean(params.sourceRow?.provider_uid || params.sourceRow?.external_id || ""),
+        thread_id: workflow?.thread_id || clean(params.sourceRow?.thread_id || ""),
+        body: workflowNote,
+        author_user_id: params.userId,
+        author_name: "",
+        visibility: "internal",
+        metadata_json: { source: "workflow-modal", action },
+        created_at: now,
+        updated_at: now
+      }).then(() => null, () => null)
+    }
+
     await recordWorkflowAudit(params.db, {
       mailboxId: params.mailboxId,
       messageId: params.messageId,
@@ -770,10 +1031,11 @@ export async function GET(request: Request) {
       ? await loadWorkspaceDetail(db, scope?.mailboxId || requestedMailboxId || null, messageId)
       : null
 
-    const filteredMessages = scope ? messages.filter((row: any) => clean(row.mailboxId) === scope.mailboxId) : messages
+    const visibleMessages = messages.filter((row: any) => !isHardDeletedMergedMessage(row))
+    const filteredMessages = scope ? visibleMessages.filter((row: any) => clean(row.mailboxId) === scope.mailboxId) : visibleMessages
     const stats = adminMode && !scope
       ? (mailboxes as any[]).map((mailbox) => {
-          const rows = messages.filter((message) => clean(message.mailboxId) === clean(mailbox.id))
+          const rows = visibleMessages.filter((message) => clean(message.mailboxId) === clean(mailbox.id))
           return {
             mailboxId: clean(mailbox.id),
             mailboxName: getMailboxLabel(mailbox),
@@ -865,6 +1127,36 @@ export async function POST(request: Request) {
     }
 
     const workflow = await ensureWorkflowRow(db, scope.mailboxId, message.table || "email_os_core_inbox", message.row)
+
+    const sourceTable = message.table || workflow.source_table || "email_os_core_inbox"
+    const archiveMeansErase = action === "archive" && (sourceTable === "email_os_core_outbox" || sourceTable === "email_os_core_drafts" || sourceTable === "email_os_core_saved_drafts")
+    if (action === "delete_permanent" || archiveMeansErase) {
+      if (action === "delete_permanent" && payload.confirm !== true && payload.confirmPermanentDelete !== true) {
+        return NextResponse.json({ ok: false, error: "Permanent delete requires explicit confirmation" }, { status: 400 })
+      }
+
+      const storage = await eraseEmailMessageCompletely({
+        db,
+        mailboxId: scope.mailboxId,
+        messageId,
+        sourceTable,
+        sourceRow: message.row,
+        actorUserId: user.id
+      })
+
+      return NextResponse.json({
+        ok: true,
+        data: {
+          erased: true,
+          messageId,
+          sourceTable,
+          storage,
+          action,
+          archiveMeansErase
+        }
+      })
+    }
+
     const result = await applyWorkflowAction({
       db,
       userId: user.id,
@@ -918,10 +1210,28 @@ export async function POST(request: Request) {
         entity_id: clean(payload.entityId || payload.entity_id || ""),
         entity_label: clean(payload.entityLabel || payload.entity_label || ""),
         created_by: user.id,
-        metadata_json: { source: "workflow-action" },
+        metadata_json: { source: "workflow-action", note: clean(payload.note || "") },
         created_at: nowIso(),
         updated_at: nowIso()
       }).then(() => null, () => null)
+
+      const linkNote = clean(payload.note || "")
+      if (linkNote) {
+        await db.from("email_os_message_notes").insert({
+          id: makeEmailOSId(),
+          mailbox_id: scope.mailboxId,
+          message_id: messageId,
+          external_id: clean(workflow.external_id || message.row.provider_uid || message.row.external_id || ""),
+          thread_id: clean(workflow.thread_id || message.row.thread_id || ""),
+          body: linkNote,
+          author_user_id: user.id,
+          author_name: "",
+          visibility: "internal",
+          metadata_json: { source: "crm-link", entityType: clean(payload.entityType || payload.entity_type || ""), entityId: clean(payload.entityId || payload.entity_id || "") },
+          created_at: nowIso(),
+          updated_at: nowIso()
+        }).then(() => null, () => null)
+      }
     }
 
     const detail = await loadWorkspaceDetail(db, scope.mailboxId, messageId)

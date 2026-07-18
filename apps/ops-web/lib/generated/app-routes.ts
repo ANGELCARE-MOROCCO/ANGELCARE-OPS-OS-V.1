@@ -6,7 +6,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Alerts Sales",
@@ -15,7 +16,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/alerts-sales",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Attendance",
@@ -24,7 +26,18 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/attendance",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Audit",
+    "shortLabel": "Audit",
+    "href": "/academy/audit",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/audit",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Automation",
@@ -33,7 +46,18 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/automation",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Calendar",
+    "shortLabel": "Calendar",
+    "href": "/academy/calendar",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/calendar",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Certificates",
@@ -42,7 +66,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/certificates",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Cohorts",
@@ -51,7 +76,28 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/cohorts",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Command Center",
+    "shortLabel": "Command Center",
+    "href": "/academy/command-center",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/command-center",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Control Tickets",
+    "shortLabel": "Control Tickets",
+    "href": "/academy/control-tickets",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/control-tickets",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Courses",
@@ -60,7 +106,38 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/courses",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Documents",
+    "shortLabel": "Documents",
+    "href": "/academy/documents",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/documents",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Eligibility",
+    "shortLabel": "Eligibility",
+    "href": "/academy/eligibility",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/eligibility",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Email Templates",
+    "shortLabel": "Email Templates",
+    "href": "/academy/email-templates",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/email-templates",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Enrollments",
@@ -69,7 +146,38 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/enrollments",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Evaluations",
+    "shortLabel": "Evaluations",
+    "href": "/academy/evaluations",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/evaluations",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Graduation",
+    "shortLabel": "Graduation",
+    "href": "/academy/graduation",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/graduation",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Import Export",
+    "shortLabel": "Import Export",
+    "href": "/academy/import-export",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/import-export",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Integrations",
@@ -78,7 +186,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/integrations",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Job Placement",
@@ -87,7 +196,28 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/job-placement",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Locations Groups",
+    "shortLabel": "Locations Groups",
+    "href": "/academy/locations-groups",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/locations-groups",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Notifications",
+    "shortLabel": "Notifications",
+    "href": "/academy/notifications",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/notifications",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Partners",
@@ -96,7 +226,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/partners",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Payments",
@@ -105,7 +236,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/payments",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Reports",
@@ -114,7 +246,28 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/reports",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Revenue Sync",
+    "shortLabel": "Revenue Sync",
+    "href": "/academy/revenue-sync",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/revenue-sync",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Role Matrix",
+    "shortLabel": "Role Matrix",
+    "href": "/academy/role-matrix",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/role-matrix",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Settings",
@@ -123,7 +276,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/settings",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Trainees",
@@ -132,7 +286,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/trainees",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Trainees / Dossier",
@@ -141,7 +296,8 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/trainees/dossier",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy / Trainers",
@@ -150,7 +306,18 @@ export const APP_ROUTES = [
     "module": "academy",
     "moduleLabel": "Academy",
     "permissionKey": "page:/academy/trainers",
-    "modulePermissionKey": "academy.view"
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Academy / Workbench",
+    "shortLabel": "Workbench",
+    "href": "/academy/workbench",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "permissionKey": "page:/academy/workbench",
+    "modulePermissionKey": "academy.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Academy Campus Command",
@@ -159,7 +326,8 @@ export const APP_ROUTES = [
     "module": "academy-campus-command",
     "moduleLabel": "Academy Campus Command",
     "permissionKey": "page:/academy-campus-command",
-    "modulePermissionKey": "academy-campus-command.view"
+    "modulePermissionKey": "academy-campus-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Admin / Archive Center",
@@ -168,7 +336,168 @@ export const APP_ROUTES = [
     "module": "admin",
     "moduleLabel": "Admin",
     "permissionKey": "page:/admin/archive-center",
-    "modulePermissionKey": "admin.view"
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace",
+    "shortLabel": "B2b Marketplace",
+    "href": "/admin/b2b-marketplace",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Academy",
+    "shortLabel": "Academy",
+    "href": "/admin/b2b-marketplace/academy",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/academy",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Categories",
+    "shortLabel": "Categories",
+    "href": "/admin/b2b-marketplace/categories",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/categories",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Crm",
+    "shortLabel": "Crm",
+    "href": "/admin/b2b-marketplace/crm",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/crm",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Gateways",
+    "shortLabel": "Gateways",
+    "href": "/admin/b2b-marketplace/gateways",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/gateways",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Homepage",
+    "shortLabel": "Homepage",
+    "href": "/admin/b2b-marketplace/homepage",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/homepage",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Media",
+    "shortLabel": "Media",
+    "href": "/admin/b2b-marketplace/media",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/media",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Navigation",
+    "shortLabel": "Navigation",
+    "href": "/admin/b2b-marketplace/navigation",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/navigation",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Packs",
+    "shortLabel": "Packs",
+    "href": "/admin/b2b-marketplace/packs",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/packs",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Preview",
+    "shortLabel": "Preview",
+    "href": "/admin/b2b-marketplace/preview",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/preview",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Products",
+    "shortLabel": "Products",
+    "href": "/admin/b2b-marketplace/products",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/products",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Publish History",
+    "shortLabel": "Publish History",
+    "href": "/admin/b2b-marketplace/publish-history",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/publish-history",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Quote Requests",
+    "shortLabel": "Quote Requests",
+    "href": "/admin/b2b-marketplace/quote-requests",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/quote-requests",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Quote Settings",
+    "shortLabel": "Quote Settings",
+    "href": "/admin/b2b-marketplace/quote-settings",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/quote-settings",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Templates",
+    "shortLabel": "Templates",
+    "href": "/admin/b2b-marketplace/templates",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/templates",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Admin / B2b Marketplace / Theme",
+    "shortLabel": "Theme",
+    "href": "/admin/b2b-marketplace/theme",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "permissionKey": "page:/admin/b2b-marketplace/theme",
+    "modulePermissionKey": "admin.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center",
@@ -177,7 +506,8 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center / Academy Copilot",
@@ -186,7 +516,8 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center/academy-copilot",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center / Executive Copilot",
@@ -195,7 +526,8 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center/executive-copilot",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center / Final Qa",
@@ -204,7 +536,8 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center/final-qa",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center / Hr Copilot",
@@ -213,7 +546,8 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center/hr-copilot",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center / Market Copilot",
@@ -222,7 +556,8 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center/market-copilot",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Ai Command Center / Revenue Copilot",
@@ -231,7 +566,1798 @@ export const APP_ROUTES = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "permissionKey": "page:/ai-command-center/revenue-copilot",
-    "modulePermissionKey": "ai-command-center.view"
+    "modulePermissionKey": "ai-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360",
+    "shortLabel": "Angelcare 360",
+    "href": "/angelcare-360",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Action Wiring",
+    "shortLabel": "Action Wiring",
+    "href": "/angelcare-360/action-wiring",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/action-wiring",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Billing Center",
+    "shortLabel": "Billing Center",
+    "href": "/angelcare-360/billing-center",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/billing-center",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Customer",
+    "shortLabel": "Customer",
+    "href": "/angelcare-360/customer",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/customer",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Customer / Cockpit Direction",
+    "shortLabel": "Cockpit Direction",
+    "href": "/angelcare-360/customer/cockpit-direction",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/customer/cockpit-direction",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Customer / Operations",
+    "shortLabel": "Operations",
+    "href": "/angelcare-360/customer/operations",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/customer/operations",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Deployment Gate",
+    "shortLabel": "Deployment Gate",
+    "href": "/angelcare-360/deployment-gate",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/deployment-gate",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Foundation",
+    "shortLabel": "Foundation",
+    "href": "/angelcare-360/foundation",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/foundation",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Guardrails",
+    "shortLabel": "Guardrails",
+    "href": "/angelcare-360/guardrails",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/guardrails",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 / Policy Lock",
+    "shortLabel": "Policy Lock",
+    "href": "/angelcare-360/policy-lock",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "permissionKey": "page:/angelcare-360/policy-lock",
+    "modulePermissionKey": "angelcare-360.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center",
+    "shortLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Eleves",
+    "shortLabel": "Eleves",
+    "href": "/angelcare-360-command-center/(people)/eleves",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/eleves",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Enseignants",
+    "shortLabel": "Enseignants",
+    "href": "/angelcare-360-command-center/(people)/enseignants",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/enseignants",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Parents",
+    "shortLabel": "Parents",
+    "href": "/angelcare-360-command-center/(people)/parents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/parents",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnel",
+    "shortLabel": "Personnel",
+    "href": "/angelcare-360-command-center/(people)/personnel",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnel",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnes",
+    "shortLabel": "Personnes",
+    "href": "/angelcare-360-command-center/(people)/personnes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Affectations Classes",
+    "shortLabel": "Affectations Classes",
+    "href": "/angelcare-360-command-center/(people)/personnes/affectations-classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnes/affectations-classes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/(people)/personnes/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnes/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Contacts Urgence",
+    "shortLabel": "Contacts Urgence",
+    "href": "/angelcare-360-command-center/(people)/personnes/contacts-urgence",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnes/contacts-urgence",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Documents",
+    "shortLabel": "Documents",
+    "href": "/angelcare-360-command-center/(people)/personnes/documents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnes/documents",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Liens Parent Enfant",
+    "shortLabel": "Liens Parent Enfant",
+    "href": "/angelcare-360-command-center/(people)/personnes/liens-parent-enfant",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/(people)/personnes/liens-parent-enfant",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique",
+    "shortLabel": "Academique",
+    "href": "/angelcare-360-command-center/academique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Appreciations",
+    "shortLabel": "Appreciations",
+    "href": "/angelcare-360-command-center/academique/appreciations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/appreciations",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/academique/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Bulletins",
+    "shortLabel": "Bulletins",
+    "href": "/angelcare-360-command-center/academique/bulletins",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/bulletins",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Cours",
+    "shortLabel": "Cours",
+    "href": "/angelcare-360-command-center/academique/cours",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/cours",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Devoirs",
+    "shortLabel": "Devoirs",
+    "href": "/angelcare-360-command-center/academique/devoirs",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/devoirs",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Examens",
+    "shortLabel": "Examens",
+    "href": "/angelcare-360-command-center/academique/examens",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/examens",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Moyennes",
+    "shortLabel": "Moyennes",
+    "href": "/angelcare-360-command-center/academique/moyennes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/moyennes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Notes",
+    "shortLabel": "Notes",
+    "href": "/angelcare-360-command-center/academique/notes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/notes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Sessions Examens",
+    "shortLabel": "Sessions Examens",
+    "href": "/angelcare-360-command-center/academique/sessions-examens",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/sessions-examens",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Academique / Soumissions",
+    "shortLabel": "Soumissions",
+    "href": "/angelcare-360-command-center/academique/soumissions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/academique/soumissions",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration",
+    "shortLabel": "Administration",
+    "href": "/angelcare-360-command-center/administration",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Affectations",
+    "shortLabel": "Affectations",
+    "href": "/angelcare-360-command-center/administration/affectations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/affectations",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Annees Scolaires",
+    "shortLabel": "Annees Scolaires",
+    "href": "/angelcare-360-command-center/administration/annees-scolaires",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/annees-scolaires",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/administration/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Classes",
+    "shortLabel": "Classes",
+    "href": "/angelcare-360-command-center/administration/classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/classes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Etablissements",
+    "shortLabel": "Etablissements",
+    "href": "/angelcare-360-command-center/administration/etablissements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/etablissements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Matieres",
+    "shortLabel": "Matieres",
+    "href": "/angelcare-360-command-center/administration/matieres",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/matieres",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Parametres",
+    "shortLabel": "Parametres",
+    "href": "/angelcare-360-command-center/administration/parametres",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/parametres",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Periodes",
+    "shortLabel": "Periodes",
+    "href": "/angelcare-360-command-center/administration/periodes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/periodes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Roles Permissions",
+    "shortLabel": "Roles Permissions",
+    "href": "/angelcare-360-command-center/administration/roles-permissions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/roles-permissions",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Administration / Sections",
+    "shortLabel": "Sections",
+    "href": "/angelcare-360-command-center/administration/sections",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/administration/sections",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions",
+    "shortLabel": "Admissions",
+    "href": "/angelcare-360-command-center/admissions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/admissions/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Conversions",
+    "shortLabel": "Conversions",
+    "href": "/angelcare-360-command-center/admissions/conversions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/conversions",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Demandes",
+    "shortLabel": "Demandes",
+    "href": "/angelcare-360-command-center/admissions/demandes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/demandes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Documents",
+    "shortLabel": "Documents",
+    "href": "/angelcare-360-command-center/admissions/documents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/documents",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Dossiers",
+    "shortLabel": "Dossiers",
+    "href": "/angelcare-360-command-center/admissions/dossiers",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/dossiers",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Entretiens",
+    "shortLabel": "Entretiens",
+    "href": "/angelcare-360-command-center/admissions/entretiens",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/entretiens",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Admissions / Pipeline",
+    "shortLabel": "Pipeline",
+    "href": "/angelcare-360-command-center/admissions/pipeline",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/admissions/pipeline",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque",
+    "shortLabel": "Bibliotheque",
+    "href": "/angelcare-360-command-center/bibliotheque",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/bibliotheque/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Disponibilite",
+    "shortLabel": "Disponibilite",
+    "href": "/angelcare-360-command-center/bibliotheque/disponibilite",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/disponibilite",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Exemplaires",
+    "shortLabel": "Exemplaires",
+    "href": "/angelcare-360-command-center/bibliotheque/exemplaires",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/exemplaires",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Livres",
+    "shortLabel": "Livres",
+    "href": "/angelcare-360-command-center/bibliotheque/livres",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/livres",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Prets",
+    "shortLabel": "Prets",
+    "href": "/angelcare-360-command-center/bibliotheque/prets",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/prets",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Retards",
+    "shortLabel": "Retards",
+    "href": "/angelcare-360-command-center/bibliotheque/retards",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/retards",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Bibliotheque / Retours",
+    "shortLabel": "Retours",
+    "href": "/angelcare-360-command-center/bibliotheque/retours",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/bibliotheque/retours",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Direction",
+    "shortLabel": "Direction",
+    "href": "/angelcare-360-command-center/direction",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/direction",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Documents",
+    "shortLabel": "Documents",
+    "href": "/angelcare-360-command-center/documents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/documents",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Documents / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/documents/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/documents/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Documents / Generated",
+    "shortLabel": "Generated",
+    "href": "/angelcare-360-command-center/documents/generated",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/documents/generated",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Documents / Governance",
+    "shortLabel": "Governance",
+    "href": "/angelcare-360-command-center/documents/governance",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/documents/governance",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Documents / Templates",
+    "shortLabel": "Templates",
+    "href": "/angelcare-360-command-center/documents/templates",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/documents/templates",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Emploi Du Temps",
+    "shortLabel": "Emploi Du Temps",
+    "href": "/angelcare-360-command-center/emploi-du-temps",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/emploi-du-temps",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Emploi Du Temps / Calendrier",
+    "shortLabel": "Calendrier",
+    "href": "/angelcare-360-command-center/emploi-du-temps/calendrier",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/emploi-du-temps/calendrier",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Emploi Du Temps / Classes",
+    "shortLabel": "Classes",
+    "href": "/angelcare-360-command-center/emploi-du-temps/classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/emploi-du-temps/classes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Emploi Du Temps / Enseignants",
+    "shortLabel": "Enseignants",
+    "href": "/angelcare-360-command-center/emploi-du-temps/enseignants",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/emploi-du-temps/enseignants",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Exports",
+    "shortLabel": "Exports",
+    "href": "/angelcare-360-command-center/exports",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/exports",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Exports / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/exports/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/exports/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Exports / Csv Xlsx",
+    "shortLabel": "Csv Xlsx",
+    "href": "/angelcare-360-command-center/exports/csv-xlsx",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/exports/csv-xlsx",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Exports / Files",
+    "shortLabel": "Files",
+    "href": "/angelcare-360-command-center/exports/files",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/exports/files",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Exports / Historique",
+    "shortLabel": "Historique",
+    "href": "/angelcare-360-command-center/exports/historique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/exports/historique",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Exports / Pdf A4",
+    "shortLabel": "Pdf A4",
+    "href": "/angelcare-360-command-center/exports/pdf-a4",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/exports/pdf-a4",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance",
+    "shortLabel": "Finance",
+    "href": "/angelcare-360-command-center/finance",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Affectations Frais",
+    "shortLabel": "Affectations Frais",
+    "href": "/angelcare-360-command-center/finance/affectations-frais",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/affectations-frais",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/finance/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Depenses",
+    "shortLabel": "Depenses",
+    "href": "/angelcare-360-command-center/finance/depenses",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/depenses",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Etats Compte",
+    "shortLabel": "Etats Compte",
+    "href": "/angelcare-360-command-center/finance/etats-compte",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/etats-compte",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Factures",
+    "shortLabel": "Factures",
+    "href": "/angelcare-360-command-center/finance/factures",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/factures",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Frais",
+    "shortLabel": "Frais",
+    "href": "/angelcare-360-command-center/finance/frais",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/frais",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Paiements",
+    "shortLabel": "Paiements",
+    "href": "/angelcare-360-command-center/finance/paiements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/paiements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Recus",
+    "shortLabel": "Recus",
+    "href": "/angelcare-360-command-center/finance/recus",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/recus",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Relances",
+    "shortLabel": "Relances",
+    "href": "/angelcare-360-command-center/finance/relances",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/relances",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Remises",
+    "shortLabel": "Remises",
+    "href": "/angelcare-360-command-center/finance/remises",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/remises",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Finance / Soldes Eleves",
+    "shortLabel": "Soldes Eleves",
+    "href": "/angelcare-360-command-center/finance/soldes-eleves",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/finance/soldes-eleves",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire",
+    "shortLabel": "Inventaire",
+    "href": "/angelcare-360-command-center/inventaire",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire / Articles",
+    "shortLabel": "Articles",
+    "href": "/angelcare-360-command-center/inventaire/articles",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire/articles",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/inventaire/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire / Categories",
+    "shortLabel": "Categories",
+    "href": "/angelcare-360-command-center/inventaire/categories",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire/categories",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire / Mouvements",
+    "shortLabel": "Mouvements",
+    "href": "/angelcare-360-command-center/inventaire/mouvements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire/mouvements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire / Responsables",
+    "shortLabel": "Responsables",
+    "href": "/angelcare-360-command-center/inventaire/responsables",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire/responsables",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Inventaire / Stock Bas",
+    "shortLabel": "Stock Bas",
+    "href": "/angelcare-360-command-center/inventaire/stock-bas",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/inventaire/stock-bas",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Messagerie",
+    "shortLabel": "Messagerie",
+    "href": "/angelcare-360-command-center/messagerie",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/messagerie",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Messagerie / Annonces",
+    "shortLabel": "Annonces",
+    "href": "/angelcare-360-command-center/messagerie/annonces",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/messagerie/annonces",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Messagerie / Audiences",
+    "shortLabel": "Audiences",
+    "href": "/angelcare-360-command-center/messagerie/audiences",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/messagerie/audiences",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Messagerie / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/messagerie/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/messagerie/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Messagerie / Conversations",
+    "shortLabel": "Conversations",
+    "href": "/angelcare-360-command-center/messagerie/conversations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/messagerie/conversations",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Messagerie / Modeles",
+    "shortLabel": "Modeles",
+    "href": "/angelcare-360-command-center/messagerie/modeles",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/messagerie/modeles",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Notifications",
+    "shortLabel": "Notifications",
+    "href": "/angelcare-360-command-center/notifications",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/notifications",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Notifications / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/notifications/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/notifications/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Notifications / Canaux",
+    "shortLabel": "Canaux",
+    "href": "/angelcare-360-command-center/notifications/canaux",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/notifications/canaux",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Notifications / Historique",
+    "shortLabel": "Historique",
+    "href": "/angelcare-360-command-center/notifications/historique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/notifications/historique",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Notifications / Internes",
+    "shortLabel": "Internes",
+    "href": "/angelcare-360-command-center/notifications/internes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/notifications/internes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie",
+    "shortLabel": "Paie",
+    "href": "/angelcare-360-command-center/paie",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Ajustements",
+    "shortLabel": "Ajustements",
+    "href": "/angelcare-360-command-center/paie/ajustements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/ajustements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/paie/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Avances",
+    "shortLabel": "Avances",
+    "href": "/angelcare-360-command-center/paie/avances",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/avances",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Conformite",
+    "shortLabel": "Conformite",
+    "href": "/angelcare-360-command-center/paie/conformite",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/conformite",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Dossiers",
+    "shortLabel": "Dossiers",
+    "href": "/angelcare-360-command-center/paie/dossiers",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/dossiers",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Elements",
+    "shortLabel": "Elements",
+    "href": "/angelcare-360-command-center/paie/elements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/elements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Historique Personnel",
+    "shortLabel": "Historique Personnel",
+    "href": "/angelcare-360-command-center/paie/historique-personnel",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/historique-personnel",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Paiements",
+    "shortLabel": "Paiements",
+    "href": "/angelcare-360-command-center/paie/paiements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/paiements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Periodes",
+    "shortLabel": "Periodes",
+    "href": "/angelcare-360-command-center/paie/periodes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/periodes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Primes",
+    "shortLabel": "Primes",
+    "href": "/angelcare-360-command-center/paie/primes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/primes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Remboursements",
+    "shortLabel": "Remboursements",
+    "href": "/angelcare-360-command-center/paie/remboursements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/remboursements",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Retenues",
+    "shortLabel": "Retenues",
+    "href": "/angelcare-360-command-center/paie/retenues",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/retenues",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Paie / Validation",
+    "shortLabel": "Validation",
+    "href": "/angelcare-360-command-center/paie/validation",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/paie/validation",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences",
+    "shortLabel": "Presences",
+    "href": "/angelcare-360-command-center/presences",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Absences",
+    "shortLabel": "Absences",
+    "href": "/angelcare-360-command-center/presences/absences",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/absences",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/presences/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Classes",
+    "shortLabel": "Classes",
+    "href": "/angelcare-360-command-center/presences/classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/classes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Eleves",
+    "shortLabel": "Eleves",
+    "href": "/angelcare-360-command-center/presences/eleves",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/eleves",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Jour",
+    "shortLabel": "Jour",
+    "href": "/angelcare-360-command-center/presences/jour",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/jour",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Justifications",
+    "shortLabel": "Justifications",
+    "href": "/angelcare-360-command-center/presences/justifications",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/justifications",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Presences / Retards",
+    "shortLabel": "Retards",
+    "href": "/angelcare-360-command-center/presences/retards",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/presences/retards",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Rapports",
+    "shortLabel": "Rapports",
+    "href": "/angelcare-360-command-center/rapports",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/rapports",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Rapports / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/rapports/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/rapports/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Rapports / Catalogue",
+    "shortLabel": "Catalogue",
+    "href": "/angelcare-360-command-center/rapports/catalogue",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/rapports/catalogue",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Rapports / Demandes",
+    "shortLabel": "Demandes",
+    "href": "/angelcare-360-command-center/rapports/demandes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/rapports/demandes",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Rapports / Historique",
+    "shortLabel": "Historique",
+    "href": "/angelcare-360-command-center/rapports/historique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/rapports/historique",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Rapports / Modeles",
+    "shortLabel": "Modeles",
+    "href": "/angelcare-360-command-center/rapports/modeles",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/rapports/modeles",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Reclamations",
+    "shortLabel": "Reclamations",
+    "href": "/angelcare-360-command-center/reclamations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/reclamations",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Reclamations / Assignations",
+    "shortLabel": "Assignations",
+    "href": "/angelcare-360-command-center/reclamations/assignations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/reclamations/assignations",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Reclamations / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/reclamations/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/reclamations/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Reclamations / Priorites",
+    "shortLabel": "Priorites",
+    "href": "/angelcare-360-command-center/reclamations/priorites",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/reclamations/priorites",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Reclamations / Tickets",
+    "shortLabel": "Tickets",
+    "href": "/angelcare-360-command-center/reclamations/tickets",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/reclamations/tickets",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport",
+    "shortLabel": "Transport",
+    "href": "/angelcare-360-command-center/transport",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Affectations",
+    "shortLabel": "Affectations",
+    "href": "/angelcare-360-command-center/transport/affectations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/affectations",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Arrets",
+    "shortLabel": "Arrets",
+    "href": "/angelcare-360-command-center/transport/arrets",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/arrets",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-command-center/transport/audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/audit",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Circuits",
+    "shortLabel": "Circuits",
+    "href": "/angelcare-360-command-center/transport/circuits",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/circuits",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Depot",
+    "shortLabel": "Depot",
+    "href": "/angelcare-360-command-center/transport/depot",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/depot",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Incidents",
+    "shortLabel": "Incidents",
+    "href": "/angelcare-360-command-center/transport/incidents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/incidents",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Notifications",
+    "shortLabel": "Notifications",
+    "href": "/angelcare-360-command-center/transport/notifications",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/notifications",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Ramassage",
+    "shortLabel": "Ramassage",
+    "href": "/angelcare-360-command-center/transport/ramassage",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/ramassage",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Securite",
+    "shortLabel": "Securite",
+    "href": "/angelcare-360-command-center/transport/securite",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/securite",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Command Center / Transport / Vehicules",
+    "shortLabel": "Vehicules",
+    "href": "/angelcare-360-command-center/transport/vehicules",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "permissionKey": "page:/angelcare-360-command-center/transport/vehicules",
+    "modulePermissionKey": "angelcare-360-command-center.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator",
+    "shortLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Audit",
+    "shortLabel": "Audit",
+    "href": "/angelcare-360-operator/audit",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/audit",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Billing",
+    "shortLabel": "Billing",
+    "href": "/angelcare-360-operator/billing",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/billing",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Billing / Accounts",
+    "shortLabel": "Accounts",
+    "href": "/angelcare-360-operator/billing/accounts",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/billing/accounts",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Billing / Balances",
+    "shortLabel": "Balances",
+    "href": "/angelcare-360-operator/billing/balances",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/billing/balances",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Billing / Dunning",
+    "shortLabel": "Dunning",
+    "href": "/angelcare-360-operator/billing/dunning",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/billing/dunning",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Billing / Invoices",
+    "shortLabel": "Invoices",
+    "href": "/angelcare-360-operator/billing/invoices",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/billing/invoices",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Billing / Payments",
+    "shortLabel": "Payments",
+    "href": "/angelcare-360-operator/billing/payments",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/billing/payments",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Client Access",
+    "shortLabel": "Client Access",
+    "href": "/angelcare-360-operator/client-access",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/client-access",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Clients",
+    "shortLabel": "Clients",
+    "href": "/angelcare-360-operator/clients",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/clients",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Contracts",
+    "shortLabel": "Contracts",
+    "href": "/angelcare-360-operator/contracts",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/contracts",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Customer Health",
+    "shortLabel": "Customer Health",
+    "href": "/angelcare-360-operator/customer-health",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/customer-health",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Features",
+    "shortLabel": "Features",
+    "href": "/angelcare-360-operator/features",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/features",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Implementation",
+    "shortLabel": "Implementation",
+    "href": "/angelcare-360-operator/implementation",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/implementation",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Incidents",
+    "shortLabel": "Incidents",
+    "href": "/angelcare-360-operator/incidents",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/incidents",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Modules",
+    "shortLabel": "Modules",
+    "href": "/angelcare-360-operator/modules",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/modules",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Notes",
+    "shortLabel": "Notes",
+    "href": "/angelcare-360-operator/notes",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/notes",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Onboarding",
+    "shortLabel": "Onboarding",
+    "href": "/angelcare-360-operator/onboarding",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/onboarding",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Operator Roles",
+    "shortLabel": "Operator Roles",
+    "href": "/angelcare-360-operator/operator-roles",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/operator-roles",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Packages",
+    "shortLabel": "Packages",
+    "href": "/angelcare-360-operator/packages",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/packages",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Plans",
+    "shortLabel": "Plans",
+    "href": "/angelcare-360-operator/plans",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/plans",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Renewals",
+    "shortLabel": "Renewals",
+    "href": "/angelcare-360-operator/renewals",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/renewals",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Service Operations",
+    "shortLabel": "Service Operations",
+    "href": "/angelcare-360-operator/service-operations",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/service-operations",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Service Requests",
+    "shortLabel": "Service Requests",
+    "href": "/angelcare-360-operator/service-requests",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/service-requests",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Settings",
+    "shortLabel": "Settings",
+    "href": "/angelcare-360-operator/settings",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/settings",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Subscriptions",
+    "shortLabel": "Subscriptions",
+    "href": "/angelcare-360-operator/subscriptions",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/subscriptions",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Support",
+    "shortLabel": "Support",
+    "href": "/angelcare-360-operator/support",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/support",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Tasks",
+    "shortLabel": "Tasks",
+    "href": "/angelcare-360-operator/tasks",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/tasks",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Tenants",
+    "shortLabel": "Tenants",
+    "href": "/angelcare-360-operator/tenants",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/tenants",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Angelcare 360 Operator / Usage Limits",
+    "shortLabel": "Usage Limits",
+    "href": "/angelcare-360-operator/usage-limits",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "permissionKey": "page:/angelcare-360-operator/usage-limits",
+    "modulePermissionKey": "angelcare-360-operator.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Automation Command",
@@ -240,7 +2366,8 @@ export const APP_ROUTES = [
     "module": "automation-command",
     "moduleLabel": "Automation Command",
     "permissionKey": "page:/automation-command",
-    "modulePermissionKey": "automation-command.view"
+    "modulePermissionKey": "automation-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Automation Command / Briefings",
@@ -249,7 +2376,8 @@ export const APP_ROUTES = [
     "module": "automation-command",
     "moduleLabel": "Automation Command",
     "permissionKey": "page:/automation-command/briefings",
-    "modulePermissionKey": "automation-command.view"
+    "modulePermissionKey": "automation-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Automation Command / Final Qa",
@@ -258,7 +2386,8 @@ export const APP_ROUTES = [
     "module": "automation-command",
     "moduleLabel": "Automation Command",
     "permissionKey": "page:/automation-command/final-qa",
-    "modulePermissionKey": "automation-command.view"
+    "modulePermissionKey": "automation-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Automation Command / Rules",
@@ -267,7 +2396,8 @@ export const APP_ROUTES = [
     "module": "automation-command",
     "moduleLabel": "Automation Command",
     "permissionKey": "page:/automation-command/rules",
-    "modulePermissionKey": "automation-command.view"
+    "modulePermissionKey": "automation-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Automation Command / Triggers",
@@ -276,7 +2406,8 @@ export const APP_ROUTES = [
     "module": "automation-command",
     "moduleLabel": "Automation Command",
     "permissionKey": "page:/automation-command/triggers",
-    "modulePermissionKey": "automation-command.view"
+    "modulePermissionKey": "automation-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Automation Command / Triggers / New",
@@ -285,7 +2416,8 @@ export const APP_ROUTES = [
     "module": "automation-command",
     "moduleLabel": "Automation Command",
     "permissionKey": "page:/automation-command/triggers/new",
-    "modulePermissionKey": "automation-command.view"
+    "modulePermissionKey": "automation-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships",
@@ -294,7 +2426,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Automation",
@@ -303,7 +2436,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/automation",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Campaigns",
@@ -312,7 +2446,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/campaigns",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Execution",
@@ -321,7 +2456,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/execution",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Imports",
@@ -330,7 +2466,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/imports",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Integration",
@@ -339,7 +2476,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/integration",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Intelligence",
@@ -348,7 +2486,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/intelligence",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Kpis",
@@ -357,7 +2496,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/kpis",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Meetings",
@@ -366,7 +2506,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/meetings",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Outreach",
@@ -375,7 +2516,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/outreach",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Partner Programs",
@@ -384,7 +2526,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/partner-programs",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Pipeline",
@@ -393,7 +2536,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/pipeline",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Programs",
@@ -402,7 +2546,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/programs",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Proposals",
@@ -411,7 +2556,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/proposals",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Prospects",
@@ -420,7 +2566,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/prospects",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Quality",
@@ -429,7 +2576,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/quality",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Reports",
@@ -438,7 +2586,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/reports",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Settings",
@@ -447,7 +2596,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/settings",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Tasks",
@@ -456,7 +2606,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/tasks",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "B2b Partnerships / Templates",
@@ -465,7 +2616,8 @@ export const APP_ROUTES = [
     "module": "b2b-partnerships",
     "moduleLabel": "B2b Partnerships",
     "permissionKey": "page:/b2b-partnerships/templates",
-    "modulePermissionKey": "b2b-partnerships.view"
+    "modulePermissionKey": "b2b-partnerships.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Billing",
@@ -474,7 +2626,8 @@ export const APP_ROUTES = [
     "module": "billing",
     "moduleLabel": "Billing",
     "permissionKey": "page:/billing",
-    "modulePermissionKey": "billing.view"
+    "modulePermissionKey": "billing.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Billing / Activation",
@@ -483,7 +2636,8 @@ export const APP_ROUTES = [
     "module": "billing",
     "moduleLabel": "Billing",
     "permissionKey": "page:/billing/activation",
-    "modulePermissionKey": "billing.view"
+    "modulePermissionKey": "billing.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Billing / Overview",
@@ -492,7 +2646,8 @@ export const APP_ROUTES = [
     "module": "billing",
     "moduleLabel": "Billing",
     "permissionKey": "page:/billing/overview",
-    "modulePermissionKey": "billing.view"
+    "modulePermissionKey": "billing.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Business Dev",
@@ -501,7 +2656,8 @@ export const APP_ROUTES = [
     "module": "business-dev",
     "moduleLabel": "Business Dev",
     "permissionKey": "page:/business-dev",
-    "modulePermissionKey": "business-dev.view"
+    "modulePermissionKey": "business-dev.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Capital Command Center",
@@ -510,7 +2666,8 @@ export const APP_ROUTES = [
     "module": "capital-command-center",
     "moduleLabel": "Capital Command Center",
     "permissionKey": "page:/capital-command-center",
-    "modulePermissionKey": "capital-command-center.view"
+    "modulePermissionKey": "capital-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Caregivers",
@@ -519,7 +2676,8 @@ export const APP_ROUTES = [
     "module": "caregivers",
     "moduleLabel": "Caregivers",
     "permissionKey": "page:/caregivers",
-    "modulePermissionKey": "caregivers.view"
+    "modulePermissionKey": "caregivers.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Caregivers / New",
@@ -528,7 +2686,8 @@ export const APP_ROUTES = [
     "module": "caregivers",
     "moduleLabel": "Caregivers",
     "permissionKey": "page:/caregivers/new",
-    "modulePermissionKey": "caregivers.view"
+    "modulePermissionKey": "caregivers.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Caregivers / Workforce",
@@ -537,7 +2696,348 @@ export const APP_ROUTES = [
     "module": "caregivers",
     "moduleLabel": "Caregivers",
     "permissionKey": "page:/caregivers/workforce",
-    "modulePermissionKey": "caregivers.view"
+    "modulePermissionKey": "caregivers.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Carelink Ops",
+    "shortLabel": "Carelink Ops",
+    "href": "/carelink-ops",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Agents",
+    "shortLabel": "Agents",
+    "href": "/carelink-ops/agents",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/agents",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Audit",
+    "shortLabel": "Audit",
+    "href": "/carelink-ops/audit",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/audit",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Calendar",
+    "shortLabel": "Calendar",
+    "href": "/carelink-ops/calendar",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/calendar",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Compliance",
+    "shortLabel": "Compliance",
+    "href": "/carelink-ops/compliance",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/compliance",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Control Room",
+    "shortLabel": "Control Room",
+    "href": "/carelink-ops/control-room",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/control-room",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch",
+    "shortLabel": "Dispatch",
+    "href": "/carelink-ops/dispatch",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Agent Pool",
+    "shortLabel": "Agent Pool",
+    "href": "/carelink-ops/dispatch/agent-pool",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/agent-pool",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Audit Trail",
+    "shortLabel": "Audit Trail",
+    "href": "/carelink-ops/dispatch/audit-trail",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/audit-trail",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Communications",
+    "shortLabel": "Communications",
+    "href": "/carelink-ops/dispatch/communications",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/communications",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Live Map",
+    "shortLabel": "Live Map",
+    "href": "/carelink-ops/dispatch/live-map",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/live-map",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Matching Engine",
+    "shortLabel": "Matching Engine",
+    "href": "/carelink-ops/dispatch/matching-engine",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/matching-engine",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Schedule",
+    "shortLabel": "Schedule",
+    "href": "/carelink-ops/dispatch/schedule",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/schedule",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Dispatch / Sla Escalations",
+    "shortLabel": "Sla Escalations",
+    "href": "/carelink-ops/dispatch/sla-escalations",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/dispatch/sla-escalations",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Incidents",
+    "shortLabel": "Incidents",
+    "href": "/carelink-ops/incidents",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/incidents",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Messages",
+    "shortLabel": "Messages",
+    "href": "/carelink-ops/messages",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/messages",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions",
+    "shortLabel": "Missions",
+    "href": "/carelink-ops/missions",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions / Audit",
+    "shortLabel": "Audit",
+    "href": "/carelink-ops/missions/audit",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions/audit",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions / Field Reports",
+    "shortLabel": "Field Reports",
+    "href": "/carelink-ops/missions/field-reports",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions/field-reports",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions / Master List",
+    "shortLabel": "Master List",
+    "href": "/carelink-ops/missions/master-list",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions/master-list",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions / Risk Monitoring",
+    "shortLabel": "Risk Monitoring",
+    "href": "/carelink-ops/missions/risk-monitoring",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions/risk-monitoring",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions / Timeline",
+    "shortLabel": "Timeline",
+    "href": "/carelink-ops/missions/timeline",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions/timeline",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Missions / Validation",
+    "shortLabel": "Validation",
+    "href": "/carelink-ops/missions/validation",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/missions/validation",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Notifications",
+    "shortLabel": "Notifications",
+    "href": "/carelink-ops/notifications",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/notifications",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Payments",
+    "shortLabel": "Payments",
+    "href": "/carelink-ops/payments",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/payments",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Performance",
+    "shortLabel": "Performance",
+    "href": "/carelink-ops/performance",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/performance",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Quality",
+    "shortLabel": "Quality",
+    "href": "/carelink-ops/quality",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/quality",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Readiness",
+    "shortLabel": "Readiness",
+    "href": "/carelink-ops/readiness",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/readiness",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Replacements",
+    "shortLabel": "Replacements",
+    "href": "/carelink-ops/replacements",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/replacements",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Reports",
+    "shortLabel": "Reports",
+    "href": "/carelink-ops/reports",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/reports",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Schedule",
+    "shortLabel": "Schedule",
+    "href": "/carelink-ops/schedule",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/schedule",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Service Config",
+    "shortLabel": "Service Config",
+    "href": "/carelink-ops/service-config",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/service-config",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Settings",
+    "shortLabel": "Settings",
+    "href": "/carelink-ops/settings",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/settings",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
+  },
+  {
+    "label": "Carelink Ops / Workforce",
+    "shortLabel": "Workforce",
+    "href": "/carelink-ops/workforce",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "permissionKey": "page:/carelink-ops/workforce",
+    "modulePermissionKey": "carelink-ops.view",
+    "detectedSource": "app/carelink-ops"
   },
   {
     "label": "Command Center",
@@ -546,7 +3046,8 @@ export const APP_ROUTES = [
     "module": "command-center",
     "moduleLabel": "Command Center",
     "permissionKey": "page:/command-center",
-    "modulePermissionKey": "command-center.view"
+    "modulePermissionKey": "command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Connect",
@@ -555,7 +3056,8 @@ export const APP_ROUTES = [
     "module": "connect",
     "moduleLabel": "Connect",
     "permissionKey": "page:/connect",
-    "modulePermissionKey": "connect.view"
+    "modulePermissionKey": "connect.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Contracts",
@@ -564,7 +3066,8 @@ export const APP_ROUTES = [
     "module": "contracts",
     "moduleLabel": "Contracts",
     "permissionKey": "page:/contracts",
-    "modulePermissionKey": "contracts.view"
+    "modulePermissionKey": "contracts.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Contracts / Command Center",
@@ -573,7 +3076,8 @@ export const APP_ROUTES = [
     "module": "contracts",
     "moduleLabel": "Contracts",
     "permissionKey": "page:/contracts/command-center",
-    "modulePermissionKey": "contracts.view"
+    "modulePermissionKey": "contracts.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Contracts / New",
@@ -582,7 +3086,8 @@ export const APP_ROUTES = [
     "module": "contracts",
     "moduleLabel": "Contracts",
     "permissionKey": "page:/contracts/new",
-    "modulePermissionKey": "contracts.view"
+    "modulePermissionKey": "contracts.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Csa Home",
@@ -591,7 +3096,8 @@ export const APP_ROUTES = [
     "module": "csa-home",
     "moduleLabel": "Csa Home",
     "permissionKey": "page:/csa-home",
-    "modulePermissionKey": "csa-home.view"
+    "modulePermissionKey": "csa-home.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Dashboard",
@@ -600,7 +3106,18 @@ export const APP_ROUTES = [
     "module": "dashboard",
     "moduleLabel": "Dashboard",
     "permissionKey": "page:/",
-    "modulePermissionKey": "dashboard.view"
+    "modulePermissionKey": "dashboard.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Dashboard",
+    "shortLabel": "Dashboard",
+    "href": "/dashboard",
+    "module": "dashboard",
+    "moduleLabel": "Dashboard",
+    "permissionKey": "page:/dashboard",
+    "modulePermissionKey": "dashboard.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os",
@@ -609,7 +3126,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Admin",
@@ -618,7 +3136,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/admin",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Analytics",
@@ -627,7 +3146,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/analytics",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Bulk Mailbox Preinstall",
@@ -636,7 +3156,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/bulk-mailbox-preinstall",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Command Center",
@@ -645,7 +3166,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/command-center",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Compose",
@@ -654,7 +3176,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/compose",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Compose Production",
@@ -663,7 +3186,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/compose-production",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Compose Real",
@@ -672,7 +3196,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/compose-real",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Credential Security",
@@ -681,7 +3206,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/credential-security",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Deployment Hardening",
@@ -690,7 +3216,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/deployment-hardening",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Deployment Readiness",
@@ -699,7 +3226,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/deployment-readiness",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Enterprise Hardening",
@@ -708,7 +3236,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/enterprise-hardening",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Executive Automation",
@@ -717,7 +3246,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/executive-automation",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Executive Execution",
@@ -726,7 +3256,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/executive-execution",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Final Acceptance",
@@ -735,7 +3266,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/final-acceptance",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Final Command",
@@ -744,7 +3276,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/final-command",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Final Readiness",
@@ -753,7 +3286,18 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/final-readiness",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Email Os / Gate",
+    "shortLabel": "Gate",
+    "href": "/email-os/gate",
+    "module": "email-os",
+    "moduleLabel": "Email Os",
+    "permissionKey": "page:/email-os/gate",
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Governance",
@@ -762,7 +3306,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/governance",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Hub",
@@ -771,7 +3316,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/hub",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Human Qa",
@@ -780,7 +3326,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/human-qa",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Launch Ops",
@@ -789,7 +3336,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/launch-ops",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Mailbox Liveness",
@@ -798,7 +3346,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/mailbox-liveness",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Mailbox Setup",
@@ -807,7 +3356,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/mailbox-setup",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Mailbox Testing",
@@ -816,7 +3366,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/mailbox-testing",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Mailboxes Premium",
@@ -825,7 +3376,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/mailboxes-premium",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Mega Operations",
@@ -834,7 +3386,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/mega-operations",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Onboarding",
@@ -843,7 +3396,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/onboarding",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Outbox Real",
@@ -852,7 +3406,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/outbox-real",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Permissions",
@@ -861,7 +3416,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/permissions",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Product Maturity",
@@ -870,7 +3426,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/product-maturity",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Production Checklist",
@@ -879,7 +3436,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/production-checklist",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Production Validation",
@@ -888,7 +3446,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/production-validation",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Search",
@@ -897,7 +3456,18 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/search",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Email Os / Server Control",
+    "shortLabel": "Server Control",
+    "href": "/email-os/server-control",
+    "module": "email-os",
+    "moduleLabel": "Email Os",
+    "permissionKey": "page:/email-os/server-control",
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Sla Workflows",
@@ -906,7 +3476,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/sla-workflows",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Sync Operations",
@@ -915,7 +3486,8 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/sync-operations",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Email Os / Team Collaboration",
@@ -924,9 +3496,19 @@ export const APP_ROUTES = [
     "module": "email-os",
     "moduleLabel": "Email Os",
     "permissionKey": "page:/email-os/team-collaboration",
-    "modulePermissionKey": "email-os.view"
+    "modulePermissionKey": "email-os.view",
+    "detectedSource": "app/(protected)"
   },
-  
+  {
+    "label": "Enterprise Command",
+    "shortLabel": "Enterprise Command",
+    "href": "/enterprise-command",
+    "module": "enterprise-command",
+    "moduleLabel": "Enterprise Command",
+    "permissionKey": "page:/enterprise-command",
+    "modulePermissionKey": "enterprise-command.view",
+    "detectedSource": "app/(protected)"
+  },
   {
     "label": "Execution Engine",
     "shortLabel": "Execution Engine",
@@ -934,7 +3516,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Execution Engine / Command Actions",
@@ -943,7 +3526,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine/command-actions",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Execution Engine / Escalations",
@@ -952,7 +3536,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine/escalations",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Execution Engine / Final Qa",
@@ -961,7 +3546,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine/final-qa",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Execution Engine / Sync Map",
@@ -970,7 +3556,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine/sync-map",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Execution Engine / Workflows",
@@ -979,7 +3566,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine/workflows",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Execution Engine / Workflows / New",
@@ -988,7 +3576,8 @@ export const APP_ROUTES = [
     "module": "execution-engine",
     "moduleLabel": "Execution Engine",
     "permissionKey": "page:/execution-engine/workflows/new",
-    "modulePermissionKey": "execution-engine.view"
+    "modulePermissionKey": "execution-engine.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Executive Cockpit",
@@ -997,7 +3586,8 @@ export const APP_ROUTES = [
     "module": "executive-cockpit",
     "moduleLabel": "Executive Cockpit",
     "permissionKey": "page:/executive-cockpit",
-    "modulePermissionKey": "executive-cockpit.view"
+    "modulePermissionKey": "executive-cockpit.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Families",
@@ -1006,7 +3596,8 @@ export const APP_ROUTES = [
     "module": "families",
     "moduleLabel": "Families",
     "permissionKey": "page:/families",
-    "modulePermissionKey": "families.view"
+    "modulePermissionKey": "families.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Families / Intelligence",
@@ -1015,7 +3606,8 @@ export const APP_ROUTES = [
     "module": "families",
     "moduleLabel": "Families",
     "permissionKey": "page:/families/intelligence",
-    "modulePermissionKey": "families.view"
+    "modulePermissionKey": "families.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Families / New",
@@ -1024,7 +3616,8 @@ export const APP_ROUTES = [
     "module": "families",
     "moduleLabel": "Families",
     "permissionKey": "page:/families/new",
-    "modulePermissionKey": "families.view"
+    "modulePermissionKey": "families.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Growth War Room",
@@ -1033,7 +3626,8 @@ export const APP_ROUTES = [
     "module": "growth-war-room",
     "moduleLabel": "Growth War Room",
     "permissionKey": "page:/growth-war-room",
-    "modulePermissionKey": "growth-war-room.view"
+    "modulePermissionKey": "growth-war-room.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr",
@@ -1042,7 +3636,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Actionability Audit",
@@ -1051,7 +3646,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/actionability-audit",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Activity Timeline",
@@ -1060,7 +3656,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/activity-timeline",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Adoption Tracker",
@@ -1069,7 +3666,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/adoption-tracker",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Alerts",
@@ -1078,7 +3676,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/alerts",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Analytics Hub",
@@ -1087,7 +3686,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/analytics-hub",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Approvals",
@@ -1096,7 +3696,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/approvals",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Attendance",
@@ -1105,7 +3706,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/attendance",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Attendance / Actions",
@@ -1114,7 +3716,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/attendance/actions",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Attendance / Corrections",
@@ -1123,7 +3726,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/attendance/corrections",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Attendance / Identity Map",
@@ -1132,7 +3736,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/attendance/identity-map",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Attendance / Readiness",
@@ -1141,7 +3746,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/attendance/readiness",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Attendance / Report",
@@ -1150,7 +3756,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/attendance/report",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Audit",
@@ -1159,7 +3766,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/audit",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Boardroom",
@@ -1168,7 +3776,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/boardroom",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Bulk Actions",
@@ -1177,7 +3786,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/bulk-actions",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Calendar",
@@ -1186,7 +3796,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/calendar",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Command Center",
@@ -1195,7 +3806,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/command-center",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Command Queue",
@@ -1204,7 +3816,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/command-queue",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Compliance",
@@ -1213,7 +3826,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/compliance",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Compliance Watch",
@@ -1222,7 +3836,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/compliance-watch",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Contracts",
@@ -1231,7 +3846,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/contracts",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Control Room",
@@ -1240,7 +3856,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/control-room",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Crud Audit",
@@ -1249,7 +3866,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/crud-audit",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Daily Ops",
@@ -1258,7 +3876,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/daily-ops",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Data Quality",
@@ -1267,7 +3886,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/data-quality",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Departments",
@@ -1276,7 +3896,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/departments",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Deployment Readiness",
@@ -1285,7 +3906,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/deployment-readiness",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Documentation",
@@ -1294,7 +3916,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/documentation",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Documents",
@@ -1303,7 +3926,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/documents",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Employees",
@@ -1312,7 +3936,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/employees",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Enterprise Dashboard",
@@ -1321,7 +3946,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/enterprise-dashboard",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Enterprise Readiness",
@@ -1330,7 +3956,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/enterprise-readiness",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Erp Readiness",
@@ -1339,7 +3966,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/erp-readiness",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Escalations",
@@ -1348,7 +3976,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/escalations",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Executive",
@@ -1357,7 +3986,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/executive",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Executive Automation",
@@ -1366,7 +3996,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/executive-automation",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Export",
@@ -1375,7 +4006,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/export",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Final Qa",
@@ -1384,7 +4016,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/final-qa",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Final Route Audit",
@@ -1393,7 +4026,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/final-route-audit",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Integrations",
@@ -1402,7 +4036,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/integrations",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Kpi Drilldowns",
@@ -1411,7 +4046,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/kpi-drilldowns",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Launch Center",
@@ -1420,7 +4056,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/launch-center",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Leave",
@@ -1429,7 +4066,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/leave",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Linked Records",
@@ -1438,7 +4076,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/linked-records",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Navigation",
@@ -1447,7 +4086,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/navigation",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Notifications",
@@ -1456,7 +4096,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/notifications",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Onboarding",
@@ -1465,7 +4106,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/onboarding",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Onboarding / Checklists",
@@ -1474,7 +4116,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/onboarding/checklists",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Openings",
@@ -1483,7 +4126,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/openings",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Openings / New",
@@ -1492,7 +4136,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/openings/new",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Operations Console",
@@ -1501,7 +4146,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/operations-console",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Operator Training",
@@ -1510,7 +4156,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/operator-training",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Organization",
@@ -1519,7 +4166,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/organization",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Overtime Approvals",
@@ -1528,7 +4176,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/overtime-approvals",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Payroll",
@@ -1537,7 +4186,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/payroll",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Performance Matrix",
@@ -1546,7 +4196,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/performance-matrix",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Playbooks",
@@ -1555,7 +4206,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/playbooks",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Policies",
@@ -1564,7 +4216,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/policies",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Positions",
@@ -1573,7 +4226,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/positions",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Quality",
@@ -1582,7 +4236,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/quality",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Quick Actions",
@@ -1591,7 +4246,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/quick-actions",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Recruitment",
@@ -1600,7 +4256,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/recruitment",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Recruitment / Candidates",
@@ -1609,7 +4266,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/recruitment/candidates",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Recruitment / Interviews",
@@ -1618,7 +4276,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/recruitment/interviews",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Recruitment / Kanban",
@@ -1627,7 +4286,18 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/recruitment/kanban",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Hr / Recruitment / Questionnaires",
+    "shortLabel": "Questionnaires",
+    "href": "/hr/recruitment/questionnaires",
+    "module": "hr",
+    "moduleLabel": "HR",
+    "permissionKey": "page:/hr/recruitment/questionnaires",
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Recruitment / Sources",
@@ -1636,7 +4306,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/recruitment/sources",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Reports",
@@ -1645,7 +4316,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/reports",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Reports / Export",
@@ -1654,7 +4326,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/reports/export",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Risk Center",
@@ -1663,7 +4336,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/risk-center",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters",
@@ -1672,7 +4346,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters / Conflicts",
@@ -1681,7 +4356,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters/conflicts",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters / New",
@@ -1690,7 +4366,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters/new",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters / Planner",
@@ -1699,7 +4376,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters/planner",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters / Readiness",
@@ -1708,7 +4386,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters/readiness",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters / Repeat",
@@ -1717,7 +4396,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters/repeat",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Rosters / Templates",
@@ -1726,7 +4406,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/rosters/templates",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Route Coverage",
@@ -1735,7 +4416,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/route-coverage",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Route Map",
@@ -1744,7 +4426,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/route-map",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Saved Views",
@@ -1753,7 +4436,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/saved-views",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Search",
@@ -1762,7 +4446,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/search",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Service Requests",
@@ -1771,7 +4456,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/service-requests",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Settings",
@@ -1780,7 +4466,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/settings",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Sla Center",
@@ -1789,7 +4476,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/sla-center",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Staff",
@@ -1798,7 +4486,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/staff",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Staff / New",
@@ -1807,7 +4496,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/staff/new",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Sync Center",
@@ -1816,7 +4506,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/sync-center",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / System Health",
@@ -1825,7 +4516,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/system-health",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Tasks",
@@ -1834,7 +4526,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/tasks",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Templates",
@@ -1843,7 +4536,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/templates",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Time Tracking",
@@ -1852,7 +4546,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/time-tracking",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Training",
@@ -1861,7 +4556,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/training",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Work Schedules",
@@ -1870,7 +4566,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/work-schedules",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce Intelligence",
@@ -1879,7 +4576,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce-intelligence",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce Ops",
@@ -1888,7 +4586,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce-ops",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce Ops / Actions",
@@ -1897,7 +4596,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce-ops/actions",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce Ops / Readiness",
@@ -1906,7 +4606,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce-ops/readiness",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce Risks",
@@ -1915,7 +4616,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce-risks",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce / Forecast",
@@ -1924,7 +4626,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce/forecast",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Hr / Workforce / Missions",
@@ -1933,7 +4636,8 @@ export const APP_ROUTES = [
     "module": "hr",
     "moduleLabel": "HR",
     "permissionKey": "page:/hr/workforce/missions",
-    "modulePermissionKey": "hr.view"
+    "modulePermissionKey": "hr.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Incidents",
@@ -1942,7 +4646,8 @@ export const APP_ROUTES = [
     "module": "incidents",
     "moduleLabel": "Incidents",
     "permissionKey": "page:/incidents",
-    "modulePermissionKey": "incidents.view"
+    "modulePermissionKey": "incidents.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Incidents / New",
@@ -1951,7 +4656,8 @@ export const APP_ROUTES = [
     "module": "incidents",
     "moduleLabel": "Incidents",
     "permissionKey": "page:/incidents/new",
-    "modulePermissionKey": "incidents.view"
+    "modulePermissionKey": "incidents.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions",
@@ -1960,7 +4666,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Command",
@@ -1969,7 +4676,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/command",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Demandes",
@@ -1978,7 +4686,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/demandes",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Dispatch",
@@ -1987,7 +4696,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/dispatch",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Equipements",
@@ -1996,7 +4706,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/equipements",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Facturation",
@@ -2005,7 +4716,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/facturation",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Lieux",
@@ -2014,7 +4726,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/lieux",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Ordres",
@@ -2023,7 +4736,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/ordres",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Parametres",
@@ -2032,7 +4746,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/parametres",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Patients",
@@ -2041,7 +4756,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/patients",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Personnel",
@@ -2050,7 +4766,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/personnel",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Planning",
@@ -2059,7 +4776,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/planning",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Rapports",
@@ -2068,7 +4786,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/rapports",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Interventions / Tournees",
@@ -2077,7 +4796,8 @@ export const APP_ROUTES = [
     "module": "interventions",
     "moduleLabel": "Interventions",
     "permissionKey": "page:/interventions/tournees",
-    "modulePermissionKey": "interventions.view"
+    "modulePermissionKey": "interventions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Leads",
@@ -2086,7 +4806,8 @@ export const APP_ROUTES = [
     "module": "leads",
     "moduleLabel": "Leads",
     "permissionKey": "page:/leads",
-    "modulePermissionKey": "leads.view"
+    "modulePermissionKey": "leads.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Leads / Command Center",
@@ -2095,7 +4816,8 @@ export const APP_ROUTES = [
     "module": "leads",
     "moduleLabel": "Leads",
     "permissionKey": "page:/leads/command-center",
-    "modulePermissionKey": "leads.view"
+    "modulePermissionKey": "leads.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Leads / New",
@@ -2104,7 +4826,8 @@ export const APP_ROUTES = [
     "module": "leads",
     "moduleLabel": "Leads",
     "permissionKey": "page:/leads/new",
-    "modulePermissionKey": "leads.view"
+    "modulePermissionKey": "leads.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Locations",
@@ -2113,7 +4836,8 @@ export const APP_ROUTES = [
     "module": "locations",
     "moduleLabel": "Locations",
     "permissionKey": "page:/locations",
-    "modulePermissionKey": "locations.view"
+    "modulePermissionKey": "locations.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os",
@@ -2122,7 +4846,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors",
@@ -2131,7 +4856,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Academy Sync",
@@ -2140,7 +4866,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/academy-sync",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Agenda",
@@ -2149,7 +4876,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/agenda",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Agent Governance",
@@ -2158,7 +4886,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/agent-governance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Ai Command",
@@ -2167,7 +4896,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/ai-command",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Analytics",
@@ -2176,7 +4906,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/analytics",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Analytics Orchestration",
@@ -2185,7 +4916,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/analytics-orchestration",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Approvals",
@@ -2194,7 +4926,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/approvals",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Assets",
@@ -2203,7 +4936,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/assets",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Attribution",
@@ -2212,7 +4946,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/attribution",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Audit Models",
@@ -2221,7 +4956,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/audit-models",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Automations",
@@ -2230,7 +4966,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/automations",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Autonomous Growth",
@@ -2239,7 +4976,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/autonomous-growth",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Backend Infra",
@@ -2248,7 +4986,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/backend-infra",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Backend Readiness",
@@ -2257,7 +4996,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/backend-readiness",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Broadcasts",
@@ -2266,7 +5006,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/broadcasts",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Ceo Command",
@@ -2275,7 +5016,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/ceo-command",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Certifications",
@@ -2284,7 +5026,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/certifications",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Command Center",
@@ -2293,7 +5036,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/command-center",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Communications",
@@ -2302,7 +5046,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/communications",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Communications Execution",
@@ -2311,7 +5056,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/communications-execution",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Compliance",
@@ -2320,7 +5066,18 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/compliance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Market Os / Ambassadors / Conversions",
+    "shortLabel": "Conversions",
+    "href": "/market-os/ambassadors/conversions",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/ambassadors/conversions",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Create",
@@ -2329,7 +5086,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/create",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Data Sync",
@@ -2338,7 +5096,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/data-sync",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Database",
@@ -2347,7 +5106,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/database",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Directory",
@@ -2356,7 +5116,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/directory",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Enterprise Dashboard",
@@ -2365,7 +5126,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/enterprise-dashboard",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Enterprise Sync",
@@ -2374,7 +5136,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/enterprise-sync",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Execution Center",
@@ -2383,7 +5146,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/execution-center",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Execution Queue",
@@ -2392,7 +5156,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/execution-queue",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Executive Command",
@@ -2401,7 +5166,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/executive-command",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Executive Intelligence",
@@ -2410,7 +5176,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/executive-intelligence",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Field Operations",
@@ -2419,7 +5186,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/field-operations",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Final Infrastructure",
@@ -2428,7 +5196,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/final-infrastructure",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Final Production Transition",
@@ -2437,7 +5206,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/final-production-transition",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Final Stabilization",
@@ -2446,7 +5216,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/final-stabilization",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Goals Kpis",
@@ -2455,7 +5226,18 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/goals-kpis",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Market Os / Ambassadors / Governance",
+    "shortLabel": "Governance",
+    "href": "/market-os/ambassadors/governance",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/ambassadors/governance",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Governance Blueprint",
@@ -2464,7 +5246,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/governance-blueprint",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Incentives",
@@ -2473,7 +5256,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/incentives",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Infrastructure Control",
@@ -2482,7 +5266,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/infrastructure-control",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Intelligence",
@@ -2491,7 +5276,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/intelligence",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Leads",
@@ -2500,7 +5286,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/leads",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Live Command",
@@ -2509,7 +5296,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/live-command",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Live Execution",
@@ -2518,7 +5306,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/live-execution",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Local Activations",
@@ -2527,7 +5316,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/local-activations",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Market Dominance",
@@ -2536,7 +5326,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/market-dominance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Market Intelligence",
@@ -2545,7 +5336,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/market-intelligence",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Message Templates",
@@ -2554,7 +5346,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/message-templates",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Missions",
@@ -2563,7 +5356,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/missions",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Multi Agent Ops",
@@ -2572,7 +5366,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/multi-agent-ops",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Onboarding",
@@ -2581,7 +5376,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/onboarding",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Operating Model",
@@ -2590,7 +5386,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/operating-model",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Operations Intelligence",
@@ -2599,7 +5396,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/operations-intelligence",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Optimization Engine",
@@ -2608,7 +5406,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/optimization-engine",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Orchestration Runtime",
@@ -2617,7 +5416,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/orchestration-runtime",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Payout Forecast",
@@ -2626,7 +5426,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/payout-forecast",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Payouts",
@@ -2635,7 +5436,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/payouts",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Performance",
@@ -2644,7 +5446,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/performance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Performance Leaderboard",
@@ -2653,7 +5456,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/performance-leaderboard",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Permission Matrix",
@@ -2662,7 +5466,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/permission-matrix",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Permissions",
@@ -2671,7 +5476,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/permissions",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Production Hardening",
@@ -2680,7 +5486,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/production-hardening",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Production Transition",
@@ -2689,7 +5496,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/production-transition",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Program Rules",
@@ -2698,7 +5506,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/program-rules",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Programs",
@@ -2707,7 +5516,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/programs",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Proofs",
@@ -2716,7 +5526,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/proofs",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Recruitment",
@@ -2725,7 +5536,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/recruitment",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Release Readiness",
@@ -2734,7 +5546,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/release-readiness",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Reports",
@@ -2743,7 +5556,18 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/reports",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Market Os / Ambassadors / Resources",
+    "shortLabel": "Resources",
+    "href": "/market-os/ambassadors/resources",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/ambassadors/resources",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Revenue Orchestration",
@@ -2752,7 +5576,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/revenue-orchestration",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Revenue Performance",
@@ -2761,7 +5586,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/revenue-performance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Reward Rules",
@@ -2770,7 +5596,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/reward-rules",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Rewards",
@@ -2779,7 +5606,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/rewards",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Settings",
@@ -2788,7 +5616,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/settings",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Strategic Intelligence",
@@ -2797,7 +5626,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/strategic-intelligence",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Territories",
@@ -2806,7 +5636,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/territories",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Territory Command",
@@ -2815,7 +5646,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/territory-command",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Tier Rules",
@@ -2824,7 +5656,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/tier-rules",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Training",
@@ -2833,7 +5666,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/training",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Training Academy",
@@ -2842,7 +5676,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/training-academy",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Training Certification",
@@ -2851,7 +5686,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/training-certification",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / Unified Operations",
@@ -2860,7 +5696,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/unified-operations",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Ambassadors / War Room",
@@ -2869,7 +5706,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/ambassadors/war-room",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Campaign Lifecycle",
@@ -2878,7 +5716,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/campaign-lifecycle",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Campaign Lifecycle / Campaign Lifecycle",
@@ -2887,7 +5726,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/campaign-lifecycle/campaign-lifecycle",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Campaign Lifecycle / Campaign Lifecycle / Create",
@@ -2896,7 +5736,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/campaign-lifecycle/campaign-lifecycle/create",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Campaign Lifecycle / Create",
@@ -2905,7 +5746,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/campaign-lifecycle/create",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center",
@@ -2914,7 +5756,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Active Assets",
@@ -2923,7 +5766,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/active-assets",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Assets",
@@ -2932,7 +5776,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/assets",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Brand Governance",
@@ -2941,7 +5786,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/brand-governance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Briefs",
@@ -2950,7 +5796,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/briefs",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Calendar",
@@ -2959,7 +5806,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/calendar",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Create",
@@ -2968,7 +5816,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/create",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Publishing",
@@ -2977,7 +5826,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/publishing",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Review",
@@ -2986,7 +5836,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/review",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Tasks",
@@ -2995,7 +5846,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/tasks",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Content Command Center / Tasks / Execution",
@@ -3004,7 +5856,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/content-command-center/tasks/execution",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Marketing Home",
@@ -3013,7 +5866,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/marketing-home",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace",
@@ -3022,7 +5876,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Analytics",
@@ -3031,7 +5886,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/analytics",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Brand Governance",
@@ -3040,7 +5896,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/brand-governance",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Calendar",
@@ -3049,7 +5906,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/calendar",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Create",
@@ -3058,7 +5916,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/create",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Linking",
@@ -3067,7 +5926,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/linking",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Optimizer",
@@ -3076,7 +5936,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/optimizer",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Publishing",
@@ -3085,7 +5946,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/publishing",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Review",
@@ -3094,7 +5956,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/review",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Market Os / Seo Blog Workspace / Topic Clusters",
@@ -3103,7 +5966,8 @@ export const APP_ROUTES = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "permissionKey": "page:/market-os/seo-blog-workspace/topic-clusters",
-    "modulePermissionKey": "market-os.view"
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Missions",
@@ -3112,7 +5976,8 @@ export const APP_ROUTES = [
     "module": "missions",
     "moduleLabel": "Missions",
     "permissionKey": "page:/missions",
-    "modulePermissionKey": "missions.view"
+    "modulePermissionKey": "missions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Missions / Command Center",
@@ -3121,7 +5986,8 @@ export const APP_ROUTES = [
     "module": "missions",
     "moduleLabel": "Missions",
     "permissionKey": "page:/missions/command-center",
-    "modulePermissionKey": "missions.view"
+    "modulePermissionKey": "missions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Missions / New",
@@ -3130,7 +5996,8 @@ export const APP_ROUTES = [
     "module": "missions",
     "moduleLabel": "Missions",
     "permissionKey": "page:/missions/new",
-    "modulePermissionKey": "missions.view"
+    "modulePermissionKey": "missions.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Module Specialization",
@@ -3139,7 +6006,8 @@ export const APP_ROUTES = [
     "module": "module-specialization",
     "moduleLabel": "Module Specialization",
     "permissionKey": "page:/module-specialization",
-    "modulePermissionKey": "module-specialization.view"
+    "modulePermissionKey": "module-specialization.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Operations",
@@ -3148,7 +6016,8 @@ export const APP_ROUTES = [
     "module": "operations",
     "moduleLabel": "Operations",
     "permissionKey": "page:/operations",
-    "modulePermissionKey": "operations.view"
+    "modulePermissionKey": "operations.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Operations / Availability",
@@ -3157,7 +6026,8 @@ export const APP_ROUTES = [
     "module": "operations",
     "moduleLabel": "Operations",
     "permissionKey": "page:/operations/availability",
-    "modulePermissionKey": "operations.view"
+    "modulePermissionKey": "operations.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Operations / Replacements",
@@ -3166,7 +6036,8 @@ export const APP_ROUTES = [
     "module": "operations",
     "moduleLabel": "Operations",
     "permissionKey": "page:/operations/replacements",
-    "modulePermissionKey": "operations.view"
+    "modulePermissionKey": "operations.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Operations War Room",
@@ -3175,7 +6046,28 @@ export const APP_ROUTES = [
     "module": "operations-war-room",
     "moduleLabel": "Operations War Room",
     "permissionKey": "page:/operations-war-room",
-    "modulePermissionKey": "operations-war-room.view"
+    "modulePermissionKey": "operations-war-room.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Opsos / Infrastructure / Windows Node",
+    "shortLabel": "Windows Node",
+    "href": "/opsos/infrastructure/windows-node",
+    "module": "opsos",
+    "moduleLabel": "Opsos",
+    "permissionKey": "page:/opsos/infrastructure/windows-node",
+    "modulePermissionKey": "opsos.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Opsos Control Plane",
+    "shortLabel": "Opsos Control Plane",
+    "href": "/opsos-control-plane",
+    "module": "opsos-control-plane",
+    "moduleLabel": "Opsos Control Plane",
+    "permissionKey": "page:/opsos-control-plane",
+    "modulePermissionKey": "opsos-control-plane.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Opsos Design System",
@@ -3184,7 +6076,8 @@ export const APP_ROUTES = [
     "module": "opsos-design-system",
     "moduleLabel": "Opsos Design System",
     "permissionKey": "page:/opsos-design-system",
-    "modulePermissionKey": "opsos-design-system.view"
+    "modulePermissionKey": "opsos-design-system.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Opsos Final Qa",
@@ -3193,7 +6086,8 @@ export const APP_ROUTES = [
     "module": "opsos-final-qa",
     "moduleLabel": "Opsos Final Qa",
     "permissionKey": "page:/opsos-final-qa",
-    "modulePermissionKey": "opsos-final-qa.view"
+    "modulePermissionKey": "opsos-final-qa.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Pacojaco Ops",
@@ -3202,7 +6096,8 @@ export const APP_ROUTES = [
     "module": "pacojaco-ops",
     "moduleLabel": "Pacojaco Ops",
     "permissionKey": "page:/pacojaco-ops",
-    "modulePermissionKey": "pacojaco-ops.view"
+    "modulePermissionKey": "pacojaco-ops.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Pointage",
@@ -3211,7 +6106,8 @@ export const APP_ROUTES = [
     "module": "pointage",
     "moduleLabel": "Pointage",
     "permissionKey": "page:/pointage",
-    "modulePermissionKey": "pointage.view"
+    "modulePermissionKey": "pointage.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Print",
@@ -3220,7 +6116,8 @@ export const APP_ROUTES = [
     "module": "print",
     "moduleLabel": "Print",
     "permissionKey": "page:/print",
-    "modulePermissionKey": "print.view"
+    "modulePermissionKey": "print.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Production Persistence Center",
@@ -3229,7 +6126,8 @@ export const APP_ROUTES = [
     "module": "production-persistence-center",
     "moduleLabel": "Production Persistence Center",
     "permissionKey": "page:/production-persistence-center",
-    "modulePermissionKey": "production-persistence-center.view"
+    "modulePermissionKey": "production-persistence-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Profile",
@@ -3238,7 +6136,8 @@ export const APP_ROUTES = [
     "module": "profile",
     "moduleLabel": "Profile",
     "permissionKey": "page:/profile",
-    "modulePermissionKey": "profile.view"
+    "modulePermissionKey": "profile.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Reports",
@@ -3247,7 +6146,8 @@ export const APP_ROUTES = [
     "module": "reports",
     "moduleLabel": "Reports",
     "permissionKey": "page:/reports",
-    "modulePermissionKey": "reports.view"
+    "modulePermissionKey": "reports.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center",
@@ -3256,7 +6156,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Activity Timeline",
@@ -3265,7 +6166,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/activity-timeline",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Ai Scoring",
@@ -3274,7 +6176,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/ai-scoring",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments",
@@ -3283,7 +6186,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Analytics",
@@ -3292,7 +6196,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/analytics",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Calendar",
@@ -3301,7 +6206,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/calendar",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Command",
@@ -3310,7 +6216,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/command",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Control Tower",
@@ -3319,7 +6226,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/control-tower",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Conversion",
@@ -3328,7 +6236,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/conversion",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Dashboard",
@@ -3337,7 +6246,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/dashboard",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Escalations",
@@ -3346,7 +6256,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/escalations",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Executive",
@@ -3355,7 +6266,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/executive",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / High Value",
@@ -3364,7 +6276,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/high-value",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Live",
@@ -3373,7 +6286,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/live",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / New",
@@ -3382,7 +6296,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / No Shows",
@@ -3391,7 +6306,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/no-shows",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Performance",
@@ -3400,7 +6316,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/performance",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Queue",
@@ -3409,7 +6326,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/queue",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Recovery",
@@ -3418,7 +6336,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/recovery",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Reschedules",
@@ -3427,7 +6346,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/reschedules",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Risk",
@@ -3436,7 +6356,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/risk",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Appointments / Schedule",
@@ -3445,7 +6366,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/appointments/schedule",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Automation",
@@ -3454,7 +6376,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/automation",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow",
@@ -3463,7 +6386,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Active Clients",
@@ -3472,7 +6396,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/active-clients",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Analytics",
@@ -3481,7 +6406,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/analytics",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Care Start",
@@ -3490,7 +6416,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/care-start",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Consultation",
@@ -3499,7 +6426,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/consultation",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Executive",
@@ -3508,7 +6436,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/executive",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / High Value",
@@ -3517,7 +6446,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/high-value",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Intake",
@@ -3526,7 +6456,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/intake",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Matching",
@@ -3535,7 +6466,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/matching",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / New",
@@ -3544,7 +6476,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Onboarding",
@@ -3553,7 +6486,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/onboarding",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Pipeline",
@@ -3562,7 +6496,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/pipeline",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Qualification",
@@ -3571,7 +6506,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/qualification",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Quote",
@@ -3580,7 +6516,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/quote",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Recovery",
@@ -3589,7 +6526,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/recovery",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Retention",
@@ -3598,7 +6536,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/retention",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / B2c Workflow / Risk",
@@ -3607,7 +6546,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/b2c-workflow/risk",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Business Development",
@@ -3616,7 +6556,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/business-development",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Campaigns",
@@ -3625,7 +6566,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/campaigns",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Campaigns / Board",
@@ -3634,7 +6576,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/campaigns/board",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Campaigns / New",
@@ -3643,7 +6586,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/campaigns/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Cockpit",
@@ -3652,7 +6596,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/cockpit",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Control Tower",
@@ -3661,7 +6606,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/control-tower",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Desk",
@@ -3670,7 +6616,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-desk",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks",
@@ -3679,7 +6626,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Agents",
@@ -3688,7 +6636,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/agents",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Analytics",
@@ -3697,7 +6646,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/analytics",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Approvals",
@@ -3706,7 +6656,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/approvals",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Blocked",
@@ -3715,7 +6666,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/blocked",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Board",
@@ -3724,7 +6676,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/board",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Calendar",
@@ -3733,7 +6686,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/calendar",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / Focus",
@@ -3742,7 +6696,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/focus",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / List",
@@ -3751,7 +6706,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/list",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Daily Tasks / New",
@@ -3760,7 +6716,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/daily-tasks/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Decision Maps",
@@ -3769,7 +6726,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/decision-maps",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Documents",
@@ -3778,7 +6736,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/documents",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Elite Command",
@@ -3787,7 +6746,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/elite-command",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Executive Briefing",
@@ -3796,7 +6756,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/executive-briefing",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Follow Ups",
@@ -3805,7 +6766,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/follow-ups",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Follow Ups / Overdue",
@@ -3814,7 +6776,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/follow-ups/overdue",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Growth",
@@ -3823,7 +6786,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/growth",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Leads Impact",
@@ -3832,7 +6796,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/leads-impact",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Management",
@@ -3841,7 +6806,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/management",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Market Insights",
@@ -3850,7 +6816,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/market-insights",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Market Mapping",
@@ -3859,7 +6826,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/market-mapping",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Market Mapping / Coverage",
@@ -3868,7 +6836,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/market-mapping/coverage",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Master Command",
@@ -3877,7 +6846,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/master-command",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Meta Readiness",
@@ -3886,7 +6856,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/meta-readiness",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / My Work",
@@ -3895,7 +6866,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/my-work",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Notifications",
@@ -3904,7 +6876,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/notifications",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Overdue Heatmap",
@@ -3913,7 +6886,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/overdue-heatmap",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships",
@@ -3922,7 +6896,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Activation",
@@ -3931,7 +6906,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/activation",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Agreements",
@@ -3940,7 +6916,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/agreements",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Decision Map",
@@ -3949,7 +6926,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/decision-map",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Executive",
@@ -3958,7 +6936,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/executive",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Growth",
@@ -3967,7 +6946,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/growth",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / High Value",
@@ -3976,7 +6956,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/high-value",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Meetings",
@@ -3985,7 +6966,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/meetings",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / New",
@@ -3994,7 +6976,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Performance",
@@ -4003,7 +6986,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/performance",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Pipeline",
@@ -4012,7 +6996,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/pipeline",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Proposals",
@@ -4021,7 +7006,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/proposals",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Qualification",
@@ -4030,7 +7016,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/qualification",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Recovery",
@@ -4039,7 +7026,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/recovery",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Referrals",
@@ -4048,7 +7036,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/referrals",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Partnerships / Risk",
@@ -4057,7 +7046,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/partnerships/risk",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Predictive",
@@ -4066,7 +7056,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/predictive",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects",
@@ -4075,7 +7066,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Analytics",
@@ -4084,7 +7076,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/analytics",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Appointments",
@@ -4093,7 +7086,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/appointments",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Decision Map",
@@ -4102,7 +7096,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/decision-map",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Directory",
@@ -4111,7 +7106,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/directory",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Executive",
@@ -4120,7 +7116,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/executive",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / High Value",
@@ -4129,7 +7126,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/high-value",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Negotiation",
@@ -4138,7 +7136,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/negotiation",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / New",
@@ -4147,7 +7146,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Performance",
@@ -4156,7 +7156,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/performance",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Pipeline",
@@ -4165,7 +7166,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/pipeline",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Proposals",
@@ -4174,7 +7176,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/proposals",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Qualification",
@@ -4183,7 +7186,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/qualification",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Recovery",
@@ -4192,7 +7196,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/recovery",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Prospects / Risk",
@@ -4201,7 +7206,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/prospects/risk",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Recovery Import",
@@ -4210,7 +7216,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/recovery-import",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Revenue Analytics",
@@ -4219,7 +7226,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/revenue-analytics",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Sdr Execution",
@@ -4228,7 +7236,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/sdr-execution",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Strategy Room",
@@ -4237,7 +7246,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/strategy-room",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / System Activation",
@@ -4246,7 +7256,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/system-activation",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Tasks",
@@ -4255,7 +7266,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/tasks",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Tasks / Approvals",
@@ -4264,7 +7276,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/tasks/approvals",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Tasks / Blocked",
@@ -4273,7 +7286,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/tasks/blocked",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Tasks / Board",
@@ -4282,7 +7296,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/tasks/board",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Tasks / New",
@@ -4291,7 +7306,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/tasks/new",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Team Performance",
@@ -4300,7 +7316,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/team-performance",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue Command Center / Workload Balancer",
@@ -4309,7 +7326,8 @@ export const APP_ROUTES = [
     "module": "revenue-command-center",
     "moduleLabel": "Revenue Command Center",
     "permissionKey": "page:/revenue-command-center/workload-balancer",
-    "modulePermissionKey": "revenue-command-center.view"
+    "modulePermissionKey": "revenue-command-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Revenue War Room",
@@ -4318,28 +7336,209 @@ export const APP_ROUTES = [
     "module": "revenue-war-room",
     "moduleLabel": "Revenue War Room",
     "permissionKey": "page:/revenue-war-room",
-    "modulePermissionKey": "revenue-war-room.view"
+    "modulePermissionKey": "revenue-war-room.view",
+    "detectedSource": "app/(protected)"
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  {
+    "label": "Saas Factory Command",
+    "shortLabel": "Saas Factory Command",
+    "href": "/saas-factory-command",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Actions",
+    "shortLabel": "Actions",
+    "href": "/saas-factory-command/actions",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/actions",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Adoption",
+    "shortLabel": "Adoption",
+    "href": "/saas-factory-command/adoption",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/adoption",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Apis",
+    "shortLabel": "Apis",
+    "href": "/saas-factory-command/apis",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/apis",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Audit",
+    "shortLabel": "Audit",
+    "href": "/saas-factory-command/audit",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/audit",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Configuration",
+    "shortLabel": "Configuration",
+    "href": "/saas-factory-command/configuration",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/configuration",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Data Sources",
+    "shortLabel": "Data Sources",
+    "href": "/saas-factory-command/data-sources",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/data-sources",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Deployment",
+    "shortLabel": "Deployment",
+    "href": "/saas-factory-command/deployment",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/deployment",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Feature Flags",
+    "shortLabel": "Feature Flags",
+    "href": "/saas-factory-command/feature-flags",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/feature-flags",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Incidents",
+    "shortLabel": "Incidents",
+    "href": "/saas-factory-command/incidents",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/incidents",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Modules",
+    "shortLabel": "Modules",
+    "href": "/saas-factory-command/modules",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/modules",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Observatory",
+    "shortLabel": "Observatory",
+    "href": "/saas-factory-command/observatory",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/observatory",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Ops",
+    "shortLabel": "Ops",
+    "href": "/saas-factory-command/ops",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/ops",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Options",
+    "shortLabel": "Options",
+    "href": "/saas-factory-command/options",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/options",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Permissions",
+    "shortLabel": "Permissions",
+    "href": "/saas-factory-command/permissions",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/permissions",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Queues",
+    "shortLabel": "Queues",
+    "href": "/saas-factory-command/queues",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/queues",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Realtime",
+    "shortLabel": "Realtime",
+    "href": "/saas-factory-command/realtime",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/realtime",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Rules",
+    "shortLabel": "Rules",
+    "href": "/saas-factory-command/rules",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/rules",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Supabase",
+    "shortLabel": "Supabase",
+    "href": "/saas-factory-command/supabase",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/supabase",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
+  {
+    "label": "Saas Factory Command / Tenants",
+    "shortLabel": "Tenants",
+    "href": "/saas-factory-command/tenants",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "permissionKey": "page:/saas-factory-command/tenants",
+    "modulePermissionKey": "saas-factory-command.view",
+    "detectedSource": "app/(protected)"
+  },
   {
     "label": "Sales",
     "shortLabel": "Sales",
@@ -4347,7 +7546,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Clients",
@@ -4356,7 +7556,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/clients",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Configuration",
@@ -4365,7 +7566,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/configuration",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Management",
@@ -4374,7 +7576,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/management",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Orders",
@@ -4383,7 +7586,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/orders",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Orders / New",
@@ -4392,7 +7596,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/orders/new",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Qa",
@@ -4401,7 +7606,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/qa",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Sales / Write Test",
@@ -4410,7 +7616,8 @@ export const APP_ROUTES = [
     "module": "sales",
     "moduleLabel": "Sales",
     "permissionKey": "page:/sales/write-test",
-    "modulePermissionKey": "sales.view"
+    "modulePermissionKey": "sales.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services",
@@ -4419,7 +7626,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Ai Matching",
@@ -4428,7 +7636,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/ai-matching",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Ai Strategy",
@@ -4437,7 +7646,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/ai-strategy",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Blueprints",
@@ -4446,7 +7656,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/blueprints",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Blueprints / New",
@@ -4455,7 +7666,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/blueprints/new",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Capacity",
@@ -4464,7 +7676,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/capacity",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Client Journey",
@@ -4473,7 +7686,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/client-journey",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Commercial",
@@ -4482,7 +7696,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/commercial",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Compliance",
@@ -4491,7 +7706,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/compliance",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Configuration",
@@ -4500,7 +7716,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/configuration",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Contracts",
@@ -4509,7 +7726,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/contracts",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Enterprise",
@@ -4518,7 +7736,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/enterprise",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Expansion",
@@ -4527,7 +7746,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/expansion",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Incidents",
@@ -4536,7 +7756,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/incidents",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Live Ops",
@@ -4545,7 +7766,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/live-ops",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Market Intelligence",
@@ -4554,7 +7776,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/market-intelligence",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / New",
@@ -4563,7 +7786,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/new",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Operations",
@@ -4572,7 +7796,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/operations",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Pricing Engine",
@@ -4581,7 +7806,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/pricing-engine",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Rules",
@@ -4590,7 +7816,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/rules",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Subscriptions",
@@ -4599,7 +7826,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/subscriptions",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Services / Workflows",
@@ -4608,7 +7836,8 @@ export const APP_ROUTES = [
     "module": "services",
     "moduleLabel": "Services",
     "permissionKey": "page:/services/workflows",
-    "modulePermissionKey": "services.view"
+    "modulePermissionKey": "services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Home",
@@ -4617,7 +7846,8 @@ export const APP_ROUTES = [
     "module": "staff-home",
     "moduleLabel": "Staff Home",
     "permissionKey": "page:/staff-home",
-    "modulePermissionKey": "staff-home.view"
+    "modulePermissionKey": "staff-home.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Memos",
@@ -4626,7 +7856,8 @@ export const APP_ROUTES = [
     "module": "staff-memos",
     "moduleLabel": "Staff Memos",
     "permissionKey": "page:/staff-memos",
-    "modulePermissionKey": "staff-memos.view"
+    "modulePermissionKey": "staff-memos.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Memos / New",
@@ -4635,7 +7866,8 @@ export const APP_ROUTES = [
     "module": "staff-memos",
     "moduleLabel": "Staff Memos",
     "permissionKey": "page:/staff-memos/new",
-    "modulePermissionKey": "staff-memos.view"
+    "modulePermissionKey": "staff-memos.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Access Check",
@@ -4644,7 +7876,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-access-check",
     "moduleLabel": "Staff Portal Access Check",
     "permissionKey": "page:/staff-portal-access-check",
-    "modulePermissionKey": "staff-portal-access-check.view"
+    "modulePermissionKey": "staff-portal-access-check.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Command",
@@ -4653,7 +7886,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-command",
     "moduleLabel": "Staff Portal Command",
     "permissionKey": "page:/staff-portal-command",
-    "modulePermissionKey": "staff-portal-command.view"
+    "modulePermissionKey": "staff-portal-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Design System",
@@ -4662,7 +7896,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-design-system",
     "moduleLabel": "Staff Portal Design System",
     "permissionKey": "page:/staff-portal-design-system",
-    "modulePermissionKey": "staff-portal-design-system.view"
+    "modulePermissionKey": "staff-portal-design-system.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Executive",
@@ -4671,7 +7906,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-executive",
     "moduleLabel": "Staff Portal Executive",
     "permissionKey": "page:/staff-portal-executive",
-    "modulePermissionKey": "staff-portal-executive.view"
+    "modulePermissionKey": "staff-portal-executive.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Final Qa",
@@ -4680,7 +7916,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-final-qa",
     "moduleLabel": "Staff Portal Final Qa",
     "permissionKey": "page:/staff-portal-final-qa",
-    "modulePermissionKey": "staff-portal-final-qa.view"
+    "modulePermissionKey": "staff-portal-final-qa.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Intelligence",
@@ -4689,7 +7926,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-intelligence",
     "moduleLabel": "Staff Portal Intelligence",
     "permissionKey": "page:/staff-portal-intelligence",
-    "modulePermissionKey": "staff-portal-intelligence.view"
+    "modulePermissionKey": "staff-portal-intelligence.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Mega Qa",
@@ -4698,7 +7936,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-mega-qa",
     "moduleLabel": "Staff Portal Mega Qa",
     "permissionKey": "page:/staff-portal-mega-qa",
-    "modulePermissionKey": "staff-portal-mega-qa.view"
+    "modulePermissionKey": "staff-portal-mega-qa.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Navigation",
@@ -4707,7 +7946,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-navigation",
     "moduleLabel": "Staff Portal Navigation",
     "permissionKey": "page:/staff-portal-navigation",
-    "modulePermissionKey": "staff-portal-navigation.view"
+    "modulePermissionKey": "staff-portal-navigation.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Route Audit",
@@ -4716,7 +7956,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-route-audit",
     "moduleLabel": "Staff Portal Route Audit",
     "permissionKey": "page:/staff-portal-route-audit",
-    "modulePermissionKey": "staff-portal-route-audit.view"
+    "modulePermissionKey": "staff-portal-route-audit.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Portal Workbench",
@@ -4725,7 +7966,8 @@ export const APP_ROUTES = [
     "module": "staff-portal-workbench",
     "moduleLabel": "Staff Portal Workbench",
     "permissionKey": "page:/staff-portal-workbench",
-    "modulePermissionKey": "staff-portal-workbench.view"
+    "modulePermissionKey": "staff-portal-workbench.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Services",
@@ -4734,7 +7976,8 @@ export const APP_ROUTES = [
     "module": "staff-services",
     "moduleLabel": "Staff Services",
     "permissionKey": "page:/staff-services",
-    "modulePermissionKey": "staff-services.view"
+    "modulePermissionKey": "staff-services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Services / Admin",
@@ -4743,7 +7986,8 @@ export const APP_ROUTES = [
     "module": "staff-services",
     "moduleLabel": "Staff Services",
     "permissionKey": "page:/staff-services/admin",
-    "modulePermissionKey": "staff-services.view"
+    "modulePermissionKey": "staff-services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Staff Services / New",
@@ -4752,7 +7996,8 @@ export const APP_ROUTES = [
     "module": "staff-services",
     "moduleLabel": "Staff Services",
     "permissionKey": "page:/staff-services/new",
-    "modulePermissionKey": "staff-services.view"
+    "modulePermissionKey": "staff-services.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Team Command",
@@ -4761,7 +8006,8 @@ export const APP_ROUTES = [
     "module": "team-command",
     "moduleLabel": "Team Command",
     "permissionKey": "page:/team-command",
-    "modulePermissionKey": "team-command.view"
+    "modulePermissionKey": "team-command.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Users",
@@ -4770,7 +8016,8 @@ export const APP_ROUTES = [
     "module": "users",
     "moduleLabel": "Users",
     "permissionKey": "page:/users",
-    "modulePermissionKey": "users.view"
+    "modulePermissionKey": "users.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Users / New",
@@ -4779,7 +8026,8 @@ export const APP_ROUTES = [
     "module": "users",
     "moduleLabel": "Users",
     "permissionKey": "page:/users/new",
-    "modulePermissionKey": "users.view"
+    "modulePermissionKey": "users.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Voice Center",
@@ -4788,16 +8036,18 @@ export const APP_ROUTES = [
     "module": "voice-center",
     "moduleLabel": "Voice Center",
     "permissionKey": "page:/voice-center",
-    "modulePermissionKey": "voice-center.view"
+    "modulePermissionKey": "voice-center.view",
+    "detectedSource": "app/(protected)"
   },
   {
     "label": "Workspace",
     "shortLabel": "Workspace",
-    "href": "/dashboard",
+    "href": "/workspace",
     "module": "workspace",
     "moduleLabel": "Workspace",
     "permissionKey": "page:/workspace",
-    "modulePermissionKey": "workspace.view"
+    "modulePermissionKey": "workspace.view",
+    "detectedSource": "app/(protected)"
   }
 ] as const;
 
@@ -4824,11 +8074,25 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/academy/attendance"
   },
   {
+    "value": "page:/academy/audit",
+    "label": "Academy / Audit",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/audit"
+  },
+  {
     "value": "page:/academy/automation",
     "label": "Academy / Automation",
     "module": "academy",
     "moduleLabel": "Academy",
     "href": "/academy/automation"
+  },
+  {
+    "value": "page:/academy/calendar",
+    "label": "Academy / Calendar",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/calendar"
   },
   {
     "value": "page:/academy/certificates",
@@ -4845,6 +8109,20 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/academy/cohorts"
   },
   {
+    "value": "page:/academy/command-center",
+    "label": "Academy / Command Center",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/command-center"
+  },
+  {
+    "value": "page:/academy/control-tickets",
+    "label": "Academy / Control Tickets",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/control-tickets"
+  },
+  {
     "value": "page:/academy/courses",
     "label": "Academy / Courses",
     "module": "academy",
@@ -4852,11 +8130,53 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/academy/courses"
   },
   {
+    "value": "page:/academy/documents",
+    "label": "Academy / Documents",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/documents"
+  },
+  {
+    "value": "page:/academy/eligibility",
+    "label": "Academy / Eligibility",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/eligibility"
+  },
+  {
+    "value": "page:/academy/email-templates",
+    "label": "Academy / Email Templates",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/email-templates"
+  },
+  {
     "value": "page:/academy/enrollments",
     "label": "Academy / Enrollments",
     "module": "academy",
     "moduleLabel": "Academy",
     "href": "/academy/enrollments"
+  },
+  {
+    "value": "page:/academy/evaluations",
+    "label": "Academy / Evaluations",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/evaluations"
+  },
+  {
+    "value": "page:/academy/graduation",
+    "label": "Academy / Graduation",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/graduation"
+  },
+  {
+    "value": "page:/academy/import-export",
+    "label": "Academy / Import Export",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/import-export"
   },
   {
     "value": "page:/academy/integrations",
@@ -4871,6 +8191,20 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "academy",
     "moduleLabel": "Academy",
     "href": "/academy/job-placement"
+  },
+  {
+    "value": "page:/academy/locations-groups",
+    "label": "Academy / Locations Groups",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/locations-groups"
+  },
+  {
+    "value": "page:/academy/notifications",
+    "label": "Academy / Notifications",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/notifications"
   },
   {
     "value": "page:/academy/partners",
@@ -4892,6 +8226,20 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "academy",
     "moduleLabel": "Academy",
     "href": "/academy/reports"
+  },
+  {
+    "value": "page:/academy/revenue-sync",
+    "label": "Academy / Revenue Sync",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/revenue-sync"
+  },
+  {
+    "value": "page:/academy/role-matrix",
+    "label": "Academy / Role Matrix",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/role-matrix"
   },
   {
     "value": "page:/academy/settings",
@@ -4922,6 +8270,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/academy/trainers"
   },
   {
+    "value": "page:/academy/workbench",
+    "label": "Academy / Workbench",
+    "module": "academy",
+    "moduleLabel": "Academy",
+    "href": "/academy/workbench"
+  },
+  {
     "value": "page:/academy-campus-command",
     "label": "Academy Campus Command",
     "module": "academy-campus-command",
@@ -4934,6 +8289,118 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "admin",
     "moduleLabel": "Admin",
     "href": "/admin/archive-center"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace",
+    "label": "Admin / B2b Marketplace",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/academy",
+    "label": "Admin / B2b Marketplace / Academy",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/academy"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/categories",
+    "label": "Admin / B2b Marketplace / Categories",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/categories"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/crm",
+    "label": "Admin / B2b Marketplace / Crm",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/crm"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/gateways",
+    "label": "Admin / B2b Marketplace / Gateways",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/gateways"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/homepage",
+    "label": "Admin / B2b Marketplace / Homepage",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/homepage"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/media",
+    "label": "Admin / B2b Marketplace / Media",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/media"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/navigation",
+    "label": "Admin / B2b Marketplace / Navigation",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/navigation"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/packs",
+    "label": "Admin / B2b Marketplace / Packs",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/packs"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/preview",
+    "label": "Admin / B2b Marketplace / Preview",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/preview"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/products",
+    "label": "Admin / B2b Marketplace / Products",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/products"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/publish-history",
+    "label": "Admin / B2b Marketplace / Publish History",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/publish-history"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/quote-requests",
+    "label": "Admin / B2b Marketplace / Quote Requests",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/quote-requests"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/quote-settings",
+    "label": "Admin / B2b Marketplace / Quote Settings",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/quote-settings"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/templates",
+    "label": "Admin / B2b Marketplace / Templates",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/templates"
+  },
+  {
+    "value": "page:/admin/b2b-marketplace/theme",
+    "label": "Admin / B2b Marketplace / Theme",
+    "module": "admin",
+    "moduleLabel": "Admin",
+    "href": "/admin/b2b-marketplace/theme"
   },
   {
     "value": "page:/ai-command-center",
@@ -4983,6 +8450,1259 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "ai-command-center",
     "moduleLabel": "Ai Command Center",
     "href": "/ai-command-center/revenue-copilot"
+  },
+  {
+    "value": "page:/angelcare-360",
+    "label": "Angelcare 360",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360"
+  },
+  {
+    "value": "page:/angelcare-360/action-wiring",
+    "label": "Angelcare 360 / Action Wiring",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/action-wiring"
+  },
+  {
+    "value": "page:/angelcare-360/billing-center",
+    "label": "Angelcare 360 / Billing Center",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/billing-center"
+  },
+  {
+    "value": "page:/angelcare-360/customer",
+    "label": "Angelcare 360 / Customer",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/customer"
+  },
+  {
+    "value": "page:/angelcare-360/customer/cockpit-direction",
+    "label": "Angelcare 360 / Customer / Cockpit Direction",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/customer/cockpit-direction"
+  },
+  {
+    "value": "page:/angelcare-360/customer/operations",
+    "label": "Angelcare 360 / Customer / Operations",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/customer/operations"
+  },
+  {
+    "value": "page:/angelcare-360/deployment-gate",
+    "label": "Angelcare 360 / Deployment Gate",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/deployment-gate"
+  },
+  {
+    "value": "page:/angelcare-360/foundation",
+    "label": "Angelcare 360 / Foundation",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/foundation"
+  },
+  {
+    "value": "page:/angelcare-360/guardrails",
+    "label": "Angelcare 360 / Guardrails",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/guardrails"
+  },
+  {
+    "value": "page:/angelcare-360/policy-lock",
+    "label": "Angelcare 360 / Policy Lock",
+    "module": "angelcare-360",
+    "moduleLabel": "Angelcare 360",
+    "href": "/angelcare-360/policy-lock"
+  },
+  {
+    "value": "page:/angelcare-360-command-center",
+    "label": "Angelcare 360 Command Center",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/eleves",
+    "label": "Angelcare 360 Command Center / (People) / Eleves",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/eleves"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/enseignants",
+    "label": "Angelcare 360 Command Center / (People) / Enseignants",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/enseignants"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/parents",
+    "label": "Angelcare 360 Command Center / (People) / Parents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/parents"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnel",
+    "label": "Angelcare 360 Command Center / (People) / Personnel",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnel"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnes",
+    "label": "Angelcare 360 Command Center / (People) / Personnes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnes/affectations-classes",
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Affectations Classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnes/affectations-classes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnes/audit",
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnes/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnes/contacts-urgence",
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Contacts Urgence",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnes/contacts-urgence"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnes/documents",
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Documents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnes/documents"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/(people)/personnes/liens-parent-enfant",
+    "label": "Angelcare 360 Command Center / (People) / Personnes / Liens Parent Enfant",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/(people)/personnes/liens-parent-enfant"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique",
+    "label": "Angelcare 360 Command Center / Academique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/appreciations",
+    "label": "Angelcare 360 Command Center / Academique / Appreciations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/appreciations"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/audit",
+    "label": "Angelcare 360 Command Center / Academique / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/bulletins",
+    "label": "Angelcare 360 Command Center / Academique / Bulletins",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/bulletins"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/cours",
+    "label": "Angelcare 360 Command Center / Academique / Cours",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/cours"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/devoirs",
+    "label": "Angelcare 360 Command Center / Academique / Devoirs",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/devoirs"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/examens",
+    "label": "Angelcare 360 Command Center / Academique / Examens",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/examens"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/moyennes",
+    "label": "Angelcare 360 Command Center / Academique / Moyennes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/moyennes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/notes",
+    "label": "Angelcare 360 Command Center / Academique / Notes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/notes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/sessions-examens",
+    "label": "Angelcare 360 Command Center / Academique / Sessions Examens",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/sessions-examens"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/academique/soumissions",
+    "label": "Angelcare 360 Command Center / Academique / Soumissions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/academique/soumissions"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration",
+    "label": "Angelcare 360 Command Center / Administration",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/affectations",
+    "label": "Angelcare 360 Command Center / Administration / Affectations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/affectations"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/annees-scolaires",
+    "label": "Angelcare 360 Command Center / Administration / Annees Scolaires",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/annees-scolaires"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/audit",
+    "label": "Angelcare 360 Command Center / Administration / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/classes",
+    "label": "Angelcare 360 Command Center / Administration / Classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/classes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/etablissements",
+    "label": "Angelcare 360 Command Center / Administration / Etablissements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/etablissements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/matieres",
+    "label": "Angelcare 360 Command Center / Administration / Matieres",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/matieres"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/parametres",
+    "label": "Angelcare 360 Command Center / Administration / Parametres",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/parametres"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/periodes",
+    "label": "Angelcare 360 Command Center / Administration / Periodes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/periodes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/roles-permissions",
+    "label": "Angelcare 360 Command Center / Administration / Roles Permissions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/roles-permissions"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/administration/sections",
+    "label": "Angelcare 360 Command Center / Administration / Sections",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/administration/sections"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions",
+    "label": "Angelcare 360 Command Center / Admissions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/audit",
+    "label": "Angelcare 360 Command Center / Admissions / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/conversions",
+    "label": "Angelcare 360 Command Center / Admissions / Conversions",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/conversions"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/demandes",
+    "label": "Angelcare 360 Command Center / Admissions / Demandes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/demandes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/documents",
+    "label": "Angelcare 360 Command Center / Admissions / Documents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/documents"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/dossiers",
+    "label": "Angelcare 360 Command Center / Admissions / Dossiers",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/dossiers"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/entretiens",
+    "label": "Angelcare 360 Command Center / Admissions / Entretiens",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/entretiens"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/admissions/pipeline",
+    "label": "Angelcare 360 Command Center / Admissions / Pipeline",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/admissions/pipeline"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque",
+    "label": "Angelcare 360 Command Center / Bibliotheque",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/audit",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/disponibilite",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Disponibilite",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/disponibilite"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/exemplaires",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Exemplaires",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/exemplaires"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/livres",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Livres",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/livres"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/prets",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Prets",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/prets"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/retards",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Retards",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/retards"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/bibliotheque/retours",
+    "label": "Angelcare 360 Command Center / Bibliotheque / Retours",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/bibliotheque/retours"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/direction",
+    "label": "Angelcare 360 Command Center / Direction",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/direction"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/documents",
+    "label": "Angelcare 360 Command Center / Documents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/documents"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/documents/audit",
+    "label": "Angelcare 360 Command Center / Documents / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/documents/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/documents/generated",
+    "label": "Angelcare 360 Command Center / Documents / Generated",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/documents/generated"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/documents/governance",
+    "label": "Angelcare 360 Command Center / Documents / Governance",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/documents/governance"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/documents/templates",
+    "label": "Angelcare 360 Command Center / Documents / Templates",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/documents/templates"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/emploi-du-temps",
+    "label": "Angelcare 360 Command Center / Emploi Du Temps",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/emploi-du-temps"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/emploi-du-temps/calendrier",
+    "label": "Angelcare 360 Command Center / Emploi Du Temps / Calendrier",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/emploi-du-temps/calendrier"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/emploi-du-temps/classes",
+    "label": "Angelcare 360 Command Center / Emploi Du Temps / Classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/emploi-du-temps/classes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/emploi-du-temps/enseignants",
+    "label": "Angelcare 360 Command Center / Emploi Du Temps / Enseignants",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/emploi-du-temps/enseignants"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/exports",
+    "label": "Angelcare 360 Command Center / Exports",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/exports"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/exports/audit",
+    "label": "Angelcare 360 Command Center / Exports / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/exports/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/exports/csv-xlsx",
+    "label": "Angelcare 360 Command Center / Exports / Csv Xlsx",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/exports/csv-xlsx"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/exports/files",
+    "label": "Angelcare 360 Command Center / Exports / Files",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/exports/files"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/exports/historique",
+    "label": "Angelcare 360 Command Center / Exports / Historique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/exports/historique"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/exports/pdf-a4",
+    "label": "Angelcare 360 Command Center / Exports / Pdf A4",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/exports/pdf-a4"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance",
+    "label": "Angelcare 360 Command Center / Finance",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/affectations-frais",
+    "label": "Angelcare 360 Command Center / Finance / Affectations Frais",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/affectations-frais"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/audit",
+    "label": "Angelcare 360 Command Center / Finance / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/depenses",
+    "label": "Angelcare 360 Command Center / Finance / Depenses",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/depenses"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/etats-compte",
+    "label": "Angelcare 360 Command Center / Finance / Etats Compte",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/etats-compte"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/factures",
+    "label": "Angelcare 360 Command Center / Finance / Factures",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/factures"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/frais",
+    "label": "Angelcare 360 Command Center / Finance / Frais",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/frais"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/paiements",
+    "label": "Angelcare 360 Command Center / Finance / Paiements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/paiements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/recus",
+    "label": "Angelcare 360 Command Center / Finance / Recus",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/recus"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/relances",
+    "label": "Angelcare 360 Command Center / Finance / Relances",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/relances"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/remises",
+    "label": "Angelcare 360 Command Center / Finance / Remises",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/remises"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/finance/soldes-eleves",
+    "label": "Angelcare 360 Command Center / Finance / Soldes Eleves",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/finance/soldes-eleves"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire",
+    "label": "Angelcare 360 Command Center / Inventaire",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire/articles",
+    "label": "Angelcare 360 Command Center / Inventaire / Articles",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire/articles"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire/audit",
+    "label": "Angelcare 360 Command Center / Inventaire / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire/categories",
+    "label": "Angelcare 360 Command Center / Inventaire / Categories",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire/categories"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire/mouvements",
+    "label": "Angelcare 360 Command Center / Inventaire / Mouvements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire/mouvements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire/responsables",
+    "label": "Angelcare 360 Command Center / Inventaire / Responsables",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire/responsables"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/inventaire/stock-bas",
+    "label": "Angelcare 360 Command Center / Inventaire / Stock Bas",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/inventaire/stock-bas"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/messagerie",
+    "label": "Angelcare 360 Command Center / Messagerie",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/messagerie"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/messagerie/annonces",
+    "label": "Angelcare 360 Command Center / Messagerie / Annonces",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/messagerie/annonces"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/messagerie/audiences",
+    "label": "Angelcare 360 Command Center / Messagerie / Audiences",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/messagerie/audiences"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/messagerie/audit",
+    "label": "Angelcare 360 Command Center / Messagerie / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/messagerie/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/messagerie/conversations",
+    "label": "Angelcare 360 Command Center / Messagerie / Conversations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/messagerie/conversations"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/messagerie/modeles",
+    "label": "Angelcare 360 Command Center / Messagerie / Modeles",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/messagerie/modeles"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/notifications",
+    "label": "Angelcare 360 Command Center / Notifications",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/notifications"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/notifications/audit",
+    "label": "Angelcare 360 Command Center / Notifications / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/notifications/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/notifications/canaux",
+    "label": "Angelcare 360 Command Center / Notifications / Canaux",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/notifications/canaux"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/notifications/historique",
+    "label": "Angelcare 360 Command Center / Notifications / Historique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/notifications/historique"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/notifications/internes",
+    "label": "Angelcare 360 Command Center / Notifications / Internes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/notifications/internes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie",
+    "label": "Angelcare 360 Command Center / Paie",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/ajustements",
+    "label": "Angelcare 360 Command Center / Paie / Ajustements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/ajustements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/audit",
+    "label": "Angelcare 360 Command Center / Paie / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/avances",
+    "label": "Angelcare 360 Command Center / Paie / Avances",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/avances"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/conformite",
+    "label": "Angelcare 360 Command Center / Paie / Conformite",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/conformite"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/dossiers",
+    "label": "Angelcare 360 Command Center / Paie / Dossiers",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/dossiers"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/elements",
+    "label": "Angelcare 360 Command Center / Paie / Elements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/elements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/historique-personnel",
+    "label": "Angelcare 360 Command Center / Paie / Historique Personnel",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/historique-personnel"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/paiements",
+    "label": "Angelcare 360 Command Center / Paie / Paiements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/paiements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/periodes",
+    "label": "Angelcare 360 Command Center / Paie / Periodes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/periodes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/primes",
+    "label": "Angelcare 360 Command Center / Paie / Primes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/primes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/remboursements",
+    "label": "Angelcare 360 Command Center / Paie / Remboursements",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/remboursements"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/retenues",
+    "label": "Angelcare 360 Command Center / Paie / Retenues",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/retenues"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/paie/validation",
+    "label": "Angelcare 360 Command Center / Paie / Validation",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/paie/validation"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences",
+    "label": "Angelcare 360 Command Center / Presences",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/absences",
+    "label": "Angelcare 360 Command Center / Presences / Absences",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/absences"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/audit",
+    "label": "Angelcare 360 Command Center / Presences / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/classes",
+    "label": "Angelcare 360 Command Center / Presences / Classes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/classes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/eleves",
+    "label": "Angelcare 360 Command Center / Presences / Eleves",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/eleves"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/jour",
+    "label": "Angelcare 360 Command Center / Presences / Jour",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/jour"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/justifications",
+    "label": "Angelcare 360 Command Center / Presences / Justifications",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/justifications"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/presences/retards",
+    "label": "Angelcare 360 Command Center / Presences / Retards",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/presences/retards"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/rapports",
+    "label": "Angelcare 360 Command Center / Rapports",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/rapports"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/rapports/audit",
+    "label": "Angelcare 360 Command Center / Rapports / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/rapports/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/rapports/catalogue",
+    "label": "Angelcare 360 Command Center / Rapports / Catalogue",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/rapports/catalogue"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/rapports/demandes",
+    "label": "Angelcare 360 Command Center / Rapports / Demandes",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/rapports/demandes"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/rapports/historique",
+    "label": "Angelcare 360 Command Center / Rapports / Historique",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/rapports/historique"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/rapports/modeles",
+    "label": "Angelcare 360 Command Center / Rapports / Modeles",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/rapports/modeles"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/reclamations",
+    "label": "Angelcare 360 Command Center / Reclamations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/reclamations"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/reclamations/assignations",
+    "label": "Angelcare 360 Command Center / Reclamations / Assignations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/reclamations/assignations"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/reclamations/audit",
+    "label": "Angelcare 360 Command Center / Reclamations / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/reclamations/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/reclamations/priorites",
+    "label": "Angelcare 360 Command Center / Reclamations / Priorites",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/reclamations/priorites"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/reclamations/tickets",
+    "label": "Angelcare 360 Command Center / Reclamations / Tickets",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/reclamations/tickets"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport",
+    "label": "Angelcare 360 Command Center / Transport",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/affectations",
+    "label": "Angelcare 360 Command Center / Transport / Affectations",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/affectations"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/arrets",
+    "label": "Angelcare 360 Command Center / Transport / Arrets",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/arrets"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/audit",
+    "label": "Angelcare 360 Command Center / Transport / Audit",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/audit"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/circuits",
+    "label": "Angelcare 360 Command Center / Transport / Circuits",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/circuits"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/depot",
+    "label": "Angelcare 360 Command Center / Transport / Depot",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/depot"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/incidents",
+    "label": "Angelcare 360 Command Center / Transport / Incidents",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/incidents"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/notifications",
+    "label": "Angelcare 360 Command Center / Transport / Notifications",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/notifications"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/ramassage",
+    "label": "Angelcare 360 Command Center / Transport / Ramassage",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/ramassage"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/securite",
+    "label": "Angelcare 360 Command Center / Transport / Securite",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/securite"
+  },
+  {
+    "value": "page:/angelcare-360-command-center/transport/vehicules",
+    "label": "Angelcare 360 Command Center / Transport / Vehicules",
+    "module": "angelcare-360-command-center",
+    "moduleLabel": "Angelcare 360 Command Center",
+    "href": "/angelcare-360-command-center/transport/vehicules"
+  },
+  {
+    "value": "page:/angelcare-360-operator",
+    "label": "Angelcare 360 Operator",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator"
+  },
+  {
+    "value": "page:/angelcare-360-operator/audit",
+    "label": "Angelcare 360 Operator / Audit",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/audit"
+  },
+  {
+    "value": "page:/angelcare-360-operator/billing",
+    "label": "Angelcare 360 Operator / Billing",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/billing"
+  },
+  {
+    "value": "page:/angelcare-360-operator/billing/accounts",
+    "label": "Angelcare 360 Operator / Billing / Accounts",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/billing/accounts"
+  },
+  {
+    "value": "page:/angelcare-360-operator/billing/balances",
+    "label": "Angelcare 360 Operator / Billing / Balances",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/billing/balances"
+  },
+  {
+    "value": "page:/angelcare-360-operator/billing/dunning",
+    "label": "Angelcare 360 Operator / Billing / Dunning",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/billing/dunning"
+  },
+  {
+    "value": "page:/angelcare-360-operator/billing/invoices",
+    "label": "Angelcare 360 Operator / Billing / Invoices",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/billing/invoices"
+  },
+  {
+    "value": "page:/angelcare-360-operator/billing/payments",
+    "label": "Angelcare 360 Operator / Billing / Payments",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/billing/payments"
+  },
+  {
+    "value": "page:/angelcare-360-operator/client-access",
+    "label": "Angelcare 360 Operator / Client Access",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/client-access"
+  },
+  {
+    "value": "page:/angelcare-360-operator/clients",
+    "label": "Angelcare 360 Operator / Clients",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/clients"
+  },
+  {
+    "value": "page:/angelcare-360-operator/contracts",
+    "label": "Angelcare 360 Operator / Contracts",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/contracts"
+  },
+  {
+    "value": "page:/angelcare-360-operator/customer-health",
+    "label": "Angelcare 360 Operator / Customer Health",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/customer-health"
+  },
+  {
+    "value": "page:/angelcare-360-operator/features",
+    "label": "Angelcare 360 Operator / Features",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/features"
+  },
+  {
+    "value": "page:/angelcare-360-operator/implementation",
+    "label": "Angelcare 360 Operator / Implementation",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/implementation"
+  },
+  {
+    "value": "page:/angelcare-360-operator/incidents",
+    "label": "Angelcare 360 Operator / Incidents",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/incidents"
+  },
+  {
+    "value": "page:/angelcare-360-operator/modules",
+    "label": "Angelcare 360 Operator / Modules",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/modules"
+  },
+  {
+    "value": "page:/angelcare-360-operator/notes",
+    "label": "Angelcare 360 Operator / Notes",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/notes"
+  },
+  {
+    "value": "page:/angelcare-360-operator/onboarding",
+    "label": "Angelcare 360 Operator / Onboarding",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/onboarding"
+  },
+  {
+    "value": "page:/angelcare-360-operator/operator-roles",
+    "label": "Angelcare 360 Operator / Operator Roles",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/operator-roles"
+  },
+  {
+    "value": "page:/angelcare-360-operator/packages",
+    "label": "Angelcare 360 Operator / Packages",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/packages"
+  },
+  {
+    "value": "page:/angelcare-360-operator/plans",
+    "label": "Angelcare 360 Operator / Plans",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/plans"
+  },
+  {
+    "value": "page:/angelcare-360-operator/renewals",
+    "label": "Angelcare 360 Operator / Renewals",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/renewals"
+  },
+  {
+    "value": "page:/angelcare-360-operator/service-operations",
+    "label": "Angelcare 360 Operator / Service Operations",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/service-operations"
+  },
+  {
+    "value": "page:/angelcare-360-operator/service-requests",
+    "label": "Angelcare 360 Operator / Service Requests",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/service-requests"
+  },
+  {
+    "value": "page:/angelcare-360-operator/settings",
+    "label": "Angelcare 360 Operator / Settings",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/settings"
+  },
+  {
+    "value": "page:/angelcare-360-operator/subscriptions",
+    "label": "Angelcare 360 Operator / Subscriptions",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/subscriptions"
+  },
+  {
+    "value": "page:/angelcare-360-operator/support",
+    "label": "Angelcare 360 Operator / Support",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/support"
+  },
+  {
+    "value": "page:/angelcare-360-operator/tasks",
+    "label": "Angelcare 360 Operator / Tasks",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/tasks"
+  },
+  {
+    "value": "page:/angelcare-360-operator/tenants",
+    "label": "Angelcare 360 Operator / Tenants",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/tenants"
+  },
+  {
+    "value": "page:/angelcare-360-operator/usage-limits",
+    "label": "Angelcare 360 Operator / Usage Limits",
+    "module": "angelcare-360-operator",
+    "moduleLabel": "Angelcare 360 Operator",
+    "href": "/angelcare-360-operator/usage-limits"
   },
   {
     "value": "page:/automation-command",
@@ -5223,6 +9943,244 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/caregivers/workforce"
   },
   {
+    "value": "page:/carelink-ops",
+    "label": "Carelink Ops",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops"
+  },
+  {
+    "value": "page:/carelink-ops/agents",
+    "label": "Carelink Ops / Agents",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/agents"
+  },
+  {
+    "value": "page:/carelink-ops/audit",
+    "label": "Carelink Ops / Audit",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/audit"
+  },
+  {
+    "value": "page:/carelink-ops/calendar",
+    "label": "Carelink Ops / Calendar",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/calendar"
+  },
+  {
+    "value": "page:/carelink-ops/compliance",
+    "label": "Carelink Ops / Compliance",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/compliance"
+  },
+  {
+    "value": "page:/carelink-ops/control-room",
+    "label": "Carelink Ops / Control Room",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/control-room"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch",
+    "label": "Carelink Ops / Dispatch",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/agent-pool",
+    "label": "Carelink Ops / Dispatch / Agent Pool",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/agent-pool"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/audit-trail",
+    "label": "Carelink Ops / Dispatch / Audit Trail",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/audit-trail"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/communications",
+    "label": "Carelink Ops / Dispatch / Communications",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/communications"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/live-map",
+    "label": "Carelink Ops / Dispatch / Live Map",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/live-map"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/matching-engine",
+    "label": "Carelink Ops / Dispatch / Matching Engine",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/matching-engine"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/schedule",
+    "label": "Carelink Ops / Dispatch / Schedule",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/schedule"
+  },
+  {
+    "value": "page:/carelink-ops/dispatch/sla-escalations",
+    "label": "Carelink Ops / Dispatch / Sla Escalations",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/dispatch/sla-escalations"
+  },
+  {
+    "value": "page:/carelink-ops/incidents",
+    "label": "Carelink Ops / Incidents",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/incidents"
+  },
+  {
+    "value": "page:/carelink-ops/messages",
+    "label": "Carelink Ops / Messages",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/messages"
+  },
+  {
+    "value": "page:/carelink-ops/missions",
+    "label": "Carelink Ops / Missions",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions"
+  },
+  {
+    "value": "page:/carelink-ops/missions/audit",
+    "label": "Carelink Ops / Missions / Audit",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions/audit"
+  },
+  {
+    "value": "page:/carelink-ops/missions/field-reports",
+    "label": "Carelink Ops / Missions / Field Reports",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions/field-reports"
+  },
+  {
+    "value": "page:/carelink-ops/missions/master-list",
+    "label": "Carelink Ops / Missions / Master List",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions/master-list"
+  },
+  {
+    "value": "page:/carelink-ops/missions/risk-monitoring",
+    "label": "Carelink Ops / Missions / Risk Monitoring",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions/risk-monitoring"
+  },
+  {
+    "value": "page:/carelink-ops/missions/timeline",
+    "label": "Carelink Ops / Missions / Timeline",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions/timeline"
+  },
+  {
+    "value": "page:/carelink-ops/missions/validation",
+    "label": "Carelink Ops / Missions / Validation",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/missions/validation"
+  },
+  {
+    "value": "page:/carelink-ops/notifications",
+    "label": "Carelink Ops / Notifications",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/notifications"
+  },
+  {
+    "value": "page:/carelink-ops/payments",
+    "label": "Carelink Ops / Payments",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/payments"
+  },
+  {
+    "value": "page:/carelink-ops/performance",
+    "label": "Carelink Ops / Performance",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/performance"
+  },
+  {
+    "value": "page:/carelink-ops/quality",
+    "label": "Carelink Ops / Quality",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/quality"
+  },
+  {
+    "value": "page:/carelink-ops/readiness",
+    "label": "Carelink Ops / Readiness",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/readiness"
+  },
+  {
+    "value": "page:/carelink-ops/replacements",
+    "label": "Carelink Ops / Replacements",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/replacements"
+  },
+  {
+    "value": "page:/carelink-ops/reports",
+    "label": "Carelink Ops / Reports",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/reports"
+  },
+  {
+    "value": "page:/carelink-ops/schedule",
+    "label": "Carelink Ops / Schedule",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/schedule"
+  },
+  {
+    "value": "page:/carelink-ops/service-config",
+    "label": "Carelink Ops / Service Config",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/service-config"
+  },
+  {
+    "value": "page:/carelink-ops/settings",
+    "label": "Carelink Ops / Settings",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/settings"
+  },
+  {
+    "value": "page:/carelink-ops/workforce",
+    "label": "Carelink Ops / Workforce",
+    "module": "carelink-ops",
+    "moduleLabel": "CareLink OPS",
+    "href": "/carelink-ops/workforce"
+  },
+  {
     "value": "page:/command-center",
     "label": "Command Center",
     "module": "command-center",
@@ -5270,6 +10228,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "dashboard",
     "moduleLabel": "Dashboard",
     "href": "/"
+  },
+  {
+    "value": "page:/dashboard",
+    "label": "Dashboard",
+    "module": "dashboard",
+    "moduleLabel": "Dashboard",
+    "href": "/dashboard"
   },
   {
     "value": "page:/email-os",
@@ -5391,6 +10356,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/email-os/final-readiness"
   },
   {
+    "value": "page:/email-os/gate",
+    "label": "Email Os / Gate",
+    "module": "email-os",
+    "moduleLabel": "Email Os",
+    "href": "/email-os/gate"
+  },
+  {
     "value": "page:/email-os/governance",
     "label": "Email Os / Governance",
     "module": "email-os",
@@ -5503,6 +10475,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/email-os/search"
   },
   {
+    "value": "page:/email-os/server-control",
+    "label": "Email Os / Server Control",
+    "module": "email-os",
+    "moduleLabel": "Email Os",
+    "href": "/email-os/server-control"
+  },
+  {
     "value": "page:/email-os/sla-workflows",
     "label": "Email Os / Sla Workflows",
     "module": "email-os",
@@ -5523,7 +10502,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Email Os",
     "href": "/email-os/team-collaboration"
   },
-  
+  {
+    "value": "page:/enterprise-command",
+    "label": "Enterprise Command",
+    "module": "enterprise-command",
+    "moduleLabel": "Enterprise Command",
+    "href": "/enterprise-command"
+  },
   {
     "value": "page:/execution-engine",
     "label": "Execution Engine",
@@ -6071,6 +11056,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/hr/recruitment/kanban"
   },
   {
+    "value": "page:/hr/recruitment/questionnaires",
+    "label": "Hr / Recruitment / Questionnaires",
+    "module": "hr",
+    "moduleLabel": "HR",
+    "href": "/hr/recruitment/questionnaires"
+  },
+  {
     "value": "page:/hr/recruitment/sources",
     "label": "Hr / Recruitment / Sources",
     "module": "hr",
@@ -6610,6 +11602,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "href": "/market-os/ambassadors/compliance"
   },
   {
+    "value": "page:/market-os/ambassadors/conversions",
+    "label": "Market Os / Ambassadors / Conversions",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/ambassadors/conversions"
+  },
+  {
     "value": "page:/market-os/ambassadors/create",
     "label": "Market Os / Ambassadors / Create",
     "module": "market-os",
@@ -6713,6 +11712,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "href": "/market-os/ambassadors/goals-kpis"
+  },
+  {
+    "value": "page:/market-os/ambassadors/governance",
+    "label": "Market Os / Ambassadors / Governance",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/ambassadors/governance"
   },
   {
     "value": "page:/market-os/ambassadors/governance-blueprint",
@@ -6937,6 +11943,13 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "market-os",
     "moduleLabel": "Market OS",
     "href": "/market-os/ambassadors/reports"
+  },
+  {
+    "value": "page:/market-os/ambassadors/resources",
+    "label": "Market Os / Ambassadors / Resources",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/ambassadors/resources"
   },
   {
     "value": "page:/market-os/ambassadors/revenue-orchestration",
@@ -7273,6 +12286,20 @@ export const APP_ROUTE_PERMISSIONS = [
     "module": "operations-war-room",
     "moduleLabel": "Operations War Room",
     "href": "/operations-war-room"
+  },
+  {
+    "value": "page:/opsos/infrastructure/windows-node",
+    "label": "Opsos / Infrastructure / Windows Node",
+    "module": "opsos",
+    "moduleLabel": "Opsos",
+    "href": "/opsos/infrastructure/windows-node"
+  },
+  {
+    "value": "page:/opsos-control-plane",
+    "label": "Opsos Control Plane",
+    "module": "opsos-control-plane",
+    "moduleLabel": "Opsos Control Plane",
+    "href": "/opsos-control-plane"
   },
   {
     "value": "page:/opsos-design-system",
@@ -8163,26 +13190,146 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Revenue War Room",
     "href": "/revenue-war-room"
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  {
+    "value": "page:/saas-factory-command",
+    "label": "Saas Factory Command",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command"
+  },
+  {
+    "value": "page:/saas-factory-command/actions",
+    "label": "Saas Factory Command / Actions",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/actions"
+  },
+  {
+    "value": "page:/saas-factory-command/adoption",
+    "label": "Saas Factory Command / Adoption",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/adoption"
+  },
+  {
+    "value": "page:/saas-factory-command/apis",
+    "label": "Saas Factory Command / Apis",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/apis"
+  },
+  {
+    "value": "page:/saas-factory-command/audit",
+    "label": "Saas Factory Command / Audit",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/audit"
+  },
+  {
+    "value": "page:/saas-factory-command/configuration",
+    "label": "Saas Factory Command / Configuration",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/configuration"
+  },
+  {
+    "value": "page:/saas-factory-command/data-sources",
+    "label": "Saas Factory Command / Data Sources",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/data-sources"
+  },
+  {
+    "value": "page:/saas-factory-command/deployment",
+    "label": "Saas Factory Command / Deployment",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/deployment"
+  },
+  {
+    "value": "page:/saas-factory-command/feature-flags",
+    "label": "Saas Factory Command / Feature Flags",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/feature-flags"
+  },
+  {
+    "value": "page:/saas-factory-command/incidents",
+    "label": "Saas Factory Command / Incidents",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/incidents"
+  },
+  {
+    "value": "page:/saas-factory-command/modules",
+    "label": "Saas Factory Command / Modules",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/modules"
+  },
+  {
+    "value": "page:/saas-factory-command/observatory",
+    "label": "Saas Factory Command / Observatory",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/observatory"
+  },
+  {
+    "value": "page:/saas-factory-command/ops",
+    "label": "Saas Factory Command / Ops",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/ops"
+  },
+  {
+    "value": "page:/saas-factory-command/options",
+    "label": "Saas Factory Command / Options",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/options"
+  },
+  {
+    "value": "page:/saas-factory-command/permissions",
+    "label": "Saas Factory Command / Permissions",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/permissions"
+  },
+  {
+    "value": "page:/saas-factory-command/queues",
+    "label": "Saas Factory Command / Queues",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/queues"
+  },
+  {
+    "value": "page:/saas-factory-command/realtime",
+    "label": "Saas Factory Command / Realtime",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/realtime"
+  },
+  {
+    "value": "page:/saas-factory-command/rules",
+    "label": "Saas Factory Command / Rules",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/rules"
+  },
+  {
+    "value": "page:/saas-factory-command/supabase",
+    "label": "Saas Factory Command / Supabase",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/supabase"
+  },
+  {
+    "value": "page:/saas-factory-command/tenants",
+    "label": "Saas Factory Command / Tenants",
+    "module": "saas-factory-command",
+    "moduleLabel": "Saas Factory Command",
+    "href": "/saas-factory-command/tenants"
+  },
   {
     "value": "page:/sales",
     "label": "Sales",
@@ -8538,7 +13685,7 @@ export const APP_ROUTE_PERMISSIONS = [
     "label": "Workspace",
     "module": "workspace",
     "moduleLabel": "Workspace",
-    "href": "/dashboard"
+    "href": "/workspace"
   }
 ] as const;
 

@@ -33,3 +33,52 @@ carelink-*-patch-pack/
 
 # OS
 .DS_Store
+
+# === ANGELCARE GENERATED NOISE ===
+.DS_Store
+Thumbs.db
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+*.tsbuildinfo
+
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+.next/
+.turbo/
+coverage/
+.cache/
+.parcel-cache/
+dist/
+build/
+tmp/
+temp/
+backups/
+__backup__/
+
+# Generated patch, debug and recovery reports
+EMAILOS_*.md
+AC360_*_REPORT.md
+*_HOTFIX*.md
+*_PATCH_REPORT.md
+*_DEBUG*.md
+*_STABILIZATION*.md
+*_CLEANUP*.md
+*_AUDIT_REPORT.md
+Texte collé*.txt

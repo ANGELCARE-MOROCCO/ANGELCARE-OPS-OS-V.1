@@ -28,6 +28,7 @@ const MODULE_GROUPS: Record<string, string> = {
   admin: 'administration',
   billing: 'finance',
   caregivers: 'care',
+  'carelink-ops': 'operations',
   contracts: 'contracts',
   families: 'care',
   incidents: 'operations',

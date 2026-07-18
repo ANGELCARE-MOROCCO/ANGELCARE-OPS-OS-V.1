@@ -20,6 +20,7 @@ type EmailOSInboundSyncResult = {
   provider: string
   fetched: number
   inserted: number
+  updated: number
   skipped: number
   synced: Array<{
     providerUid: string
@@ -624,6 +625,7 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
     provider: "pop3",
     fetched,
     inserted,
+    updated: 0,
     skipped,
     synced
   }

@@ -2,15 +2,28 @@ import fs from "fs";
 import path from "path";
 
 const root = process.cwd();
-const protectedDir = path.join(root, "app", "(protected)");
 const outDir = path.join(root, "lib", "generated");
 const outFile = path.join(outDir, "app-routes.ts");
+
+const SCAN_ROOTS = [
+  {
+    dir: path.join(root, "app", "(protected)"),
+    baseHref: "",
+    source: "app/(protected)",
+  },
+  {
+    dir: path.join(root, "app", "carelink-ops"),
+    baseHref: "/carelink-ops",
+    source: "app/carelink-ops",
+  },
+];
 
 const MODULE_LABELS = {
   academy: "Academy",
   admin: "Admin",
   billing: "Billing",
   caregivers: "Caregivers",
+  "carelink-ops": "CareLink OPS",
   contracts: "Contracts",
   families: "Families",
   hr: "HR",
@@ -48,10 +61,16 @@ function titleize(value) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function toRoute(file) {
-  const relative = path.relative(protectedDir, path.dirname(file));
-  const href = "/" + relative.replaceAll(path.sep, "/");
-  const cleanHref = href === "/." ? "/" : href;
+function normalizeHref(value) {
+  const href = String(value || "").replace(/\/+/g, "/");
+  if (!href || href === "/.") return "/";
+  return href.endsWith("/") && href !== "/" ? href.slice(0, -1) : href;
+}
+
+function toRoute(file, scanRoot) {
+  const relative = path.relative(scanRoot.dir, path.dirname(file));
+  const childHref = relative === "." ? "" : "/" + relative.replaceAll(path.sep, "/");
+  const cleanHref = normalizeHref(`${scanRoot.baseHref}${childHref}`);
 
   const parts = cleanHref.split("/").filter(Boolean);
   const module = parts[0] || "dashboard";
@@ -68,11 +87,12 @@ function toRoute(file) {
     moduleLabel,
     permissionKey: `page:${cleanHref}`,
     modulePermissionKey: `${module}.view`,
+    detectedSource: scanRoot.source,
   };
 }
 
-const routes = walk(protectedDir)
-  .map(toRoute)
+const routes = SCAN_ROOTS
+  .flatMap((scanRoot) => walk(scanRoot.dir).map((file) => toRoute(file, scanRoot)))
   .filter((route) => !route.href.includes("["))
   .sort((a, b) => {
     if (a.module === b.module) return a.href.localeCompare(b.href);

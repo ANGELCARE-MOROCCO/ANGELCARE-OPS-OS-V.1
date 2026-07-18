@@ -4,9 +4,14 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import {CareLinkColors} from '../design/tokens'
 
 export function AppShell({children, inverse = false}: {children: ReactNode; inverse?: boolean}) {
+  const backgroundColor = inverse ? CareLinkColors.hero : CareLinkColors.background
+
   return (
-    <SafeAreaView style={[styles.safe, {backgroundColor: inverse ? CareLinkColors.hero : CareLinkColors.background}]} edges={['top', 'left', 'right']}>
-      <StatusBar barStyle={inverse ? 'light-content' : 'dark-content'} backgroundColor={inverse ? CareLinkColors.hero : CareLinkColors.background} />
+    <SafeAreaView style={[styles.safe, {backgroundColor}]} edges={['top', 'bottom', 'left', 'right']}>
+      <StatusBar
+        barStyle={inverse ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundColor}
+      />
       <View style={[styles.glowA, inverse ? styles.glowAInverse : styles.glowAHome]} />
       <View style={[styles.glowB, inverse ? styles.glowBInverse : styles.glowBHome]} />
       <View style={styles.content}>{children}</View>
@@ -28,7 +33,7 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     borderRadius: 210,
-    opacity: 0.6,
+    opacity: 0.62,
   },
   glowB: {
     position: 'absolute',

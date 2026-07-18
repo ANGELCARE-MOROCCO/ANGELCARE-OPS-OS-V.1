@@ -2208,6 +2208,7 @@ async function handleSend(request, body) {
   const text = clean(body.text)
   const html = clean(body.html)
   const replyTo = clean(body.replyTo)
+  const attachments = Array.isArray(body.attachments) ? body.attachments : []
   const diagnostics = safeSummary(body.diagnostics || {})
   const mailbox = clean(body.diagnostics?.mailbox || body.diagnostics?.mailboxKey || body.diagnostics?.mailboxLabel || username || fromEmail)
   const mailboxId = clean(body.diagnostics?.mailboxId || body.diagnostics?.mailbox_id)

@@ -15,10 +15,18 @@ type LoginUser = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ error?: string | string[] }>
+  searchParams?: Promise<{ error?: string | string[]; next?: string | string[] }>
 }) {
   const params = searchParams ? await searchParams : {}
   const errorCode = Array.isArray(params.error) ? params.error[0] : params.error
+  const requestedNext = Array.isArray(params.next) ? params.next[0] : params.next
+  const safeNext =
+    typeof requestedNext === 'string' &&
+    requestedNext.startsWith('/') &&
+    !requestedNext.startsWith('//') &&
+    !requestedNext.includes('://')
+      ? requestedNext
+      : ''
   const loginError =
     errorCode === 'missing'
       ? 'Veuillez saisir le nom utilisateur et le mot de passe.'
@@ -33,6 +41,13 @@ export default async function LoginPage({
 
     const username = String(formData.get('username') || '').trim().toLowerCase()
     const password = String(formData.get('password') || '')
+    const next = String(formData.get('next') || '').trim()
+    const safeNext =
+      next.startsWith('/') &&
+      !next.startsWith('//') &&
+      !next.includes('://')
+        ? next
+        : ''
 
     if (!username || !password) {
       redirect('/login?error=missing')
@@ -98,7 +113,7 @@ export default async function LoginPage({
       expires: expiresAt,
     })
 
-    const redirectTo = getFirstAllowedRoute(user)
+    const redirectTo = safeNext || getFirstAllowedRoute(user)
     redirect(redirectTo)
   }
 
@@ -148,6 +163,7 @@ export default async function LoginPage({
           {loginError ? <div style={formErrorStyle}>{loginError}</div> : null}
 
           <form action={loginAction} style={formStyle}>
+            <input type="hidden" name="next" value={safeNext} />
             <label style={fieldStyle}>
               <span style={labelStyle}>Nom utilisateur</span>
               <input name="username" placeholder="ex: sara.ops" autoComplete="username" style={inputStyle} />
