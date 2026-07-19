@@ -173,7 +173,7 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
       provider: incoming.protocol,
       syncedCount: count,
       status: "completed",
-      message: `Windows bridge inbound sync completed. fetched=${bridgeResult.fetched}, inserted=${persistResult.inserted}, updated=${persistResult.updated}, skipped=${skipped}`
+      message: `Windows bridge inbound sync completed. fetched=${bridgeResult.fetched}, inserted=${persistResult.inserted}, updated=${persistResult.updated}, skipped=${skipped}, suppressed=${persistResult.suppressed}, deduplicated=${persistResult.deduplicated}`
     })
 
     return {
@@ -187,6 +187,8 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
       inserted: persistResult.inserted,
       updated: persistResult.updated,
       skipped,
+      suppressed: persistResult.suppressed,
+      deduplicated: persistResult.deduplicated,
       synced: persistResult.synced,
       source: "windows-bridge-pop3"
     }
@@ -199,7 +201,7 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
         provider: mailbox.incoming.protocol,
         syncedCount: result.inserted,
         status: "completed",
-        message: `Direct POP3 inbound sync fallback completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}`
+        message: `Direct POP3 inbound sync fallback completed. fetched=${result.fetched}, inserted=${result.inserted}, skipped=${result.skipped}, suppressed=${result.suppressed}, deduplicated=${result.deduplicated}`
       })
 
       return {
@@ -213,6 +215,8 @@ async function syncOneMailbox(mailbox: ResolvedEmailOSMailbox, limit: number) {
         inserted: result.inserted,
         updated: result.updated || 0,
         skipped: result.skipped,
+        suppressed: result.suppressed,
+        deduplicated: result.deduplicated,
         synced: result.synced,
         source: "direct-pop3"
       }

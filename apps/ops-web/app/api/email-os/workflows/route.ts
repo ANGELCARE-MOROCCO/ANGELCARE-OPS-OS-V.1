@@ -10,6 +10,19 @@ import {
 } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { deleteStorageFileFromBridge } from "@/lib/email-os-core/storage-gateway"
+import {
+  buildEmailOSInboundIdentityFromRow,
+  recordEmailOSInboundSuppressions
+} from "@/lib/email-os-core/inbound-identity"
+import {
+  emailOSOperatorDirectoryMap,
+  emailOSOperatorSnapshot,
+  identityFromSnapshot,
+  loadEmailOSOperatorDirectory,
+  normalizeEmailOSOperatorIdentity,
+  resolveEmailOSOperatorIdentity,
+  type EmailOSOperatorIdentity
+} from "@/lib/email-os-core/operator-identity"
 
 type WorkflowAction =
   | "mark_read"
@@ -246,7 +259,17 @@ function buildWorkflowRow(row: any, table: string, mailboxId: string) {
     priority,
     category,
     owner_user_id: clean(row?.owner_user_id || row?.owner || row?.assigned_to || ""),
+    owner_name_snapshot: clean(row?.owner_name_snapshot || row?.owner_name || ""),
+    owner_email_snapshot: clean(row?.owner_email_snapshot || row?.owner_email || ""),
+    owner_role_snapshot: clean(row?.owner_role_snapshot || row?.owner_role || ""),
+    owner_department_snapshot: clean(row?.owner_department_snapshot || row?.owner_department || ""),
+    owner_title_snapshot: clean(row?.owner_title_snapshot || row?.owner_title || ""),
     assigned_by: clean(row?.assigned_by || ""),
+    assigned_by_name_snapshot: clean(row?.assigned_by_name_snapshot || ""),
+    assigned_by_email_snapshot: clean(row?.assigned_by_email_snapshot || ""),
+    assigned_by_role_snapshot: clean(row?.assigned_by_role_snapshot || ""),
+    assigned_by_department_snapshot: clean(row?.assigned_by_department_snapshot || ""),
+    assigned_by_title_snapshot: clean(row?.assigned_by_title_snapshot || ""),
     assigned_at: row?.assigned_at || null,
     read_at: row?.read_at || null,
     archived_at: row?.archived_at || null,
@@ -255,6 +278,12 @@ function buildWorkflowRow(row: any, table: string, mailboxId: string) {
     first_response_due_at: row?.first_response_due_at || dueAt,
     waiting_since_at: row?.waiting_since_at || null,
     last_operator_action_at: row?.last_operator_action_at || null,
+    last_handled_by_user_id: clean(row?.last_handled_by_user_id || ""),
+    last_handled_by_name_snapshot: clean(row?.last_handled_by_name_snapshot || ""),
+    last_handled_by_email_snapshot: clean(row?.last_handled_by_email_snapshot || ""),
+    last_handled_by_role_snapshot: clean(row?.last_handled_by_role_snapshot || ""),
+    last_handled_by_department_snapshot: clean(row?.last_handled_by_department_snapshot || ""),
+    last_handled_by_title_snapshot: clean(row?.last_handled_by_title_snapshot || ""),
     last_action: clean(row?.last_action || ""),
     last_action_at: row?.last_action_at || null,
     linked_entity_type: clean(row?.linked_entity_type || ""),
@@ -315,8 +344,25 @@ function mergeWorkflowMessage(row: any, workflow: any, mailbox: any) {
     priority,
     category,
     ownerUserId: clean(workflow?.owner_user_id || row?.owner_user_id || row?.owner || row?.assigned_to || ""),
+    ownerName: clean(workflow?.owner_name_snapshot || row?.owner_name_snapshot || row?.owner_name || ""),
+    ownerEmail: clean(workflow?.owner_email_snapshot || row?.owner_email_snapshot || row?.owner_email || ""),
+    ownerRole: clean(workflow?.owner_role_snapshot || row?.owner_role_snapshot || row?.owner_role || ""),
+    ownerDepartment: clean(workflow?.owner_department_snapshot || row?.owner_department_snapshot || row?.owner_department || ""),
+    ownerTitle: clean(workflow?.owner_title_snapshot || row?.owner_title_snapshot || row?.owner_title || ""),
     assignedBy: clean(workflow?.assigned_by || row?.assigned_by || ""),
+    assignedByName: clean(workflow?.assigned_by_name_snapshot || row?.assigned_by_name_snapshot || ""),
+    assignedByEmail: clean(workflow?.assigned_by_email_snapshot || row?.assigned_by_email_snapshot || ""),
     assignedAt: workflow?.assigned_at || row?.assigned_at || null,
+    sentByUserId: clean(row?.sent_by_user_id || row?.diagnostics?.operator?.userId || ""),
+    sentByName: clean(row?.sent_by_name || row?.diagnostics?.operator?.name || row?.diagnostics?.operator?.fullName || ""),
+    sentByEmail: clean(row?.sent_by_email || row?.diagnostics?.operator?.email || ""),
+    sentByRole: clean(row?.sent_by_role || row?.diagnostics?.operator?.role || ""),
+    sentByDepartment: clean(row?.sent_by_department || row?.diagnostics?.operator?.department || ""),
+    lastHandledByUserId: clean(workflow?.last_handled_by_user_id || row?.last_handled_by_user_id || ""),
+    lastHandledByName: clean(workflow?.last_handled_by_name_snapshot || row?.last_handled_by_name_snapshot || ""),
+    lastHandledByEmail: clean(workflow?.last_handled_by_email_snapshot || row?.last_handled_by_email_snapshot || ""),
+    lastHandledByRole: clean(workflow?.last_handled_by_role_snapshot || row?.last_handled_by_role_snapshot || ""),
+    lastHandledByDepartment: clean(workflow?.last_handled_by_department_snapshot || row?.last_handled_by_department_snapshot || ""),
     lastAction: clean(workflow?.last_action || row?.last_action || ""),
     lastActionAt: workflow?.last_action_at || row?.last_action_at || null,
     lastOperatorActionAt: workflow?.last_operator_action_at || null,
@@ -683,6 +729,7 @@ async function recordWorkflowAudit(db: ReturnType<typeof createEmailOSCoreDb>, p
   threadId?: string | null
   action: string
   actorUserId?: string | null
+  actorIdentity?: EmailOSOperatorIdentity | null
   severity?: string
   details?: Record<string, unknown>
 }) {
@@ -693,7 +740,12 @@ async function recordWorkflowAudit(db: ReturnType<typeof createEmailOSCoreDb>, p
     external_id: payload.externalId || null,
     thread_id: payload.threadId || null,
     action: payload.action,
-    actor_user_id: payload.actorUserId || null,
+    actor_user_id: payload.actorUserId || payload.actorIdentity?.id || null,
+    actor_name_snapshot: payload.actorIdentity?.fullName || null,
+    actor_email_snapshot: payload.actorIdentity?.email || null,
+    actor_role_snapshot: payload.actorIdentity?.role || null,
+    actor_department_snapshot: payload.actorIdentity?.department || null,
+    actor_title_snapshot: payload.actorIdentity?.title || null,
     severity: payload.severity || "info",
     details_json: payload.details || {},
     created_at: nowIso()
@@ -721,12 +773,25 @@ async function applyWorkflowAction(params: {
   workflowRow: any
   payload: Record<string, any>
   request?: Request | null
+  actorIdentity: EmailOSOperatorIdentity
 }) {
   const now = nowIso()
   const action = params.action
   const workflow = params.workflowRow || (await ensureWorkflowRow(params.db, params.mailboxId, params.sourceTable, params.sourceRow))
   const sourcePatch = sourcePatchForAction(action, workflow)
-  const workflowPatch: Record<string, unknown> = { updated_at: now, last_action: action, last_action_at: now }
+  const actorSnapshot = emailOSOperatorSnapshot(params.actorIdentity)
+  const workflowPatch: Record<string, unknown> = {
+    updated_at: now,
+    last_action: action,
+    last_action_at: now,
+    last_operator_action_at: now,
+    last_handled_by_user_id: actorSnapshot.userId,
+    last_handled_by_name_snapshot: actorSnapshot.name,
+    last_handled_by_email_snapshot: actorSnapshot.email,
+    last_handled_by_role_snapshot: actorSnapshot.role,
+    last_handled_by_department_snapshot: actorSnapshot.department,
+    last_handled_by_title_snapshot: actorSnapshot.title
+  }
 
   if (action === "mark_read") {
     workflowPatch.status = "triaged"
@@ -793,8 +858,20 @@ async function applyWorkflowAction(params: {
 
   if (action === "assign_owner") {
     const ownerUserId = clean(params.payload.ownerUserId || params.payload.owner_user_id || params.payload.owner || "")
+    const ownerIdentity = ownerUserId ? await resolveEmailOSOperatorIdentity(params.db, ownerUserId) : null
+    const ownerSnapshot = emailOSOperatorSnapshot(ownerIdentity)
     workflowPatch.owner_user_id = ownerUserId || null
+    workflowPatch.owner_name_snapshot = ownerSnapshot.name
+    workflowPatch.owner_email_snapshot = ownerSnapshot.email
+    workflowPatch.owner_role_snapshot = ownerSnapshot.role
+    workflowPatch.owner_department_snapshot = ownerSnapshot.department
+    workflowPatch.owner_title_snapshot = ownerSnapshot.title
     workflowPatch.assigned_by = params.userId
+    workflowPatch.assigned_by_name_snapshot = actorSnapshot.name
+    workflowPatch.assigned_by_email_snapshot = actorSnapshot.email
+    workflowPatch.assigned_by_role_snapshot = actorSnapshot.role
+    workflowPatch.assigned_by_department_snapshot = actorSnapshot.department
+    workflowPatch.assigned_by_title_snapshot = actorSnapshot.title
     workflowPatch.assigned_at = now
     workflowPatch.status = "assigned"
 
@@ -805,8 +882,18 @@ async function applyWorkflowAction(params: {
         message_id: params.messageId,
         external_id: clean(workflow?.external_id || params.sourceRow?.provider_uid || params.sourceRow?.external_id || ""),
         thread_id: clean(workflow?.thread_id || params.sourceRow?.thread_id || ""),
-        assignee_user_id: ownerUserId,
+        owner_user_id: ownerUserId,
+        assignee_name_snapshot: ownerSnapshot.name,
+        assignee_email_snapshot: ownerSnapshot.email,
+        assignee_role_snapshot: ownerSnapshot.role,
+        assignee_department_snapshot: ownerSnapshot.department,
+        assignee_title_snapshot: ownerSnapshot.title,
         assigned_by: params.userId,
+        assigned_by_name_snapshot: actorSnapshot.name,
+        assigned_by_email_snapshot: actorSnapshot.email,
+        assigned_by_role_snapshot: actorSnapshot.role,
+        assigned_by_department_snapshot: actorSnapshot.department,
+        assigned_by_title_snapshot: actorSnapshot.title,
         status: "active",
         note: clean(params.payload.note || params.payload.reason || ""),
         metadata_json: {
@@ -854,7 +941,11 @@ async function applyWorkflowAction(params: {
       thread_id: clean(workflow?.thread_id || ""),
       body: note,
       author_user_id: params.userId,
-      author_name: clean(params.payload.authorName || params.payload.author_name || ""),
+      author_name: params.actorIdentity.fullName,
+      author_email: params.actorIdentity.email,
+      author_role: params.actorIdentity.role,
+      author_department: params.actorIdentity.department,
+      author_title: params.actorIdentity.title,
       visibility: "internal",
       metadata_json: {
         source: "message-detail",
@@ -875,6 +966,7 @@ async function applyWorkflowAction(params: {
       threadId: workflow?.thread_id || null,
       action,
       actorUserId: params.userId,
+      actorIdentity: params.actorIdentity,
       details: { noteId: noteData?.id, body: note }
     })
 
@@ -885,6 +977,10 @@ async function applyWorkflowAction(params: {
     const title = clean(params.payload.title || params.payload.subject || `Follow-up: ${clean(params.sourceRow?.subject || workflow?.subject || "Message")}`)
     if (!title) throw new Error("Task title is required")
 
+    const taskOwnerUserId = clean(params.payload.ownerUserId || params.payload.owner_user_id || params.payload.owner || workflow?.owner_user_id || "")
+    const taskOwnerIdentity = taskOwnerUserId ? await resolveEmailOSOperatorIdentity(params.db, taskOwnerUserId) : null
+    const taskOwnerSnapshot = emailOSOperatorSnapshot(taskOwnerIdentity)
+
     const taskRow = {
       id: makeEmailOSId(),
       mailbox_id: params.mailboxId,
@@ -893,7 +989,18 @@ async function applyWorkflowAction(params: {
       thread_id: clean(workflow?.thread_id || ""),
       title,
       description: clean(params.payload.description || params.payload.body || ""),
-      owner_user_id: clean(params.payload.ownerUserId || params.payload.owner_user_id || params.payload.owner || workflow?.owner_user_id || ""),
+      owner_user_id: taskOwnerUserId,
+      owner_name_snapshot: taskOwnerSnapshot.name,
+      owner_email_snapshot: taskOwnerSnapshot.email,
+      owner_role_snapshot: taskOwnerSnapshot.role,
+      owner_department_snapshot: taskOwnerSnapshot.department,
+      owner_title_snapshot: taskOwnerSnapshot.title,
+      created_by_user_id: actorSnapshot.userId,
+      created_by_name_snapshot: actorSnapshot.name,
+      created_by_email_snapshot: actorSnapshot.email,
+      created_by_role_snapshot: actorSnapshot.role,
+      created_by_department_snapshot: actorSnapshot.department,
+      created_by_title_snapshot: actorSnapshot.title,
       due_at: params.payload.dueAt || params.payload.due_at || null,
       priority: normalizePriority(params.payload.priority || workflow?.priority || "normal"),
       status: "open",
@@ -915,6 +1022,7 @@ async function applyWorkflowAction(params: {
       threadId: workflow?.thread_id || null,
       action,
       actorUserId: params.userId,
+      actorIdentity: params.actorIdentity,
       details: { taskId: taskData?.id, title }
     })
 
@@ -932,7 +1040,11 @@ async function applyWorkflowAction(params: {
         thread_id: workflow?.thread_id || clean(params.sourceRow?.thread_id || ""),
         body: workflowNote,
         author_user_id: params.userId,
-        author_name: "",
+        author_name: params.actorIdentity.fullName,
+        author_email: params.actorIdentity.email,
+        author_role: params.actorIdentity.role,
+        author_department: params.actorIdentity.department,
+        author_title: params.actorIdentity.title,
         visibility: "internal",
         metadata_json: { source: "workflow-modal", action },
         created_at: now,
@@ -947,6 +1059,7 @@ async function applyWorkflowAction(params: {
       threadId: workflow?.thread_id || null,
       action,
       actorUserId: params.userId,
+      actorIdentity: params.actorIdentity,
       severity: action === "archive" ? "warning" : "info",
       details: {
         payload: params.payload,
@@ -985,6 +1098,14 @@ export async function GET(request: Request) {
     }
 
     const db = createEmailOSCoreDb()
+    const operatorDirectory = await loadEmailOSOperatorDirectory(db, { limit: 1000 })
+    const operatorMap = emailOSOperatorDirectoryMap(operatorDirectory)
+    const currentOperator = operatorMap.get(user.id) || normalizeEmailOSOperatorIdentity(null, {
+      id: user.id,
+      name: user.name || undefined,
+      email: user.email || undefined,
+      role: user.role || undefined
+    })
 
     const mailboxQuery = adminMode
       ? db.from("email_os_core_mailboxes").select("*").order("updated_at", { ascending: false }).limit(250)
@@ -1024,12 +1145,50 @@ export async function GET(request: Request) {
       const mailbox = mailboxMap.get(clean(row.mailbox_id)) || null
       const sourceTable = row.__source === "outbox" ? "email_os_core_outbox" : row.__source === "drafts" ? "email_os_core_drafts" : row.__source === "saved_drafts" ? "email_os_core_saved_drafts" : "email_os_core_inbox"
       const workflow = workflowByKey.get(`${clean(row.mailbox_id)}:${clean(row.id)}:${sourceTable}`) || null
-      return mergeWorkflowMessage(row, workflow, mailbox)
+      const merged = mergeWorkflowMessage(row, workflow, mailbox)
+      const resolveIdentity = (id: unknown, snapshot: any) => operatorMap.get(clean(id)) || identityFromSnapshot({ id, ...snapshot })
+      const owner = resolveIdentity(merged.ownerUserId, { name: merged.ownerName, email: merged.ownerEmail, role: merged.ownerRole, department: merged.ownerDepartment, title: merged.ownerTitle })
+      const sentBy = resolveIdentity(merged.sentByUserId, { name: merged.sentByName, email: merged.sentByEmail, role: merged.sentByRole, department: merged.sentByDepartment })
+      const handledBy = resolveIdentity(merged.lastHandledByUserId, { name: merged.lastHandledByName, email: merged.lastHandledByEmail, role: merged.lastHandledByRole, department: merged.lastHandledByDepartment })
+      return {
+        ...merged,
+        ownerIdentity: merged.ownerUserId ? owner : null,
+        ownerName: merged.ownerUserId ? owner.fullName : "",
+        ownerEmail: merged.ownerUserId ? owner.email : "",
+        ownerRole: merged.ownerUserId ? owner.role : "",
+        ownerDepartment: merged.ownerUserId ? owner.department : "",
+        sentByIdentity: merged.sentByUserId ? sentBy : null,
+        sentByName: merged.sentByUserId ? sentBy.fullName : merged.sentByName,
+        sentByEmail: merged.sentByUserId ? sentBy.email : merged.sentByEmail,
+        sentByRole: merged.sentByUserId ? sentBy.role : merged.sentByRole,
+        sentByDepartment: merged.sentByUserId ? sentBy.department : merged.sentByDepartment,
+        lastHandledByIdentity: merged.lastHandledByUserId ? handledBy : null,
+        lastHandledByName: merged.lastHandledByUserId ? handledBy.fullName : merged.lastHandledByName,
+        lastHandledByEmail: merged.lastHandledByUserId ? handledBy.email : merged.lastHandledByEmail,
+        lastHandledByRole: merged.lastHandledByUserId ? handledBy.role : merged.lastHandledByRole,
+        lastHandledByDepartment: merged.lastHandledByUserId ? handledBy.department : merged.lastHandledByDepartment
+      }
     })
 
-    const detail = messageId
+    const rawDetail = messageId
       ? await loadWorkspaceDetail(db, scope?.mailboxId || requestedMailboxId || null, messageId)
       : null
+    const detail = rawDetail ? {
+      ...rawDetail,
+      notes: (rawDetail.notes || []).map((row: any) => {
+        const identity = operatorMap.get(clean(row.author_user_id)) || identityFromSnapshot({ id: row.author_user_id, name: row.author_name, email: row.author_email, role: row.author_role, department: row.author_department, title: row.author_title })
+        return { ...row, author_name: identity.fullName, author_identity: identity }
+      }),
+      tasks: (rawDetail.tasks || []).map((row: any) => {
+        const owner = operatorMap.get(clean(row.owner_user_id)) || identityFromSnapshot({ id: row.owner_user_id, name: row.owner_name_snapshot, email: row.owner_email_snapshot, role: row.owner_role_snapshot, department: row.owner_department_snapshot, title: row.owner_title_snapshot })
+        const creator = operatorMap.get(clean(row.created_by_user_id)) || identityFromSnapshot({ id: row.created_by_user_id, name: row.created_by_name_snapshot, email: row.created_by_email_snapshot, role: row.created_by_role_snapshot, department: row.created_by_department_snapshot, title: row.created_by_title_snapshot })
+        return { ...row, owner_name: row.owner_user_id ? owner.fullName : "", owner_identity: row.owner_user_id ? owner : null, created_by_name: creator.fullName, created_by_identity: creator }
+      }),
+      audit: (rawDetail.audit || []).map((row: any) => {
+        const identity = operatorMap.get(clean(row.actor_user_id)) || identityFromSnapshot({ id: row.actor_user_id, name: row.actor_name_snapshot, email: row.actor_email_snapshot, role: row.actor_role_snapshot, department: row.actor_department_snapshot, title: row.actor_title_snapshot })
+        return { ...row, actor_name: identity.fullName, actor_identity: identity }
+      })
+    } : null
 
     const visibleMessages = messages.filter((row: any) => !isHardDeletedMergedMessage(row))
     const filteredMessages = scope ? visibleMessages.filter((row: any) => clean(row.mailboxId) === scope.mailboxId) : visibleMessages
@@ -1045,6 +1204,28 @@ export async function GET(request: Request) {
         })
       : computeStats(filteredMessages, workflowRows, scope?.mailboxId || requestedMailboxId || null)
 
+    const workloadMap = new Map((teamWorkloads || []).map((row: any) => [clean(row.user_id || row.owner_user_id || row.id), row]))
+    const resolvedTeamWorkloads = operatorDirectory.map((identity) => {
+      const assignedRows = filteredMessages.filter((row: any) => clean(row.ownerUserId) === identity.id)
+      const existing = workloadMap.get(identity.id) || {}
+      return {
+        ...existing,
+        user_id: identity.id,
+        owner_user_id: identity.id,
+        full_name: identity.fullName,
+        name: identity.fullName,
+        email: identity.email,
+        role: identity.role,
+        department: identity.department,
+        title: identity.title,
+        initials: identity.initials,
+        avatar_url: identity.avatarUrl,
+        active_count: assignedRows.filter((row: any) => !["resolved", "archived"].includes(cleanLower(row.status))).length,
+        urgent_count: assignedRows.filter((row: any) => ["urgent", "vip", "high"].includes(cleanLower(row.priority))).length,
+        overdue_count: assignedRows.filter((row: any) => Boolean(row.sla?.overdue)).length
+      }
+    })
+
     const assignedToMe = filteredMessages.filter((row: any) => clean(row.ownerUserId) === clean(user.id)).length
     const lastSync = syncLogs.length ? syncLogs[0] : null
     const source = lastSync?.message?.includes("bridge") ? "windows-bridge-pop3" : "windows-bridge-pop3"
@@ -1052,7 +1233,8 @@ export async function GET(request: Request) {
     return NextResponse.json({
       ok: true,
       data: {
-        currentUser: { id: user.id, name: user.name || null, email: user.email || null, role: user.role || null },
+        currentUser: currentOperator,
+        operatorDirectory,
         mailboxScope: scope ? { mailboxId: scope.mailboxId, mailbox: scope.mailbox, assignment: scope.assignment, session: scope.session } : null,
         mailboxes,
         messages: filteredMessages,
@@ -1064,7 +1246,7 @@ export async function GET(request: Request) {
         audit: auditRows,
         slaRules,
         syncHistory: syncLogs,
-        teamWorkloads,
+        teamWorkloads: resolvedTeamWorkloads,
         stats,
         metrics: {
           assignedToMe,
@@ -1121,6 +1303,12 @@ export async function POST(request: Request) {
     }
 
     const db = createEmailOSCoreDb()
+    const actorIdentity = await resolveEmailOSOperatorIdentity(db, user.id, {
+      id: user.id,
+      name: user.name || undefined,
+      email: user.email || undefined,
+      role: user.role || undefined
+    })
     const message = await findMessageRow(db, scope.mailboxId, messageId)
     if (!message.row) {
       return NextResponse.json({ ok: false, error: "Message not found" }, { status: 404 })
@@ -1134,6 +1322,16 @@ export async function POST(request: Request) {
       if (action === "delete_permanent" && payload.confirm !== true && payload.confirmPermanentDelete !== true) {
         return NextResponse.json({ ok: false, error: "Permanent delete requires explicit confirmation" }, { status: 400 })
       }
+
+      const suppression = action === "delete_permanent" && sourceTable === "email_os_core_inbox"
+        ? await recordEmailOSInboundSuppressions(db, {
+            mailboxId: scope.mailboxId,
+            messageId,
+            identity: buildEmailOSInboundIdentityFromRow(message.row),
+            actorUserId: user.id,
+            reason: "permanent_delete"
+          })
+        : null
 
       const storage = await eraseEmailMessageCompletely({
         db,
@@ -1151,6 +1349,7 @@ export async function POST(request: Request) {
           messageId,
           sourceTable,
           storage,
+          suppression,
           action,
           archiveMeansErase
         }
@@ -1167,7 +1366,8 @@ export async function POST(request: Request) {
       sourceRow: message.row,
       workflowRow: workflow,
       payload,
-      request
+      request,
+      actorIdentity
     })
 
     const updatedWorkflow = await db
@@ -1184,14 +1384,28 @@ export async function POST(request: Request) {
     }
 
     if (action === "assign_owner") {
+      const assignedOwnerId = clean(payload.ownerUserId || payload.owner_user_id || payload.owner || "")
+      const assignedOwnerIdentity = assignedOwnerId ? await resolveEmailOSOperatorIdentity(db, assignedOwnerId) : null
+      const assignedOwnerSnapshot = emailOSOperatorSnapshot(assignedOwnerIdentity)
+      const actorSnapshot = emailOSOperatorSnapshot(actorIdentity)
       await db.from("email_os_message_assignments").insert({
         id: makeEmailOSId(),
         mailbox_id: scope.mailboxId,
         message_id: messageId,
         external_id: clean(workflow.external_id || message.row.provider_uid || message.row.external_id || ""),
         thread_id: clean(workflow.thread_id || message.row.thread_id || ""),
-        owner_user_id: clean(payload.ownerUserId || payload.owner_user_id || payload.owner || ""),
+        owner_user_id: assignedOwnerId,
+        assignee_name_snapshot: assignedOwnerSnapshot.name,
+        assignee_email_snapshot: assignedOwnerSnapshot.email,
+        assignee_role_snapshot: assignedOwnerSnapshot.role,
+        assignee_department_snapshot: assignedOwnerSnapshot.department,
+        assignee_title_snapshot: assignedOwnerSnapshot.title,
         assigned_by: user.id,
+        assigned_by_name_snapshot: actorSnapshot.name,
+        assigned_by_email_snapshot: actorSnapshot.email,
+        assigned_by_role_snapshot: actorSnapshot.role,
+        assigned_by_department_snapshot: actorSnapshot.department,
+        assigned_by_title_snapshot: actorSnapshot.title,
         assigned_at: nowIso(),
         metadata_json: { source: "workflow-action" },
         created_at: nowIso(),
@@ -1225,7 +1439,11 @@ export async function POST(request: Request) {
           thread_id: clean(workflow.thread_id || message.row.thread_id || ""),
           body: linkNote,
           author_user_id: user.id,
-          author_name: "",
+          author_name: actorIdentity.fullName,
+          author_email: actorIdentity.email,
+          author_role: actorIdentity.role,
+          author_department: actorIdentity.department,
+          author_title: actorIdentity.title,
           visibility: "internal",
           metadata_json: { source: "crm-link", entityType: clean(payload.entityType || payload.entity_type || ""), entityId: clean(payload.entityId || payload.entity_id || "") },
           created_at: nowIso(),

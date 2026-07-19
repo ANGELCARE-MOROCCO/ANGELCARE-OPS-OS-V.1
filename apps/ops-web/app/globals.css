@@ -997,4 +997,66 @@ body:has([data-market-os-root]) {
     inset 0 1px 0 rgba(255, 255, 255, .35) !important;
 }
 
+/* =========================================================
+   EMAIL-OS — ENTERPRISE DRAWER WHITE-SURFACE TEXT CONTRACT
+   White/light drawer surfaces must never inherit white or transparent text.
+   Colored icon tiles and primary action buttons remain intentionally white.
+   ========================================================= */
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-white-surface="true"] {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-strong-text="true"] {
+  color: #020617 !important;
+  -webkit-text-fill-color: #020617 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-support-text="true"] {
+  color: #334155 !important;
+  -webkit-text-fill-color: #334155 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-label-text="true"] {
+  color: #475569 !important;
+  -webkit-text-fill-color: #475569 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] input,
+[data-emailos-enterprise-drawer="true"] textarea,
+[data-emailos-enterprise-drawer="true"] select,
+[data-emailos-enterprise-drawer="true"] option {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0284c7;
+}
+
+[data-emailos-enterprise-drawer="true"] input::placeholder,
+[data-emailos-enterprise-drawer="true"] textarea::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-strong-text="true"]::selection,
+[data-emailos-enterprise-drawer="true"] [data-emailos-support-text="true"]::selection,
+[data-emailos-enterprise-drawer="true"] [data-emailos-label-text="true"]::selection {
+  color: #020617 !important;
+  -webkit-text-fill-color: #020617 !important;
+  background: #bfdbfe !important;
+}
 

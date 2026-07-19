@@ -681,7 +681,7 @@ function readJsonBody(request) {
     let raw = ""
     request.on("data", (chunk) => {
       raw += chunk
-      if (raw.length > 2_000_000) {
+      if (Buffer.byteLength(raw, "utf8") > 25 * 1024 * 1024) {
         request.destroy()
       }
     })

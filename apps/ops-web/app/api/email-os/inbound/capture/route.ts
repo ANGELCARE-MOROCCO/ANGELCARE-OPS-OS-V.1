@@ -3,6 +3,12 @@ import crypto from "crypto"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { listEmailOSMultiMailboxes } from "@/lib/email-os-core/multi-mailbox-resolver"
+import {
+  buildEmailOSInboundIdentity,
+  buildEmailOSInboundIdentityFromRow,
+  emailOSInboundIdentityIntersects,
+  loadEmailOSInboundSuppressionKeys
+} from "@/lib/email-os-core/inbound-identity"
 
 function clean(value: unknown) {
   return String(value || "").trim()
@@ -15,32 +21,6 @@ function normalizeEmail(value: unknown) {
 function previewFrom(input: { text?: string; html?: string; body?: string; preview?: string }) {
   const raw = clean(input.preview || input.text || input.body || input.html)
   return raw.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 240)
-}
-
-function makeProviderUid(input: {
-  mailboxId: string
-  fromEmail: string
-  toEmail: string
-  subject: string
-  date: string
-  messageId?: string
-  text?: string
-}) {
-  if (input.messageId) return input.messageId
-
-  const hash = crypto
-    .createHash("sha256")
-    .update([
-      input.mailboxId,
-      input.fromEmail,
-      input.toEmail,
-      input.subject,
-      input.date,
-      input.text || ""
-    ].join("|"))
-    .digest("hex")
-
-  return `capture_${hash}`
 }
 
 function resolveMailboxId(input: { mailboxId?: string; toEmail?: string }) {
@@ -97,20 +77,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "toEmail is required" }, { status: 400 })
     }
 
-    const providerUid = makeProviderUid({
+    const identity = buildEmailOSInboundIdentity({
       mailboxId,
+      providerUid: body.providerUid || body.provider_uid,
+      externalId: body.externalId || body.external_id,
+      messageId,
       fromEmail,
       toEmail,
+      ccEmail: body.cc,
       subject,
       date,
-      messageId,
-      text
+      text,
+      html
     })
+    const providerUid = identity.canonicalProviderUid
 
     const row = {
       id: makeEmailOSId(),
       mailbox_id: mailboxId,
       provider_uid: providerUid,
+      ingest_key: identity.ingestKey,
       subject,
       from_email: fromEmail,
       to_email: toEmail,
@@ -139,16 +125,37 @@ export async function POST(request: Request) {
 
     const db = createEmailOSCoreDb()
 
-    const { data: existing, error: lookupError } = await db
+    const suppressionKeys = await loadEmailOSInboundSuppressionKeys(db, mailboxId)
+    if (emailOSInboundIdentityIntersects(suppressionKeys, identity.keys)) {
+      return NextResponse.json({
+        ok: true,
+        data: {
+          captured: false,
+          operation: "suppressed",
+          mailboxId,
+          providerUid,
+          ingestKey: identity.ingestKey
+        }
+      })
+    }
+
+    const { data: candidates, error: lookupError } = await db
       .from("email_os_core_inbox")
-      .select("id")
+      .select("id,mailbox_id,provider_uid,ingest_key,subject,from_email,to_email,preview,status,folder,raw,created_at,updated_at")
       .eq("mailbox_id", mailboxId)
-      .eq("provider_uid", providerUid)
-      .maybeSingle()
+      .order("created_at", { ascending: false })
+      .limit(2500)
 
     if (lookupError) {
       return NextResponse.json({ ok: false, error: lookupError.message }, { status: 500 })
     }
+
+    const existing = (candidates || []).find((candidate: any) =>
+      emailOSInboundIdentityIntersects(
+        buildEmailOSInboundIdentityFromRow(candidate).keys,
+        identity.keys
+      )
+    ) || null
 
     let savedId = row.id
     let operation: "inserted" | "updated" = "inserted"
@@ -160,13 +167,15 @@ export async function POST(request: Request) {
       const { error: updateError } = await db
         .from("email_os_core_inbox")
         .update({
+          provider_uid: row.provider_uid,
+          ingest_key: row.ingest_key,
           subject: row.subject,
           from_email: row.from_email,
           to_email: row.to_email,
           preview: row.preview,
-          status: row.status,
-          label: row.label,
-          folder: row.folder,
+          ...(["read", "archived", "trash", "trashed", "spam", "deleted"].includes(String(existing.status || "").toLowerCase())
+            ? {}
+            : { status: row.status, label: row.label, folder: row.folder }),
           raw: row.raw,
           updated_at: nowIso()
         })
@@ -192,6 +201,7 @@ export async function POST(request: Request) {
         operation,
         mailboxId,
         providerUid,
+        ingestKey: identity.ingestKey,
         id: savedId,
         subject,
         fromEmail,

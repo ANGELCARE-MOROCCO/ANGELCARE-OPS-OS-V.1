@@ -70,7 +70,7 @@ export default async function CareLinkMobileLoginPage({ searchParams }: { search
       const identifier = String(formData.get('identifier') || '')
       const password = String(formData.get('password') || '')
       const result = await loginCareLinkMobileAgent({ identifier, password })
-      redirectTo = result.redirectTo
+      redirectTo = result.redirectTo?.startsWith('/carelink') ? result.redirectTo : '/carelink'?.startsWith('/carelink') ? result.redirectTo : '/carelink'
     } catch (error) {
       const message = encodeURIComponent(careLinkMobileLoginErrorMessage(error))
       redirect(`/carelink/login?error=${message}`)

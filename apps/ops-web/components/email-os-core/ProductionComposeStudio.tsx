@@ -165,10 +165,12 @@ export default function ProductionComposeStudio() {
   }
 
   async function loadTemplates() {
-    const result = await api("/api/email-os/templates")
+    const suffix = mailboxId ? `?mailboxId=${encodeURIComponent(mailboxId)}` : ""
+    const result = await api(`/api/email-os/templates${suffix}`)
     if (result.ok) {
-      setTemplates(result.data || [])
-      setStatus(`Modèles chargés : ${(result.data || []).length}`)
+      const rows = Array.isArray(result.data?.templates) ? result.data.templates : Array.isArray(result.data) ? result.data : []
+      setTemplates(rows)
+      setStatus(`Modèles chargés : ${rows.length}`)
     } else {
       setStatus(result.error || "Échec chargement modèles")
     }

@@ -19,11 +19,14 @@ export type EmailOSAttachmentInput = {
 export type EmailOSSendInput = {
   mailboxId?: string | null
   fromEmail?: string | null
+  fromDisplayName?: string | null
   toEmail: string
   ccEmail?: string | null
   bccEmail?: string | null
   subject: string
   body: string
+  bodyHtml?: string | null
+  bodyText?: string | null
   headers?: Record<string, string>
   attachments?: EmailOSAttachmentInput[]
 }
@@ -217,16 +220,73 @@ async function normalizeEmailAttachments(input: unknown) {
   return normalized
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;")
+}
+
+function decodeHtmlEntities(value: unknown) {
+  let output = String(value || "")
+
+  for (let pass = 0; pass < 3; pass += 1) {
+    const before = output
+    output = output
+      .replace(/&#x([0-9a-f]+);/gi, (_match, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+      .replace(/&#(\d+);/g, (_match, decimal) => String.fromCodePoint(Number.parseInt(decimal, 10)))
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&quot;/gi, '\"')
+      .replace(/&apos;|&#39;/gi, "'")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/&amp;/gi, "&")
+    if (output === before) break
+  }
+
+  return output
+}
+
+function normalizeHtmlMarkup(value: unknown) {
+  const raw = String(value || "").trim()
+  if (!raw) return ""
+
+  const containsHtml = /<[a-z][\s\S]*>/i.test(raw)
+  const containsEncodedHtml = /&lt;\/?[a-z][\s\S]*?&gt;/i.test(raw) || /&amp;lt;\/?[a-z][\s\S]*?&amp;gt;/i.test(raw)
+  const normalized = !containsHtml && containsEncodedHtml ? decodeHtmlEntities(raw) : raw
+
+  if (/<[a-z][\s\S]*>/i.test(normalized)) return normalized
+  return escapeHtml(normalized).replace(/\r?\n/g, "<br />")
+}
+
 function htmlFromBody(value: unknown) {
-  const raw = String(value || "")
-  if (/<[a-z][\s\S]*>/i.test(raw)) return raw.replace(/\n/g, "<br />")
-  return raw.replace(/\n/g, "<br />")
+  return normalizeHtmlMarkup(value)
 }
 
 function textFromBody(value: unknown) {
-  return String(value || "")
-    .replace(/<br\s*\/?\s*>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
+  return decodeHtmlEntities(
+    String(value || "")
+      .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
+      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+      .replace(/<br\s*\/?\s*>/gi, "\n")
+      .replace(/<\/(p|div|li|h[1-6]|blockquote|tr)>/gi, "\n")
+      .replace(/<li(?:\s[^>]*)?>/gi, "- ")
+      .replace(/<[^>]+>/g, " ")
+  )
+    .replace(/\r/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim()
+}
+
+function resolveMessageBodies(input: EmailOSSendInput) {
+  const html = htmlFromBody(input.bodyHtml ?? input.body)
+  const text = clean(input.bodyText) || textFromBody(input.bodyHtml ?? input.body)
+  return { html, text }
 }
 
 function safePreview(input: unknown, maxLength = 260) {
@@ -334,6 +394,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
   }
 
   const endpoint = `${bridgeUrl}/send`
+  const messageBodies = resolveMessageBodies(input)
 
   let response: Response
   try {
@@ -350,6 +411,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
         username: identity.smtp.user,
         password: identity.smtp.pass || identity.credential?.passwordRef || "",
         fromEmail: identity.smtp.from,
+        fromName: clean(input.fromDisplayName) || undefined,
         diagnostics: {
           source: "angelcare-email-os",
           transport: "angelcare-windows-email-bridge",
@@ -364,9 +426,9 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
         cc: clean(input.ccEmail) || undefined,
         bcc: clean(input.bccEmail) || undefined,
         subject: input.subject || "(Sans objet)",
-        body: input.body || "",
-        text: textFromBody(input.body),
-        html: htmlFromBody(input.body),
+        body: messageBodies.html,
+        text: messageBodies.text,
+        html: messageBodies.html,
         replyTo: input.headers?.["Reply-To"] || undefined,
         attachments: (await normalizeEmailAttachments(input.attachments || [])).map((item) => ({
           filename: item.filename,
@@ -475,6 +537,8 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
       throw new Error("Email-OS bridge is required but EMAIL_OS_BRIDGE_URL is missing or bridge send did not execute")
     }
 
+    const messageBodies = resolveMessageBodies(input)
+
     const transporter = nodemailer.createTransport({
       host: identity.smtp.host,
       port: identity.smtp.port,
@@ -494,13 +558,15 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
 
     try {
       const sent = await transporter.sendMail({
-        from: identity.smtp.from,
+        from: clean(input.fromDisplayName)
+          ? { name: clean(input.fromDisplayName), address: identity.smtp.from }
+          : identity.smtp.from,
         to: toEmail,
         cc: clean(input.ccEmail) || undefined,
         bcc: clean(input.bccEmail) || undefined,
         subject: input.subject || "(Sans objet)",
-        text: textFromBody(input.body),
-        html: htmlFromBody(input.body),
+        text: messageBodies.text,
+        html: messageBodies.html,
         attachments: await normalizeEmailAttachments(input.attachments || []),
         headers: {
           "X-AngelCare-Mailbox-Key": identity.key,

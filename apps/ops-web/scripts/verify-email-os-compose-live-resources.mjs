@@ -7,10 +7,8 @@ const files = [
 ]
 
 let failed = false
-
 console.log("EMAIL-OS COMPOSE LIVE RESOURCES VERIFY")
 console.log("=====================================")
-
 for (const file of files) {
   const ok = fs.existsSync(file)
   console.log(`${ok ? "✓" : "✗"} ${file}`)
@@ -18,22 +16,19 @@ for (const file of files) {
 }
 
 const modal = fs.existsSync(files[2]) ? fs.readFileSync(files[2], "utf8") : ""
-
 for (const marker of [
   "/api/email-os/compose-resources",
-  "Live Templates",
-  "Send from / Outbox mailbox",
+  "/api/email-os/templates",
+  "Envoyer depuis",
   "applyTemplate",
   "addDriveLink",
-  "Email tracking",
-  "Request read receipt",
+  "Suivi d’ouverture",
+  "Accusé de lecture",
   "/api/email-os/send-direct"
 ]) {
   const ok = modal.includes(marker)
   console.log(`${ok ? "✓" : "✗"} ${marker}`)
   if (!ok) failed = true
 }
-
 if (failed) process.exit(1)
-
 console.log("Ready.")

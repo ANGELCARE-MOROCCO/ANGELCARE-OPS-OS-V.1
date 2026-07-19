@@ -2,7 +2,8 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import {
+  usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
@@ -44,6 +45,7 @@ const groups = [
     label: "FIELD OPERATIONS",
     items: [
       { label: "Missions", href: "/market-os/ambassadors/missions", icon: MapPinned },
+      { label: "Leads", href: "/market-os/ambassadors/leads", icon: Target },
     ],
   },
   {

@@ -373,7 +373,7 @@ function toneClasses(tone = "blue") {
     rose: "bg-rose-50 text-rose-700 border-rose-100",
     violet: "bg-violet-50 text-violet-700 border-violet-100",
     slate: "bg-slate-50 text-slate-700 border-slate-100",
-    navy: "bg-slate-900 text-white border-slate-900",
+    navy: "bg-slate-900 !text-slate-950 border-slate-900",
   }
   return tones[tone] || tones.blue
 }
@@ -511,7 +511,7 @@ function candidateLiveScore(form: typeof defaultCandidate) {
   return Math.max(0, Math.min(100, base + bonuses.reduce((sum, value) => sum + value, 0)))
 }
 
-function candidateReadiness(form: typeof defaultCandidate) {
+export function candidateReadiness(form: typeof defaultCandidate) {
   const score = candidateLiveScore(form)
   const missing = candidateCreateMissingFields(form)
   const interviewMissing = candidateInterviewMissingFields(form)
@@ -711,20 +711,20 @@ function ModalFrame({
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[80] flex items-center justify-center bg-slate-950/28 px-4 py-3 backdrop-blur-sm" style={{ top: topOffset }}>
-      <div className={`flex h-[calc(100dvh-var(--angelcare-overhead-height,96px)-24px)] flex-col overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/20 ${width}`}>
-        <header className="sticky top-0 z-20 border-b border-slate-100 bg-white px-6 py-5">
+    <div className="fixed inset-x-0 bottom-0 z-[80] flex items-center justify-center bg-slate-950/28 px-1 py-2 backdrop-blur-sm sm:px-2 lg:px-4 placeholder:!text-slate-600" style={{ top: topOffset }}>
+      <div className={`flex h-[calc(100dvh-var(--angelcare-overhead-height,96px)-16px)] !w-[calc(100vw-16px)] !max-w-[1680px] flex-col overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/20 sm:!w-[calc(100vw-24px)] lg:!w-[calc(100vw-48px)] 2xl:!w-[calc(100vw-72px)] ${width} !text-slate-950 [&_*]:!text-slate-950 [&_label]:!text-slate-950 [&_h1]:!text-slate-950 [&_h2]:!text-slate-950 [&_h3]:!text-slate-950 [&_p]:!text-slate-950 [&_span]:!text-slate-950 [&_button]:!text-slate-950 [&_input]:!text-slate-950 [&_select]:!text-slate-950 [&_textarea]:!text-slate-950 [&_option]:!text-slate-950`}>
+        <header className="sticky top-0 z-20 border-b border-slate-100 bg-white px-6 py-5 text-slate-950 placeholder:!text-slate-600">
           <div className="flex items-start justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className={`grid h-12 w-12 place-items-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-700 ${chrome === "amber" ? "bg-amber-50 text-amber-700 border-amber-100" : chrome === "rose" ? "bg-rose-50 text-rose-700 border-rose-100" : chrome === "navy" ? "bg-slate-900 text-white border-slate-900" : ""}`}>
+              <div className={`grid h-12 w-12 place-items-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-700 ${chrome === "amber" ? "bg-amber-50 text-amber-700 border-amber-100" : chrome === "rose" ? "bg-rose-50 text-rose-700 border-rose-100" : chrome === "navy" ? "bg-slate-900 !text-slate-950 border-slate-900" : ""}`}>
                 <Icon size={20} />
               </div>
               <div>
-                <h2 className="text-xl font-black text-slate-950">{title}</h2>
-                <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-slate-600">{subtitle}</p>
+                <h2 className="text-xl font-black !text-slate-950" style={{ color: "#0f172a" }}>{title}</h2>
+                <p className="mt-1 max-w-6xl text-sm font-semibold leading-6 !!text-slate-950" style={{ color: "#475569" }}>{subtitle}</p>
               </div>
             </div>
-            <button type="button" onClick={onClose} className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-slate-200 text-slate-500 hover:bg-slate-50">
+            <button type="button" onClick={onClose} className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-slate-200 !text-slate-950 hover:bg-slate-50 placeholder:!text-slate-600">
               <X size={16} />
             </button>
           </div>
@@ -735,7 +735,7 @@ function ModalFrame({
           ) : null}
         </header>
         <div className={`flex-1 overflow-y-auto overscroll-contain px-6 py-6 ${chromeClasses[chrome]}`}>{children}</div>
-        <footer className="sticky bottom-0 z-20 border-t border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">{footer}</footer>
+        <footer className="sticky bottom-0 z-20 border-t border-slate-100 bg-white/95 px-6 py-4 backdrop-blur placeholder:!text-slate-600">{footer}</footer>
       </div>
     </div>
   )
@@ -754,9 +754,9 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</span>
+      <span className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">{label}</span>
       <div className="mt-2">{children}</div>
-      {hint ? <p className="mt-1 text-[11px] font-semibold text-slate-500">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-[11px] font-semibold !text-slate-950">{hint}</p> : null}
     </label>
   )
 }
@@ -773,13 +773,13 @@ function Checklist({ items, tone = "slate" }: { items: { label: string; done: bo
   return (
     <div className="space-y-3">
       {items.map((item) => (
-        <div key={item.label} className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3">
-          <span className={`mt-0.5 grid h-5 w-5 place-items-center rounded-full ${item.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500"}`}>
+        <div key={item.label} className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3 placeholder:!text-slate-600">
+          <span className={`mt-0.5 grid h-5 w-5 place-items-center rounded-full ${item.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 !text-slate-950"}`}>
             <CheckCircle2 size={13} />
           </span>
           <div>
             <p className="text-sm font-black text-slate-950">{item.label}</p>
-            {item.detail ? <p className="text-xs font-semibold text-slate-500">{item.detail}</p> : null}
+            {item.detail ? <p className="text-xs font-semibold !text-slate-950">{item.detail}</p> : null}
           </div>
         </div>
       ))}
@@ -804,17 +804,17 @@ function ScenarioCards({
             type="button"
             onClick={() => onSelect(item.id)}
             className={`rounded-[24px] border p-4 text-left transition ${
-              selected ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-200/70" : "border-slate-200 bg-white/90 hover:border-blue-200 hover:bg-white"
+              selected ? "border-slate-900 bg-slate-900 !text-slate-950 shadow-lg shadow-slate-200/70" : "border-slate-200 bg-white/90 hover:border-blue-200 hover:bg-white"
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-white/10 text-white" : "bg-blue-50 text-blue-700"}`}>
+              <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-white/10 !text-slate-950" : "bg-blue-50 text-blue-700"}`}>
                 <MapPinned size={16} />
               </div>
               <StatusPill tone={selected ? "slate" : "blue"}>{item.priorityHint}</StatusPill>
             </div>
             <p className="mt-3 text-sm font-black tracking-tight">{item.label}</p>
-            <p className={`mt-2 text-xs font-semibold leading-5 ${selected ? "text-slate-200" : "text-slate-500"}`}>{item.objective}</p>
+            <p className={`mt-2 text-xs font-semibold leading-5 ${selected ? "!text-slate-950" : "!text-slate-950"}`}>{item.objective}</p>
           </button>
         )
       })}
@@ -843,38 +843,88 @@ export function AmbassadorCandidateIntakeModal({
   const checklist = useMemo(() => candidateChecklist(form), [form])
   const cities = useMemo(() => pickCities(snapshot), [snapshot])
   const cityContext = cities.find((city) => city.city === form.city) || cities[0]
+  const duplicateMatches = useMemo(() => {
+    const phone = form.phone.trim().toLowerCase()
+    const email = form.email.trim().toLowerCase()
+    if (!phone && !email) return []
+
+    return (snapshot.recruitment || []).filter((item: AnyRecord) => {
+      const itemPhone = String(item.phone || item.candidate_phone || "").trim().toLowerCase()
+      const itemEmail = String(item.email || item.candidate_email || "").trim().toLowerCase()
+      return Boolean((phone && itemPhone === phone) || (email && itemEmail === email))
+    })
+  }, [form.email, form.phone, snapshot.recruitment])
+
   const createReason = busy ? "Synchronisation en cours." : readiness.missing.length ? describeMissing(readiness.missing) : "Dossier prêt pour création."
-  const interviewReason = busy ? "Synchronisation en cours." : readiness.interviewMissing.length ? describeMissing(readiness.interviewMissing) : "Dossier prêt pour création et entretien."
-  const draftReason = busy ? "Synchronisation en cours." : "Le brouillon restera exploitable dans le pipeline recrutement."
+  const interviewReason = busy ? "Synchronisation en cours." : readiness.interviewMissing.length ? describeMissing(readiness.interviewMissing) : "Dossier prêt pour création et planification d'entretien."
+  const draftReason = busy ? "Synchronisation en cours." : "Le brouillon sera conservé dans le pipeline recrutement."
+
+  const hasCsv = (value: string, item: string) => value.split(",").map((part) => part.trim()).filter(Boolean).includes(item)
+  const toggleCsv = (value: string, item: string) => {
+    const parts = value.split(",").map((part) => part.trim()).filter(Boolean)
+    return parts.includes(item) ? parts.filter((part) => part !== item).join(", ") : [...parts, item].join(", ")
+  }
+
+  const languageOptions = ["Arabe", "Français", "Anglais", "Amazigh"]
+  const availabilityOptions = ["Matin", "Après-midi", "Soir", "Week-end"]
+  const sourceReliability = form.source === "Recommandation" || form.source === "Partenaire" ? "Source fiable" : form.source === "Candidature spontanée" ? "À qualifier" : "Source active"
+  const profileRecommendation = readiness.score >= 85 ? "Ambassadeur terrain + WhatsApp" : readiness.score >= 70 ? "Préqualification puis entretien" : "Compléter avant entretien"
+  const riskItems = [
+    duplicateMatches.length ? "Risque doublon contact" : "Aucun doublon contact détecté",
+    form.digital_confidence === "Faible" ? "Niveau digital à renforcer" : "Usage digital exploitable",
+    form.field_experience === "Première expérience" ? "Accompagnement terrain conseillé" : "Expérience terrain rassurante",
+    form.followup_date ? "Relance planifiée" : "Date de relance manquante",
+  ]
+  const strengths = [
+    form.city ? `Ancrage local: ${form.city}` : "Ville à définir",
+    form.preferred_channel ? `Canal fort: ${form.preferred_channel}` : "Canal à préciser",
+    form.mobility ? `Mobilité: ${form.mobility}` : "Mobilité à clarifier",
+    form.weekly_capacity ? `Capacité: ${form.weekly_capacity}` : "Capacité à cadrer",
+  ]
+  const stageLabels: Record<string, string> = {
+    new: "Nouveau",
+    screening: "Préqualification",
+    interview: "Entretien",
+    validated: "Validation",
+    onboarding: "Onboarding",
+  }
 
   return (
     <ModalFrame
-      title="Nouveau candidat"
-      subtitle="Intake de recrutement premium pour préqualification, capacité terrain, qualité du dossier et planification d'entretien."
+      title="Nouveau candidat ambassadeur"
+      subtitle="Centre de préqualification RH pour identité, source, disponibilité, potentiel terrain, scoring et prochaine décision."
       icon={UserPlus}
-      width="w-[calc(100vw-32px)] lg:w-[90vw] lg:max-w-[1120px]"
+      width="w-[calc(100vw-16px)] lg:w-[calc(100vw-48px)] xl:max-w-[1580px]"
       feedback={feedback}
       onClose={onClose}
       chrome="blue"
       footer={
-        <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1 text-xs font-semibold text-slate-500">
-            <p className="font-black text-slate-900">{readiness.status} · {readiness.score}%</p>
-            <p>{draftReason}</p>
-            <p>{createReason}</p>
-            <p>{interviewReason}</p>
+        <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between [&_*]:!text-slate-950">
+          <div className="grid gap-2 text-xs font-black lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2">
+              <span className="block text-[10px] uppercase tracking-[0.16em]">Statut</span>
+              <span className="mt-1 block">{readiness.status} · {readiness.score}%</span>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2">
+              <span className="block text-[10px] uppercase tracking-[0.16em]">Création</span>
+              <span className="mt-1 block">{createReason}</span>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2">
+              <span className="block text-[10px] uppercase tracking-[0.16em]">Entretien</span>
+              <span className="mt-1 block">{interviewReason || draftReason}</span>
+            </div>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-black !text-slate-950 hover:bg-slate-50">
               Annuler
             </button>
-            <button type="submit" form="candidate-form" data-mode="draft" disabled={busy} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="submit" form="candidate-form" data-mode="draft" disabled={busy} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black !text-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
               Enregistrer brouillon
             </button>
-            <button type="submit" form="candidate-form" data-mode="create" disabled={busy || readiness.missing.length > 0} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">
+            <button type="submit" form="candidate-form" data-mode="create" disabled={busy || readiness.missing.length > 0} className="rounded-2xl border border-emerald-200 bg-emerald-100 px-5 py-3 text-sm font-black !text-slate-950 shadow-lg shadow-emerald-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:shadow-none">
               {busy ? "Création..." : "Créer candidat"}
             </button>
-            <button type="submit" form="candidate-form" data-mode="interview" disabled={busy || readiness.interviewMissing.length > 0} className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-black text-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="submit" form="candidate-form" data-mode="interview" disabled={busy || readiness.interviewMissing.length > 0} className="rounded-2xl border border-amber-200 bg-amber-100 px-5 py-3 text-sm font-black !text-slate-950 shadow-lg shadow-amber-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:shadow-none">
               {busy ? "Planification..." : "Créer + planifier entretien"}
             </button>
           </div>
@@ -887,186 +937,326 @@ export function AmbassadorCandidateIntakeModal({
           event.preventDefault()
           onSubmit(readSubmitMode(event, "create") as "draft" | "create" | "interview")
         }}
-        className="grid gap-5 xl:grid-cols-[1.08fr_0.92fr]"
+        className="grid gap-5 xl:grid-cols-12 [&_*]:!text-slate-950"
       >
-        <div className="space-y-5">
-          <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(135deg,#ffffff_0%,#f4f9ff_56%,#ecf4ff_100%)] p-5 shadow-sm shadow-blue-100/60">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">Dossier de recrutement</p>
-                <h3 className="mt-1 text-lg font-black text-slate-950">Identité et ancrage local</h3>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusPill tone={readiness.tone}>{readiness.status}</StatusPill>
-                <StatusPill tone="slate">{form.city || "Ville"}</StatusPill>
-                <StatusPill tone="blue">{cityContext?.status || "Couverture"}</StatusPill>
+        <aside className="space-y-5 xl:col-span-4">
+          <section className="overflow-hidden rounded-[32px] border border-blue-100 bg-[linear-gradient(135deg,#ffffff_0%,#f7fbff_62%,#edf6ff_100%)] shadow-sm shadow-blue-100/60">
+            <div className="border-b border-blue-100 px-5 py-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em]">Carte candidat</p>
+                  <h3 className="mt-1 text-xl font-black">Identité & source</h3>
+                </div>
+                <StatusPill tone={duplicateMatches.length ? "rose" : "emerald"}>{duplicateMatches.length ? "Doublon" : "Unique"}</StatusPill>
               </div>
             </div>
+            <div className="p-5">
+              <div className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-blue-100 bg-blue-50 text-2xl font-black">
+                    {initials(form.candidate_name)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-lg font-black">{form.candidate_name || "Nom du candidat"}</p>
+                    <p className="mt-1 text-sm font-bold">{form.phone || "Téléphone à renseigner"}</p>
+                    <p className="mt-1 text-xs font-bold">{form.email || "Email à renseigner"}</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black">Ville: {form.city || "—"}</div>
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black">Canal: {form.preferred_channel || "—"}</div>
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black">Source: {form.source || "—"}</div>
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black">Qualité: {sourceReliability}</div>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <Field label="Nom complet">
+                  <input className={inputClass} value={form.candidate_name} onChange={(e) => onChange("candidate_name", e.target.value)} placeholder="Ex: Salma Bennis" />
+                </Field>
+                <Field label="Téléphone">
+                  <input className={inputClass} value={form.phone} onChange={(e) => onChange("phone", e.target.value)} placeholder="+212 6..." />
+                </Field>
+                <Field label="Email">
+                  <input className={inputClass} value={form.email} onChange={(e) => onChange("email", e.target.value)} placeholder="email@exemple.com" />
+                </Field>
+                <Field label="Canal préféré">
+                  <select className={selectClass} value={form.preferred_channel} onChange={(e) => onChange("preferred_channel", e.target.value)}>
+                    {preferredChannels.map((item) => <option key={item}>{item}</option>)}
+                  </select>
+                </Field>
+                <Field label="Ville principale">
+                  <select className={selectClass} value={form.city} onChange={(e) => onChange("city", e.target.value)}>
+                    {candidateCities.map((city) => <option key={city}>{city}</option>)}
+                  </select>
+                </Field>
+                <Field label="Quartier / zone">
+                  <input className={inputClass} value={form.district} onChange={(e) => onChange("district", e.target.value)} placeholder="Agdal, Maarif, Centre..." />
+                </Field>
+                <Field label="Zone secondaire">
+                  <input className={inputClass} value={form.zone} onChange={(e) => onChange("zone", e.target.value)} placeholder="Centre, périphérie, axe école..." />
+                </Field>
+                <Field label="Campagne associée">
+                  <input className={inputClass} value={form.campaign} onChange={(e) => onChange("campaign", e.target.value)} placeholder="Campagne / code source" />
+                </Field>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.18em]">Acquisition</p>
+                <h3 className="mt-1 text-lg font-black">Source & fiabilité</h3>
+              </div>
+              <StatusPill tone="blue">Traçabilité</StatusPill>
+            </div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              {candidateSources.map((source) => {
+                const active = form.source === source
+                return (
+                  <button
+                    key={source}
+                    type="button"
+                    onClick={() => onChange("source", source)}
+                    className={`rounded-2xl border px-3 py-3 text-left text-xs font-black transition ${active ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-blue-200"}`}
+                  >
+                    {source}
+                  </button>
+                )
+              })}
+            </div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <Field label="Nom complet">
-                <input className={inputClass} value={form.candidate_name} onChange={(e) => onChange("candidate_name", e.target.value)} placeholder="Ex: Salma Bennis" />
-              </Field>
-              <Field label="Téléphone">
-                <input className={inputClass} value={form.phone} onChange={(e) => onChange("phone", e.target.value)} placeholder="+212 6..." />
-              </Field>
-              <Field label="Email">
-                <input className={inputClass} value={form.email} onChange={(e) => onChange("email", e.target.value)} placeholder="email@exemple.com" />
-              </Field>
-              <Field label="Ville principale">
-                <select className={selectClass} value={form.city} onChange={(e) => onChange("city", e.target.value)}>
-                  {candidateCities.map((city) => <option key={city}>{city}</option>)}
-                </select>
-              </Field>
-              <Field label="Quartier / zone">
-                <input className={inputClass} value={form.district} onChange={(e) => onChange("district", e.target.value)} placeholder="Agdal, Centre..." />
-              </Field>
-              <Field label="Zone secondaire">
-                <input className={inputClass} value={form.zone} onChange={(e) => onChange("zone", e.target.value)} placeholder="Rabat centre / périphérie" />
-              </Field>
-              <Field label="Langues">
-                <input className={inputClass} value={form.languages} onChange={(e) => onChange("languages", e.target.value)} placeholder="Arabe, Français" />
-              </Field>
-              <Field label="Canal préféré">
-                <select className={selectClass} value={form.preferred_channel} onChange={(e) => onChange("preferred_channel", e.target.value)}>
-                  {preferredChannels.map((item) => <option key={item}>{item}</option>)}
-                </select>
-              </Field>
-              <Field label="Source">
-                <select className={selectClass} value={form.source} onChange={(e) => onChange("source", e.target.value)}>
-                  {candidateSources.map((source) => <option key={source}>{source}</option>)}
-                </select>
-              </Field>
               <Field label="Parrain / source interne">
-                <input className={inputClass} value={form.internal_referrer} onChange={(e) => onChange("internal_referrer", e.target.value)} placeholder="Nom du parrain ou du référent" />
+                <input className={inputClass} value={form.internal_referrer} onChange={(e) => onChange("internal_referrer", e.target.value)} placeholder="Nom du parrain" />
               </Field>
-              <Field label="Campagne associée" className="md:col-span-2">
-                <input className={inputClass} value={form.campaign} onChange={(e) => onChange("campaign", e.target.value)} placeholder="Campagne ou code source" />
+              <Field label="Étape pipeline">
+                <select className={selectClass} value={form.pipeline_stage} onChange={(e) => onChange("pipeline_stage", e.target.value)}>
+                  {Object.entries(stageLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </Field>
+            </div>
+          </section>
+        </aside>
+
+        <main className="space-y-5 xl:col-span-5">
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.18em]">Préqualification opérationnelle</p>
+                <h3 className="mt-1 text-xl font-black">Disponibilité, mobilité et terrain</h3>
+              </div>
+              <StatusPill tone="emerald">Capacité terrain</StatusPill>
+            </div>
+
+            <div className="mt-5 grid gap-5 lg:grid-cols-2">
+              <div className="rounded-[28px] border border-slate-100 bg-slate-50 p-4">
+                <p className="text-sm font-black">Créneaux disponibles</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {availabilityOptions.map((item) => {
+                    const active = hasCsv(form.availability_slots, item)
+                    return (
+                      <button key={item} type="button" onClick={() => onChange("availability_slots", toggleCsv(form.availability_slots, item))} className={`rounded-full border px-3 py-2 text-xs font-black transition ${active ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
+                        {item}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="rounded-[28px] border border-slate-100 bg-slate-50 p-4">
+                <p className="text-sm font-black">Langues opérationnelles</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {languageOptions.map((item) => {
+                    const active = hasCsv(form.languages, item)
+                    return (
+                      <button key={item} type="button" onClick={() => onChange("languages", toggleCsv(form.languages, item))} className={`rounded-full border px-3 py-2 text-xs font-black transition ${active ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white"}`}>
+                        {item}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <Field label="Disponibilité générale">
+                <select className={selectClass} value={form.availability} onChange={(e) => onChange("availability", e.target.value)}>
+                  {["Temps partiel", "Disponible immédiatement", "Week-end uniquement", "Après-midi uniquement", "À confirmer"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Jours disponibles">
+                <select className={selectClass} value={form.availability_days} onChange={(e) => onChange("availability_days", e.target.value)}>
+                  {availabilityDays.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Mode terrain">
+                <select className={selectClass} value={form.terrain_mode} onChange={(e) => onChange("terrain_mode", e.target.value)}>
+                  {missionModes.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Mobilité">
+                <select className={selectClass} value={form.mobility} onChange={(e) => onChange("mobility", e.target.value)}>
+                  {["À pied", "Transport public", "Moto", "Voiture"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Rayon d'action">
+                <select className={selectClass} value={form.action_radius} onChange={(e) => onChange("action_radius", e.target.value)}>
+                  {["3 km", "5 km", "10 km", "Ville complète"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Capacité hebdomadaire">
+                <select className={selectClass} value={form.weekly_capacity} onChange={(e) => onChange("weekly_capacity", e.target.value)}>
+                  {["8 h / semaine", "12 h / semaine", "16 h / semaine", "20 h / semaine", "Temps plein"].map((item) => <option key={item}>{item}</option>)}
+                </select>
               </Field>
             </div>
           </section>
 
-          <div className="grid gap-5 lg:grid-cols-2">
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-black tracking-tight text-slate-950">Disponibilité & mobilité</h3>
-                <StatusPill tone="emerald">Capacité</StatusPill>
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label="Disponibilité">
-                  <input className={inputClass} value={form.availability} onChange={(e) => onChange("availability", e.target.value)} placeholder="Temps partiel, week-end..." />
-                </Field>
-                <Field label="Jours disponibles">
-                  <select className={selectClass} value={form.availability_days} onChange={(e) => onChange("availability_days", e.target.value)}>
-                    {availabilityDays.map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Créneaux">
-                  <select className={selectClass} value={form.availability_slots} onChange={(e) => onChange("availability_slots", e.target.value)}>
-                    {availabilitySlots.map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Mode terrain">
-                  <select className={selectClass} value={form.terrain_mode} onChange={(e) => onChange("terrain_mode", e.target.value)}>
-                    {missionModes.map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Mobilité">
-                  <select className={selectClass} value={form.mobility} onChange={(e) => onChange("mobility", e.target.value)}>
-                    {["À pied", "Transport public", "Moto", "Voiture"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Rayon d'action">
-                  <select className={selectClass} value={form.action_radius} onChange={(e) => onChange("action_radius", e.target.value)}>
-                    {["3 km", "5 km", "10 km", "Ville complète"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Capacité hebdomadaire">
-                  <select className={selectClass} value={form.weekly_capacity} onChange={(e) => onChange("weekly_capacity", e.target.value)}>
-                    {["8 h / semaine", "12 h / semaine", "16 h / semaine", "20 h / semaine", "Temps plein"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Notes internes" className="md:col-span-2">
-                  <textarea className={textareaClass} value={form.internal_notes} onChange={(e) => onChange("internal_notes", e.target.value)} placeholder="Contraintes, vigilance, précisions opérationnelles..." />
-                </Field>
-              </div>
-            </section>
-
-            <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-5 shadow-sm shadow-blue-100/60">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-black tracking-tight text-slate-950">Profil & préqualification</h3>
-                <StatusPill tone={readiness.tone}>{readiness.score}%</StatusPill>
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label="Expérience commerciale">
-                  <select className={selectClass} value={form.commercial_experience} onChange={(e) => onChange("commercial_experience", e.target.value)}>
-                    {["Débutant", "1-2 ans", "3-5 ans", "5+ ans"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Expérience terrain">
-                  <select className={selectClass} value={form.field_experience} onChange={(e) => onChange("field_experience", e.target.value)}>
-                    {["Première expérience", "Habitué terrain", "Très expérimenté"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Connaissance parentalité / enfance">
-                  <select className={selectClass} value={form.family_knowledge} onChange={(e) => onChange("family_knowledge", e.target.value)}>
-                    {["Faible", "Moyenne", "Bonne", "Très bonne"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Aisance communication">
-                  <select className={selectClass} value={form.communication_confidence} onChange={(e) => onChange("communication_confidence", e.target.value)}>
-                    {["Faible", "Moyenne", "Bonne", "Très bonne"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Niveau digital">
-                  <select className={selectClass} value={form.digital_confidence} onChange={(e) => onChange("digital_confidence", e.target.value)}>
-                    {["Faible", "Moyenne", "Bonne", "Très bonne"].map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Score préqualification">
-                  <select className={selectClass} value={form.prequal_score} onChange={(e) => onChange("prequal_score", e.target.value)}>
-                    {["52", "62", "72", "82", "92"].map((item) => <option key={item} value={item}>{item}%</option>)}
-                  </select>
-                </Field>
-                <Field label="Étape pipeline">
-                  <select className={selectClass} value={form.pipeline_stage} onChange={(e) => onChange("pipeline_stage", e.target.value)}>
-                    {["screening", "interview", "validated", "on_hold"].map((item) => <option key={item} value={item}>{item}</option>)}
-                  </select>
-                </Field>
-                <Field label="Responsable / interviewer">
-                  <input className={inputClass} value={form.responsible_owner} onChange={(e) => onChange("responsible_owner", e.target.value)} />
-                </Field>
-                <Field label="Prochaine action" className="md:col-span-2">
-                  <input className={inputClass} value={form.next_action} onChange={(e) => onChange("next_action", e.target.value)} />
-                </Field>
-                <Field label="Date de relance">
-                  <input type="datetime-local" className={inputClass} value={form.followup_date} onChange={(e) => onChange("followup_date", e.target.value)} />
-                </Field>
-                <Field label="Checklist qualité" className="md:col-span-2">
-                  <textarea className={textareaClass} value={form.quality_checklist} onChange={(e) => onChange("quality_checklist", e.target.value)} />
-                </Field>
-              </div>
-            </section>
-          </div>
-        </div>
-
-        <aside className="space-y-5">
-          <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f6faff_100%)] p-5 shadow-sm shadow-blue-100/60">
-            <div className="flex items-center justify-between gap-3">
+          <section className="rounded-[32px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-5 shadow-sm shadow-blue-100/60">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">Score de readiness</p>
-                <h3 className="mt-1 text-lg font-black text-slate-950">{readiness.status}</h3>
+                <p className="text-[11px] font-black uppercase tracking-[0.18em]">Profil ambassadeur</p>
+                <h3 className="mt-1 text-xl font-black">Potentiel relationnel & digital</h3>
               </div>
               <StatusPill tone={readiness.tone}>{readiness.score}%</StatusPill>
             </div>
-            <div className="mt-4 h-2 rounded-full bg-slate-100">
-              <div className={`h-2 rounded-full ${progressColor(readiness.band.tone)}`} style={{ width: `${readiness.score}%` }} />
+            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <Field label="Expérience commerciale">
+                <select className={selectClass} value={form.commercial_experience} onChange={(e) => onChange("commercial_experience", e.target.value)}>
+                  {["Débutant", "1-2 ans", "3-5 ans", "5+ ans"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Expérience terrain">
+                <select className={selectClass} value={form.field_experience} onChange={(e) => onChange("field_experience", e.target.value)}>
+                  {["Première expérience", "Habitué terrain", "Très expérimenté"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Parentalité / enfance">
+                <select className={selectClass} value={form.family_knowledge} onChange={(e) => onChange("family_knowledge", e.target.value)}>
+                  {["Faible", "Moyenne", "Bonne", "Très bonne"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Aisance communication">
+                <select className={selectClass} value={form.communication_confidence} onChange={(e) => onChange("communication_confidence", e.target.value)}>
+                  {["Faible", "Moyenne", "Bonne", "Très bonne"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Niveau digital">
+                <select className={selectClass} value={form.digital_confidence} onChange={(e) => onChange("digital_confidence", e.target.value)}>
+                  {["Faible", "Moyenne", "Bonne", "Très bonne"].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </Field>
+              <Field label="Score préqualification">
+                <input type="number" min="0" max="100" className={inputClass} value={form.prequal_score} onChange={(e) => onChange("prequal_score", e.target.value)} />
+              </Field>
+              <Field label="Notes internes" className="md:col-span-2 xl:col-span-3">
+                <textarea className={textareaClass} value={form.internal_notes} onChange={(e) => onChange("internal_notes", e.target.value)} placeholder="Forces, risques, disponibilité réelle, motivation, vigilance..." />
+              </Field>
             </div>
-            <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{readiness.band.label}. Le score évolue avec la disponibilité, la mobilité, le niveau digital et le réseau local.</p>
           </section>
 
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.18em]">Décision recrutement</p>
+                <h3 className="mt-1 text-xl font-black">Responsable, action suivante et entretien</h3>
+              </div>
+              <StatusPill tone="amber">Next action</StatusPill>
+            </div>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <Field label="Responsable / owner">
+                <input className={inputClass} value={form.responsible_owner} onChange={(e) => onChange("responsible_owner", e.target.value)} placeholder="AngelCare OPS" />
+              </Field>
+              <Field label="Intervieweur">
+                <input className={inputClass} value={form.interviewer} onChange={(e) => onChange("interviewer", e.target.value)} placeholder="Manager OPS" />
+              </Field>
+              <Field label="Prochaine action">
+                <input className={inputClass} value={form.next_action} onChange={(e) => onChange("next_action", e.target.value)} placeholder="Appel, entretien, relance..." />
+              </Field>
+              <Field label="Date de relance">
+                <input type="date" className={inputClass} value={form.followup_date} onChange={(e) => onChange("followup_date", e.target.value)} />
+              </Field>
+              <Field label="Checklist qualité" className="md:col-span-2">
+                <textarea className={textareaClass} value={form.quality_checklist} onChange={(e) => onChange("quality_checklist", e.target.value)} placeholder="Contact vérifié, ville prioritaire, disponibilité confirmée, profil compatible, prochaine action définie..." />
+              </Field>
+            </div>
+          </section>
+        </main>
+
+        <aside className="space-y-5 xl:col-span-3">
+          <section className="rounded-[32px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f6faff_100%)] p-5 shadow-sm shadow-blue-100/60">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.18em]">Score décision</p>
+                <h3 className="mt-1 text-xl font-black">{readiness.status}</h3>
+              </div>
+              <div className="grid h-16 w-16 place-items-center rounded-3xl border border-blue-100 bg-white text-xl font-black shadow-sm">{readiness.score}%</div>
+            </div>
+            <div className="mt-5 h-3 rounded-full bg-slate-100">
+              <div className={`h-3 rounded-full ${progressColor(readiness.band.tone)}`} style={{ width: `${readiness.score}%` }} />
+            </div>
+            <div className="mt-4 rounded-3xl border border-slate-200 bg-white p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em]">Profil recommandé</p>
+              <p className="mt-2 text-sm font-black">{profileRecommendation}</p>
+              <p className="mt-2 text-xs font-bold leading-5">{readiness.band.label}. Le score croise identité, mobilité, digital, communication et action suivante.</p>
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black tracking-tight text-slate-950">Checklist qualité</h3>
+              <h3 className="text-sm font-black tracking-tight">Forces candidat</h3>
+              <Sparkles size={16} />
+            </div>
+            <div className="mt-4 space-y-2">
+              {strengths.map((item) => (
+                <div key={item} className="flex items-start gap-2 rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-black">
+                  <CheckCircle2 size={14} className="mt-0.5 shrink-0" />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-black tracking-tight">Risques & vigilance</h3>
+              <AlertTriangle size={16} />
+            </div>
+            <div className="mt-4 space-y-2">
+              {riskItems.map((item, index) => (
+                <div key={item} className={`flex items-start gap-2 rounded-2xl border px-3 py-2 text-xs font-black ${index === 0 && duplicateMatches.length ? "border-rose-100 bg-rose-50" : "border-amber-100 bg-amber-50"}`}>
+                  <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-slate-200 bg-slate-50/80 p-5 shadow-sm shadow-slate-200/60">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-black tracking-tight">Couverture ville</h3>
+              <StatusPill tone={cityContext?.tone || "blue"}>{cityContext?.status || "À vérifier"}</StatusPill>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+              <div className="rounded-2xl border border-slate-200 bg-white p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em]">Couverture</p>
+                <p className="mt-1 text-lg font-black">{cityContext?.coverage || 0}%</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em]">Ambassadeurs</p>
+                <p className="mt-1 text-lg font-black">{cityContext?.ambassadors || 0}</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em]">Conversions</p>
+                <p className="mt-1 text-lg font-black">{cityContext?.conversions || 0}</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-black tracking-tight">Checklist qualité</h3>
               <StatusPill tone="emerald">{checklist.filter((item) => item.done).length}/{checklist.length}</StatusPill>
             </div>
             <div className="mt-4">
@@ -1074,25 +1264,18 @@ export function AmbassadorCandidateIntakeModal({
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black tracking-tight text-slate-950">Affectation cible</h3>
-              <StatusPill tone="blue">OPS</StatusPill>
-            </div>
-            <div className="mt-4 rounded-3xl border border-blue-100 bg-[linear-gradient(180deg,#f7fbff_0%,#eef5ff_100%)] p-4">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Responsable</p>
-              <p className="mt-2 text-sm font-semibold text-slate-600">{form.responsible_owner} · {form.interviewer || "Intervieweur à définir"}</p>
-              <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">Le dossier reste auditable: prochaine action, date de relance et checklist qualité sont conservées.</p>
-            </div>
-          </section>
-
-          <section className="rounded-[30px] border border-slate-200 bg-slate-50/80 p-5 shadow-sm shadow-slate-200/60">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black tracking-tight text-slate-950">Champs manquants</h3>
+              <h3 className="text-sm font-black tracking-tight">Champs bloquants</h3>
               <StatusPill tone={readiness.missing.length ? "amber" : "emerald"}>{readiness.missing.length}</StatusPill>
             </div>
             <div className="mt-4 space-y-2">
-              {readiness.missing.length ? readiness.missing.map((item) => <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{item}</div>) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Dossier complet pour création.</div>}
+              {readiness.missing.length ? readiness.missing.slice(0, 8).map((item) => (
+                <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-black">
+                  <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+                  {item}
+                </div>
+              )) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-black">Dossier complet pour création.</div>}
             </div>
           </section>
         </aside>
@@ -1120,9 +1303,48 @@ export function AmbassadorMissionBuilderModal({
 }) {
   const scenario = useMemo(() => selectedMissionScenario(form.scenario_id), [form.scenario_id])
   const missing = useMemo(() => missionMissingFields(form), [form])
-  const draftReason = busy ? "Création en cours." : "Le brouillon peut être conservé même si certains champs restent incomplets."
-  const createReason = busy ? "Création en cours." : missing.length ? describeMissing(missing) : "Mission prête à être créée."
-  const notifyReason = busy ? "Notification en cours." : missing.length ? describeMissing(missing) : "Mission prête à être créée et notifiée."
+  const readinessScore = useMemo(() => {
+    const mandatoryPenalty = Math.min(56, missing.length * 7)
+    const assignmentBonus = form.ambassador_id.trim() ? 8 : 0
+    const territoryBonus = form.territory.trim() ? 8 : 0
+    const deadlineBonus = form.deadline.trim() ? 6 : 0
+    const proofBonus = form.proof_expected.trim() ? 6 : 0
+    return Math.max(0, Math.min(100, 72 - mandatoryPenalty + assignmentBonus + territoryBonus + deadlineBonus + proofBonus))
+  }, [form.ambassador_id, form.deadline, form.proof_expected, form.territory, missing.length])
+
+  const readinessBand = scoreBand(readinessScore)
+  const selectedAmbassador = useMemo(
+    () => snapshot.ambassadors.find((item: AnyRecord) => item.id === form.ambassador_id),
+    [form.ambassador_id, snapshot.ambassadors]
+  )
+  const selectedTerritory = useMemo(
+    () => snapshot.territories.find((item: AnyRecord) => item.id === form.territory),
+    [form.territory, snapshot.territories]
+  )
+  const cityMissions = useMemo(
+    () => snapshot.missions.filter((item: AnyRecord) => String(item.city || "").toLowerCase() === form.city.toLowerCase()).slice(0, 8),
+    [form.city, snapshot.missions]
+  )
+  const filteredTerritories = useMemo(() => {
+    const list = snapshot.territories.filter((item: AnyRecord) => !form.city || String(item.city || "").toLowerCase() === form.city.toLowerCase())
+    return (list.length ? list : snapshot.territories).slice(0, 80)
+  }, [form.city, snapshot.territories])
+  const filteredAmbassadors = useMemo(() => {
+    const list = snapshot.ambassadors.filter((item: AnyRecord) => !form.city || String(item.city || "").toLowerCase() === form.city.toLowerCase())
+    return (list.length ? list : snapshot.ambassadors).slice(0, 80)
+  }, [form.city, snapshot.ambassadors])
+
+  const proofItems = [
+    { label: "Photo terrain", done: form.proof_expected.toLowerCase().includes("photo"), detail: "Preuve visuelle autorisée" },
+    { label: "Liste contacts", done: form.proof_expected.toLowerCase().includes("liste") || form.proof_expected.toLowerCase().includes("contacts"), detail: "Contacts et coordonnées utiles" },
+    { label: "Screenshot WhatsApp", done: form.proof_expected.toLowerCase().includes("screenshot") || form.channel.toLowerCase().includes("whatsapp"), detail: "Traçabilité premier échange" },
+    { label: "Compte-rendu OPS", done: Boolean(form.operator_notes.trim() || form.success_criteria.trim()), detail: "Résumé exploitable pour validation" },
+  ]
+
+  const actionReason = busy ? "Synchronisation en cours." : missing.length ? describeMissing(missing) : "Mission prête à être créée et suivie."
+  const draftReason = busy ? "Sauvegarde en cours." : "Le brouillon conserve la préparation même si des champs restent à compléter."
+  const notifyReason = busy ? "Notification en cours." : missing.length ? describeMissing(missing) : "La mission peut être créée et notifiée à l'ambassadeur."
+
   const applyScenario = (id: string) => {
     const preset = selectedMissionScenario(id)
     onChange("scenario_id", preset.id)
@@ -1146,38 +1368,42 @@ export function AmbassadorMissionBuilderModal({
     onChange("escalation_rule", preset.escalation)
     onChange("overloaded_warning", preset.warning)
     onChange("workload_warning", preset.warning)
-    onChange("notification_preview", `${preset.label} · ${preset.channel}`)
+    onChange("notification_preview", preset.label + " · " + preset.channel)
   }
 
   return (
     <ModalFrame
       title="Créer mission"
-      subtitle="Planificateur opérationnel pour scénarios terrain, affectation ambassadeur, SLA de clôture et preuve attendue."
+      subtitle="Mission Builder entreprise pour scénario terrain, dispatch ambassadeur, objectifs mesurables, SLA, preuves et validation OPS."
       icon={MapPinned}
-      width="w-[calc(100vw-32px)] lg:w-[92vw] lg:max-w-[1120px]"
+      width="w-[calc(100vw-12px)] sm:w-[calc(100vw-20px)] lg:w-[calc(100vw-40px)] 2xl:max-w-[1680px]"
       feedback={feedback}
       onClose={onClose}
       chrome="navy"
       footer={
-        <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1 text-xs font-semibold text-slate-500">
-            <p className="font-black text-slate-900">{scenario.label} · {form.priority}</p>
-            <p>{draftReason}</p>
-            <p>{createReason}</p>
-            <p>{notifyReason}</p>
+        <div className="flex w-full flex-col gap-4 !text-slate-950 lg:flex-row lg:items-center lg:justify-between [&_*]:!text-slate-950">
+          <div className="grid gap-2 text-xs font-bold !text-slate-950 lg:max-w-[760px]">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-slate-200 bg-white px-3 py-1 font-black !text-slate-950">{scenario.label}</span>
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 font-black !text-slate-950">Readiness {readinessScore}%</span>
+              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 font-black !text-slate-950">{form.city || "Ville à définir"}</span>
+            </div>
+            <p className="!text-slate-950">{draftReason}</p>
+            <p className="!text-slate-950">{actionReason}</p>
+            <p className="!text-slate-950">{notifyReason}</p>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-black !text-slate-950 hover:bg-slate-50">
               Annuler
             </button>
-            <button type="submit" form="mission-form" data-mode="draft" disabled={busy} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="submit" form="mission-form" data-mode="draft" disabled={busy} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black !text-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
               Enregistrer brouillon
             </button>
-            <button type="submit" form="mission-form" data-mode="create" disabled={busy || missing.length > 0} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">
+            <button type="submit" form="mission-form" data-mode="create" disabled={busy || missing.length > 0} className="rounded-2xl border border-emerald-300 bg-emerald-100 px-5 py-3 text-sm font-black !text-slate-950 shadow-lg shadow-emerald-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:shadow-none">
               {busy ? "Création..." : "Créer mission"}
             </button>
-            <button type="submit" form="mission-form" data-mode="notify" disabled={busy || missing.length > 0} className="rounded-2xl border border-slate-900 bg-slate-50 px-5 py-3 text-sm font-black text-slate-900 disabled:cursor-not-allowed disabled:opacity-50">
-              {busy ? "Notification..." : "Créer mission + notifier ambassadeur"}
+            <button type="submit" form="mission-form" data-mode="notify" disabled={busy || missing.length > 0} className="rounded-2xl border border-amber-300 bg-amber-100 px-5 py-3 text-sm font-black !text-slate-950 shadow-lg shadow-amber-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:shadow-none">
+              {busy ? "Notification..." : "Créer mission + notifier"}
             </button>
           </div>
         </div>
@@ -1189,198 +1415,261 @@ export function AmbassadorMissionBuilderModal({
           event.preventDefault()
           onSubmit(readSubmitMode(event, "create") as "draft" | "create" | "notify")
         }}
-        className="grid gap-5 xl:grid-cols-[1.04fr_0.96fr]"
+        className="space-y-5 !text-slate-950 [&_*]:!text-slate-950"
       >
-        <div className="space-y-5">
-          <section className="rounded-[30px] border border-slate-200 bg-[linear-gradient(135deg,#f8fbff_0%,#eef5ff_48%,#ffffff_100%)] p-5 shadow-sm shadow-blue-100/60">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-900">Sélection du scénario</p>
-                <h3 className="mt-1 text-lg font-black text-slate-950">Choisir le contexte mission</h3>
+        <section className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-sm shadow-slate-200/70">
+          <div className="grid gap-0 2xl:grid-cols-12">
+            <aside className="border-b border-slate-200 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 2xl:col-span-3 2xl:border-b-0 2xl:border-r">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] !text-slate-950">Banque de scénarios</p>
+                  <h3 className="mt-1 text-lg font-black !text-slate-950">Choisir la mission terrain</h3>
+                  <p className="mt-2 text-sm font-bold leading-6 !text-slate-950">Chaque scénario pré-remplit les objectifs, la preuve attendue, le canal et le SLA.</p>
+                </div>
+                <StatusPill tone="blue">{missionScenarioPresets.length}</StatusPill>
               </div>
-              <StatusPill tone="navy">{scenario.label}</StatusPill>
-            </div>
-            <div className="mt-4">
-              <ScenarioCards selectedId={form.scenario_id} onSelect={applyScenario} />
-            </div>
-          </section>
 
-          <div className="grid gap-5 lg:grid-cols-2">
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-black tracking-tight text-slate-950">Planification et affectation</h3>
-                <StatusPill tone="blue">Dispatch</StatusPill>
+              <div className="mt-5 grid max-h-[62vh] gap-3 overflow-y-auto pr-1">
+                {missionScenarioPresets.map((item) => {
+                  const selected = item.id === form.scenario_id
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => applyScenario(item.id)}
+                      className={selected ? "rounded-[26px] border-2 border-blue-500 bg-white p-4 text-left shadow-lg shadow-blue-100" : "rounded-[26px] border border-slate-200 bg-white/90 p-4 text-left shadow-sm transition hover:border-blue-200 hover:shadow-md"}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="grid h-11 w-11 place-items-center rounded-2xl border border-blue-100 bg-blue-50 !text-slate-950">
+                          <MapPinned size={17} />
+                        </div>
+                        <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] !text-slate-950">{item.priorityHint}</span>
+                      </div>
+                      <p className="mt-3 text-sm font-black tracking-tight !text-slate-950">{item.label}</p>
+                      <p className="mt-2 text-xs font-bold leading-5 !text-slate-950">{item.objective}</p>
+                      <div className="mt-3 grid gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-3 text-[11px] font-bold leading-5 !text-slate-950">
+                        <span>Canal: {item.channel}</span>
+                        <span>Sortie attendue: {item.expectedLeads} leads · {item.expectedConversations} échanges</span>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label="Type de mission preset">
-                  <input className={inputClass} value={scenario.label} readOnly />
-                </Field>
-                <Field label="Campagne associée">
-                  <input className={inputClass} value={form.campaign} onChange={(e) => onChange("campaign", e.target.value)} />
-                </Field>
-                <Field label="Ville">
-                  <select className={selectClass} value={form.city} onChange={(e) => onChange("city", e.target.value)}>
-                    {candidateCities.map((city) => <option key={city}>{city}</option>)}
-                  </select>
-                </Field>
-                <Field label="Zone / quartier">
-                  <input className={inputClass} value={form.zone} onChange={(e) => onChange("zone", e.target.value)} />
-                </Field>
-                <Field label="Territoire existant">
-                  <select className={selectClass} value={form.territory} onChange={(e) => onChange("territory", e.target.value)}>
-                    <option value="">À définir</option>
-                    {snapshot.territories.slice(0, 80).map((item: AnyRecord) => <option key={item.id} value={item.id}>{item.name} — {item.city || "Ville"}</option>)}
-                  </select>
-                </Field>
-                <Field label="Ambassadeur assigné">
-                  <select className={selectClass} value={form.ambassador_id} onChange={(e) => onChange("ambassador_id", e.target.value)}>
-                    <option value="">Auto-affectation OPS</option>
-                    {snapshot.ambassadors.slice(0, 80).map((item: AnyRecord) => <option key={item.id} value={item.id}>{item.full_name || item.name} — {item.city || "Ville"}</option>)}
-                  </select>
-                </Field>
-                <Field label="Priorité">
-                  <select className={selectClass} value={form.priority} onChange={(e) => onChange("priority", e.target.value)}>
-                    <option value="normale">Normale</option>
-                    <option value="haute">Haute</option>
-                    <option value="urgente">Urgente</option>
-                  </select>
-                </Field>
-                <Field label="Deadline">
-                  <input type="datetime-local" className={inputClass} value={form.deadline} onChange={(e) => onChange("deadline", e.target.value)} />
-                </Field>
-              </div>
-            </section>
+            </aside>
 
-            <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f9fcff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-black tracking-tight text-slate-950">Objectifs mesurables</h3>
-                <StatusPill tone="emerald">SLA</StatusPill>
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label="Leads attendus">
-                  <input className={inputClass} value={form.leads_expected} onChange={(e) => onChange("leads_expected", e.target.value)} />
-                </Field>
-                <Field label="Conversations attendues">
-                  <input className={inputClass} value={form.conversations_expected} onChange={(e) => onChange("conversations_expected", e.target.value)} />
-                </Field>
-                <Field label="Conversions potentielles">
-                  <input className={inputClass} value={form.conversions_potential} onChange={(e) => onChange("conversions_potential", e.target.value)} />
-                </Field>
-                <Field label="SLA de clôture">
-                  <input className={inputClass} value={form.sla_closing} onChange={(e) => onChange("sla_closing", e.target.value)} />
-                </Field>
-                <Field label="Objectif principal" className="md:col-span-2">
-                  <textarea className={textareaClass} value={form.objective} onChange={(e) => onChange("objective", e.target.value)} />
-                </Field>
-                <Field label="Objectif secondaire" className="md:col-span-2">
-                  <textarea className={textareaClass} value={form.objective_secondary} onChange={(e) => onChange("objective_secondary", e.target.value)} />
-                </Field>
-                <Field label="Critères de réussite" className="md:col-span-2">
-                  <textarea className={textareaClass} value={form.success_criteria} onChange={(e) => onChange("success_criteria", e.target.value)} />
-                </Field>
-              </div>
-            </section>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-black tracking-tight text-slate-950">Exécution terrain</h3>
-                <StatusPill tone="blue">{form.channel}</StatusPill>
-              </div>
-              <div className="mt-4 grid gap-4">
-                <Field label="Script conseillé">
-                  <textarea className={textareaClass} value={form.script} onChange={(e) => onChange("script", e.target.value)} />
-                </Field>
-                <Field label="Playbook à utiliser">
-                  <input className={inputClass} value={form.playbook} onChange={(e) => onChange("playbook", e.target.value)} />
-                </Field>
-                <Field label="Preuve attendue">
-                  <textarea className={textareaClass} value={form.proof_expected} onChange={(e) => onChange("proof_expected", e.target.value)} />
-                </Field>
-                <Field label="Escalade si retard">
-                  <input className={inputClass} value={form.escalation_rule} onChange={(e) => onChange("escalation_rule", e.target.value)} />
-                </Field>
-                <Field label="Notes opérateur">
-                  <textarea className={textareaClass} value={form.operator_notes} onChange={(e) => onChange("operator_notes", e.target.value)} />
-                </Field>
-              </div>
-            </section>
-
-            <section className="rounded-[30px] border border-slate-200 bg-slate-50/80 p-5 shadow-sm shadow-slate-200/60">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-black tracking-tight text-slate-950">Résumé mission</h3>
-                <StatusPill tone="emerald">{missionSummary(form, snapshot).length}</StatusPill>
-              </div>
-              <div className="mt-4 space-y-3">
-                {missionSummary(form, snapshot).map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-white bg-white p-3 shadow-sm">
-                    <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">{item.label}</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-700">{item.value}</p>
+            <main className="p-5 2xl:col-span-6">
+              <div className="rounded-[30px] border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fbff_100%)] p-5 shadow-sm shadow-slate-200/70">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] !text-slate-950">Configuration mission</p>
+                    <h3 className="mt-1 text-2xl font-black tracking-tight !text-slate-950">{scenario.label}</h3>
+                    <p className="mt-2 max-w-3xl text-sm font-bold leading-6 !text-slate-950">{scenario.objective}</p>
                   </div>
-                ))}
+                  <div className="grid min-w-[220px] gap-2 rounded-3xl border border-blue-100 bg-blue-50 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Score préparation</p>
+                    <div className="flex items-end justify-between gap-3">
+                      <span className="text-3xl font-black !text-slate-950">{readinessScore}%</span>
+                      <StatusPill tone={readinessBand.tone}>{readinessBand.label}</StatusPill>
+                    </div>
+                    <div className="h-2 rounded-full bg-white">
+                      <div className={"h-2 rounded-full " + progressColor(readinessBand.tone)} style={{ width: readinessScore + "%" }} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-12">
+                  <Field label="Titre mission" className="lg:col-span-4">
+                    <input className={inputClass} value={form.title} onChange={(e) => onChange("title", e.target.value)} />
+                  </Field>
+                  <Field label="Campagne associée" className="lg:col-span-4">
+                    <input className={inputClass} value={form.campaign} onChange={(e) => onChange("campaign", e.target.value)} />
+                  </Field>
+                  <Field label="Priorité" className="lg:col-span-2">
+                    <select className={selectClass} value={form.priority} onChange={(e) => onChange("priority", e.target.value)}>
+                      <option value="normale">Normale</option>
+                      <option value="haute">Haute</option>
+                      <option value="urgente">Urgente</option>
+                    </select>
+                  </Field>
+                  <Field label="Deadline" className="lg:col-span-2">
+                    <input type="datetime-local" className={inputClass} value={form.deadline} onChange={(e) => onChange("deadline", e.target.value)} />
+                  </Field>
+                </div>
               </div>
-              <div className="mt-4 rounded-3xl border border-white bg-white p-4 shadow-sm">
-                <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Notification ambassadeur</p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-                  {form.notify_ambassador === "oui" ? `Notification opérationnelle prévue pour ${scenario.channel}.` : "Notification non demandée."}
-                </p>
+
+              <div className="mt-5 grid gap-5 xl:grid-cols-2">
+                <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Territoire & affectation</h3>
+                    <StatusPill tone="blue">Dispatch</StatusPill>
+                  </div>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    <Field label="Ville">
+                      <select className={selectClass} value={form.city} onChange={(e) => onChange("city", e.target.value)}>
+                        {candidateCities.map((city) => <option key={city}>{city}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="Zone / quartier">
+                      <input className={inputClass} value={form.zone} onChange={(e) => onChange("zone", e.target.value)} />
+                    </Field>
+                    <Field label="Territoire existant" className="md:col-span-2">
+                      <select className={selectClass} value={form.territory} onChange={(e) => onChange("territory", e.target.value)}>
+                        <option value="">À définir</option>
+                        {filteredTerritories.map((item: AnyRecord) => <option key={item.id} value={item.id}>{item.name} — {item.city || "Ville"}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="Ambassadeur assigné" className="md:col-span-2">
+                      <select className={selectClass} value={form.ambassador_id} onChange={(e) => onChange("ambassador_id", e.target.value)}>
+                        <option value="">Auto-affectation OPS</option>
+                        {filteredAmbassadors.map((item: AnyRecord) => <option key={item.id} value={item.id}>{item.full_name || item.name} — {item.city || "Ville"}</option>)}
+                      </select>
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f6faff_100%)] p-5 shadow-sm shadow-blue-100/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Objectifs mesurables</h3>
+                    <StatusPill tone="emerald">KPI</StatusPill>
+                  </div>
+                  <div className="mt-4 grid gap-4 md:grid-cols-3">
+                    <Field label="Leads attendus">
+                      <input className={inputClass} value={form.leads_expected} onChange={(e) => onChange("leads_expected", e.target.value)} />
+                    </Field>
+                    <Field label="Conversations">
+                      <input className={inputClass} value={form.conversations_expected} onChange={(e) => onChange("conversations_expected", e.target.value)} />
+                    </Field>
+                    <Field label="Conversions">
+                      <input className={inputClass} value={form.conversions_potential} onChange={(e) => onChange("conversions_potential", e.target.value)} />
+                    </Field>
+                    <Field label="SLA de clôture" className="md:col-span-3">
+                      <input className={inputClass} value={form.sla_closing} onChange={(e) => onChange("sla_closing", e.target.value)} />
+                    </Field>
+                    <Field label="Objectif principal" className="md:col-span-3">
+                      <textarea className={textareaClass} value={form.objective} onChange={(e) => onChange("objective", e.target.value)} />
+                    </Field>
+                    <Field label="Critères de réussite" className="md:col-span-3">
+                      <textarea className={textareaClass} value={form.success_criteria} onChange={(e) => onChange("success_criteria", e.target.value)} />
+                    </Field>
+                  </div>
+                </section>
               </div>
-            </section>
+
+              <section className="mt-5 rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Exécution terrain & playbook</h3>
+                    <p className="mt-1 text-xs font-bold !text-slate-950">Le script, la ressource et la preuve doivent permettre une clôture auditable.</p>
+                  </div>
+                  <StatusPill tone="blue">{form.channel}</StatusPill>
+                </div>
+                <div className="mt-4 grid gap-4 lg:grid-cols-12">
+                  <Field label="Canal d'exécution" className="lg:col-span-3">
+                    <select className={selectClass} value={form.channel} onChange={(e) => onChange("channel", e.target.value)}>
+                      <option>Terrain</option>
+                      <option>WhatsApp</option>
+                      <option>Appel + WhatsApp</option>
+                      <option>Email + WhatsApp</option>
+                      <option>Partenaire</option>
+                      <option>Événement</option>
+                    </select>
+                  </Field>
+                  <Field label="Playbook à utiliser" className="lg:col-span-5">
+                    <input className={inputClass} value={form.playbook} onChange={(e) => onChange("playbook", e.target.value)} />
+                  </Field>
+                  <Field label="Responsable validation" className="lg:col-span-4">
+                    <input className={inputClass} value={form.validator} onChange={(e) => onChange("validator", e.target.value)} />
+                  </Field>
+                  <Field label="Script conseillé" className="lg:col-span-6">
+                    <textarea className={textareaClass + " min-h-[132px]"} value={form.script} onChange={(e) => onChange("script", e.target.value)} />
+                  </Field>
+                  <Field label="Preuve attendue" className="lg:col-span-6">
+                    <textarea className={textareaClass + " min-h-[132px]"} value={form.proof_expected} onChange={(e) => onChange("proof_expected", e.target.value)} />
+                  </Field>
+                  <Field label="Escalade si retard" className="lg:col-span-6">
+                    <textarea className={textareaClass} value={form.escalation_rule} onChange={(e) => onChange("escalation_rule", e.target.value)} />
+                  </Field>
+                  <Field label="Notes opérateur" className="lg:col-span-6">
+                    <textarea className={textareaClass} value={form.operator_notes} onChange={(e) => onChange("operator_notes", e.target.value)} />
+                  </Field>
+                </div>
+              </section>
+            </main>
+
+            <aside className="border-t border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-5 2xl:col-span-3 2xl:border-l 2xl:border-t-0">
+              <div className="sticky top-4 space-y-5">
+                <section className="rounded-[30px] border border-blue-100 bg-blue-50 p-5 shadow-sm shadow-blue-100/60">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.18em] !text-slate-950">Intelligence mission</p>
+                      <h3 className="mt-1 text-xl font-black !text-slate-950">Prête à lancer ?</h3>
+                    </div>
+                    <StatusPill tone={readinessBand.tone}>{readinessScore}%</StatusPill>
+                  </div>
+                  <div className="mt-4 h-2 rounded-full bg-white">
+                    <div className={"h-2 rounded-full " + progressColor(readinessBand.tone)} style={{ width: readinessScore + "%" }} />
+                  </div>
+                  <p className="mt-3 text-sm font-bold leading-6 !text-slate-950">{missing.length ? describeMissing(missing) : "Tous les prérequis critiques sont prêts pour création."}</p>
+                </section>
+
+                <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Résumé dispatch</h3>
+                    <StatusPill tone="slate">Live</StatusPill>
+                  </div>
+                  <div className="mt-4 grid gap-3">
+                    {missionSummary(form, snapshot).map((item) => (
+                      <div key={item.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">{item.label}</p>
+                        <p className="mt-1 text-sm font-bold !text-slate-950">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 rounded-2xl border border-slate-100 bg-slate-50 p-3 text-xs font-bold leading-5 !text-slate-950">
+                    <p>Ambassadeur: {selectedAmbassador?.full_name || selectedAmbassador?.name || "Non assigné"}</p>
+                    <p>Territoire: {selectedTerritory?.name || "Non assigné"}</p>
+                    <p>Missions ville actives: {cityMissions.length}</p>
+                  </div>
+                </section>
+
+                <section className="rounded-[30px] border border-amber-200 bg-amber-50 p-5 shadow-sm shadow-amber-100/70">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Risque surcharge</h3>
+                    <StatusPill tone="amber">OPS</StatusPill>
+                  </div>
+                  <p className="mt-3 text-sm font-bold leading-6 !text-slate-950">{form.overloaded_warning || scenario.warning}</p>
+                </section>
+
+                <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Preuves attendues</h3>
+                    <StatusPill tone="emerald">{proofItems.filter((item) => item.done).length}/{proofItems.length}</StatusPill>
+                  </div>
+                  <div className="mt-4">
+                    <Checklist items={proofItems} />
+                  </div>
+                </section>
+
+                <section className="rounded-[30px] border border-slate-200 bg-slate-50 p-5 shadow-sm shadow-slate-200/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-sm font-black tracking-tight !text-slate-950">Champs bloquants</h3>
+                    <StatusPill tone={missing.length ? "amber" : "emerald"}>{missing.length}</StatusPill>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {missing.length ? missing.map((item) => (
+                      <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-black !text-slate-950">
+                        <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+                        {item}
+                      </div>
+                    )) : (
+                      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black !text-slate-950">Mission complète pour création.</div>
+                    )}
+                  </div>
+                </section>
+              </div>
+            </aside>
           </div>
-        </div>
-
-        <aside className="space-y-5">
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-900">Surcharge d'affectation</p>
-                <h3 className="mt-1 text-lg font-black text-slate-950">Alerte capacité</h3>
-              </div>
-              <StatusPill tone="amber">Ops</StatusPill>
-            </div>
-            <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{form.overloaded_warning}</p>
-          </section>
-
-          <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f6faff_100%)] p-5 shadow-sm shadow-blue-100/60">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black tracking-tight text-slate-950">Planificateur SLA</h3>
-              <StatusPill tone="blue">{scenario.sla}</StatusPill>
-            </div>
-            <div className="mt-4 space-y-3 text-sm font-semibold leading-6 text-slate-600">
-              <p>{scenario.success}</p>
-              <p>{scenario.proof}</p>
-              <p>{scenario.escalation}</p>
-            </div>
-          </section>
-
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black tracking-tight text-slate-950">Checklist de preuve</h3>
-              <StatusPill tone="emerald">{form.proof_expected ? 1 : 0}/1</StatusPill>
-            </div>
-            <div className="mt-4">
-              <Checklist
-                items={[
-                  { label: "Preuve définie", done: Boolean(form.proof_expected.trim()), detail: "Photo, liste, screenshot ou note partenaire" },
-                  { label: "Responsable validateur", done: Boolean(form.validator.trim()), detail: "Ops ou manager" },
-                  { label: "Canal d'exécution cadré", done: Boolean(form.channel.trim()), detail: "Terrain, WhatsApp, appel ou partenaire" },
-                  { label: "Deadline renseignée", done: Boolean(form.deadline.trim()), detail: "SLA de clôture" },
-                ]}
-              />
-            </div>
-          </section>
-
-          <section className="rounded-[30px] border border-slate-200 bg-slate-50/80 p-5 shadow-sm shadow-slate-200/60">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black tracking-tight text-slate-950">Champs manquants</h3>
-              <StatusPill tone={missing.length ? "amber" : "emerald"}>{missing.length}</StatusPill>
-            </div>
-            <div className="mt-4 space-y-2">
-              {missing.length ? missing.map((item) => <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{item}</div>) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Mission complète pour création.</div>}
-            </div>
-          </section>
-        </aside>
+        </section>
       </form>
     </ModalFrame>
   )
@@ -1419,28 +1708,28 @@ export function AmbassadorLeadQualificationModal({
       title="Nouveau lead"
       subtitle="CRM de qualification premium avec segments, duplication, suivi et signal commercial exploitable."
       icon={Target}
-      width="w-[calc(100vw-32px)] lg:w-[90vw] lg:max-w-[1100px]"
+      width="w-[calc(100vw-16px)] lg:w-[calc(100vw-48px)] xl:max-w-[1560px]"
       feedback={feedback}
       onClose={onClose}
       chrome="rose"
       footer={
         <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1 text-xs font-semibold text-slate-500">
+          <div className="space-y-1 text-xs font-semibold !text-slate-950">
             <p className="font-black text-slate-900">{leadTemp.label} · {liveScore}%</p>
             <p>{baseReason}</p>
             <p>{followupReason}</p>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 placeholder:!text-slate-600">
               Annuler
             </button>
-            <button type="submit" form="lead-form" data-mode="create" disabled={busy || missingBase.length > 0} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="submit" form="lead-form" data-mode="create" disabled={busy || missingBase.length > 0} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50 placeholder:!text-slate-600">
               Créer lead
             </button>
-            <button type="submit" form="lead-form" data-mode="qualify" disabled={busy || missingBase.length > 0} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">
+            <button type="submit" form="lead-form" data-mode="qualify" disabled={busy || missingBase.length > 0} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-slate-950 shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none placeholder:!text-slate-600">
               {busy ? "Qualification..." : "Créer + qualifier"}
             </button>
-            <button type="submit" form="lead-form" data-mode="followup" disabled={busy || followupMissing.length > 0} className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-black text-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="submit" form="lead-form" data-mode="followup" disabled={busy || followupMissing.length > 0} className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-black text-blue-700 disabled:cursor-not-allowed disabled:opacity-50 placeholder:!text-slate-600">
               {busy ? "Relance..." : "Créer + planifier relance"}
             </button>
           </div>
@@ -1456,7 +1745,7 @@ export function AmbassadorLeadQualificationModal({
         className="grid gap-5 xl:grid-cols-[1.08fr_0.92fr]"
       >
         <div className="space-y-5">
-          <section className="rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#f9fcff_0%,#eef5ff_48%,#ffffff_100%)] p-5 shadow-sm shadow-blue-100/60">
+          <section className="rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#f9fcff_0%,#eef5ff_48%,#ffffff_100%)] p-5 shadow-sm shadow-blue-100/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">Segments de lead</p>
@@ -1478,10 +1767,10 @@ export function AmbassadorLeadQualificationModal({
                     }`}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-500"}`}>
+                      <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-blue-50 text-blue-700" : "bg-slate-100 !text-slate-950"}`}>
                         <Icon size={16} />
                       </div>
-                      {selected ? <CheckCircle2 size={16} className="text-blue-600" /> : <Sparkles size={16} className="text-slate-400" />}
+                      {selected ? <CheckCircle2 size={16} className="text-blue-600" /> : <Sparkles size={16} className="!text-slate-950" />}
                     </div>
                     <p className="mt-3 text-sm font-black tracking-tight text-slate-950">{item.label}</p>
                   </button>
@@ -1490,7 +1779,7 @@ export function AmbassadorLeadQualificationModal({
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">Contact</h3>
               <StatusPill tone="emerald">{form.city}</StatusPill>
@@ -1545,7 +1834,7 @@ export function AmbassadorLeadQualificationModal({
           </section>
 
           <div className="grid gap-5 lg:grid-cols-2">
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-black tracking-tight text-slate-950">Besoin & contexte</h3>
                 <StatusPill tone="blue">{isB2B ? "B2B" : "Famille"}</StatusPill>
@@ -1578,7 +1867,7 @@ export function AmbassadorLeadQualificationModal({
               </div>
             </section>
 
-            <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60">
+            <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60 placeholder:!text-slate-600">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-black tracking-tight text-slate-950">Suivi commercial</h3>
                 <StatusPill tone={leadTemp.tone}>{liveScore}%</StatusPill>
@@ -1612,7 +1901,7 @@ export function AmbassadorLeadQualificationModal({
         </div>
 
         <aside className="space-y-5">
-          <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f6faff_100%)] p-5 shadow-sm shadow-blue-100/60">
+          <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#ffffff_0%,#f6faff_100%)] p-5 shadow-sm shadow-blue-100/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">Qualification cockpit</p>
@@ -1621,30 +1910,30 @@ export function AmbassadorLeadQualificationModal({
               <StatusPill tone={leadTemp.tone}>{liveScore}%</StatusPill>
             </div>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Température</p>
+              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Température</p>
                 <p className="mt-2 text-sm font-black text-slate-950">{leadTemp.label}</p>
               </div>
-              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Risque doublon</p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{form.duplicate_risk}</p>
+              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Risque doublon</p>
+                <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.duplicate_risk}</p>
               </div>
-              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Probabilité</p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{form.qualification_score}%</p>
+              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Probabilité</p>
+                <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.qualification_score}%</p>
               </div>
-              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Budget</p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{form.probable_budget || "À confirmer"}</p>
+              <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Budget</p>
+                <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.probable_budget || "À confirmer"}</p>
               </div>
             </div>
-            <div className="mt-4 rounded-3xl border border-white bg-white p-4 shadow-sm">
-              <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Prochain canal</p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{form.next_channel} · {form.next_followup_at || "Non planifié"}</p>
+            <div className="mt-4 rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+              <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Prochain canal</p>
+              <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.next_channel} · {form.next_followup_at || "Non planifié"}</p>
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">Checklist qualification</h3>
               <StatusPill tone="emerald">{checklist.filter((item) => item.done).length}/{checklist.length}</StatusPill>
@@ -1654,7 +1943,7 @@ export function AmbassadorLeadQualificationModal({
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-amber-100 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50">
+          <section className="rounded-[30px] border border-amber-100 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">Risque doublon / qualité</h3>
               <StatusPill tone="amber">{form.duplicate_risk}</StatusPill>
@@ -1666,13 +1955,13 @@ export function AmbassadorLeadQualificationModal({
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-slate-200 bg-slate-50/80 p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[30px] border border-slate-200 bg-slate-50/80 p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">Champs manquants</h3>
               <StatusPill tone={missingBase.length ? "amber" : "emerald"}>{missingBase.length}</StatusPill>
             </div>
             <div className="mt-4 space-y-2">
-              {missingBase.length ? missingBase.map((item) => <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{item}</div>) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Lead prêt pour création.</div>}
+              {missingBase.length ? missingBase.map((item) => <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800 placeholder:!text-slate-600"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{item}</div>) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 placeholder:!text-slate-600">Lead prêt pour création.</div>}
             </div>
           </section>
         </aside>
@@ -1717,31 +2006,31 @@ export function AmbassadorConversionValidationModal({
       title="Conversions à valider"
       subtitle="Queue de validation conformité avec attribution, preuve, risque et décision auditable."
       icon={ClipboardCheck}
-      width="w-[calc(100vw-32px)] lg:w-[92vw] lg:max-w-[1240px]"
+      width="w-[calc(100vw-16px)] lg:w-[calc(100vw-48px)] xl:max-w-[1660px]"
       feedback={feedback}
       onClose={onClose}
       chrome="rose"
       footer={
         <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1 text-xs font-semibold text-slate-500">
+          <div className="space-y-1 text-xs font-semibold !text-slate-950">
             <p className="font-black text-slate-900">{selected?.lead_name || "Aucune conversion sélectionnée"}</p>
             <p>{selected ? `Statut actuel: ${String(selected.status || "pending")}` : "Aucune conversion à traiter."}</p>
             <p>{note || "Renseigner une note de décision avant validation."}</p>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 placeholder:!text-slate-600">
               Annuler
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("proof_requested")} className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-700 disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("proof_requested")} className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-700 disabled:opacity-50 placeholder:!text-slate-600">
               Demander justificatif
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("escalated")} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("escalated")} className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 disabled:opacity-50 placeholder:!text-slate-600">
               Escalader
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("rejected")} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("rejected")} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50 placeholder:!text-slate-600">
               Refuser avec motif
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("validated")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("validated")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-slate-950 disabled:opacity-50 placeholder:!text-slate-600">
               Valider conversion
             </button>
           </div>
@@ -1750,7 +2039,7 @@ export function AmbassadorConversionValidationModal({
     >
       {selected ? (
         <div className="grid gap-5 xl:grid-cols-[0.92fr_1.08fr]">
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">File d'attente</h3>
               <StatusPill tone="amber">{queueSlice.length}</StatusPill>
@@ -1764,13 +2053,13 @@ export function AmbassadorConversionValidationModal({
                     type="button"
                     onClick={() => setSelectedId(String(item.id || ""))}
                     className={`w-full rounded-3xl border p-4 text-left transition ${
-                      isSelected ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
+                      isSelected ? "border-slate-900 bg-slate-900 !text-slate-950 shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-black">{item.lead_name || "Conversion"}</p>
-                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "text-slate-200" : "text-slate-500"}`}>{item.source || "Source"} · {item.city || "Ville"}</p>
+                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "!text-slate-950" : "!text-slate-950"}`}>{item.source || "Source"} · {item.city || "Ville"}</p>
                       </div>
                       <StatusPill tone={String(item.status || "pending") === "validated" ? "emerald" : String(item.status || "pending") === "rejected" ? "rose" : "amber"}>
                         {String(item.status || "pending")}
@@ -1787,7 +2076,7 @@ export function AmbassadorConversionValidationModal({
           </section>
 
           <div className="space-y-5">
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-900">Détail sélectionné</p>
@@ -1796,27 +2085,27 @@ export function AmbassadorConversionValidationModal({
                 <StatusPill tone="blue">{selected.city || "Ville"}</StatusPill>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Source lead</p>
+                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4 placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Source lead</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{selected.source || "Non renseignée"}</p>
                 </div>
-                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Ambassadeur</p>
+                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4 placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Ambassadeur</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{selected.ambassador_name || labelForAmbassador(snapshot, selected.ambassador_id)}</p>
                 </div>
-                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Valeur</p>
+                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4 placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Valeur</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{selected.offer_name || "Offre AngelCare"} · {formatMoney(selected.value || 0, selected.currency || "MAD")}</p>
                 </div>
-                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Âge du dossier</p>
+                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4 placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Âge du dossier</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{selected.created_at ? shortDate(selected.created_at) : "Non documenté"}</p>
                 </div>
               </div>
             </section>
 
             <div className="grid gap-5 lg:grid-cols-2">
-              <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+              <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-sm font-black tracking-tight text-slate-950">Checklist de preuve</h3>
                   <StatusPill tone="emerald">{proofChecklist.filter((item) => item.done).length}/{proofChecklist.length}</StatusPill>
@@ -1826,7 +2115,7 @@ export function AmbassadorConversionValidationModal({
                 </div>
               </section>
 
-              <section className="rounded-[30px] border border-amber-100 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50">
+              <section className="rounded-[30px] border border-amber-100 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50 placeholder:!text-slate-600">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-sm font-black tracking-tight text-slate-950">Risques et éligibilité</h3>
                   <StatusPill tone="amber">{String(selected.status || "pending")}</StatusPill>
@@ -1840,7 +2129,7 @@ export function AmbassadorConversionValidationModal({
               </section>
             </div>
 
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
               <Field label="Note de validation / justification">
                 <textarea className={textareaClass} value={note} onChange={(e) => onNote(e.target.value)} />
               </Field>
@@ -1848,7 +2137,7 @@ export function AmbassadorConversionValidationModal({
           </div>
         </div>
       ) : (
-        <p className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-sm font-bold text-slate-600">Aucune conversion à traiter pour le moment.</p>
+        <p className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-sm font-bold !text-slate-950 placeholder:!text-slate-600">Aucune conversion à traiter pour le moment.</p>
       )}
     </ModalFrame>
   )
@@ -1892,31 +2181,31 @@ export function AmbassadorIncentiveApprovalModal({
       title="Incentives en attente"
       subtitle="Workflow finance et risque pour contrôles, approbation, paiement et revue d'éligibilité."
       icon={Wallet}
-      width="w-[calc(100vw-32px)] lg:w-[92vw] lg:max-w-[1200px]"
+      width="w-[calc(100vw-16px)] lg:w-[calc(100vw-48px)] xl:max-w-[1620px]"
       feedback={feedback}
       onClose={onClose}
       chrome="amber"
       footer={
         <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1 text-xs font-semibold text-slate-500">
+          <div className="space-y-1 text-xs font-semibold !text-slate-950">
             <p className="font-black text-slate-900">{selected ? labelForAmbassador(snapshot, selected.ambassador_id) : "Aucun incentive sélectionné"}</p>
             <p>{selected ? `Cycle: ${payoutCycle}` : "Aucune ligne en attente."}</p>
             <p>{note || "Renseigner une note finance avant décision."}</p>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 placeholder:!text-slate-600">
               Annuler
             </button>
-            <button type="button" disabled title={blockReason} className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-black text-slate-400 disabled:opacity-100">
+            <button type="button" disabled title={blockReason} className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-black !text-slate-950 disabled:opacity-100 placeholder:!text-slate-600">
               Bloquer pour revue
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("reject")} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("reject")} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50 placeholder:!text-slate-600">
               Rejeter
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("approve")} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700 disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("approve")} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700 disabled:opacity-50 placeholder:!text-slate-600">
               Approuver
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("pay")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("pay")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-slate-950 disabled:opacity-50 placeholder:!text-slate-600">
               Marquer comme payé
             </button>
           </div>
@@ -1925,7 +2214,7 @@ export function AmbassadorIncentiveApprovalModal({
     >
       {selected ? (
         <div className="grid gap-5 xl:grid-cols-[0.92fr_1.08fr]">
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">File d'attente paiements</h3>
               <StatusPill tone="amber">{pendingQueue.length}</StatusPill>
@@ -1939,13 +2228,13 @@ export function AmbassadorIncentiveApprovalModal({
                     type="button"
                     onClick={() => setSelectedId(String(item.id || ""))}
                     className={`w-full rounded-3xl border p-4 text-left transition ${
-                      isSelected ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
+                      isSelected ? "border-slate-900 bg-slate-900 !text-slate-950 shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-black">{labelForAmbassador(snapshot, item.ambassador_id)}</p>
-                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "text-slate-200" : "text-slate-500"}`}>{item.incentive_type || "Commission"} · {item.status || "pending"}</p>
+                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "!text-slate-950" : "!text-slate-950"}`}>{item.incentive_type || "Commission"} · {item.status || "pending"}</p>
                       </div>
                       <StatusPill tone="blue">{formatMoney(item.amount || 0, item.currency || "MAD")}</StatusPill>
                     </div>
@@ -1956,7 +2245,7 @@ export function AmbassadorIncentiveApprovalModal({
           </section>
 
           <div className="space-y-5">
-            <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60">
+            <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60 placeholder:!text-slate-600">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">Détail sélectionné</p>
@@ -1965,27 +2254,27 @@ export function AmbassadorIncentiveApprovalModal({
                 <StatusPill tone="blue">{payoutCycle}</StatusPill>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Mini profil</p>
+                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Mini profil</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{ambassador?.city || selected.city || "Ville"} · {ambassador?.region || "Région"} · Performance {ambassador?.performance_score || "N/A"}</p>
                 </div>
-                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Source de mission / conversion</p>
+                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Source de mission / conversion</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{selected.source_mission || selected.reason || "Mission ou conversion source"}</p>
                 </div>
-                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Base commission</p>
+                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Base commission</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{selected.incentive_type || "Commission"} · {formatMoney(selected.amount || 0, selected.currency || "MAD")}</p>
                 </div>
-                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Règle 10%</p>
+                <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Règle 10%</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{rule10 ? "Règle 10% visible pour cette ligne." : "Aucune règle 10% explicite détectée."}</p>
                 </div>
               </div>
             </section>
 
             <div className="grid gap-5 lg:grid-cols-2">
-              <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+              <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-sm font-black tracking-tight text-slate-950">Éligibilité</h3>
                   <StatusPill tone={eligibleRules.filter((item) => item.done).length === eligibleRules.length ? "emerald" : "amber"}>{eligibleRules.filter((item) => item.done).length}/{eligibleRules.length}</StatusPill>
@@ -1995,7 +2284,7 @@ export function AmbassadorIncentiveApprovalModal({
                 </div>
               </section>
 
-              <section className="rounded-[30px] border border-amber-100 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50">
+              <section className="rounded-[30px] border border-amber-100 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50 placeholder:!text-slate-600">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-sm font-black tracking-tight text-slate-950">Risques</h3>
                   <StatusPill tone="amber">{String(selected.status || "pending")}</StatusPill>
@@ -2009,7 +2298,7 @@ export function AmbassadorIncentiveApprovalModal({
               </section>
             </div>
 
-            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+            <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
               <Field label="Note finance">
                 <textarea className={textareaClass} value={note} onChange={(e) => onNote(e.target.value)} />
               </Field>
@@ -2017,7 +2306,7 @@ export function AmbassadorIncentiveApprovalModal({
           </div>
         </div>
       ) : (
-        <p className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-sm font-bold text-slate-600">Aucun incentive à traiter pour le moment.</p>
+        <p className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-sm font-bold !text-slate-950 placeholder:!text-slate-600">Aucun incentive à traiter pour le moment.</p>
       )}
     </ModalFrame>
   )
@@ -2058,31 +2347,31 @@ export function AmbassadorReportExportModal({
       title="Exporter rapport"
       subtitle="Prévisualisation A4, export CSV réel et validation de diffusion pour la direction, la finance et les opérations."
       icon={FileText}
-      width="w-[calc(100vw-32px)] lg:w-[93vw] lg:max-w-[1260px]"
+      width="w-[calc(100vw-16px)] lg:w-[calc(100vw-48px)] xl:max-w-[1680px]"
       feedback={feedback}
       onClose={onClose}
       chrome="slate"
       footer={
         <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1 text-xs font-semibold text-slate-500">
+          <div className="space-y-1 text-xs font-semibold !text-slate-950">
             <p className="font-black text-slate-900">{preview.title}</p>
             <p>{missing.length ? describeMissing(missing) : "Export prêt."}</p>
             <p>{selectedFormat?.reason || "Export CSV backend actif."}</p>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 placeholder:!text-slate-600">
               Annuler
             </button>
-            <button type="button" disabled={busy || missing.length > 0} onClick={onPreview} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" disabled={busy || missing.length > 0} onClick={onPreview} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50 placeholder:!text-slate-600">
               Prévisualiser
             </button>
-            <button type="button" disabled title={pdfDisabledReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-400 disabled:opacity-100">
+            <button type="button" disabled title={pdfDisabledReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black !text-slate-950 disabled:opacity-100 placeholder:!text-slate-600">
               Exporter PDF
             </button>
-            <button type="button" disabled={busy || missing.length > 0} onClick={onExportCsv} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" disabled={busy || missing.length > 0} onClick={onExportCsv} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-slate-950 disabled:opacity-50 placeholder:!text-slate-600">
               {busy ? "Génération..." : "Exporter CSV"}
             </button>
-            <button type="button" disabled title={scheduleDisabledReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-400 disabled:opacity-100">
+            <button type="button" disabled title={scheduleDisabledReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black !text-slate-950 disabled:opacity-100 placeholder:!text-slate-600">
               Planifier envoi
             </button>
           </div>
@@ -2090,7 +2379,7 @@ export function AmbassadorReportExportModal({
       }
     >
       <div className="grid gap-5 xl:grid-cols-[0.88fr_1.1fr_0.9fr]">
-        <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+        <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-sm font-black tracking-tight text-slate-950">Configuration du rapport</h3>
             <StatusPill tone="blue">Export backend</StatusPill>
@@ -2128,34 +2417,34 @@ export function AmbassadorReportExportModal({
           </div>
         </section>
 
-        <section className="rounded-[30px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-5 shadow-sm shadow-slate-200/60">
+        <section className="rounded-[30px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-sm font-black tracking-tight text-slate-950">Prévisualisation</h3>
             <StatusPill tone="emerald">{preview.metrics.length} métriques</StatusPill>
           </div>
-          <div className="mt-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Aperçu A4</p>
+          <div className="mt-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm placeholder:!text-slate-600">
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] !text-slate-950">Aperçu A4</p>
             <h4 className="mt-2 text-2xl font-black text-slate-950">{preview.title}</h4>
-            <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{preview.summary}</p>
+            <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{preview.summary}</p>
             <div className="mt-5 grid gap-3 md:grid-cols-3">
               {preview.metrics.map((metric) => (
-                <div key={metric.label} className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">{metric.label}</p>
+                <div key={metric.label} className="rounded-3xl border border-slate-100 bg-slate-50 p-4 placeholder:!text-slate-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">{metric.label}</p>
                   <p className="mt-2 text-xl font-black text-slate-950">{metric.value}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-5 rounded-3xl border border-slate-100 bg-slate-50 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">Détail de la diffusion</p>
-              <div className="mt-3 space-y-2 text-sm font-semibold leading-6 text-slate-600">
+            <div className="mt-5 rounded-3xl border border-slate-100 bg-slate-50 p-4 placeholder:!text-slate-600">
+              <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Détail de la diffusion</p>
+              <div className="mt-3 space-y-2 text-sm font-semibold leading-6 !text-slate-950">
                 {preview.lines.map((line) => (
                   <p key={line}>{line}</p>
                 ))}
               </div>
             </div>
           </div>
-          <div className="mt-5 rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Formats disponibles</p>
+          <div className="mt-5 rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm placeholder:!text-slate-600">
+            <p className="text-xs font-black uppercase tracking-[0.14em] !text-slate-950">Formats disponibles</p>
             <div className="mt-3 grid gap-3 md:grid-cols-3">
               {reportFormatOptions.map((item) => (
                 <button
@@ -2165,13 +2454,13 @@ export function AmbassadorReportExportModal({
                   onClick={() => item.available && onChange("format", item.value)}
                   className={`rounded-2xl border p-3 text-left transition ${
                     form.format === item.value
-                      ? "border-slate-900 bg-slate-900 text-white"
+                      ? "border-slate-900 bg-slate-900 !text-slate-950"
                       : "border-slate-200 bg-slate-50 text-slate-700 disabled:opacity-50"
                   }`}
                   title={item.reason}
                 >
                   <p className="text-sm font-black">{item.label}</p>
-                  <p className={`mt-1 text-xs font-semibold ${form.format === item.value ? "text-slate-200" : "text-slate-500"}`}>
+                  <p className={`mt-1 text-xs font-semibold ${form.format === item.value ? "!text-slate-950" : "!text-slate-950"}`}>
                     {item.available ? "Disponible" : item.reason}
                   </p>
                 </button>
@@ -2181,19 +2470,19 @@ export function AmbassadorReportExportModal({
         </section>
 
         <section className="space-y-5">
-          <div className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60">
+          <div className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">Statut de l'export</h3>
               <StatusPill tone={missing.length ? "amber" : "emerald"}>{missing.length}</StatusPill>
             </div>
             <div className="mt-4 space-y-2">
-              {missing.length ? missing.map((item) => <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{item}</div>) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Export prêt pour le CSV backend.</div>}
+              {missing.length ? missing.map((item) => <div key={item} className="flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800 placeholder:!text-slate-600"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{item}</div>) : <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 placeholder:!text-slate-600">Export prêt pour le CSV backend.</div>}
             </div>
           </div>
 
-          <div className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <div className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <h3 className="text-sm font-black tracking-tight text-slate-950">Destinataires et approbation</h3>
-            <div className="mt-4 space-y-3 text-sm font-semibold leading-6 text-slate-600">
+            <div className="mt-4 space-y-3 text-sm font-semibold leading-6 !text-slate-950">
               <p>Destinataires : {form.recipients || "N/A"}</p>
               <p>Signature : {form.signature_note || "N/A"}</p>
               <p>Format actif : {form.format.toUpperCase()}</p>
@@ -2201,12 +2490,12 @@ export function AmbassadorReportExportModal({
             </div>
           </div>
 
-          <div className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60">
+          <div className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/60 placeholder:!text-slate-600">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-black tracking-tight text-slate-950">Rappel d'infrastructure</h3>
               <StatusPill tone="amber">Avertissement</StatusPill>
             </div>
-            <div className="mt-4 space-y-2 text-sm font-semibold leading-6 text-slate-600">
+            <div className="mt-4 space-y-2 text-sm font-semibold leading-6 !text-slate-950">
               <p>{reportFormatOptions.find((item) => item.value === "pdf")?.reason}</p>
               <p>{reportFormatOptions.find((item) => item.value === "excel")?.reason}</p>
               <p>{scheduleDisabledReason}</p>

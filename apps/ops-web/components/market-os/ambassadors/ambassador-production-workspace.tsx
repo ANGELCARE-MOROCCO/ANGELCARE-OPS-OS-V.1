@@ -58,6 +58,10 @@ import {
 
 import AmbassadorMarketSidebar from "./ambassador-market-sidebar"
 import AmbassadorCockpitRoute from "./routes/AmbassadorCockpitRoute"
+import AmbassadorDirectoryRoute from "./routes/AmbassadorDirectoryRoute"
+import AmbassadorRecruitmentRoute from "./routes/AmbassadorRecruitmentRoute"
+import AmbassadorMissionsRoute from "./routes/AmbassadorMissionsRoute"
+import AmbassadorLeadsRoute from "./routes/AmbassadorLeadsRoute"
 import type {
   Ambassador,
   AmbassadorAuditLog,
@@ -687,7 +691,7 @@ function RelatedList({ title, items, empty }: { title: string; items: string[]; 
 }
 
 export default function AmbassadorProductionWorkspace({ mode = "overview", id }: { mode?: AmbassadorWorkspaceMode; id?: string }) {
-  const config = pageConfig[mode]
+  const config = pageConfig[mode] ?? pageConfig.overview
   const [snapshot, setSnapshot] = useState<AmbassadorWorkspaceSnapshot>(emptySnapshot)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -736,7 +740,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   }, [loading, id, mode, snapshot.ambassadors])
 
   const kpis = useMemo(() => deriveAmbassadorKpis(snapshot), [snapshot])
-  const PageIcon = config.icon
+  const PageIcon = config?.icon ?? Users
   const regions = useMemo(() => Array.from(new Set(snapshot.ambassadors.map((item) => item.region).filter(Boolean) as string[])).sort(), [snapshot.ambassadors])
   const territories = useMemo(() => snapshot.territories.filter((item) => item.status !== "archived"), [snapshot.territories])
   const activeAmbassadors = useMemo(() => snapshot.ambassadors.filter((item) => item.status !== "archived"), [snapshot.ambassadors])
@@ -1296,6 +1300,49 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
     }
   }
 
+  // PAGE5_LEADS_ENTERPRISE_START
+  if (mode === "leads") {
+    return (
+      <div className="flex min-h-screen bg-slate-50 text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-slate-50">
+          <AmbassadorLeadsRoute
+            snapshot={snapshot}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            onRefresh={() => void load(true)}
+          />
+        </main>
+      </div>
+    )
+  }
+  // PAGE5_LEADS_ENTERPRISE_END
+
+  // PAGE4A_MISSIONS_ENTERPRISE_START
+  if (mode === "missions") {
+    return (
+      <div className="flex min-h-screen bg-slate-50 text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-slate-50">
+          <AmbassadorMissionsRoute
+            snapshot={snapshot}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            onRefresh={() => void load(true)}
+            onCreateMission={() => openModal("mission")}
+          />
+          {modal ? renderModal() : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+  // PAGE4A_MISSIONS_ENTERPRISE_END
+
   if (mode === "overview") {
     return (
       <div className="flex min-h-screen bg-slate-50 text-slate-950">
@@ -1313,6 +1360,85 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
             onCreateMission={() => openModal("mission")}
             onCreateCandidate={() => openModal("recruitment")}
             onExportReport={() => exportCurrentView("ambassadors-overview")}
+          />
+          {modal ? renderModal() : null}
+          {detail ? (
+            <DetailDrawer
+              ambassador={snapshot.ambassadors.find((item) => item.id === detail.id) || detail}
+              snapshot={snapshot}
+              onClose={() => setDetail(null)}
+              onEdit={() => openModal("ambassador", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onAssign={() => openModal("assignTerritory", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onMission={() => openModal("mission", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onArchive={() => openArchiveConfirm("ambassadors", detail.id, detail.full_name)}
+            />
+          ) : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+
+
+
+  if (mode === "recruitment") {
+    return (
+      <div className="flex min-h-screen bg-slate-50 text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-slate-50">
+          <AmbassadorRecruitmentRoute
+            snapshot={snapshot}
+            kpis={kpis as Record<string, number>}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            query={query}
+            onRefresh={() => void load(true)}
+            onNewCandidate={() => openModal("recruitment")}
+            onExport={() => exportCurrentView("ambassadors-recruitment-pipeline")}
+          />
+          {modal ? renderModal() : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+
+  if (mode === "directory") {
+    return (
+      <div className="flex min-h-screen bg-slate-50 text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 bg-slate-50">
+          <AmbassadorDirectoryRoute
+            snapshot={snapshot}
+            kpis={kpis as Record<string, number>}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            diagnostics={snapshot.diagnostics}
+            query={query}
+            statusFilter={statusFilter}
+            regionFilter={regionFilter}
+            territoryFilter={territoryFilter}
+            sortKey={sortKey}
+            regions={regions}
+            territories={territories}
+            filteredAmbassadors={filteredAmbassadors}
+            onQueryChange={setQuery}
+            onStatusFilterChange={setStatusFilter}
+            onRegionFilterChange={setRegionFilter}
+            onTerritoryFilterChange={setTerritoryFilter}
+            onSortKeyChange={setSortKey}
+            onRefresh={() => void load(true)}
+            onAddAmbassador={() => openModal("ambassador")}
+            onAssignTerritory={(ambassador) => openModal("assignTerritory", ambassador || null)}
+            onCreateMission={(ambassador) => openModal("mission", ambassador || null)}
+            onExport={() => exportCurrentView("ambassadors-directory")}
+            onOpenProfile={(ambassador) => setDetail(ambassador)}
+            onEditAmbassador={(ambassador) => openModal("ambassador", ambassador)}
+            onArchiveAmbassador={(ambassador) => openArchiveConfirm("ambassadors", ambassador.id, ambassador.full_name || "ambassadeur")}
           />
           {modal ? renderModal() : null}
           {detail ? (

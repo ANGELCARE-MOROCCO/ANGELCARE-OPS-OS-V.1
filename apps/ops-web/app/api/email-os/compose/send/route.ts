@@ -4,6 +4,7 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
+import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
 import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, countEmailRecipients, runAc360WiredAction } from "@/lib/ac360/action-wiring"
 
 function clean(value: any) {
@@ -53,6 +54,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 })
     }
 
+    const operatorIdentity = await resolveEmailOSOperatorIdentity(db, user.id, {
+      id: user.id,
+      name: user.name || undefined,
+      email: user.email || undefined,
+      role: user.role || undefined
+    })
+    const operatorSnapshot = emailOSOperatorSnapshot(operatorIdentity)
+
     const requestedMailboxId = clean(body.mailboxId || body.mailbox_id)
     const fromEmail = clean(body.fromEmail || body.from_email)
     const toEmail = clean(body.toEmail || body.to_email || body.to)
@@ -97,6 +106,10 @@ export async function POST(request: Request) {
     }
 
     const recipientCount = countEmailRecipients(toEmail, ccEmail, bccEmail)
+    const externalIdentityMode = clean(body.externalOperatorIdentityMode || body.external_operator_identity_mode || process.env.EMAIL_OS_EXTERNAL_OPERATOR_IDENTITY_MODE).toLowerCase()
+    const exposeOperatorExternally = body.externalOperatorIdentity === true || body.external_operator_identity === true || externalIdentityMode === "operator"
+    const mailboxDisplayName = clean(access.mailbox?.name || resolvedFrom || "AngelCare")
+    const fromDisplayName = exposeOperatorExternally ? `${operatorIdentity.fullName} | ${mailboxDisplayName}` : mailboxDisplayName
 
     const guarded = await runAc360WiredAction("email_os.compose_send", async () => {
       const now = nowIso()
@@ -117,6 +130,12 @@ export async function POST(request: Request) {
         queue_id: null,
         tracking_id: trackingId || null,
         tracking_enabled: trackingEnabled,
+        sent_by_user_id: operatorSnapshot.userId,
+        sent_by_name: operatorSnapshot.name,
+        sent_by_email: operatorSnapshot.email,
+        sent_by_role: operatorSnapshot.role,
+        sent_by_department: operatorSnapshot.department,
+        sent_by_title: operatorSnapshot.title,
         first_opened_at: null,
         last_opened_at: null,
         open_count: 0,
@@ -129,6 +148,11 @@ export async function POST(request: Request) {
             trackingId: trackingId || null,
             status: trackingEnabled ? "active_not_opened" : "off"
           },
+          operator: {
+            ...operatorSnapshot,
+            externalDisplayName: fromDisplayName,
+            externallyExposed: exposeOperatorExternally
+          },
           ac360Guarded: true,
         },
         created_at: now,
@@ -140,12 +164,18 @@ export async function POST(request: Request) {
       const { identity, info } = await sendEmailOSDirect({
         mailboxId: mailboxScope.mailboxId,
         fromEmail: resolvedFrom,
+        fromDisplayName,
         toEmail,
         ccEmail,
         bccEmail,
         subject,
         body: sendBody,
         attachments,
+        headers: {
+          "X-AngelCare-Operator-ID": operatorIdentity.id,
+          "X-AngelCare-Operator-Name": operatorIdentity.fullName,
+          "X-AngelCare-Operator-Role": operatorIdentity.role
+        }
       })
 
       const sentAt = nowIso()
@@ -172,8 +202,19 @@ export async function POST(request: Request) {
           smtpUser: identity.smtp.user,
           accepted: info.accepted || [],
           rejected: info.rejected || [],
+          operator: {
+            ...operatorSnapshot,
+            externalDisplayName: fromDisplayName,
+            externallyExposed: exposeOperatorExternally
+          },
           ac360Guarded: true,
         },
+        sent_by_user_id: operatorSnapshot.userId,
+        sent_by_name: operatorSnapshot.name,
+        sent_by_email: operatorSnapshot.email,
+        sent_by_role: operatorSnapshot.role,
+        sent_by_department: operatorSnapshot.department,
+        sent_by_title: operatorSnapshot.title,
       }).eq("id", outboxId).then(() => null, () => null)
 
       return {
@@ -184,6 +225,7 @@ export async function POST(request: Request) {
         mailboxKey: identity.key,
         from: identity.smtp.from,
         attachmentCount: attachments.length,
+        operator: operatorIdentity,
         tracking: {
           enabled: trackingEnabled,
           trackingId: trackingId || null,

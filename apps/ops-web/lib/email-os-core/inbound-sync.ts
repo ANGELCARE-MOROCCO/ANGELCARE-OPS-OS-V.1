@@ -6,6 +6,12 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { recordStorageEvent, upsertStorageFileMetadata } from "@/lib/email-os-core/storage-gateway"
 import type { ResolvedEmailOSMailbox } from "@/lib/email-os-core/multi-mailbox-resolver"
+import {
+  buildEmailOSInboundIdentity,
+  buildEmailOSInboundIdentityFromRow,
+  emailOSInboundIdentityIntersects,
+  loadEmailOSInboundSuppressionKeys
+} from "@/lib/email-os-core/inbound-identity"
 
 type Pop3MessageRef = {
   number: number
@@ -22,6 +28,8 @@ type EmailOSInboundSyncResult = {
   inserted: number
   updated: number
   skipped: number
+  suppressed: number
+  deduplicated: number
   synced: Array<{
     providerUid: string
     subject: string
@@ -74,6 +82,8 @@ export type EmailOSBridgeInboundPersistResult = {
   inserted: number
   updated: number
   skipped: number
+  suppressed: number
+  deduplicated: number
   synced: Array<{
     providerUid: string
     subject: string
@@ -164,26 +174,6 @@ function normalizeBridgeDate(value: unknown) {
   return Number.isNaN(date.getTime()) ? nowIso() : date.toISOString()
 }
 
-function buildBridgeProviderUid(mailbox: ResolvedEmailOSMailbox, message: EmailOSBridgeInboundMessage, index: number) {
-  const externalId = String(message.externalId || message.messageId || "").trim()
-  if (externalId) return externalId
-
-  return crypto
-    .createHash("sha256")
-    .update([
-      mailbox.mailboxId,
-      mailbox.email,
-      normalizeBridgeList(message.to).join(","),
-      normalizeBridgeList(message.cc).join(","),
-      String(message.subject || ""),
-      String(message.date || ""),
-      String(message.fromEmail || ""),
-      String(message.text || ""),
-      String(index)
-    ].join("|"))
-    .digest("hex")
-}
-
 function buildBridgeRawPayload(mailbox: ResolvedEmailOSMailbox, providerUid: string, message: EmailOSBridgeInboundMessage, receivedAt: string, fromEmail: string, toEmail: string, ccEmail: string[]) {
   const toList = normalizeBridgeList(message.to)
   return {
@@ -224,6 +214,161 @@ function buildBridgeRawPayload(mailbox: ResolvedEmailOSMailbox, providerUid: str
   }
 }
 
+
+type ExistingInboundRow = {
+  id: string
+  mailbox_id: string
+  provider_uid?: string | null
+  ingest_key?: string | null
+  subject?: string | null
+  from_email?: string | null
+  to_email?: string | null
+  preview?: string | null
+  status?: string | null
+  folder?: string | null
+  raw?: any
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+async function loadExistingInboundRows(db: ReturnType<typeof createEmailOSCoreDb>, mailboxId: string) {
+  const { data, error } = await db
+    .from("email_os_core_inbox")
+    .select("id,mailbox_id,provider_uid,ingest_key,subject,from_email,to_email,preview,status,folder,raw,created_at,updated_at")
+    .eq("mailbox_id", mailboxId)
+    .order("created_at", { ascending: false })
+    .limit(2500)
+
+  if (error) throw new EmailOSInboundPersistenceError(error.message)
+  return (data || []) as ExistingInboundRow[]
+}
+
+function rowOperationalScore(row: ExistingInboundRow) {
+  const status = clean(row.status).toLowerCase()
+  if (status === "read") return 0
+  if (status === "archived") return 1
+  if (status === "trash" || status === "trashed") return 2
+  if (status === "spam") return 3
+  return 4
+}
+
+function chooseInboundSurvivor(rows: ExistingInboundRow[]) {
+  return rows.slice().sort((left, right) => {
+    const score = rowOperationalScore(left) - rowOperationalScore(right)
+    if (score !== 0) return score
+    const rightUpdated = new Date(right.updated_at || right.created_at || 0).getTime()
+    const leftUpdated = new Date(left.updated_at || left.created_at || 0).getTime()
+    return rightUpdated - leftUpdated
+  })[0] || null
+}
+
+function buildInboundIdentityIndex(rows: ExistingInboundRow[]) {
+  const index = new Map<string, Set<ExistingInboundRow>>()
+  for (const row of rows) {
+    const identity = buildEmailOSInboundIdentityFromRow(row)
+    const keys = new Set([identity.ingestKey, ...(identity.keys || []), clean(row.ingest_key)].filter(Boolean))
+    for (const key of keys) {
+      const normalized = key.toLowerCase()
+      const bucket = index.get(normalized) || new Set<ExistingInboundRow>()
+      bucket.add(row)
+      index.set(normalized, bucket)
+    }
+  }
+  return index
+}
+
+function findInboundMatches(index: Map<string, Set<ExistingInboundRow>>, keys: string[]) {
+  const matches = new Map<string, ExistingInboundRow>()
+  for (const key of keys) {
+    for (const row of index.get(key.toLowerCase()) || []) {
+      matches.set(row.id, row)
+    }
+  }
+  return Array.from(matches.values())
+}
+
+function addInboundRowToIndex(index: Map<string, Set<ExistingInboundRow>>, row: ExistingInboundRow) {
+  const identity = buildEmailOSInboundIdentityFromRow(row)
+  const keys = new Set([identity.ingestKey, ...(identity.keys || []), clean(row.ingest_key)].filter(Boolean))
+  for (const key of keys) {
+    const normalized = key.toLowerCase()
+    const bucket = index.get(normalized) || new Set<ExistingInboundRow>()
+    bucket.add(row)
+    index.set(normalized, bucket)
+  }
+}
+
+async function consolidateInboundDuplicates(
+  db: ReturnType<typeof createEmailOSCoreDb>,
+  mailboxId: string,
+  survivor: ExistingInboundRow,
+  duplicates: ExistingInboundRow[]
+) {
+  let removed = 0
+  const detailTables = [
+    "email_os_message_notes",
+    "email_os_message_tasks",
+    "email_os_message_assignments",
+    "email_os_message_entity_links",
+    "email_os_message_audit_events"
+  ]
+
+  for (const duplicate of duplicates) {
+    if (!duplicate?.id || duplicate.id === survivor.id) continue
+
+    for (const table of detailTables) {
+      await db
+        .from(table)
+        .update({ message_id: survivor.id, updated_at: nowIso() })
+        .eq("mailbox_id", mailboxId)
+        .eq("message_id", duplicate.id)
+        .then(() => null, () => null)
+    }
+
+    const { data: survivorWorkflow } = await db
+      .from("email_os_message_workflow")
+      .select("id")
+      .eq("mailbox_id", mailboxId)
+      .eq("message_id", survivor.id)
+      .eq("source_table", "email_os_core_inbox")
+      .maybeSingle()
+      .then((result: any) => result, () => ({ data: null }))
+
+    if (survivorWorkflow?.id) {
+      await db
+        .from("email_os_message_workflow")
+        .delete()
+        .eq("mailbox_id", mailboxId)
+        .eq("message_id", duplicate.id)
+        .eq("source_table", "email_os_core_inbox")
+        .then(() => null, () => null)
+    } else {
+      await db
+        .from("email_os_message_workflow")
+        .update({ message_id: survivor.id, updated_at: nowIso() })
+        .eq("mailbox_id", mailboxId)
+        .eq("message_id", duplicate.id)
+        .eq("source_table", "email_os_core_inbox")
+        .then(() => null, () => null)
+    }
+
+    const { error } = await db
+      .from("email_os_core_inbox")
+      .delete()
+      .eq("mailbox_id", mailboxId)
+      .eq("id", duplicate.id)
+
+    if (!error) removed += 1
+  }
+
+  return removed
+}
+
+function shouldPreserveInboundState(row: ExistingInboundRow) {
+  const status = clean(row.status).toLowerCase()
+  return ["read", "archived", "trash", "trashed", "spam", "deleted"].includes(status)
+}
+
 export async function persistEmailOSBridgeInboundMessages(
   mailbox: ResolvedEmailOSMailbox,
   messages: EmailOSBridgeInboundMessage[]
@@ -233,13 +378,13 @@ export async function persistEmailOSBridgeInboundMessages(
   let inserted = 0
   let updated = 0
   let skipped = 0
+  let suppressed = 0
+  let deduplicated = 0
+  const suppressionKeys = await loadEmailOSInboundSuppressionKeys(db, mailbox.mailboxId)
+  const existingRows = await loadExistingInboundRows(db, mailbox.mailboxId)
+  const identityIndex = buildInboundIdentityIndex(existingRows)
 
-  for (const [index, message] of messages.entries()) {
-    const providerUid = buildBridgeProviderUid(mailbox, message, index)
-    if (!providerUid) {
-      skipped += 1
-      continue
-    }
+  for (const message of messages) {
 
     const fromEmail = String(message.fromEmail || "").trim().toLowerCase() || mailbox.email
     const toEmails = normalizeBridgeList(message.to)
@@ -248,16 +393,37 @@ export async function persistEmailOSBridgeInboundMessages(
     const receivedAt = normalizeBridgeDate(message.date)
     const subject = String(message.subject || "(Sans objet)")
     const preview = previewFromBridgeMessage(message)
+    const identity = buildEmailOSInboundIdentity({
+      mailboxId: mailbox.mailboxId,
+      providerUid: message.externalId,
+      externalId: message.externalId,
+      messageId: message.messageId,
+      fromEmail,
+      toEmail,
+      ccEmail: ccEmails.join(", "),
+      subject,
+      date: receivedAt,
+      text: message.text,
+      html: message.html
+    })
+    const providerUid = identity.canonicalProviderUid
 
-    const { data: existing, error: lookupError } = await db
-      .from("email_os_core_inbox")
-      .select("id")
-      .eq("mailbox_id", mailbox.mailboxId)
-      .eq("provider_uid", providerUid)
-      .maybeSingle()
+    if (emailOSInboundIdentityIntersects(suppressionKeys, identity.keys)) {
+      suppressed += 1
+      skipped += 1
+      continue
+    }
 
-    if (lookupError) {
-      throw new EmailOSInboundPersistenceError(lookupError.message)
+    const matches = findInboundMatches(identityIndex, identity.keys)
+    const existing = chooseInboundSurvivor(matches)
+
+    if (existing && matches.length > 1) {
+      deduplicated += await consolidateInboundDuplicates(
+        db,
+        mailbox.mailboxId,
+        existing,
+        matches.filter((row) => row.id !== existing.id)
+      )
     }
 
     const attachmentRows = Array.isArray(message.attachments)
@@ -268,6 +434,7 @@ export async function persistEmailOSBridgeInboundMessages(
       id: makeEmailOSId(),
       mailbox_id: mailbox.mailboxId,
       provider_uid: providerUid,
+      ingest_key: identity.ingestKey,
       subject,
       from_email: fromEmail,
       to_email: toEmail,
@@ -284,13 +451,17 @@ export async function persistEmailOSBridgeInboundMessages(
       const { error: updateError } = await db
         .from("email_os_core_inbox")
         .update({
+          provider_uid: payload.provider_uid,
+          ingest_key: payload.ingest_key,
           subject: payload.subject,
           from_email: payload.from_email,
           to_email: payload.to_email,
           preview: payload.preview,
-          status: payload.status,
-          label: payload.label,
-          folder: payload.folder,
+          ...(shouldPreserveInboundState(existing) ? {} : {
+            status: payload.status,
+            label: payload.label,
+            folder: payload.folder
+          }),
           raw: payload.raw,
           updated_at: payload.updated_at
         })
@@ -301,12 +472,14 @@ export async function persistEmailOSBridgeInboundMessages(
       }
 
       updated += 1
+      addInboundRowToIndex(identityIndex, { ...existing, ...payload, id: existing.id })
     } else {
       const { error: insertError } = await db.from("email_os_core_inbox").insert(payload)
       if (insertError) {
         throw new EmailOSInboundPersistenceError(insertError.message)
       }
       inserted += 1
+      addInboundRowToIndex(identityIndex, payload)
     }
 
     for (const attachment of attachmentRows) {
@@ -373,6 +546,8 @@ export async function persistEmailOSBridgeInboundMessages(
     inserted,
     updated,
     skipped,
+    suppressed,
+    deduplicated,
     synced
   }
 }
@@ -539,6 +714,11 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
   let inserted = 0
   let skipped = 0
   let fetched = 0
+  let suppressed = 0
+  let deduplicated = 0
+  const suppressionKeys = await loadEmailOSInboundSuppressionKeys(db, mailbox.mailboxId)
+  const existingRows = await loadExistingInboundRows(db, mailbox.mailboxId)
+  const identityIndex = buildInboundIdentityIndex(existingRows)
 
   await client.connect()
   try {
@@ -546,16 +726,21 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
     const refs = (await client.listMessages()).slice(-Math.max(1, Math.min(limit, 100)))
 
     for (const ref of refs) {
-      const providerUid = `${mailbox.email}:pop3:${ref.uid}`
-      const { data: existing } = await db
-        .from("email_os_core_inbox")
-        .select("id")
-        .eq("mailbox_id", mailbox.mailboxId)
-        .eq("provider_uid", providerUid)
-        .maybeSingle()
+      const preliminaryIdentity = buildEmailOSInboundIdentity({
+        mailboxId: mailbox.mailboxId,
+        providerUid: ref.uid,
+        externalId: ref.uid
+      })
 
-      if (existing?.id) {
-        skipped++
+      if (emailOSInboundIdentityIntersects(suppressionKeys, preliminaryIdentity.keys)) {
+        suppressed += 1
+        skipped += 1
+        continue
+      }
+
+      const preliminaryMatches = findInboundMatches(identityIndex, preliminaryIdentity.keys)
+      if (preliminaryMatches.length === 1) {
+        skipped += 1
         continue
       }
 
@@ -568,11 +753,85 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
       const receivedAt = parsed.date ? parsed.date.toISOString() : nowIso()
       const subject = parsed.subject || "(Sans objet)"
       const preview = previewFrom(parsed.text, parsed.html)
+      const identity = buildEmailOSInboundIdentity({
+        mailboxId: mailbox.mailboxId,
+        providerUid: ref.uid,
+        externalId: ref.uid,
+        messageId: parsed.messageId,
+        fromEmail: from?.address,
+        toEmail: to,
+        ccEmail: parsed.cc?.value?.map((item) => item.address).filter(Boolean).join(", "),
+        subject,
+        date: receivedAt,
+        text: parsed.text,
+        html: parsed.html
+      })
 
-      const { error } = await db.from("email_os_core_inbox").insert({
+      if (emailOSInboundIdentityIntersects(suppressionKeys, identity.keys)) {
+        suppressed += 1
+        skipped += 1
+        continue
+      }
+
+      const matches = findInboundMatches(identityIndex, identity.keys)
+      const existing = chooseInboundSurvivor(matches)
+      if (existing) {
+        if (matches.length > 1) {
+          deduplicated += await consolidateInboundDuplicates(
+            db,
+            mailbox.mailboxId,
+            existing,
+            matches.filter((row) => row.id !== existing.id)
+          )
+        }
+
+        await db
+          .from("email_os_core_inbox")
+          .update({
+            provider_uid: identity.canonicalProviderUid,
+            ingest_key: identity.ingestKey,
+            subject,
+            from_email: from?.address || "",
+            to_email: to,
+            preview,
+            raw: {
+              ...(existing.raw || {}),
+              source: "pop3",
+              mailboxKey: mailbox.key,
+              mailboxEmail: mailbox.email,
+              providerUid: identity.canonicalProviderUid,
+              externalId: ref.uid,
+              messageId: parsed.messageId || null,
+              fromName: from?.name || null,
+              fromEmail: from?.address || null,
+              to: parsed.to?.value || [],
+              cc: parsed.cc?.value || [],
+              subject,
+              text: parsed.text || null,
+              html: parsed.html || null,
+              date: receivedAt,
+              headers: headersToObject(parsed.headers),
+              attachments: (parsed.attachments || []).map((attachment) => ({
+                filename: attachment.filename || null,
+                contentType: attachment.contentType || null,
+                size: attachment.size || 0
+              }))
+            },
+            updated_at: nowIso()
+          })
+          .eq("id", existing.id)
+          .eq("mailbox_id", mailbox.mailboxId)
+
+        skipped += 1
+        addInboundRowToIndex(identityIndex, { ...existing, provider_uid: identity.canonicalProviderUid, ingest_key: identity.ingestKey })
+        continue
+      }
+
+      const row = {
         id: makeEmailOSId(),
         mailbox_id: mailbox.mailboxId,
-        provider_uid: providerUid,
+        provider_uid: identity.canonicalProviderUid,
+        ingest_key: identity.ingestKey,
         subject,
         from_email: from?.address || "",
         to_email: to,
@@ -584,7 +843,7 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
           source: "pop3",
           mailboxKey: mailbox.key,
           mailboxEmail: mailbox.email,
-          providerUid,
+          providerUid: identity.canonicalProviderUid,
           messageId: parsed.messageId || null,
           fromName: from?.name || null,
           fromEmail: from?.address || null,
@@ -603,12 +862,14 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
         },
         created_at: receivedAt,
         updated_at: nowIso()
-      })
+      }
 
+      const { error } = await db.from("email_os_core_inbox").insert(row)
       if (error) throw error
       inserted++
+      addInboundRowToIndex(identityIndex, row)
       synced.push({
-        providerUid,
+        providerUid: identity.canonicalProviderUid,
         subject,
         fromEmail: from?.address || "",
         receivedAt
@@ -627,6 +888,8 @@ async function syncPop3Mailbox(mailbox: ResolvedEmailOSMailbox, limit: number): 
     inserted,
     updated: 0,
     skipped,
+    suppressed,
+    deduplicated,
     synced
   }
 }

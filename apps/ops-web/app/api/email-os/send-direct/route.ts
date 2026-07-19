@@ -4,9 +4,57 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
+import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
 
 function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
+}
+
+function decodeHtmlEntities(value: unknown) {
+  let output = String(value || "")
+
+  for (let pass = 0; pass < 3; pass += 1) {
+    const before = output
+    output = output
+      .replace(/&#x([0-9a-f]+);/gi, (_match, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+      .replace(/&#(\d+);/g, (_match, decimal) => String.fromCodePoint(Number.parseInt(decimal, 10)))
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&quot;/gi, '"')
+      .replace(/&apos;|&#39;/gi, "'")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/&amp;/gi, "&")
+    if (output === before) break
+  }
+
+  return output
+}
+
+function normalizeHtmlBody(value: unknown) {
+  const raw = clean(value)
+  if (!raw) return ""
+
+  const containsHtml = /<[a-z][\s\S]*>/i.test(raw)
+  const containsEncodedHtml = /&lt;\/?[a-z][\s\S]*?&gt;/i.test(raw) || /&amp;lt;\/?[a-z][\s\S]*?&amp;gt;/i.test(raw)
+  return !containsHtml && containsEncodedHtml ? decodeHtmlEntities(raw) : raw
+}
+
+function htmlToPlainText(value: unknown) {
+  return decodeHtmlEntities(
+    String(value || "")
+      .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
+      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+      .replace(/<br\s*\/?\s*>/gi, "\n")
+      .replace(/<\/(p|div|li|h[1-6]|blockquote|tr)>/gi, "\n")
+      .replace(/<li(?:\s[^>]*)?>/gi, "- ")
+      .replace(/<[^>]+>/g, " ")
+  )
+    .replace(/\r/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim()
 }
 
 function normalizeAttachmentsForSend(value: any) {
@@ -76,20 +124,30 @@ export async function POST(request: Request) {
     const ccEmail = clean(body.ccEmail || body.cc_email)
     const bccEmail = clean(body.bccEmail || body.bcc_email)
     const subject = clean(body.subject) || "(Sans objet)"
-    const messageBody = clean(body.body || body.message)
+    const messageHtml = normalizeHtmlBody(body.bodyHtml || body.body_html || body.body || body.html || body.message)
+    const messageText = clean(body.bodyText || body.body_text || body.text) || htmlToPlainText(messageHtml)
     const priority = clean(body.priority) || "normal"
     const attachments = normalizeAttachmentsForSend(body.attachments)
     const trackingEnabled = body.tracking !== false && body.tracking !== "false"
+    const sourceTemplateId = clean(body.templateId || body.template_id)
+    const sourceTemplateVersion = Number(body.templateVersion || body.template_version || 0)
     const trackingId = trackingEnabled ? makeEmailOSId() : ""
     const trackingBaseUrl = absoluteBaseUrl(request)
     const trackingUrl = trackingPixelUrl(trackingBaseUrl, trackingId)
-    const sendBody = trackingEnabled ? withTrackingPixel(messageBody, trackingBaseUrl, trackingId) : messageBody
+    const sendHtml = trackingEnabled ? withTrackingPixel(messageHtml, trackingBaseUrl, trackingId) : messageHtml
 
     if (!toEmail) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
     }
 
     db = createEmailOSCoreDb()
+    const operatorIdentity = await resolveEmailOSOperatorIdentity(db, user.id, {
+      id: user.id,
+      name: user.name || undefined,
+      email: user.email || undefined,
+      role: user.role || undefined
+    })
+    const operatorSnapshot = emailOSOperatorSnapshot(operatorIdentity)
 
     const mailboxScope = await resolveMailboxScopeForUser(user.id, requestedMailboxId || null)
     const access = await requireUnlockedMailboxAccess({
@@ -119,6 +177,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Permission denied for this mailbox action." }, { status: 403 })
     }
 
+    const externalIdentityMode = clean(body.externalOperatorIdentityMode || body.external_operator_identity_mode || process.env.EMAIL_OS_EXTERNAL_OPERATOR_IDENTITY_MODE).toLowerCase()
+    const exposeOperatorExternally = body.externalOperatorIdentity === true || body.external_operator_identity === true || externalIdentityMode === "operator"
+    const mailboxDisplayName = clean(access.mailbox?.name || resolvedFrom || "AngelCare")
+    const fromDisplayName = exposeOperatorExternally ? `${operatorIdentity.fullName} | ${mailboxDisplayName}` : mailboxDisplayName
+
     const now = nowIso()
     outboxId = makeEmailOSId()
 
@@ -129,11 +192,17 @@ export async function POST(request: Request) {
       cc_email: ccEmail || null,
       bcc_email: bccEmail || null,
       subject,
-      body: messageBody,
+      body: messageHtml,
       status: "sending",
       provider_message_id: null,
       tracking_id: trackingId || null,
       tracking_enabled: trackingEnabled,
+      sent_by_user_id: operatorSnapshot.userId,
+      sent_by_name: operatorSnapshot.name,
+      sent_by_email: operatorSnapshot.email,
+      sent_by_role: operatorSnapshot.role,
+      sent_by_department: operatorSnapshot.department,
+      sent_by_title: operatorSnapshot.title,
       first_opened_at: null,
       last_opened_at: null,
       open_count: 0,
@@ -148,13 +217,23 @@ export async function POST(request: Request) {
         route: "send-direct",
         transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
         attachmentCount: attachments.length,
+        content: {
+          bodyText: messageText,
+          bodyHtml: messageHtml,
+        },
+        operator: {
+          ...operatorSnapshot,
+          externalDisplayName: fromDisplayName,
+          externallyExposed: exposeOperatorExternally
+        },
+        template: sourceTemplateId ? { id: sourceTemplateId, version: sourceTemplateVersion || null } : null,
         tracking: {
           enabled: trackingEnabled,
           trackingId: trackingId || null,
           status: trackingEnabled ? "active_not_opened" : "off",
           url: trackingUrl || null,
           baseUrl: trackingBaseUrl || null,
-          bodyPreview: sendBody.slice(-500)
+          bodyPreview: sendHtml.slice(-500)
         },
       },
       queue_id: null,
@@ -165,12 +244,20 @@ export async function POST(request: Request) {
     const { identity, info } = await sendEmailOSDirect({
       mailboxId: mailboxScope.mailboxId,
       fromEmail: resolvedFrom,
+      fromDisplayName,
       toEmail,
       ccEmail,
       bccEmail,
       subject,
-      body: sendBody,
+      body: sendHtml,
+      bodyHtml: sendHtml,
+      bodyText: messageText,
       attachments,
+      headers: {
+        "X-AngelCare-Operator-ID": operatorIdentity.id,
+        "X-AngelCare-Operator-Name": operatorIdentity.fullName,
+        "X-AngelCare-Operator-Role": operatorIdentity.role
+      }
     })
 
     const sentAt = nowIso()
@@ -193,6 +280,10 @@ export async function POST(request: Request) {
           smtpUser: identity.smtp.user,
           transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
           attachmentCount: attachments.length,
+          content: {
+            bodyText: messageText,
+            bodyHtml: messageHtml,
+          },
           tracking: {
             enabled: trackingEnabled,
             trackingId: trackingId || null,
@@ -200,11 +291,66 @@ export async function POST(request: Request) {
           },
           accepted: info.accepted || [],
           rejected: info.rejected || [],
+          operator: {
+            ...operatorSnapshot,
+            externalDisplayName: fromDisplayName,
+            externallyExposed: exposeOperatorExternally
+          },
+          template: sourceTemplateId ? { id: sourceTemplateId, version: sourceTemplateVersion || null } : null,
         },
+        sent_by_user_id: operatorSnapshot.userId,
+        sent_by_name: operatorSnapshot.name,
+        sent_by_email: operatorSnapshot.email,
+        sent_by_role: operatorSnapshot.role,
+        sent_by_department: operatorSnapshot.department,
+        sent_by_title: operatorSnapshot.title,
         last_error: null,
       })
       .eq("id", outboxId)
       .then(() => null, () => null)
+
+    if (sourceTemplateId) {
+      const { data: templateUsageRow } = await db
+        .from("email_os_mailbox_templates")
+        .select("usage_count,current_version,name")
+        .eq("mailbox_id", mailboxScope.mailboxId)
+        .eq("id", sourceTemplateId)
+        .maybeSingle()
+        .then((result: any) => result, () => ({ data: null }))
+
+      if (templateUsageRow) {
+        await db.from("email_os_template_usage_events").insert({
+          id: makeEmailOSId(),
+          mailbox_id: mailboxScope.mailboxId,
+          template_id: sourceTemplateId,
+          version_number: sourceTemplateVersion || Number(templateUsageRow.current_version || 0) || null,
+          action: "sent",
+          outbox_id: outboxId,
+          actor_user_id: user.id,
+          created_at: sentAt
+        }).then(() => null, () => null)
+
+        await db.from("email_os_mailbox_templates").update({
+          usage_count: Number(templateUsageRow.usage_count || 0) + 1,
+          last_used_at: sentAt,
+          last_used_by_user_id: user.id,
+          updated_at: sentAt
+        }).eq("mailbox_id", mailboxScope.mailboxId).eq("id", sourceTemplateId).then(() => null, () => null)
+
+        await db.from("email_os_template_audit_events").insert({
+          id: makeEmailOSId(),
+          mailbox_id: mailboxScope.mailboxId,
+          template_id: sourceTemplateId,
+          template_name_snapshot: templateUsageRow.name || null,
+          event_type: "template_sent",
+          actor_user_id: user.id,
+          actor_name_snapshot: operatorIdentity.fullName,
+          version_number: sourceTemplateVersion || Number(templateUsageRow.current_version || 0) || null,
+          details: { outboxId, providerMessageId: info.messageId || null },
+          created_at: sentAt
+        }).then(() => null, () => null)
+      }
+    }
 
     await db.from("email_os_core_audit").insert({
       id: makeEmailOSId(),
@@ -226,7 +372,7 @@ export async function POST(request: Request) {
           status: trackingEnabled ? "active_not_opened" : "off",
           url: trackingUrl || null,
           baseUrl: trackingBaseUrl || null,
-          bodyPreview: sendBody.slice(-500)
+          bodyPreview: sendHtml.slice(-500)
         },
       },
       created_at: sentAt,
@@ -242,6 +388,9 @@ export async function POST(request: Request) {
         mailboxKey: identity.key,
         from: identity.smtp.from,
         attachmentCount: attachments.length,
+        templateId: sourceTemplateId || null,
+        templateVersion: sourceTemplateVersion || null,
+        operator: operatorIdentity,
       },
     })
   } catch (error) {
