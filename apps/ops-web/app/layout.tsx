@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import GlobalLocalStoragePersistenceBridge from "@/components/persistence/GlobalLocalStoragePersistenceBridge";
+import DesktopRuntimeBridge from "@/components/desktop/DesktopRuntimeBridge";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col">
         {children}
         <GlobalLocalStoragePersistenceBridge />
+        <DesktopRuntimeBridge />
       </body>
     </html>
   )

@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "ANGELCARE Revenue Command",
+  "short_name": "ANGELCARE Revenue",
+  "version": "0.6.0",
+  "description": "Private browser-side revenue and growth operating system for ANGELCARE.",
+  "minimum_chrome_version": "114",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "tabs",
+    "scripting",
+    "contextMenus",
+    "notifications",
+    "alarms"
+  ],
+  "host_permissions": [
+    "__SAAS_ORIGIN__/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "Open ANGELCARE Revenue Command",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "externally_connectable": {
+    "matches": [
+      "__SAAS_ORIGIN__/*"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "__SAAS_ORIGIN__/*"
+      ],
+      "js": [
+        "content/angelcare-saas.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "version_name": "0.6.0 Mega ZIP 6"
+}

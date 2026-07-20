@@ -99,6 +99,9 @@ export async function POST(request: Request) {
         const mailboxDisplayName = clean(payload.mailbox_name || payload.diagnostics?.resolvedMailboxLabel || fromEmail || "AngelCare")
         const externalIdentityMode = clean(process.env.EMAIL_OS_EXTERNAL_OPERATOR_IDENTITY_MODE).toLowerCase()
         const fromDisplayName = externalIdentityMode === "operator" && operatorName ? `${operatorName} | ${mailboxDisplayName}` : mailboxDisplayName
+        const senderIdentityId = clean(row.sender_identity_id || row.payload?.senderIdentityId || payload.sender_identity_id || payload.senderIdentityId)
+        const senderIdentityVersion = Number(row.sender_identity_version || row.payload?.senderIdentityVersion || payload.sender_identity_version || payload.senderIdentityVersion || 0)
+        const freezeSenderIdentity = row.freeze_sender_identity === true || row.payload?.freezeSenderIdentity === true || payload.freeze_sender_identity === true || payload.freezeSenderIdentity === true
 
         if (!mailboxId || !toEmail) {
           throw new Error("Scheduled queue payload is missing mailboxId or recipient.")
@@ -108,6 +111,9 @@ export async function POST(request: Request) {
           mailboxId,
           fromEmail,
           fromDisplayName,
+          senderIdentityId: senderIdentityId || null,
+          senderIdentityVersion: senderIdentityVersion || null,
+          freezeSenderIdentity,
           toEmail,
           ccEmail,
           bccEmail,
@@ -128,7 +134,11 @@ export async function POST(request: Request) {
           messageId: info.messageId || null,
           mailboxKey: identity.key,
           mailboxId: identity.mailboxId,
-          from: identity.smtp.from,
+          from: info.senderIdentity.fromAddress,
+          fromName: info.senderIdentity.fromName,
+          senderIdentityId: info.senderIdentity.identityId,
+          senderIdentityVersion: info.senderIdentity.version,
+          senderIdentitySource: info.senderIdentity.source,
           accepted: info.accepted || [],
           rejected: info.rejected || [],
           attachmentCount: attachments.length,
@@ -141,17 +151,16 @@ export async function POST(request: Request) {
           updated_at: sentAt,
           last_error: null,
           result,
+          sender_identity_id: info.senderIdentity.identityId,
+          sender_identity_version: info.senderIdentity.version,
           diagnostics: {
             ...(row.diagnostics || {}),
             transport: process.env.EMAIL_OS_BRIDGE_URL ? "angelcare-windows-email-bridge" : "central-send-mail",
             resolvedMailboxKey: identity.key,
             resolvedMailboxId: identity.mailboxId,
             attachmentCount: attachments.length,
-            content: {
-              bodyText: messageText,
-              bodyHtml: messageHtml,
-            },
-            tracking: { enabled: trackingEnabled, trackingId: trackingId || null }
+            tracking: { enabled: trackingEnabled, trackingId: trackingId || null },
+            senderIdentity: info.senderIdentity
           }
         }).eq("id", row.id).then(() => null, () => null)
 
@@ -164,7 +173,12 @@ export async function POST(request: Request) {
             sent_at: sentAt,
             updated_at: sentAt,
             mailbox_id: identity.mailboxId,
-            from_email: identity.smtp.from,
+            from_email: info.senderIdentity.fromAddress,
+            sender_identity_id: info.senderIdentity.identityId,
+            sender_identity_version: info.senderIdentity.version,
+            resolved_from_name: info.senderIdentity.fromName,
+            resolved_reply_to_name: info.senderIdentity.replyToName,
+            resolved_reply_to_address: info.senderIdentity.replyToAddress,
             last_error: null,
             diagnostics: {
               ...(outbox?.diagnostics || {}),
@@ -173,11 +187,8 @@ export async function POST(request: Request) {
               resolvedMailboxId: identity.mailboxId,
               smtpUser: identity.smtp.user,
               attachmentCount: attachments.length,
-              content: {
-                bodyText: messageText,
-                bodyHtml: messageHtml,
-              },
-              tracking: { enabled: trackingEnabled, trackingId: trackingId || null }
+              tracking: { enabled: trackingEnabled, trackingId: trackingId || null },
+              senderIdentity: info.senderIdentity
             }
           }).eq("id", outboxId).then(() => null, () => null)
         }

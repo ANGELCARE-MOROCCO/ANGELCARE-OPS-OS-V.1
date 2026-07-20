@@ -21,9 +21,6 @@
     "paths": {
       "@/*": [
         "./*"
-      ],
-      "@refferq/*": [
-        "./integrations/refferq/live/src/*"
       ]
     },
     "plugins": [
@@ -48,8 +45,6 @@
     "_old_*",
     "modules",
     "backups",
-    "backups/**",
-    "integrations/refferq/source",
-    "integrations/refferq/source/**"
+    "backups/**"
   ]
 }

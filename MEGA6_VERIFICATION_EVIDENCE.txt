@@ -1,0 +1,23 @@
+ANGELCARE Revenue Command Browser OS — Mega ZIP 6 Verification Evidence
+
+Dedicated Mega ZIP 6 verifier: 322/322 PASS
+Canonical contracts: 45/45 capabilities; 183 cumulative command mappings
+Mega ZIP 6: 61 governed commands; 17 persistence structures; 10 Director workspaces
+Extension TypeScript: PASS
+Extension build: PASS
+Manifest version: 0.6.0
+Extension distribution verification: PASS
+Contract mirrors: PASS
+Mega ZIP 1 regression: PASS
+Mega ZIP 2 regression: PASS
+Centralized user-profile integration: PASS
+Mega ZIP 3 regression: PASS
+Mega ZIP 4 regression: PASS
+Mega ZIP 4.5 regression: PASS
+Mega ZIP 5 regression: 196 PASS
+Root cumulative Browser OS verifier: PASS
+
+OPS web dependency caveat:
+The isolated package copy has no apps/ops-web/node_modules, so the full Next.js/React TypeScript command cannot resolve framework and dependency typings. No Mega ZIP 6-specific service diagnostics remain. Re-run the full OPS typecheck in the installed repository with dependencies available.
+
+Live production acceptance is not claimed until SQL, deployment, permission assignment and the live checklist have been completed in the target environment.

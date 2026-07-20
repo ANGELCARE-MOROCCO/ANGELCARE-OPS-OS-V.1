@@ -1,0 +1,32 @@
+{
+  "contractVersion": "AC-REVENUE-OS-CANONICAL-2026.07",
+  "releaseCode": "AC-REVENUE-OS-MZ01-FOUNDATION",
+  "moduleVersion": "1.0.0-phase1",
+  "executionMode": "shadow",
+  "externalActions": false,
+  "expectedWorkspaceCount": 12,
+  "requiredPermissions": [
+    "revenue_os.view",
+    "revenue_os.manage",
+    "revenue_os.objectives.manage",
+    "revenue_os.strategy.manage",
+    "revenue_os.commands.manage",
+    "revenue_os.approvals.manage",
+    "revenue_os.audit.view",
+    "revenue_os.settings.manage"
+  ],
+  "requiredRoutes": [
+    "/revenue-command-os",
+    "/revenue-command-os/revenue-objectives",
+    "/revenue-command-os/signals",
+    "/revenue-command-os/strategies",
+    "/revenue-command-os/intelligent-commands",
+    "/revenue-command-os/active-programs",
+    "/revenue-command-os/compiled-missions",
+    "/revenue-command-os/approvals",
+    "/revenue-command-os/exceptions",
+    "/revenue-command-os/memory-learning",
+    "/revenue-command-os/audit",
+    "/revenue-command-os/settings"
+  ]
+}

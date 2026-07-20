@@ -62,6 +62,7 @@ import AmbassadorDirectoryRoute from "./routes/AmbassadorDirectoryRoute"
 import AmbassadorRecruitmentRoute from "./routes/AmbassadorRecruitmentRoute"
 import AmbassadorMissionsRoute from "./routes/AmbassadorMissionsRoute"
 import AmbassadorLeadsRoute from "./routes/AmbassadorLeadsRoute"
+import AmbassadorPayoutsRoute from "./routes/AmbassadorPayoutsRoute"
 import type {
   Ambassador,
   AmbassadorAuditLog,
@@ -691,7 +692,7 @@ function RelatedList({ title, items, empty }: { title: string; items: string[]; 
 }
 
 export default function AmbassadorProductionWorkspace({ mode = "overview", id }: { mode?: AmbassadorWorkspaceMode; id?: string }) {
-  const config = pageConfig[mode] ?? pageConfig.overview
+  const config = pageConfig[mode] ?? (mode === "payouts" ? pageConfig.incentives : pageConfig.overview)
   const [snapshot, setSnapshot] = useState<AmbassadorWorkspaceSnapshot>(emptySnapshot)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -740,7 +741,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   }, [loading, id, mode, snapshot.ambassadors])
 
   const kpis = useMemo(() => deriveAmbassadorKpis(snapshot), [snapshot])
-  const PageIcon = config?.icon ?? Users
+  const PageIcon = config?.icon ?? Wallet ?? Users
   const regions = useMemo(() => Array.from(new Set(snapshot.ambassadors.map((item) => item.region).filter(Boolean) as string[])).sort(), [snapshot.ambassadors])
   const territories = useMemo(() => snapshot.territories.filter((item) => item.status !== "archived"), [snapshot.territories])
   const activeAmbassadors = useMemo(() => snapshot.ambassadors.filter((item) => item.status !== "archived"), [snapshot.ambassadors])
@@ -1299,6 +1300,26 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
       rows: filteredAmbassadors.map((item) => [item.full_name, item.email, item.phone, item.city, item.region, item.territory_name, item.status, item.lifecycle_stage, item.performance_score, item.kpi_score, `${item.missions_completed}/${item.missions_assigned}`, item.incentives_balance]),
     }
   }
+
+  // PAGE6_PAYOUTS_ENTERPRISE_START
+  if (mode === "payouts") {
+    return (
+      <div className="flex min-h-screen bg-slate-50 text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-slate-50">
+          <AmbassadorPayoutsRoute
+            snapshot={snapshot}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            onRefresh={() => void load(true)}
+          />
+        </main>
+      </div>
+    )
+  }
+  // PAGE6_PAYOUTS_ENTERPRISE_END
 
   // PAGE5_LEADS_ENTERPRISE_START
   if (mode === "leads") {

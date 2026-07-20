@@ -62,6 +62,7 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'Revenue Command',
     accent: '#a855f7',
     items: [
+      { label: 'Revenue Command OS', href: '/revenue-command-os', icon: '🧠', badge: 'P1', keywords: ['revenue', 'strategy', 'orchestration', 'intelligence'] },
       { label: 'Revenue Center', href: '/revenue-command-center', icon: '💎', badge: 'OS', keywords: ['revenue', 'command'] },
       { label: 'Tasks', href: '/revenue-command-center/tasks', icon: '✅', keywords: ['tasks', 'execution'] },
       { label: 'Pipeline', href: '/revenue-command-center/pipeline', icon: '🧬', keywords: ['pipeline'] },

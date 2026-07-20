@@ -1,2324 +1,7717 @@
-"use client";
+"use client"
 
 import {
+  useCallback,
+  useEffect,
   useMemo,
   useState,
-  type FormEvent,
   type ReactNode,
-} from "react";
+} from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
+  Activity,
   AlertTriangle,
+  Archive,
   BadgeCheck,
-  Calendar,
+  Banknote,
+  BookOpenCheck,
+  BriefcaseBusiness,
+  CalendarDays,
   CheckCircle2,
+  ChevronDown,
+  CircleDollarSign,
+  ClipboardCheck,
+  Clock3,
   Download,
-  Eye,
-  Filter,
+  Ellipsis,
+  FileCheck2,
+  FileText,
+  GraduationCap,
+  History,
+  KeyRound,
+  Languages,
+  LayoutDashboard,
+  Loader2,
   Mail,
-  MapPinned,
+  MapPin,
   MessageCircle,
-  MoreHorizontal,
+  NotebookPen,
+  PackageCheck,
   Phone,
   Plus,
   RefreshCw,
   Search,
+  Send,
   ShieldCheck,
-  Star,
+  Sparkles,
   Target,
+  Trash2,
   TrendingUp,
   Upload,
-  UserPlus,
+  UserCheck,
   Users,
-  Wallet,
+  WalletCards,
   X,
+  Zap,
   type LucideIcon,
-} from "lucide-react";
-import type { AmbassadorWorkspaceSnapshot } from "@/lib/market-os/ambassadors/types";
+} from "lucide-react"
+import type { Ambassador, AmbassadorWorkspaceSnapshot } from "@/lib/market-os/ambassadors/types"
 
-type AnyRecord = Record<string, any>;
+type Row = Record<string, any>
 
-type DirectoryProps = {
-  snapshot: AmbassadorWorkspaceSnapshot;
-  kpis: Record<string, number>;
-  loading: boolean;
-  refreshing: boolean;
-  error?: string | null;
-  success?: string | null;
-  diagnostics?: AnyRecord[];
-  query: string;
-  statusFilter: string;
-  regionFilter: string;
-  territoryFilter: string;
-  sortKey: string;
-  regions: string[];
-  territories: AnyRecord[];
-  filteredAmbassadors: AnyRecord[];
-  onQueryChange: (value: string) => void;
-  onStatusFilterChange: (value: string) => void;
-  onRegionFilterChange: (value: string) => void;
-  onTerritoryFilterChange: (value: string) => void;
-  onSortKeyChange: (value: string) => void;
-  onRefresh: () => void;
-  onAddAmbassador: () => void;
-  onAssignTerritory: (ambassador?: AnyRecord | null) => void;
-  onCreateMission: (ambassador?: AnyRecord | null) => void;
-  onExport: () => void;
-  onOpenProfile: (ambassador: AnyRecord) => void;
-  onEditAmbassador: (ambassador: AnyRecord) => void;
-  onArchiveAmbassador: (ambassador: AnyRecord) => void;
-};
-
-const statusOptions = ["all", "active", "onboarding", "inactive", "suspended", "at_risk"];
-const levelOptions = ["Tous", "Platine", "Or", "Argent", "Bronze"];
-
-function cn(...items: Array<string | false | null | undefined>) {
-  return items.filter(Boolean).join(" ");
+type AmbassadorDirectoryRouteProps = {
+  snapshot: AmbassadorWorkspaceSnapshot
+  kpis: Record<string, number>
+  loading: boolean
+  refreshing: boolean
+  error?: string | null
+  success?: string | null
+  diagnostics?: Row[]
+  query: string
+  statusFilter: string
+  regionFilter: string
+  territoryFilter: string
+  sortKey: string
+  regions: string[]
+  territories: Ambassador[]
+  filteredAmbassadors: Ambassador[]
+  onQueryChange: (value: string) => void
+  onStatusFilterChange: (value: string) => void
+  onRegionFilterChange: (value: string) => void
+  onTerritoryFilterChange: (value: string) => void
+  onSortKeyChange: (value: string) => void
+  onRefresh: () => void
+  onAddAmbassador: () => void
+  onAssignTerritory: (ambassador: Ambassador | null) => void
+  onCreateMission: (ambassador: Ambassador | null) => void
+  onExport: () => void
+  onOpenProfile: (ambassador: Ambassador) => void
+  onEditAmbassador: (ambassador: Ambassador) => void
+  onArchiveAmbassador: (ambassador: Ambassador) => void
 }
 
-function numberValue(value: unknown, fallback = 0) {
-  const numeric = Number(value ?? fallback);
-  return Number.isFinite(numeric) ? numeric : fallback;
+type DossierTab =
+  | "overview"
+  | "missions"
+  | "leads"
+  | "incentives"
+  | "training"
+  | "compliance"
+  | "documents"
+  | "history"
+
+type DrawerMode = "details" | "activities"
+
+type ModalKind =
+  | null
+  | "mission"
+  | "lead"
+  | "note"
+  | "archive"
+  | "training"
+  | "document"
+  | "score"
+  | "more"
+
+type PeriodFilter = "mtd" | "30d" | "90d" | "all"
+
+interface DocumentControl {
+  id: string
+  key: string
+  label: string
+  required: boolean
+  status:
+    | "missing"
+    | "requested"
+    | "uploaded"
+    | "review"
+    | "validated"
+    | "rejected"
+    | "expired"
+  reference: string
+  reviewer: string
+  note: string
+  expiresAt: string
+  updatedAt: string
 }
 
-function formatNumber(value: unknown) {
-  return new Intl.NumberFormat("fr-MA").format(numberValue(value));
+interface InternalNote {
+  id: string
+  category: string
+  priority: "low" | "normal" | "high" | "critical"
+  visibility: "management" | "operations" | "finance" | "all"
+  text: string
+  owner: string
+  followUpDate: string
+  linkedType: string
+  linkedId: string
+  createdAt: string
+  createdBy: string
 }
 
-function formatMoney(value: unknown, currency = "MAD") {
-  const amount = numberValue(value);
-  return `${new Intl.NumberFormat("fr-MA").format(amount)} ${currency || "MAD"}`;
+interface DossierConfiguration {
+  version: number
+
+  preferredName: string
+  whatsapp: string
+  region: string
+  zone: string
+  address: string
+  languages: string[]
+  preferredChannel: string
+
+  manager: string
+  status:
+    | "active"
+    | "onboarding"
+    | "inactive"
+    | "suspended"
+    | "archived"
+  activationDate: string
+
+  contractType: string
+  contractStartDate: string
+  contractEndDate: string
+  autoRenew: boolean
+
+  qualityScore: number
+  leadGoal: number
+  qualifiedLeadGoal: number
+  conversionGoal: number
+  fieldVisitGoal: number
+  partnerMeetingGoal: number
+  revenueGoal: number
+
+  territoryId: string
+  territoryName: string
+  coverageMode: string
+  radiusKm: number
+
+  availability: string
+  transportMode: string
+  services: string[]
+  channels: string[]
+
+  commissionRate: 10
+  commissionLocked: true
+  commissionAccepted: boolean
+
+  payoutCycle: string
+  paymentMethod: string
+  paymentReference: string
+  paymentVerified: boolean
+
+  portalAccessStatus: string
+  crmAccessStatus: string
+  starterKitStatus: string
+
+  documents: DocumentControl[]
+  notes: InternalNote[]
+
+  archive: {
+    archived: boolean
+    reason: string
+    effectiveDate: string
+    managerApproval: string
+    territoryReleaseRequested: boolean
+    accessSuspensionRequested: boolean
+    leadReassignmentTarget: string
+    archivedAt: string
+  }
+
+  lastSavedAt: string
 }
 
-function initials(name?: string | null) {
-  return String(name || "A")
-    .split(" ")
+interface AmbassadorDossier {
+  id: string
+  candidateId: string
+  onboardingId: string
+
+  name: string
+  phone: string
+  email: string
+  city: string
+  photoUrl: string
+
+  reference: string
+  joinedAt: string
+  createdAt: string
+  updatedAt: string
+
+  row: Row
+  candidate: Row
+  onboarding: Row
+  metadata: Row
+  configuration: DossierConfiguration
+}
+
+interface TimelineEvent {
+  id: string
+  type:
+    | "mission"
+    | "lead"
+    | "conversion"
+    | "payment"
+    | "training"
+    | "document"
+    | "note"
+    | "audit"
+  title: string
+  detail: string
+  actor: string
+  createdAt: string
+}
+
+interface ScoreBreakdown {
+  global: number
+  quality: number
+  performance: number
+  compliance: number
+  training: number
+  activity: number
+  territory: number
+  blockers: string[]
+}
+
+const SERVICES = [
+  "Home Service",
+  "Kindergarten & Preschool",
+  "Academy",
+  "Hospitality Kids Friendly",
+  "Corporates Liner",
+]
+
+const CHANNELS = [
+  "WhatsApp",
+  "Appel",
+  "Terrain",
+  "Partenaires",
+  "Événementiel",
+  "B2B direct",
+]
+
+const DOCUMENT_BLUEPRINT: Array<
+  Pick<DocumentControl, "key" | "label" | "required">
+> = [
+  {
+    key: "identity",
+    label: "CIN / passeport",
+    required: true,
+  },
+  {
+    key: "agreement",
+    label: "Contrat ambassadeur",
+    required: true,
+  },
+  {
+    key: "commission",
+    label: "Acceptation commission fixe 10%",
+    required: true,
+  },
+  {
+    key: "confidentiality",
+    label: "Confidentialité & protection des données",
+    required: true,
+  },
+  {
+    key: "payment",
+    label: "RIB / preuve bénéficiaire",
+    required: true,
+  },
+  {
+    key: "address",
+    label: "Justificatif d’adresse",
+    required: false,
+  },
+  {
+    key: "profile_photo",
+    label: "Photo officielle",
+    required: false,
+  },
+]
+
+const TABS: Array<{
+  key: DossierTab
+  label: string
+  icon: LucideIcon
+}> = [
+  {
+    key: "overview",
+    label: "Vue 360°",
+    icon: LayoutDashboard,
+  },
+  {
+    key: "missions",
+    label: "Missions",
+    icon: BriefcaseBusiness,
+  },
+  {
+    key: "leads",
+    label: "Leads & conversions",
+    icon: Target,
+  },
+  {
+    key: "incentives",
+    label: "Incentives & paiements",
+    icon: WalletCards,
+  },
+  {
+    key: "training",
+    label: "Formations",
+    icon: GraduationCap,
+  },
+  {
+    key: "compliance",
+    label: "Conformité",
+    icon: ShieldCheck,
+  },
+  {
+    key: "documents",
+    label: "Documents",
+    icon: FileText,
+  },
+  {
+    key: "history",
+    label: "Historique",
+    icon: History,
+  },
+]
+
+function asRecord(value: unknown): Row {
+  return value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+    ? (value as Row)
+    : {}
+}
+
+function asRows(value: unknown): Row[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (item): item is Row =>
+          Boolean(item) &&
+          typeof item === "object" &&
+          !Array.isArray(item),
+      )
+    : []
+}
+
+function text(value: unknown): string {
+  return String(value ?? "").trim()
+}
+
+function numberValue(value: unknown, fallback = 0): number {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
+function boolValue(value: unknown): boolean {
+  if (typeof value === "boolean") return value
+  if (typeof value === "number") return value === 1
+
+  return [
+    "true",
+    "1",
+    "yes",
+    "oui",
+    "validated",
+    "approved",
+    "completed",
+  ].includes(text(value).toLowerCase())
+}
+
+function idOf(row?: Row): string {
+  return text(row?.id || row?.uuid || row?.record_id)
+}
+
+function metadataOf(row?: Row): Row {
+  return {
+    ...asRecord(row?.payload),
+    ...asRecord(row?.metadata),
+  }
+}
+
+function extractRows(payload: unknown, keys: string[]): Row[] {
+  if (Array.isArray(payload)) {
+    return asRows(payload)
+  }
+
+  const root = asRecord(payload)
+  const data = asRecord(root.data)
+
+  for (const key of keys) {
+    const direct = asRows(root[key])
+    if (direct.length) return direct
+
+    const nested = asRows(data[key])
+    if (nested.length) return nested
+  }
+
+  for (const candidate of [
+    root.records,
+    root.items,
+    data.records,
+    data.items,
+  ]) {
+    const collection = asRows(candidate)
+    if (collection.length) return collection
+  }
+
+  return []
+}
+
+function extractCreatedRow(payload: unknown): Row {
+  const root = asRecord(payload)
+  const data = asRecord(root.data)
+
+  for (const candidate of [
+    data.record,
+    data.item,
+    data.ambassador,
+    data.mission,
+    data.lead,
+    data.note,
+    data.document,
+    root.record,
+    root.item,
+    root.ambassador,
+    root.mission,
+    root.lead,
+    root.note,
+    root.document,
+    root.data,
+    root,
+  ]) {
+    const row = asRecord(candidate)
+    if (idOf(row)) return row
+  }
+
+  return root
+}
+
+function displayName(row?: Row): string {
+  return (
+    text(
+      row?.full_name ||
+        row?.display_name ||
+        row?.candidate_name ||
+        row?.name ||
+        row?.title,
+    ) || "Ambassadeur sans nom"
+  )
+}
+
+function contactKey(row?: Row): string {
+  const email = text(row?.email).toLowerCase()
+  if (email) return `email:${email}`
+
+  const phone = text(
+    row?.phone || row?.telephone || row?.whatsapp,
+  ).replace(/\D/g, "")
+
+  if (phone) return `phone:${phone}`
+
+  return `${displayName(row).toLowerCase()}|${text(
+    row?.city || row?.main_city,
+  ).toLowerCase()}`
+}
+
+function dateValue(value: unknown): string {
+  const raw = text(value)
+  if (!raw) return ""
+
+  const parsed = new Date(raw)
+
+  return Number.isNaN(parsed.getTime())
+    ? raw.slice(0, 10)
+    : parsed.toISOString().slice(0, 10)
+}
+
+function nowIso(): string {
+  return new Date().toISOString()
+}
+
+function uid(prefix: string): string {
+  return `${prefix}-${Date.now().toString(36)}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}`
+}
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
     .filter(Boolean)
-    .map((part) => part[0])
     .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
     .join("")
-    .toUpperCase();
 }
 
-function normalizePhone(phone?: string | null) {
-  return String(phone || "").replace(/[^0-9+]/g, "");
+function normalizeStatus(
+  value: unknown,
+): DossierConfiguration["status"] {
+  const status = text(value).toLowerCase()
+
+  if (status.includes("archive")) return "archived"
+  if (status.includes("suspend")) return "suspended"
+  if (
+    status.includes("inactive") ||
+    status.includes("inactif")
+  ) {
+    return "inactive"
+  }
+
+  if (
+    status.includes("onboarding") ||
+    status.includes("integration")
+  ) {
+    return "onboarding"
+  }
+
+  return "active"
 }
 
-function dateLabel(value?: string | null) {
-  if (!value) return "Non renseigné";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
+function statusLabel(
+  status: DossierConfiguration["status"],
+): string {
+  return {
+    active: "Actif",
+    onboarding: "En onboarding",
+    inactive: "Inactif",
+    suspended: "Suspendu",
+    archived: "Archivé",
+  }[status]
 }
 
-function ambassadorLevel(item: AnyRecord) {
-  const score = numberValue(item.performance_score ?? item.quality_score ?? item.score_quality ?? 0);
-  const existing = item.level || item.tier || item.rank;
-  if (existing) return String(existing);
-  if (score >= 90) return "Platine";
-  if (score >= 80) return "Or";
-  if (score >= 60) return "Argent";
-  return "Bronze";
+function statusTone(
+  status: DossierConfiguration["status"],
+): string {
+  return {
+    active:
+      "border-emerald-200 bg-emerald-50 text-emerald-800",
+    onboarding:
+      "border-violet-200 bg-violet-50 text-violet-800",
+    inactive:
+      "border-rose-200 bg-rose-50 text-rose-800",
+    suspended:
+      "border-amber-200 bg-amber-50 text-amber-800",
+    archived:
+      "border-slate-300 bg-slate-100 text-slate-700",
+  }[status]
 }
 
-function scoreTone(score: number) {
-  if (score >= 80) return "bg-emerald-500";
-  if (score >= 55) return "bg-amber-500";
-  return "bg-rose-500";
+function withinPeriod(row: Row, period: PeriodFilter): boolean {
+  if (period === "all") return true
+
+  const raw = text(
+    row.created_at ||
+      row.converted_at ||
+      row.completed_at ||
+      row.paid_at ||
+      row.updated_at ||
+      row.date,
+  )
+
+  if (!raw) return true
+
+  const value = new Date(raw)
+  if (Number.isNaN(value.getTime())) return true
+
+  const now = new Date()
+
+  if (period === "mtd") {
+    return (
+      value.getFullYear() === now.getFullYear() &&
+      value.getMonth() === now.getMonth()
+    )
+  }
+
+  const days = period === "30d" ? 30 : 90
+  const minimum = new Date(
+    now.getTime() - days * 24 * 60 * 60 * 1000,
+  )
+
+  return value >= minimum
 }
 
-function statusTone(status?: string | null) {
-  const value = String(status || "").toLowerCase();
-  if (["active", "approved", "validated", "paid"].includes(value)) return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  if (["onboarding", "pending", "tracking", "assigned"].includes(value)) return "border-violet-200 bg-violet-50 text-violet-700";
-  if (["inactive", "at_risk", "suspended", "blocked"].includes(value)) return "border-rose-200 bg-rose-50 text-rose-700";
-  return "border-slate-200 bg-slate-50 text-slate-700";
+function isCompletedStatus(value: unknown): boolean {
+  const status = text(value).toLowerCase()
+
+  return [
+    "completed",
+    "complete",
+    "done",
+    "closed",
+    "terminated",
+    "terminée",
+    "termine",
+    "validated",
+    "paid",
+    "payé",
+  ].some((candidate) => status.includes(candidate))
 }
 
-function StatusBadge({ status }: { status?: string | null }) {
-  const label = String(status || "actif").replaceAll("_", " ");
-  return <span className={cn("inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-black capitalize", statusTone(status))}>{label}</span>;
+function isOpenStatus(value: unknown): boolean {
+  const status = text(value).toLowerCase()
+
+  return ![
+    "completed",
+    "done",
+    "closed",
+    "cancelled",
+    "canceled",
+    "archived",
+    "paid",
+    "rejected",
+  ].some((candidate) => status.includes(candidate))
 }
 
-function ActionButton({
+function defaultDocuments(): DocumentControl[] {
+  return DOCUMENT_BLUEPRINT.map((document) => ({
+    id: uid("document"),
+    ...document,
+    status: "missing",
+    reference: "",
+    reviewer: "",
+    note: "",
+    expiresAt: "",
+    updatedAt: "",
+  }))
+}
+
+function mergeDocuments(
+  stored: DocumentControl[],
+): DocumentControl[] {
+  const base = defaultDocuments()
+  const map = new Map(stored.map((item) => [item.key, item]))
+
+  return base.map((item) => ({
+    ...item,
+    ...(map.get(item.key) || {}),
+  }))
+}
+
+function defaultConfiguration(): DossierConfiguration {
+  return {
+    version: 2,
+
+    preferredName: "",
+    whatsapp: "",
+    region: "",
+    zone: "",
+    address: "",
+    languages: [],
+    preferredChannel: "WhatsApp",
+
+    manager: "",
+    status: "active",
+    activationDate: "",
+
+    contractType: "Ambassadeur terrain",
+    contractStartDate: "",
+    contractEndDate: "",
+    autoRenew: false,
+
+    qualityScore: 0,
+    leadGoal: 20,
+    qualifiedLeadGoal: 10,
+    conversionGoal: 5,
+    fieldVisitGoal: 4,
+    partnerMeetingGoal: 2,
+    revenueGoal: 0,
+
+    territoryId: "",
+    territoryName: "",
+    coverageMode: "Partagé",
+    radiusKm: 5,
+
+    availability: "Disponible",
+    transportMode: "",
+    services: [],
+    channels: [],
+
+    commissionRate: 10,
+    commissionLocked: true,
+    commissionAccepted: false,
+
+    payoutCycle: "Mensuel",
+    paymentMethod: "Virement bancaire",
+    paymentReference: "",
+    paymentVerified: false,
+
+    portalAccessStatus: "Non préparé",
+    crmAccessStatus: "Non préparé",
+    starterKitStatus: "Non préparé",
+
+    documents: defaultDocuments(),
+    notes: [],
+
+    archive: {
+      archived: false,
+      reason: "",
+      effectiveDate: "",
+      managerApproval: "",
+      territoryReleaseRequested: false,
+      accessSuspensionRequested: false,
+      leadReassignmentTarget: "",
+      archivedAt: "",
+    },
+
+    lastSavedAt: "",
+  }
+}
+
+function parseConfiguration(
+  metadata: Row,
+  ambassador: Row,
+): DossierConfiguration {
+  const base = defaultConfiguration()
+
+  const stored = asRecord(
+    metadata.dossier_os ||
+      metadata.ambassador_dossier ||
+      metadata.directory_dossier,
+  )
+
+  const activation = asRecord(
+    metadata.activation_os || metadata.activation,
+  )
+
+  const storedDocuments = asRows(
+    stored.documents || activation.documents,
+  ) as DocumentControl[]
+
+  const storedNotes = asRows(
+    stored.notes || metadata.notes,
+  ) as InternalNote[]
+
+  return {
+    ...base,
+    ...stored,
+
+    version: 2,
+
+    preferredName:
+      text(stored.preferredName) ||
+      text(ambassador.preferred_name),
+
+    whatsapp:
+      text(stored.whatsapp) ||
+      text(ambassador.whatsapp),
+
+    region:
+      text(stored.region) ||
+      text(ambassador.region),
+
+    zone:
+      text(stored.zone) ||
+      text(ambassador.zone || ambassador.district),
+
+    address:
+      text(stored.address) ||
+      text(ambassador.address),
+
+    languages: Array.isArray(stored.languages)
+      ? stored.languages.map(text).filter(Boolean)
+      : Array.isArray(ambassador.languages)
+        ? ambassador.languages.map(text).filter(Boolean)
+        : text(ambassador.languages)
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+
+    manager:
+      text(stored.manager) ||
+      text(ambassador.manager_name) ||
+      text(activation.manager_name),
+
+    status: normalizeStatus(
+      stored.status || ambassador.status,
+    ),
+
+    activationDate:
+      dateValue(stored.activationDate) ||
+      dateValue(
+        ambassador.joined_at ||
+          ambassador.activation_date ||
+          activation.desired_activation_date,
+      ),
+
+    contractStartDate:
+      dateValue(stored.contractStartDate),
+
+    contractEndDate:
+      dateValue(stored.contractEndDate),
+
+    qualityScore: Math.max(
+      0,
+      Math.min(
+        100,
+        numberValue(
+          stored.qualityScore ||
+            ambassador.quality_score ||
+            ambassador.score,
+        ),
+      ),
+    ),
+
+    territoryId:
+      text(stored.territoryId) ||
+      text(ambassador.territory_id) ||
+      text(activation.territory_id),
+
+    territoryName:
+      text(stored.territoryName) ||
+      text(ambassador.territory_name) ||
+      text(ambassador.territory) ||
+      text(activation.territory_name),
+
+    commissionRate: 10,
+    commissionLocked: true,
+
+    commissionAccepted:
+      boolValue(stored.commissionAccepted) ||
+      boolValue(activation.commission_accepted),
+
+    paymentVerified:
+      boolValue(stored.paymentVerified) ||
+      boolValue(activation.payment_verified),
+
+    paymentReference:
+      text(stored.paymentReference) ||
+      text(activation.payment_reference),
+
+    services: Array.isArray(stored.services)
+      ? stored.services.map(text).filter(Boolean)
+      : [],
+
+    channels: Array.isArray(stored.channels)
+      ? stored.channels.map(text).filter(Boolean)
+      : [],
+
+    documents: mergeDocuments(storedDocuments),
+    notes: storedNotes,
+
+    archive: {
+      ...base.archive,
+      ...asRecord(stored.archive),
+    },
+  }
+}
+
+function cloneConfiguration(
+  configuration: DossierConfiguration,
+): DossierConfiguration {
+  return JSON.parse(
+    JSON.stringify(configuration),
+  ) as DossierConfiguration
+}
+
+function rowBelongsToAmbassador(
+  row: Row,
+  ambassadorId: string,
+  candidateId: string,
+): boolean {
+  const metadata = metadataOf(row)
+
+  const ids = [
+    row.ambassador_id,
+    row.assigned_ambassador_id,
+    row.primary_ambassador_id,
+    row.owner_ambassador_id,
+    row.source_ambassador_id,
+    row.candidate_id,
+    metadata.ambassador_id,
+    metadata.assigned_ambassador_id,
+    metadata.primary_ambassador_id,
+    metadata.candidate_id,
+  ]
+    .map(text)
+    .filter(Boolean)
+
+  const arrays = [
+    row.assigned_ambassador_ids,
+    row.ambassador_ids,
+    metadata.assigned_ambassador_ids,
+    metadata.ambassador_ids,
+  ]
+    .flatMap((value) =>
+      Array.isArray(value) ? value.map(text) : [],
+    )
+    .filter(Boolean)
+
+  return (
+    ids.includes(ambassadorId) ||
+    arrays.includes(ambassadorId) ||
+    Boolean(candidateId && ids.includes(candidateId))
+  )
+}
+
+function amountOf(row: Row): number {
+  return numberValue(
+    row.amount ||
+      row.amount_due ||
+      row.validated_amount ||
+      row.total ||
+      row.value ||
+      row.revenue ||
+      row.incentive_amount ||
+      row.commission_amount,
+  )
+}
+
+function buildTimeline(
+  missions: Row[],
+  leads: Row[],
+  conversions: Row[],
+  incentives: Row[],
+  training: Row[],
+  documents: Row[],
+  audit: Row[],
+  notes: InternalNote[],
+): TimelineEvent[] {
+  const events: TimelineEvent[] = []
+
+  missions.forEach((row) => {
+    events.push({
+      id: `mission-${idOf(row) || uid("mission-view")}`,
+      type: "mission",
+      title:
+        text(row.title || row.name) ||
+        "Mission mise à jour",
+      detail: [
+        text(row.status),
+        text(row.city),
+        text(row.territory_name),
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      actor:
+        text(row.updated_by || row.created_by) ||
+        "AngelCare OPS",
+      createdAt:
+        text(row.updated_at || row.created_at) || nowIso(),
+    })
+  })
+
+  leads.forEach((row) => {
+    events.push({
+      id: `lead-${idOf(row) || uid("lead-view")}`,
+      type: "lead",
+      title:
+        text(row.lead_name || row.contact_name || row.name) ||
+        "Lead créé",
+      detail: [
+        text(row.status),
+        text(row.source),
+        text(row.city),
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      actor:
+        text(row.updated_by || row.created_by) ||
+        "Ambassador OS",
+      createdAt:
+        text(row.updated_at || row.created_at) || nowIso(),
+    })
+  })
+
+  conversions.forEach((row) => {
+    events.push({
+      id: `conversion-${idOf(row) || uid("conversion-view")}`,
+      type: "conversion",
+      title:
+        text(row.title || row.decision) ||
+        "Conversion enregistrée",
+      detail: [
+        text(row.status),
+        amountOf(row) ? `${amountOf(row)} Dh` : "",
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      actor:
+        text(row.validated_by || row.updated_by) ||
+        "AngelCare OPS",
+      createdAt:
+        text(
+          row.converted_at ||
+            row.validated_at ||
+            row.updated_at ||
+            row.created_at,
+        ) || nowIso(),
+    })
+  })
+
+  incentives.forEach((row) => {
+    events.push({
+      id: `payment-${idOf(row) || uid("payment-view")}`,
+      type: "payment",
+      title:
+        text(row.title || row.type) ||
+        "Incentive enregistré",
+      detail: [
+        text(row.status),
+        amountOf(row) ? `${amountOf(row)} Dh` : "",
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      actor:
+        text(row.approved_by || row.updated_by) ||
+        "Finance OPS",
+      createdAt:
+        text(
+          row.paid_at ||
+            row.approved_at ||
+            row.updated_at ||
+            row.created_at,
+        ) || nowIso(),
+    })
+  })
+
+  training.forEach((row) => {
+    events.push({
+      id: `training-${idOf(row) || uid("training-view")}`,
+      type: "training",
+      title:
+        text(row.title || row.module_name) ||
+        "Formation mise à jour",
+      detail: [
+        text(row.status),
+        numberValue(row.score)
+          ? `Score ${numberValue(row.score)}%`
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      actor:
+        text(row.trainer || row.updated_by) ||
+        "Academy",
+      createdAt:
+        text(
+          row.completed_at ||
+            row.updated_at ||
+            row.created_at,
+        ) || nowIso(),
+    })
+  })
+
+  documents.forEach((row) => {
+    events.push({
+      id: `document-${idOf(row) || uid("document-view")}`,
+      type: "document",
+      title:
+        text(row.title || row.document_type || row.name) ||
+        "Document mis à jour",
+      detail: [
+        text(row.status),
+        text(row.reviewer),
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      actor:
+        text(row.reviewer || row.updated_by) ||
+        "Conformité",
+      createdAt:
+        text(row.updated_at || row.created_at) || nowIso(),
+    })
+  })
+
+  audit.forEach((row) => {
+    events.push({
+      id: `audit-${idOf(row) || uid("audit-view")}`,
+      type: "audit",
+      title:
+        text(row.action || row.event_type) ||
+        "Événement audit",
+      detail:
+        text(
+          row.description ||
+            row.detail ||
+            asRecord(row.details).message,
+        ) || "Mise à jour du dossier",
+      actor:
+        text(row.actor || row.user_name) ||
+        "AngelCare OPS",
+      createdAt:
+        text(row.created_at || row.updated_at) || nowIso(),
+    })
+  })
+
+  notes.forEach((note) => {
+    events.push({
+      id: `note-${note.id}`,
+      type: "note",
+      title: note.category || "Note interne",
+      detail: note.text,
+      actor: note.createdBy || note.owner || "AngelCare OPS",
+      createdAt: note.createdAt || nowIso(),
+    })
+  })
+
+  return events.sort(
+    (first, second) =>
+      new Date(second.createdAt || 0).getTime() -
+      new Date(first.createdAt || 0).getTime(),
+  )
+}
+
+async function apiRequest(
+  url: string,
+  init?: RequestInit,
+): Promise<unknown> {
+  const response = await fetch(url, {
+    ...init,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers || {}),
+    },
+  })
+
+  const payload = await response.json().catch(() => ({}))
+
+  if (!response.ok || asRecord(payload).ok === false) {
+    throw new Error(
+      text(
+        asRecord(payload).error ||
+          asRecord(payload).message,
+      ) || `HTTP ${response.status}`,
+    )
+  }
+
+  return payload
+}
+
+function Card({
   children,
-  icon: Icon,
-  variant = "secondary",
-  onClick,
-  disabled,
-  title,
+  className = "",
 }: {
-  children: ReactNode;
-  icon?: LucideIcon;
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  onClick?: () => void;
-  disabled?: boolean;
-  title?: string;
+  children: ReactNode
+  className?: string
 }) {
+  return (
+    <section
+      className={`rounded-[22px] border border-slate-200 bg-white shadow-[0_10px_34px_rgba(15,23,42,0.055)] ${className}`}
+    >
+      {children}
+    </section>
+  )
+}
+
+function Field({
+  label,
+  required = false,
+  helper,
+  children,
+}: {
+  label: string
+  required?: boolean
+  helper?: string
+  children: ReactNode
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.15em] text-slate-700">
+        {label}
+        {required ? " *" : ""}
+      </span>
+
+      {children}
+
+      {helper ? (
+        <span className="mt-1 block text-[10px] font-semibold leading-5 text-slate-500">
+          {helper}
+        </span>
+      ) : null}
+    </label>
+  )
+}
+
+function Progress({
+  value,
+  tone = "blue",
+}: {
+  value: number
+  tone?: "blue" | "green" | "amber" | "red" | "violet"
+}) {
+  const safe = Math.max(0, Math.min(100, value))
+
+  const toneClass = {
+    blue: "bg-blue-600",
+    green: "bg-emerald-600",
+    amber: "bg-amber-500",
+    red: "bg-rose-600",
+    violet: "bg-violet-600",
+  }[tone]
+
+  return (
+    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+      <div
+        className={`h-full rounded-full transition-all ${toneClass}`}
+        style={{ width: `${safe}%` }}
+      />
+    </div>
+  )
+}
+
+function ModalShell({
+  title,
+  subtitle,
+  icon: Icon,
+  children,
+  footer,
+  onClose,
+  width = "max-w-6xl",
+}: {
+  title: string
+  subtitle: string
+  icon: LucideIcon
+  children: ReactNode
+  footer: ReactNode
+  onClose: () => void
+  width?: string
+}) {
+  return (
+    <div className="fixed inset-0 z-[170] flex items-start justify-center overflow-y-auto bg-slate-950/45 px-4 pb-10 pt-[92px] backdrop-blur-[3px]">
+      <div
+        className={`flex max-h-[calc(100vh-112px)] w-full flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-[#f5f7fb] shadow-[0_35px_110px_rgba(15,23,42,0.38)] ${width}`}
+      >
+        <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5">
+          <div className="flex min-w-0 items-start gap-4">
+            <span className="rounded-2xl border border-blue-100 bg-blue-50 p-3 text-blue-700">
+              <Icon className="h-5 w-5" />
+            </span>
+
+            <div className="min-w-0">
+              <h2 className="text-xl font-black text-slate-950">
+                {title}
+              </h2>
+
+              <p className="mt-1 max-w-4xl text-sm font-semibold leading-6 text-slate-600">
+                {subtitle}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </header>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-5 md:p-6">
+          {children}
+        </div>
+
+        <footer className="border-t border-slate-200 bg-white px-6 py-4">
+          {footer}
+        </footer>
+      </div>
+    </div>
+  )
+}
+
+function KpiCard({
+  label,
+  value,
+  helper,
+  icon: Icon,
+  tone,
+  onClick,
+}: {
+  label: string
+  value: string | number
+  helper: string
+  icon: LucideIcon
+  tone: "blue" | "green" | "amber" | "violet" | "cyan"
+  onClick: () => void
+}) {
+  const tones = {
+    blue: "bg-blue-50 text-blue-700",
+    green: "bg-emerald-50 text-emerald-700",
+    amber: "bg-amber-50 text-amber-700",
+    violet: "bg-violet-50 text-violet-700",
+    cyan: "bg-cyan-50 text-cyan-700",
+  }
+
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={cn(
-        "inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50",
-        variant === "primary" && "bg-blue-700 text-white shadow-lg shadow-blue-100 hover:bg-blue-800",
-        variant === "secondary" && "border border-slate-200 bg-white text-slate-950 hover:border-blue-300 hover:bg-blue-50",
-        variant === "ghost" && "text-slate-950 hover:bg-slate-100",
-        variant === "danger" && "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100",
-      )}
+      className="rounded-[18px] border border-slate-200 bg-white p-3 text-left shadow-[0_8px_24px_rgba(15,23,42,0.045)] transition hover:-translate-y-0.5 hover:border-blue-300"
     >
-      {Icon ? <Icon size={17} /> : null}
-      {children}
-    </button>
-  );
-}
-
-function MetricCard({ label, value, helper, icon: Icon, tone }: { label: string; value: string; helper: string; icon: LucideIcon; tone: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">{label}</p>
-          <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
-          <p className="mt-2 text-xs font-bold text-emerald-600">{helper}</p>
-        </div>
-        <div className={cn("grid h-12 w-12 shrink-0 place-items-center rounded-2xl", tone)}>
-          <Icon size={21} />
-        </div>
-      </div>
-    </div>
-  );
-}
+          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
+            {label}
+          </p>
 
-function FilterSelect({ label, value, onChange, children }: { label: string; value: string; onChange: (value: string) => void; children: ReactNode }) {
-  return (
-    <label className="block">
-      <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">{label}</span>
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-950 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-      >
-        {children}
-      </select>
-    </label>
-  );
-}
+          <p className="mt-2 text-2xl font-black text-slate-950">
+            {value}
+          </p>
 
-function IconLink({ href, icon: Icon, title, disabled }: { href: string; icon: LucideIcon; title: string; disabled?: boolean }) {
-  if (disabled) {
-    return (
-      <span title={`${title} indisponible`} className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50 text-slate-400">
-        <Icon size={16} />
-      </span>
-    );
-  }
-  return (
-    <a href={href} title={title} className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-950 transition hover:border-blue-300 hover:bg-blue-50">
-      <Icon size={16} />
-    </a>
-  );
-}
-
-function SectionCard({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
-  return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h3 className="text-sm font-black text-slate-950">{title}</h3>
-        {action}
-      </div>
-      {children}
-    </section>
-  );
-}
-
-export default function AmbassadorDirectoryRoute({
-  snapshot,
-  kpis,
-  loading,
-  refreshing,
-  error,
-  success,
-  diagnostics = [],
-  query,
-  statusFilter,
-  regionFilter,
-  territoryFilter,
-  sortKey,
-  regions,
-  territories,
-  filteredAmbassadors,
-  onQueryChange,
-  onStatusFilterChange,
-  onRegionFilterChange,
-  onTerritoryFilterChange,
-  onSortKeyChange,
-  onRefresh,
-  onAddAmbassador,
-  onAssignTerritory,
-  onCreateMission,
-  onExport,
-  onOpenProfile,
-  onEditAmbassador,
-  onArchiveAmbassador,
-}: DirectoryProps) {
-  const [directoryMissionModalOpen, setDirectoryMissionModalOpen] = useState(false);
-  const [directoryMissionAmbassador, setDirectoryMissionAmbassador] = useState<AnyRecord | null>(null);
-  void onCreateMission;
-  const [activationModalOpen, setActivationModalOpen] = useState(false);
-  const [territoryModalOpen, setTerritoryModalOpen] = useState(false);
-  const [territoryModalAmbassador, setTerritoryModalAmbassador] = useState<AnyRecord | null>(null);
-  void onAddAmbassador;
-  void onAssignTerritory;
-
-  const activeAmbassadors = (snapshot.ambassadors || []).filter((item: AnyRecord) => item.status !== "archived");
-  const selected = filteredAmbassadors[0] || activeAmbassadors[0] || null;
-  function openDirectoryMissionStudio(ambassador?: AnyRecord | null) {
-    setDirectoryMissionAmbassador(ambassador || selected || null);
-    setDirectoryMissionModalOpen(true);
-  }
-  function openTerritoryAssignmentModal(ambassador?: AnyRecord | null) {
-    setTerritoryModalAmbassador(ambassador || selected || null);
-    setTerritoryModalOpen(true);
-  }
-  const topPerformers = [...activeAmbassadors]
-    .sort((a: AnyRecord, b: AnyRecord) => numberValue(b.performance_score) - numberValue(a.performance_score))
-    .slice(0, 5);
-  const risky = activeAmbassadors
-    .filter((item: AnyRecord) => numberValue(item.performance_score ?? item.quality_score) < 65 || ["inactive", "at_risk", "suspended"].includes(String(item.status || "")))
-    .slice(0, 4);
-  const pendingValidations = [
-    ["Justificatifs d'identité", activeAmbassadors.filter((item: AnyRecord) => !item.identity_verified_at && !item.kyc_verified_at).length],
-    ["Contrats", activeAmbassadors.filter((item: AnyRecord) => !item.contract_signed_at && !item.contract_status).length],
-    ["RIB", activeAmbassadors.filter((item: AnyRecord) => !item.rib_verified_at && !item.bank_account_verified_at).length],
-    ["Formations", (snapshot.training || []).filter((item: AnyRecord) => ["pending", "assigned"].includes(String(item.status || ""))).length],
-  ];
-  const coaching = risky.slice(0, 3);
-
-  const metrics = [
-    { label: "Ambassadeurs actifs", value: formatNumber(kpis.activeAmbassadors ?? activeAmbassadors.filter((item: AnyRecord) => item.status === "active").length), helper: "↗ 12% vs période", icon: Users, tone: "bg-emerald-50 text-emerald-700" },
-    { label: "En onboarding", value: formatNumber(kpis.onboardingAmbassadors ?? activeAmbassadors.filter((item: AnyRecord) => String(item.lifecycle_stage || item.status) === "onboarding").length), helper: "↗ 10% vs période", icon: UserPlus, tone: "bg-violet-50 text-violet-700" },
-    { label: "Inactifs à relancer", value: formatNumber(risky.length), helper: "↘ action requise", icon: AlertTriangle, tone: "bg-rose-50 text-rose-700" },
-    { label: "Top performers", value: formatNumber(topPerformers.length), helper: "↗ réseau moteur", icon: Star, tone: "bg-amber-50 text-amber-700" },
-    { label: "Territoires couverts", value: `${formatNumber(kpis.territoryCoverage ?? 0)}%`, helper: "↗ couverture locale", icon: MapPinned, tone: "bg-cyan-50 text-cyan-700" },
-    { label: "Documents à renouveler", value: formatNumber(pendingValidations.reduce((sum, item) => sum + Number(item[1] || 0), 0)), helper: "contrôle conformité", icon: ShieldCheck, tone: "bg-orange-50 text-orange-700" },
-  ];
-
-  return (
-    <div className="min-h-screen bg-slate-50 px-6 py-6 text-slate-950 lg:px-8">
-      <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div>
-          <div className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
-            <Users size={16} />
-            Ambassador
-          </div>
-          <h1 className="mt-3 text-[34px] font-black tracking-tight text-slate-950">Ambassadeurs</h1>
-          <p className="mt-2 max-w-4xl text-sm font-semibold leading-6 text-slate-600">
-            Gérez votre réseau d'ambassadeurs, suivez leurs performances et développez votre impact terrain avec une vue opérationnelle claire.
+          <p className="mt-1 text-[10px] font-bold text-slate-500">
+            {helper}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <ActionButton variant="primary" icon={Plus} onClick={() => setActivationModalOpen(true)}>Ajouter ambassadeur</ActionButton>
-          <ActionButton icon={Upload} disabled title="Import CSV à connecter au workflow d'import sécurisé">Importer</ActionButton>
-          <ActionButton icon={MapPinned} onClick={() => openTerritoryAssignmentModal(selected)}>Affecter territoire</ActionButton>
-          <ActionButton icon={Plus} onClick={() => openDirectoryMissionStudio(selected)}>Créer mission</ActionButton>
-          <ActionButton icon={Download} onClick={onExport}>Exporter</ActionButton>
-          <ActionButton icon={refreshing ? RefreshCw : RefreshCw} onClick={onRefresh} disabled={refreshing}>{refreshing ? "Synchronisation" : "Rafraîchir"}</ActionButton>
-        </div>
-      </header>
 
-      {error ? <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700">{error}</div> : null}
-      {success ? <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">{success}</div> : null}
-      {diagnostics.length ? <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">Diagnostic: {String(diagnostics[0]?.reason || diagnostics[0]?.area || diagnostics[0])}</div> : null}
-
-      <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-        {metrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}
-      </section>
-
-      <section className="mt-6 grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm xl:grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.6fr_auto]">
-        <label className="flex h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-950">
-          <Search size={18} className="text-slate-500" />
-          <input value={query} onChange={(event) => onQueryChange(event.target.value)} placeholder="Rechercher un ambassadeur, ville, téléphone..." className="w-full bg-transparent outline-none placeholder:text-slate-400" />
-        </label>
-        <FilterSelect label="Territoire" value={territoryFilter} onChange={onTerritoryFilterChange}>
-          <option value="all">Tous</option>
-          {territories.map((item) => <option key={item.id} value={item.id}>{item.name || item.city || item.id}</option>)}
-        </FilterSelect>
-        <FilterSelect label="Statut" value={statusFilter} onChange={onStatusFilterChange}>
-          {statusOptions.map((item) => <option key={item} value={item}>{item === "all" ? "Tous" : item.replaceAll("_", " ")}</option>)}
-        </FilterSelect>
-        <FilterSelect label="Région" value={regionFilter} onChange={onRegionFilterChange}>
-          <option value="all">Toutes</option>
-          {regions.map((item) => <option key={item} value={item}>{item}</option>)}
-        </FilterSelect>
-        <FilterSelect label="Niveau" value="Tous" onChange={() => undefined}>
-          {levelOptions.map((item) => <option key={item} value={item}>{item}</option>)}
-        </FilterSelect>
-        <div className="flex items-end gap-2">
-          <ActionButton icon={Filter}>Filtres</ActionButton>
-          <select value={sortKey} onChange={(event) => onSortKeyChange(event.target.value)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-950 outline-none">
-            <option value="updated">Tri récent</option>
-            <option value="name">Tri nom</option>
-            <option value="status">Tri statut</option>
-          </select>
-        </div>
-      </section>
-
-      <section className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-5">
-          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-100 p-5">
-              <div>
-                <h2 className="font-black text-slate-950">Liste des ambassadeurs</h2>
-                <p className="mt-1 text-xs font-semibold text-slate-500">Affichage de {formatNumber(filteredAmbassadors.length)} ambassadeur(s) synchronisés</p>
-              </div>
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">{formatNumber(activeAmbassadors.length)} total réseau</span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1120px] text-left text-sm">
-                <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-600">
-                  <tr>
-                    <th className="px-5 py-3">Ambassadeur</th>
-                    <th>Ville</th>
-                    <th>Statut</th>
-                    <th>Niveau</th>
-                    <th>Leads (MTD)</th>
-                    <th>Conversions</th>
-                    <th>Incentive dû</th>
-                    <th>Dernier contact</th>
-                    <th>Score qualité</th>
-                    <th className="pr-5">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    [1, 2, 3, 4, 5].map((item) => <tr key={item} className="border-t border-slate-100"><td colSpan={10} className="px-5 py-4"><div className="h-12 animate-pulse rounded-xl bg-slate-100" /></td></tr>)
-                  ) : filteredAmbassadors.length ? (
-                    filteredAmbassadors.map((item) => {
-                      const score = numberValue(item.performance_score ?? item.quality_score ?? item.score_quality ?? 0);
-                      const phone = normalizePhone(item.phone);
-                      return (
-                        <tr key={item.id} className="border-t border-slate-100 transition hover:bg-blue-50/35">
-                          <td className="px-5 py-4">
-                            <button type="button" onClick={() => onOpenProfile(item)} className="flex items-center gap-3 text-left">
-                              <span className="relative grid h-11 w-11 place-items-center rounded-full bg-slate-100 text-xs font-black text-slate-950 ring-1 ring-slate-200">
-                                {initials(item.full_name || item.name)}
-                                <span className={cn("absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white", String(item.status || "active") === "active" ? "bg-emerald-500" : "bg-amber-500")} />
-                              </span>
-                              <span>
-                                <span className="block font-black text-slate-950">{item.full_name || item.name || "Ambassadeur"}</span>
-                                <span className="block text-xs font-semibold text-slate-500">{item.phone || item.email || "Contact à compléter"}</span>
-                              </span>
-                            </button>
-                          </td>
-                          <td className="font-bold text-slate-700">{item.city || item.region || "Non renseignée"}</td>
-                          <td><StatusBadge status={item.status || item.lifecycle_stage || "active"} /></td>
-                          <td><span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-700">{ambassadorLevel(item)}</span></td>
-                          <td className="font-black text-slate-950">{formatNumber(item.leads_mtd ?? item.leads_generated ?? item.leads_count ?? 0)}</td>
-                          <td className="font-black text-slate-950">{formatNumber(item.conversions_mtd ?? item.conversions_validated ?? item.conversions_count ?? 0)}</td>
-                          <td className="font-black text-emerald-700">{formatMoney(item.incentives_balance ?? item.incentive_due ?? 0, item.currency || "MAD")}</td>
-                          <td className="text-xs font-semibold text-slate-500">{dateLabel(item.last_activity_at || item.last_contact_at || item.updated_at)}</td>
-                          <td>
-                            <div className="flex items-center gap-2">
-                              <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100"><div className={cn("h-full rounded-full", scoreTone(score))} style={{ width: `${Math.max(5, Math.min(100, score))}%` }} /></div>
-                              <span className="text-xs font-black text-slate-950">{score}%</span>
-                            </div>
-                          </td>
-                          <td className="pr-5">
-                            <div className="flex items-center gap-2">
-                              <IconLink href={`tel:${phone}`} icon={Phone} title="Appeler" disabled={!phone} />
-                              <IconLink href={`https://wa.me/${phone.replace(/^\+/, "")}`} icon={MessageCircle} title="WhatsApp" disabled={!phone} />
-                              <IconLink href={`mailto:${item.email || ""}`} icon={Mail} title="Email" disabled={!item.email} />
-                              <button type="button" onClick={() => onEditAmbassador(item)} className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-950 hover:border-blue-300 hover:bg-blue-50" title="Mettre à jour"><MoreHorizontal size={16} /></button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr><td colSpan={10} className="px-5 py-14 text-center"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-slate-100"><Search size={22} /></div><p className="mt-3 font-black text-slate-950">Aucun ambassadeur trouvé</p><p className="text-sm font-semibold text-slate-500">Ajustez les filtres ou ajoutez un ambassadeur.</p></td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {selected ? <SelectedAmbassadorPanel ambassador={selected} snapshot={snapshot} onOpenProfile={onOpenProfile} onAssignTerritory={openTerritoryAssignmentModal} onCreateMission={openDirectoryMissionStudio} onArchive={onArchiveAmbassador} /> : null}
-        </div>
-
-        <aside className="space-y-5">
-          <SectionCard title="Top performers (MTD)" action={<button className="text-xs font-black text-blue-700">Voir tout</button>}>
-            <div className="space-y-3">
-              {topPerformers.map((item: AnyRecord, index: number) => (
-                <button key={item.id || index} type="button" onClick={() => onOpenProfile(item)} className="flex w-full items-center justify-between gap-3 rounded-xl p-2 text-left hover:bg-blue-50">
-                  <div className="flex items-center gap-3"><span className="grid h-8 w-8 place-items-center rounded-full bg-amber-50 text-xs font-black text-amber-700">{index + 1}</span><span><span className="block text-sm font-black text-slate-950">{item.full_name || item.name}</span><span className="text-xs font-semibold text-slate-500">{item.city || item.region || "Maroc"}</span></span></div>
-                  <span className="text-xs font-black text-slate-950">{formatMoney(item.incentives_balance ?? 0)}</span>
-                </button>
-              ))}
-              {!topPerformers.length ? <p className="text-sm font-semibold text-slate-500">Aucune performance disponible.</p> : null}
-            </div>
-          </SectionCard>
-
-          <SectionCard title="Ambassadeurs à risque" action={<button className="text-xs font-black text-blue-700">Voir tout</button>}>
-            <div className="space-y-3">
-              {risky.map((item: AnyRecord) => {
-                const score = numberValue(item.performance_score ?? item.quality_score ?? 0);
-                return <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-rose-50/60 p-3"><div className="flex items-center gap-3"><AlertTriangle size={17} className="text-rose-600" /><span><span className="block text-sm font-black text-slate-950">{item.full_name || item.name}</span><span className="text-xs font-semibold text-slate-500">Score / activité à revoir</span></span></div><span className="text-sm font-black text-rose-600">{score}%</span></div>;
-              })}
-              {!risky.length ? <p className="text-sm font-semibold text-slate-500">Aucun risque majeur détecté.</p> : null}
-            </div>
-          </SectionCard>
-
-          <SectionCard title="Validations en attente">
-            <div className="space-y-3">
-              {pendingValidations.map(([label, value]) => <div key={String(label)} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3"><span className="flex items-center gap-2 text-sm font-bold text-slate-700"><BadgeCheck size={16} className="text-blue-700" />{String(label)}</span><span className="font-black text-slate-950">{formatNumber(value)}</span></div>)}
-            </div>
-          </SectionCard>
-
-          <SectionCard title="Priorités coaching">
-            <div className="space-y-3">
-              {coaching.map((item: AnyRecord) => <div key={item.id} className="rounded-xl border border-slate-100 p-3"><p className="text-sm font-black text-slate-950">Développer le portefeuille</p><p className="mt-1 text-xs font-semibold text-slate-500">{item.full_name || item.name} · relance et objectifs à clarifier</p></div>)}
-              {!coaching.length ? <p className="text-sm font-semibold text-slate-500">Aucune priorité de coaching immédiate.</p> : null}
-            </div>
-          </SectionCard>
-        </aside>
-      </section>
-
-      <AmbassadorActivationEnterpriseModal
-        open={activationModalOpen}
-        snapshot={snapshot}
-        onClose={() => setActivationModalOpen(false)}
-        onCreated={onRefresh}
-      />
-      <AmbassadorTerritoryAssignmentEnterpriseModal
-        key={territoryModalAmbassador?.id || "manual-territory-assignment"}
-        open={territoryModalOpen}
-        selectedAmbassador={territoryModalAmbassador}
-        snapshot={snapshot}
-        onClose={() => setTerritoryModalOpen(false)}
-        onAssigned={onRefresh}
-      />
-      <AmbassadorDirectoryMissionStudioModal
-        key={directoryMissionAmbassador?.id || "manual-directory-mission"}
-        open={directoryMissionModalOpen}
-        selectedAmbassador={directoryMissionAmbassador}
-        snapshot={snapshot}
-        onClose={() => setDirectoryMissionModalOpen(false)}
-        onCreated={onRefresh}
-      />
-    </div>
-  );
+        <span className={`rounded-2xl p-2.5 ${tones[tone]}`}>
+          <Icon className="h-5 w-5" />
+        </span>
+      </div>
+    </button>
+  )
 }
 
-type DirectoryMissionSubmitMode = "draft" | "create" | "notify" | "route";
-
-type DirectoryMissionAmbassadorRole = "responsable" | "support_terrain" | "whatsapp" | "relance" | "preuves" | "coordinateur_zone";
-
-type DirectoryMissionAssignedAmbassador = {
-  ambassadorId: string;
-  role: DirectoryMissionAmbassadorRole;
-};
-
-type DirectoryMissionForm = {
-  missionTitle: string;
-  scenarioKey: string;
-  campaign: string;
-  serviceLine: string;
-  city: string;
-  territoryName: string;
-  district: string;
-  channel: string;
-  priority: string;
-  deadline: string;
-  slaClosure: string;
-  expectedLeads: string;
-  expectedConversations: string;
-  expectedConversions: string;
-  mainObjective: string;
-  successCriteria: string;
-  playbook: string;
-  instructions: string;
-  proofRequirements: string[];
-  notifyAmbassador: boolean;
-  notificationChannel: string;
-  notificationMessage: string;
-  managerName: string;
-  primaryAmbassadorId: string;
-  assignedAmbassadors: DirectoryMissionAssignedAmbassador[];
-};
-
-const directoryMissionServices = ["Home Service", "Kindergarten & Preschool", "Academy", "Hospitality Kids Friendly", "Corporates Liner"];
-const directoryMissionChannels = ["Terrain", "WhatsApp", "Appel", "Partenaire", "Événement local", "B2B direct"];
-const directoryMissionProofs = ["Photo terrain", "Liste contacts", "Screenshot WhatsApp", "Formulaire lead", "Note partenaire", "Compte rendu court", "Objections rencontrées", "Résultat conversion"];
-const directoryMissionPriorities = ["Normale", "Haute", "Urgente"];
-
-const directoryMissionAssignmentRoles: { value: DirectoryMissionAmbassadorRole; label: string; description: string }[] = [
-  { value: "responsable", label: "Responsable mission", description: "Porte l’objectif, la preuve finale et la clôture." },
-  { value: "support_terrain", label: "Support terrain", description: "Renforce les visites, contacts locaux et preuves terrain." },
-  { value: "whatsapp", label: "Prospection WhatsApp", description: "Active les premiers messages, relances et scripts digitaux." },
-  { value: "relance", label: "Relance leads", description: "Suit les prospects chauds et les prochaines actions." },
-  { value: "preuves", label: "Collecte preuves", description: "Centralise photos, screenshots, listes et compte rendu." },
-  { value: "coordinateur_zone", label: "Coordinateur zone", description: "Synchronise l’équipe sur un quartier ou territoire." },
-];
-
-const directoryMissionScenarios = [
-  {
-    key: "hot_leads_followup",
-    label: "Relance leads chauds",
-    badge: "Recommandé",
-    service: "Home Service",
-    channel: "WhatsApp",
-    priority: "Haute",
-    output: "Relancer les prospects déjà engagés et verrouiller les prochaines étapes.",
-    objective: "Transformer les leads chauds de la zone en conversations qualifiées et rendez-vous exploitables.",
-    criteria: "Tous les leads assignés sont contactés, qualifiés et annotés avec prochaine action.",
-    playbook: "Script relance chaude + objections prix/confiance",
-    proof: ["Screenshot WhatsApp", "Compte rendu court", "Résultat conversion"],
-    leads: "8",
-    conversations: "12",
-    conversions: "2",
-  },
-  {
-    key: "parents_prospecting",
-    label: "Prospection parents",
-    badge: "B2C",
-    service: "Home Service",
-    channel: "Terrain",
-    priority: "Haute",
-    output: "Identifier familles qualifiées dans le quartier prioritaire.",
-    objective: "Créer un flux de contacts parents qualifiés autour du territoire de l’ambassadeur.",
-    criteria: "Minimum 15 conversations terrain et 5 leads exploitables dans le système.",
-    playbook: "Pitch famille + introduction sécurité/confiance",
-    proof: ["Liste contacts", "Photo terrain", "Compte rendu court"],
-    leads: "5",
-    conversations: "15",
-    conversions: "1",
-  },
-  {
-    key: "promo_code_activation",
-    label: "Activation code promo",
-    badge: "Tracking",
-    service: "Home Service",
-    channel: "WhatsApp",
-    priority: "Normale",
-    output: "Réactiver les contacts dormants avec une proposition claire.",
-    objective: "Diffuser un code promo traçable auprès de prospects ciblés et mesurer la réaction.",
-    criteria: "Code partagé, contacts listés, retours qualifiés et objections notées.",
-    playbook: "Message WhatsApp code promo + relance 48h",
-    proof: ["Screenshot WhatsApp", "Liste contacts"],
-    leads: "10",
-    conversations: "18",
-    conversions: "2",
-  },
-  {
-    key: "school_partner_visit",
-    label: "Visite partenaire école/crèche",
-    badge: "B2B",
-    service: "Kindergarten & Preschool",
-    channel: "Partenaire",
-    priority: "Haute",
-    output: "Obtenir un rendez-vous utile avec un décideur éducatif.",
-    objective: "Ouvrir une opportunité partenaire avec une structure éducative locale.",
-    criteria: "Décideur identifié, besoin noté, suite commerciale planifiée.",
-    playbook: "Pitch partenariat éducatif + fiche bénéfices direction",
-    proof: ["Note partenaire", "Photo terrain", "Compte rendu court"],
-    leads: "2",
-    conversations: "5",
-    conversions: "1",
-  },
-  {
-    key: "recommendations_collection",
-    label: "Collecte recommandations",
-    badge: "Réseau",
-    service: "Home Service",
-    channel: "WhatsApp",
-    priority: "Normale",
-    output: "Collecter des recommandations qualifiées via le réseau local.",
-    objective: "Déclencher un flux de recommandations parents/partenaires avec suivi clair.",
-    criteria: "Recommandations sourcées, permission contact confirmée et suivi attribué.",
-    playbook: "Message recommandation + mini-script confiance",
-    proof: ["Liste contacts", "Screenshot WhatsApp"],
-    leads: "6",
-    conversations: "10",
-    conversions: "1",
-  },
-  {
-    key: "quality_control",
-    label: "Contrôle qualité terrain",
-    badge: "Qualité",
-    service: "Home Service",
-    channel: "Terrain",
-    priority: "Urgente",
-    output: "Vérifier conformité terrain, preuves et respect playbook.",
-    objective: "Auditer l’exécution locale et sécuriser les standards avant extension.",
-    criteria: "Observations documentées, anomalies remontées, actions correctives proposées.",
-    playbook: "Checklist qualité terrain ambassadeur",
-    proof: ["Photo terrain", "Compte rendu court", "Objections rencontrées"],
-    leads: "0",
-    conversations: "4",
-    conversions: "0",
-  },
-];
-
-function directoryMissionDate(offsetDays = 3) {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
-}
-
-function defaultDirectoryMissionForm(ambassador?: AnyRecord | null): DirectoryMissionForm {
-  const scenario = directoryMissionScenarios[0];
-  const city = String(ambassador?.city || ambassador?.region || "Rabat");
-  const territoryName = String(ambassador?.territory_name || ambassador?.territory || `${city} Centre`);
-  const name = String(ambassador?.full_name || ambassador?.name || "l’ambassadeur");
-  const ambassadorId = String(ambassador?.id || "");
-  return {
-    missionTitle: `${scenario.label} · ${name}`,
-    scenarioKey: scenario.key,
-    campaign: "Ambassadeurs Maroc 2026",
-    serviceLine: scenario.service,
-    city,
-    territoryName,
-    district: String(ambassador?.zone || ambassador?.district || "Centre / zone prioritaire"),
-    channel: scenario.channel,
-    priority: scenario.priority,
-    deadline: directoryMissionDate(3),
-    slaClosure: "48h",
-    expectedLeads: scenario.leads,
-    expectedConversations: scenario.conversations,
-    expectedConversions: scenario.conversions,
-    mainObjective: scenario.objective,
-    successCriteria: scenario.criteria,
-    playbook: scenario.playbook,
-    instructions: "Utiliser le script recommandé, documenter chaque échange utile, créer les leads qualifiés et remonter les objections exploitables.",
-    proofRequirements: scenario.proof,
-    notifyAmbassador: true,
-    notificationChannel: "WhatsApp",
-    notificationMessage: `Bonjour ${name}, une nouvelle mission vous est proposée sur ${territoryName}. Merci de confirmer votre disponibilité et de respecter les preuves attendues.`,
-    managerName: String(ambassador?.manager_name || "Sara Bakoki"),
-    primaryAmbassadorId: ambassadorId,
-    assignedAmbassadors: ambassadorId ? [{ ambassadorId, role: "responsable" }] : [],
-  };
-}
-
-function AmbassadorDirectoryMissionStudioModal({
-  open,
-  selectedAmbassador,
-  snapshot,
-  onClose,
-  onCreated,
+function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
 }: {
-  open: boolean;
-  selectedAmbassador?: AnyRecord | null;
-  snapshot: AmbassadorWorkspaceSnapshot;
-  onClose: () => void;
-  onCreated: () => void;
+  icon: LucideIcon
+  title: string
+  description: string
+  action?: ReactNode
 }) {
-  const [form, setForm] = useState<DirectoryMissionForm>(() => defaultDirectoryMissionForm(selectedAmbassador));
-  const [savingMode, setSavingMode] = useState<DirectoryMissionSubmitMode | null>(null);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [supportAmbassadorPick, setSupportAmbassadorPick] = useState("");
+  return (
+    <div className="p-10 text-center">
+      <Icon className="mx-auto h-10 w-10 text-blue-500" />
 
-  if (!open) return null;
+      <h3 className="mt-3 text-lg font-black text-slate-950">
+        {title}
+      </h3>
 
-  const ambassadors = ((snapshot.ambassadors || []) as AnyRecord[]).filter((item) => String(item.status || "") !== "archived");
-  const missions = ((snapshot.missions || []) as AnyRecord[]);
-  const leads = ((snapshot.leads || []) as AnyRecord[]);
-  const conversions = ((snapshot.conversions || []) as AnyRecord[]);
-  const fallbackAmbassadorId = String(selectedAmbassador?.id || "");
-  const primaryAmbassadorId = form.primaryAmbassadorId || fallbackAmbassadorId;
-  const ambassador = ambassadors.find((item) => String(item.id) === String(primaryAmbassadorId)) || selectedAmbassador || ambassadors[0] || null;
-  const ambassadorName = String(ambassador?.full_name || ambassador?.name || "Ambassadeur non sélectionné");
-  const normalizedAssignments = form.assignedAmbassadors.length
-    ? form.assignedAmbassadors
-    : ambassador?.id
-      ? [{ ambassadorId: String(ambassador.id), role: "responsable" as DirectoryMissionAmbassadorRole }]
-      : [];
-  const selectedAmbassadorCards = normalizedAssignments
-    .map((assignment) => ({
-      ...assignment,
-      ambassador: ambassadors.find((item) => String(item.id) === String(assignment.ambassadorId)) || (String(selectedAmbassador?.id || "") === String(assignment.ambassadorId) ? selectedAmbassador : null),
-    }))
-    .filter((assignment) => assignment.ambassador) as Array<DirectoryMissionAssignedAmbassador & { ambassador: AnyRecord }>;
-  const selectedAmbassadorIds = new Set(selectedAmbassadorCards.map((assignment) => String(assignment.ambassadorId)));
-  const supportCandidates = ambassadors.filter((item) => !selectedAmbassadorIds.has(String(item.id)));
-  const primaryAssignment = selectedAmbassadorCards.find((assignment) => assignment.role === "responsable") || selectedAmbassadorCards[0] || null;
-  const currentMissions = missions.filter((item) => String(item.ambassador_id || item.assigned_ambassador_id || item.owner_id || "") === String(ambassador?.id || ""));
-  const lateMissions = currentMissions.filter((item) => ["late", "overdue", "blocked", "at_risk"].includes(String(item.status || "").toLowerCase()));
-  const cityLeads = leads.filter((item) => String(item.city || item.region || "").toLowerCase() === form.city.toLowerCase());
-  const cityConversions = conversions.filter((item) => String(item.city || item.region || "").toLowerCase() === form.city.toLowerCase());
-  const qualityScore = numberValue(ambassador?.performance_score ?? ambassador?.quality_score ?? ambassador?.score_quality ?? 72);
-  const currentLoad = Math.min(100, Math.round(currentMissions.length * 17 + lateMissions.length * 14 + Number(form.expectedLeads || 0) * 1.4 + Number(form.expectedConversations || 0) * 0.6));
-  const selectedScenario = directoryMissionScenarios.find((scenario) => scenario.key === form.scenarioKey) || directoryMissionScenarios[0];
-  const serviceFit = form.serviceLine === selectedScenario.service ? 100 : form.serviceLine.includes("Home") ? 78 : 68;
-  const territoryFit = cityLeads.length || cityConversions.length ? Math.min(96, 62 + cityLeads.length * 3 + cityConversions.length * 7) : 58;
-  const notificationReady = form.notifyAmbassador && form.notificationChannel && form.notificationMessage.trim().length >= 20;
+      <p className="mx-auto mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-500">
+        {description}
+      </p>
 
-  const missingFields = [
-    ["Ambassadeur", selectedAmbassadorCards.length ? "ok" : ""],
-    ["Type de mission", form.scenarioKey],
-    ["Service", form.serviceLine],
-    ["Ville", form.city],
-    ["Territoire", form.territoryName],
-    ["Deadline", form.deadline],
-    ["SLA", form.slaClosure],
-    ["Objectif principal", form.mainObjective],
-    ["Preuve attendue", form.proofRequirements.length ? "ok" : ""],
-  ].filter(([, value]) => !String(value || "").trim()).map(([label]) => String(label));
+      {action ? <div className="mt-5">{action}</div> : null}
+    </div>
+  )
+}
 
-  const readinessScore = Math.max(18, Math.min(100, Math.round(
-    (missingFields.length === 0 ? 24 : 8) +
-    (qualityScore >= 85 ? 18 : qualityScore >= 65 ? 12 : 6) +
-    (currentLoad < 70 ? 16 : currentLoad < 90 ? 8 : 2) +
-    (serviceFit >= 90 ? 14 : serviceFit >= 75 ? 10 : 6) +
-    (territoryFit >= 80 ? 14 : territoryFit >= 60 ? 10 : 6) +
-    (form.proofRequirements.length >= 3 ? 8 : 4) +
-    (notificationReady ? 6 : 2)
-  )));
-  const blockedReasons = missingFields;
-  const dispatchLabel = readinessScore >= 82 ? "Dispatch recommandé" : readinessScore >= 64 ? "Mission possible avec contrôle" : "À compléter avant lancement";
-  const riskLabel = currentLoad >= 90 ? "Surcharge probable" : currentLoad >= 72 ? "Charge à surveiller" : "Capacité compatible";
+export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDirectoryRouteProps>) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  function update<K extends keyof DirectoryMissionForm>(key: K, value: DirectoryMissionForm[K]) {
-    setForm((current) => ({ ...current, [key]: value }));
-  }
+  const [ambassadors, setAmbassadors] = useState<Row[]>([])
+  const [candidates, setCandidates] = useState<Row[]>([])
+  const [onboardingRows, setOnboardingRows] = useState<Row[]>([])
+  const [missions, setMissions] = useState<Row[]>([])
+  const [leads, setLeads] = useState<Row[]>([])
+  const [conversions, setConversions] = useState<Row[]>([])
+  const [incentives, setIncentives] = useState<Row[]>([])
+  const [payouts, setPayouts] = useState<Row[]>([])
+  const [territories, setTerritories] = useState<Row[]>([])
+  const [training, setTraining] = useState<Row[]>([])
+  const [documents, setDocuments] = useState<Row[]>([])
+  const [notesRows, setNotesRows] = useState<Row[]>([])
+  const [auditRows, setAuditRows] = useState<Row[]>([])
 
-  function selectPrimaryAmbassador(ambassadorId: string) {
-    const target = ambassadors.find((item) => String(item.id) === String(ambassadorId));
-    const targetName = String(target?.full_name || target?.name || ambassadorName);
-    const targetCity = String(target?.city || target?.region || form.city || "Rabat");
-    const targetTerritory = String(target?.territory_name || target?.territory || form.territoryName || `${targetCity} Centre`);
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState("")
+  const [error, setError] = useState("")
 
-    setForm((current) => {
-      const withoutTarget = current.assignedAmbassadors.filter((item) => String(item.ambassadorId) !== String(ambassadorId));
-      return {
-        ...current,
-        primaryAmbassadorId: ambassadorId,
-        assignedAmbassadors: [{ ambassadorId, role: "responsable" }, ...withoutTarget.map((item) => item.role === "responsable" ? { ...item, role: "support_terrain" as DirectoryMissionAmbassadorRole } : item)],
-        city: targetCity,
-        territoryName: targetTerritory,
-        district: String(target?.zone || target?.district || current.district || "Centre / zone prioritaire"),
-        managerName: String(target?.manager_name || current.managerName || "Sara Bakoki"),
-        missionTitle: `${selectedScenario.label} · ${targetName}`,
-        notificationMessage: `Bonjour ${targetName}, une nouvelle mission “${selectedScenario.label}” vous est proposée sur ${targetTerritory}. Merci de confirmer votre disponibilité et de respecter les preuves attendues.`,
-      };
-    });
-  }
+  const [query, setQuery] = useState("")
+  const [territoryFilter, setTerritoryFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [period, setPeriod] = useState<PeriodFilter>("mtd")
 
-  function addSupportAmbassador(ambassadorId = supportAmbassadorPick) {
-    if (!ambassadorId) return;
-    setForm((current) => {
-      if (current.assignedAmbassadors.some((item) => String(item.ambassadorId) === String(ambassadorId))) return current;
-      return {
-        ...current,
-        assignedAmbassadors: [...current.assignedAmbassadors, { ambassadorId, role: "support_terrain" }],
-      };
-    });
-    setSupportAmbassadorPick("");
-  }
+  const [selectedId, setSelectedId] = useState(
+    searchParams.get("ambassador") || "",
+  )
 
-  function removeAssignedAmbassador(ambassadorId: string) {
-    setForm((current) => {
-      const next = current.assignedAmbassadors.filter((item) => String(item.ambassadorId) !== String(ambassadorId));
-      const nextPrimary = String(current.primaryAmbassadorId) === String(ambassadorId) ? String(next[0]?.ambassadorId || "") : current.primaryAmbassadorId;
-      return {
-        ...current,
-        primaryAmbassadorId: nextPrimary,
-        assignedAmbassadors: next.map((item, index) => index === 0 && !next.some((assignment) => assignment.role === "responsable") ? { ...item, role: "responsable" as DirectoryMissionAmbassadorRole } : item),
-      };
-    });
-  }
+  const [activeTab, setActiveTab] =
+    useState<DossierTab>("overview")
 
-  function updateAssignedAmbassadorRole(ambassadorId: string, role: DirectoryMissionAmbassadorRole) {
-    setForm((current) => {
-      const normalized = current.assignedAmbassadors.map((item) => {
-        if (String(item.ambassadorId) === String(ambassadorId)) return { ...item, role };
-        if (role === "responsable" && item.role === "responsable") return { ...item, role: "support_terrain" as DirectoryMissionAmbassadorRole };
-        return item;
-      });
-      return {
-        ...current,
-        primaryAmbassadorId: role === "responsable" ? ambassadorId : current.primaryAmbassadorId,
-        assignedAmbassadors: normalized,
-      };
-    });
-  }
+  const [drawerMode, setDrawerMode] =
+    useState<DrawerMode>("details")
 
-  function toggleProof(value: string) {
-    setForm((current) => {
-      const next = current.proofRequirements.includes(value)
-        ? current.proofRequirements.filter((item) => item !== value)
-        : [...current.proofRequirements, value];
-      return { ...current, proofRequirements: next };
-    });
-  }
+  const [modal, setModal] = useState<ModalKind>(null)
 
-  function applyScenario(key: string) {
-    const scenario = directoryMissionScenarios.find((item) => item.key === key) || directoryMissionScenarios[0];
-    const name = ambassadorName;
-    setForm((current) => ({
-      ...current,
-      scenarioKey: scenario.key,
-      missionTitle: `${scenario.label} · ${name}`,
-      serviceLine: scenario.service,
-      channel: scenario.channel,
-      priority: scenario.priority,
-      expectedLeads: scenario.leads,
-      expectedConversations: scenario.conversations,
-      expectedConversions: scenario.conversions,
-      mainObjective: scenario.objective,
-      successCriteria: scenario.criteria,
-      playbook: scenario.playbook,
-      proofRequirements: scenario.proof,
-      notificationMessage: `Bonjour ${name}, une nouvelle mission “${scenario.label}” vous est proposée sur ${current.territoryName}. Merci de confirmer votre disponibilité et de respecter les preuves attendues.`,
-    }));
-  }
+  const [draft, setDraft] =
+    useState<DossierConfiguration>(defaultConfiguration())
 
-  async function submit(mode: DirectoryMissionSubmitMode) {
-    setMessage(null);
-    if ((mode === "create" || mode === "notify" || mode === "route") && blockedReasons.length) {
-      setMessage({ type: "error", text: `Bloqué: ${blockedReasons.join(", ")}` });
-      return;
-    }
+  const [originalDraft, setOriginalDraft] =
+    useState<DossierConfiguration>(defaultConfiguration())
 
-    setSavingMode(mode);
+  const [missionForm, setMissionForm] = useState({
+    mode: "create",
+    existingMissionId: "",
+    title: "",
+    missionType: "field_activation",
+    priority: "normal",
+    status: "assigned",
+    city: "",
+    territoryId: "",
+    territoryName: "",
+    dueDate: "",
+    startDate: "",
+    instructions: "",
+    requiredProof: "",
+    validator: "",
+    leadTarget: 0,
+    conversionTarget: 0,
+    supportAmbassadorIds: [] as string[],
+  })
+
+  const [leadForm, setLeadForm] = useState({
+    leadName: "",
+    phone: "",
+    email: "",
+    city: "",
+    zone: "",
+    source: "Referral ambassadeur",
+    leadType: "B2C",
+    serviceNeed: "",
+    score: 50,
+    status: "new",
+    nextAction: "",
+    nextFollowUp: "",
+    referralCode: "",
+    promoCode: "",
+    consentConfirmed: false,
+    sourceProof: "",
+    allowDuplicate: false,
+  })
+
+  const [noteForm, setNoteForm] = useState({
+    category: "Suivi opérationnel",
+    priority: "normal",
+    visibility: "management",
+    text: "",
+    owner: "",
+    followUpDate: "",
+    linkedType: "",
+    linkedId: "",
+  })
+
+  const [archiveForm, setArchiveForm] = useState({
+    reason: "",
+    effectiveDate: "",
+    managerApproval: "",
+    territoryReleaseRequested: true,
+    accessSuspensionRequested: true,
+    leadReassignmentTarget: "",
+    acknowledgeOpenItems: false,
+  })
+
+  const [trainingForm, setTrainingForm] = useState({
+    title: "",
+    moduleCode: "",
+    trainer: "",
+    status: "scheduled",
+    dueDate: "",
+    mode: "Présentiel",
+    location: "",
+    score: 0,
+    notes: "",
+  })
+
+  const [documentForm, setDocumentForm] = useState({
+    key: "identity",
+    label: "CIN / passeport",
+    status: "uploaded",
+    reference: "",
+    reviewer: "",
+    note: "",
+    expiresAt: "",
+  })
+
+  const inputClass =
+    "h-11 w-full rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+
+  const textareaClass =
+    "min-h-[110px] w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm font-bold text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+
+  const loadData = useCallback(async () => {
+    setLoading(true)
+    setError("")
+
     try {
-      const payload = {
-        source: "directory",
-        status: mode === "draft" ? "draft" : "assigned",
-        title: form.missionTitle,
-        mission_type: selectedScenario.label,
-        scenario_key: form.scenarioKey,
-        ambassador_id: ambassador?.id || null,
-        ambassador_name: ambassadorName,
-        primary_ambassador_id: primaryAssignment?.ambassadorId || ambassador?.id || null,
-        assigned_ambassador_ids: selectedAmbassadorCards.map((assignment) => assignment.ambassadorId),
-        assigned_ambassadors: selectedAmbassadorCards.map((assignment) => ({
-          ambassador_id: assignment.ambassadorId,
-          ambassador_name: String(assignment.ambassador?.full_name || assignment.ambassador?.name || "Ambassadeur"),
-          role: assignment.role,
-          city: String(assignment.ambassador?.city || assignment.ambassador?.region || ""),
-          territory_name: String(assignment.ambassador?.territory_name || assignment.ambassador?.territory || ""),
-          quality_score: numberValue(assignment.ambassador?.performance_score ?? assignment.ambassador?.quality_score ?? assignment.ambassador?.score_quality ?? 0),
-        })),
-        support_ambassadors: selectedAmbassadorCards.filter((assignment) => assignment.role !== "responsable").map((assignment) => assignment.ambassadorId),
-        ambassador_count: selectedAmbassadorCards.length,
-        city: form.city,
-        territory_name: form.territoryName,
-        district: form.district,
-        campaign: form.campaign,
-        service_line: form.serviceLine,
-        channel: form.channel,
-        priority: form.priority.toLowerCase(),
-        deadline: form.deadline,
-        sla_closure: form.slaClosure,
-        expected_leads: Number(form.expectedLeads || 0),
-        expected_conversations: Number(form.expectedConversations || 0),
-        expected_conversions: Number(form.expectedConversions || 0),
-        objective: form.mainObjective,
-        success_criteria: form.successCriteria,
-        playbook: form.playbook,
-        instructions: form.instructions,
-        proof_requirements: form.proofRequirements,
-        notify_ambassador: mode === "notify" || mode === "route" ? form.notifyAmbassador : false,
-        notification_channel: form.notificationChannel,
-        notification_message: form.notificationMessage,
-        manager_name: form.managerName,
-        readiness_score: readinessScore,
-        current_load: currentLoad,
-        service_fit: serviceFit,
-        territory_fit: territoryFit,
-        open_route_sheet: mode === "route",
-      };
+      const results = await Promise.allSettled([
+        apiRequest("/api/market-os/ambassadors"),
+        apiRequest("/api/market-os/ambassadors/ambassadors"),
+        apiRequest("/api/market-os/ambassadors/recruitment"),
+        apiRequest("/api/market-os/ambassadors/onboarding"),
+        apiRequest("/api/market-os/ambassadors/missions"),
+        apiRequest("/api/market-os/ambassadors/leads"),
+        apiRequest("/api/market-os/ambassadors/conversions"),
+        apiRequest("/api/market-os/ambassadors/incentives"),
+        apiRequest("/api/market-os/ambassadors/payouts"),
+        apiRequest("/api/market-os/ambassadors/territories"),
+        apiRequest("/api/market-os/ambassadors/training"),
+        apiRequest("/api/market-os/ambassadors/documents"),
+        apiRequest("/api/market-os/ambassadors/notes"),
+        apiRequest("/api/market-os/ambassadors/audit"),
+      ])
 
-      const response = await fetch("/api/market-os/ambassadors/missions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data?.ok === false) throw new Error(data?.error || "Création de mission impossible avec l’infrastructure actuelle");
-      setMessage({
-        type: "success",
-        text: mode === "draft" ? "Brouillon mission enregistré." : mode === "notify" ? "Mission créée avec demande de notification ambassadeur." : mode === "route" ? "Mission créée avec ouverture de feuille de route demandée." : "Mission créée et assignée à l’ambassadeur.",
-      });
-      onCreated();
-    } catch (error) {
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Erreur inconnue lors de la création mission" });
+      const payloads = results.map((result) =>
+        result.status === "fulfilled" ? result.value : {},
+      )
+
+      const snapshot = payloads[0]
+
+      const realAmbassadors = extractRows(payloads[1], [
+        "ambassadors",
+      ])
+
+      const realCandidates = extractRows(payloads[2], [
+        "recruitment",
+        "candidates",
+      ])
+
+      const realOnboarding = extractRows(payloads[3], [
+        "onboarding",
+        "records",
+      ])
+
+      const realMissions = extractRows(payloads[4], [
+        "missions",
+      ])
+
+      const realLeads = extractRows(payloads[5], ["leads"])
+      const realConversions = extractRows(payloads[6], [
+        "conversions",
+      ])
+
+      const realIncentives = extractRows(payloads[7], [
+        "incentives",
+      ])
+
+      const realPayouts = extractRows(payloads[8], [
+        "payouts",
+        "payments",
+      ])
+
+      const realTerritories = extractRows(payloads[9], [
+        "territories",
+      ])
+
+      const realTraining = extractRows(payloads[10], [
+        "training",
+        "certifications",
+      ])
+
+      const realDocuments = extractRows(payloads[11], [
+        "documents",
+      ])
+
+      const realNotes = extractRows(payloads[12], ["notes"])
+      const realAudit = extractRows(payloads[13], [
+        "audit",
+        "events",
+        "records",
+      ])
+
+      setAmbassadors(
+        realAmbassadors.length
+          ? realAmbassadors
+          : extractRows(snapshot, ["ambassadors"]),
+      )
+
+      setCandidates(
+        realCandidates.length
+          ? realCandidates
+          : extractRows(snapshot, ["recruitment", "candidates"]),
+      )
+
+      setOnboardingRows(
+        realOnboarding.length
+          ? realOnboarding
+          : extractRows(snapshot, ["onboarding"]),
+      )
+
+      setMissions(
+        realMissions.length
+          ? realMissions
+          : extractRows(snapshot, ["missions"]),
+      )
+
+      setLeads(
+        realLeads.length
+          ? realLeads
+          : extractRows(snapshot, ["leads"]),
+      )
+
+      setConversions(
+        realConversions.length
+          ? realConversions
+          : extractRows(snapshot, ["conversions"]),
+      )
+
+      setIncentives(
+        realIncentives.length
+          ? realIncentives
+          : extractRows(snapshot, ["incentives"]),
+      )
+
+      setPayouts(
+        realPayouts.length
+          ? realPayouts
+          : extractRows(snapshot, ["payouts", "payments"]),
+      )
+
+      setTerritories(
+        realTerritories.length
+          ? realTerritories
+          : extractRows(snapshot, ["territories"]),
+      )
+
+      setTraining(
+        realTraining.length
+          ? realTraining
+          : extractRows(snapshot, ["training", "certifications"]),
+      )
+
+      setDocuments(
+        realDocuments.length
+          ? realDocuments
+          : extractRows(snapshot, ["documents"]),
+      )
+
+      setNotesRows(realNotes)
+      setAuditRows(realAudit)
+
+      const failures = results.filter(
+        (result) => result.status === "rejected",
+      ).length
+
+      setNotice(
+        failures
+          ? `Synchronisation partielle : ${failures} source(s) secondaire(s) indisponible(s).`
+          : "",
+      )
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Impossible de charger les dossiers ambassadeurs.",
+      )
     } finally {
-      setSavingMode(null);
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadData()
+  }, [loadData])
+
+  const dossiers = useMemo<AmbassadorDossier[]>(() => {
+    const candidateById = new Map(
+      candidates.map((row) => [idOf(row), row]),
+    )
+
+    const candidateByContact = new Map(
+      candidates.map((row) => [contactKey(row), row]),
+    )
+
+    const onboardingByAmbassador = new Map<string, Row>()
+    const onboardingByCandidate = new Map<string, Row>()
+
+    onboardingRows.forEach((row) => {
+      const metadata = metadataOf(row)
+
+      const ambassadorId = text(
+        row.ambassador_id || metadata.ambassador_id,
+      )
+
+      const candidateId = text(
+        row.candidate_id || metadata.candidate_id,
+      )
+
+      if (ambassadorId) {
+        onboardingByAmbassador.set(ambassadorId, row)
+      }
+
+      if (candidateId) {
+        onboardingByCandidate.set(candidateId, row)
+      }
+    })
+
+    return ambassadors
+      .map((row) => {
+        const id = idOf(row)
+        const metadata = metadataOf(row)
+
+        const candidateId = text(
+          row.candidate_id || metadata.candidate_id,
+        )
+
+        const candidate =
+          candidateById.get(candidateId) ||
+          candidateByContact.get(contactKey(row)) ||
+          {}
+
+        const onboarding =
+          onboardingByAmbassador.get(id) ||
+          onboardingByCandidate.get(candidateId) ||
+          {}
+
+        const onboardingMetadata = metadataOf(onboarding)
+
+        const combinedMetadata = {
+          ...metadataOf(candidate),
+          ...metadata,
+          ...onboardingMetadata,
+        }
+
+        return {
+          id,
+          candidateId,
+          onboardingId: idOf(onboarding),
+
+          name: displayName(row),
+          phone: text(row.phone || row.telephone),
+          email: text(row.email),
+          city: text(row.city || row.main_city),
+          photoUrl: text(
+            row.photo_url ||
+              row.avatar_url ||
+              combinedMetadata.photo_url,
+          ),
+
+          reference:
+            text(
+              row.reference ||
+                row.ambassador_code ||
+                row.code ||
+                combinedMetadata.reference,
+            ) || id,
+
+          joinedAt: text(
+            row.joined_at ||
+              row.activation_date ||
+              onboarding.completed_at,
+          ),
+
+          createdAt: text(row.created_at),
+          updatedAt: text(row.updated_at),
+
+          row,
+          candidate,
+          onboarding,
+          metadata: combinedMetadata,
+          configuration: parseConfiguration(
+            combinedMetadata,
+            row,
+          ),
+        }
+      })
+      .filter((dossier) => Boolean(dossier.id))
+      .sort((first, second) => {
+        const firstDate = new Date(
+          first.updatedAt || first.createdAt || 0,
+        ).getTime()
+
+        const secondDate = new Date(
+          second.updatedAt || second.createdAt || 0,
+        ).getTime()
+
+        return secondDate - firstDate
+      })
+  }, [ambassadors, candidates, onboardingRows])
+
+  useEffect(() => {
+    if (!dossiers.length) {
+      setSelectedId("")
+      return
+    }
+
+    if (
+      !selectedId ||
+      !dossiers.some((dossier) => dossier.id === selectedId)
+    ) {
+      const initialId =
+        searchParams.get("ambassador") || dossiers[0].id
+
+      setSelectedId(initialId)
+    }
+  }, [dossiers, searchParams, selectedId])
+
+  const selectedDossier = useMemo(
+    () =>
+      dossiers.find((dossier) => dossier.id === selectedId) ||
+      null,
+    [dossiers, selectedId],
+  )
+
+  useEffect(() => {
+    if (!selectedDossier) {
+      const empty = defaultConfiguration()
+      setDraft(empty)
+      setOriginalDraft(empty)
+      return
+    }
+
+    const next = cloneConfiguration(
+      selectedDossier.configuration,
+    )
+
+    setDraft(next)
+    setOriginalDraft(cloneConfiguration(next))
+
+    setMissionForm((current) => ({
+      ...current,
+      city: selectedDossier.city,
+      territoryId: next.territoryId,
+      territoryName: next.territoryName,
+      validator: next.manager,
+    }))
+
+    setLeadForm((current) => ({
+      ...current,
+      city: selectedDossier.city,
+      zone: next.zone,
+      referralCode: text(
+        selectedDossier.metadata.referral_code ||
+          selectedDossier.metadata.activation_os?.referralCode,
+      ),
+      promoCode: text(
+        selectedDossier.metadata.promo_code ||
+          selectedDossier.metadata.activation_os?.promoCode,
+      ),
+    }))
+
+    setNoteForm((current) => ({
+      ...current,
+      owner: next.manager,
+    }))
+  }, [selectedDossier])
+
+  const dirty = useMemo(
+    () =>
+      JSON.stringify(draft) !== JSON.stringify(originalDraft),
+    [draft, originalDraft],
+  )
+
+  const relatedMissions = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return missions.filter((row) =>
+      rowBelongsToAmbassador(
+        row,
+        selectedDossier.id,
+        selectedDossier.candidateId,
+      ),
+    )
+  }, [missions, selectedDossier])
+
+  const relatedLeads = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return leads.filter((row) =>
+      rowBelongsToAmbassador(
+        row,
+        selectedDossier.id,
+        selectedDossier.candidateId,
+      ),
+    )
+  }, [leads, selectedDossier])
+
+  const relatedLeadIds = useMemo(
+    () => new Set(relatedLeads.map(idOf).filter(Boolean)),
+    [relatedLeads],
+  )
+
+  const relatedConversions = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return conversions.filter((row) => {
+      if (
+        rowBelongsToAmbassador(
+          row,
+          selectedDossier.id,
+          selectedDossier.candidateId,
+        )
+      ) {
+        return true
+      }
+
+      return relatedLeadIds.has(
+        text(row.lead_id || metadataOf(row).lead_id),
+      )
+    })
+  }, [conversions, selectedDossier, relatedLeadIds])
+
+  const relatedIncentives = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return [...incentives, ...payouts].filter((row) =>
+      rowBelongsToAmbassador(
+        row,
+        selectedDossier.id,
+        selectedDossier.candidateId,
+      ),
+    )
+  }, [incentives, payouts, selectedDossier])
+
+  const relatedTraining = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return training.filter((row) =>
+      rowBelongsToAmbassador(
+        row,
+        selectedDossier.id,
+        selectedDossier.candidateId,
+      ),
+    )
+  }, [training, selectedDossier])
+
+  const relatedDocuments = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return documents.filter((row) =>
+      rowBelongsToAmbassador(
+        row,
+        selectedDossier.id,
+        selectedDossier.candidateId,
+      ),
+    )
+  }, [documents, selectedDossier])
+
+  const relatedNotesRows = useMemo(() => {
+    if (!selectedDossier) return []
+
+    return notesRows.filter((row) =>
+      rowBelongsToAmbassador(
+        row,
+        selectedDossier.id,
+        selectedDossier.candidateId,
+      ),
+    )
+  }, [notesRows, selectedDossier])
+
+  const relatedAudit = useMemo(() => {
+    if (!selectedDossier) return []
+
+    const acceptedIds = new Set(
+      [
+        selectedDossier.id,
+        selectedDossier.candidateId,
+        selectedDossier.onboardingId,
+      ].filter(Boolean),
+    )
+
+    return auditRows.filter((row) => {
+      const metadata = metadataOf(row)
+
+      return [
+        row.entity_id,
+        row.ambassador_id,
+        row.candidate_id,
+        row.onboarding_id,
+        metadata.ambassador_id,
+        metadata.candidate_id,
+        metadata.onboarding_id,
+      ]
+        .map(text)
+        .some((id) => acceptedIds.has(id))
+    })
+  }, [auditRows, selectedDossier])
+
+  const periodMissions = useMemo(
+    () =>
+      relatedMissions.filter((row) => withinPeriod(row, period)),
+    [relatedMissions, period],
+  )
+
+  const periodLeads = useMemo(
+    () => relatedLeads.filter((row) => withinPeriod(row, period)),
+    [relatedLeads, period],
+  )
+
+  const periodConversions = useMemo(
+    () =>
+      relatedConversions.filter((row) =>
+        withinPeriod(row, period),
+      ),
+    [relatedConversions, period],
+  )
+
+  const periodIncentives = useMemo(
+    () =>
+      relatedIncentives.filter((row) =>
+        withinPeriod(row, period),
+      ),
+    [relatedIncentives, period],
+  )
+
+  const completedMissionCount = useMemo(
+    () =>
+      periodMissions.filter((row) =>
+        isCompletedStatus(row.status),
+      ).length,
+    [periodMissions],
+  )
+
+  const qualifiedLeadCount = useMemo(
+    () =>
+      periodLeads.filter((row) => {
+        const status = text(row.status).toLowerCase()
+
+        return (
+          status.includes("qualified") ||
+          status.includes("qualifié") ||
+          numberValue(row.score) >= 70
+        )
+      }).length,
+    [periodLeads],
+  )
+
+  const conversionRate = periodLeads.length
+    ? Math.round(
+        (periodConversions.length / periodLeads.length) * 100,
+      )
+    : 0
+
+  const validatedAmount = useMemo(
+    () =>
+      periodConversions.reduce(
+        (total, row) => total + amountOf(row),
+        0,
+      ),
+    [periodConversions],
+  )
+
+  const incentiveAvailable = useMemo(
+    () =>
+      periodIncentives
+        .filter((row) => {
+          const status = text(row.status).toLowerCase()
+
+          return (
+            status.includes("approved") ||
+            status.includes("payable") ||
+            status.includes("available") ||
+            status.includes("à payer")
+          )
+        })
+        .reduce((total, row) => total + amountOf(row), 0),
+    [periodIncentives],
+  )
+
+  const paidAmount = useMemo(
+    () =>
+      periodIncentives
+        .filter((row) =>
+          ["paid", "payé", "paye"].some((status) =>
+            text(row.status).toLowerCase().includes(status),
+          ),
+        )
+        .reduce((total, row) => total + amountOf(row), 0),
+    [periodIncentives],
+  )
+
+  const pendingAmount = useMemo(
+    () =>
+      periodIncentives
+        .filter((row) => {
+          const status = text(row.status).toLowerCase()
+
+          return [
+            "pending",
+            "approval",
+            "attente",
+            "blocked",
+            "bloqué",
+          ].some((candidate) => status.includes(candidate))
+        })
+        .reduce((total, row) => total + amountOf(row), 0),
+    [periodIncentives],
+  )
+
+  const trainingCompletion = useMemo(() => {
+    if (!relatedTraining.length) return 0
+
+    return Math.round(
+      (relatedTraining.filter((row) =>
+        isCompletedStatus(row.status),
+      ).length /
+        relatedTraining.length) *
+        100,
+    )
+  }, [relatedTraining])
+
+  const complianceCompletion = useMemo(() => {
+    const required = draft.documents.filter(
+      (document) => document.required,
+    )
+
+    if (!required.length) return 0
+
+    return Math.round(
+      (required.filter(
+        (document) => document.status === "validated",
+      ).length /
+        required.length) *
+        100,
+    )
+  }, [draft.documents])
+
+  const scoreBreakdown = useMemo<ScoreBreakdown>(() => {
+    const missionPerformance = draft.fieldVisitGoal
+      ? Math.min(
+          100,
+          Math.round(
+            (completedMissionCount / draft.fieldVisitGoal) * 100,
+          ),
+        )
+      : 0
+
+    const leadPerformance = draft.leadGoal
+      ? Math.min(
+          100,
+          Math.round((periodLeads.length / draft.leadGoal) * 100),
+        )
+      : 0
+
+    const conversionPerformance = draft.conversionGoal
+      ? Math.min(
+          100,
+          Math.round(
+            (periodConversions.length / draft.conversionGoal) *
+              100,
+          ),
+        )
+      : 0
+
+    const performance = Math.round(
+      (missionPerformance +
+        leadPerformance +
+        conversionPerformance) /
+        3,
+    )
+
+    const territory =
+      draft.territoryId &&
+      draft.services.length &&
+      draft.channels.length
+        ? 100
+        : draft.territoryId
+          ? 55
+          : 0
+
+    const activity = relatedMissions.length || relatedLeads.length
+      ? Math.min(
+          100,
+          30 +
+            relatedMissions.length * 4 +
+            relatedLeads.length * 2,
+        )
+      : 0
+
+    const quality = draft.qualityScore
+    const compliance = complianceCompletion
+    const trainingScore = trainingCompletion
+
+    const global = Math.round(
+      quality * 0.25 +
+        performance * 0.25 +
+        compliance * 0.2 +
+        trainingScore * 0.15 +
+        activity * 0.1 +
+        territory * 0.05,
+    )
+
+    const blockers: string[] = []
+
+    if (compliance < 100) {
+      blockers.push("Conformité documentaire incomplète")
+    }
+
+    if (trainingScore < 70) {
+      blockers.push("Formation sous le seuil de 70%")
+    }
+
+    if (!draft.territoryId) {
+      blockers.push("Territoire non affecté")
+    }
+
+    if (!draft.manager) {
+      blockers.push("Manager non affecté")
+    }
+
+    if (!draft.commissionAccepted) {
+      blockers.push("Commission fixe 10% non acceptée")
+    }
+
+    if (!draft.paymentVerified) {
+      blockers.push("Paiement non vérifié")
+    }
+
+    return {
+      global,
+      quality,
+      performance,
+      compliance,
+      training: trainingScore,
+      activity,
+      territory,
+      blockers,
+    }
+  }, [
+    draft,
+    completedMissionCount,
+    periodLeads.length,
+    periodConversions.length,
+    complianceCompletion,
+    trainingCompletion,
+    relatedMissions.length,
+    relatedLeads.length,
+  ])
+
+  const timeline = useMemo(
+    () =>
+      buildTimeline(
+        relatedMissions,
+        relatedLeads,
+        relatedConversions,
+        relatedIncentives,
+        relatedTraining,
+        relatedDocuments,
+        relatedAudit,
+        draft.notes,
+      ),
+    [
+      relatedMissions,
+      relatedLeads,
+      relatedConversions,
+      relatedIncentives,
+      relatedTraining,
+      relatedDocuments,
+      relatedAudit,
+      draft.notes,
+    ],
+  )
+
+  const territoriesNames = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          dossiers
+            .map(
+              (dossier) =>
+                dossier.configuration.territoryName,
+            )
+            .filter(Boolean),
+        ),
+      ).sort(),
+    [dossiers],
+  )
+
+  const filteredDossiers = useMemo(() => {
+    const needle = query.trim().toLowerCase()
+
+    return dossiers.filter((dossier) => {
+      if (
+        territoryFilter !== "all" &&
+        dossier.configuration.territoryName !== territoryFilter
+      ) {
+        return false
+      }
+
+      if (
+        statusFilter !== "all" &&
+        dossier.configuration.status !== statusFilter
+      ) {
+        return false
+      }
+
+      if (!needle) return true
+
+      return [
+        dossier.name,
+        dossier.phone,
+        dossier.email,
+        dossier.city,
+        dossier.reference,
+        dossier.configuration.manager,
+        dossier.configuration.territoryName,
+        dossier.configuration.zone,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(needle)
+    })
+  }, [dossiers, query, territoryFilter, statusFilter])
+
+  const openMissions = useMemo(
+    () =>
+      relatedMissions.filter((row) => isOpenStatus(row.status)),
+    [relatedMissions],
+  )
+
+  const pendingPayouts = useMemo(
+    () =>
+      relatedIncentives.filter((row) => {
+        const status = text(row.status).toLowerCase()
+
+        return [
+          "pending",
+          "approval",
+          "payable",
+          "attente",
+          "blocked",
+        ].some((candidate) => status.includes(candidate))
+      }),
+    [relatedIncentives],
+  )
+
+  const selectAmbassador = (id: string) => {
+    if (dirty) {
+      setError(
+        "Enregistrez ou annulez les modifications du dossier avant de changer d’ambassadeur.",
+      )
+      return
+    }
+
+    setSelectedId(id)
+    setActiveTab("overview")
+    setDrawerMode("details")
+    setError("")
+
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("ambassador", id)
+
+    router.replace(
+      `/market-os/ambassadors/directory?${params.toString()}`,
+      {
+        scroll: false,
+      },
+    )
+  }
+
+  const updateDraft = <
+    K extends keyof DossierConfiguration,
+  >(
+    key: K,
+    value: DossierConfiguration[K],
+  ) => {
+    setDraft((current) => ({
+      ...current,
+      [key]: value,
+    }))
+  }
+
+  const toggleDraftArray = (
+    key: "services" | "channels",
+    value: string,
+  ) => {
+    setDraft((current) => ({
+      ...current,
+      [key]: current[key].includes(value)
+        ? current[key].filter((item) => item !== value)
+        : [...current[key], value],
+    }))
+  }
+
+  const writeAudit = async (
+    action: string,
+    details: Row,
+  ) => {
+    if (!selectedDossier) return
+
+    try {
+      await apiRequest("/api/market-os/ambassadors/audit", {
+        method: "POST",
+        body: JSON.stringify({
+          action,
+          entity_type: "ambassador",
+          entity_id: selectedDossier.id,
+          actor: "AngelCare OPS",
+          details,
+          metadata: {
+            ambassador_id: selectedDossier.id,
+            candidate_id: selectedDossier.candidateId || null,
+            onboarding_id:
+              selectedDossier.onboardingId || null,
+            ...details,
+          },
+        }),
+      })
+    } catch {
+      // L'opération principale ne devient pas un faux échec
+      // lorsque l'audit secondaire est temporairement indisponible.
     }
   }
+
+  const persistConfiguration = async (
+    configuration: DossierConfiguration,
+    action: string,
+  ) => {
+    if (!selectedDossier) {
+      throw new Error("Aucun ambassadeur réel sélectionné.")
+    }
+
+    const nextConfiguration: DossierConfiguration = {
+      ...configuration,
+      commissionRate: 10,
+      commissionLocked: true,
+      lastSavedAt: nowIso(),
+    }
+
+    const previousTerritoryId =
+      selectedDossier.configuration.territoryId
+
+    const previousTerritoryName =
+      selectedDossier.configuration.territoryName
+
+    const partialFailures: string[] = []
+
+    await apiRequest(
+      `/api/market-os/ambassadors/ambassadors/${selectedDossier.id}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          full_name: selectedDossier.name,
+          display_name:
+            nextConfiguration.preferredName ||
+            selectedDossier.name,
+
+          phone: selectedDossier.phone || null,
+          email: selectedDossier.email || null,
+          city: selectedDossier.city || null,
+
+          whatsapp: nextConfiguration.whatsapp || null,
+          region: nextConfiguration.region || null,
+          district: nextConfiguration.zone || null,
+          address: nextConfiguration.address || null,
+          languages: nextConfiguration.languages,
+
+          manager_name: nextConfiguration.manager || null,
+          status: nextConfiguration.status,
+          lifecycle_stage: nextConfiguration.status,
+
+          joined_at:
+            nextConfiguration.activationDate || null,
+
+          territory_id:
+            nextConfiguration.territoryId || null,
+
+          territory_name:
+            nextConfiguration.territoryName || null,
+
+          quality_score:
+            nextConfiguration.qualityScore,
+
+          metadata: {
+            ...metadataOf(selectedDossier.row),
+
+            dossier_os: nextConfiguration,
+
+            commission_rate: 10,
+            commission_locked: true,
+
+            candidate_id:
+              selectedDossier.candidateId || null,
+
+            onboarding_id:
+              selectedDossier.onboardingId || null,
+          },
+
+          payload: {
+            dossier_os: nextConfiguration,
+            commission_rate: 10,
+            commission_locked: true,
+          },
+        }),
+      },
+    )
+
+    if (
+      nextConfiguration.territoryId &&
+      (nextConfiguration.territoryId !==
+        previousTerritoryId ||
+        nextConfiguration.territoryName !==
+          previousTerritoryName)
+    ) {
+      try {
+        await apiRequest(
+          "/api/market-os/ambassadors/territories/assign",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              ambassador_id: selectedDossier.id,
+              territory_id: nextConfiguration.territoryId,
+              assignment_type: "primary",
+              coverage_mode: nextConfiguration.coverageMode,
+              radius_km: nextConfiguration.radiusKm,
+              assigned_by:
+                nextConfiguration.manager ||
+                "AngelCare OPS",
+              source: "ambassador_master_dossier",
+            }),
+          },
+        )
+      } catch (caught) {
+        partialFailures.push(
+          `Territoire : ${
+            caught instanceof Error
+              ? caught.message
+              : "synchronisation échouée"
+          }`,
+        )
+      }
+    }
+
+    await writeAudit(action, {
+      previous_status:
+        selectedDossier.configuration.status,
+      next_status: nextConfiguration.status,
+      previous_territory_id:
+        previousTerritoryId || null,
+      next_territory_id:
+        nextConfiguration.territoryId || null,
+      quality_score:
+        nextConfiguration.qualityScore,
+    })
+
+    return {
+      nextConfiguration,
+      partialFailures,
+    }
+  }
+
+  const saveDossier = async () => {
+    if (!selectedDossier) return
+
+    setBusy(true)
+    setError("")
+    setNotice("")
+
+    try {
+      const result = await persistConfiguration(
+        draft,
+        "Ambassador dossier updated",
+      )
+
+      setOriginalDraft(
+        cloneConfiguration(result.nextConfiguration),
+      )
+
+      await loadData()
+
+      if (result.partialFailures.length) {
+        setError(
+          `Dossier principal enregistré, mais synchronisation partielle : ${result.partialFailures.join(
+            " · ",
+          )}`,
+        )
+      } else {
+        setNotice(
+          "Dossier ambassadeur enregistré et synchronisé.",
+        )
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Enregistrement du dossier échoué.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const assignMission = async () => {
+    if (!selectedDossier) return
+
+    setBusy(true)
+    setError("")
+
+    try {
+      if (missionForm.mode === "existing") {
+        if (!missionForm.existingMissionId) {
+          throw new Error(
+            "Sélectionnez une mission réelle à affecter.",
+          )
+        }
+
+        const selectedMission = missions.find(
+          (mission) =>
+            idOf(mission) === missionForm.existingMissionId,
+        )
+
+        const metadata = metadataOf(selectedMission)
+
+        const existingIds = Array.isArray(
+          selectedMission?.assigned_ambassador_ids ||
+            metadata.assigned_ambassador_ids,
+        )
+          ? (
+              selectedMission?.assigned_ambassador_ids ||
+              metadata.assigned_ambassador_ids
+            ).map(text)
+          : []
+
+        const assignedIds = Array.from(
+          new Set([
+            selectedDossier.id,
+            ...missionForm.supportAmbassadorIds,
+            ...existingIds,
+          ]),
+        )
+
+        await apiRequest(
+          `/api/market-os/ambassadors/missions/${missionForm.existingMissionId}`,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              ambassador_id: selectedDossier.id,
+              assigned_ambassador_id: selectedDossier.id,
+              primary_ambassador_id: selectedDossier.id,
+              assigned_ambassador_ids: assignedIds,
+              status:
+                missionForm.status ||
+                selectedMission?.status ||
+                "assigned",
+
+              metadata: {
+                ...metadata,
+                assigned_ambassador_ids: assignedIds,
+                primary_ambassador_id: selectedDossier.id,
+                assignment_source:
+                  "ambassador_master_dossier",
+              },
+            }),
+          },
+        )
+      } else {
+        if (!missionForm.title.trim()) {
+          throw new Error(
+            "Le titre de mission est obligatoire.",
+          )
+        }
+
+        const assignedIds = Array.from(
+          new Set([
+            selectedDossier.id,
+            ...missionForm.supportAmbassadorIds,
+          ]),
+        )
+
+        await apiRequest(
+          "/api/market-os/ambassadors/missions",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              title: missionForm.title.trim(),
+              mission_type: missionForm.missionType,
+              priority: missionForm.priority,
+              status: missionForm.status,
+
+              ambassador_id: selectedDossier.id,
+              assigned_ambassador_id: selectedDossier.id,
+              primary_ambassador_id: selectedDossier.id,
+              assigned_ambassador_ids: assignedIds,
+
+              city:
+                missionForm.city ||
+                selectedDossier.city ||
+                null,
+
+              territory_id:
+                missionForm.territoryId || null,
+
+              territory_name:
+                missionForm.territoryName || null,
+
+              start_date:
+                missionForm.startDate || null,
+
+              due_date:
+                missionForm.dueDate || null,
+
+              instructions:
+                missionForm.instructions || null,
+
+              required_proof:
+                missionForm.requiredProof || null,
+
+              validator:
+                missionForm.validator || null,
+
+              lead_target:
+                missionForm.leadTarget,
+
+              conversion_target:
+                missionForm.conversionTarget,
+
+              metadata: {
+                source:
+                  "ambassador_master_dossier",
+                assigned_ambassador_ids: assignedIds,
+                primary_ambassador_id: selectedDossier.id,
+                required_proof:
+                  missionForm.requiredProof || null,
+                validator:
+                  missionForm.validator || null,
+              },
+            }),
+          },
+        )
+      }
+
+      await writeAudit("Mission assigned from dossier", {
+        mission_id:
+          missionForm.mode === "existing"
+            ? missionForm.existingMissionId
+            : null,
+        assignment_mode: missionForm.mode,
+      })
+
+      setModal(null)
+      await loadData()
+
+      setNotice(
+        missionForm.mode === "existing"
+          ? "Mission réelle affectée et synchronisée."
+          : "Mission créée, affectée et synchronisée.",
+      )
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Affectation mission échouée.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const createLead = async () => {
+    if (!selectedDossier) return
+
+    if (!leadForm.leadName.trim()) {
+      setError("Le nom du lead est obligatoire.")
+      return
+    }
+
+    if (!leadForm.phone.trim() && !leadForm.email.trim()) {
+      setError(
+        "Un téléphone ou un email est obligatoire.",
+      )
+      return
+    }
+
+    const normalizedPhone = leadForm.phone.replace(/\D/g, "")
+    const normalizedEmail = leadForm.email.trim().toLowerCase()
+
+    const duplicate = leads.find((row) => {
+      const phone = text(
+        row.phone || row.telephone,
+      ).replace(/\D/g, "")
+
+      const email = text(row.email).toLowerCase()
+
+      return (
+        (normalizedPhone && normalizedPhone === phone) ||
+        (normalizedEmail && normalizedEmail === email)
+      )
+    })
+
+    if (duplicate && !leadForm.allowDuplicate) {
+      setError(
+        "Un lead avec ce téléphone ou cet email existe déjà. Activez l’exception de doublon uniquement après contrôle.",
+      )
+      return
+    }
+
+    setBusy(true)
+    setError("")
+
+    try {
+      await apiRequest("/api/market-os/ambassadors/leads", {
+        method: "POST",
+        body: JSON.stringify({
+          lead_name: leadForm.leadName.trim(),
+          contact_name: leadForm.leadName.trim(),
+
+          phone: leadForm.phone || null,
+          email: leadForm.email || null,
+
+          city:
+            leadForm.city || selectedDossier.city || null,
+
+          zone:
+            leadForm.zone || draft.zone || null,
+
+          source: leadForm.source,
+          lead_type: leadForm.leadType,
+          service_need:
+            leadForm.serviceNeed || null,
+
+          score: leadForm.score,
+          status: leadForm.status,
+
+          next_action:
+            leadForm.nextAction || null,
+
+          next_follow_up:
+            leadForm.nextFollowUp || null,
+
+          ambassador_id: selectedDossier.id,
+          assigned_ambassador_id: selectedDossier.id,
+          source_ambassador_id: selectedDossier.id,
+
+          referral_code:
+            leadForm.referralCode || null,
+
+          promo_code:
+            leadForm.promoCode || null,
+
+          consent_confirmed:
+            leadForm.consentConfirmed,
+
+          source_proof:
+            leadForm.sourceProof || null,
+
+          metadata: {
+            source:
+              "ambassador_master_dossier",
+            ambassador_id: selectedDossier.id,
+            candidate_id:
+              selectedDossier.candidateId || null,
+            duplicate_override:
+              Boolean(duplicate && leadForm.allowDuplicate),
+            duplicate_reference:
+              duplicate ? idOf(duplicate) : null,
+            consent_confirmed:
+              leadForm.consentConfirmed,
+            source_proof:
+              leadForm.sourceProof || null,
+          },
+        }),
+      })
+
+      await writeAudit("Lead created from dossier", {
+        lead_name: leadForm.leadName,
+        duplicate_override:
+          Boolean(duplicate && leadForm.allowDuplicate),
+      })
+
+      setModal(null)
+      await loadData()
+
+      setNotice(
+        "Lead réel créé, attribué et synchronisé.",
+      )
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Création du lead échouée.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const saveNote = async () => {
+    if (!selectedDossier) return
+
+    if (!noteForm.text.trim()) {
+      setError("Le contenu de la note est obligatoire.")
+      return
+    }
+
+    const note: InternalNote = {
+      id: uid("note"),
+      category: noteForm.category,
+      priority:
+        noteForm.priority as InternalNote["priority"],
+      visibility:
+        noteForm.visibility as InternalNote["visibility"],
+      text: noteForm.text.trim(),
+      owner: noteForm.owner,
+      followUpDate: noteForm.followUpDate,
+      linkedType: noteForm.linkedType,
+      linkedId: noteForm.linkedId,
+      createdAt: nowIso(),
+      createdBy: "AngelCare OPS",
+    }
+
+    setBusy(true)
+    setError("")
+
+    const failures: string[] = []
+
+    try {
+      try {
+        await apiRequest("/api/market-os/ambassadors/notes", {
+          method: "POST",
+          body: JSON.stringify({
+            ambassador_id: selectedDossier.id,
+            candidate_id:
+              selectedDossier.candidateId || null,
+
+            category: note.category,
+            priority: note.priority,
+            visibility: note.visibility,
+            note: note.text,
+            content: note.text,
+
+            owner: note.owner || null,
+
+            follow_up_date:
+              note.followUpDate || null,
+
+            linked_entity_type:
+              note.linkedType || null,
+
+            linked_entity_id:
+              note.linkedId || null,
+
+            metadata: {
+              source:
+                "ambassador_master_dossier",
+              ambassador_id: selectedDossier.id,
+            },
+          }),
+        })
+      } catch (caught) {
+        failures.push(
+          `Registre Notes : ${
+            caught instanceof Error
+              ? caught.message
+              : "indisponible"
+          }`,
+        )
+      }
+
+      const next = cloneConfiguration(draft)
+      next.notes = [note, ...next.notes]
+
+      const result = await persistConfiguration(
+        next,
+        "Internal note added",
+      )
+
+      failures.push(...result.partialFailures)
+
+      setDraft(result.nextConfiguration)
+      setOriginalDraft(
+        cloneConfiguration(result.nextConfiguration),
+      )
+
+      setModal(null)
+      await loadData()
+
+      if (failures.length) {
+        setError(
+          `Note conservée dans le dossier principal, mais synchronisation partielle : ${failures.join(
+            " · ",
+          )}`,
+        )
+      } else {
+        setNotice(
+          "Note enregistrée et journalisée dans le dossier.",
+        )
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Enregistrement de la note échoué.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const scheduleTraining = async () => {
+    if (!selectedDossier) return
+
+    if (!trainingForm.title.trim()) {
+      setError(
+        "Le titre de la formation est obligatoire.",
+      )
+      return
+    }
+
+    setBusy(true)
+    setError("")
+
+    try {
+      await apiRequest(
+        "/api/market-os/ambassadors/training",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            ambassador_id: selectedDossier.id,
+            candidate_id:
+              selectedDossier.candidateId || null,
+
+            title: trainingForm.title.trim(),
+            module_code:
+              trainingForm.moduleCode || null,
+
+            trainer: trainingForm.trainer || null,
+            status: trainingForm.status,
+
+            due_date:
+              trainingForm.dueDate || null,
+
+            mode: trainingForm.mode,
+
+            location:
+              trainingForm.location || null,
+
+            score: trainingForm.score,
+
+            notes:
+              trainingForm.notes || null,
+
+            metadata: {
+              source:
+                "ambassador_master_dossier",
+              ambassador_id: selectedDossier.id,
+              candidate_id:
+                selectedDossier.candidateId || null,
+            },
+          }),
+        },
+      )
+
+      await writeAudit("Training assigned from dossier", {
+        title: trainingForm.title,
+        due_date: trainingForm.dueDate || null,
+      })
+
+      setModal(null)
+      await loadData()
+
+      setNotice(
+        "Formation réelle affectée et synchronisée.",
+      )
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Affectation de formation échouée.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const saveDocument = async () => {
+    if (!selectedDossier) return
+
+    const current =
+      draft.documents.find(
+        (document) => document.key === documentForm.key,
+      ) ||
+      defaultDocuments().find(
+        (document) => document.key === documentForm.key,
+      )
+
+    if (!current) {
+      setError("Document inconnu.")
+      return
+    }
+
+    const nextDocument: DocumentControl = {
+      ...current,
+      label:
+        documentForm.label || current.label,
+      status:
+        documentForm.status as DocumentControl["status"],
+      reference: documentForm.reference,
+      reviewer: documentForm.reviewer,
+      note: documentForm.note,
+      expiresAt: documentForm.expiresAt,
+      updatedAt: nowIso(),
+    }
+
+    const next = cloneConfiguration(draft)
+
+    next.documents = next.documents.map((document) =>
+      document.key === nextDocument.key
+        ? nextDocument
+        : document,
+    )
+
+    if (
+      nextDocument.key === "commission" &&
+      nextDocument.status === "validated"
+    ) {
+      next.commissionAccepted = true
+    }
+
+    if (
+      nextDocument.key === "payment" &&
+      nextDocument.status === "validated"
+    ) {
+      next.paymentVerified = true
+    }
+
+    setBusy(true)
+    setError("")
+
+    const failures: string[] = []
+
+    try {
+      try {
+        await apiRequest(
+          "/api/market-os/ambassadors/documents",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              ambassador_id: selectedDossier.id,
+              candidate_id:
+                selectedDossier.candidateId || null,
+
+              document_type: nextDocument.key,
+              title: nextDocument.label,
+              status: nextDocument.status,
+              reference:
+                nextDocument.reference || null,
+              reviewer:
+                nextDocument.reviewer || null,
+              note: nextDocument.note || null,
+              expires_at:
+                nextDocument.expiresAt || null,
+
+              metadata: {
+                source:
+                  "ambassador_master_dossier",
+                ambassador_id: selectedDossier.id,
+              },
+            }),
+          },
+        )
+      } catch (caught) {
+        failures.push(
+          `Registre Documents : ${
+            caught instanceof Error
+              ? caught.message
+              : "indisponible"
+          }`,
+        )
+      }
+
+      const result = await persistConfiguration(
+        next,
+        "Document control updated",
+      )
+
+      failures.push(...result.partialFailures)
+
+      setDraft(result.nextConfiguration)
+      setOriginalDraft(
+        cloneConfiguration(result.nextConfiguration),
+      )
+
+      setModal(null)
+      await loadData()
+
+      if (failures.length) {
+        setError(
+          `Contrôle conservé dans le dossier principal, mais synchronisation partielle : ${failures.join(
+            " · ",
+          )}`,
+        )
+      } else {
+        setNotice(
+          "Contrôle documentaire enregistré et synchronisé.",
+        )
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Mise à jour documentaire échouée.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const archiveAmbassador = async () => {
+    if (!selectedDossier) return
+
+    if (!archiveForm.reason.trim()) {
+      setError("Le motif d’archivage est obligatoire.")
+      return
+    }
+
+    if (!archiveForm.managerApproval.trim()) {
+      setError(
+        "L’autorité d’approbation est obligatoire.",
+      )
+      return
+    }
+
+    if (
+      (openMissions.length || pendingPayouts.length) &&
+      !archiveForm.acknowledgeOpenItems
+    ) {
+      setError(
+        "Des missions ou paiements restent ouverts. Confirmez explicitement leur prise en charge avant archivage.",
+      )
+      return
+    }
+
+    setBusy(true)
+    setError("")
+
+    const partialFailures: string[] = []
+
+    try {
+      const next = cloneConfiguration(draft)
+
+      next.status = "archived"
+      next.archive = {
+        archived: true,
+        reason: archiveForm.reason.trim(),
+        effectiveDate:
+          archiveForm.effectiveDate ||
+          new Date().toISOString().slice(0, 10),
+        managerApproval:
+          archiveForm.managerApproval.trim(),
+        territoryReleaseRequested:
+          archiveForm.territoryReleaseRequested,
+        accessSuspensionRequested:
+          archiveForm.accessSuspensionRequested,
+        leadReassignmentTarget:
+          archiveForm.leadReassignmentTarget,
+        archivedAt: nowIso(),
+      }
+
+      if (archiveForm.accessSuspensionRequested) {
+        next.portalAccessStatus = "Suspendu"
+        next.crmAccessStatus = "Suspendu"
+      }
+
+      const result = await persistConfiguration(
+        next,
+        "Ambassador archived",
+      )
+
+      partialFailures.push(...result.partialFailures)
+
+      try {
+        await apiRequest(
+          "/api/market-os/ambassadors/operations",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              action: "archive_ambassador",
+              ambassador_id: selectedDossier.id,
+
+              reason: archiveForm.reason.trim(),
+
+              effective_date:
+                archiveForm.effectiveDate || null,
+
+              manager_approval:
+                archiveForm.managerApproval.trim(),
+
+              release_territory:
+                archiveForm.territoryReleaseRequested,
+
+              suspend_access:
+                archiveForm.accessSuspensionRequested,
+
+              lead_reassignment_target:
+                archiveForm.leadReassignmentTarget || null,
+
+              open_mission_count:
+                openMissions.length,
+
+              pending_payout_count:
+                pendingPayouts.length,
+
+              metadata: {
+                source:
+                  "ambassador_master_dossier",
+                acknowledged_open_items:
+                  archiveForm.acknowledgeOpenItems,
+              },
+            }),
+          },
+        )
+      } catch (caught) {
+        partialFailures.push(
+          `Orchestration archivage : ${
+            caught instanceof Error
+              ? caught.message
+              : "indisponible"
+          }`,
+        )
+      }
+
+      setDraft(result.nextConfiguration)
+      setOriginalDraft(
+        cloneConfiguration(result.nextConfiguration),
+      )
+
+      setModal(null)
+      await loadData()
+
+      if (partialFailures.length) {
+        setError(
+          `Profil archivé, mais certaines opérations restent à traiter : ${partialFailures.join(
+            " · ",
+          )}`,
+        )
+      } else {
+        setNotice(
+          "Ambassadeur archivé avec traçabilité complète.",
+        )
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Archivage échoué.",
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const exportDossier = () => {
+    if (!selectedDossier) return
+
+    const payload = {
+      exported_at: nowIso(),
+      ambassador: {
+        id: selectedDossier.id,
+        reference: selectedDossier.reference,
+        name: selectedDossier.name,
+        phone: selectedDossier.phone,
+        email: selectedDossier.email,
+        city: selectedDossier.city,
+      },
+      configuration: draft,
+      score: scoreBreakdown,
+      metrics: {
+        missions: relatedMissions.length,
+        completed_missions: completedMissionCount,
+        leads: relatedLeads.length,
+        conversions: relatedConversions.length,
+        conversion_rate: conversionRate,
+        validated_amount: validatedAmount,
+        incentive_available: incentiveAvailable,
+        paid_amount: paidAmount,
+        pending_amount: pendingAmount,
+        training_completion: trainingCompletion,
+        compliance_completion: complianceCompletion,
+      },
+      timeline,
+    }
+
+    const blob = new Blob(
+      [JSON.stringify(payload, null, 2)],
+      {
+        type: "application/json;charset=utf-8",
+      },
+    )
+
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement("a")
+
+    anchor.href = url
+    anchor.download = `angelcare-ambassador-dossier-${selectedDossier.reference}.json`
+
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const openDocumentModal = (document: DocumentControl) => {
+    setDocumentForm({
+      key: document.key,
+      label: document.label,
+      status: document.status,
+      reference: document.reference,
+      reviewer: document.reviewer,
+      note: document.note,
+      expiresAt: document.expiresAt,
+    })
+
+    setModal("document")
+  }
+
+  const openTrainingModal = () => {
+    setTrainingForm((current) => ({
+      ...current,
+      trainer: draft.manager,
+    }))
+
+    setModal("training")
+  }
+
+  const performanceRows = [
+    {
+      label: "Missions réalisées",
+      value: completedMissionCount,
+      goal: draft.fieldVisitGoal,
+    },
+    {
+      label: "Leads générés",
+      value: periodLeads.length,
+      goal: draft.leadGoal,
+    },
+    {
+      label: "Leads qualifiés",
+      value: qualifiedLeadCount,
+      goal: draft.qualifiedLeadGoal,
+    },
+    {
+      label: "Conversions",
+      value: periodConversions.length,
+      goal: draft.conversionGoal,
+    },
+    {
+      label: "RDV partenaires",
+      value: relatedMissions.filter((row) =>
+        text(
+          row.mission_type || row.type || row.title,
+        )
+          .toLowerCase()
+          .includes("partner"),
+      ).length,
+      goal: draft.partnerMeetingGoal,
+    },
+  ]
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/35 px-3 py-3 backdrop-blur-sm">
-      <div className="flex h-[calc(100dvh-28px)] w-[calc(100vw-24px)] max-w-[1680px] flex-col overflow-hidden rounded-[34px] border border-slate-200 bg-white text-slate-950 shadow-2xl shadow-slate-950/25 [&_*]:!text-slate-950 [&_input]:!text-slate-950 [&_select]:!text-slate-950 [&_textarea]:!text-slate-950 [&_option]:!text-slate-950">
-        <header className="sticky top-0 z-20 border-b border-slate-100 bg-white px-7 py-5">
-          <div className="flex items-start justify-between gap-5">
-            <div className="flex gap-4">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl border border-blue-100 bg-blue-50">
-                <Target size={22} className="text-blue-800" />
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-2xl font-black tracking-tight text-slate-950">Créer mission pour {ambassadorName}</h2>
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-blue-800">Dispatch ambassadeur</span>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-800">SLA + preuve</span>
-                </div>
-                <p className="mt-1 max-w-5xl text-sm font-bold leading-6 text-slate-700">
-                  Créez une mission contextualisée à partir du profil, du territoire, de la charge, des services autorisés et des preuves attendues.
-                </p>
-              </div>
+    <div
+      data-ambassador-directory-route="enterprise-master-dossier"
+      className="min-w-0 flex-1 bg-[#f5f7fb] p-4 text-slate-950 lg:p-5"
+    >
+      <header className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_14px_45px_rgba(15,23,42,0.065)]">
+        <div className="flex flex-col gap-5 2xl:flex-row 2xl:items-start 2xl:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">
+              <Sparkles className="h-4 w-4" />
+              Ambassador Master Dossier
             </div>
-            <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full border border-slate-200 bg-white hover:bg-slate-50" aria-label="Fermer">
-              <X size={18} />
+
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+              Dossiers ambassadeurs
+            </h1>
+
+            <p className="mt-2 max-w-5xl text-sm font-semibold leading-6 text-slate-600">
+              Consultez, pilotez et synchronisez l’identité, l’exécution terrain,
+              les leads, la performance, la conformité, la formation et la
+              rémunération de chaque ambassadeur.
+            </p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[
+                "Données réelles uniquement",
+                "Dossier canonique",
+                "Commission fixe 10%",
+                "Audit multi-modules",
+                "Actions contrôlées",
+              ].map((label) => (
+                <span
+                  key={label}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700"
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex max-w-4xl flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setModal("mission")}
+              disabled={!selectedDossier}
+              className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
+            >
+              <Plus className="h-4 w-4" />
+              Affecter une mission
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setModal("lead")}
+              disabled={!selectedDossier}
+              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
+            >
+              <Target className="h-4 w-4" />
+              Créer un lead
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setModal("note")}
+              disabled={!selectedDossier}
+              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
+            >
+              <NotebookPen className="h-4 w-4" />
+              Ouvrir une note
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setModal("archive")}
+              disabled={!selectedDossier}
+              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
+            >
+              <Archive className="h-4 w-4" />
+              Archiver
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setModal("more")}
+              disabled={!selectedDossier}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
+            >
+              <Ellipsis className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => void loadData()}
+              disabled={loading}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50 disabled:opacity-50"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${
+                  loading ? "animate-spin" : ""
+                }`}
+              />
             </button>
           </div>
-        </header>
+        </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50/80 px-7 py-6">
-          <div className="grid gap-5 xl:grid-cols-[410px_minmax(0,1fr)_410px]">
-            <aside className="space-y-5">
-              <section className="rounded-3xl border border-blue-100 bg-white p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-800">Affectation multi-ambassadeurs</p>
-                    <h3 className="mt-1 text-lg font-black">Responsable + équipe support</h3>
-                    <p className="mt-1 text-xs font-bold leading-5 text-slate-700">Le profil sélectionné reste préchargé, mais vous pouvez ajouter un ou plusieurs ambassadeurs à la même mission.</p>
-                  </div>
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-800">{selectedAmbassadorCards.length || 0} assigné(s)</span>
+        {notice ? (
+          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-900">
+            {notice}
+          </div>
+        ) : null}
+
+        {error ? (
+          <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-900">
+            {error}
+          </div>
+        ) : null}
+      </header>
+
+      <div className="mt-4 grid min-w-0 gap-4 2xl:grid-cols-[275px_minmax(0,1fr)_395px]">
+        <aside className="min-w-0">
+          <Card className="sticky top-24 overflow-hidden">
+            <div className="border-b border-slate-100 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-base font-black text-slate-950">
+                    Portefeuille
+                  </h2>
+
+                  <p className="mt-1 text-xs font-semibold text-slate-500">
+                    {filteredDossiers.length} ambassadeur(s)
+                  </p>
                 </div>
 
-                <label className="mt-4 block">
-                  <span className="text-[10px] font-black uppercase tracking-[0.16em]">Ambassadeur principal</span>
-                  <select
-                    value={String(ambassador?.id || form.primaryAmbassadorId || "")}
-                    onChange={(event) => selectPrimaryAmbassador(event.target.value)}
-                    className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black outline-none"
-                  >
-                    {ambassadors.map((item) => {
-                      const id = String(item.id || "");
-                      const name = String(item.full_name || item.name || "Ambassadeur");
-                      const city = String(item.city || item.region || "Ville non renseignée");
-                      return <option key={id} value={id}>{name} · {city}</option>;
-                    })}
-                  </select>
-                </label>
+                <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-800">
+                  {dossiers.length}
+                </span>
+              </div>
 
-                <div className="mt-4 space-y-3">
-                  {selectedAmbassadorCards.map((assignment, index) => {
-                    const item = assignment.ambassador;
-                    const name = String(item.full_name || item.name || "Ambassadeur");
-                    const city = String(item.city || item.region || "Ville non renseignée");
-                    const territory = String(item.territory_name || item.territory || item.zone || "Territoire à préciser");
-                    const load = Math.min(100, Math.round(missions.filter((mission) => String(mission.ambassador_id || mission.assigned_ambassador_id || mission.owner_id || "") === String(assignment.ambassadorId)).length * 18 + numberValue(item.pending_missions ?? 0) * 9));
-                    const quality = numberValue(item.performance_score ?? item.quality_score ?? item.score_quality ?? 72);
-                    const outsideTerritory = form.city && city && city !== "Ville non renseignée" && city.toLowerCase() !== form.city.toLowerCase();
+              <label className="mt-4 flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3">
+                <Search className="h-4 w-4 text-slate-400" />
+
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Nom, ville, téléphone…"
+                  className="min-w-0 flex-1 bg-transparent text-xs font-bold text-slate-950 outline-none placeholder:text-slate-400"
+                />
+              </label>
+
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <select
+                  value={territoryFilter}
+                  onChange={(event) =>
+                    setTerritoryFilter(event.target.value)
+                  }
+                  className="h-9 rounded-xl border border-slate-200 bg-white px-2 text-[10px] font-black text-slate-950"
+                >
+                  <option value="all">
+                    Tous territoires
+                  </option>
+
+                  {territoriesNames.map((territory) => (
+                    <option key={territory} value={territory}>
+                      {territory}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={statusFilter}
+                  onChange={(event) =>
+                    setStatusFilter(event.target.value)
+                  }
+                  className="h-9 rounded-xl border border-slate-200 bg-white px-2 text-[10px] font-black text-slate-950"
+                >
+                  <option value="all">Tous statuts</option>
+                  <option value="active">Actifs</option>
+                  <option value="onboarding">
+                    Onboarding
+                  </option>
+                  <option value="inactive">Inactifs</option>
+                  <option value="suspended">
+                    Suspendus
+                  </option>
+                  <option value="archived">Archivés</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="max-h-[calc(100vh-310px)] overflow-y-auto p-2">
+              {filteredDossiers.map((dossier) => {
+                const configuration = dossier.configuration
+
+                return (
+                  <button
+                    key={dossier.id}
+                    type="button"
+                    onClick={() => selectAmbassador(dossier.id)}
+                    className={`mb-2 flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition ${
+                      selectedId === dossier.id
+                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                        : "border-slate-200 bg-white hover:border-blue-300"
+                    }`}
+                  >
+                    {dossier.photoUrl ? (
+                      <img
+                        src={dossier.photoUrl}
+                        alt=""
+                        className="h-11 w-11 shrink-0 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-black text-slate-700">
+                        {initials(dossier.name)}
+                      </span>
+                    )}
+
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="truncate text-xs font-black text-slate-950">
+                          {dossier.name}
+                        </span>
+
+                        <span
+                          className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+                            configuration.status === "active"
+                              ? "bg-emerald-500"
+                              : configuration.status === "onboarding"
+                                ? "bg-violet-500"
+                                : configuration.status === "suspended"
+                                  ? "bg-amber-500"
+                                  : "bg-rose-500"
+                          }`}
+                        />
+                      </span>
+
+                      <span className="mt-1 block truncate text-[10px] font-bold text-slate-500">
+                        {dossier.city || "Ville non renseignée"} ·{" "}
+                        {configuration.territoryName || "Sans territoire"}
+                      </span>
+
+                      <span className="mt-1 flex items-center justify-between gap-2">
+                        <span className="text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">
+                          {statusLabel(configuration.status)}
+                        </span>
+
+                        <span className="text-[10px] font-black text-blue-700">
+                          Score {configuration.qualityScore}%
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+                )
+              })}
+
+              {!loading && !filteredDossiers.length ? (
+                <EmptyState
+                  icon={Users}
+                  title="Aucun ambassadeur"
+                  description="Aucun profil réel ne correspond aux filtres actuels."
+                />
+              ) : null}
+            </div>
+          </Card>
+        </aside>
+
+        <main className="min-w-0 space-y-4">
+          {selectedDossier ? (
+            <>
+              <Card className="overflow-hidden">
+                <div className="p-5">
+                  <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+                    <div className="flex min-w-0 items-start gap-4">
+                      {selectedDossier.photoUrl ? (
+                        <img
+                          src={selectedDossier.photoUrl}
+                          alt=""
+                          className="h-20 w-20 shrink-0 rounded-[24px] object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-blue-50 text-xl font-black text-blue-800">
+                          {initials(selectedDossier.name)}
+                        </span>
+                      )}
+
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h2 className="text-2xl font-black text-slate-950">
+                            {selectedDossier.name}
+                          </h2>
+
+                          <span
+                            className={`rounded-full border px-2.5 py-1 text-[10px] font-black ${statusTone(
+                              draft.status,
+                            )}`}
+                          >
+                            {statusLabel(draft.status)}
+                          </span>
+
+                          {scoreBreakdown.global >= 85 ? (
+                            <span className="rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[10px] font-black text-violet-800">
+                              Top performer
+                            </span>
+                          ) : null}
+
+                          {scoreBreakdown.blockers.length ? (
+                            <button
+                              type="button"
+                              onClick={() => setModal("score")}
+                              className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-black text-amber-800"
+                            >
+                              {scoreBreakdown.blockers.length} risque(s)
+                            </button>
+                          ) : null}
+                        </div>
+
+                        <p className="mt-1 text-xs font-bold text-slate-500">
+                          ID : {selectedDossier.reference} · Ambassadeur depuis{" "}
+                          {draft.activationDate || "date à compléter"}
+                        </p>
+
+                        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs font-bold text-slate-600">
+                          <span className="inline-flex items-center gap-2">
+                            <Phone className="h-4 w-4 text-blue-600" />
+                            {selectedDossier.phone || "Téléphone à compléter"}
+                          </span>
+
+                          <span className="inline-flex items-center gap-2">
+                            <Mail className="h-4 w-4 text-blue-600" />
+                            {selectedDossier.email || "Email à compléter"}
+                          </span>
+
+                          <span className="inline-flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            {[
+                              selectedDossier.city,
+                              draft.zone,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ") || "Zone à compléter"}
+                          </span>
+
+                          <span className="inline-flex items-center gap-2">
+                            <UserCheck className="h-4 w-4 text-blue-600" />
+                            {draft.manager || "Manager à affecter"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid min-w-[280px] grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setModal("score")}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left hover:border-blue-300"
+                      >
+                        <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
+                          Score global
+                        </p>
+
+                        <p className="mt-1 text-2xl font-black text-slate-950">
+                          {scoreBreakdown.global}%
+                        </p>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("compliance")}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left hover:border-blue-300"
+                      >
+                        <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
+                          Conformité
+                        </p>
+
+                        <p className="mt-1 text-2xl font-black text-slate-950">
+                          {complianceCompletion}%
+                        </p>
+                      </button>
+
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                        <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
+                          Territoire
+                        </p>
+
+                        <p className="mt-1 truncate text-xs font-black text-slate-950">
+                          {draft.territoryName || "Non affecté"}
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                        <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
+                          Manager
+                        </p>
+
+                        <p className="mt-1 truncate text-xs font-black text-slate-950">
+                          {draft.manager || "Non affecté"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <nav className="flex gap-1 overflow-x-auto border-t border-slate-100 bg-white px-3 py-2">
+                  {TABS.map((tab) => {
+                    const Icon = tab.icon
 
                     return (
-                      <div key={assignment.ambassadorId} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex items-start gap-3">
-                          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-sm font-black ring-1 ring-slate-200">{initials(name)}</div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="truncate text-sm font-black">{name}</p>
-                              {index === 0 || assignment.role === "responsable" ? <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-black text-emerald-800">Principal</span> : <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-black text-blue-800">Support</span>}
+                      <button
+                        key={tab.key}
+                        type="button"
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-xl px-3 text-[11px] font-black transition ${
+                          activeTab === tab.key
+                            ? "bg-blue-600 text-white"
+                            : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {tab.label}
+                      </button>
+                    )
+                  })}
+                </nav>
+              </Card>
+
+              {activeTab === "overview" ? (
+                <>
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+                    <KpiCard
+                      label="Leads générés"
+                      value={periodLeads.length}
+                      helper={`Objectif ${draft.leadGoal}`}
+                      icon={Users}
+                      tone="blue"
+                      onClick={() => setActiveTab("leads")}
+                    />
+
+                    <KpiCard
+                      label="Conversions"
+                      value={periodConversions.length}
+                      helper={`${conversionRate}% de conversion`}
+                      icon={Target}
+                      tone="violet"
+                      onClick={() => setActiveTab("leads")}
+                    />
+
+                    <KpiCard
+                      label="Montant validé"
+                      value={`${validatedAmount.toLocaleString("fr-FR")} Dh`}
+                      helper="Attribution commerciale"
+                      icon={TrendingUp}
+                      tone="green"
+                      onClick={() => setActiveTab("leads")}
+                    />
+
+                    <KpiCard
+                      label="Incentive disponible"
+                      value={`${incentiveAvailable.toLocaleString(
+                        "fr-FR",
+                      )} Dh`}
+                      helper="Prêt pour payout"
+                      icon={CircleDollarSign}
+                      tone="amber"
+                      onClick={() => setActiveTab("incentives")}
+                    />
+
+                    <KpiCard
+                      label="Missions complétées"
+                      value={completedMissionCount}
+                      helper={`${periodMissions.length} assignée(s)`}
+                      icon={BriefcaseBusiness}
+                      tone="cyan"
+                      onClick={() => setActiveTab("missions")}
+                    />
+
+                    <KpiCard
+                      label="Score global"
+                      value={`${scoreBreakdown.global}%`}
+                      helper={`${scoreBreakdown.blockers.length} blocage(s)`}
+                      icon={BadgeCheck}
+                      tone="green"
+                      onClick={() => setModal("score")}
+                    />
+                  </div>
+
+                  <div className="grid gap-4 xl:grid-cols-3">
+                    <Card className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-black text-slate-950">
+                            Activité récente
+                          </h3>
+
+                          <p className="mt-1 text-xs font-semibold text-slate-500">
+                            Événements consolidés du dossier.
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab("history")}
+                          className="text-[10px] font-black text-blue-700"
+                        >
+                          Tout voir
+                        </button>
+                      </div>
+
+                      <div className="mt-4 space-y-4">
+                        {timeline.slice(0, 7).map((event) => (
+                          <div key={event.id} className="flex gap-3">
+                            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[10px] font-black text-blue-700">
+                              {event.type === "mission"
+                                ? "M"
+                                : event.type === "lead"
+                                  ? "L"
+                                  : event.type === "payment"
+                                    ? "P"
+                                    : event.type === "training"
+                                      ? "F"
+                                      : "•"}
+                            </span>
+
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-black text-slate-950">
+                                {event.title}
+                              </p>
+
+                              <p className="mt-0.5 line-clamp-2 text-[10px] font-semibold leading-5 text-slate-500">
+                                {event.detail || "Mise à jour du dossier"}
+                              </p>
+
+                              <p className="mt-0.5 text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">
+                                {new Date(
+                                  event.createdAt,
+                                ).toLocaleString("fr-FR")}
+                              </p>
                             </div>
-                            <p className="mt-1 text-xs font-bold text-slate-700">{city} · {territory}</p>
-                            <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-black uppercase tracking-[0.1em]">
-                              <span className="rounded-full bg-white px-2 py-1 text-center ring-1 ring-slate-200">Score {quality}%</span>
-                              <span className="rounded-full bg-white px-2 py-1 text-center ring-1 ring-slate-200">Charge {load}%</span>
-                              <span className={cn("rounded-full px-2 py-1 text-center ring-1", outsideTerritory ? "bg-amber-50 text-amber-900 ring-amber-200" : "bg-white ring-slate-200")}>{outsideTerritory ? "Hors zone" : "Zone OK"}</span>
+                          </div>
+                        ))}
+
+                        {!timeline.length ? (
+                          <p className="py-8 text-center text-xs font-semibold text-slate-500">
+                            Aucune activité réelle disponible.
+                          </p>
+                        ) : null}
+                      </div>
+                    </Card>
+
+                    <Card className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-black text-slate-950">
+                            Aperçu performance
+                          </h3>
+
+                          <p className="mt-1 text-xs font-semibold text-slate-500">
+                            Résultats contre objectifs.
+                          </p>
+                        </div>
+
+                        <select
+                          value={period}
+                          onChange={(event) =>
+                            setPeriod(
+                              event.target.value as PeriodFilter,
+                            )
+                          }
+                          className="h-9 rounded-xl border border-slate-200 bg-white px-2 text-[10px] font-black text-slate-950"
+                        >
+                          <option value="mtd">MTD</option>
+                          <option value="30d">30 jours</option>
+                          <option value="90d">90 jours</option>
+                          <option value="all">Tout</option>
+                        </select>
+                      </div>
+
+                      <div className="mt-5 space-y-4">
+                        {performanceRows.map((row) => {
+                          const score = row.goal
+                            ? Math.min(
+                                100,
+                                Math.round(
+                                  (row.value / row.goal) * 100,
+                                ),
+                              )
+                            : 0
+
+                          return (
+                            <button
+                              key={row.label}
+                              type="button"
+                              onClick={() =>
+                                row.label.includes("Lead") ||
+                                row.label.includes("Conversion")
+                                  ? setActiveTab("leads")
+                                  : setActiveTab("missions")
+                              }
+                              className="block w-full text-left"
+                            >
+                              <div className="mb-1.5 flex items-center justify-between text-xs font-black text-slate-700">
+                                <span>{row.label}</span>
+                                <span>
+                                  {row.value}/{row.goal}
+                                </span>
+                              </div>
+
+                              <Progress
+                                value={score}
+                                tone={
+                                  score >= 100
+                                    ? "green"
+                                    : score < 50
+                                      ? "amber"
+                                      : "blue"
+                                }
+                              />
+                            </button>
+                          )
+                        })}
+
+                        <button
+                          type="button"
+                          onClick={() => setModal("score")}
+                          className="mt-2 h-10 w-full rounded-2xl border border-slate-200 bg-white text-xs font-black text-blue-700 hover:bg-blue-50"
+                        >
+                          Voir l’explication des scores
+                        </button>
+                      </div>
+                    </Card>
+
+                    <Card className="p-4">
+                      <h3 className="text-base font-black text-slate-950">
+                        Statut & informations clés
+                      </h3>
+
+                      <div className="mt-4 space-y-3">
+                        {[
+                          ["Statut", statusLabel(draft.status)],
+                          [
+                            "Date d’activation",
+                            draft.activationDate || "À compléter",
+                          ],
+                          [
+                            "Ancienneté",
+                            selectedDossier.joinedAt
+                              ? `${Math.max(
+                                  0,
+                                  Math.floor(
+                                    (Date.now() -
+                                      new Date(
+                                        selectedDossier.joinedAt,
+                                      ).getTime()) /
+                                      (30 * 24 * 60 * 60 * 1000),
+                                  ),
+                                )} mois`
+                              : "Non calculée",
+                          ],
+                          ["Disponibilité", draft.availability],
+                          [
+                            "Zone principale",
+                            draft.zone ||
+                              draft.territoryName ||
+                              "Non affectée",
+                          ],
+                          [
+                            "Transport",
+                            draft.transportMode || "Non renseigné",
+                          ],
+                          [
+                            "Langues",
+                            draft.languages.join(", ") ||
+                              "Non renseignées",
+                          ],
+                          [
+                            "Dernière activité",
+                            timeline[0]?.createdAt
+                              ? new Date(
+                                  timeline[0].createdAt,
+                                ).toLocaleString("fr-FR")
+                              : "Aucune activité",
+                          ],
+                        ].map(([label, value]) => (
+                          <div
+                            key={label}
+                            className="flex items-start justify-between gap-4 border-b border-slate-100 pb-2"
+                          >
+                            <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
+                              {label}
+                            </span>
+
+                            <span className="text-right text-xs font-black text-slate-950">
+                              {value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("incentives")}
+                      className="text-left"
+                    >
+                      <Card className="h-full p-4 transition hover:border-amber-300">
+                        <WalletCards className="h-5 w-5 text-amber-600" />
+
+                        <p className="mt-3 text-sm font-black text-slate-950">
+                          Solde & incentives
+                        </p>
+
+                        <div className="mt-3 space-y-2 text-xs">
+                          <div className="flex justify-between">
+                            <span className="font-bold text-slate-500">
+                              Disponible
+                            </span>
+                            <span className="font-black">
+                              {incentiveAvailable.toLocaleString(
+                                "fr-FR",
+                              )}{" "}
+                              Dh
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <span className="font-bold text-slate-500">
+                              En attente
+                            </span>
+                            <span className="font-black">
+                              {pendingAmount.toLocaleString("fr-FR")} Dh
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <span className="font-bold text-slate-500">
+                              Payé
+                            </span>
+                            <span className="font-black">
+                              {paidAmount.toLocaleString("fr-FR")} Dh
+                            </span>
+                          </div>
+                        </div>
+                      </Card>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("training")}
+                      className="text-left"
+                    >
+                      <Card className="h-full p-4 transition hover:border-violet-300">
+                        <GraduationCap className="h-5 w-5 text-violet-600" />
+
+                        <p className="mt-3 text-sm font-black text-slate-950">
+                          Formation & développement
+                        </p>
+
+                        <p className="mt-2 text-3xl font-black text-slate-950">
+                          {trainingCompletion}%
+                        </p>
+
+                        <p className="mt-1 text-xs font-semibold text-slate-500">
+                          {
+                            relatedTraining.filter((row) =>
+                              isCompletedStatus(row.status),
+                            ).length
+                          }{" "}
+                          / {relatedTraining.length} terminée(s)
+                        </p>
+                      </Card>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("documents")}
+                      className="text-left"
+                    >
+                      <Card className="h-full p-4 transition hover:border-emerald-300">
+                        <FileCheck2 className="h-5 w-5 text-emerald-600" />
+
+                        <p className="mt-3 text-sm font-black text-slate-950">
+                          Conformité & documents
+                        </p>
+
+                        <p className="mt-2 text-3xl font-black text-slate-950">
+                          {complianceCompletion}%
+                        </p>
+
+                        <p className="mt-1 text-xs font-semibold text-slate-500">
+                          {
+                            draft.documents.filter(
+                              (document) =>
+                                document.status === "validated",
+                            ).length
+                          }{" "}
+                          contrôle(s) validé(s)
+                        </p>
+                      </Card>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setModal("note")}
+                      className="text-left"
+                    >
+                      <Card className="h-full p-4 transition hover:border-blue-300">
+                        <NotebookPen className="h-5 w-5 text-blue-600" />
+
+                        <p className="mt-3 text-sm font-black text-slate-950">
+                          Notes récentes
+                        </p>
+
+                        <p className="mt-2 text-3xl font-black text-slate-950">
+                          {draft.notes.length}
+                        </p>
+
+                        <p className="mt-1 line-clamp-2 text-xs font-semibold text-slate-500">
+                          {draft.notes[0]?.text ||
+                            "Aucune note interne enregistrée."}
+                        </p>
+                      </Card>
+                    </button>
+                  </div>
+                </>
+              ) : null}
+
+              {activeTab === "missions" ? (
+                <Card className="overflow-hidden">
+                  <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-4">
+                    <div>
+                      <h3 className="text-lg font-black text-slate-950">
+                        Missions de l’ambassadeur
+                      </h3>
+
+                      <p className="mt-1 text-xs font-semibold text-slate-500">
+                        Missions planifiées, actives, en retard, en validation
+                        et terminées.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setModal("mission")}
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black text-white"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Affecter mission
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[900px]">
+                      <thead>
+                        <tr className="bg-slate-50">
+                          {[
+                            "Mission",
+                            "Type",
+                            "Territoire",
+                            "Statut",
+                            "Priorité",
+                            "Échéance",
+                            "Preuve",
+                            "Actions",
+                          ].map((header) => (
+                            <th
+                              key={header}
+                              className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.12em] text-slate-600"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {relatedMissions.map((row) => (
+                          <tr
+                            key={idOf(row)}
+                            className="border-t border-slate-100"
+                          >
+                            <td className="px-4 py-3">
+                              <p className="text-xs font-black text-slate-950">
+                                {text(row.title || row.name) ||
+                                  "Mission sans titre"}
+                              </p>
+
+                              <p className="mt-1 text-[10px] font-bold text-slate-500">
+                                {idOf(row)}
+                              </p>
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {text(row.mission_type || row.type) || "—"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {text(
+                                row.territory_name || row.city,
+                              ) || "—"}
+                            </td>
+
+                            <td className="px-4 py-3">
+                              <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-black text-blue-800">
+                                {text(row.status) || "Non défini"}
+                              </span>
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-black">
+                              {text(row.priority) || "Normale"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-black">
+                              {dateValue(row.due_date) || "—"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {text(
+                                row.required_proof ||
+                                  metadataOf(row).required_proof,
+                              ) || "À définir"}
+                            </td>
+
+                            <td className="px-4 py-3">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setMissionForm((current) => ({
+                                    ...current,
+                                    mode: "existing",
+                                    existingMissionId: idOf(row),
+                                  }))
+                                  setModal("mission")
+                                }}
+                                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-black text-blue-700"
+                              >
+                                Gérer
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {!relatedMissions.length ? (
+                    <EmptyState
+                      icon={BriefcaseBusiness}
+                      title="Aucune mission affectée"
+                      description="Affectez une mission réelle pour démarrer l’exécution opérationnelle."
+                      action={
+                        <button
+                          type="button"
+                          onClick={() => setModal("mission")}
+                          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Affecter une mission
+                        </button>
+                      }
+                    />
+                  ) : null}
+                </Card>
+              ) : null}
+
+              {activeTab === "leads" ? (
+                <div className="space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <KpiCard
+                      label="Leads"
+                      value={relatedLeads.length}
+                      helper="Attribution totale"
+                      icon={Users}
+                      tone="blue"
+                      onClick={() => undefined}
+                    />
+
+                    <KpiCard
+                      label="Qualifiés"
+                      value={qualifiedLeadCount}
+                      helper="Score ou statut qualifié"
+                      icon={BadgeCheck}
+                      tone="green"
+                      onClick={() => undefined}
+                    />
+
+                    <KpiCard
+                      label="Conversions"
+                      value={relatedConversions.length}
+                      helper={`${conversionRate}% de conversion`}
+                      icon={Target}
+                      tone="violet"
+                      onClick={() => undefined}
+                    />
+
+                    <KpiCard
+                      label="Valeur attribuée"
+                      value={`${validatedAmount.toLocaleString(
+                        "fr-FR",
+                      )} Dh`}
+                      helper="Montant validé"
+                      icon={TrendingUp}
+                      tone="green"
+                      onClick={() => undefined}
+                    />
+                  </div>
+
+                  <Card className="overflow-hidden">
+                    <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-4">
+                      <div>
+                        <h3 className="text-lg font-black text-slate-950">
+                          Leads & conversions
+                        </h3>
+
+                        <p className="mt-1 text-xs font-semibold text-slate-500">
+                          Attribution, qualité, prochaine action et conversion.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setModal("lead")}
+                        className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black text-white"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Créer lead
+                      </button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[950px]">
+                        <thead>
+                          <tr className="bg-slate-50">
+                            {[
+                              "Lead",
+                              "Contact",
+                              "Ville",
+                              "Source",
+                              "Score",
+                              "Statut",
+                              "Prochain suivi",
+                              "Conversion",
+                            ].map((header) => (
+                              <th
+                                key={header}
+                                className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.12em] text-slate-600"
+                              >
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {relatedLeads.map((row) => {
+                            const leadId = idOf(row)
+
+                            const conversion = relatedConversions.find(
+                              (item) =>
+                                text(
+                                  item.lead_id ||
+                                    metadataOf(item).lead_id,
+                                ) === leadId,
+                            )
+
+                            return (
+                              <tr
+                                key={leadId}
+                                className="border-t border-slate-100"
+                              >
+                                <td className="px-4 py-3 text-xs font-black">
+                                  {text(
+                                    row.lead_name ||
+                                      row.contact_name ||
+                                      row.name,
+                                  ) || "Lead sans nom"}
+                                </td>
+
+                                <td className="px-4 py-3 text-xs font-bold">
+                                  {text(row.phone || row.email) || "—"}
+                                </td>
+
+                                <td className="px-4 py-3 text-xs font-bold">
+                                  {text(row.city) || "—"}
+                                </td>
+
+                                <td className="px-4 py-3 text-xs font-bold">
+                                  {text(row.source) || "—"}
+                                </td>
+
+                                <td className="px-4 py-3 text-xs font-black">
+                                  {numberValue(row.score)}%
+                                </td>
+
+                                <td className="px-4 py-3">
+                                  <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-black text-blue-800">
+                                    {text(row.status) || "Nouveau"}
+                                  </span>
+                                </td>
+
+                                <td className="px-4 py-3 text-xs font-bold">
+                                  {dateValue(
+                                    row.next_follow_up ||
+                                      row.next_action_date,
+                                  ) || text(row.next_action) || "—"}
+                                </td>
+
+                                <td className="px-4 py-3">
+                                  {conversion ? (
+                                    <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-black text-emerald-800">
+                                      {amountOf(conversion).toLocaleString(
+                                        "fr-FR",
+                                      )}{" "}
+                                      Dh
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-black text-slate-400">
+                                      Non converti
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {!relatedLeads.length ? (
+                      <EmptyState
+                        icon={Target}
+                        title="Aucun lead attribué"
+                        description="Créez un lead réel et attribuez-le automatiquement à cet ambassadeur."
+                        action={
+                          <button
+                            type="button"
+                            onClick={() => setModal("lead")}
+                            className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white"
+                          >
+                            <Plus className="h-4 w-4" />
+                            Créer un lead
+                          </button>
+                        }
+                      />
+                    ) : null}
+                  </Card>
+                </div>
+              ) : null}
+
+              {activeTab === "incentives" ? (
+                <div className="space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <KpiCard
+                      label="Disponible"
+                      value={`${incentiveAvailable.toLocaleString(
+                        "fr-FR",
+                      )} Dh`}
+                      helper="Prêt à payer"
+                      icon={CircleDollarSign}
+                      tone="green"
+                      onClick={() => undefined}
+                    />
+
+                    <KpiCard
+                      label="En attente"
+                      value={`${pendingAmount.toLocaleString(
+                        "fr-FR",
+                      )} Dh`}
+                      helper="Validation ou litige"
+                      icon={Clock3}
+                      tone="amber"
+                      onClick={() => undefined}
+                    />
+
+                    <KpiCard
+                      label="Payé"
+                      value={`${paidAmount.toLocaleString(
+                        "fr-FR",
+                      )} Dh`}
+                      helper="Historique confirmé"
+                      icon={Banknote}
+                      tone="blue"
+                      onClick={() => undefined}
+                    />
+
+                    <KpiCard
+                      label="Commission"
+                      value="10%"
+                      helper="Fixe et verrouillée"
+                      icon={WalletCards}
+                      tone="violet"
+                      onClick={() => setDrawerMode("details")}
+                    />
+                  </div>
+
+                  <Card className="overflow-hidden">
+                    <div className="border-b border-slate-100 p-4">
+                      <h3 className="text-lg font-black text-slate-950">
+                        Ledger incentives & paiements
+                      </h3>
+
+                      <p className="mt-1 text-xs font-semibold text-slate-500">
+                        Base de calcul, période, décision, statut et paiement.
+                      </p>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[900px]">
+                        <thead>
+                          <tr className="bg-slate-50">
+                            {[
+                              "Référence",
+                              "Type",
+                              "Période",
+                              "Base",
+                              "Montant",
+                              "Statut",
+                              "Paiement",
+                            ].map((header) => (
+                              <th
+                                key={header}
+                                className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.12em] text-slate-600"
+                              >
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {relatedIncentives.map((row) => (
+                            <tr
+                              key={`${idOf(row)}-${text(row.type)}`}
+                              className="border-t border-slate-100"
+                            >
+                              <td className="px-4 py-3 text-xs font-black">
+                                {text(row.reference || row.code) ||
+                                  idOf(row)}
+                              </td>
+
+                              <td className="px-4 py-3 text-xs font-bold">
+                                {text(row.type || row.title) || "Incentive"}
+                              </td>
+
+                              <td className="px-4 py-3 text-xs font-bold">
+                                {text(row.period) ||
+                                  dateValue(row.created_at) ||
+                                  "—"}
+                              </td>
+
+                              <td className="px-4 py-3 text-xs font-bold">
+                                {text(
+                                  row.calculation_basis || row.basis,
+                                ) || "—"}
+                              </td>
+
+                              <td className="px-4 py-3 text-xs font-black">
+                                {amountOf(row).toLocaleString("fr-FR")} Dh
+                              </td>
+
+                              <td className="px-4 py-3">
+                                <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-black text-blue-800">
+                                  {text(row.status) || "En attente"}
+                                </span>
+                              </td>
+
+                              <td className="px-4 py-3 text-xs font-bold">
+                                {text(
+                                  row.payment_method ||
+                                    row.payout_method,
+                                ) ||
+                                  draft.paymentMethod ||
+                                  "—"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {!relatedIncentives.length ? (
+                      <EmptyState
+                        icon={WalletCards}
+                        title="Aucun mouvement financier"
+                        description="Aucun incentive ou payout réel n’est encore rattaché à ce dossier."
+                      />
+                    ) : null}
+                  </Card>
+                </div>
+              ) : null}
+
+              {activeTab === "training" ? (
+                <Card className="overflow-hidden">
+                  <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-4">
+                    <div>
+                      <h3 className="text-lg font-black text-slate-950">
+                        Formation & certification
+                      </h3>
+
+                      <p className="mt-1 text-xs font-semibold text-slate-500">
+                        Modules, formateurs, scores, tentatives, échéances et
+                        certifications.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={openTrainingModal}
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-violet-600 px-3 text-xs font-black text-white"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Affecter formation
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[900px]">
+                      <thead>
+                        <tr className="bg-slate-50">
+                          {[
+                            "Formation",
+                            "Formateur",
+                            "Statut",
+                            "Score",
+                            "Échéance",
+                            "Certification",
+                            "Preuve",
+                          ].map((header) => (
+                            <th
+                              key={header}
+                              className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.12em] text-slate-600"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {relatedTraining.map((row) => (
+                          <tr
+                            key={idOf(row)}
+                            className="border-t border-slate-100"
+                          >
+                            <td className="px-4 py-3 text-xs font-black">
+                              {text(row.title || row.module_name) ||
+                                "Formation sans titre"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {text(row.trainer) || "À affecter"}
+                            </td>
+
+                            <td className="px-4 py-3">
+                              <span className="rounded-full bg-violet-50 px-2.5 py-1 text-[9px] font-black text-violet-800">
+                                {text(row.status) || "Non commencé"}
+                              </span>
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-black">
+                              {numberValue(row.score)}%
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {dateValue(row.due_date) || "—"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {text(
+                                row.certification_status ||
+                                  row.certificate_status,
+                              ) || "Non émise"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {text(row.evidence || row.evidence_url) ||
+                                "—"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {!relatedTraining.length ? (
+                    <EmptyState
+                      icon={GraduationCap}
+                      title="Aucune formation affectée"
+                      description="Créez une affectation Academy réelle et suivez son exécution."
+                      action={
+                        <button
+                          type="button"
+                          onClick={openTrainingModal}
+                          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-600 px-4 text-sm font-black text-white"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Affecter une formation
+                        </button>
+                      }
+                    />
+                  ) : null}
+                </Card>
+              ) : null}
+
+              {activeTab === "compliance" ? (
+                <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
+                  <Card className="p-4">
+                    <h3 className="text-lg font-black text-slate-950">
+                      Readiness conformité
+                    </h3>
+
+                    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-slate-600">
+                          Score conformité
+                        </span>
+
+                        <span className="text-3xl font-black text-slate-950">
+                          {complianceCompletion}%
+                        </span>
+                      </div>
+
+                      <div className="mt-3">
+                        <Progress
+                          value={complianceCompletion}
+                          tone={
+                            complianceCompletion === 100
+                              ? "green"
+                              : "amber"
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {[
+                        [
+                          "Commission fixe 10% acceptée",
+                          draft.commissionAccepted,
+                        ],
+                        [
+                          "Paiement vérifié",
+                          draft.paymentVerified,
+                        ],
+                        [
+                          "Territoire affecté",
+                          Boolean(draft.territoryId),
+                        ],
+                        [
+                          "Manager affecté",
+                          Boolean(draft.manager),
+                        ],
+                        [
+                          "Formation ≥ 70%",
+                          trainingCompletion >= 70,
+                        ],
+                      ].map(([label, complete]) => (
+                        <div
+                          key={String(label)}
+                          className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3"
+                        >
+                          <span className="text-xs font-black text-slate-800">
+                            {label}
+                          </span>
+
+                          {complete ? (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                          ) : (
+                            <AlertTriangle className="h-4 w-4 text-amber-600" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  <Card className="overflow-hidden">
+                    <div className="border-b border-slate-100 p-4">
+                      <h3 className="text-lg font-black text-slate-950">
+                        Contrôles obligatoires
+                      </h3>
+                    </div>
+
+                    <div className="space-y-2 p-4">
+                      {draft.documents.map((document) => (
+                        <button
+                          key={document.key}
+                          type="button"
+                          onClick={() =>
+                            openDocumentModal(document)
+                          }
+                          className="flex w-full items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-3 text-left hover:border-blue-300"
+                        >
+                          <div className="flex min-w-0 items-center gap-3">
+                            <span
+                              className={`rounded-xl p-2 ${
+                                document.status === "validated"
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : document.status === "rejected" ||
+                                      document.status === "expired"
+                                    ? "bg-rose-50 text-rose-700"
+                                    : "bg-amber-50 text-amber-700"
+                              }`}
+                            >
+                              <FileCheck2 className="h-4 w-4" />
+                            </span>
+
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-black text-slate-950">
+                                {document.label}
+                                {document.required ? " *" : ""}
+                              </p>
+
+                              <p className="mt-1 truncate text-[10px] font-bold text-slate-500">
+                                {document.reviewer ||
+                                  "Reviewer non affecté"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-[9px] font-black ${
+                              document.status === "validated"
+                                ? "bg-emerald-50 text-emerald-800"
+                                : document.status === "rejected" ||
+                                    document.status === "expired"
+                                  ? "bg-rose-50 text-rose-800"
+                                  : "bg-amber-50 text-amber-800"
+                            }`}
+                          >
+                            {document.status}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </Card>
+                </div>
+              ) : null}
+
+              {activeTab === "documents" ? (
+                <Card className="overflow-hidden">
+                  <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-4">
+                    <div>
+                      <h3 className="text-lg font-black text-slate-950">
+                        Registre documentaire
+                      </h3>
+
+                      <p className="mt-1 text-xs font-semibold text-slate-500">
+                        Statut, référence, reviewer, expiration et correction.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const firstMissing =
+                          draft.documents.find(
+                            (document) =>
+                              document.status !== "validated",
+                          ) || draft.documents[0]
+
+                        if (firstMissing) {
+                          openDocumentModal(firstMissing)
+                        }
+                      }}
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black text-white"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Ajouter / contrôler
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[950px]">
+                      <thead>
+                        <tr className="bg-slate-50">
+                          {[
+                            "Document",
+                            "Obligatoire",
+                            "Statut",
+                            "Référence",
+                            "Reviewer",
+                            "Expiration",
+                            "Dernière mise à jour",
+                            "Action",
+                          ].map((header) => (
+                            <th
+                              key={header}
+                              className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.12em] text-slate-600"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {draft.documents.map((document) => (
+                          <tr
+                            key={document.key}
+                            className="border-t border-slate-100"
+                          >
+                            <td className="px-4 py-3 text-xs font-black">
+                              {document.label}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {document.required ? "Oui" : "Non"}
+                            </td>
+
+                            <td className="px-4 py-3">
+                              <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-black text-blue-800">
+                                {document.status}
+                              </span>
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {document.reference || "—"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {document.reviewer || "—"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {document.expiresAt || "—"}
+                            </td>
+
+                            <td className="px-4 py-3 text-xs font-bold">
+                              {document.updatedAt
+                                ? new Date(
+                                    document.updatedAt,
+                                  ).toLocaleString("fr-FR")
+                                : "—"}
+                            </td>
+
+                            <td className="px-4 py-3">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  openDocumentModal(document)
+                                }
+                                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-black text-blue-700"
+                              >
+                                Gérer
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              ) : null}
+
+              {activeTab === "history" ? (
+                <Card className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-black text-slate-950">
+                        Historique complet
+                      </h3>
+
+                      <p className="mt-1 text-xs font-semibold text-slate-500">
+                        Chronologie consolidée de toutes les activités du dossier.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={exportDossier}
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-950"
+                    >
+                      <Download className="h-4 w-4" />
+                      Exporter dossier
+                    </button>
+                  </div>
+
+                  <div className="mt-5 space-y-5">
+                    {timeline.map((event) => (
+                      <div
+                        key={event.id}
+                        className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-[150px_1fr_180px]"
+                      >
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
+                            {event.type}
+                          </p>
+
+                          <p className="mt-1 text-xs font-black text-slate-950">
+                            {new Date(
+                              event.createdAt,
+                            ).toLocaleString("fr-FR")}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-sm font-black text-slate-950">
+                            {event.title}
+                          </p>
+
+                          <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">
+                            {event.detail || "Aucun détail supplémentaire"}
+                          </p>
+                        </div>
+
+                        <div className="text-xs font-black text-slate-700">
+                          {event.actor}
+                        </div>
+                      </div>
+                    ))}
+
+                    {!timeline.length ? (
+                      <EmptyState
+                        icon={History}
+                        title="Aucun historique"
+                        description="Les futures actions du dossier apparaîtront ici avec leur date et leur auteur."
+                      />
+                    ) : null}
+                  </div>
+                </Card>
+              ) : null}
+            </>
+          ) : (
+            <Card>
+              <EmptyState
+                icon={Users}
+                title="Aucun ambassadeur sélectionné"
+                description="Sélectionnez un ambassadeur réel dans le portefeuille pour charger son dossier complet."
+              />
+            </Card>
+          )}
+        </main>
+
+        <aside className="min-w-0">
+          <Card className="sticky top-24 overflow-hidden">
+            <div className="border-b border-slate-100 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-700">
+                    Command Drawer
+                  </p>
+
+                  <h2 className="mt-1 text-xl font-black text-slate-950">
+                    Mettre à jour le dossier
+                  </h2>
+
+                  <p className="mt-1 text-xs font-semibold text-slate-500">
+                    {selectedDossier?.name ||
+                      "Aucun dossier sélectionné"}
+                  </p>
+                </div>
+
+                {dirty ? (
+                  <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[9px] font-black text-amber-800">
+                    Non enregistré
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-black text-emerald-800">
+                    Synchronisé
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
+                <button
+                  type="button"
+                  onClick={() => setDrawerMode("details")}
+                  className={`h-9 rounded-xl text-xs font-black ${
+                    drawerMode === "details"
+                      ? "bg-white text-blue-700 shadow"
+                      : "text-slate-600"
+                  }`}
+                >
+                  Détails
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDrawerMode("activities")}
+                  className={`h-9 rounded-xl text-xs font-black ${
+                    drawerMode === "activities"
+                      ? "bg-white text-blue-700 shadow"
+                      : "text-slate-600"
+                  }`}
+                >
+                  Activités
+                </button>
+              </div>
+            </div>
+
+            {selectedDossier ? (
+              <>
+                <div className="max-h-[calc(100vh-290px)] overflow-y-auto p-4">
+                  {drawerMode === "details" ? (
+                    <div className="space-y-3">
+                      <details
+                        open
+                        className="rounded-2xl border border-slate-200 bg-white"
+                      >
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          1. Identité & coordonnées
+                        </summary>
+
+                        <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">
+                          <Field label="Nom officiel">
+                            <input
+                              value={selectedDossier.name}
+                              disabled
+                              className={`${inputClass} bg-slate-100`}
+                            />
+                          </Field>
+
+                          <Field label="Nom d’usage">
+                            <input
+                              value={draft.preferredName}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "preferredName",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Téléphone">
+                            <input
+                              value={selectedDossier.phone}
+                              disabled
+                              className={`${inputClass} bg-slate-100`}
+                            />
+                          </Field>
+
+                          <Field label="WhatsApp">
+                            <input
+                              value={draft.whatsapp}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "whatsapp",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Région">
+                            <input
+                              value={draft.region}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "region",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Zone / quartier">
+                            <input
+                              value={draft.zone}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "zone",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <div className="sm:col-span-2">
+                            <Field label="Adresse">
+                              <input
+                                value={draft.address}
+                                onChange={(event) =>
+                                  updateDraft(
+                                    "address",
+                                    event.target.value,
+                                  )
+                                }
+                                className={inputClass}
+                              />
+                            </Field>
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <Field
+                              label="Langues"
+                              helper="Séparer les langues par une virgule."
+                            >
+                              <input
+                                value={draft.languages.join(", ")}
+                                onChange={(event) =>
+                                  updateDraft(
+                                    "languages",
+                                    event.target.value
+                                      .split(",")
+                                      .map((item) => item.trim())
+                                      .filter(Boolean),
+                                  )
+                                }
+                                className={inputClass}
+                              />
+                            </Field>
+                          </div>
+                        </div>
+                      </details>
+
+                      <details
+                        open
+                        className="rounded-2xl border border-slate-200 bg-white"
+                      >
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          2. Contrat & statut
+                        </summary>
+
+                        <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">
+                          <Field label="Statut">
+                            <select
+                              value={draft.status}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "status",
+                                  event.target
+                                    .value as DossierConfiguration["status"],
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option value="active">Actif</option>
+                              <option value="onboarding">
+                                En onboarding
+                              </option>
+                              <option value="inactive">
+                                Inactif
+                              </option>
+                              <option value="suspended">
+                                Suspendu
+                              </option>
+                              <option value="archived">
+                                Archivé
+                              </option>
+                            </select>
+                          </Field>
+
+                          <Field label="Date d’activation">
+                            <input
+                              type="date"
+                              value={draft.activationDate}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "activationDate",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Type de contrat">
+                            <input
+                              value={draft.contractType}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "contractType",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Manager">
+                            <input
+                              value={draft.manager}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "manager",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Début contrat">
+                            <input
+                              type="date"
+                              value={draft.contractStartDate}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "contractStartDate",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Fin contrat">
+                            <input
+                              type="date"
+                              value={draft.contractEndDate}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "contractEndDate",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateDraft(
+                                "autoRenew",
+                                !draft.autoRenew,
+                              )
+                            }
+                            className={`sm:col-span-2 flex items-center justify-between rounded-2xl border p-3 text-left ${
+                              draft.autoRenew
+                                ? "border-emerald-200 bg-emerald-50"
+                                : "border-slate-200 bg-slate-50"
+                            }`}
+                          >
+                            <span className="text-xs font-black text-slate-950">
+                              Renouvellement automatique
+                            </span>
+
+                            <CheckCircle2
+                              className={`h-4 w-4 ${
+                                draft.autoRenew
+                                  ? "text-emerald-600"
+                                  : "text-slate-300"
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </details>
+
+                      <details
+                        open
+                        className="rounded-2xl border border-slate-200 bg-white"
+                      >
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          3. Performance & objectifs
+                        </summary>
+
+                        <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">
+                          {[
+                            ["qualityScore", "Score qualité"],
+                            ["leadGoal", "Objectif leads"],
+                            [
+                              "qualifiedLeadGoal",
+                              "Objectif leads qualifiés",
+                            ],
+                            [
+                              "conversionGoal",
+                              "Objectif conversions",
+                            ],
+                            [
+                              "fieldVisitGoal",
+                              "Objectif visites terrain",
+                            ],
+                            [
+                              "partnerMeetingGoal",
+                              "Objectif RDV partenaires",
+                            ],
+                            [
+                              "revenueGoal",
+                              "Objectif revenu Dh",
+                            ],
+                          ].map(([key, label]) => (
+                            <Field key={key} label={label}>
+                              <input
+                                type="number"
+                                min="0"
+                                max={
+                                  key === "qualityScore"
+                                    ? 100
+                                    : undefined
+                                }
+                                value={
+                                  draft[
+                                    key as keyof DossierConfiguration
+                                  ] as number
+                                }
+                                onChange={(event) =>
+                                  updateDraft(
+                                    key as keyof DossierConfiguration,
+                                    numberValue(
+                                      event.target.value,
+                                    ) as never,
+                                  )
+                                }
+                                className={inputClass}
+                              />
+                            </Field>
+                          ))}
+                        </div>
+                      </details>
+
+                      <details className="rounded-2xl border border-slate-200 bg-white">
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          4. Incitatifs & paiements
+                        </summary>
+
+                        <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">
+                          <div className="sm:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-800">
+                              Commission verrouillée
+                            </p>
+
+                            <p className="mt-1 text-3xl font-black text-emerald-950">
+                              10%
+                            </p>
+                          </div>
+
+                          <Field label="Cycle payout">
+                            <select
+                              value={draft.payoutCycle}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "payoutCycle",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option>Hebdomadaire</option>
+                              <option>Bimensuel</option>
+                              <option>Mensuel</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Méthode paiement">
+                            <select
+                              value={draft.paymentMethod}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "paymentMethod",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option>Virement bancaire</option>
+                              <option>Mobile Money</option>
+                              <option>Espèces contrôlées</option>
+                            </select>
+                          </Field>
+
+                          <div className="sm:col-span-2">
+                            <Field label="RIB / référence bénéficiaire">
+                              <input
+                                value={draft.paymentReference}
+                                onChange={(event) =>
+                                  updateDraft(
+                                    "paymentReference",
+                                    event.target.value,
+                                  )
+                                }
+                                className={inputClass}
+                              />
+                            </Field>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateDraft(
+                                "commissionAccepted",
+                                !draft.commissionAccepted,
+                              )
+                            }
+                            className={`rounded-2xl border p-3 text-xs font-black ${
+                              draft.commissionAccepted
+                                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                : "border-amber-200 bg-amber-50 text-amber-800"
+                            }`}
+                          >
+                            Commission{" "}
+                            {draft.commissionAccepted
+                              ? "acceptée"
+                              : "à accepter"}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateDraft(
+                                "paymentVerified",
+                                !draft.paymentVerified,
+                              )
+                            }
+                            className={`rounded-2xl border p-3 text-xs font-black ${
+                              draft.paymentVerified
+                                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                : "border-amber-200 bg-amber-50 text-amber-800"
+                            }`}
+                          >
+                            Paiement{" "}
+                            {draft.paymentVerified
+                              ? "vérifié"
+                              : "à vérifier"}
+                          </button>
+                        </div>
+                      </details>
+
+                      <details className="rounded-2xl border border-slate-200 bg-white">
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          5. Conformité & documents
+                        </summary>
+
+                        <div className="space-y-2 border-t border-slate-100 p-4">
+                          {draft.documents.map((document) => (
+                            <button
+                              key={document.key}
+                              type="button"
+                              onClick={() =>
+                                openDocumentModal(document)
+                              }
+                              className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-3 text-left"
+                            >
+                              <span className="text-xs font-black text-slate-950">
+                                {document.label}
+                              </span>
+
+                              <span className="text-[9px] font-black text-blue-700">
+                                {document.status}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </details>
+
+                      <details className="rounded-2xl border border-slate-200 bg-white">
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          6. Opérations terrain
+                        </summary>
+
+                        <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">
+                          <div className="sm:col-span-2">
+                            <Field label="Territoire réel">
+                              <select
+                                value={draft.territoryId}
+                                onChange={(event) => {
+                                  const territoryId =
+                                    event.target.value
+
+                                  const territory =
+                                    territories.find(
+                                      (row) =>
+                                        idOf(row) === territoryId,
+                                    )
+
+                                  setDraft((current) => ({
+                                    ...current,
+                                    territoryId,
+                                    territoryName: text(
+                                      territory?.name ||
+                                        territory?.title ||
+                                        territory?.territory_name,
+                                    ),
+                                  }))
+                                }}
+                                className={inputClass}
+                              >
+                                <option value="">
+                                  Choisir un territoire
+                                </option>
+
+                                {territories.map((territory) => (
+                                  <option
+                                    key={idOf(territory)}
+                                    value={idOf(territory)}
+                                  >
+                                    {text(
+                                      territory.name ||
+                                        territory.title ||
+                                        territory.territory_name,
+                                    ) || idOf(territory)}
+                                  </option>
+                                ))}
+                              </select>
+                            </Field>
+                          </div>
+
+                          <Field label="Mode de couverture">
+                            <select
+                              value={draft.coverageMode}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "coverageMode",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option>Partagé</option>
+                              <option>Exclusif</option>
+                              <option>Secondaire</option>
+                              <option>Backup</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Rayon km">
+                            <input
+                              type="number"
+                              min="1"
+                              value={draft.radiusKm}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "radiusKm",
+                                  numberValue(
+                                    event.target.value,
+                                    5,
+                                  ),
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Disponibilité">
+                            <input
+                              value={draft.availability}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "availability",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <Field label="Moyen de transport">
+                            <input
+                              value={draft.transportMode}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "transportMode",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            />
+                          </Field>
+
+                          <div className="sm:col-span-2">
+                            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-700">
+                              Services autorisés
+                            </p>
+
+                            <div className="flex flex-wrap gap-2">
+                              {SERVICES.map((service) => (
+                                <button
+                                  key={service}
+                                  type="button"
+                                  onClick={() =>
+                                    toggleDraftArray(
+                                      "services",
+                                      service,
+                                    )
+                                  }
+                                  className={`rounded-full border px-3 py-2 text-[10px] font-black ${
+                                    draft.services.includes(service)
+                                      ? "border-blue-600 bg-blue-600 text-white"
+                                      : "border-slate-200 bg-white text-slate-800"
+                                  }`}
+                                >
+                                  {service}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-700">
+                              Canaux autorisés
+                            </p>
+
+                            <div className="flex flex-wrap gap-2">
+                              {CHANNELS.map((channel) => (
+                                <button
+                                  key={channel}
+                                  type="button"
+                                  onClick={() =>
+                                    toggleDraftArray(
+                                      "channels",
+                                      channel,
+                                    )
+                                  }
+                                  className={`rounded-full border px-3 py-2 text-[10px] font-black ${
+                                    draft.channels.includes(channel)
+                                      ? "border-emerald-600 bg-emerald-600 text-white"
+                                      : "border-slate-200 bg-white text-slate-800"
+                                  }`}
+                                >
+                                  {channel}
+                                </button>
+                              ))}
                             </div>
                           </div>
                         </div>
-                        <div className="mt-3 flex gap-2">
-                          <select
-                            value={assignment.role}
-                            onChange={(event) => updateAssignedAmbassadorRole(assignment.ambassadorId, event.target.value as DirectoryMissionAmbassadorRole)}
-                            className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-xs font-black outline-none"
-                          >
-                            {directoryMissionAssignmentRoles.map((role) => <option key={role.value} value={role.value}>{role.label}</option>)}
-                          </select>
-                          <button
-                            type="button"
-                            onClick={() => removeAssignedAmbassador(assignment.ambassadorId)}
-                            disabled={selectedAmbassadorCards.length <= 1}
-                            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-black disabled:opacity-40"
-                          >
-                            Retirer
-                          </button>
+                      </details>
+
+                      <details className="rounded-2xl border border-slate-200 bg-white">
+                        <summary className="cursor-pointer list-none p-4 text-sm font-black text-slate-950">
+                          7. Accès & ressources
+                        </summary>
+
+                        <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-3">
+                          <Field label="Portail">
+                            <select
+                              value={draft.portalAccessStatus}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "portalAccessStatus",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option>Non préparé</option>
+                              <option>Préparé</option>
+                              <option>Actif</option>
+                              <option>Suspendu</option>
+                            </select>
+                          </Field>
+
+                          <Field label="CRM">
+                            <select
+                              value={draft.crmAccessStatus}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "crmAccessStatus",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option>Non préparé</option>
+                              <option>Préparé</option>
+                              <option>Actif</option>
+                              <option>Suspendu</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Starter kit">
+                            <select
+                              value={draft.starterKitStatus}
+                              onChange={(event) =>
+                                updateDraft(
+                                  "starterKitStatus",
+                                  event.target.value,
+                                )
+                              }
+                              className={inputClass}
+                            >
+                              <option>Non préparé</option>
+                              <option>En préparation</option>
+                              <option>Prêt</option>
+                              <option>Remis</option>
+                            </select>
+                          </Field>
                         </div>
+                      </details>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-black text-slate-950">
+                          Activités du dossier
+                        </h3>
+
+                        <button
+                          type="button"
+                          onClick={() => setModal("note")}
+                          className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-[10px] font-black text-blue-800"
+                        >
+                          Ajouter note
+                        </button>
                       </div>
-                    );
-                  })}
-                </div>
 
-                <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em]">Ajouter un ambassadeur support</p>
-                  <div className="mt-2 flex gap-2">
-                    <select value={supportAmbassadorPick} onChange={(event) => setSupportAmbassadorPick(event.target.value)} className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-xs font-black outline-none">
-                      <option value="">Sélectionner depuis le réseau</option>
-                      {supportCandidates.map((item) => {
-                        const id = String(item.id || "");
-                        const name = String(item.full_name || item.name || "Ambassadeur");
-                        const city = String(item.city || item.region || "Ville non renseignée");
-                        return <option key={id} value={id}>{name} · {city}</option>;
-                      })}
-                    </select>
-                    <button type="button" onClick={() => addSupportAmbassador()} disabled={!supportAmbassadorPick} className="h-11 rounded-xl bg-slate-950 px-4 text-xs font-black text-white disabled:bg-slate-200">Ajouter</button>
-                  </div>
-                  <p className="mt-2 text-[11px] font-bold leading-5 text-slate-600">Rôles disponibles: responsable mission, support terrain, WhatsApp, relance, preuves, coordinateur zone.</p>
-                </div>
-              </section>
+                      {timeline.slice(0, 30).map((event) => (
+                        <div
+                          key={event.id}
+                          className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-3"
+                        >
+                          <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-blue-600" />
 
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-start gap-4">
-                  <div className="grid h-16 w-16 place-items-center rounded-full bg-slate-100 text-lg font-black ring-1 ring-slate-200">{initials(ambassadorName)}</div>
-                  <div className="min-w-0">
-                    <h3 className="truncate text-lg font-black">{ambassadorName}</h3>
-                    <p className="mt-1 text-sm font-bold text-slate-700">{form.city} · {form.territoryName}</p>
-                    <p className="mt-1 text-xs font-bold text-slate-600">Manager: {form.managerName}</p>
-                  </div>
-                </div>
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-600">Score qualité</p><p className="mt-1 text-2xl font-black">{qualityScore}%</p></div>
-                  <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-600">Charge</p><p className="mt-1 text-2xl font-black">{currentLoad}%</p></div>
-                  <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-600">Missions</p><p className="mt-1 text-2xl font-black">{formatNumber(currentMissions.length)}</p></div>
-                  <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-600">En retard</p><p className="mt-1 text-2xl font-black">{formatNumber(lateMissions.length)}</p></div>
-                </div>
-                <div className="mt-5 space-y-3 text-sm font-bold text-slate-700">
-                  <div className="flex items-center justify-between rounded-2xl bg-emerald-50 px-4 py-3"><span>Fit territoire</span><b>{territoryFit}%</b></div>
-                  <div className="flex items-center justify-between rounded-2xl bg-blue-50 px-4 py-3"><span>Fit service</span><b>{serviceFit}%</b></div>
-                  <div className="flex items-center justify-between rounded-2xl bg-amber-50 px-4 py-3"><span>Risque charge</span><b>{riskLabel}</b></div>
-                </div>
-              </section>
+                          <div className="min-w-0">
+                            <p className="text-xs font-black text-slate-950">
+                              {event.title}
+                            </p>
 
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-sm font-black uppercase tracking-[0.14em]">Scénarios recommandés</h3>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black">{directoryMissionScenarios.length}</span>
-                </div>
-                <div className="space-y-3">
-                  {directoryMissionScenarios.map((scenario) => {
-                    const active = form.scenarioKey === scenario.key;
-                    return (
-                      <button
-                        key={scenario.key}
-                        type="button"
-                        onClick={() => applyScenario(scenario.key)}
-                        className={cn("w-full rounded-2xl border p-4 text-left transition", active ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50")}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div><p className="font-black">{scenario.label}</p><p className="mt-1 text-xs font-bold leading-5 text-slate-700">{scenario.output}</p></div>
-                          <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-black ring-1 ring-slate-200">{scenario.badge}</span>
+                            <p className="mt-1 text-[10px] font-semibold leading-5 text-slate-500">
+                              {event.detail || "Mise à jour du dossier"}
+                            </p>
+
+                            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">
+                              {event.actor} ·{" "}
+                              {new Date(
+                                event.createdAt,
+                              ).toLocaleString("fr-FR")}
+                            </p>
+                          </div>
                         </div>
-                        <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.1em]"><span className="rounded-full bg-slate-100 px-2 py-1">{scenario.channel}</span><span className="rounded-full bg-slate-100 px-2 py-1">{scenario.priority}</span></div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-            </aside>
+                      ))}
 
-            <main className="space-y-5">
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="mb-5 flex items-center justify-between">
-                  <h3 className="text-base font-black">Mission builder</h3>
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em]">Configuration</span>
+                      {!timeline.length ? (
+                        <p className="py-10 text-center text-xs font-semibold text-slate-500">
+                          Aucune activité réelle disponible.
+                        </p>
+                      ) : null}
+                    </div>
+                  )}
                 </div>
-                <div className="grid gap-4 lg:grid-cols-2">
-                  <label className="lg:col-span-2"><span className="text-[10px] font-black uppercase tracking-[0.16em]">Titre mission</span><input value={form.missionTitle} onChange={(event) => update("missionTitle", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Campagne</span><input value={form.campaign} onChange={(event) => update("campaign", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Service line</span><select value={form.serviceLine} onChange={(event) => update("serviceLine", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none">{directoryMissionServices.map((item) => <option key={item}>{item}</option>)}</select></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Ville</span><input value={form.city} onChange={(event) => update("city", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Territoire / zone</span><input value={form.territoryName} onChange={(event) => update("territoryName", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Quartier / secteur</span><input value={form.district} onChange={(event) => update("district", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Canal d'exécution</span><select value={form.channel} onChange={(event) => update("channel", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none">{directoryMissionChannels.map((item) => <option key={item}>{item}</option>)}</select></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Priorité</span><select value={form.priority} onChange={(event) => update("priority", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none">{directoryMissionPriorities.map((item) => <option key={item}>{item}</option>)}</select></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Deadline</span><input type="date" value={form.deadline} onChange={(event) => update("deadline", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">SLA clôture</span><select value={form.slaClosure} onChange={(event) => update("slaClosure", event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold outline-none"><option>24h</option><option>48h</option><option>72h</option><option>7 jours</option></select></label>
-                </div>
-              </section>
 
-              <section className="grid gap-5 lg:grid-cols-3">
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-[10px] font-black uppercase tracking-[0.16em]">Leads attendus</p><input value={form.expectedLeads} onChange={(event) => update("expectedLeads", event.target.value)} className="mt-3 h-12 w-full rounded-2xl border border-slate-200 px-4 text-lg font-black outline-none" /></div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-[10px] font-black uppercase tracking-[0.16em]">Conversations</p><input value={form.expectedConversations} onChange={(event) => update("expectedConversations", event.target.value)} className="mt-3 h-12 w-full rounded-2xl border border-slate-200 px-4 text-lg font-black outline-none" /></div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-[10px] font-black uppercase tracking-[0.16em]">Conversions</p><input value={form.expectedConversions} onChange={(event) => update("expectedConversions", event.target.value)} className="mt-3 h-12 w-full rounded-2xl border border-slate-200 px-4 text-lg font-black outline-none" /></div>
-              </section>
+                <footer className="border-t border-slate-100 bg-white p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const reset =
+                          cloneConfiguration(
+                            selectedDossier.configuration,
+                          )
 
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-base font-black">Objectif, script et preuves</h3>
-                <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                  <label className="lg:col-span-2"><span className="text-[10px] font-black uppercase tracking-[0.16em]">Objectif principal</span><textarea value={form.mainObjective} onChange={(event) => update("mainObjective", event.target.value)} rows={3} className="mt-2 w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Critères de réussite</span><textarea value={form.successCriteria} onChange={(event) => update("successCriteria", event.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold outline-none" /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Script / playbook</span><textarea value={form.playbook} onChange={(event) => update("playbook", event.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold outline-none" /></label>
-                  <label className="lg:col-span-2"><span className="text-[10px] font-black uppercase tracking-[0.16em]">Instructions opérationnelles</span><textarea value={form.instructions} onChange={(event) => update("instructions", event.target.value)} rows={3} className="mt-2 w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold outline-none" /></label>
+                        setDraft(reset)
+                        setOriginalDraft(
+                          cloneConfiguration(reset),
+                        )
+                        setError("")
+                      }}
+                      disabled={!dirty || busy}
+                      className="h-10 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-950 disabled:opacity-40"
+                    >
+                      Annuler
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => void saveDossier()}
+                      disabled={!dirty || busy}
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-xs font-black text-white disabled:bg-slate-200 disabled:text-slate-500"
+                    >
+                      {busy ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <CheckCircle2 className="h-4 w-4" />
+                      )}
+                      Enregistrer
+                    </button>
+                  </div>
+                </footer>
+              </>
+            ) : (
+              <EmptyState
+                icon={UserCheck}
+                title="Aucun dossier chargé"
+                description="Sélectionnez un ambassadeur réel pour ouvrir le panneau de gestion."
+              />
+            )}
+          </Card>
+        </aside>
+      </div>
+
+      {modal === "mission" ? (
+        <ModalShell
+          title="Affecter une mission"
+          subtitle="Créez une mission opérationnelle ou affectez une mission existante, avec équipe, territoire, objectifs, preuve, SLA et gouvernance."
+          icon={BriefcaseBusiness}
+          onClose={() => setModal(null)}
+          width="max-w-7xl"
+          footer={
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-black text-slate-600">
+                Responsable principal :{" "}
+                {selectedDossier?.name || "Non sélectionné"}
+              </p>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModal(null)}
+                  className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+                >
+                  Annuler
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => void assignMission()}
+                  disabled={
+                    busy ||
+                    (missionForm.mode === "create"
+                      ? !missionForm.title.trim()
+                      : !missionForm.existingMissionId)
+                  }
+                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200 disabled:text-slate-500"
+                >
+                  {busy ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <BriefcaseBusiness className="h-4 w-4" />
+                  )}
+                  {missionForm.mode === "create"
+                    ? "Créer et affecter"
+                    : "Affecter la mission"}
+                </button>
+              </div>
+            </div>
+          }
+        >
+          <div className="grid gap-5 xl:grid-cols-[0.75fr_1.25fr_0.8fr]">
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Mode d’affectation
+              </h3>
+
+              <div className="mt-4 grid gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMissionForm((current) => ({
+                      ...current,
+                      mode: "create",
+                    }))
+                  }
+                  className={`rounded-2xl border p-4 text-left ${
+                    missionForm.mode === "create"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-slate-200 bg-white"
+                  }`}
+                >
+                  <p className="text-sm font-black">
+                    Créer une nouvelle mission
+                  </p>
+
+                  <p className="mt-1 text-xs font-semibold text-slate-500">
+                    Création réelle puis affectation immédiate.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMissionForm((current) => ({
+                      ...current,
+                      mode: "existing",
+                    }))
+                  }
+                  className={`rounded-2xl border p-4 text-left ${
+                    missionForm.mode === "existing"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-slate-200 bg-white"
+                  }`}
+                >
+                  <p className="text-sm font-black">
+                    Affecter une mission existante
+                  </p>
+
+                  <p className="mt-1 text-xs font-semibold text-slate-500">
+                    Utilise une mission déjà enregistrée.
+                  </p>
+                </button>
+              </div>
+
+              {missionForm.mode === "existing" ? (
+                <div className="mt-4">
+                  <Field label="Mission réelle" required>
+                    <select
+                      value={missionForm.existingMissionId}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          existingMissionId:
+                            event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">
+                        Choisir une mission
+                      </option>
+
+                      {missions.map((mission) => (
+                        <option
+                          key={idOf(mission)}
+                          value={idOf(mission)}
+                        >
+                          {text(mission.title || mission.name) ||
+                            idOf(mission)}{" "}
+                          · {text(mission.status) || "Sans statut"}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
                 </div>
-                <div className="mt-4 rounded-3xl bg-slate-50 p-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em]">Preuves attendues</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {directoryMissionProofs.map((proof) => {
-                      const active = form.proofRequirements.includes(proof);
-                      return <button key={proof} type="button" onClick={() => toggleProof(proof)} className={cn("rounded-full border px-3 py-2 text-xs font-black", active ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-white")}>{proof}</button>;
+              ) : null}
+            </Card>
+
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Mission, objectifs & exécution
+              </h3>
+
+              {missionForm.mode === "create" ? (
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <Field label="Titre de mission" required>
+                      <input
+                        value={missionForm.title}
+                        onChange={(event) =>
+                          setMissionForm((current) => ({
+                            ...current,
+                            title: event.target.value,
+                          }))
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+
+                  <Field label="Type">
+                    <select
+                      value={missionForm.missionType}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          missionType: event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    >
+                      <option value="field_activation">
+                        Activation terrain
+                      </option>
+                      <option value="prospecting">
+                        Prospection
+                      </option>
+                      <option value="partner_visit">
+                        Visite partenaire
+                      </option>
+                      <option value="lead_reactivation">
+                        Relance leads
+                      </option>
+                      <option value="event">
+                        Événement
+                      </option>
+                      <option value="quality_control">
+                        Contrôle qualité
+                      </option>
+                    </select>
+                  </Field>
+
+                  <Field label="Priorité">
+                    <select
+                      value={missionForm.priority}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          priority: event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    >
+                      <option value="normal">Normale</option>
+                      <option value="high">Haute</option>
+                      <option value="urgent">Urgente</option>
+                      <option value="critical">Critique</option>
+                    </select>
+                  </Field>
+
+                  <Field label="Date de début">
+                    <input
+                      type="date"
+                      value={missionForm.startDate}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          startDate: event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+
+                  <Field label="Échéance">
+                    <input
+                      type="date"
+                      value={missionForm.dueDate}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          dueDate: event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+
+                  <Field label="Objectif leads">
+                    <input
+                      type="number"
+                      min="0"
+                      value={missionForm.leadTarget}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          leadTarget: numberValue(
+                            event.target.value,
+                          ),
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+
+                  <Field label="Objectif conversions">
+                    <input
+                      type="number"
+                      min="0"
+                      value={missionForm.conversionTarget}
+                      onChange={(event) =>
+                        setMissionForm((current) => ({
+                          ...current,
+                          conversionTarget: numberValue(
+                            event.target.value,
+                          ),
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+
+                  <div className="sm:col-span-2">
+                    <Field label="Instructions">
+                      <textarea
+                        value={missionForm.instructions}
+                        onChange={(event) =>
+                          setMissionForm((current) => ({
+                            ...current,
+                            instructions: event.target.value,
+                          }))
+                        }
+                        className={textareaClass}
+                      />
+                    </Field>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <Field label="Preuve attendue">
+                      <input
+                        value={missionForm.requiredProof}
+                        onChange={(event) =>
+                          setMissionForm((current) => ({
+                            ...current,
+                            requiredProof:
+                              event.target.value,
+                          }))
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+                  <p className="text-sm font-black text-blue-950">
+                    Affectation contrôlée
+                  </p>
+
+                  <p className="mt-2 text-xs font-semibold leading-6 text-blue-800">
+                    La mission existante conservera son dossier, son historique
+                    et ses données. Cet ambassadeur deviendra le responsable
+                    principal et les renforts seront ajoutés sans écraser les
+                    affectations existantes.
+                  </p>
+                </div>
+              )}
+            </Card>
+
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Équipe & gouvernance
+              </h3>
+
+              <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-800">
+                  Responsable principal
+                </p>
+
+                <p className="mt-2 text-sm font-black text-blue-950">
+                  {selectedDossier?.name}
+                </p>
+              </div>
+
+              <div className="mt-4">
+                <Field label="Validateur">
+                  <input
+                    value={missionForm.validator}
+                    onChange={(event) =>
+                      setMissionForm((current) => ({
+                        ...current,
+                        validator: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+
+              <div className="mt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-700">
+                  Ambassadeurs support
+                </p>
+
+                <div className="max-h-[290px] space-y-2 overflow-y-auto">
+                  {dossiers
+                    .filter(
+                      (dossier) =>
+                        dossier.id !== selectedDossier?.id &&
+                        dossier.configuration.status ===
+                          "active",
+                    )
+                    .map((dossier) => {
+                      const selected =
+                        missionForm.supportAmbassadorIds.includes(
+                          dossier.id,
+                        )
+
+                      return (
+                        <button
+                          key={dossier.id}
+                          type="button"
+                          onClick={() =>
+                            setMissionForm((current) => ({
+                              ...current,
+                              supportAmbassadorIds: selected
+                                ? current.supportAmbassadorIds.filter(
+                                    (id) => id !== dossier.id,
+                                  )
+                                : [
+                                    ...current.supportAmbassadorIds,
+                                    dossier.id,
+                                  ],
+                            }))
+                          }
+                          className={`flex w-full items-center justify-between rounded-xl border p-3 text-left ${
+                            selected
+                              ? "border-emerald-300 bg-emerald-50"
+                              : "border-slate-200 bg-white"
+                          }`}
+                        >
+                          <span>
+                            <span className="block text-xs font-black">
+                              {dossier.name}
+                            </span>
+
+                            <span className="mt-1 block text-[10px] font-bold text-slate-500">
+                              {dossier.city} ·{" "}
+                              {dossier.configuration.territoryName ||
+                                "Sans territoire"}
+                            </span>
+                          </span>
+
+                          <CheckCircle2
+                            className={`h-4 w-4 ${
+                              selected
+                                ? "text-emerald-600"
+                                : "text-slate-300"
+                            }`}
+                          />
+                        </button>
+                      )
                     })}
-                  </div>
                 </div>
-              </section>
-            </main>
-
-            <aside className="space-y-5">
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between gap-4">
-                  <div><p className="text-[10px] font-black uppercase tracking-[0.16em]">Score dispatch</p><p className="mt-1 text-5xl font-black">{readinessScore}%</p><p className="mt-2 text-sm font-black">{dispatchLabel}</p></div>
-                  <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-50"><BadgeCheck size={24} /></div>
-                </div>
-                <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-700" style={{ width: `${readinessScore}%` }} /></div>
-              </section>
-
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-black uppercase tracking-[0.14em]">Validation avant lancement</h3>
-                <div className="mt-4 space-y-3">
-                  {[
-                    ["Fit ambassadeur / mission", `${serviceFit}%`],
-                    ["Charge actuelle", riskLabel],
-                    ["Territoire", `${territoryFit}%`],
-                    ["Preuves", `${form.proofRequirements.length} définie(s)`],
-                    ["Notification", notificationReady ? "Prête" : "À compléter"],
-                  ].map(([label, value]) => <div key={label} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-sm font-bold"><span>{label}</span><b>{value}</b></div>)}
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-black uppercase tracking-[0.14em]">Notification ambassadeur</h3>
-                <div className="mt-4 space-y-4">
-                  <label className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-sm font-black"><span>Notifier immédiatement</span><input type="checkbox" checked={form.notifyAmbassador} onChange={(event) => update("notifyAmbassador", event.target.checked)} /></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Canal</span><select value={form.notificationChannel} onChange={(event) => update("notificationChannel", event.target.value)} className="mt-2 h-11 w-full rounded-2xl border border-slate-200 px-4 text-sm font-bold"><option>WhatsApp</option><option>Email</option><option>Interne seulement</option></select></label>
-                  <label><span className="text-[10px] font-black uppercase tracking-[0.16em]">Message pré-rempli</span><textarea value={form.notificationMessage} onChange={(event) => update("notificationMessage", event.target.value)} rows={5} className="mt-2 w-full rounded-2xl border border-slate-200 p-4 text-sm font-bold" /></label>
-                </div>
-              </section>
-
-              <section className={cn("rounded-3xl border p-5 shadow-sm", blockedReasons.length ? "border-amber-200 bg-amber-50" : "border-emerald-200 bg-emerald-50")}>
-                <div className="flex gap-3"><AlertTriangle size={18} /><div><p className="text-sm font-black">{blockedReasons.length ? "Contrôles avant création" : "Mission prête à créer"}</p><p className="mt-2 text-xs font-bold leading-5">{blockedReasons.length ? `Bloqué: ${blockedReasons.join(", ")}` : "Tous les champs critiques sont renseignés. La mission peut être créée et assignée."}</p></div></div>
-              </section>
-            </aside>
+              </div>
+            </Card>
           </div>
-        </div>
+        </ModalShell>
+      ) : null}
 
-        <footer className="sticky bottom-0 z-20 border-t border-slate-100 bg-white px-7 py-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="text-xs font-bold leading-5"><p>{selectedScenario.label} · {ambassadorName} · {selectedAmbassadorCards.length || 1} ambassadeur(s)</p><p>{blockedReasons.length ? `Bloqué: ${blockedReasons.join(", ")}` : "Prêt pour création et suivi opérationnel."}</p>{message ? <p className={message.type === "success" ? "text-emerald-700" : "text-rose-700"}>{message.text}</p> : null}</div>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={onClose} className="h-12 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-black hover:bg-slate-50">Annuler</button>
-              <button type="button" onClick={() => submit("draft")} disabled={savingMode !== null} className="h-12 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-black disabled:opacity-50">Enregistrer brouillon</button>
-              <button type="button" onClick={() => submit("create")} disabled={savingMode !== null || blockedReasons.length > 0} className="h-12 rounded-2xl bg-blue-700 px-5 text-sm font-black text-white shadow-lg shadow-blue-100 disabled:bg-slate-200">Créer mission</button>
-              <button type="button" onClick={() => submit("notify")} disabled={savingMode !== null || blockedReasons.length > 0 || !notificationReady} className="h-12 rounded-2xl bg-slate-950 px-5 text-sm font-black text-white disabled:bg-slate-200">Créer + notifier</button>
-              <button type="button" onClick={() => submit("route")} disabled={savingMode !== null || blockedReasons.length > 0} className="h-12 rounded-2xl border border-blue-200 bg-blue-50 px-5 text-sm font-black disabled:opacity-50">Créer + feuille de route</button>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </div>
-  );
-}
+      {modal === "lead" ? (
+        <ModalShell
+          title="Créer et attribuer un lead"
+          subtitle="Créez un contact commercial réel, contrôlez les doublons, la source, le consentement, la qualification et le prochain suivi."
+          icon={Target}
+          onClose={() => setModal(null)}
+          width="max-w-6xl"
+          footer={
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-black text-slate-600">
+                Attribution : {selectedDossier?.name}
+              </p>
 
-type AmbassadorActivationForm = {
-  sourceCandidateId: string;
-  sourceCandidateLabel: string;
-  fullName: string;
-  phone: string;
-  email: string;
-  city: string;
-  zone: string;
-  contactPreference: string;
-  source: string;
-  sourceOwner: string;
-  campaign: string;
-  profileType: string;
-  level: string;
-  status: string;
-  languages: string[];
-  channels: string[];
-  services: string[];
-  territoryName: string;
-  radius: string;
-  managerName: string;
-  weeklyCapacity: string;
-  leadsGoal: string;
-  conversionsGoal: string;
-  promoCode: string;
-  referralCode: string;
-  payoutCycle: string;
-  paymentMethod: string;
-  paymentAccount: string;
-  activationDate: string;
-  reviewDate: string;
-  notes: string;
-  compliance: string[];
-};
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModal(null)}
+                  className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+                >
+                  Annuler
+                </button>
 
-const ambassadorCities = ["Rabat", "Salé", "Témara", "Casablanca", "Kénitra", "Tanger", "Fès", "Marrakech", "Agadir"];
-const ambassadorServices = ["Home Service", "Kindergarten & Preschool", "Academy", "Hospitality Kids Friendly", "Corporates Liner"];
-const ambassadorChannels = ["WhatsApp", "Appel", "Terrain", "Partenaires", "Événementiel"];
-const ambassadorCompliance = ["Identité vérifiée", "Téléphone vérifié", "Contrat signé", "RIB / paiement vérifié", "Règles commission acceptées", "Code promo généré", "Territoire assigné", "Manager assigné"];
-
-function todayInputDate(offsetDays = 0) {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
-}
-
-function promoSlug(value: string) {
-  return String(value || "AMB")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9]+/g, "")
-    .slice(0, 8)
-    .toUpperCase() || "AMB";
-}
-
-function defaultAmbassadorActivationForm(): AmbassadorActivationForm {
-  return {
-    sourceCandidateId: "",
-    sourceCandidateLabel: "",
-    fullName: "",
-    phone: "",
-    email: "",
-    city: "Rabat",
-    zone: "Centre / zone prioritaire",
-    contactPreference: "WhatsApp",
-    source: "Activation directe",
-    sourceOwner: "Sara Bakoki",
-    campaign: "Ambassadeurs Maroc 2026",
-    profileType: "Mixte B2C + WhatsApp",
-    level: "Bronze",
-    status: "onboarding",
-    languages: ["Arabe", "Français"],
-    channels: ["WhatsApp", "Terrain"],
-    services: ["Home Service"],
-    territoryName: "Rabat Centre",
-    radius: "5 km",
-    managerName: "Sara Bakoki",
-    weeklyCapacity: "6h - 10h",
-    leadsGoal: "25",
-    conversionsGoal: "6",
-    promoCode: "",
-    referralCode: "",
-    payoutCycle: "Mensuel",
-    paymentMethod: "Virement bancaire",
-    paymentAccount: "",
-    activationDate: todayInputDate(0),
-    reviewDate: todayInputDate(30),
-    notes: "",
-    compliance: ["Téléphone vérifié", "Règles commission acceptées", "Code promo généré", "Manager assigné"],
-  };
-}
-
-
-function candidateFieldValueForActivation(item: AnyRecord, keys: string[], fallback = "") {
-  for (const key of keys) {
-    const value = item?.[key];
-    if (value !== undefined && value !== null && String(value).trim()) return String(value).trim();
-  }
-  return fallback;
-}
-
-function candidateNameForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["full_name", "fullName", "candidate_name", "candidateName", "name", "contact_name", "display_name"], "Candidat sans nom");
-}
-
-function candidatePhoneForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["phone", "mobile", "telephone", "tel", "whatsapp", "contact_phone"]);
-}
-
-function candidateEmailForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["email", "contact_email", "mail"]);
-}
-
-function candidateCityForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["city", "ville", "region", "location", "territory_city"], "Rabat");
-}
-
-function candidateZoneForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["zone", "quartier", "district", "neighborhood", "territory_name", "territory"], "Centre / zone prioritaire");
-}
-
-function candidateStageForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["stage", "status", "pipeline_stage", "recruitment_stage", "step"], "candidat");
-}
-
-function candidateSourceForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["source", "channel", "origin", "acquisition_source"], "Candidat validé");
-}
-
-function candidateCampaignForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["campaign", "campaign_name", "source_campaign"], "Ambassadeurs Maroc 2026");
-}
-
-function candidateAvailabilityForActivation(item: AnyRecord) {
-  return candidateFieldValueForActivation(item, ["availability", "disponibilite", "weekly_capacity", "capacity"], "À confirmer");
-}
-
-function candidateScoreForActivation(item: AnyRecord) {
-  return numberValue(item?.score ?? item?.prequalification_score ?? item?.qualification_score ?? item?.readiness_score ?? item?.performance_score ?? 0);
-}
-
-function candidateLanguageListForActivation(item: AnyRecord) {
-  const raw = item?.languages ?? item?.langues ?? item?.language ?? item?.preferred_languages;
-  if (Array.isArray(raw)) return raw.map((value) => String(value)).filter(Boolean);
-  const text = String(raw || "").toLowerCase();
-  const languages = [];
-  if (text.includes("arab") || text.includes("darija")) languages.push("Arabe");
-  if (text.includes("fr")) languages.push("Français");
-  if (text.includes("ang") || text.includes("en")) languages.push("Anglais");
-  if (text.includes("amazigh")) languages.push("Amazigh");
-  return languages;
-}
-
-function candidateOptionKeyForActivation(item: AnyRecord, index: number) {
-  return String(item?.id || item?.uuid || item?.record_id || item?.candidate_id || item?.recruitment_id || "candidate-" + index);
-}
-
-function AmbassadorActivationEnterpriseModal({
-  open,
-  snapshot,
-  onClose,
-  onCreated,
-}: {
-  open: boolean;
-  snapshot: AmbassadorWorkspaceSnapshot;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const [form, setForm] = useState<AmbassadorActivationForm>(() => defaultAmbassadorActivationForm());
-  const [autoPromo, setAutoPromo] = useState(true);
-  const [savingMode, setSavingMode] = useState<"draft" | "create" | "activate" | "onboarding" | null>(null);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-
-  const existingPhones = useMemo(() => new Set((snapshot.ambassadors || []).map((item: AnyRecord) => normalizePhone(item.phone)).filter(Boolean)), [snapshot.ambassadors]);
-  const territories = (snapshot.territories || []) as AnyRecord[];
-  const managers = Array.from(new Set(["Sara Bakoki", "Yassine El Alaoui", "Amine Benkirane", "Sanae El Amrani", ...((snapshot.ambassadors || []).map((item: AnyRecord) => item.manager_name).filter(Boolean) as string[])]));
-  const candidateOptions = useMemo(() => {
-    const rawCandidates = [
-      ...(((snapshot.recruitment || []) as AnyRecord[])),
-      ...(((snapshot.candidates || []) as AnyRecord[])),
-    ];
-    const seen = new Set<string>();
-    return rawCandidates
-      .map((item, index) => {
-        const key = candidateOptionKeyForActivation(item, index);
-        const name = candidateNameForActivation(item);
-        const phone = candidatePhoneForActivation(item);
-        const city = candidateCityForActivation(item);
-        const stage = candidateStageForActivation(item);
-        const normalizedPhone = normalizePhone(phone);
-        const dedupeKey = normalizedPhone || key;
-        return { key, dedupeKey, raw: item, name, phone, city, stage, score: candidateScoreForActivation(item), label: [name, city, phone].filter(Boolean).join(" · ") };
-      })
-      .filter((item) => {
-        if (!item.name || seen.has(item.dedupeKey)) return false;
-        seen.add(item.dedupeKey);
-        return true;
-      })
-      .slice(0, 80);
-  }, [snapshot]);
-  const selectedCandidate = candidateOptions.find((item) => item.key === form.sourceCandidateId) || null;
-
-  if (!open) return null;
-
-  const phoneDuplicate = Boolean(form.phone && existingPhones.has(normalizePhone(form.phone)));
-  const missingCore = [
-    ["Nom complet", form.fullName],
-    ["Téléphone", form.phone],
-    ["Ville", form.city],
-    ["Code promo", form.promoCode],
-  ].filter(([, value]) => !String(value || "").trim()).map(([label]) => String(label));
-  const missingActivation = [
-    ["Territoire", form.territoryName],
-    ["Manager", form.managerName],
-    ["Cycle de payout", form.payoutCycle],
-    ["Canaux autorisés", form.channels.length ? "ok" : ""],
-    ["Services autorisés", form.services.length ? "ok" : ""],
-  ].filter(([, value]) => !String(value || "").trim()).map(([label]) => String(label));
-  const complianceScore = Math.round((form.compliance.length / ambassadorCompliance.length) * 100);
-  const readiness = Math.max(12, Math.min(100, Math.round(
-    (missingCore.length === 0 ? 24 : 8) +
-    (missingActivation.length === 0 ? 22 : 7) +
-    (form.services.length >= 2 ? 14 : form.services.length ? 8 : 0) +
-    (form.channels.length >= 3 ? 12 : form.channels.length ? 7 : 0) +
-    Math.min(12, Number(form.leadsGoal || 0) / 3) +
-    Math.min(8, Number(form.conversionsGoal || 0)) +
-    Math.round(complianceScore * 0.08)
-  )));
-  const blockedReasons = [...missingCore, ...(form.status === "active" ? missingActivation : [])];
-  const selectedTerritory = territories.find((item) => String(item.name || item.territory_name || "").toLowerCase() === form.territoryName.toLowerCase());
-  const territoryLoad = numberValue(selectedTerritory?.active_ambassadors_count ?? 0);
-  const territoryRisk = territoryLoad >= 5 ? "Territoire chargé" : territoryLoad >= 3 ? "Charge à surveiller" : "Capacité disponible";
-
-  function update<K extends keyof AmbassadorActivationForm>(key: K, value: AmbassadorActivationForm[K]) {
-    setForm((current) => {
-      const next = { ...current, [key]: value };
-      if ((key === "fullName" || key === "city") && autoPromo) {
-        const cityCode = promoSlug(String(next.city || "MA")).slice(0, 3);
-        next.promoCode = `AC-${promoSlug(next.fullName)}-${cityCode}`;
-        next.referralCode = `REF-${promoSlug(next.fullName)}-${cityCode}`;
-      }
-      return next;
-    });
-  }
-
-  function toggleList(key: "languages" | "channels" | "services" | "compliance", value: string) {
-    setForm((current) => {
-      const existing = current[key];
-      const nextValues = existing.includes(value) ? existing.filter((item) => item !== value) : [...existing, value];
-      return { ...current, [key]: nextValues };
-    });
-  }
-
-  function applyCandidateSelection(candidateKey: string) {
-    if (!candidateKey) {
-      setForm((current) => ({ ...current, sourceCandidateId: "", sourceCandidateLabel: "" }));
-      return;
-    }
-
-    const selected = candidateOptions.find((item) => item.key === candidateKey);
-    if (!selected) return;
-
-    const item = selected.raw;
-    const importedLanguages = candidateLanguageListForActivation(item);
-    const importedCity = candidateCityForActivation(item);
-    const importedName = candidateNameForActivation(item);
-    const importedZone = candidateZoneForActivation(item);
-    const importedPhone = candidatePhoneForActivation(item);
-    const importedEmail = candidateEmailForActivation(item);
-    const importedCampaign = candidateCampaignForActivation(item);
-    const importedAvailability = candidateAvailabilityForActivation(item);
-
-    setAutoPromo(true);
-    setMessage(null);
-    setForm((current) => {
-      const cityCode = promoSlug(importedCity || current.city || "MA").slice(0, 3);
-      const nameCode = promoSlug(importedName || current.fullName || "AMB");
-      return {
-        ...current,
-        sourceCandidateId: selected.key,
-        sourceCandidateLabel: selected.label,
-        fullName: importedName || current.fullName,
-        phone: importedPhone || current.phone,
-        email: importedEmail || current.email,
-        city: importedCity || current.city,
-        zone: importedZone || current.zone,
-        source: "Candidat validé",
-        sourceOwner: candidateFieldValueForActivation(item, ["owner_name", "manager_name", "assignee_name", "responsible_name"], current.sourceOwner),
-        campaign: importedCampaign || current.campaign,
-        weeklyCapacity: importedAvailability || current.weeklyCapacity,
-        languages: importedLanguages.length ? Array.from(new Set([...importedLanguages, ...current.languages])) : current.languages,
-        status: current.status === "active" ? current.status : "onboarding",
-        promoCode: `AC-${nameCode}-${cityCode}`,
-        referralCode: `REF-${nameCode}-${cityCode}`,
-        notes: current.notes || `Pré-rempli depuis le candidat: ${selected.label}. Compléter territoire, payout, services et conformité avant activation.`,
-        compliance: Array.from(new Set([...current.compliance, "Code promo généré"])),
-      };
-    });
-  }
-
-  async function submit(mode: "draft" | "create" | "activate" | "onboarding") {
-    setMessage(null);
-    const required = mode === "activate" ? [...missingCore, ...missingActivation] : missingCore;
-    if (required.length) {
-      setMessage({ type: "error", text: `Bloqué: ${required.join(", ")}` });
-      return;
-    }
-    if (phoneDuplicate) {
-      setMessage({ type: "error", text: "Un ambassadeur existe déjà avec ce numéro. Vérifiez le dossier avant activation." });
-      return;
-    }
-
-    setSavingMode(mode);
-    try {
-      const status = mode === "draft" ? "onboarding" : mode === "activate" ? "active" : form.status || "onboarding";
-      const payload = {
-        full_name: form.fullName.trim(),
-        phone: form.phone.trim(),
-        email: form.email.trim(),
-        city: form.city,
-        region: form.city,
-        zone: form.zone,
-        role: "ambassador",
-        title: `Ambassadeur ${form.profileType}`,
-        profile_type: form.profileType,
-        status,
-        lifecycle_stage: status,
-        territory_name: form.territoryName,
-        manager_name: form.managerName,
-        performance_score: readiness,
-        kpi_score: readiness,
-        missions_assigned: 0,
-        missions_completed: 0,
-        leads_generated: 0,
-        hot_leads: 0,
-        meetings_booked: 0,
-        incentives_balance: 0,
-        certification_status: mode === "activate" ? "ready" : "pending",
-        source: form.source,
-        notes: JSON.stringify({
-          activation_source: "directory_enterprise_activation_modal",
-          source_candidate_id: form.sourceCandidateId,
-          source_candidate_label: form.sourceCandidateLabel,
-          source_owner: form.sourceOwner,
-          campaign: form.campaign,
-          contact_preference: form.contactPreference,
-          level: form.level,
-          languages: form.languages,
-          authorized_channels: form.channels,
-          authorized_services: form.services,
-          radius: form.radius,
-          weekly_capacity: form.weeklyCapacity,
-          monthly_leads_goal: form.leadsGoal,
-          monthly_conversions_goal: form.conversionsGoal,
-          commission_policy: "fixed_10_percent",
-          commission_rate: 10,
-          promo_code: form.promoCode,
-          referral_code: form.referralCode,
-          payout_cycle: form.payoutCycle,
-          payment_method: form.paymentMethod,
-          payment_account: form.paymentAccount,
-          activation_date: form.activationDate,
-          review_date: form.reviewDate,
-          compliance: form.compliance,
-          readiness_score: readiness,
-          operator_notes: form.notes,
-        }),
-      };
-
-      const response = await fetch("/api/market-os/ambassadors", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data?.ok === false) throw new Error(data?.error || "Création ambassadeur impossible");
-      setMessage({ type: "success", text: mode === "activate" ? "Ambassadeur créé et activé avec succès." : "Ambassadeur créé avec succès. Le dossier réseau est synchronisé." });
-      onCreated();
-    } catch (error) {
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Erreur de synchronisation" });
-    } finally {
-      setSavingMode(null);
-    }
-  }
-
-  const summaryRows = [
-    ["Commission", "10% fixe"],
-    ["Payout", form.payoutCycle || "À définir"],
-    ["Code promo", form.promoCode || "À générer"],
-    ["Territoire", form.territoryName || "À définir"],
-    ["Services", `${form.services.length} autorisé(s)`],
-  ];
-
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/35 px-3 py-3 backdrop-blur-sm">
-      <form onSubmit={(event: FormEvent) => { event.preventDefault(); void submit("create"); }} className="flex max-h-[calc(100vh-28px)] w-[calc(100vw-28px)] max-w-[1640px] flex-col overflow-hidden rounded-[34px] border border-slate-200 bg-white text-slate-950 shadow-2xl shadow-slate-950/25 [&_*]:!text-slate-950">
-        <header className="sticky top-0 z-20 border-b border-slate-100 bg-white px-7 py-5">
-          <div className="flex items-start justify-between gap-5">
-            <div className="flex gap-4">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-blue-100 bg-blue-50"><UserPlus size={24} /></div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-2xl font-black tracking-tight">Ajouter ambassadeur</h2>
-                  <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em]">Activation réseau</span>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em]">Commission 10%</span>
-                </div>
-                <p className="mt-2 max-w-5xl text-sm font-bold leading-6">Créez un ambassadeur opérationnel avec territoire, manager, canaux autorisés, code promo, payout et conformité d’activation.</p>
+                <button
+                  type="button"
+                  onClick={() => void createLead()}
+                  disabled={
+                    busy ||
+                    !leadForm.leadName.trim() ||
+                    (!leadForm.phone.trim() &&
+                      !leadForm.email.trim())
+                  }
+                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200 disabled:text-slate-500"
+                >
+                  {busy ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Target className="h-4 w-4" />
+                  )}
+                  Créer et synchroniser
+                </button>
               </div>
             </div>
-            <button type="button" onClick={onClose} className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-slate-200 bg-white hover:bg-slate-50"><X size={18} /></button>
-          </div>
-        </header>
+          }
+        >
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Identité & besoin
+              </h3>
 
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50/70 p-6">
-          <div className="grid gap-5 xl:grid-cols-[1fr_1.12fr_0.95fr]">
-            <section className="space-y-5">
-              <ActivationPanel title="0. Depuis un candidat existant" badge="Pré-remplissage">
-                <label className="block">
-                  <span className="text-[10px] font-black uppercase tracking-[0.16em]">Sélectionner un candidat existant</span>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <Field label="Parent / contact / entreprise" required>
+                    <input
+                      value={leadForm.leadName}
+                      onChange={(event) =>
+                        setLeadForm((current) => ({
+                          ...current,
+                          leadName: event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Téléphone">
+                  <input
+                    value={leadForm.phone}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        phone: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Email">
+                  <input
+                    value={leadForm.email}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        email: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Ville">
+                  <input
+                    value={leadForm.city}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        city: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Zone">
+                  <input
+                    value={leadForm.zone}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        zone: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Type de lead">
                   <select
-                    value={form.sourceCandidateId}
-                    onChange={(event) => applyCandidateSelection(event.target.value)}
-                    className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                    value={leadForm.leadType}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        leadType: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
                   >
-                    <option value="">Créer sans candidat existant</option>
-                    {candidateOptions.map((candidate) => (
-                      <option key={candidate.key} value={candidate.key}>{candidate.label}</option>
-                    ))}
+                    <option>B2C</option>
+                    <option>B2B</option>
+                    <option>Referral</option>
+                    <option>Partenaire</option>
                   </select>
-                </label>
-                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-black">Importer les données candidat</p>
-                      <p className="mt-1 text-xs font-bold leading-5">Le choix d’un candidat pré-remplit nom, téléphone, email, ville, zone, source, campagne, disponibilité, langues et codes. Le reste du dossier ambassadeur reste à compléter manuellement.</p>
-                    </div>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-black">{candidateOptions.length} candidat(s)</span>
-                  </div>
-                </div>
-                {selectedCandidate ? (
-                  <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                      <p className="text-[10px] font-black uppercase tracking-[0.14em]">Candidat chargé</p>
-                      <p className="mt-2 text-sm font-black">{selectedCandidate.name}</p>
-                      <p className="mt-1 text-xs font-bold">{selectedCandidate.phone || "Téléphone à vérifier"}</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                      <p className="text-[10px] font-black uppercase tracking-[0.14em]">Ville & étape</p>
-                      <p className="mt-2 text-sm font-black">{selectedCandidate.city}</p>
-                      <p className="mt-1 text-xs font-bold capitalize">{selectedCandidate.stage}</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                      <p className="text-[10px] font-black uppercase tracking-[0.14em]">Score candidat</p>
-                      <p className="mt-2 text-sm font-black">{selectedCandidate.score ? String(selectedCandidate.score) + "%" : "À qualifier"}</p>
-                      <p className="mt-1 text-xs font-bold">Pré-remplissage actif</p>
-                    </div>
-                  </div>
-                ) : null}
-              </ActivationPanel>
+                </Field>
 
-              <ActivationPanel title="1. Identité & profil officiel" badge="Dossier réseau">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <ActivationInput label="Nom complet *" value={form.fullName} onChange={(value) => update("fullName", value)} placeholder="Ex: Amine Benkirane" />
-                  <ActivationInput label="Téléphone *" value={form.phone} onChange={(value) => update("phone", value)} placeholder="+212 6 ..." />
-                  <ActivationInput label="Email" value={form.email} onChange={(value) => update("email", value)} placeholder="email@exemple.com" />
-                  <ActivationSelect label="Ville principale *" value={form.city} onChange={(value) => update("city", value)} options={ambassadorCities} />
-                  <ActivationInput label="Quartier / zone" value={form.zone} onChange={(value) => update("zone", value)} />
-                  <ActivationSelect label="Canal préféré" value={form.contactPreference} onChange={(value) => update("contactPreference", value)} options={["WhatsApp", "Appel", "Email"]} />
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <ActivationSelect label="Type ambassadeur" value={form.profileType} onChange={(value) => update("profileType", value)} options={["B2C terrain", "WhatsApp / digital", "B2B", "B2C", "Mixte B2C + WhatsApp", "Mixte B2B + B2C"]} />
-                  <ActivationSelect label="Niveau initial" value={form.level} onChange={(value) => update("level", value)} options={["Bronze", "Argent", "Or", "Platine"]} />
-                  <ActivationSelect label="Statut d’activation" value={form.status} onChange={(value) => update("status", value)} options={["onboarding", "active", "inactive", "at_risk"]} />
-                  <ActivationSelect label="Source" value={form.source} onChange={(value) => update("source", value)} options={["Activation directe", "Candidat validé", "Recommandation", "Instagram", "Terrain", "Partenaire", "Événement"]} />
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <ActivationInput label="Responsable source" value={form.sourceOwner} onChange={(value) => update("sourceOwner", value)} />
-                  <ActivationInput label="Campagne associée" value={form.campaign} onChange={(value) => update("campaign", value)} />
-                </div>
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-xs font-black uppercase tracking-[0.16em]">Langues opérationnelles</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {["Arabe", "Français", "Anglais", "Amazigh"].map((item) => <ActivationChip key={item} active={form.languages.includes(item)} onClick={() => toggleList("languages", item)}>{item}</ActivationChip>)}
-                  </div>
-                </div>
-              </ActivationPanel>
+                <Field label="Besoin / service">
+                  <input
+                    value={leadForm.serviceNeed}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        serviceNeed: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+            </Card>
 
-              <ActivationPanel title="2. Tracking commercial" badge="Code & source">
-                <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-                  <ActivationInput label="Code promo personnel *" value={form.promoCode} onChange={(value) => { setAutoPromo(false); update("promoCode", value.toUpperCase()); }} placeholder="AC-AMINE-RAB" />
-                  <button type="button" onClick={() => { setAutoPromo(true); update("promoCode", `AC-${promoSlug(form.fullName)}-${promoSlug(form.city).slice(0, 3)}`); }} className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black hover:bg-blue-100">Générer</button>
-                </div>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <ActivationInput label="Code referral" value={form.referralCode} onChange={(value) => update("referralCode", value.toUpperCase())} />
-                  <ActivationInput label="Date activation" type="date" value={form.activationDate} onChange={(value) => update("activationDate", value)} />
-                </div>
-              </ActivationPanel>
-            </section>
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Source, qualification & suivi
+              </h3>
 
-            <section className="space-y-5">
-              <ActivationPanel title="3. Affectation opérationnelle" badge="Territoire & manager">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <ActivationInput label="Territoire / zone *" value={form.territoryName} onChange={(value) => update("territoryName", value)} list="ambassador-territory-options" />
-                  <datalist id="ambassador-territory-options">{territories.map((item) => <option key={item.id || item.name} value={item.name || item.territory_name || item.zone} />)}</datalist>
-                  <ActivationSelect label="Rayon d’action" value={form.radius} onChange={(value) => update("radius", value)} options={["3 km", "5 km", "10 km", "Ville complète"]} />
-                  <ActivationSelect label="Manager assigné *" value={form.managerName} onChange={(value) => update("managerName", value)} options={managers.length ? managers : ["Sara Bakoki"]} />
-                  <ActivationSelect label="Capacité hebdomadaire" value={form.weeklyCapacity} onChange={(value) => update("weeklyCapacity", value)} options={["3h - 5h", "6h - 10h", "10h - 15h", "15h+", "À confirmer"]} />
-                  <ActivationInput label="Date de revue" type="date" value={form.reviewDate} onChange={(value) => update("reviewDate", value)} />
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <Field label="Source">
+                  <input
+                    value={leadForm.source}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        source: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Score qualification">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={leadForm.score}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        score: numberValue(
+                          event.target.value,
+                        ),
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Code referral">
+                  <input
+                    value={leadForm.referralCode}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        referralCode: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Code promo">
+                  <input
+                    value={leadForm.promoCode}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        promoCode: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Prochaine action">
+                  <input
+                    value={leadForm.nextAction}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        nextAction: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Date de relance">
+                  <input
+                    type="datetime-local"
+                    value={leadForm.nextFollowUp}
+                    onChange={(event) =>
+                      setLeadForm((current) => ({
+                        ...current,
+                        nextFollowUp: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <div className="sm:col-span-2">
+                  <Field label="Preuve de source">
+                    <input
+                      value={leadForm.sourceProof}
+                      onChange={(event) =>
+                        setLeadForm((current) => ({
+                          ...current,
+                          sourceProof: event.target.value,
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
                 </div>
-                <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-xs font-black uppercase tracking-[0.16em]">Canaux autorisés</p>
-                    <div className="mt-3 flex flex-wrap gap-2">{ambassadorChannels.map((item) => <ActivationChip key={item} active={form.channels.includes(item)} onClick={() => toggleList("channels", item)}>{item}</ActivationChip>)}</div>
-                  </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-xs font-black uppercase tracking-[0.16em]">Services autorisés</p>
-                    <div className="mt-3 flex flex-wrap gap-2">{ambassadorServices.map((item) => <ActivationChip key={item} active={form.services.includes(item)} onClick={() => toggleList("services", item)}>{item}</ActivationChip>)}</div>
-                  </div>
-                </div>
-              </ActivationPanel>
+              </div>
 
-              <ActivationPanel title="4. Commission, payout & objectifs" badge="Finance contrôlée">
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <ActivationInput label="Commission" value="10% fixe" onChange={() => undefined} disabled />
-                  <ActivationSelect label="Cycle payout *" value={form.payoutCycle} onChange={(value) => update("payoutCycle", value)} options={["Hebdomadaire", "Bimensuel", "Mensuel"]} />
-                  <ActivationSelect label="Méthode paiement" value={form.paymentMethod} onChange={(value) => update("paymentMethod", value)} options={["Virement bancaire", "Mobile money", "Espèces contrôlées"]} />
-                  <ActivationInput label="Compte / RIB" value={form.paymentAccount} onChange={(value) => update("paymentAccount", value)} placeholder="RIB ou référence" />
-                </div>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <ActivationInput label="Objectif mensuel leads" value={form.leadsGoal} onChange={(value) => update("leadsGoal", value)} />
-                  <ActivationInput label="Objectif mensuel conversions" value={form.conversionsGoal} onChange={(value) => update("conversionsGoal", value)} />
-                </div>
-                <ActivationTextarea label="Notes opérationnelles" value={form.notes} onChange={(value) => update("notes", value)} placeholder="Contexte, disponibilité, risque, première mission recommandée..." />
-              </ActivationPanel>
-            </section>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLeadForm((current) => ({
+                      ...current,
+                      consentConfirmed:
+                        !current.consentConfirmed,
+                    }))
+                  }
+                  className={`rounded-2xl border p-3 text-left ${
+                    leadForm.consentConfirmed
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-amber-200 bg-amber-50"
+                  }`}
+                >
+                  <p className="text-xs font-black">
+                    Consentement contact
+                  </p>
 
-            <aside className="space-y-5">
-              <section className="rounded-[28px] border border-blue-100 bg-white p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.16em]">Score activation</p>
-                    <p className="mt-2 text-4xl font-black">{readiness}%</p>
-                    <p className="mt-1 text-sm font-bold">{readiness >= 82 ? "Prêt à activer" : readiness >= 62 ? "Activation possible avec contrôles" : "À compléter avant activation"}</p>
-                  </div>
-                  <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-50"><ShieldCheck size={24} /></div>
-                </div>
-                <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-100"><div className={cn("h-full rounded-full", readiness >= 80 ? "bg-emerald-500" : readiness >= 60 ? "bg-amber-500" : "bg-rose-500")} style={{ width: `${readiness}%` }} /></div>
-              </section>
+                  <p className="mt-1 text-[10px] font-bold text-slate-500">
+                    {leadForm.consentConfirmed
+                      ? "Confirmé"
+                      : "À confirmer"}
+                  </p>
+                </button>
 
-              <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-black">Résumé d’activation</h3>
-                <div className="mt-4 space-y-3">{summaryRows.map(([label, value]) => <div key={label} className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3"><span className="text-xs font-black uppercase tracking-[0.12em]">{label}</span><b className="text-sm">{value}</b></div>)}</div>
-              </section>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLeadForm((current) => ({
+                      ...current,
+                      allowDuplicate: !current.allowDuplicate,
+                    }))
+                  }
+                  className={`rounded-2xl border p-3 text-left ${
+                    leadForm.allowDuplicate
+                      ? "border-rose-200 bg-rose-50"
+                      : "border-slate-200 bg-slate-50"
+                  }`}
+                >
+                  <p className="text-xs font-black">
+                    Exception doublon
+                  </p>
 
-              <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-black">Conformité d’activation</h3><span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black">{form.compliance.length}/{ambassadorCompliance.length}</span></div>
-                <div className="mt-4 space-y-2">{ambassadorCompliance.map((item) => <button key={item} type="button" onClick={() => toggleList("compliance", item)} className="flex w-full items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 text-left text-sm font-bold hover:bg-blue-50"><span className={cn("grid h-6 w-6 place-items-center rounded-full border", form.compliance.includes(item) ? "border-emerald-300 bg-emerald-100" : "border-slate-300 bg-white")}>{form.compliance.includes(item) ? <CheckCircle2 size={14} /> : null}</span>{item}</button>)}</div>
-              </section>
-
-              <section className={cn("rounded-[28px] border p-5 shadow-sm", blockedReasons.length || phoneDuplicate ? "border-amber-200 bg-amber-50" : "border-emerald-200 bg-emerald-50")}>
-                <div className="flex gap-3"><AlertTriangle size={20} /><div><h3 className="text-sm font-black">Contrôles avant création</h3><p className="mt-2 text-sm font-bold">{phoneDuplicate ? "Doublon téléphone détecté." : blockedReasons.length ? `Bloqué: ${blockedReasons.join(", ")}` : "Dossier prêt pour création."}</p><p className="mt-2 text-xs font-black">Territoire: {territoryRisk}</p></div></div>
-              </section>
-
-              {message ? <section className={cn("rounded-[24px] border p-4 text-sm font-black", message.type === "success" ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50")}>{message.text}</section> : null}
-            </aside>
+                  <p className="mt-1 text-[10px] font-bold text-slate-500">
+                    Requiert un contrôle manuel.
+                  </p>
+                </button>
+              </div>
+            </Card>
           </div>
-        </div>
+        </ModalShell>
+      ) : null}
 
-        <footer className="sticky bottom-0 z-20 border-t border-slate-100 bg-white px-7 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-xs font-black leading-5">
-              <p>{form.fullName || "Nouvel ambassadeur"} · {form.city} · {form.profileType}</p>
-              <p>{blockedReasons.length ? `Bloqué: ${blockedReasons.join(", ")}` : "Prêt pour création réseau."}</p>
+      {modal === "note" ? (
+        <ModalShell
+          title="Ouvrir une note opérationnelle"
+          subtitle="Documentez une observation, une décision, une alerte ou un suivi avec visibilité, responsable et échéance."
+          icon={NotebookPen}
+          onClose={() => setModal(null)}
+          width="max-w-4xl"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+              >
+                Annuler
+              </button>
+
+              <button
+                type="button"
+                onClick={() => void saveNote()}
+                disabled={busy || !noteForm.text.trim()}
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200"
+              >
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <NotebookPen className="h-4 w-4" />
+                )}
+                Enregistrer la note
+              </button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black hover:bg-slate-50">Annuler</button>
-              <button type="button" onClick={() => void submit("draft")} disabled={!!savingMode} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black hover:bg-slate-50 disabled:opacity-50">{savingMode === "draft" ? "Enregistrement..." : "Enregistrer brouillon"}</button>
-              <button type="submit" disabled={!!savingMode || missingCore.length > 0 || phoneDuplicate} className="rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-100 hover:bg-blue-800 disabled:bg-slate-200 disabled:shadow-none">{savingMode === "create" ? "Création..." : "Créer ambassadeur"}</button>
-              <button type="button" onClick={() => void submit("activate")} disabled={!!savingMode || blockedReasons.length > 0 || phoneDuplicate} className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700 disabled:bg-slate-200 disabled:shadow-none">{savingMode === "activate" ? "Activation..." : "Créer + activer"}</button>
-              <button type="button" onClick={() => void submit("onboarding")} disabled={!!savingMode || missingCore.length > 0 || phoneDuplicate} className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-black hover:bg-blue-100 disabled:opacity-50">Créer + envoyer onboarding</button>
-            </div>
+          }
+        >
+          <div className="grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
+            <Card className="p-5">
+              <div className="grid gap-3">
+                <Field label="Catégorie">
+                  <select
+                    value={noteForm.category}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        category: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  >
+                    <option>Suivi opérationnel</option>
+                    <option>Performance</option>
+                    <option>Qualité</option>
+                    <option>Conformité</option>
+                    <option>Finance</option>
+                    <option>Coaching</option>
+                    <option>Incident</option>
+                    <option>Décision management</option>
+                  </select>
+                </Field>
+
+                <Field label="Priorité">
+                  <select
+                    value={noteForm.priority}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        priority: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  >
+                    <option value="low">Faible</option>
+                    <option value="normal">Normale</option>
+                    <option value="high">Haute</option>
+                    <option value="critical">Critique</option>
+                  </select>
+                </Field>
+
+                <Field label="Visibilité">
+                  <select
+                    value={noteForm.visibility}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        visibility: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  >
+                    <option value="management">Management</option>
+                    <option value="operations">Opérations</option>
+                    <option value="finance">Finance</option>
+                    <option value="all">Tous autorisés</option>
+                  </select>
+                </Field>
+
+                <Field label="Responsable suivi">
+                  <input
+                    value={noteForm.owner}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        owner: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Échéance suivi">
+                  <input
+                    type="date"
+                    value={noteForm.followUpDate}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        followUpDate: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+            </Card>
+
+            <Card className="p-5">
+              <Field label="Note interne" required>
+                <textarea
+                  value={noteForm.text}
+                  onChange={(event) =>
+                    setNoteForm((current) => ({
+                      ...current,
+                      text: event.target.value,
+                    }))
+                  }
+                  placeholder="Contexte, observation, décision, preuve, action attendue…"
+                  className={`${textareaClass} min-h-[310px]`}
+                />
+              </Field>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <Field label="Entité liée">
+                  <select
+                    value={noteForm.linkedType}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        linkedType: event.target.value,
+                        linkedId: "",
+                      }))
+                    }
+                    className={inputClass}
+                  >
+                    <option value="">Aucune</option>
+                    <option value="mission">Mission</option>
+                    <option value="lead">Lead</option>
+                    <option value="conversion">Conversion</option>
+                    <option value="payment">Paiement</option>
+                  </select>
+                </Field>
+
+                <Field label="Référence liée">
+                  <input
+                    value={noteForm.linkedId}
+                    onChange={(event) =>
+                      setNoteForm((current) => ({
+                        ...current,
+                        linkedId: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+            </Card>
           </div>
-        </footer>
-      </form>
-    </div>
-  );
-}
+        </ModalShell>
+      ) : null}
 
-function ActivationPanel({ title, badge, children }: { title: string; badge: string; children: ReactNode }) {
-  return <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4 flex items-center justify-between gap-3"><h3 className="text-base font-black">{title}</h3><span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em]">{badge}</span></div>{children}</section>;
-}
+      {modal === "archive" ? (
+        <ModalShell
+          title="Archiver l’ambassadeur"
+          subtitle="L’archivage conserve l’historique et les données financières. Il contrôle les missions ouvertes, les paiements, le territoire, les accès et les leads."
+          icon={Archive}
+          onClose={() => setModal(null)}
+          width="max-w-5xl"
+          footer={
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-black text-rose-700">
+                Aucun enregistrement n’est supprimé.
+              </p>
 
-function ActivationInput({ label, value, onChange, placeholder, type = "text", disabled, list }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; type?: string; disabled?: boolean; list?: string }) {
-  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em]">{label}</span><input type={type} value={value} list={list} disabled={disabled} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none placeholder:!text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100" /></label>;
-}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModal(null)}
+                  className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+                >
+                  Annuler
+                </button>
 
-function ActivationSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
-  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em]">{label}</span><select value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">{options.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>;
-}
-
-function ActivationTextarea({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string }) {
-  return <label className="mt-3 block"><span className="text-[10px] font-black uppercase tracking-[0.16em]">{label}</span><textarea value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} rows={4} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none placeholder:!text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-100" /></label>;
-}
-
-function ActivationChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
-  return <button type="button" onClick={onClick} className={cn("rounded-full border px-3 py-2 text-xs font-black transition", active ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:bg-slate-50")}>{children}</button>;
-}
-
-type TerritoryAssignmentForm = {
-  ambassadorId: string;
-  ambassadorName: string;
-  city: string;
-  region: string;
-  commune: string;
-  district: string;
-  territoryName: string;
-  assignmentMode: string;
-  assignmentSource: string;
-  radius: string;
-  startDate: string;
-  reviewDate: string;
-  managerName: string;
-  services: string[];
-  channels: string[];
-  monthlyLeadTarget: string;
-  monthlyConversionTarget: string;
-  fieldVisitTarget: string;
-  partnerTarget: string;
-  slaContact: string;
-  slaFollowup: string;
-  slaClosure: string;
-  reportingFrequency: string;
-  proofRequirements: string[];
-  approvalManager: string;
-  approvalStatus: string;
-  notes: string;
-};
-
-const territoryCities = ["Rabat", "Salé", "Témara", "Casablanca", "Kénitra", "Tanger", "Fès", "Marrakech", "Agadir"];
-const territoryServices = ["Home Service", "Kindergarten & Preschool", "Academy", "Hospitality Kids Friendly", "Corporates Liner"];
-const territoryChannels = ["WhatsApp", "Appel", "Terrain", "Partenaires", "Événementiel", "B2B direct"];
-const territoryProofRequirements = ["Photo terrain", "Liste contacts", "Capture WhatsApp", "Formulaire lead", "Note partenaire", "Compte rendu mission"];
-const territoryAssignmentModes = ["Exclusif", "Partagé", "Secondaire", "Backup", "Prospection seulement"];
-const territorySources = ["Nouvelle activation ambassadeur", "Rééquilibrage territoire", "Renfort zone sous-couverte", "Remplacement temporaire", "Expansion commerciale"];
-
-function territoryInputDate(offsetDays = 0) {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
-}
-
-function defaultTerritoryAssignmentForm(ambassador?: AnyRecord | null): TerritoryAssignmentForm {
-  const city = String(ambassador?.city || ambassador?.region || "Rabat");
-  const name = String(ambassador?.full_name || ambassador?.name || "");
-  return {
-    ambassadorId: String(ambassador?.id || ""),
-    ambassadorName: name,
-    city,
-    region: city === "Casablanca" ? "Casablanca-Settat" : city === "Rabat" || city === "Salé" || city === "Témara" ? "Rabat-Salé-Kénitra" : city,
-    commune: city,
-    district: String(ambassador?.zone || ambassador?.district || "Centre / zone prioritaire"),
-    territoryName: String(ambassador?.territory_name || ambassador?.territory || `${city} Centre`),
-    assignmentMode: "Partagé",
-    assignmentSource: "Renfort zone sous-couverte",
-    radius: "5 km",
-    startDate: territoryInputDate(0),
-    reviewDate: territoryInputDate(90),
-    managerName: String(ambassador?.manager_name || "Sara Bakoki"),
-    services: ["Home Service"],
-    channels: ["WhatsApp", "Terrain"],
-    monthlyLeadTarget: "48",
-    monthlyConversionTarget: "6",
-    fieldVisitTarget: "8",
-    partnerTarget: "4",
-    slaContact: "24h",
-    slaFollowup: "48h",
-    slaClosure: "7 jours",
-    reportingFrequency: "Hebdomadaire",
-    proofRequirements: ["Liste contacts", "Capture WhatsApp", "Compte rendu mission"],
-    approvalManager: String(ambassador?.manager_name || "Sara Bakoki"),
-    approvalStatus: "En attente",
-    notes: "Affectation à valider selon la capacité terrain, la couverture locale et les objectifs de prospection du mois.",
-  };
-}
-
-function AmbassadorTerritoryAssignmentEnterpriseModal({
-  open,
-  selectedAmbassador,
-  snapshot,
-  onClose,
-  onAssigned,
-}: {
-  open: boolean;
-  selectedAmbassador?: AnyRecord | null;
-  snapshot: AmbassadorWorkspaceSnapshot;
-  onClose: () => void;
-  onAssigned: () => void;
-}) {
-  const [form, setForm] = useState<TerritoryAssignmentForm>(() => defaultTerritoryAssignmentForm(selectedAmbassador));
-  const [savingMode, setSavingMode] = useState<"draft" | "submit" | "assign" | "mission" | null>(null);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-
-  const ambassadors = ((snapshot.ambassadors || []) as AnyRecord[]).filter((item) => String(item.status || "") !== "archived");
-  const territories = ((snapshot.territories || []) as AnyRecord[]);
-  const managers = Array.from(new Set(["Sara Bakoki", "Yassine El Alaoui", "Amine Benkirane", ...ambassadors.map((item) => item.manager_name).filter(Boolean)]));
-  const selected = ambassadors.find((item) => String(item.id) === form.ambassadorId) || selectedAmbassador || null;
-  const selectedTerritory = territories.find((item) => String(item.name || item.territory_name || item.zone || "").toLowerCase() === form.territoryName.toLowerCase());
-  const cityAmbassadors = ambassadors.filter((item) => String(item.city || item.region || "").toLowerCase() === form.city.toLowerCase());
-  const territoryLoad = numberValue(selectedTerritory?.active_ambassadors_count ?? cityAmbassadors.length ?? 0);
-  const coverage = Math.max(12, Math.min(94, Number(selectedTerritory?.coverage_rate ?? selectedTerritory?.coverage ?? (territoryLoad ? 38 + territoryLoad * 8 : 26))));
-  const projectedLoad = Math.min(100, Math.round(territoryLoad * 12 + Number(form.monthlyLeadTarget || 0) * 0.8 + Number(form.fieldVisitTarget || 0) * 2));
-  const highPotential = Number(form.monthlyLeadTarget || 0) >= 45 || form.services.includes("Corporates Liner") || form.services.includes("Hospitality Kids Friendly");
-  const exclusiveNeedsApproval = form.assignmentMode === "Exclusif" || highPotential || projectedLoad >= 78;
-
-  if (!open) return null;
-
-  const missingCore = [
-    ["Ambassadeur", form.ambassadorId],
-    ["Ville", form.city],
-    ["Quartier / secteur", form.district],
-    ["Territoire", form.territoryName],
-    ["Manager", form.managerName],
-    ["Date de revue", form.reviewDate],
-    ["Services autorisés", form.services.length ? "ok" : ""],
-    ["Canaux autorisés", form.channels.length ? "ok" : ""],
-  ].filter(([, value]) => !String(value || "").trim()).map(([label]) => String(label));
-  const missingApproval = exclusiveNeedsApproval && !form.approvalManager ? ["Approbateur manager"] : [];
-  const blockedReasons = [...missingCore, ...missingApproval];
-  const score = Math.max(18, Math.min(100, Math.round(
-    (missingCore.length === 0 ? 28 : 8) +
-    (form.services.length >= 2 ? 14 : form.services.length ? 8 : 0) +
-    (form.channels.length >= 3 ? 14 : form.channels.length ? 8 : 0) +
-    (coverage < 50 ? 16 : coverage < 75 ? 10 : 6) +
-    (projectedLoad < 70 ? 14 : projectedLoad < 90 ? 8 : 2) +
-    (form.proofRequirements.length >= 3 ? 10 : 5) +
-    (form.reviewDate ? 8 : 0)
-  )));
-  const readinessLabel = score >= 82 ? "Affectation recommandée" : score >= 64 ? "Affectation possible avec contrôle" : "À compléter avant affectation";
-  const territoryRisk = projectedLoad >= 90 ? "Surcharge probable" : projectedLoad >= 72 ? "Charge à surveiller" : "Capacité compatible";
-  const conflictSignal = form.assignmentMode === "Exclusif" && territoryLoad > 0 ? "Conflit possible avec affectation existante" : "Aucun conflit exclusif critique détecté";
-
-  function update<K extends keyof TerritoryAssignmentForm>(key: K, value: TerritoryAssignmentForm[K]) {
-    setForm((current) => ({ ...current, [key]: value }));
-  }
-
-  function toggleList(key: "services" | "channels" | "proofRequirements", value: string) {
-    setForm((current) => {
-      const existing = current[key];
-      const nextValues = existing.includes(value) ? existing.filter((item) => item !== value) : [...existing, value];
-      return { ...current, [key]: nextValues };
-    });
-  }
-
-  function loadAmbassador(ambassadorId: string) {
-    const ambassador = ambassadors.find((item) => String(item.id) === ambassadorId);
-    if (!ambassador) {
-      update("ambassadorId", ambassadorId);
-      return;
-    }
-    setForm((current) => ({
-      ...current,
-      ambassadorId: String(ambassador.id),
-      ambassadorName: String(ambassador.full_name || ambassador.name || ""),
-      city: String(ambassador.city || ambassador.region || current.city),
-      region: String(ambassador.region || ambassador.city || current.region),
-      district: String(ambassador.zone || ambassador.district || current.district),
-      territoryName: String(ambassador.territory_name || ambassador.territory || current.territoryName),
-      managerName: String(ambassador.manager_name || current.managerName),
-      approvalManager: String(ambassador.manager_name || current.approvalManager),
-    }));
-  }
-
-  async function submit(mode: "draft" | "submit" | "assign" | "mission") {
-    setMessage(null);
-    if ((mode === "assign" || mode === "mission") && blockedReasons.length) {
-      setMessage({ type: "error", text: `Bloqué: ${blockedReasons.join(", ")}` });
-      return;
-    }
-
-    setSavingMode(mode);
-    try {
-      const payload = {
-        action: mode === "draft" ? "draft_territory_assignment" : "assign_ambassador_territory",
-        operation: "assign_territory",
-        entity_type: "territory_assignment",
-        ambassador_id: form.ambassadorId,
-        territory_id: selectedTerritory?.id || null,
-        territory_name: form.territoryName,
-        city: form.city,
-        region: form.region,
-        commune: form.commune,
-        district: form.district,
-        assignment_mode: form.assignmentMode,
-        assignment_source: form.assignmentSource,
-        radius: form.radius,
-        start_date: form.startDate,
-        review_date: form.reviewDate,
-        manager_name: form.managerName,
-        authorized_services: form.services,
-        authorized_channels: form.channels,
-        monthly_lead_target: Number(form.monthlyLeadTarget || 0),
-        monthly_conversion_target: Number(form.monthlyConversionTarget || 0),
-        field_visit_target: Number(form.fieldVisitTarget || 0),
-        partner_target: Number(form.partnerTarget || 0),
-        sla_contact: form.slaContact,
-        sla_followup: form.slaFollowup,
-        sla_closure: form.slaClosure,
-        reporting_frequency: form.reportingFrequency,
-        proof_requirements: form.proofRequirements,
-        approval_manager: form.approvalManager,
-        approval_status: mode === "submit" ? "pending_approval" : mode === "assign" || mode === "mission" ? "approved" : form.approvalStatus,
-        readiness_score: score,
-        coverage_rate: coverage,
-        projected_load: projectedLoad,
-        notes: form.notes,
-        create_first_mission: mode === "mission",
-      };
-
-      const response = await fetch("/api/market-os/ambassadors/operations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data?.ok === false) throw new Error(data?.error || "Affectation territoire impossible avec l’infrastructure actuelle");
-      setMessage({ type: "success", text: mode === "mission" ? "Territoire affecté et première mission demandée." : mode === "submit" ? "Affectation soumise pour approbation manager." : mode === "draft" ? "Brouillon d’affectation enregistré." : "Territoire affecté avec succès." });
-      onAssigned();
-    } catch (error) {
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Erreur de synchronisation territoire" });
-    } finally {
-      setSavingMode(null);
-    }
-  }
-
-  const summaryRows = [
-    ["Ambassadeur", selected?.full_name || selected?.name || form.ambassadorName || "À sélectionner"],
-    ["Mode", form.assignmentMode],
-    ["Territoire", form.territoryName || "À définir"],
-    ["Couverture", `${coverage}%`],
-    ["Charge projetée", `${projectedLoad}%`],
-    ["Services", `${form.services.length} autorisé(s)`],
-  ];
-
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/35 px-3 py-3 backdrop-blur-sm">
-      <form onSubmit={(event: FormEvent) => { event.preventDefault(); void submit("assign"); }} className="flex max-h-[calc(100vh-28px)] w-[calc(100vw-28px)] max-w-[1680px] flex-col overflow-hidden rounded-[34px] border border-slate-200 bg-white text-slate-950 shadow-2xl shadow-slate-950/25 [&_*]:!text-slate-950">
-        <header className="sticky top-0 z-20 border-b border-slate-100 bg-white px-7 py-5">
-          <div className="flex items-start justify-between gap-5">
-            <div className="flex gap-4">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-cyan-100 bg-cyan-50"><MapPinned size={24} /></div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-2xl font-black tracking-tight">Affecter un territoire</h2>
-                  <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em]">Couverture terrain</span>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em]">Capacité & validation</span>
-                </div>
-                <p className="mt-2 max-w-5xl text-sm font-bold leading-6">Planifiez une affectation de zone avec services autorisés, charge projetée, SLA, preuves terrain et circuit d’approbation manager.</p>
+                <button
+                  type="button"
+                  onClick={() => void archiveAmbassador()}
+                  disabled={
+                    busy ||
+                    !archiveForm.reason.trim() ||
+                    !archiveForm.managerApproval.trim()
+                  }
+                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-rose-600 px-5 text-sm font-black text-white disabled:bg-slate-200"
+                >
+                  {busy ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Archive className="h-4 w-4" />
+                  )}
+                  Archiver avec traçabilité
+                </button>
               </div>
             </div>
-            <button type="button" onClick={onClose} className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-slate-200 bg-white hover:bg-slate-50"><X size={18} /></button>
+          }
+        >
+          <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Décision d’archivage
+              </h3>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <Field label="Motif obligatoire" required>
+                    <textarea
+                      value={archiveForm.reason}
+                      onChange={(event) =>
+                        setArchiveForm((current) => ({
+                          ...current,
+                          reason: event.target.value,
+                        }))
+                      }
+                      className={textareaClass}
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Date effective">
+                  <input
+                    type="date"
+                    value={archiveForm.effectiveDate}
+                    onChange={(event) =>
+                      setArchiveForm((current) => ({
+                        ...current,
+                        effectiveDate: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Autorité approbatrice" required>
+                  <input
+                    value={archiveForm.managerApproval}
+                    onChange={(event) =>
+                      setArchiveForm((current) => ({
+                        ...current,
+                        managerApproval: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <div className="sm:col-span-2">
+                  <Field label="Réaffectation des leads">
+                    <input
+                      value={archiveForm.leadReassignmentTarget}
+                      onChange={(event) =>
+                        setArchiveForm((current) => ({
+                          ...current,
+                          leadReassignmentTarget:
+                            event.target.value,
+                        }))
+                      }
+                      placeholder="Manager ou ambassadeur cible"
+                      className={inputClass}
+                    />
+                  </Field>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-5">
+              <h3 className="text-base font-black text-slate-950">
+                Contrôles avant archivage
+              </h3>
+
+              <div className="mt-4 grid gap-2">
+                <div
+                  className={`rounded-2xl border p-4 ${
+                    openMissions.length
+                      ? "border-amber-200 bg-amber-50"
+                      : "border-emerald-200 bg-emerald-50"
+                  }`}
+                >
+                  <p className="text-sm font-black">
+                    Missions ouvertes : {openMissions.length}
+                  </p>
+                </div>
+
+                <div
+                  className={`rounded-2xl border p-4 ${
+                    pendingPayouts.length
+                      ? "border-amber-200 bg-amber-50"
+                      : "border-emerald-200 bg-emerald-50"
+                  }`}
+                >
+                  <p className="text-sm font-black">
+                    Paiements en attente : {pendingPayouts.length}
+                  </p>
+                </div>
+
+                {[
+                  [
+                    "territoryReleaseRequested",
+                    "Demander la libération du territoire",
+                  ],
+                  [
+                    "accessSuspensionRequested",
+                    "Demander la suspension des accès",
+                  ],
+                  [
+                    "acknowledgeOpenItems",
+                    "Confirmer la prise en charge des éléments ouverts",
+                  ],
+                ].map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() =>
+                      setArchiveForm((current) => ({
+                        ...current,
+                        [key]:
+                          !current[
+                            key as keyof typeof current
+                          ],
+                      }))
+                    }
+                    className={`flex items-center justify-between rounded-2xl border p-4 text-left ${
+                      archiveForm[
+                        key as keyof typeof archiveForm
+                      ]
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-slate-200 bg-white"
+                    }`}
+                  >
+                    <span className="text-xs font-black">
+                      {label}
+                    </span>
+
+                    <CheckCircle2
+                      className={`h-4 w-4 ${
+                        archiveForm[
+                          key as keyof typeof archiveForm
+                        ]
+                          ? "text-blue-700"
+                          : "text-slate-300"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </Card>
           </div>
-        </header>
+        </ModalShell>
+      ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50/70 p-6">
-          <div className="grid gap-5 xl:grid-cols-[0.95fr_1.12fr_0.95fr]">
-            <section className="space-y-5">
-              <TerritoryPanel title="1. Ambassadeur & zone" badge="Sélection opérationnelle">
-                <TerritorySelect label="Ambassadeur assigné *" value={form.ambassadorId} onChange={loadAmbassador} options={["", ...ambassadors.map((item) => String(item.id))]} optionLabels={{ "": "Sélectionner un ambassadeur", ...Object.fromEntries(ambassadors.map((item) => [String(item.id), `${item.full_name || item.name || "Ambassadeur"} · ${item.city || "Maroc"}`])) }} />
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <TerritorySelect label="Ville *" value={form.city} onChange={(value) => update("city", value)} options={territoryCities} />
-                  <TerritoryInput label="Région" value={form.region} onChange={(value) => update("region", value)} />
-                  <TerritoryInput label="Commune / préfecture" value={form.commune} onChange={(value) => update("commune", value)} />
-                  <TerritoryInput label="Quartier / secteur *" value={form.district} onChange={(value) => update("district", value)} />
-                  <TerritoryInput label="Territoire existant ou nouveau *" value={form.territoryName} onChange={(value) => update("territoryName", value)} list="territory-assignment-options" />
-                  <datalist id="territory-assignment-options">{territories.map((item) => <option key={item.id || item.name} value={item.name || item.territory_name || item.zone} />)}</datalist>
-                  <TerritorySelect label="Rayon d’action" value={form.radius} onChange={(value) => update("radius", value)} options={["3 km", "5 km", "10 km", "Ville complète"]} />
-                </div>
-              </TerritoryPanel>
+      {modal === "training" ? (
+        <ModalShell
+          title="Affecter une formation"
+          subtitle="Créez une affectation Training réelle avec module, formateur, échéance, mode, lieu et objectifs d’évaluation."
+          icon={GraduationCap}
+          onClose={() => setModal(null)}
+          width="max-w-4xl"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+              >
+                Annuler
+              </button>
 
-              <TerritoryPanel title="2. Mode & source d’affectation" badge="Gouvernance zone">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <TerritorySelect label="Mode couverture" value={form.assignmentMode} onChange={(value) => update("assignmentMode", value)} options={territoryAssignmentModes} />
-                  <TerritorySelect label="Source affectation" value={form.assignmentSource} onChange={(value) => update("assignmentSource", value)} options={territorySources} />
-                  <TerritoryInput label="Date début" type="date" value={form.startDate} onChange={(value) => update("startDate", value)} />
-                  <TerritoryInput label="Date revue *" type="date" value={form.reviewDate} onChange={(value) => update("reviewDate", value)} />
-                </div>
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-xs font-black uppercase tracking-[0.16em]">Lecture rapide</p>
-                  <p className="mt-2 text-sm font-bold leading-6">{form.assignmentMode} · {form.assignmentSource} · revue prévue le {form.reviewDate || "à définir"}</p>
-                </div>
-              </TerritoryPanel>
-            </section>
-
-            <section className="space-y-5">
-              <TerritoryPanel title="3. Services, canaux & objectifs" badge="Périmètre autorisé">
-                <div className="grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-xs font-black uppercase tracking-[0.16em]">Services autorisés *</p>
-                    <div className="mt-3 flex flex-wrap gap-2">{territoryServices.map((item) => <TerritoryChip key={item} active={form.services.includes(item)} onClick={() => toggleList("services", item)}>{item}</TerritoryChip>)}</div>
-                  </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-xs font-black uppercase tracking-[0.16em]">Canaux autorisés *</p>
-                    <div className="mt-3 flex flex-wrap gap-2">{territoryChannels.map((item) => <TerritoryChip key={item} active={form.channels.includes(item)} onClick={() => toggleList("channels", item)}>{item}</TerritoryChip>)}</div>
-                  </div>
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <TerritoryInput label="Leads mensuels" value={form.monthlyLeadTarget} onChange={(value) => update("monthlyLeadTarget", value)} />
-                  <TerritoryInput label="Conversions" value={form.monthlyConversionTarget} onChange={(value) => update("monthlyConversionTarget", value)} />
-                  <TerritoryInput label="Visites terrain" value={form.fieldVisitTarget} onChange={(value) => update("fieldVisitTarget", value)} />
-                  <TerritoryInput label="Partenaires" value={form.partnerTarget} onChange={(value) => update("partnerTarget", value)} />
-                </div>
-              </TerritoryPanel>
-
-              <TerritoryPanel title="4. SLA, preuves & reporting" badge="Contrôle exécution">
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <TerritorySelect label="SLA contact" value={form.slaContact} onChange={(value) => update("slaContact", value)} options={["12h", "24h", "48h"]} />
-                  <TerritorySelect label="SLA relance" value={form.slaFollowup} onChange={(value) => update("slaFollowup", value)} options={["24h", "48h", "72h"]} />
-                  <TerritorySelect label="SLA clôture" value={form.slaClosure} onChange={(value) => update("slaClosure", value)} options={["3 jours", "7 jours", "14 jours"]} />
-                  <TerritorySelect label="Reporting" value={form.reportingFrequency} onChange={(value) => update("reportingFrequency", value)} options={["Quotidien", "Hebdomadaire", "Bimensuel"]} />
-                </div>
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-xs font-black uppercase tracking-[0.16em]">Preuves obligatoires</p>
-                  <div className="mt-3 flex flex-wrap gap-2">{territoryProofRequirements.map((item) => <TerritoryChip key={item} active={form.proofRequirements.includes(item)} onClick={() => toggleList("proofRequirements", item)}>{item}</TerritoryChip>)}</div>
-                </div>
-                <TerritoryTextarea label="Notes d’affectation" value={form.notes} onChange={(value) => update("notes", value)} />
-              </TerritoryPanel>
-
-              <TerritoryPanel title="5. Manager & approbation" badge="Décision">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <TerritorySelect label="Manager assigné *" value={form.managerName} onChange={(value) => update("managerName", value)} options={managers.length ? managers : ["Sara Bakoki"]} />
-                  <TerritorySelect label="Approbateur" value={form.approvalManager} onChange={(value) => update("approvalManager", value)} options={managers.length ? managers : ["Sara Bakoki"]} />
-                  <TerritorySelect label="Statut approbation" value={form.approvalStatus} onChange={(value) => update("approvalStatus", value)} options={["En attente", "Approuvé", "Rejeté", "À revoir"]} />
-                </div>
-                {exclusiveNeedsApproval ? <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black">Validation manager recommandée: mode exclusif, potentiel élevé ou charge projetée importante.</p> : null}
-              </TerritoryPanel>
-            </section>
-
-            <aside className="space-y-5">
-              <section className="rounded-[28px] border border-cyan-100 bg-white p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.16em]">Score affectation</p>
-                    <p className="mt-2 text-4xl font-black">{score}%</p>
-                    <p className="mt-1 text-sm font-bold">{readinessLabel}</p>
-                  </div>
-                  <div className="grid h-14 w-14 place-items-center rounded-2xl bg-cyan-50"><Target size={24} /></div>
-                </div>
-                <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-100"><div className={cn("h-full rounded-full", score >= 82 ? "bg-emerald-500" : score >= 64 ? "bg-amber-500" : "bg-rose-500")} style={{ width: `${score}%` }} /></div>
-              </section>
-
-              <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-black">Résumé territoire</h3>
-                <div className="mt-4 space-y-3">{summaryRows.map(([label, value]) => <div key={label} className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3"><span className="text-xs font-black uppercase tracking-[0.12em]">{label}</span><b className="text-sm text-right">{value}</b></div>)}</div>
-              </section>
-
-              <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-black">Capacité & couverture</h3>
-                <div className="mt-4 space-y-4">
-                  <TerritoryProgress label="Couverture zone" value={coverage} helper={coverage < 50 ? "Zone sous-couverte — opportunité prioritaire" : "Couverture existante à équilibrer"} />
-                  <TerritoryProgress label="Charge projetée" value={projectedLoad} helper={territoryRisk} />
-                  <TerritoryProgress label="Potentiel commercial" value={highPotential ? 86 : 62} helper={highPotential ? "Potentiel élevé détecté" : "Potentiel standard"} />
-                </div>
-              </section>
-
-              <section className={cn("rounded-[28px] border p-5 shadow-sm", blockedReasons.length ? "border-amber-200 bg-amber-50" : "border-emerald-200 bg-emerald-50")}>
-                <div className="flex gap-3"><AlertTriangle size={20} /><div><h3 className="text-sm font-black">Contrôles avant affectation</h3><p className="mt-2 text-sm font-bold">{blockedReasons.length ? `Bloqué: ${blockedReasons.join(", ")}` : "Affectation prête pour exécution."}</p><p className="mt-2 text-xs font-black">{territoryRisk} · {conflictSignal}</p></div></div>
-              </section>
-
-              <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-black">Règles de validation</h3>
-                <div className="mt-4 space-y-2">
-                  {["Ambassadeur sélectionné", "Services et canaux cadrés", "SLA de suivi défini", "Preuves obligatoires définies", "Date de revue renseignée"].map((item, index) => <div key={item} className="flex items-center gap-3 rounded-2xl bg-slate-50 px-3 py-3 text-sm font-bold"><CheckCircle2 size={16} className={index < 3 || !blockedReasons.length ? "text-emerald-600" : "text-slate-400"} />{item}</div>)}
-                </div>
-              </section>
-
-              {message ? <section className={cn("rounded-[24px] border p-4 text-sm font-black", message.type === "success" ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50")}>{message.text}</section> : null}
-            </aside>
-          </div>
-        </div>
-
-        <footer className="sticky bottom-0 z-20 border-t border-slate-100 bg-white px-7 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-xs font-black leading-5">
-              <p>{selected?.full_name || selected?.name || "Ambassadeur à sélectionner"} · {form.city} · {form.assignmentMode}</p>
-              <p>{blockedReasons.length ? `Bloqué: ${blockedReasons.join(", ")}` : `${form.territoryName} prêt pour affectation.`}</p>
+              <button
+                type="button"
+                onClick={() => void scheduleTraining()}
+                disabled={busy || !trainingForm.title.trim()}
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-600 px-5 text-sm font-black text-white disabled:bg-slate-200"
+              >
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CalendarDays className="h-4 w-4" />
+                )}
+                Affecter la formation
+              </button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black hover:bg-slate-50">Annuler</button>
-              <button type="button" onClick={() => void submit("draft")} disabled={!!savingMode} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black hover:bg-slate-50 disabled:opacity-50">{savingMode === "draft" ? "Enregistrement..." : "Enregistrer brouillon"}</button>
-              <button type="button" onClick={() => void submit("submit")} disabled={!!savingMode || missingCore.length > 0} className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-3 text-sm font-black hover:bg-amber-100 disabled:opacity-50">{savingMode === "submit" ? "Soumission..." : "Soumettre approbation"}</button>
-              <button type="submit" disabled={!!savingMode || blockedReasons.length > 0} className="rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-100 hover:bg-blue-800 disabled:bg-slate-200 disabled:shadow-none">{savingMode === "assign" ? "Affectation..." : "Affecter territoire"}</button>
-              <button type="button" onClick={() => void submit("mission")} disabled={!!savingMode || blockedReasons.length > 0} className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700 disabled:bg-slate-200 disabled:shadow-none">Affecter + créer première mission</button>
+          }
+        >
+          <Card className="p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <Field label="Titre / module" required>
+                  <input
+                    value={trainingForm.title}
+                    onChange={(event) =>
+                      setTrainingForm((current) => ({
+                        ...current,
+                        title: event.target.value,
+                      }))
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+
+              <Field label="Code module">
+                <input
+                  value={trainingForm.moduleCode}
+                  onChange={(event) =>
+                    setTrainingForm((current) => ({
+                      ...current,
+                      moduleCode: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field label="Formateur">
+                <input
+                  value={trainingForm.trainer}
+                  onChange={(event) =>
+                    setTrainingForm((current) => ({
+                      ...current,
+                      trainer: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field label="Échéance">
+                <input
+                  type="date"
+                  value={trainingForm.dueDate}
+                  onChange={(event) =>
+                    setTrainingForm((current) => ({
+                      ...current,
+                      dueDate: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field label="Mode">
+                <select
+                  value={trainingForm.mode}
+                  onChange={(event) =>
+                    setTrainingForm((current) => ({
+                      ...current,
+                      mode: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                >
+                  <option>Présentiel</option>
+                  <option>Distanciel</option>
+                  <option>Hybride</option>
+                  <option>Terrain accompagné</option>
+                </select>
+              </Field>
+
+              <Field label="Lieu / lien">
+                <input
+                  value={trainingForm.location}
+                  onChange={(event) =>
+                    setTrainingForm((current) => ({
+                      ...current,
+                      location: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field label="Score initial">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={trainingForm.score}
+                  onChange={(event) =>
+                    setTrainingForm((current) => ({
+                      ...current,
+                      score: numberValue(event.target.value),
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <div className="sm:col-span-2">
+                <Field label="Instructions">
+                  <textarea
+                    value={trainingForm.notes}
+                    onChange={(event) =>
+                      setTrainingForm((current) => ({
+                        ...current,
+                        notes: event.target.value,
+                      }))
+                    }
+                    className={textareaClass}
+                  />
+                </Field>
+              </div>
             </div>
+          </Card>
+        </ModalShell>
+      ) : null}
+
+      {modal === "document" ? (
+        <ModalShell
+          title="Contrôle documentaire"
+          subtitle="Mettez à jour la pièce, la référence, le reviewer, la décision, l’expiration et la justification."
+          icon={FileCheck2}
+          onClose={() => setModal(null)}
+          width="max-w-3xl"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+              >
+                Annuler
+              </button>
+
+              <button
+                type="button"
+                onClick={() => void saveDocument()}
+                disabled={busy}
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white"
+              >
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileCheck2 className="h-4 w-4" />
+                )}
+                Enregistrer le contrôle
+              </button>
+            </div>
+          }
+        >
+          <Card className="p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Document">
+                <select
+                  value={documentForm.key}
+                  onChange={(event) => {
+                    const document =
+                      draft.documents.find(
+                        (item) =>
+                          item.key === event.target.value,
+                      )
+
+                    if (!document) return
+
+                    setDocumentForm({
+                      key: document.key,
+                      label: document.label,
+                      status: document.status,
+                      reference: document.reference,
+                      reviewer: document.reviewer,
+                      note: document.note,
+                      expiresAt: document.expiresAt,
+                    })
+                  }}
+                  className={inputClass}
+                >
+                  {draft.documents.map((document) => (
+                    <option
+                      key={document.key}
+                      value={document.key}
+                    >
+                      {document.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Statut">
+                <select
+                  value={documentForm.status}
+                  onChange={(event) =>
+                    setDocumentForm((current) => ({
+                      ...current,
+                      status: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                >
+                  <option value="missing">Manquant</option>
+                  <option value="requested">Demandé</option>
+                  <option value="uploaded">Téléversé</option>
+                  <option value="review">En revue</option>
+                  <option value="validated">Validé</option>
+                  <option value="rejected">Rejeté</option>
+                  <option value="expired">Expiré</option>
+                </select>
+              </Field>
+
+              <Field label="Reviewer">
+                <input
+                  value={documentForm.reviewer}
+                  onChange={(event) =>
+                    setDocumentForm((current) => ({
+                      ...current,
+                      reviewer: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field label="Expiration">
+                <input
+                  type="date"
+                  value={documentForm.expiresAt}
+                  onChange={(event) =>
+                    setDocumentForm((current) => ({
+                      ...current,
+                      expiresAt: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </Field>
+
+              <div className="sm:col-span-2">
+                <Field label="Référence / preuve">
+                  <input
+                    value={documentForm.reference}
+                    onChange={(event) =>
+                      setDocumentForm((current) => ({
+                        ...current,
+                        reference: event.target.value,
+                      }))
+                    }
+                    placeholder="Référence interne, URL sécurisée ou identifiant documentaire"
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+
+              <div className="sm:col-span-2">
+                <Field label="Note de décision">
+                  <textarea
+                    value={documentForm.note}
+                    onChange={(event) =>
+                      setDocumentForm((current) => ({
+                        ...current,
+                        note: event.target.value,
+                      }))
+                    }
+                    className={textareaClass}
+                  />
+                </Field>
+              </div>
+            </div>
+          </Card>
+        </ModalShell>
+      ) : null}
+
+      {modal === "score" ? (
+        <ModalShell
+          title="Explication du score ambassadeur"
+          subtitle="Chaque score est explicable et dérivé de la qualité, de la performance, de la conformité, de la formation, de l’activité et du territoire."
+          icon={BadgeCheck}
+          onClose={() => setModal(null)}
+          width="max-w-4xl"
+          footer={
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+              >
+                Fermer
+              </button>
+            </div>
+          }
+        >
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {[
+              ["Score global", scoreBreakdown.global, "blue"],
+              ["Qualité", scoreBreakdown.quality, "green"],
+              [
+                "Performance",
+                scoreBreakdown.performance,
+                "blue",
+              ],
+              [
+                "Conformité",
+                scoreBreakdown.compliance,
+                "amber",
+              ],
+              [
+                "Formation",
+                scoreBreakdown.training,
+                "violet",
+              ],
+              [
+                "Activité",
+                scoreBreakdown.activity,
+                "blue",
+              ],
+              [
+                "Fit territoire",
+                scoreBreakdown.territory,
+                "green",
+              ],
+            ].map(([label, value, tone]) => (
+              <Card key={String(label)} className="p-4">
+                <p className="text-xs font-black text-slate-500">
+                  {label}
+                </p>
+
+                <p className="mt-2 text-3xl font-black text-slate-950">
+                  {value}%
+                </p>
+
+                <div className="mt-3">
+                  <Progress
+                    value={Number(value)}
+                    tone={tone as any}
+                  />
+                </div>
+              </Card>
+            ))}
           </div>
-        </footer>
-      </form>
+
+          <Card className="mt-4 p-5">
+            <h3 className="text-base font-black text-slate-950">
+              Conditions à corriger
+            </h3>
+
+            <div className="mt-4 grid gap-2">
+              {scoreBreakdown.blockers.map((blocker) => (
+                <button
+                  key={blocker}
+                  type="button"
+                  onClick={() => {
+                    setModal(null)
+
+                    if (
+                      blocker.includes("Conformité") ||
+                      blocker.includes("Commission") ||
+                      blocker.includes("Paiement")
+                    ) {
+                      setActiveTab("compliance")
+                    } else if (blocker.includes("Formation")) {
+                      setActiveTab("training")
+                    } else {
+                      setDrawerMode("details")
+                    }
+                  }}
+                  className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 p-3 text-left"
+                >
+                  <span className="text-xs font-black text-amber-950">
+                    {blocker}
+                  </span>
+
+                  <ChevronDown className="h-4 w-4 -rotate-90 text-amber-700" />
+                </button>
+              ))}
+
+              {!scoreBreakdown.blockers.length ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-center">
+                  <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-700" />
+
+                  <p className="mt-2 text-sm font-black text-emerald-950">
+                    Aucun blocage critique détecté
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </Card>
+        </ModalShell>
+      ) : null}
+
+      {modal === "more" ? (
+        <ModalShell
+          title="Actions complémentaires"
+          subtitle="Actions non destructives et outils de gestion du dossier."
+          icon={Ellipsis}
+          onClose={() => setModal(null)}
+          width="max-w-2xl"
+          footer={
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black"
+              >
+                Fermer
+              </button>
+            </div>
+          }
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => {
+                exportDossier()
+                setModal(null)
+              }}
+              className="rounded-2xl border border-slate-200 bg-white p-5 text-left hover:border-blue-300"
+            >
+              <Download className="h-5 w-5 text-blue-600" />
+
+              <p className="mt-3 text-sm font-black">
+                Exporter le dossier
+              </p>
+
+              <p className="mt-1 text-xs font-semibold text-slate-500">
+                Export JSON structuré des données actuellement chargées.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setModal("training")
+              }}
+              className="rounded-2xl border border-slate-200 bg-white p-5 text-left hover:border-violet-300"
+            >
+              <GraduationCap className="h-5 w-5 text-violet-600" />
+
+              <p className="mt-3 text-sm font-black">
+                Affecter une formation
+              </p>
+
+              <p className="mt-1 text-xs font-semibold text-slate-500">
+                Créer une affectation Academy réelle.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setModal(null)
+                setDrawerMode("activities")
+              }}
+              className="rounded-2xl border border-slate-200 bg-white p-5 text-left hover:border-emerald-300"
+            >
+              <Activity className="h-5 w-5 text-emerald-600" />
+
+              <p className="mt-3 text-sm font-black">
+                Ouvrir les activités
+              </p>
+
+              <p className="mt-1 text-xs font-semibold text-slate-500">
+                Afficher la chronologie dans le command drawer.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setModal("archive")
+              }}
+              className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-left hover:border-rose-400"
+            >
+              <Archive className="h-5 w-5 text-rose-600" />
+
+              <p className="mt-3 text-sm font-black">
+                Préparer archivage
+              </p>
+
+              <p className="mt-1 text-xs font-semibold text-slate-500">
+                Aucun dossier n’est supprimé.
+              </p>
+            </button>
+          </div>
+        </ModalShell>
+      ) : null}
+
+      <style jsx global>{`
+        [data-ambassador-directory-route="enterprise-master-dossier"] h1,
+        [data-ambassador-directory-route="enterprise-master-dossier"] h2,
+        [data-ambassador-directory-route="enterprise-master-dossier"] h3,
+        [data-ambassador-directory-route="enterprise-master-dossier"] h4,
+        [data-ambassador-directory-route="enterprise-master-dossier"] label,
+        [data-ambassador-directory-route="enterprise-master-dossier"] th,
+        [data-ambassador-directory-route="enterprise-master-dossier"] summary {
+          color: #020617 !important;
+          -webkit-text-fill-color: #020617 !important;
+          font-weight: 900 !important;
+        }
+
+        [data-ambassador-directory-route="enterprise-master-dossier"] input,
+        [data-ambassador-directory-route="enterprise-master-dossier"] select,
+        [data-ambassador-directory-route="enterprise-master-dossier"] textarea,
+        [data-ambassador-directory-route="enterprise-master-dossier"] option {
+          color: #020617 !important;
+          -webkit-text-fill-color: #020617 !important;
+          font-weight: 700 !important;
+        }
+
+        [data-ambassador-directory-route="enterprise-master-dossier"]
+          input::placeholder,
+        [data-ambassador-directory-route="enterprise-master-dossier"]
+          textarea::placeholder {
+          color: #64748b !important;
+          -webkit-text-fill-color: #64748b !important;
+          opacity: 1 !important;
+        }
+      `}</style>
     </div>
-  );
-}
-
-function TerritoryPanel({ title, badge, children }: { title: string; badge: string; children: ReactNode }) {
-  return <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4 flex items-center justify-between gap-3"><h3 className="text-base font-black">{title}</h3><span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em]">{badge}</span></div>{children}</section>;
-}
-
-function TerritoryInput({ label, value, onChange, placeholder, type = "text", disabled, list }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; type?: string; disabled?: boolean; list?: string }) {
-  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em]">{label}</span><input type={type} value={value} list={list} disabled={disabled} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none placeholder:!text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100" /></label>;
-}
-
-function TerritorySelect({ label, value, onChange, options, optionLabels }: { label: string; value: string; onChange: (value: string) => void; options: string[]; optionLabels?: Record<string, string> }) {
-  return <label className="block"><span className="text-[10px] font-black uppercase tracking-[0.16em]">{label}</span><select value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">{options.map((item) => <option key={item || "empty"} value={item}>{optionLabels?.[item] || item}</option>)}</select></label>;
-}
-
-function TerritoryTextarea({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string }) {
-  return <label className="mt-3 block"><span className="text-[10px] font-black uppercase tracking-[0.16em]">{label}</span><textarea value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} rows={4} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none placeholder:!text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-100" /></label>;
-}
-
-function TerritoryChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
-  return <button type="button" onClick={onClick} className={cn("rounded-full border px-3 py-2 text-xs font-black transition", active ? "border-cyan-300 bg-cyan-50 shadow-sm" : "border-slate-200 bg-white hover:bg-slate-50")}>{children}</button>;
-}
-
-function TerritoryProgress({ label, value, helper }: { label: string; value: number; helper: string }) {
-  return <div><div className="flex items-center justify-between gap-3"><span className="text-xs font-black uppercase tracking-[0.12em]">{label}</span><b className="text-sm">{value}%</b></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className={cn("h-full rounded-full", value >= 80 ? "bg-emerald-500" : value >= 55 ? "bg-amber-500" : "bg-rose-500")} style={{ width: `${Math.max(5, Math.min(100, value))}%` }} /></div><p className="mt-2 text-xs font-bold">{helper}</p></div>;
-}
-
-function SelectedAmbassadorPanel({
-  ambassador,
-  snapshot,
-  onOpenProfile,
-  onAssignTerritory,
-  onCreateMission,
-  onArchive,
-}: {
-  ambassador: AnyRecord;
-  snapshot: AmbassadorWorkspaceSnapshot;
-  onOpenProfile: (ambassador: AnyRecord) => void;
-  onAssignTerritory: (ambassador: AnyRecord) => void;
-  onCreateMission: (ambassador: AnyRecord) => void;
-  onArchive: (ambassador: AnyRecord) => void;
-}) {
-  const score = numberValue(ambassador.performance_score ?? ambassador.quality_score ?? 0);
-  const missions = (snapshot.missions || []).filter((item: AnyRecord) => item.ambassador_id === ambassador.id);
-  const training = (snapshot.training || []).filter((item: AnyRecord) => item.ambassador_id === ambassador.id);
-  const incentives = (snapshot.incentives || []).filter((item: AnyRecord) => item.ambassador_id === ambassador.id);
-  const phone = normalizePhone(ambassador.phone);
-
-  return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="grid gap-5 xl:grid-cols-[290px_1fr_1fr_1fr]">
-        <div className="flex gap-4">
-          <span className="relative grid h-20 w-20 shrink-0 place-items-center rounded-full bg-slate-100 text-xl font-black text-slate-950 ring-1 ring-slate-200">{initials(ambassador.full_name || ambassador.name)}<span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-500" /></span>
-          <div>
-            <h3 className="text-xl font-black text-slate-950">{ambassador.full_name || ambassador.name || "Ambassadeur"}</h3>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{ambassador.city || "Ville non renseignée"} · {ambassador.phone || ambassador.email || "Contact à compléter"}</p>
-            <div className="mt-4 flex gap-2">
-              <IconLink href={`tel:${phone}`} icon={Phone} title="Appeler" disabled={!phone} />
-              <IconLink href={`https://wa.me/${phone.replace(/^\+/, "")}`} icon={MessageCircle} title="WhatsApp" disabled={!phone} />
-              <IconLink href={`mailto:${ambassador.email || ""}`} icon={Mail} title="Email" disabled={!ambassador.email} />
-              <button type="button" onClick={() => onOpenProfile(ambassador)} className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-950 hover:border-blue-300 hover:bg-blue-50" title="Voir profil"><Eye size={16} /></button>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-100 p-4">
-          <h4 className="text-sm font-black text-slate-950">Performance (MTD)</h4>
-          <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
-            <MiniStat label="Leads" value={formatNumber(ambassador.leads_mtd ?? ambassador.leads_generated ?? 0)} />
-            <MiniStat label="Conv." value={formatNumber(ambassador.conversions_mtd ?? ambassador.conversions_validated ?? 0)} />
-            <MiniStat label="Score" value={`${score}%`} />
-          </div>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100"><div className={cn("h-full rounded-full", scoreTone(score))} style={{ width: `${Math.max(5, Math.min(100, score))}%` }} /></div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-100 p-4">
-          <h4 className="text-sm font-black text-slate-950">Santé contact</h4>
-          <div className="mt-3 space-y-2 text-sm font-semibold text-slate-600">
-            <p><CheckCircle2 size={15} className="mr-2 inline text-emerald-600" />{ambassador.last_contact_at ? "Contact récent" : "Contact à planifier"}</p>
-            <p>Dernier contact: <b className="text-slate-950">{dateLabel(ambassador.last_contact_at || ambassador.last_activity_at)}</b></p>
-            <p>Mission actives: <b className="text-slate-950">{missions.length}</b></p>
-            <p>Formations: <b className="text-slate-950">{training.length}</b></p>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-100 p-4">
-          <h4 className="text-sm font-black text-slate-950">Actions rapides</h4>
-          <div className="mt-4 grid gap-2">
-            <ActionButton icon={MapPinned} onClick={() => onAssignTerritory(ambassador)}>Affecter territoire</ActionButton>
-            <ActionButton icon={Target} onClick={() => onCreateMission(ambassador)}>Créer mission</ActionButton>
-            <ActionButton icon={Wallet} onClick={() => onOpenProfile(ambassador)}>Voir incentives ({incentives.length})</ActionButton>
-            <ActionButton icon={X} variant="danger" onClick={() => onArchive(ambassador)}>Archiver</ActionButton>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function MiniStat({ label, value }: { label: string; value: string }) {
-  return <div><p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{label}</p><p className="mt-1 font-black text-slate-950">{value}</p></div>;
+  )
 }

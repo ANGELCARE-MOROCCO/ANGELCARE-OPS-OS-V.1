@@ -1,0 +1,37 @@
+{
+  "name": "@angelcare/desktop",
+  "productName": "ANGELCARE Desktop",
+  "version": "1.1.0",
+  "description": "Secure ANGELCARE SaaS desktop runtime with a persistent governed WhatsApp Web workspace.",
+  "author": "ANGELCARE",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/main.cjs",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "electron-forge start",
+    "start:dev": "cross-env NODE_ENV=development ANGELCARE_DESKTOP_APP_URL=http://localhost:3000 electron-forge start",
+    "start:production-preview": "cross-env NODE_ENV=production electron-forge start",
+    "verify": "node scripts/verify-mega-zip-1.mjs && node scripts/verify-mega-zip-2.mjs",
+    "smoke:config": "node scripts/smoke-config.mjs",
+    "package": "npm run verify && electron-forge package",
+    "make": "npm run verify && electron-forge make",
+    "make:mac:x64": "npm run verify && node scripts/build-macos-dmg.mjs x64",
+    "make:mac:arm64": "npm run verify && node scripts/build-macos-dmg.mjs arm64",
+    "make:mac:zip:x64": "npm run verify && electron-forge make --platform=darwin --arch=x64",
+    "make:mac:zip:arm64": "npm run verify && electron-forge make --platform=darwin --arch=arm64",
+    "make:win:x64": "npm run verify && electron-forge make --platform=win32 --arch=x64",
+    "clean": "node scripts/clean-output.mjs"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "7.11.2",
+    "@electron-forge/maker-squirrel": "7.11.2",
+    "@electron-forge/maker-zip": "7.11.2",
+    "@electron-forge/plugin-fuses": "7.11.2",
+    "@electron/fuses": "1.8.0",
+    "cross-env": "7.0.3",
+    "electron": "43.1.1"
+  }
+}

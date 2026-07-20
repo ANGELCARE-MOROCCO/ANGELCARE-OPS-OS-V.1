@@ -1,0 +1,4 @@
+Applied: 20260720-001135
+Package: ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_04_DEAL_CLOSING
+Backup: /Users/user/Desktop/angelcare-platform/.angelcare_patch_backups/browser-os-b2b-patch04-20260720-001135
+Next SQL: apps/ops-web/supabase/migrations/20260719_browser_extension_b2b_deal_closing.sql

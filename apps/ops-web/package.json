@@ -85,7 +85,15 @@
     "traininghub:e2e": "node --env-file=.env.local scripts/traininghub-e2e-prod-journey-smoke.mjs",
     "traininghub:cleanup-report": "node --env-file=.env.local scripts/traininghub-production-safe-cleanup-report.mjs",
     "operation-completion:v2-verify": "node scripts/verify-operation-completion-autonomous.mjs",
-    "email-os:enterprise-compose-studio": "node scripts/verify-email-os-enterprise-compose-studio.mjs"
+    "browser-extension:verify": "node scripts/verify-browser-extension-core.mjs",
+    "browser-extension:typecheck": "tsc -p tsconfig.browser-extension.json --pretty false",
+    "browser-extension:b2b-intelligence:verify": "node scripts/verify-browser-extension-b2b-account-intelligence.mjs",
+    "browser-extension:user-profile:verify": "node scripts/verify-browser-extension-user-profile-integration.mjs",
+    "browser-extension:b2b-execution:verify": "node scripts/verify-browser-extension-b2b-revenue-execution.mjs",
+    "browser-extension:b2b-deal-closing:verify": "node scripts/verify-browser-extension-b2b-deal-closing.mjs",
+    "browser-extension:b2b-enterprise-experience:verify": "node scripts/verify-browser-extension-b2b-enterprise-experience.mjs",
+    "browser-extension:b2b-partner-lifecycle:verify": "node scripts/verify-browser-extension-b2b-partner-lifecycle.mjs",
+    "browser-extension:b2b-ai-sales-director:verify": "node scripts/verify-browser-extension-b2b-ai-sales-director.mjs"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",

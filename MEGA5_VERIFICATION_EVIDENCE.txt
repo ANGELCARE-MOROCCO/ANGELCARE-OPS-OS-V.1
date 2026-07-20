@@ -1,0 +1,60 @@
+ANGELCARE REVENUE COMMAND BROWSER OS — MEGA ZIP 5 VERIFICATION EVIDENCE
+Release candidate: 0.5.0
+
+PASS  npm run browser-extension:contracts:verify
+      45/45 canonical capabilities; 129 commands; permission/audit/acceptance mappings 45/45.
+
+PASS  npm run typecheck:extension
+      Revenue Browser Extension TypeScript completed with no errors.
+
+PASS  npm run build:extension
+      Manifest V3 distribution built successfully.
+
+PASS  npm --prefix apps/revenue-browser-extension run verify
+      Version 0.5.0, required runtime files, classic content scripts, Partner Mode signals,
+      41/41 cumulative operational UI coverage and Mega ZIP 5 visual workspaces verified.
+
+PASS  npm --prefix apps/ops-web run browser-extension:verify
+      Mega ZIP 1 secure pairing, gateway, dynamic access, admin and audit foundation preserved.
+
+PASS  npm --prefix apps/ops-web run browser-extension:user-profile:verify
+      `/users/[id]` governs 41/41 operational capabilities; future capabilities remain locked;
+      unrelated module and adapter grants remain preserved.
+
+PASS  npm run browser-extension:b2b-intelligence:verify
+      Mega ZIP 2 regression accepted.
+
+PASS  npm run browser-extension:b2b-execution:verify
+      Mega ZIP 3 regression accepted.
+
+PASS  npm run browser-extension:b2b-deal-closing:verify
+      Mega ZIP 4 regression accepted.
+
+PASS  npm run browser-extension:b2b-enterprise-experience:verify
+      Mega ZIP 4.5 regression accepted.
+
+PASS  npm run browser-extension:b2b-partner-lifecycle:verify
+      196/196 checks; six capabilities; 40 commands; eight Focus workspaces;
+      30 SQL structures; complete rollback; Partner 360; sensitive approvals;
+      no RefferQ resurrection in Mega ZIP 5 sources; no direct Chrome-to-Supabase client.
+
+PASS  Changed TS/TSX parser validation
+      21 changed TypeScript/TSX source files parsed without syntax diagnostics.
+
+PASS  SQL static integrity
+      30 create tables matched by 30 rollback drops; balanced statements;
+      explicit JSONB defaults; transaction boundaries present.
+
+PASS  Contract/generated JSON parsing
+      20 registry and generated JSON artifacts parsed successfully.
+
+ENVIRONMENT LIMITATION
+The clean source archive does not contain OPS web node_modules. The OPS project TypeScript command
+therefore cannot resolve React, Next.js and other package types in this isolated environment. Its full
+log is retained as `MEGA5_VERIFICATION_LOGS/12_ops_typecheck_environment_limitation.log`.
+Run `npm install` using the repository lockfile and rerun
+`npm --prefix apps/ops-web run browser-extension:typecheck` in the normal project environment.
+
+LIVE LIMITATION
+No production Supabase target or live Chrome fleet was connected. Migration and live acceptance are
+therefore deployment steps documented in MEGA5_MIGRATION_ORDER.md and MEGA5_LIVE_ACCEPTANCE_CHECKLIST.md.

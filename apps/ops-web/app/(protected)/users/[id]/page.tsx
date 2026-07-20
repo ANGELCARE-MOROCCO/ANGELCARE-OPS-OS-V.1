@@ -4,7 +4,11 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
 import EmailOSMailboxAccessSection from '@/app/(protected)/users/_components/EmailOSMailboxAccessSection'
+import UserBrowserExtensionAccessSection from '@/app/(protected)/users/_components/UserBrowserExtensionAccessSection'
 import { getMailboxAccessAudit, getUserEmailOSMailboxAssignments } from '@/lib/email-os-core/access-governance'
+import { isExtensionAdmin } from '@/lib/browser-extension/access'
+import { loadUserAccess } from '@/lib/browser-extension/runtime'
+import { B2B_EXTENSION_CONTRACT, BROWSER_EXTENSION_MODULES } from '@/lib/browser-extension/catalog'
 
 type Tone = 'green' | 'red' | 'blue' | 'purple' | 'amber' | 'slate'
 type AnyRecord = Record<string, any>
@@ -468,7 +472,7 @@ export default async function UserProfilePage({
   params: Promise<{ id: string }>
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }) {
-  await requireRole(['ceo', 'manager'])
+  const actor = await requireRole(['ceo', 'manager'])
 
   const { id } = await params
   const query = (await searchParams) || {}
@@ -644,6 +648,48 @@ export default async function UserProfilePage({
     owner: row.owner ? String(row.owner) : null,
     provider: row.provider ? String(row.provider) : null,
   }))
+
+  const canManageBrowserExtension = isExtensionAdmin({
+    id: String(actor.id || ''),
+    email: actor.email ? String(actor.email) : null,
+    full_name: actor.full_name ? String(actor.full_name) : null,
+    name: actor.name ? String(actor.name) : null,
+    role: actor.role ? String(actor.role) : null,
+    role_key: actor.role_key ? String(actor.role_key) : null,
+    permissions: Array.isArray(actor.permissions)
+      ? actor.permissions.map(String)
+      : null,
+  })
+  let browserExtensionSnapshot: AnyRecord | null = null
+  if (canManageBrowserExtension) {
+    const extensionAccess = await loadUserAccess(supabase, resolvedUserId)
+    const [{ data: extensionDevices }, { data: extensionChanges }] = await Promise.all([
+      supabase.from('browser_extension_devices').select('*').eq('user_id', resolvedUserId).order('created_at', { ascending: false }).limit(30),
+      supabase.from('browser_extension_access_changes').select('*').eq('user_id', resolvedUserId).order('created_at', { ascending: false }).limit(20),
+    ])
+    const extensionDeviceIds = (extensionDevices || []).map((row: AnyRecord) => row.id).filter(Boolean)
+    let extensionAuditQuery = supabase.from('browser_extension_audit_logs').select('*').order('created_at', { ascending: false }).limit(60)
+    if (extensionDeviceIds.length) extensionAuditQuery = extensionAuditQuery.or(`target_id.eq.${resolvedUserId},device_id.in.(${extensionDeviceIds.join(',')})`)
+    else extensionAuditQuery = extensionAuditQuery.eq('target_id', resolvedUserId)
+    const { data: extensionAudit } = await extensionAuditQuery
+    browserExtensionSnapshot = {
+      user: {
+        id: resolvedUserId,
+        full_name: userRecord.full_name || userRecord.name || userRecord.display_name,
+        name: userRecord.name || userRecord.full_name,
+        email: userRecord.email,
+        role: userRecord.role,
+        role_key: userRecord.role_key,
+        status: userRecord.status,
+        department: userRecord.department || userRecord.department_name,
+        job_title: userRecord.job_title || userRecord.position || userRecord.role_title,
+      },
+      access: extensionAccess,
+      devices: extensionDevices || [],
+      audit: extensionAudit || [],
+      changes: extensionChanges || [],
+    }
+  }
 
   return (
     <AppShell
@@ -849,6 +895,16 @@ export default async function UserProfilePage({
               <ManagerCard title="Action recommandée" value={permissions.length === 0 && userRecord.role !== 'ceo' ? 'Ajouter permissions' : missingFields.length ? 'Compléter profil' : 'Surveillance standard'} tone={missingFields.length ? 'amber' : 'green'} />
             </div>
           </section>
+
+          {browserExtensionSnapshot ? (
+            <div style={{ gridColumn: '1 / -1' }}>
+              <UserBrowserExtensionAccessSection
+                initialSnapshot={browserExtensionSnapshot as any}
+                modules={BROWSER_EXTENSION_MODULES as any}
+                b2bContract={B2B_EXTENSION_CONTRACT as any}
+              />
+            </div>
+          ) : null}
 
           <section style={dangerPanelStyle}>
             <Header eyebrow="Danger zone" title="Suppression permanente" subtitle="Action administrative protégée par confirmation explicite." />

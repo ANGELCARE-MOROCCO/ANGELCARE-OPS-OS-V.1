@@ -686,6 +686,7 @@ export default function EnterpriseComposeModal({
   const [maximized, setMaximized] = useState<boolean>(false)
   const [busy, setBusy] = useState<boolean>(false)
   const [status, setStatus] = useState<string>("Prêt à composer")
+  const [senderIdentityPreview, setSenderIdentityPreview] = useState<any>(null)
   const [lastAutoSavedAt, setLastAutoSavedAt] = useState<Date | null>(null)
   const [completion, setCompletion] = useState<CompletionState | null>(null)
   const [priority, setPriority] = useState<string>(String(storedDraft?.priority || initialPriority || "normal"))
@@ -859,6 +860,22 @@ export default function EnterpriseComposeModal({
     void loadResources()
     return () => { cancelled = true }
   }, [open, selectedEmail?.mailbox_id, mailboxScopeLocked, mailboxes])
+
+  useEffect(() => {
+    if (!open || !mailboxId) {
+      setSenderIdentityPreview(null)
+      return
+    }
+    let cancelled = false
+    async function loadSenderIdentityPreview() {
+      const result = await api(`/api/email-os/access/sender-identity?mailboxId=${encodeURIComponent(mailboxId)}`)
+      if (cancelled) return
+      if (result.ok) setSenderIdentityPreview(result.data || null)
+      else setSenderIdentityPreview(null)
+    }
+    void loadSenderIdentityPreview()
+    return () => { cancelled = true }
+  }, [open, mailboxId])
 
   useEffect(() => {
     if (!open || !mailboxId) return
@@ -1595,8 +1612,12 @@ export default function EnterpriseComposeModal({
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700"><AtSign className="h-5 w-5" /></div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2"><span className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">Envoyer depuis</span>{mailboxScopeLocked ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-700"><LockKeyhole className="h-3 w-3" /> Verrouillé par session PIN</span> : null}</div>
-                        <div className="mt-1 truncate text-sm font-black text-slate-950">{activeMailbox?.name || "Aucune boîte sélectionnée"}</div>
-                        <div className="truncate text-xs font-semibold text-slate-500">{activeMailbox?.email || "Configurez une adresse dans Email OS"}</div>
+                        <div className="mt-1 truncate text-sm font-black text-slate-950">{senderIdentityPreview?.fromName || activeMailbox?.name || "Aucune boîte sélectionnée"}</div>
+                        <div className="truncate text-xs font-semibold text-slate-500">{senderIdentityPreview?.fromAddress || activeMailbox?.email || "Configurez une adresse dans Email OS"}</div>
+                        <div className="mt-2 flex flex-wrap gap-2 text-[9px] font-black uppercase tracking-wide">
+                          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Identité externe gouvernée</span>
+                          {senderIdentityPreview?.version ? <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-blue-700">Version {senderIdentityPreview.version}</span> : null}
+                        </div>
                       </div>
                       <div className="hidden text-right sm:block"><div className="text-[10px] font-black uppercase tracking-wide text-emerald-600">Envoi autorisé</div><div className="mt-1 text-xs font-bold text-slate-500">Signature {activeSignature.unit}</div></div>
                       {!mailboxScopeLocked ? <ChevronDown className={`h-5 w-5 text-slate-400 transition ${mailboxMenuOpen ? "rotate-180" : ""}`} /> : <ShieldCheck className="h-5 w-5 text-emerald-600" />}
@@ -1713,7 +1734,7 @@ export default function EnterpriseComposeModal({
               <div className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4"><div><div className="text-[10px] font-black uppercase tracking-[.18em] text-blue-600">Contrôle avant envoi</div><h3 className="mt-1 text-lg font-black text-slate-950">Aperçu destinataire</h3></div><button type="button" onClick={() => setPreviewOpen(false)} className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-50"><X className="h-4 w-4" /></button></div>
               <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-7">
                 <div className="mx-auto max-w-3xl overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,.1)]">
-                  <div className="border-b border-slate-200 bg-slate-50 px-5 py-4"><div className="text-xs font-black text-slate-950">{activeMailbox?.name || "AngelCare"} <span className="font-semibold text-slate-500">&lt;{activeMailbox?.email || ""}&gt;</span></div><div className="mt-1 text-xs font-semibold text-slate-500">À : {toEmail || "Destinataire non renseigné"}</div><div className="mt-3 text-base font-black text-slate-950">{subject || "Sans objet"}</div></div>
+                  <div className="border-b border-slate-200 bg-slate-50 px-5 py-4"><div className="text-xs font-black text-slate-950">{senderIdentityPreview?.fromName || activeMailbox?.name || "ANGELCARE"} <span className="font-semibold text-slate-500">&lt;{senderIdentityPreview?.fromAddress || activeMailbox?.email || ""}&gt;</span></div><div className="mt-1 text-xs font-semibold text-slate-500">À : {toEmail || "Destinataire non renseigné"}</div><div className="mt-3 text-base font-black text-slate-950">{subject || "Sans objet"}</div></div>
                   <div className="px-6 py-7 text-sm leading-7 text-slate-800" dangerouslySetInnerHTML={{ __html: deliveryBody }} />
                   {attachments.filter((item) => item.source !== "drive").length ? <div className="border-t border-slate-200 bg-slate-50 px-5 py-4"><div className="text-[10px] font-black uppercase tracking-wide text-slate-500">Pièces jointes</div><div className="mt-2 flex flex-wrap gap-2">{attachments.filter((item) => item.source !== "drive").map((item) => <span key={item.id} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700">{item.name} · {item.size}</span>)}</div></div> : null}
                 </div>

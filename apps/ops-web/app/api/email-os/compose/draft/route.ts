@@ -4,6 +4,7 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
+import { resolveSenderIdentity, senderIdentitySnapshot } from "@/lib/email-os-core/sender-identity"
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : ""
@@ -76,19 +77,24 @@ export async function POST(request: Request) {
     const trackingEnabled = body.tracking !== false && body.tracking !== "false"
     const sourceTemplateId = clean(body.templateId || body.template_id)
     const sourceTemplateVersion = Number(body.templateVersion || body.template_version || 0)
+    const freezeSenderIdentity = body.freezeSenderIdentity === true || body.freeze_sender_identity === true
+    const resolvedSenderIdentity = await resolveSenderIdentity({
+      mailboxId: mailboxScope.mailboxId,
+      canonicalFromAddress: fromEmail || "",
+      mailboxInternalName: access.mailbox?.name || null,
+    })
+    const senderSnapshot = senderIdentitySnapshot(resolvedSenderIdentity)
     const diagnostics = {
       ...(body.diagnostics || {}),
       route: "compose/draft",
       transport: requestedStatus === "scheduled" ? "scheduled-queue" : "draft-only",
       operator: operatorSnapshot,
       attachmentCount: attachments.length,
-      content: {
-        bodyText: messageText,
-        bodyHtml: messageHtml,
-      },
       tracking: { enabled: trackingEnabled },
       template: sourceTemplateId ? { id: sourceTemplateId, version: sourceTemplateVersion || null } : null,
       scheduledAt,
+      senderIdentity: senderSnapshot,
+      freezeSenderIdentity,
     }
 
     if (requestedStatus === "scheduled") {
@@ -100,6 +106,11 @@ export async function POST(request: Request) {
         queue_id: queueId,
         mailbox_id: mailboxScope.mailboxId,
         from_email: fromEmail,
+        sender_identity_id: resolvedSenderIdentity.identityId,
+        sender_identity_version: resolvedSenderIdentity.version,
+        resolved_from_name: resolvedSenderIdentity.fromName,
+        resolved_reply_to_name: resolvedSenderIdentity.replyToName,
+        resolved_reply_to_address: resolvedSenderIdentity.replyToAddress,
         to_email: toEmail,
         cc_email: ccEmail,
         bcc_email: bccEmail,
@@ -147,6 +158,10 @@ export async function POST(request: Request) {
         templateVersion: sourceTemplateVersion || null,
         diagnostics,
         sentBy: operatorSnapshot,
+        senderIdentityId: resolvedSenderIdentity.identityId,
+        senderIdentityVersion: resolvedSenderIdentity.version,
+        freezeSenderIdentity,
+        senderIdentitySnapshot: senderSnapshot,
       }
 
       const { error: queueError } = await db.from("email_os_core_queue").insert({
@@ -155,6 +170,9 @@ export async function POST(request: Request) {
         status: "queued",
         mailbox_id: mailboxScope.mailboxId,
         outbox_id: outboxId,
+        sender_identity_id: resolvedSenderIdentity.identityId,
+        sender_identity_version: resolvedSenderIdentity.version,
+        freeze_sender_identity: freezeSenderIdentity,
         payload: queuePayload,
         attempts: 0,
         last_error: null,
@@ -181,6 +199,9 @@ export async function POST(request: Request) {
       id,
       mailbox_id: mailboxScope.mailboxId,
       from_email: fromEmail,
+      sender_identity_id: resolvedSenderIdentity.identityId,
+      sender_identity_version: resolvedSenderIdentity.version,
+      freeze_sender_identity: freezeSenderIdentity,
       to_email: toEmail,
       cc_email: ccEmail,
       bcc_email: bccEmail,
@@ -208,6 +229,11 @@ export async function POST(request: Request) {
       queue_id: null,
       mailbox_id: mailboxScope.mailboxId,
       from_email: fromEmail,
+      sender_identity_id: resolvedSenderIdentity.identityId,
+      sender_identity_version: resolvedSenderIdentity.version,
+      resolved_from_name: resolvedSenderIdentity.fromName,
+      resolved_reply_to_name: resolvedSenderIdentity.replyToName,
+      resolved_reply_to_address: resolvedSenderIdentity.replyToAddress,
       to_email: toEmail,
       cc_email: ccEmail,
       bcc_email: bccEmail,

@@ -111,6 +111,14 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         permissions: ['sales.view'],
       },
       {
+        id: 'revenue-command-os',
+        title: 'Revenue Command OS',
+        href: '/revenue-command-os',
+        icon: 'target',
+        categories: ['revenue'],
+        permissions: ['revenue_os.view', 'revenue.view'],
+      },
+      {
         id: 'revenue-command-center',
         title: 'Revenue Command Center',
         href: '/revenue-command-center',

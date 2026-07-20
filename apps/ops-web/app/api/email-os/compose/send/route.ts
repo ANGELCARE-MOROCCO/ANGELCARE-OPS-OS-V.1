@@ -24,6 +24,25 @@ function normalizeAttachmentsForSend(value: any) {
     .filter((item: any) => item.filename && (item.contentBase64 || item.fileId || item.storageFileId))
 }
 
+
+function htmlToPlainText(value: unknown) {
+  return String(value || "")
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6]|blockquote)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim()
+}
+
 function absoluteBaseUrl(request: Request) {
   const configured = clean(process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL)
   if (configured) return configured.startsWith("http") ? configured.replace(/\/+$/, "") : `https://${configured.replace(/\/+$/, "")}`
@@ -68,12 +87,14 @@ export async function POST(request: Request) {
     const ccEmail = clean(body.ccEmail || body.cc_email || body.cc)
     const bccEmail = clean(body.bccEmail || body.bcc_email || body.bcc)
     const subject = clean(body.subject) || "(Sans objet)"
-    const message = clean(body.body || body.message || body.text || body.html)
+    const messageHtml = clean(body.bodyHtml || body.body_html || body.body || body.html || body.message)
+    const messageText = clean(body.bodyText || body.body_text || body.text) || htmlToPlainText(messageHtml)
+    const message = messageHtml
     const attachments = normalizeAttachmentsForSend(body.attachments)
     const trackingEnabled = body.tracking !== false && body.tracking !== "false"
     const trackingId = trackingEnabled ? makeEmailOSId() : ""
     const trackingBaseUrl = absoluteBaseUrl(request)
-    const sendBody = trackingEnabled ? withTrackingPixel(message, trackingBaseUrl, trackingId) : message
+    const sendBody = trackingEnabled ? withTrackingPixel(messageHtml, trackingBaseUrl, trackingId) : messageHtml
 
     if (!toEmail) {
       return NextResponse.json({ ok: false, error: "Recipient is required" }, { status: 400 })
@@ -170,6 +191,8 @@ export async function POST(request: Request) {
         bccEmail,
         subject,
         body: sendBody,
+        bodyHtml: sendBody,
+        bodyText: messageText,
         attachments,
         headers: {
           "X-AngelCare-Operator-ID": operatorIdentity.id,
@@ -182,7 +205,12 @@ export async function POST(request: Request) {
 
       await db.from("email_os_core_outbox").update({
         mailbox_id: identity.mailboxId,
-        from_email: identity.smtp.from,
+        from_email: info.senderIdentity.fromAddress,
+        sender_identity_id: info.senderIdentity.identityId,
+        sender_identity_version: info.senderIdentity.version,
+        resolved_from_name: info.senderIdentity.fromName,
+        resolved_reply_to_name: info.senderIdentity.replyToName,
+        resolved_reply_to_address: info.senderIdentity.replyToAddress,
         status: "sent",
         provider_message_id: info.messageId || null,
         sent_at: sentAt,
@@ -199,12 +227,14 @@ export async function POST(request: Request) {
           },
           resolvedMailboxKey: identity.key,
           resolvedMailboxId: identity.mailboxId,
+          senderIdentity: info.senderIdentity,
+          resolvedFromName: info.senderIdentity.fromName,
           smtpUser: identity.smtp.user,
           accepted: info.accepted || [],
           rejected: info.rejected || [],
           operator: {
             ...operatorSnapshot,
-            externalDisplayName: fromDisplayName,
+            externalDisplayName: info.senderIdentity.fromName,
             externallyExposed: exposeOperatorExternally
           },
           ac360Guarded: true,
@@ -223,7 +253,9 @@ export async function POST(request: Request) {
         messageId: info.messageId || null,
         mailboxId: identity.mailboxId,
         mailboxKey: identity.key,
-        from: identity.smtp.from,
+        from: info.senderIdentity.fromAddress,
+        fromName: info.senderIdentity.fromName,
+        senderIdentity: info.senderIdentity,
         attachmentCount: attachments.length,
         operator: operatorIdentity,
         tracking: {

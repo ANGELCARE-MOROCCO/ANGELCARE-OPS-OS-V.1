@@ -1,0 +1,4 @@
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase1:typecheck
+> NODE_OPTIONS="--max-old-space-size=4096" tsc -p tsconfig.revenue-os-phase1.json --pretty false && NODE_OPTIONS="--max-old-space-size=4096" tsc -p tsconfig.revenue-os-integration.json --pretty false
+

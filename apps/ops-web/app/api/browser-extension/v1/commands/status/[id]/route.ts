@@ -1,0 +1,3 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { authenticateExtensionRequest } from '@/lib/browser-extension/runtime'
+export async function GET(req:NextRequest,{params}:{params:Promise<{id:string}>}){const auth=await authenticateExtensionRequest(req);if(!auth.ok)return auth.response;const {id}=await params;const {data}=await auth.db.from('browser_extension_command_requests').select('*,browser_extension_command_results(*)').eq('id',id).eq('user_id',auth.context.user.id).maybeSingle();if(!data)return NextResponse.json({ok:false,error:'Command not found.'},{status:404});return NextResponse.json({ok:true,command:data})}

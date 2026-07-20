@@ -2,6 +2,7 @@ import nodemailer from "nodemailer"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { resolveEmailOSMailboxIdentity, resolveEmailOSMailboxIdentityFromDb } from "@/lib/email-os-core/multi-mailbox-resolver"
 import { downloadStorageFileFromBridge, loadStorageFileMetadata } from "@/lib/email-os-core/storage-gateway"
+import { auditSenderIdentity, resolveSenderIdentity, senderIdentitySnapshot, type ResolvedSenderIdentity, type SenderIdentityOverride } from "@/lib/email-os-core/sender-identity"
 
 const sendLocks = new Map<string, Promise<void>>()
 const lastSendAt = new Map<string, number>()
@@ -20,6 +21,10 @@ export type EmailOSSendInput = {
   mailboxId?: string | null
   fromEmail?: string | null
   fromDisplayName?: string | null
+  senderIdentityId?: string | null
+  senderIdentityVersion?: number | null
+  freezeSenderIdentity?: boolean
+  senderIdentityOverride?: SenderIdentityOverride | null
   toEmail: string
   ccEmail?: string | null
   bccEmail?: string | null
@@ -37,6 +42,7 @@ export type EmailOSSendInfo = {
   rejected: unknown[]
   bridge: boolean
   bridgeUrl?: string
+  senderIdentity: ResolvedSenderIdentity
 }
 
 export type EmailOSBridgeFetchDiagnostics = {
@@ -350,7 +356,7 @@ function getBridgeFailureMessage(reason: string, bridgeUrl: string) {
   return `${reason}${host ? ` (${host})` : ""}`
 }
 
-async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<EmailOSSendInfo | null> {
+async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdentity: ResolvedSenderIdentity): Promise<EmailOSSendInfo | null> {
   const { bridgeUrl, bridgeToken, forceBridge, hasBridgeUrl, hasBridgeToken } = getBridgeConfig()
 
   if (!hasBridgeUrl || !bridgeUrl.startsWith("http://") && !bridgeUrl.startsWith("https://")) {
@@ -410,8 +416,9 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
         smtpSecure: identity.smtp.secure,
         username: identity.smtp.user,
         password: identity.smtp.pass || identity.credential?.passwordRef || "",
-        fromEmail: identity.smtp.from,
-        fromName: clean(input.fromDisplayName) || undefined,
+        fromEmail: senderIdentity.fromAddress,
+        fromName: senderIdentity.fromName,
+        replyToName: senderIdentity.replyToName || undefined,
         diagnostics: {
           source: "angelcare-email-os",
           transport: "angelcare-windows-email-bridge",
@@ -420,7 +427,8 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
           smtpHost: identity.smtp.host,
           smtpPort: identity.smtp.port,
           smtpUser: identity.smtp.user,
-          passwordConfigured: Boolean(identity.credential?.passwordRef || identity.smtp.pass)
+          passwordConfigured: Boolean(identity.credential?.passwordRef || identity.smtp.pass),
+          senderIdentity: senderIdentitySnapshot(senderIdentity)
         },
         toEmail: input.toEmail,
         cc: clean(input.ccEmail) || undefined,
@@ -429,7 +437,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
         body: messageBodies.html,
         text: messageBodies.text,
         html: messageBodies.html,
-        replyTo: input.headers?.["Reply-To"] || undefined,
+        replyTo: senderIdentity.replyToAddress || input.headers?.["Reply-To"] || undefined,
         attachments: (await normalizeEmailAttachments(input.attachments || [])).map((item) => ({
           filename: item.filename,
           contentType: item.contentType,
@@ -480,7 +488,8 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput): Promise<Em
     accepted: payload?.data?.accepted || [],
     rejected: payload?.data?.rejected || [],
     bridge: true,
-    bridgeUrl
+    bridgeUrl,
+    senderIdentity
   }
 }
 
@@ -527,10 +536,20 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
     )
   }
 
+  const senderIdentity = await resolveSenderIdentity({
+    mailboxId: identity.mailboxId || mailboxId,
+    canonicalFromAddress: identity.smtp.from,
+    mailboxInternalName: identity.label || identity.key,
+    requestedDisplayName: input.fromDisplayName,
+    senderIdentityId: input.senderIdentityId,
+    senderIdentityVersion: input.freezeSenderIdentity ? input.senderIdentityVersion : null,
+    override: input.senderIdentityOverride || null,
+  })
+
   const lockKey = identity.smtp.user || identity.email || identity.key
 
   const info = await runLocked<EmailOSSendInfo>(lockKey, async () => {
-    const bridged = await sendViaBridge(identity, input)
+    const bridged = await sendViaBridge(identity, input, senderIdentity)
     if (bridged) return bridged
 
     if (String(process.env.EMAIL_OS_FORCE_BRIDGE || "").toLowerCase() === "true") {
@@ -558,9 +577,7 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
 
     try {
       const sent = await transporter.sendMail({
-        from: clean(input.fromDisplayName)
-          ? { name: clean(input.fromDisplayName), address: identity.smtp.from }
-          : identity.smtp.from,
+        from: { name: senderIdentity.fromName, address: senderIdentity.fromAddress },
         to: toEmail,
         cc: clean(input.ccEmail) || undefined,
         bcc: clean(input.bccEmail) || undefined,
@@ -568,10 +585,15 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
         text: messageBodies.text,
         html: messageBodies.html,
         attachments: await normalizeEmailAttachments(input.attachments || []),
+        replyTo: senderIdentity.replyToAddress
+          ? { name: senderIdentity.replyToName || senderIdentity.fromName, address: senderIdentity.replyToAddress }
+          : undefined,
         headers: {
           "X-AngelCare-Mailbox-Key": identity.key,
           "X-AngelCare-Mailbox-ID": identity.mailboxId,
-          "X-AngelCare-Actual-From": identity.smtp.from,
+          "X-AngelCare-Actual-From": senderIdentity.fromAddress,
+          "X-AngelCare-Sender-Identity-ID": senderIdentity.identityId || "fallback",
+          "X-AngelCare-Sender-Identity-Version": String(senderIdentity.version || 0),
           ...(input.headers || {})
         }
       })
@@ -580,12 +602,31 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
         messageId: clean((sent as any)?.messageId) || null,
         accepted: Array.isArray((sent as any)?.accepted) ? (sent as any).accepted : [],
         rejected: Array.isArray((sent as any)?.rejected) ? (sent as any).rejected : [],
-        bridge: false
+        bridge: false,
+        senderIdentity
       }
     } finally {
       transporter.close()
     }
   })
+
+  await auditSenderIdentity({
+    identityId: senderIdentity.identityId,
+    mailboxId: senderIdentity.mailboxId || identity.mailboxId,
+    actor: { name: clean(input.headers?.["X-AngelCare-Operator-Name"]) || "Email OS send service" },
+    action: "sender_identity_used_for_send",
+    result: "success",
+    reason: "Resolved automatically by the authoritative sender identity service",
+    metadata: {
+      messageId: info.messageId,
+      fromName: senderIdentity.fromName,
+      fromAddress: senderIdentity.fromAddress,
+      replyToName: senderIdentity.replyToName,
+      replyToAddress: senderIdentity.replyToAddress,
+      source: senderIdentity.source,
+      bridge: info.bridge,
+    },
+  }).catch(() => null)
 
   return {
     identity,

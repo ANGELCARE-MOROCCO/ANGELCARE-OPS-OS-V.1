@@ -11,6 +11,18 @@
     "android:run": "npm --prefix apps/carelink-android run android",
     "android:debug-apk": "cd apps/carelink-android/android && ./gradlew assembleDebug",
     "android:release-apk": "cd apps/carelink-android/android && ./gradlew assembleRelease",
-    "verify:all": "npm run typecheck:web && npm run carelink:deploy-gate && npm run android:debug-apk"
+    "verify:all": "npm run typecheck:web && npm run carelink:deploy-gate && npm run android:debug-apk",
+    "dev:extension": "npm --prefix apps/revenue-browser-extension run build",
+    "build:extension": "npm --prefix apps/revenue-browser-extension run build",
+    "typecheck:extension": "npm --prefix apps/revenue-browser-extension run typecheck",
+    "browser-extension:contracts:sync": "node scripts/sync-browser-extension-contracts.mjs",
+    "browser-extension:contracts:verify": "node scripts/verify-browser-extension-contracts.mjs",
+    "browser-extension:verify": "npm run browser-extension:contracts:verify && npm --prefix apps/ops-web run browser-extension:verify && npm run browser-extension:b2b-ai-sales-director:verify && npm --prefix apps/revenue-browser-extension run verify",
+    "browser-extension:b2b-intelligence:verify": "npm --prefix apps/ops-web run browser-extension:b2b-intelligence:verify",
+    "browser-extension:b2b-execution:verify": "npm --prefix apps/ops-web run browser-extension:b2b-execution:verify",
+    "browser-extension:b2b-deal-closing:verify": "npm --prefix apps/ops-web run browser-extension:b2b-deal-closing:verify",
+    "browser-extension:b2b-enterprise-experience:verify": "npm --prefix apps/ops-web run browser-extension:b2b-enterprise-experience:verify",
+    "browser-extension:b2b-partner-lifecycle:verify": "npm --prefix apps/ops-web run browser-extension:b2b-partner-lifecycle:verify",
+    "browser-extension:b2b-ai-sales-director:verify": "npm --prefix apps/ops-web run browser-extension:b2b-ai-sales-director:verify"
   }
 }

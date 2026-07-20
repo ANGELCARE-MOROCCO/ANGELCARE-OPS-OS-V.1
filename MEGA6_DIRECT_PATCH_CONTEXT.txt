@@ -1,0 +1,21 @@
+ANGELCARE Revenue Command Browser OS — Mega ZIP 6 Direct Patch Context
+
+Baseline: Browser OS 0.5.0 with Mega ZIP 5 installed.
+Target: Browser OS 0.6.0.
+Package: ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_06_AI_SALES_DIRECTOR.zip
+
+Use MEGA6_APPLIED_FILES.txt for surgical source injection. Do not replace the repository blindly and do not delete unrelated files.
+
+Required sequence:
+1. Back up all target files listed in MEGA6_APPLIED_FILES.txt.
+2. Copy only listed new/modified files from the package's angelcare-platform folder.
+3. Verify contracts and extension TypeScript.
+4. Apply 20260720_browser_extension_b2b_ai_sales_director.sql.
+5. Deploy OPS backend.
+6. Build/reload extension 0.6.0.
+7. Assign a pilot manager in /users/[id].
+8. Execute MEGA6_LIVE_ACCEPTANCE_CHECKLIST.md.
+
+Do not stage, commit or push automatically.
+Do not run the rollback unless intentionally reverting.
+The private Chrome signing key is not included in the package.

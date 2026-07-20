@@ -1,0 +1,18 @@
+import type { BrowserBusinessContext, ScoreResult, VerticalEvaluation } from './types'
+function clamp(v:number){return Math.max(0,Math.min(100,Math.round(v)))}
+export function scoreAccount(context:BrowserBusinessContext,vertical:VerticalEvaluation,input?:{matchStatus?:string;decisionRolesIdentified?:number;evidenceCount?:number}):ScoreResult{
+ const org=context.organization||{}; const hay=[org.description,context.title,context.selectedText,...(org.signals||[]),...vertical.opportunitySignals].filter(Boolean).join(' ').toLowerCase(); const contributions:ScoreResult['contributions']=[]
+ const add=(key:string,label:string,points:number,reason:string)=>contributions.push({key,label,points,reason})
+ let fit=42; if(vertical.key!=='institutional'){fit+=18;add('vertical','Recognized vertical',18,vertical.label)} if(/premium|luxury|vip/.test(hay)){fit+=10;add('premium','Premium positioning',10,'Observed premium positioning')} if(/family|kids|child|famille/.test(hay)){fit+=14;add('family','Family relevance',14,'Observed family relevance')} if(vertical.opportunitySignals.some((x)=>x.includes('No structured'))){fit+=8;add('gap','Visible service gap',8,'No structured childcare offer detected')}
+ let revenue=45; const range=vertical.estimatedAnnualValue; if(range.max>=450000){revenue+=25;add('value','High annual potential',25,`${range.min}–${range.max} Dh`)} else if(range.max>=250000){revenue+=16;add('value','Material annual potential',16,`${range.min}–${range.max} Dh`)} if(/group|network|branches|properties/.test(hay)){revenue+=12;add('multi_site','Multi-site potential',12,'Possible group or network expansion')}
+ let strategic=45+(vertical.key==='hospitality'||vertical.key==='corporate'?18:10); if(/casablanca|rabat|marrakech|tanger|kenitra|kénitra/.test(`${org.city||''} ${hay}`)){strategic+=10;add('territory','Priority Moroccan territory',10,org.city||'Detected territory')}
+ let readiness=35; if(org.phone||org.email){readiness+=15;add('contactability','Contact channel available',15,'Public phone or email found')} if((context.contacts||[]).length){readiness+=18;add('contact','Named contact found',18,'At least one public contact detected')} if(/request|quote|partnership|contact us|book|devis/.test(hay))readiness+=10
+ const identified=input?.decisionRolesIdentified||0; const decision=clamp(20+identified*18)
+ let operational=62; if(org.city)operational+=8; if(vertical.key==='events')operational-=5
+ const territory=clamp(45+(org.city?20:0)+(org.address?10:0))
+ const expansion=clamp(35+(/group|network|branches|properties|locations/.test(hay)?35:0)+(vertical.key==='corporate'||vertical.key==='hospitality'?12:5))
+ const evidence=clamp(30+Math.min(40,(input?.evidenceCount??context.evidence?.length??0)*7)+(org.website?15:0)+(org.phone||org.email?10:0))
+ const commercial=clamp(fit), revenueP=clamp(revenue), strategicP=clamp(strategic), buying=clamp(readiness), overall=clamp(commercial*.23+revenueP*.18+strategicP*.14+buying*.12+decision*.08+operational*.08+territory*.06+expansion*.07+evidence*.04)
+ const priority:ScoreResult['priority']=overall>=80?'A':overall>=65?'B':overall>=48?'C':'D'
+ return {version:'b2b-account-intelligence-v1.0',scores:{commercialFit:commercial,revenuePotential:revenueP,strategicImportance:strategicP,buyingReadiness:buying,decisionMakerCoverage:decision,operationalFeasibility:clamp(operational),territoryValue:territory,expansionPotential:expansion,evidenceConfidence:evidence,overall},priority,contributions,explanation:`Priority ${priority}: ${overall}/100. ${vertical.label} fit with ${vertical.opportunitySignals.length} opportunity signals and ${vertical.missingInformation.length} critical information gaps.`}
+}

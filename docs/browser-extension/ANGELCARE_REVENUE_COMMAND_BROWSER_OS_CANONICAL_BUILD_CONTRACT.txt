@@ -1,0 +1,2676 @@
+ANGELCARE REVENUE COMMAND BROWSER OS
+Canonical Build Contract — Complete Migration Pack
+
+Copy everything below into the new conversation. It contains the cumulative product doctrine, access rules, approved B2B scope, Mega ZIP 1 through Mega ZIP 5 contracts, and the complete forward specifications for Mega ZIPs 6, 7 and 8.
+
+0. CONTRACT STATUS AND TRUTHFULNESS
+Mega ZIP 1     Signed, implemented and accepted
+Mega ZIP 2     Signed, implemented and accepted
+Mega ZIP 2.1   Corrective integration implemented and accepted
+Mega ZIP 3     Signed, implemented and accepted
+Mega ZIP 4     Signed, implemented and accepted
+Mega ZIP 4.5   Signed, implemented and accepted
+Mega ZIP 5     Signed and committed; implementation still required
+Mega ZIP 6     Forward roadmap contract; detailed below
+Mega ZIP 7     Forward roadmap contract; detailed below
+Mega ZIP 8     Newly formalized continuation contract; it was not previously
+               signed in the original conversation and must not be described
+               retroactively as already implemented or accepted
+
+The next conversation must preserve this distinction. It must never claim that Mega ZIP 5, 6, 7 or 8 is complete unless the corresponding code, migration, build, verification and live acceptance actually exist.
+
+1. PERMANENT PRODUCT DOCTRINE
+1.1 Product identity
+
+The product is:
+
+ANGELCARE Revenue Command Browser OS
+
+It is a privately installed Google Chrome Manifest V3 extension, securely connected to the ANGELCARE SaaS.
+
+It is not a public Chrome Web Store dependency.
+
+Its purpose is to become a browser-native execution operating system for:
+
+Revenue B2B Partnerships
+Capital Command Center
+Market OS
+Ambassadors
+Campaign Lifecycle
+SEO Blog
+
+The B2B Partnerships implementation is the first complete operating vertical.
+
+1.2 Canonical module terminology
+
+RefferQ is permanently deleted from the ANGELCARE universe.
+
+It must never be:
+
+Referenced
+Restored
+Redirected to
+Retained as a compatibility layer
+Used in schemas
+Used in capability names
+Proposed in documentation
+Treated as a legacy dependency
+
+The canonical field-network module is:
+
+Market OS → Ambassadors
+Canonical route: /market-os/ambassadors
+1.3 User-controlled module loading
+
+The extension must never expose every module to every user.
+
+Access is assigned individually from the centralized ANGELCARE user dossier:
+
+/users/[id]
+
+The user profile is the authoritative administrative location for:
+
+Extension activation
+Assigned modules
+Assigned submodules
+Exact capabilities
+Browser adapters
+Territory scope
+Account/data scope
+Autonomy level
+Approval requirements
+Temporary access
+Expiration
+Registered devices
+Revocation
+Access history
+Audit
+
+The old disconnected empty extension-users screen must not be the primary assignment workflow.
+
+1.4 Dynamic loading doctrine
+
+The extension starts as a minimal secure shell.
+
+It loads only what the current user is assigned:
+
+Authentication
+Device pairing
+Capability bootstrap
+Secure API client
+Audit client
+Dynamic module loader
+
+Unassigned modules, adapters, commands, data, listeners and interfaces must remain:
+
+Unavailable
+Unloaded
+Invisible
+Server-side denied
+Removed from cached state
+
+Hiding a button is not considered security.
+
+Every server command must independently validate:
+
+Device
+User
+Module
+Submodule
+Capability
+Access level
+Territory
+Account ownership
+Data scope
+Autonomy
+Approval requirement
+Capability version
+1.5 Access levels
+
+Canonical access levels:
+
+NONE
+VIEW
+SUGGEST
+CREATE
+EXECUTE
+APPROVE
+ADMINISTER
+
+Canonical autonomy modes:
+
+READ_ONLY
+SUGGEST_ONLY
+USER_CONFIRMATION
+MANAGER_APPROVAL
+SAFE_AUTOMATION
+BLOCKED
+
+External communication must remain user-confirmed unless a future contract explicitly defines a legally and technically compliant controlled automation mode.
+
+No uncontrolled bulk messaging is permitted.
+
+1.6 Security doctrine
+
+Absolute rules:
+
+No Supabase service-role key inside Chrome
+No database password inside Chrome
+No direct Chrome-to-Supabase communication
+No direct database writes from content scripts
+Every mutation goes through the Extension Gateway
+Every mutation is permission-controlled
+Every mutation is idempotent
+Every mutation is audited
+Every important fact retains evidence and confidence
+No AI-generated claim becomes verified evidence automatically
+No fabricated signature
+No fabricated payment
+No fabricated delivery
+No fabricated proposal engagement
+No hidden employee surveillance
+No uncontrolled background scraping
+No bypass of WhatsApp, Gmail, LinkedIn or browser platform restrictions
+No module loads without assignment
+No adapter injects without assignment
+Access revocation must propagate quickly
+Server authority always overrides stale extension UI state
+1.7 Delivery doctrine
+
+Every Mega ZIP must be:
+
+Cumulative over prior accepted work
+Production-oriented
+Traceable
+Testable
+Backed up before overwriting
+Reversible
+Compatible with unrelated uncommitted work
+Free from Git staging, commit or push
+Accompanied by verification
+Accompanied by migration order where SQL is required
+Accompanied by rollback instructions
+Free from mocks presented as production completion
+
+No Mega ZIP is complete because static cards exist.
+
+A capability is complete only when it has:
+
+Contract definition
+Visible interface
+Real backend command
+Permission mapping
+Data scope
+Approval rule
+Persistence
+Audit event
+Loading state
+Empty state
+Error state
+Success state
+Acceptance scenario
+Verification coverage
+2. CANONICAL 45 B2B CAPABILITY CONTRACTS
+
+The following 45 capability families are mandatory and cumulative.
+
+01. Browser Context Understanding
+02. Organization Identity Resolution
+03. Prospect Capture and Duplicate Prevention
+04. Account Enrichment
+05. Vertical-Specific Intelligence
+06. Explainable Account Scoring
+07. Account Plan Builder
+08. Contact Capture and Classification
+09. Decision-Maker and Buying-Committee Research
+10. Opportunity Creation
+11. Intelligent Pipeline Management
+12. Outreach Strategy Builder
+13. Gmail-Assisted Commercial Operations
+14. WhatsApp-Assisted Commercial Operations
+15. Call Preparation and Outcome Capture
+16. Field Visit Mode
+17. Meeting Preparation
+18. User-Operated Live Meeting Assistance
+19. Post-Meeting Conversion
+20. Proposal Studio
+21. Pricing Model Selection
+22. Pricing and Margin Protection
+23. Negotiation Deal Room
+24. Objection Intelligence
+25. Closing Room
+26. Contract and Payment Gates
+27. Payment-Promise Control
+28. Revenue Rescue
+29. Executive Intervention
+30. Operational Handoff
+31. Partner Activation
+32. Partner Performance
+33. Upsell and Cross-Sell Intelligence
+34. Renewal Management
+35. Tender and RFP Intelligence
+36. Campaign Association and Attribution
+37. Referral-Source Management
+38. Daily Revenue Command
+39. Manager Control
+40. Staff Execution Quality
+41. B2B Reporting
+42. Evidence and Audit
+43. Command Palette
+44. Controlled Automation
+45. Dynamic User-Specific Loading
+
+Additional required mechanics that support these contracts include:
+
+Universal account recognition
+Parent and branch resolution
+Multi-signal duplicate detection
+Google Maps Territory Sweep
+Persistent active account context
+Account 360 hydration
+Partner 360 hydration
+Capability-version invalidation
+Cross-browser-context continuity
+Focus Mode
+Real-time or near-real-time synchronization
+3. MEGA ZIP 1 CONTRACT
+Secure Runtime, Governance and Access Control
+Package identity
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_01_CORE.zip
+Objective
+
+Create the permanent secure foundation upon which every browser capability depends.
+
+Mega ZIP 1 must not attempt to deliver mature B2B intelligence. It establishes identity, pairing, governance, assignment, authorization, dynamic loading and audit.
+
+3.1 Mandatory extension foundation
+Manifest V3 extension
+Premium ANGELCARE side-panel shell
+Background service worker
+Secure local storage
+Extension messaging bus
+SaaS API client
+Dynamic module loader
+Manual unpacked installation
+Stable extension identity
+Private-key generation
+Build pipeline
+Package verification
+Runtime configuration
+Health endpoint
+3.2 Secure device pairing
+
+Required flow:
+
+User installs extension
+→ Extension identity is detected
+→ Logged-in SaaS user requests pairing
+→ One-time expiring pairing code is generated
+→ Device is registered
+→ Pairing code becomes unusable
+→ Short-lived access token is issued
+→ Refresh session is established
+→ Device appears in user management
+
+Required controls:
+
+One-time pairing
+Short expiration
+Replay protection
+Installed-extension identity binding
+User binding
+Device revocation
+Refresh-token rotation
+Session invalidation
+Access-version checks
+Audit
+3.3 Extension Gateway
+
+Canonical route namespace:
+
+/api/browser-extension/v1/*
+
+Gateway responsibilities:
+
+Validate extension token
+Validate user
+Validate device
+Validate access profile
+Validate module
+Validate command
+Validate territory
+Validate account scope
+Validate approval level
+Enforce idempotency
+Execute through domain services
+Record audit
+Return governed result
+
+Chrome must never call the database directly.
+
+3.4 User-profile governance
+
+Primary configuration location:
+
+/users/[id]
+
+The profile section must support:
+
+Extension enabled/disabled
+Revenue B2B module assignment
+Submodule assignment
+Capability assignment
+Browser adapter assignment
+Territory assignment
+Vertical assignment
+Account ownership mode
+Data scope
+Autonomy
+Sensitive action approval
+Expiration
+Notes
+Registered devices
+Device revocation
+Access-version history
+Audit
+
+Saving an access change must increment the capability version.
+
+3.5 Database foundation
+
+Required governance structures include:
+
+browser_extension_users
+browser_extension_devices
+browser_extension_pairing_codes
+browser_extension_sessions
+browser_extension_access_profiles
+browser_extension_module_grants
+browser_extension_submodule_grants
+browser_extension_capability_grants
+browser_extension_adapter_grants
+browser_extension_data_scopes
+browser_extension_autonomy_rules
+browser_extension_approval_rules
+browser_extension_access_changes
+browser_extension_command_requests
+browser_extension_command_results
+browser_extension_audit_logs
+browser_extension_release_channels
+
+Names may be adapted to the existing schema, but equivalent functionality is mandatory.
+
+3.6 Contract registry
+
+The repository must contain:
+
+Human-readable B2B contract
+Machine-readable capability registry
+Command registry
+Permission mapping
+Audit-event mapping
+Acceptance mapping
+Traceability matrix
+Contract verifier
+
+A contract-verification command must fail when an approved capability loses its mapping.
+
+3.7 Mega ZIP 1 acceptance
+Install extension
+→ Pair approved user
+→ Load only assigned B2B shell
+→ Unassigned modules remain unavailable
+→ Remove access
+→ Extension clears capability state
+→ New commands are denied
+→ Device can be revoked
+→ Audit confirms all events
+4. MEGA ZIP 2 CONTRACT
+B2B Account Discovery and Commercial Intelligence
+Package identity
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_02_ACCOUNT_INTELLIGENCE.zip
+Objective
+
+Turn an authorized browser page into a recognized, deduplicated, evidence-backed and strategically scored ANGELCARE B2B account.
+
+4.1 Browser context understanding
+
+The extension must understand:
+
+Current URL
+Domain
+Page type
+Organization identity
+Visible public contact details
+Sector
+Vertical
+Address
+City
+Selected text
+Source evidence
+Assigned adapter
+User permission
+Relevant action
+
+Supported browser contexts:
+
+Generic company website
+Google Maps listing
+AngelCare SaaS dossier
+Business directory
+Public contact page
+Selected business document context
+4.2 Organization resolution
+
+Organization matching must use combinations of:
+
+Domain
+Legal name
+Commercial name
+Phone
+Address
+Email domain
+Google Maps identity
+Known contact
+Branch identity
+Parent organization
+
+The extension must classify the result as:
+
+Unknown
+Existing prospect
+Active opportunity
+Active partner
+Former partner
+Archived account
+Possible duplicate
+Separate branch
+Parent group
+4.3 Duplicate prevention
+
+Before creating a prospect:
+
+Search prospects
+Search partners
+Search branches
+Search contacts
+Calculate match confidence
+Explain matching signals
+Block high-confidence duplicates
+Allow controlled branch creation
+Allow merge-review request
+Never silently create a likely duplicate
+4.4 Prospect capture
+
+From authorized browser context, create:
+
+Organization identity
+Website
+Sector
+Vertical
+City
+Address
+Phone
+Public email
+Source
+Territory
+Commercial priority
+Owner
+Evidence
+Initial score
+Initial research mission
+
+The employee confirms before mutation unless safe automation is explicitly assigned.
+
+4.5 Evidence-backed enrichment
+
+Enrichment may include:
+
+Organization positioning
+Services
+Branches
+Family positioning
+Event activity
+Expansion indications
+Public contact channels
+Relevant ANGELCARE opportunity
+Visible service gaps
+Decision-maker role hypotheses
+
+Every applied field must retain:
+
+Source URL
+Adapter
+Timestamp
+Original value
+Confidence
+Validation status
+User
+4.6 Vertical intelligence
+
+First vertical engines:
+
+Hospitality
+Schools and nurseries
+Corporate employers
+Clinics and pediatric professionals
+Events and venues
+Institutional partners
+
+Each vertical must have distinct:
+
+Opportunity signals
+Qualification questions
+Decision-maker roles
+Recommended ANGELCARE programs
+Risks
+Objections
+Account-plan logic
+Commercial angles
+Missing evidence
+4.7 Explainable scoring
+
+Required score dimensions:
+
+Commercial Fit
+Revenue Potential
+Strategic Importance
+Buying Readiness
+Decision-Maker Coverage
+Operational Feasibility
+Territory Value
+Expansion Potential
+Evidence Confidence
+Overall Priority
+
+The user must see why each score exists.
+
+Opaque AI-only scoring is not acceptable.
+
+4.8 Contacts and buying committee
+
+Contact capture must support:
+
+Full name
+Role
+Department
+Email
+Phone
+Organization
+Branch
+Decision role
+Influence
+Relationship state
+Evidence source
+
+Buying committee roles include:
+
+Economic buyer
+Commercial sponsor
+Operational owner
+Financial approver
+Procurement
+Legal/risk
+Influencer
+Champion
+Blocker
+
+Missing roles must generate focused research missions.
+
+4.9 Account plan
+
+A generated account plan must include:
+
+Strategic objective
+Opportunity thesis
+Relevant program
+Stakeholders
+Missing research
+Entry strategy
+Outreach route
+Meeting objective
+Risks
+Milestones
+Expected value
+Owner
+Support resources
+Deadline
+4.10 Google Maps Territory Sweep
+
+Human-selected Google Maps listings may be:
+
+Recognized
+Checked against existing records
+Classified by vertical
+Scored
+Grouped by city or zone
+Captured as prospects
+Added to territory missions
+Marked as duplicates
+Marked as low priority
+Added to coverage reporting
+
+No uncontrolled bulk scraping.
+
+Territory matching must normalize:
+
+Accents
+Postal codes
+Aliases
+City strings
+Moroccan address formats
+4.11 Mega ZIP 2 acceptance
+Open unknown business
+→ Recognize organization
+→ Search existing records
+→ Explain duplicate confidence
+→ Score opportunity
+→ Create or enrich prospect
+→ Store evidence
+→ Add contacts
+→ Build buying committee
+→ Create research mission
+→ Generate account plan
+5. MEGA ZIP 2.1 CONTRACT
+Centralized User-Profile Access Integration
+
+This corrective contract was required because the disconnected extension-admin user list did not load real ANGELCARE users.
+
+Mandatory correction
+
+The extension access system must be integrated into:
+
+/users/[id]
+
+The section must be premium, scrollable and bound to the selected real app_users record.
+
+It must safely handle users who have no existing Browser OS access profile.
+
+It must never crash when:
+
+access = null
+snapshot = null
+new user has never been assigned extension access
+
+It must preserve other assigned modules when B2B access is edited.
+
+No new disconnected identity system is permitted.
+
+6. MEGA ZIP 3 CONTRACT
+Outreach, Pipeline, Meetings and Daily Revenue Execution
+Package identity
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_03_REVENUE_EXECUTION.zip
+Objective
+
+Turn account intelligence into disciplined daily revenue execution.
+
+6.1 Opportunities
+
+Create real opportunities from:
+
+Qualified account
+Inbound inquiry
+Referral
+Meeting
+Pricing request
+Tender
+Existing partner expansion
+New branch
+Seasonal requirement
+Event opportunity
+
+Opportunity data:
+
+Account
+Title
+Program
+Estimated value
+Probability
+Stage
+Expected close
+Launch timing
+Decision process
+Stakeholders
+Objections
+Risks
+Source
+Evidence
+Owner
+Next action
+6.2 Governed pipeline
+
+Canonical stages:
+
+New target
+Research
+Qualified
+Initial contact
+Discovery
+Meeting scheduled
+Needs confirmed
+Solution design
+Proposal preparation
+Proposal sent
+Negotiation
+Commercial agreement
+Contract pending
+Payment pending
+Activation preparation
+Won
+Lost
+Nurture
+
+The extension must:
+
+Recommend a stage
+Explain the recommendation
+Prevent unsupported progression
+Preserve stage history
+Detect stale opportunities
+Detect missing next action
+Detect false won status
+Require evidence
+Recommend nurture or closure where appropriate
+6.3 Next-best-action engine
+
+Each active account must receive a clear recommended action based on:
+
+Stage
+Last interaction
+Priority
+Decision-maker coverage
+Deadline
+Objections
+Account value
+Proposal status
+Follow-up SLA
+Current permissions
+
+Recommendations must be explainable.
+
+6.4 Outreach strategy
+
+Prepare contextual:
+
+Introduction email
+Warm introduction
+Follow-up
+Reactivation
+Meeting request
+Objection response
+Proposal follow-up
+Executive introduction
+Decision reminder
+Nurture message
+
+No generic one-message-for-all approach.
+
+6.5 Gmail adapter
+
+When assigned, Gmail assistance must:
+
+Recognize selected sender
+Resolve account/contact
+Summarize selected thread
+Extract questions
+Extract commitments
+Extract deadlines
+Detect objections
+Detect buying signals
+Prepare a response
+Create follow-up
+Update opportunity
+Create meeting
+Log activity
+
+Sending remains governed.
+
+6.6 WhatsApp Web adapter
+
+When assigned:
+
+Recognize selected conversation
+Resolve account/contact
+Prepare approved message
+Capture selected commitment
+Detect dates
+Detect objection
+Create follow-up
+Link opportunity
+Log activity
+
+Forbidden:
+
+Mass contact extraction
+Bulk unattended messaging
+Restriction evasion
+Rate-limit evasion
+Hidden full-conversation scraping
+6.7 Calls, field visits and meetings
+
+Call Command must provide:
+
+Account summary
+Contact role
+Call objective
+Questions
+Relevant offer
+Known objection
+Desired result
+Minimum next step
+
+Field Visit Mode must support:
+
+Visit objective
+Contact met
+Notes
+Evidence
+Outcome
+Follow-up
+Opportunity movement
+Same-day report
+
+Meeting Command must support:
+
+Account-specific brief
+Stakeholders
+Pain hypotheses
+Discovery questions
+Risks
+Required commitment
+User-operated notes
+Post-meeting conversion
+Actions
+Follow-up
+Stage recommendation
+
+No secret recording.
+
+6.8 Follow-up orchestration and sequences
+
+Every commitment requires:
+
+Owner
+Deadline
+Priority
+Channel
+Objective
+Account
+Contact
+Opportunity
+Evidence
+Escalation rule
+
+Sequences must adapt or stop when:
+
+Prospect replies
+Meeting is booked
+Contact is wrong
+Prospect declines
+Proposal is requested
+Stage changes
+Manager intervenes
+Policy threshold is reached
+6.9 Attribution and referrals
+
+Support:
+
+Campaign association
+Source attribution
+Google Maps mission
+Field mission
+Event
+Referral
+Ambassador referral
+Existing partner
+Organic inbound
+
+Prevent duplicate or conflicting referral claims.
+
+Canonical terminology remains Ambassadors.
+
+6.10 Daily Revenue Command
+
+Required operational periods:
+
+Morning Command
+Midday Correction
+Closing Hour
+End-of-Day Review
+
+The cockpit must display:
+
+Priorities
+Follow-ups
+Meetings
+Calls
+Replies
+Opportunities at risk
+Missed actions
+Revenue advanceable today
+Tomorrow’s first commitments
+Data-quality problems
+7. MEGA ZIP 4 CONTRACT
+Proposal, Pricing, Negotiation, Closing and Revenue Protection
+Package identity
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_04_DEAL_CLOSING.zip
+Objective
+
+Turn qualified opportunities into governed offers, protected margins, controlled negotiations and truthful closing.
+
+7.1 Offer Configuration
+
+Configure:
+
+Service line
+Program
+Locations
+Volume
+Frequency
+Hours
+Staffing
+Materials
+Launch support
+Reporting
+Partner responsibilities
+ANGELCARE responsibilities
+Optional services
+Exclusions
+Pilot/full deployment
+Contract period
+
+Incomplete offers must remain visibly incomplete.
+
+7.2 Proposal Studio
+
+Supported formats:
+
+One-page offer
+Discovery recap
+Pilot proposal
+Annual proposal
+Multi-site proposal
+Event offer
+Corporate program
+School program
+Hospitality partnership
+Institutional agreement
+Renewal/expansion proposal
+
+Proposal content:
+
+Client context
+Confirmed need
+Recommended solution
+Scope
+Operating model
+Responsibilities
+Implementation
+Pricing
+Payment structure
+KPIs
+Risk controls
+Exclusions
+Validity
+Next step
+
+Proposals must use real dossier information.
+
+7.3 Pricing models
+
+Supported models:
+
+Fixed pilot
+Monthly retainer
+Per booking
+Per service
+Per child/session
+Per event
+Revenue share
+Annual subscription
+Volume package
+Multi-site agreement
+Retainer plus usage
+Setup fee plus recurring
+Training plus operations
+7.4 Cost and margin engine
+
+Display:
+
+Quoted revenue
+Direct staffing
+Transport
+Materials
+Training
+Operational overhead
+Partner commission
+Discount impact
+Contingency
+Contribution
+Gross margin
+Minimum margin
+
+Assumptions must be visible and auditable.
+
+7.5 Margin guardrails
+
+Canonical starting policy:
+
+Margin ≥ 35%       Healthy
+Margin 25–34.99%   Manager review
+Margin 15–24.99%   Executive approval
+Margin below 15%   Blocked unless exceptional evidence-based authorization
+
+Thresholds must be configurable.
+
+7.6 Discount governance
+
+A discount request requires:
+
+Amount
+Reason
+Prospect objection
+Competitive context
+Expected commercial benefit
+Contract duration
+Payment structure
+Original margin
+Revised margin
+Approver
+Expiration
+
+The system should recommend non-price alternatives first.
+
+7.7 Approvals and versioning
+
+Approval states:
+
+Draft
+Submitted
+Under review
+Changes requested
+Approved
+Rejected
+Expired
+Superseded
+
+Proposal history must preserve:
+
+Version
+Creator
+Time
+Scope
+Pricing
+Margin
+Changes
+Approval
+Delivery evidence
+Expiration
+
+No silent overwriting.
+
+7.8 Negotiation Deal Room
+
+Must display:
+
+Opportunity
+Current proposal
+Value
+Margin
+Decision date
+Stakeholders
+Client requests
+Open objections
+Commitments
+Competitive threat
+Approvals
+Next action
+
+Must distinguish:
+
+Client request
+Sales recommendation
+Approved ANGELCARE position
+Final agreed position
+7.9 Counteroffers and objections
+
+Counteroffers may include:
+
+Scope revision
+Volume revision
+Pilot
+Longer commitment
+Upfront incentive
+Multi-site package
+Phased launch
+Optional-service removal
+Conditional discount
+Performance-based expansion
+Alternative payment calendar
+
+Objection categories:
+
+Price
+Budget
+Payment timing
+Trust
+Quality
+Operational capacity
+Risk/liability
+Internal approval
+Procurement
+Legal
+Existing provider
+Need not proven
+No urgency
+Implementation timing
+Decision-maker access
+
+The extension must not automatically recommend discount for non-price objections.
+
+7.10 Closing Room
+
+Closing readiness dimensions:
+
+Need
+Scope
+Decision maker
+Financial approver
+Price
+Payment terms
+Operational feasibility
+Contract
+Risks
+Decision date
+
+Distinct states:
+
+Verbally agreed
+Commercially agreed
+Proposal accepted
+Contract signed
+Payment pending
+Payment verified
+Operationally ready
+Activated
+
+A deal is not won merely because someone verbally agreed.
+
+7.11 Contract and payment gates
+
+Contract gate:
+
+Correct legal entity
+Approved proposal
+Final scope
+Final value
+Signatory authority
+Signature evidence
+Effective date
+Duration
+Renewal
+Termination
+Billing
+Special commitments
+
+Payment gate:
+
+Invoice/request
+Amount
+Deposit
+Due date
+Method
+Payer
+Evidence
+Finance verification
+Balance
+Activation condition
+
+Only authorized Finance/management users may verify payment where configured.
+
+7.12 Payment promises, rescue and executive intervention
+
+Payment promise:
+
+Client
+Opportunity
+Reference
+Amount
+Date
+Time
+Method
+Payer
+Internal owner
+Verification deadline
+Escalation
+
+Revenue Rescue detects:
+
+Unanswered proposal
+Expiring proposal
+Stalled negotiation
+Missing decision maker
+Contract delay
+Payment delay
+Operational concern
+Competitive threat
+Stale strategic account
+
+Executive brief includes:
+
+Value
+Strategic importance
+History
+Stakeholders
+Blocker
+Current proposal
+Margin
+Client request
+Approved position
+Recommended intervention
+Prohibited commitments
+Required outcome
+8. MEGA ZIP 4.5 CONTRACT
+Enterprise Browser Experience and Runtime Completion
+Package identity
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_04_5_ENTERPRISE_EXPERIENCE.zip
+Objective
+
+Replace the thin developer-style extension shell with a premium browser-native enterprise operating system.
+
+This is not a cosmetic redesign.
+
+8.1 Five-domain architecture
+
+Prospect/deal mode:
+
+Account
+Execute
+Deal
+Intelligence
+More
+
+No flat 22-tab navigation.
+
+8.2 Automatic Account 360 hydration
+
+After account recognition, one governed hydration flow must load all authorized data:
+
+Account
+Owner
+Contacts
+Buying committee
+Opportunities
+Scores
+Plans
+Research missions
+Tasks
+Follow-ups
+Communications
+Calls
+Visits
+Meetings
+Sequences
+Proposals
+Approvals
+Pricing
+Negotiation
+Objections
+Closing
+Contracts
+Payments
+Rescue
+Timeline
+Evidence
+Attribution
+Audit
+8.3 Persistent commercial context
+
+Preserve:
+
+activeAccountId
+activeOpportunityId
+activeContactId
+activeMissionId
+activeBrowserTabs
+
+Context must survive:
+
+Panel closing
+Service-worker suspension
+Browser navigation
+Google Maps to Gmail transition
+Gmail to SaaS transition
+Side panel to Focus Mode transition
+8.4 Dedicated workspaces
+
+Required premium workspaces:
+
+Account 360
+Buying Committee
+Next Best Action
+Daily Revenue Command
+Opportunity and Pipeline
+Commercial Intelligence
+Proposal Studio
+Pricing and Margin
+Negotiation Deal Room
+Closing Room
+Payments
+Revenue Rescue
+Evidence
+Capability Command
+8.5 Focus Mode
+
+Complex workspaces must support full-page expansion:
+
+Open Focus Mode
+
+Focus Mode must preserve the active account and opportunity.
+
+8.6 Command Palette
+
+Keyboard entry:
+
+Cmd + K
+Ctrl + K
+
+The palette must display only assigned capabilities and route to real workspaces or governed actions.
+
+8.7 State and synchronization
+
+Required:
+
+Normalized state
+Persistent cache
+Request cancellation
+Stale-data invalidation
+Loading skeletons
+Empty states
+Error recovery
+Success confirmation
+Optimistic update where safe
+Access-version refresh
+Real-time events or controlled polling fallback
+Service-worker recovery
+8.8 Capability-to-UI mapping
+
+Every operational capability through Mega ZIP 4 must map to:
+
+Domain
+Visible workspace
+Authorized action
+Hydrated data
+Audit behavior
+
+Acceptance target:
+
+35 operational capability families
+35/35 visible
+35/35 connected to real data
+35/35 permission-controlled
+35/35 with real action execution
+35/35 with loading/error/success states
+9. MEGA ZIP 5 CONTRACT
+Partner Lifecycle, Activation, Performance, Expansion and Renewal
+Package identity
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_05_PARTNER_LIFECYCLE_GROWTH.zip
+Status
+
+Signed and committed.
+
+Implementation must be completed without reducing the contract.
+
+9.1 Objective
+
+Continue the commercial journey after genuine closing:
+
+Commercial handoff
+→ Operational acceptance
+→ Partner onboarding
+→ Activation readiness
+→ Launch
+→ First service
+→ Hypercare
+→ Performance
+→ Issue resolution
+→ Growth
+→ Renewal
+→ Long-term partnership
+
+The extension must stop treating an active partner as a prospect.
+
+9.2 Adaptive partner mode
+
+Active-partner navigation:
+
+Partner
+Operate
+Growth
+Intelligence
+More
+Partner
+Identity
+Contract
+Sites
+Branches
+Contacts
+Services
+Activation
+Obligations
+Documents
+Billing
+History
+Operate
+Handoff
+Onboarding
+Launch tasks
+Readiness
+First service
+Issues
+Corrective actions
+Reviews
+Growth
+Upsell
+Cross-sell
+New branches
+Multi-site expansion
+Seasonal opportunities
+Renewal
+Referrals
+Intelligence
+Partner health
+Performance
+Revenue
+Payment risk
+Satisfaction
+Churn risk
+Expansion readiness
+Contract compliance
+More
+Timeline
+Audit
+Evidence
+Documents
+Communications
+Tender history
+Attribution
+Data quality
+9.3 Commercial-to-operational handoff
+
+Generate a structured handoff from real closing data:
+
+Legal entity
+Sites
+Final proposal
+Final scope
+Pricing
+Billing
+Payment terms
+Launch date
+Schedule
+Volume
+Partner contacts
+Operational contacts
+Financial contacts
+Escalation contacts
+Sales owner
+Operational owner
+Partner obligations
+ANGELCARE obligations
+Commitments
+Exclusions
+Reporting requirements
+Service levels
+Risks
+Documents
+Training
+Equipment
+Communication assets
+
+Sales must not manually rebuild the deal in another system.
+
+9.4 Promise normalization
+
+Analyze commitments made across:
+
+Email
+WhatsApp-selected context
+Calls
+Meetings
+Proposals
+Negotiation
+Counteroffers
+Contract discussion
+Executive intervention
+
+Classify each as:
+
+Contractual obligation
+Commercial commitment
+Operational expectation
+Unapproved promise
+Informal statement
+Excluded commitment
+
+Unresolved high-impact promises block handoff.
+
+9.5 Handoff validation
+
+Operations may:
+
+Accept
+Accept with conditions
+Request correction
+Reject
+Escalate capacity conflict
+Escalate contractual inconsistency
+
+Required readiness dimensions:
+
+Contract
+Payment
+Scope
+Operational owner
+Partner owner
+Sites
+Contacts
+Schedule
+Staffing
+Materials
+Transport
+Training
+Reporting
+Risk
+Launch date
+9.6 Partner 360
+
+Create or activate a real dossier containing:
+
+Partner identity
+Parent group
+Branches
+Contract
+Services
+Sites
+Owners
+Contacts
+Billing
+Payments
+Service configuration
+Activation
+Performance
+Issues
+Reviews
+Growth
+Renewal
+Documents
+Evidence
+Timeline
+Audit
+
+No second disconnected partner CRM.
+
+9.7 Onboarding and activation
+
+Onboarding stages:
+
+Not started
+Welcome initiated
+Information collection
+Operational configuration
+Training and briefing
+Partner materials
+Technical configuration
+Readiness review
+Launch approved
+Completed
+
+Activation Command must control:
+
+Owner
+Launch date
+Sites
+Services
+Staffing
+Availability
+Training
+Materials
+Transport
+Partner assets
+Billing
+Communication
+Support
+Safety
+Quality
+Escalation
+First-service readiness
+9.8 Launch gates
+
+Required gates:
+
+Contract
+Payment
+Handoff
+Staffing
+Training
+Materials
+Site
+Communication
+Safety
+Quality
+Support
+Reporting
+
+Only authorized users may approve launch.
+
+9.9 First service and hypercare
+
+First-service control:
+
+Brief
+Staff
+Partner contact
+Schedule
+Instructions
+Materials
+Transport
+Safety
+Escalation
+Report
+Partner confirmation
+
+After first service:
+
+Outcome
+Partner feedback
+Staff feedback
+Issues
+Deviations
+Corrective actions
+Billing consequence
+Continued-service readiness
+Launch review
+
+Hypercare checkpoints:
+
+Day 1
+Day 3
+Day 7
+Day 14
+Day 30
+9.10 Partner performance and health
+
+Performance metrics may include only real available data:
+
+Contracted revenue
+Invoiced revenue
+Collected revenue
+Usage
+Volume
+Utilization
+Sites
+Service success
+Incidents
+Complaints
+Response time
+Satisfaction
+Payment discipline
+Growth potential
+Renewal readiness
+
+Partner-health dimensions:
+
+Relationship
+Contract compliance
+Payment
+Usage
+Quality
+Issue burden
+Satisfaction
+Engagement
+Expansion
+Renewal
+
+Missing data must display as missing.
+
+9.11 Issues and corrective actions
+
+Issue categories:
+
+Operational failure
+Quality concern
+Safety incident
+Staffing
+Billing dispute
+Payment delay
+Partner complaint
+Contract misunderstanding
+Service configuration
+Technology/portal
+Communication failure
+Executive relationship risk
+
+Corrective Action Plan:
+
+Problem
+Root cause
+Containment
+Corrective action
+Preventive action
+Owner
+Deadline
+Evidence
+Partner communication
+Validation
+Closure approval
+9.12 Reviews and QBR
+
+Support:
+
+Launch review
+Monthly review
+Quarterly business review
+Escalation meeting
+Renewal meeting
+Expansion meeting
+Executive relationship meeting
+
+QBR must summarize:
+
+Contract performance
+Services
+Revenue
+Satisfaction
+Issues
+Growth opportunities
+Renewal risk
+Decisions
+Follow-up actions
+9.13 Growth
+
+Upsell/cross-sell logic must use:
+
+Current usage
+Service requests
+Seasonal demand
+Partner feedback
+Events
+New departments
+New branches
+Existing success
+Contract limits
+Partner growth
+Payment health
+Operational capacity
+
+Do not push expansion to an unhealthy partner.
+
+9.14 Multi-site expansion
+
+Detect:
+
+Additional branches
+New openings
+Unactivated sites
+Sister organizations
+Franchise sites
+Group-level opportunities
+Regional expansion
+National rollout
+
+Expansion readiness:
+
+Partner health
+Payment discipline
+Quality
+Usage
+Relationship
+Executive sponsor
+Operational scalability
+Group structure
+Demand
+Timing
+9.15 Renewal and churn prevention
+
+Renewal timeline:
+
+180 days: renewal intelligence
+120 days: performance and stakeholder review
+90 days: renewal strategy
+60 days: proposal
+30 days: decision/signature control
+Expiry: renewed, extended, expired or escalated
+
+Strategies:
+
+Straight renewal
+Price adjustment
+Expanded scope
+Multi-year
+Multi-site
+Service correction
+Reduced scope
+Short extension
+Executive rescue
+Planned non-renewal
+
+Churn detection:
+
+Low usage
+Disengagement
+Complaints
+Service failures
+Payment disputes
+Leadership changes
+Competitor signal
+Renewal delay
+Poor perceived value
+9.16 Tender lifecycle
+
+Complete lifecycle:
+
+Detected
+→ Eligibility
+→ Bid/no-bid
+→ Requirements
+→ Compliance matrix
+→ Documents
+→ Solution
+→ Pricing
+→ Approval
+→ Submission
+→ Clarification
+→ Negotiation
+→ Award/loss
+→ Contract
+→ Handoff
+
+Bid/no-bid considers:
+
+Strategic fit
+Revenue
+Delivery feasibility
+Margin
+Risk
+Payment
+Resources
+Competition
+Deadline
+Documentation readiness
+9.17 Partner 360 hydration and persistent context
+
+One request loads:
+
+Partner
+Parent/branches
+Contract
+Services
+Sites
+Contacts
+Billing
+Payments
+Handoff
+Onboarding
+Activation
+Readiness
+Performance
+Usage
+Issues
+Corrective actions
+Reviews
+Growth
+Renewal
+Tender
+Documents
+Timeline
+Audit
+
+Persistent identifiers:
+
+activePartnerId
+activeContractId
+activeSiteId
+activeServiceId
+activeActivationId
+activeIssueId
+activeGrowthOpportunityId
+activeRenewalId
+9.18 Premium Focus Mode
+
+Dedicated Focus Mode workspaces:
+
+Operational Handoff
+Partner Activation
+Partner Performance
+Issue Command
+Quarterly Business Review
+Growth and Expansion
+Renewal Command
+Tender Command
+9.19 User-profile access controls
+
+Add granular assignments for:
+
+Operational Handoff
+Handoff Acceptance
+Partner Onboarding
+Activation Management
+Launch Approval
+Partner Performance
+Issue Management
+Corrective Actions
+Partner Reviews
+Upsell
+Cross-sell
+Multi-site Expansion
+Renewals
+Renewal Approval
+Tender Management
+Tender Submission
+9.20 Governed command families
+
+Approximately 40 commands covering:
+
+handoff.generate
+handoff.validate
+handoff.accept
+handoff.request_correction
+partner.activate
+partner.read
+partner.update
+partner.site_create
+partner.service_configure
+onboarding.create
+onboarding.task_complete
+activation.readiness_calculate
+activation.approve
+first_service.prepare
+first_service.outcome_record
+hypercare.create
+partner_performance.read
+partner_health.calculate
+partner_issue.create
+partner_issue.escalate
+corrective_action.create
+corrective_action.close
+partner_review.prepare
+qbr.generate
+upsell.detect
+upsell.create
+cross_sell.detect
+expansion.site_detect
+expansion.plan_create
+renewal.readiness_calculate
+renewal.plan_create
+renewal.proposal_prepare
+churn_risk.detect
+partner_rescue.create
+tender.create
+tender.requirements_extract
+tender.bid_decision
+tender.compliance_update
+tender.submit
+tender.outcome_record
+10. MEGA ZIP 6 FORWARD CONTRACT
+AI Sales Director, Management Command and Controlled Automation
+Proposed package
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_06_AI_SALES_DIRECTOR.zip
+Objective
+
+Transform Browser OS from an employee execution tool into an explainable management and executive command system.
+
+This contract must not create an uncontrolled autonomous bot. It creates governed intelligence, recommendations, coaching, prioritization and approved automation.
+
+10.1 AI Sales Director
+
+The AI Sales Director must:
+
+Review every authorized account
+Review pipeline quality
+Review task execution
+Review communication outcomes
+Review stakeholder coverage
+Review proposal readiness
+Review margin risk
+Review negotiation status
+Review closing blockers
+Review payment risk
+Review partner health
+Review renewal exposure
+Recommend actions
+Explain why
+Cite evidence
+Respect permissions
+Never fabricate data
+Never bypass approval
+
+Example:
+
+This opportunity is incorrectly positioned as Negotiation.
+
+Evidence:
+• No economic buyer engaged
+• No approved proposal
+• No confirmed budget
+• Last contact was 17 days ago
+
+Recommended correction:
+Return to Discovery, create financial-approver research mission,
+and schedule a decision-process call.
+10.2 Management cockpit
+
+Manager view:
+
+Team priorities
+Account ownership
+Pipeline truth
+Stale opportunities
+Missing next actions
+Weak meeting preparation
+Proposal delays
+Margin concessions
+Payment promises
+Handoff quality
+Partner risks
+Renewal exposure
+Territory coverage
+
+Manager actions:
+
+Reassign
+Prioritize
+Approve
+Reject
+Request correction
+Create coaching mission
+Escalate
+Freeze risky action
+Intervene
+10.3 Staff execution quality
+
+Evaluate:
+
+Follow-up discipline
+Response time
+Decision-maker coverage
+Meeting preparation
+Note quality
+Discovery completeness
+Proposal follow-through
+Pricing discipline
+Closing quality
+Handoff quality
+Data completeness
+Partner follow-up
+Renewal discipline
+
+The system must explain patterns, not merely display a score.
+
+Example:
+
+Strong activity volume, weak economic-buyer penetration.
+High meeting conversion, poor post-meeting follow-up.
+Good closing rate, excessive margin concessions.
+
+No secret surveillance metrics.
+
+10.4 Pipeline truth and forecasting
+
+Forecast categories:
+
+Committed
+Probable
+Possible
+At risk
+Unqualified
+Stale
+
+Forecast must use evidence such as:
+
+Stage validity
+Decision-maker engagement
+Proposal approval
+Decision date
+Contract status
+Payment status
+Historical conversion
+Current activity
+Risk
+Partner readiness
+
+Forecast confidence must be explainable.
+
+10.5 Revenue-risk command
+
+Queues:
+
+Forgotten Opportunities
+Proposal Recovery
+Closing-Hour Queue
+Payment Recovery
+Strategic Account Rescue
+Renewal Rescue
+Partner Health Rescue
+Executive Intervention
+
+Each queue item requires:
+
+Reason
+Revenue at risk
+Deadline
+Owner
+Recommended action
+Escalation path
+Evidence
+10.6 Territory and vertical intelligence
+
+Management must see:
+
+Coverage by city
+Coverage by vertical
+Untouched strategic accounts
+Account density
+Conversion
+Pipeline
+Revenue
+Lost reasons
+Partner expansion
+Ambassador contribution
+Campaign attribution
+
+No cross-territory data leakage.
+
+10.7 Coaching missions
+
+Generate purpose-built coaching:
+
+Improve discovery
+Reach economic buyers
+Improve proposal follow-up
+Protect margins
+Improve meeting notes
+Improve field coverage
+Recover stale accounts
+Improve handoff quality
+Protect renewal
+
+Every coaching mission must have:
+
+Skill gap
+Evidence
+Expected behavior
+Deadline
+Manager
+Completion proof
+Result
+10.8 Executive reporting
+
+Generate:
+
+Daily Revenue Brief
+Weekly Commercial Review
+Pipeline Truth Report
+Closing Risk Report
+Margin Protection Report
+Payment Recovery Report
+Partner Health Report
+Renewal Exposure Report
+Territory Performance Report
+Strategic Account Report
+
+Reports must use real data and identify missing data.
+
+10.9 Controlled automation
+
+Allowed automation categories may include:
+
+Safe enrichment refresh
+Duplicate search
+Internal task creation
+Deadline reminders
+Risk detection
+Sequence pause on reply
+Access-version refresh
+Internal report generation
+Internal escalation draft
+
+High-risk actions remain confirmation or approval controlled:
+
+External communication
+Discounts
+Proposal approval
+Contract changes
+Payment confirmation
+Partner launch
+Tender submission
+Opportunity won
+Renewal approval
+10.10 Mega ZIP 6 acceptance
+Manager opens Browser OS
+→ Receives truthful team priorities
+→ Sees explainable pipeline forecast
+→ Sees revenue-risk queues
+→ Creates intervention/coaching mission
+→ Staff receives assigned correction
+→ Completion updates account and forecast
+→ Executive reports remain evidence-backed
+11. MEGA ZIP 7 FORWARD CONTRACT
+Production Hardening, Security, Deployment and Final B2B Release
+Proposed package
+ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_07_PRODUCTION_FINAL.zip
+Objective
+
+Convert the cumulative product into a production-operable, deployable and supportable private enterprise Chrome extension.
+
+11.1 Complete contract verification
+
+Required final report:
+
+Canonical capabilities             45/45
+Visible UI                          45/45
+Real commands                       45/45
+Permission mapping                 45/45
+Audit mapping                      45/45
+Acceptance scenarios               45/45
+Loading/error/success states       45/45
+Documentation                      Complete
+11.2 Security testing
+
+Test:
+
+Invalid token
+Expired token
+Stolen refresh token
+Revoked device
+Replayed pairing code
+Stale capability version
+Unassigned module
+Unassigned adapter
+Unauthorized territory
+Unauthorized account
+Unauthorized approval
+Unauthorized Finance verification
+Direct API mutation
+Cross-user data access
+Cross-module data access
+Tampered command payload
+Duplicate command replay
+Content-script injection boundary
+11.3 Performance
+
+Optimize:
+
+Service-worker startup
+Side-panel startup
+Account hydration
+Partner hydration
+Memory
+Storage
+Content-script footprint
+Lazy module loading
+Request concurrency
+Cancellation
+Caching
+Refresh
+Large timeline rendering
+Focus Mode
+Browser navigation
+
+Performance budgets must be documented.
+
+11.4 Reliability
+
+Required:
+
+Offline state
+Retry with backoff
+Idempotent mutation recovery
+Partial hydration handling
+Adapter failure handling
+Google Maps selector monitoring
+Gmail selector monitoring
+WhatsApp selector monitoring
+Browser-version compatibility
+Service-worker suspension recovery
+Corrupted cache recovery
+Invalid session recovery
+Safe kill switches
+Feature flags
+Rollback channel
+11.5 Observability
+
+Add:
+
+Extension health
+Adapter health
+Gateway health
+Command success/failure
+Latency
+Hydration failures
+Permission denials
+Version adoption
+Device activity
+Error fingerprints
+Release-channel monitoring
+
+No sensitive page content in technical logs.
+
+11.6 Private deployment
+
+Required deployment options:
+
+Unpacked development build
+Signed private package preparation
+Stable extension identity
+Controlled private update manifest
+Internal release channel
+Pilot channel
+Stable channel
+Emergency rollback channel
+Enterprise Chrome policy documentation
+Device registration procedure
+Revocation procedure
+11.7 Documentation
+
+Deliver:
+
+Administrator handbook
+User handbook
+Manager handbook
+Security handbook
+Deployment handbook
+Troubleshooting handbook
+Release procedure
+Rollback procedure
+Adapter maintenance guide
+Incident-response SOP
+Data and privacy guide
+Acceptance checklist
+Architecture map
+Command registry
+Capability registry
+11.8 Final acceptance
+
+A full live journey must pass:
+
+Install
+→ Pair
+→ Assign
+→ Recognize account
+→ Create prospect
+→ Enrich
+→ Build opportunity
+→ Execute outreach
+→ Prepare meeting
+→ Create proposal
+→ Approve pricing
+→ Negotiate
+→ Close with gates
+→ Verify payment
+→ Handoff
+→ Activate
+→ Monitor partner
+→ Expand
+→ Renew
+→ Report
+→ Revoke access
+12. MEGA ZIP 8 NEWLY FORMALIZED CONTRACT
+Multi-Module Revenue and Growth Federation
+Important status
+
+Mega ZIP 8 was not previously defined or signed in the original roadmap. It is included here as the logical continuation requested for migration.
+
+It must be explicitly signed in the new conversation before implementation.
+
+Proposed package
+ANGELCARE_BROWSER_OS_MEGA_PATCH_08_MULTI_MODULE_FEDERATION.zip
+Objective
+
+Extend the proven Browser OS architecture beyond Revenue B2B Partnerships and safely federate:
+
+Revenue B2B Partnerships
+Capital Command Center
+Market OS
+Ambassadors
+Campaign Lifecycle
+SEO Blog
+
+The extension must not combine all modules into one uncontrolled interface.
+
+12.1 Dynamic module federation
+
+Every user receives only assigned modules.
+
+Examples:
+
+Business developer:
+Revenue B2B + Campaign Lifecycle
+
+Investor-relations user:
+Capital Command + Market OS
+
+Ambassador manager:
+Ambassadors + Campaign Lifecycle
+
+SEO specialist:
+SEO Blog + Market OS
+
+Managing Director:
+Authorized cross-module command
+
+Modules remain separately permissioned.
+
+12.2 Shared browser context broker
+
+The extension may recognize the current browser context once and route it to authorized modules.
+
+Example company website:
+
+Revenue B2B:
+Potential partner account
+
+Capital Command:
+Possible investor or portfolio relationship
+
+Market OS:
+Market signal
+
+Campaign Lifecycle:
+Campaign target
+
+SEO Blog:
+Content opportunity
+
+Only assigned lenses appear.
+
+12.3 Controlled cross-module intake
+
+When a user lacks the destination module:
+
+SEO opportunity detected
+
+You do not have access to SEO Blog.
+
+[Submit Opportunity to SEO Team]
+
+The extension creates a controlled intake item without exposing restricted module data.
+
+12.4 Capital Command integration
+
+Capabilities may include:
+
+Investor identity recognition
+Investor dossier
+Fund thesis
+Capital opportunity
+Investor outreach
+Due-diligence requirements
+Data-room requests
+Traction evidence
+Investment meeting brief
+Commitment tracking
+Capital-impact tasks
+12.5 Market OS integration
+
+Capabilities:
+
+Market signal capture
+Competitor observation
+Market opportunity
+Research mission
+Territory signal
+Product signal
+Positioning recommendation
+Campaign promotion
+Market report
+Cross-account pattern intelligence
+12.6 Ambassadors integration
+
+Canonical route:
+
+/market-os/ambassadors
+
+Capabilities:
+
+Candidate capture
+Recruitment pipeline
+Interview
+Onboarding
+Territory assignment
+Mission
+Referral lead
+Mission proof
+Conversion validation
+Incentive evaluation
+Inactivity escalation
+Territory reporting
+
+No RefferQ terminology.
+
+12.7 Campaign Lifecycle integration
+
+Capabilities:
+
+Campaign creation
+Campaign brief
+Production tasks
+Asset requests
+Approval
+Launch readiness
+Calendar
+Live evidence
+Optimization
+Campaign reporting
+B2B attribution
+Partner lifecycle campaigns
+12.8 SEO Blog integration
+
+Capabilities:
+
+Topic opportunity
+Keyword capture
+Content brief
+Article creation
+Writer/reviewer assignment
+Internal-link recommendation
+Brand/compliance checks
+Approval
+Schedule/publish only when authorized
+Performance recording
+12.9 Cross-module mission orchestration
+
+Example:
+
+B2B objection pattern detected
+→ Market OS signal
+→ Campaign Lifecycle response brief
+→ SEO Blog content opportunity
+→ B2B sales enablement asset
+
+Another example:
+
+Ambassador referral produces strategic hotel lead
+→ Attribution preserved
+→ B2B prospect created
+→ Campaign source linked
+→ Ambassador reward remains pending until validated revenue
+12.10 Cross-module executive command
+
+Authorized executives may see:
+
+Revenue pipeline
+Capital pipeline
+Market signals
+Campaign execution
+Ambassador performance
+SEO opportunity
+Cross-module dependencies
+Strategic risks
+Executive interventions
+
+This must not bypass module-specific permissions.
+
+12.11 Federated event bus
+
+Required events may include:
+
+account.created
+opportunity.created
+proposal.approved
+deal.won
+payment.verified
+partner.activated
+market.signal.created
+campaign.launched
+ambassador.lead.validated
+seo.opportunity.created
+capital.opportunity.created
+access.revoked
+
+Events must be versioned, auditable and idempotent.
+
+12.12 Mega ZIP 8 acceptance
+Open relevant browser context
+→ Resolve authorized module lenses
+→ Load only assigned modules
+→ Permit module-specific actions
+→ Allow controlled cross-module intake
+→ Preserve attribution
+→ Prevent unauthorized data exposure
+→ Audit the complete cross-module journey
+13. CURRENT CONTINUATION INSTRUCTION FOR THE NEW CONVERSATION
+
+Paste this after the full contract:
+
+Continue the ANGELCARE Revenue Command Browser OS build from the contract above.
+
+Working repository:
+/Users/user/Desktop/angelcare-platform
+
+Current accepted extension version:
+0.4.5
+
+Mega ZIP 5 is the next implementation and is already signed.
+
+Do not start Mega ZIP 6, 7 or 8 before Mega ZIP 5 has:
+- Real code
+- SQL migration
+- TypeScript verification
+- Extension build verification
+- Live user-profile permission support
+- Partner 360 hydration
+- Premium partner-mode workspaces
+- Rollback instructions
+- Successful acceptance evidence
+
+The file MEGA5_DIRECT_PATCH_CONTEXT.txt contains the exact cumulative code
+currently installed on the machine. Inspect it before writing any patch.
+
+Do not reduce the Mega ZIP 5 scope.
+Do not create a disconnected second partner CRM.
+Do not use mocks or decorative cards as completion.
+Do not stage, commit or push.
+Preserve unrelated uncommitted work.
+
+This is the complete canonical migration contract.

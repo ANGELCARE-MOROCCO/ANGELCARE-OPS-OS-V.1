@@ -1,0 +1,3 @@
+import { NextRequest } from 'next/server'
+import { POST as execute } from '@/app/api/browser-extension/v1/commands/execute/route'
+export async function POST(req:NextRequest){const body=await req.json().catch(()=>({}));const forwarded=new NextRequest(req.url,{method:'POST',headers:req.headers,body:JSON.stringify({commandKey:'b2b.contact.classify',idempotencyKey:body.idempotencyKey||crypto.randomUUID(),sourceAdapter:body.sourceAdapter||body.context?.adapterId||null,sourceOrigin:body.sourceOrigin||body.context?.origin||null,targetType:body.targetType||null,targetId:body.targetId||body.prospectId||null,payload:body.payload||body})});return execute(forwarded)}

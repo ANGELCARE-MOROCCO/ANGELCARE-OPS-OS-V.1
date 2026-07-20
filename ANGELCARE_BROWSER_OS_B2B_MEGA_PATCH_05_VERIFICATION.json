@@ -1,0 +1,993 @@
+{
+  "generatedAt": "2026-07-20T03:10:44.265Z",
+  "checks": [
+    {
+      "label": "required file packages/browser-extension-contracts/b2b-partner-lifecycle.v5.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/supabase/migrations/20260720_browser_extension_b2b_partner_lifecycle.sql",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/supabase/migrations/rollback_20260720_browser_extension_b2b_partner_lifecycle.sql",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/types.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/contract.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/service.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/authorization.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/workspace.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/api/browser-extension/v1/b2b/partner/workspace/hydrate/route.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/revenue-browser-extension/src/modules/revenue-b2b/partner-mode.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/revenue-browser-extension/src/modules/revenue-b2b/partner-actions.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "six Mega ZIP 5 capability families implemented",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "label": "41 cumulative operational capability families",
+      "ok": true,
+      "detail": "41"
+    },
+    {
+      "label": "40 governed Mega ZIP 5 commands",
+      "ok": true,
+      "detail": "40"
+    },
+    {
+      "label": "eight premium Focus Mode workspaces",
+      "ok": true,
+      "detail": "8"
+    },
+    {
+      "label": "eight persistent Partner context identifiers",
+      "ok": true,
+      "detail": "8"
+    },
+    {
+      "label": "Mega ZIP 6 remains future-locked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner lifecycle persistence structures",
+      "ok": true,
+      "detail": "30 tables"
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_partners",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_handoffs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_onboarding_plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_activation_plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_first_services",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_hypercare_checkpoints",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_partner_performance_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_partner_health_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_partner_issues",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_corrective_actions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_partner_reviews",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_growth_opportunities",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_renewals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_tenders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS enabled for lifecycle tables",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback covers every created table",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "release channel upgrades to 0.5.0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback returns release to 0.4.5",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.handoff.generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.handoff.validate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.handoff.accept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.handoff.request_correction",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner.activate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner.read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner.update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner.site_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner.service_configure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.onboarding.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.onboarding.task_complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.activation.readiness_calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.activation.approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.first_service.prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.first_service.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.hypercare.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner_performance.read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner_health.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner_issue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner_issue.escalate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.corrective_action.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.corrective_action.close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner_review.prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.qbr.generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.upsell.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.upsell.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.cross_sell.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.expansion.site_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.expansion.plan_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.renewal.readiness_calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.renewal.plan_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.renewal.proposal_prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.churn_risk.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.partner_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.tender.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.tender.requirements_extract",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.tender.bid_decision",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.tender.compliance_update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.tender.submit",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command implementation b2b.tender.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard sourceSnapshot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard handoffReadiness",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard filterByOwnership",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard assertTerritory",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard actorCanApprove",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard [1, 3, 7, 14, 30]",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard renewal_milestones",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "domain safeguard TENDER_COMPLIANCE_INCOMPLETE",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration partner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration sites",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration services",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration contacts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration handoffs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration onboardingPlans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration activationPlans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration firstServices",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration hypercare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration performance",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration issues",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration correctiveActions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration reviews",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration growthOpportunities",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration renewals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration tenders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration activeContext",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration missingData",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "pre-activation handoff hydration supported",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner command authorization integrated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner command dispatch integrated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "gateway knows Mega ZIP 5 commands",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile patch05 allow-list",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Mega ZIP 5 preset visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Mega ZIP 5 submodules assignable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment operational_handoff",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment handoff_acceptance",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment partner_onboarding",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment activation_management",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment launch_approval",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment partner_performance",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment issue_management",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment corrective_actions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment partner_reviews",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment upsell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment cross_sell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment multi_site_expansion",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment renewals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment renewal_approval",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment tender_management",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "granular assignment tender_submission",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.handoff.accept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.partner.activate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.activation.approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.corrective_action.close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.expansion.plan_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.renewal.proposal_prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.tender.bid_decision",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.tender.submit",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "adaptive Partner Mode wired",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Partner 360 hydration message wired",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "41/41 UI coverage exposed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Operational Handoff",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Partner Activation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Partner Performance",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Issue Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Quarterly Business Review",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Growth and Expansion",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Renewal Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "premium workspace Tender Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system partner-runtime",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system partner-hero",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system partner-gate-grid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system issue-board",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system qbr-cover",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system growth-lanes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system renewal-rail",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "partner visual system tender-board",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.handoff.generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.handoff.validate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.handoff.accept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.handoff.request_correction",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner.activate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner.read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner.update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner.site_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner.service_configure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.onboarding.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.onboarding.task_complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.activation.readiness_calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.activation.approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.first_service.prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.first_service.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.hypercare.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner_performance.read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner_health.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner_issue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner_issue.escalate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.corrective_action.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.corrective_action.close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner_review.prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.qbr.generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.upsell.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.upsell.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.cross_sell.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.expansion.site_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.expansion.plan_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.renewal.readiness_calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.renewal.plan_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.renewal.proposal_prepare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.churn_risk.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.partner_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.tender.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.tender.requirements_extract",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.tender.bid_decision",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.tender.compliance_update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.tender.submit",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser action contract b2b.tender.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "extension version 0.5.0",
+      "ok": true,
+      "detail": "0.5.0"
+    },
+    {
+      "label": "no RefferQ resurrection in Mega ZIP 5 sources",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "no direct Chrome-to-Supabase client",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "totals": {
+    "checks": 196,
+    "passed": 196,
+    "failed": 0,
+    "capabilities": 41,
+    "mega5Commands": 40,
+    "tables": 30
+  }
+}

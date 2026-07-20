@@ -1,0 +1,29 @@
+ANGELCARE REVENUE COMMAND BROWSER OS — DIRECT PATCH CONTEXT
+Checkpoint: Mega ZIP 5 implementation candidate
+Extension version: 0.5.0
+Authoritative input baseline: angelcare-platform-clean-20260720-022750(2).zip
+Baseline accepted version: 0.4.5
+
+Implemented in this checkpoint:
+- B2B-030 Operational Handoff
+- B2B-031 Partner Activation
+- B2B-032 Partner Performance
+- B2B-033 Upsell and Cross-Sell Intelligence
+- B2B-034 Renewal Management
+- B2B-035 Tender and RFP Intelligence
+- 40 governed Partner Lifecycle commands
+- 30 SQL lifecycle structures with RLS
+- Partner 360 hydration and eight persistent context identifiers
+- Adaptive Partner / Operate / Growth / Intelligence / More browser mode
+- Eight premium Focus Mode workspaces
+- Granular `/users/[id]` assignments and sensitive-action approvals
+- Migration, rollback, verification and live acceptance documentation
+
+Still future-locked:
+- B2B-039 Manager Control
+- B2B-040 Staff Execution Quality
+- B2B-041 B2B Reporting
+- B2B-044 Controlled Automation
+
+No Git staging, commit or push was performed.
+The SQL migration and live browser journeys must be executed in the target environment before production acceptance is claimed.

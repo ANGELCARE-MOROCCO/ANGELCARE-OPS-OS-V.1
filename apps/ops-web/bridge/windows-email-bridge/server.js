@@ -36,6 +36,24 @@ const STORAGE_NODE = "angelcare-windows-node-01"
 const STORAGE_MAX_FILE_BYTES = 8 * 1024 * 1024
 const STORAGE_WARNING_FREE_BYTES = 40 * 1024 * 1024 * 1024
 const STORAGE_CRITICAL_FREE_BYTES = 25 * 1024 * 1024 * 1024
+const STORAGE_INVENTORY_MAX_FILES = Math.max(1000, Number(process.env.STORAGE_INVENTORY_MAX_FILES || 50000))
+const STORAGE_INVENTORY_MAX_DURATION_MS = Math.max(2000, Number(process.env.STORAGE_INVENTORY_MAX_DURATION_MS || 12000))
+const STORAGE_INVENTORY_CACHE_MS = Math.max(5000, Number(process.env.STORAGE_INVENTORY_CACHE_MS || 30000))
+const STORAGE_INVENTORY_TOP_FILES = Math.max(20, Math.min(250, Number(process.env.STORAGE_INVENTORY_TOP_FILES || 100)))
+const STORAGE_EXPLORER_MAX_RESULTS = Math.max(25, Math.min(500, Number(process.env.STORAGE_EXPLORER_MAX_RESULTS || 200)))
+const STORAGE_EXPLORER_SEARCH_MS = Math.max(1000, Math.min(15000, Number(process.env.STORAGE_EXPLORER_SEARCH_MS || 5000)))
+const STORAGE_PREVIEW_MAX_BYTES = Math.max(256 * 1024, Math.min(8 * 1024 * 1024, Number(process.env.STORAGE_PREVIEW_MAX_BYTES || 3 * 1024 * 1024)))
+const STORAGE_TEXT_PREVIEW_MAX_BYTES = Math.max(64 * 1024, Math.min(2 * 1024 * 1024, Number(process.env.STORAGE_TEXT_PREVIEW_MAX_BYTES || 512 * 1024)))
+const ANGELCARE_APP_ROOT = clean(process.env.ANGELCARE_APP_ROOT || "")
+const ANGELCARE_UPLOADS_DIR = clean(process.env.ANGELCARE_UPLOADS_DIR || "")
+const ANGELCARE_EXPORTS_DIR = clean(process.env.ANGELCARE_EXPORTS_DIR || "")
+const STORAGE_QUARANTINE_ROOT = clean(process.env.STORAGE_QUARANTINE_ROOT || "C:\\AngelCare\\quarantine") || "C:\\AngelCare\\quarantine"
+const STORAGE_QUARANTINE_TOKEN_SECRET = clean(process.env.STORAGE_QUARANTINE_TOKEN_SECRET || process.env.EMAIL_BRIDGE_ADMIN_TOKEN || "angelcare-storage-quarantine")
+const STORAGE_QUARANTINE_MAX_FILE_BYTES = Math.max(1024 * 1024, Number(process.env.STORAGE_QUARANTINE_MAX_FILE_BYTES || 20 * 1024 * 1024 * 1024))
+const STORAGE_CANONICAL_ROOT = clean(process.env.STORAGE_CANONICAL_ROOT || "C:\\AngelCare\\content-store") || "C:\\AngelCare\\content-store"
+const STORAGE_DEDUP_MAPPING_FILE = path.join(STATUS_DIR, "storage-dedup-mappings.json")
+const STORAGE_DEDUP_MAX_COPIES = Math.max(2, Math.min(250, Number(process.env.STORAGE_DEDUP_MAX_COPIES || 100)))
+const STORAGE_PROVIDER_REMOTE_DELETE_ENABLED = String(process.env.STORAGE_PROVIDER_REMOTE_DELETE_ENABLED || "false").toLowerCase() === "true"
 
 const LOG_OUT = path.join(LOG_DIR, "email-bridge-out.log")
 const LOG_ERROR = path.join(LOG_DIR, "email-bridge-error.log")
@@ -60,6 +78,9 @@ const runtimeState = {
   lastStorageUpload: null,
   lastStorageDownload: null,
   lastStorageError: null,
+  lastStorageInventory: null,
+  previousStorageInventory: null,
+  storageInventoryPromise: null,
   maintenance: loadMaintenanceState(),
   lastBackup: null
 }
@@ -479,6 +500,1405 @@ function storageHealthPayload(extra = {}) {
       ...extra
     }
   }
+}
+
+
+function inventoryExtensionGroup(filename, contentType) {
+  const ext = path.extname(clean(filename)).toLowerCase()
+  const type = clean(contentType).toLowerCase()
+  if (type.startsWith("image/") || [".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".heic"].includes(ext)) return "images"
+  if (type === "application/pdf" || ext === ".pdf") return "pdf"
+  if (type.includes("spreadsheet") || type.includes("excel") || [".csv", ".xls", ".xlsx"].includes(ext)) return "spreadsheets"
+  if (type.includes("word") || [".doc", ".docx", ".odt", ".rtf"].includes(ext)) return "documents"
+  if (type.startsWith("video/") || [".mp4", ".mov", ".avi", ".mkv", ".webm"].includes(ext)) return "video"
+  if (type.startsWith("audio/") || [".mp3", ".wav", ".m4a", ".aac", ".ogg"].includes(ext)) return "audio"
+  if ([".zip", ".7z", ".rar", ".tar", ".gz", ".tgz"].includes(ext)) return "archives"
+  if ([".log", ".jsonl", ".txt"].includes(ext)) return "text_logs"
+  if ([".js", ".mjs", ".cjs", ".ts", ".tsx", ".json", ".map"].includes(ext)) return "application_code"
+  return ext ? ext.slice(1) : "other"
+}
+
+function inventoryAgeBucket(timestampMs) {
+  if (!Number.isFinite(timestampMs) || timestampMs <= 0) return "unknown"
+  const ageDays = Math.max(0, (Date.now() - timestampMs) / 86400000)
+  if (ageDays <= 7) return "0_7_days"
+  if (ageDays <= 30) return "8_30_days"
+  if (ageDays <= 90) return "31_90_days"
+  if (ageDays <= 365) return "91_365_days"
+  return "over_365_days"
+}
+
+function inventorySafeRelative(rootPath, filePath) {
+  try {
+    const relative = path.relative(rootPath, filePath)
+    if (!relative || relative === ".") return "."
+    if (relative.startsWith("..") || path.isAbsolute(relative)) return path.basename(filePath)
+    return relative.split(path.sep).join("/")
+  } catch {
+    return path.basename(filePath)
+  }
+}
+
+function inventoryTopPush(target, item, limit = STORAGE_INVENTORY_TOP_FILES) {
+  target.push(item)
+  target.sort((left, right) => Number(right.sizeBytes || 0) - Number(left.sizeBytes || 0))
+  if (target.length > limit) target.length = limit
+}
+
+function inventoryAggregateMap(map, key, sizeBytes, count = 1, extra = {}) {
+  const safeKey = clean(key) || "unclassified"
+  const current = map.get(safeKey) || { key: safeKey, sizeBytes: 0, fileCount: 0, ...extra }
+  current.sizeBytes += Number(sizeBytes || 0)
+  current.fileCount += Number(count || 0)
+  for (const [extraKey, value] of Object.entries(extra || {})) {
+    if (value !== undefined && value !== null && value !== "") current[extraKey] = value
+  }
+  map.set(safeKey, current)
+  return current
+}
+
+function inventoryScanContext(mode) {
+  const deep = mode === "deep"
+  return {
+    mode: deep ? "deep" : "summary",
+    startedAt: Date.now(),
+    deadline: Date.now() + (deep ? STORAGE_INVENTORY_MAX_DURATION_MS : Math.min(STORAGE_INVENTORY_MAX_DURATION_MS, 6500)),
+    maxFiles: deep ? STORAGE_INVENTORY_MAX_FILES : Math.min(STORAGE_INVENTORY_MAX_FILES, 20000),
+    filesVisited: 0,
+    directoriesVisited: 0,
+    errors: [],
+    truncated: false
+  }
+}
+
+function inventoryShouldStop(context) {
+  if (context.filesVisited >= context.maxFiles || Date.now() >= context.deadline) {
+    context.truncated = true
+    return true
+  }
+  return false
+}
+
+async function inventoryScanGenericRoot(definition, context) {
+  const result = {
+    id: definition.id,
+    label: definition.label,
+    kind: definition.kind,
+    rootAlias: definition.rootAlias,
+    status: "ready",
+    sizeBytes: 0,
+    fileCount: 0,
+    directoryCount: 0,
+    largestFiles: [],
+    fileTypes: new Map(),
+    ageBuckets: new Map(),
+    topFolders: new Map(),
+    errors: []
+  }
+
+  if (!definition.path || !fs.existsSync(definition.path)) {
+    result.status = definition.optional ? "not_configured" : "unavailable"
+    return result
+  }
+
+  const stack = [{ directory: definition.path, topFolder: "root" }]
+  while (stack.length && !inventoryShouldStop(context)) {
+    const current = stack.pop()
+    if (!current) continue
+    let entries
+    try {
+      entries = await fs.promises.readdir(current.directory, { withFileTypes: true })
+      context.directoriesVisited += 1
+      result.directoryCount += 1
+    } catch (error) {
+      const message = `${definition.rootAlias}:${inventorySafeRelative(definition.path, current.directory)}:${error instanceof Error ? error.message : String(error)}`
+      result.errors.push(message)
+      context.errors.push(message)
+      continue
+    }
+
+    for (const entry of entries) {
+      if (inventoryShouldStop(context)) break
+      if (entry.name === "." || entry.name === "..") continue
+      const fullPath = path.join(current.directory, entry.name)
+      const relative = inventorySafeRelative(definition.path, fullPath)
+      const topFolder = relative.includes("/") ? relative.split("/")[0] : relative
+
+      if (entry.isDirectory()) {
+        if ([".git", "node_modules", ".next", "$RECYCLE.BIN", "System Volume Information"].includes(entry.name) && definition.kind === "runtime") continue
+        stack.push({ directory: fullPath, topFolder })
+        continue
+      }
+      if (!entry.isFile()) continue
+
+      context.filesVisited += 1
+      let stat
+      try {
+        stat = await fs.promises.stat(fullPath)
+      } catch (error) {
+        const message = `${definition.rootAlias}:${relative}:${error instanceof Error ? error.message : String(error)}`
+        result.errors.push(message)
+        context.errors.push(message)
+        continue
+      }
+
+      const sizeBytes = Number(stat.size || 0)
+      result.sizeBytes += sizeBytes
+      result.fileCount += 1
+      inventoryAggregateMap(result.fileTypes, inventoryExtensionGroup(entry.name, ""), sizeBytes)
+      inventoryAggregateMap(result.ageBuckets, inventoryAgeBucket(stat.mtimeMs), sizeBytes)
+      inventoryAggregateMap(result.topFolders, topFolder || "root", sizeBytes)
+      inventoryTopPush(result.largestFiles, {
+        sourceId: definition.id,
+        sourceLabel: definition.label,
+        rootAlias: definition.rootAlias,
+        relativePath: relative,
+        filename: entry.name,
+        sizeBytes,
+        modifiedAt: stat.mtime.toISOString(),
+        createdAt: stat.birthtime.toISOString(),
+        fileType: inventoryExtensionGroup(entry.name, ""),
+        classification: definition.kind
+      })
+    }
+  }
+
+  if (context.truncated) result.status = "partial"
+  return result
+}
+
+async function inventoryScanAttachments(context) {
+  const directories = getStorageDirectories()
+  const directions = [
+    ["inbound", directories.inbound, "Pièces jointes reçues"],
+    ["outbound", directories.outbound, "Pièces jointes envoyées"],
+    ["temp", directories.temp, "Téléversements temporaires"],
+    ["archive", directories.archive, "Archives de pièces jointes"]
+  ]
+  const result = {
+    id: "email_attachments",
+    label: "Email OS · Pièces jointes",
+    kind: "email",
+    rootAlias: "storage/email-os/attachments",
+    status: "ready",
+    sizeBytes: 0,
+    fileCount: 0,
+    directoryCount: 0,
+    metadataBytes: 0,
+    metadataCount: 0,
+    directions: new Map(),
+    mailboxes: new Map(),
+    fileTypes: new Map(),
+    ageBuckets: new Map(),
+    largestFiles: [],
+    duplicateHashes: new Map(),
+    orphanCandidates: [],
+    errors: []
+  }
+
+  for (const [direction, rootPath, label] of directions) {
+    const directionAggregate = { key: direction, label, sizeBytes: 0, fileCount: 0 }
+    result.directions.set(direction, directionAggregate)
+    if (!fs.existsSync(rootPath)) continue
+
+    const stack = [rootPath]
+    while (stack.length && !inventoryShouldStop(context)) {
+      const directory = stack.pop()
+      if (!directory) continue
+      let entries
+      try {
+        entries = await fs.promises.readdir(directory, { withFileTypes: true })
+        context.directoriesVisited += 1
+        result.directoryCount += 1
+      } catch (error) {
+        const message = `attachments:${direction}:${inventorySafeRelative(rootPath, directory)}:${error instanceof Error ? error.message : String(error)}`
+        result.errors.push(message)
+        context.errors.push(message)
+        continue
+      }
+
+      const metaEntry = entries.find((entry) => entry.isFile() && entry.name === "_metadata.json")
+      let meta = null
+      let metaStat = null
+      if (metaEntry) {
+        const metaPath = path.join(directory, metaEntry.name)
+        try {
+          const raw = await fs.promises.readFile(metaPath, "utf8")
+          meta = JSON.parse(raw)
+          metaStat = await fs.promises.stat(metaPath)
+          result.metadataCount += 1
+          result.metadataBytes += Number(metaStat.size || 0)
+          result.sizeBytes += Number(metaStat.size || 0)
+          directionAggregate.sizeBytes += Number(metaStat.size || 0)
+        } catch (error) {
+          const message = `attachments:${direction}:${inventorySafeRelative(rootPath, metaPath)}:metadata_invalid`
+          result.errors.push(message)
+          context.errors.push(message)
+        }
+      }
+
+      const contentEntries = entries.filter((entry) => entry.isFile() && entry.name !== "_metadata.json" && !entry.name.endsWith(".meta.json"))
+      if (metaEntry && !contentEntries.length) {
+        result.orphanCandidates.push({
+          candidateType: "metadata_without_file",
+          direction,
+          rootAlias: `storage/email-os/attachments/${direction}`,
+          relativePath: inventorySafeRelative(rootPath, directory),
+          filename: clean(meta?.original_filename) || "Fichier manquant",
+          sizeBytes: Number(meta?.size_bytes || 0),
+          mailboxId: clean(meta?.mailbox_id) || null,
+          entityType: clean(meta?.entity_type) || null,
+          entityId: clean(meta?.entity_id) || null,
+          reason: "Métadonnées présentes mais fichier physique absent"
+        })
+      }
+
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          stack.push(path.join(directory, entry.name))
+          continue
+        }
+      }
+
+      for (const entry of contentEntries) {
+        if (inventoryShouldStop(context)) break
+        context.filesVisited += 1
+        const fullPath = path.join(directory, entry.name)
+        let stat
+        try {
+          stat = await fs.promises.stat(fullPath)
+        } catch (error) {
+          const message = `attachments:${direction}:${inventorySafeRelative(rootPath, fullPath)}:${error instanceof Error ? error.message : String(error)}`
+          result.errors.push(message)
+          context.errors.push(message)
+          continue
+        }
+
+        const sizeBytes = Number(stat.size || 0)
+        const contentType = clean(meta?.content_type || meta?.contentType)
+        const fileType = inventoryExtensionGroup(entry.name, contentType)
+        const mailboxId = clean(meta?.mailbox_id || meta?.mailboxId) || "non_attribuee"
+        const hash = clean(meta?.sha256_hash || meta?.sha256Hash)
+        const relative = inventorySafeRelative(rootPath, fullPath)
+        const entityId = clean(meta?.entity_id || meta?.entityId)
+        const entityType = clean(meta?.entity_type || meta?.entityType) || "attachment"
+        const moduleKey = clean(meta?.module_key || meta?.moduleKey) || "email_os"
+
+        result.sizeBytes += sizeBytes
+        result.fileCount += 1
+        directionAggregate.sizeBytes += sizeBytes
+        directionAggregate.fileCount += 1
+        inventoryAggregateMap(result.mailboxes, mailboxId, sizeBytes, 1, { mailboxId })
+        inventoryAggregateMap(result.fileTypes, fileType, sizeBytes)
+        inventoryAggregateMap(result.ageBuckets, inventoryAgeBucket(stat.mtimeMs), sizeBytes)
+
+        const item = {
+          fileId: clean(meta?.id) || path.basename(directory),
+          sourceId: "email_attachments",
+          sourceLabel: "Email OS · Pièces jointes",
+          rootAlias: `storage/email-os/attachments/${direction}`,
+          relativePath: relative,
+          filename: clean(meta?.original_filename || meta?.safe_filename) || entry.name,
+          storedFilename: entry.name,
+          sizeBytes,
+          modifiedAt: stat.mtime.toISOString(),
+          createdAt: safeDate(meta?.created_at) || stat.birthtime.toISOString(),
+          contentType: contentType || "application/octet-stream",
+          fileType,
+          direction,
+          mailboxId: mailboxId === "non_attribuee" ? null : mailboxId,
+          moduleKey,
+          entityType,
+          entityId: entityId || null,
+          storageStatus: clean(meta?.status) || "active",
+          sha256Hash: hash || null,
+          classification: direction === "temp" ? "temporary_upload" : direction === "archive" ? "email_archive" : "email_attachment",
+          referenceState: !meta ? "metadata_missing" : !entityId ? "entity_reference_missing" : "referenced"
+        }
+        inventoryTopPush(result.largestFiles, item)
+
+        if (hash) {
+          const duplicate = result.duplicateHashes.get(hash) || { sha256Hash: hash, sizeBytes, totalBytes: 0, fileCount: 0, files: [] }
+          duplicate.totalBytes += sizeBytes
+          duplicate.fileCount += 1
+          if (duplicate.files.length < 12) duplicate.files.push(item)
+          result.duplicateHashes.set(hash, duplicate)
+        }
+
+        if (!meta || !entityId || !mailboxId || mailboxId === "non_attribuee") {
+          result.orphanCandidates.push({
+            candidateType: !meta ? "file_without_metadata" : !entityId ? "missing_entity_reference" : "missing_mailbox_reference",
+            direction,
+            rootAlias: `storage/email-os/attachments/${direction}`,
+            relativePath: relative,
+            filename: item.filename,
+            sizeBytes,
+            mailboxId: item.mailboxId,
+            entityType,
+            entityId: item.entityId,
+            reason: !meta ? "Fichier sans métadonnées Email OS" : !entityId ? "Aucune référence d’entité enregistrée" : "Aucune boîte associée"
+          })
+        }
+      }
+    }
+  }
+
+  if (context.truncated) result.status = "partial"
+  result.orphanCandidates.sort((left, right) => Number(right.sizeBytes || 0) - Number(left.sizeBytes || 0))
+  if (result.orphanCandidates.length > 100) result.orphanCandidates.length = 100
+  return result
+}
+
+function inventoryMapToArray(map, labelMap = {}) {
+  return Array.from(map.values())
+    .map((item) => ({ ...item, label: item.label || labelMap[item.key] || item.key }))
+    .sort((left, right) => Number(right.sizeBytes || 0) - Number(left.sizeBytes || 0))
+}
+
+function inventoryBuildRootDefinitions() {
+  const candidates = [
+    { id: "backups", label: "Sauvegardes de production", kind: "backups", rootAlias: "backups", path: BACKUP_ROOT, optional: false },
+    { id: "logs", label: "Journaux Windows & Bridge", kind: "logs", rootAlias: "logs", path: LOG_DIR, optional: false },
+    { id: "bridge_runtime", label: "Runtime Email Bridge", kind: "runtime", rootAlias: "email-bridge", path: __dirname, optional: false },
+    { id: "application", label: "Application AngelCare", kind: "application", rootAlias: "application", path: ANGELCARE_APP_ROOT, optional: true },
+    { id: "uploads", label: "Téléversements applicatifs", kind: "uploads", rootAlias: "uploads", path: ANGELCARE_UPLOADS_DIR, optional: true },
+    { id: "exports", label: "Exports générés", kind: "exports", rootAlias: "exports", path: ANGELCARE_EXPORTS_DIR, optional: true }
+  ]
+  const seen = new Set()
+  return candidates.filter((item) => {
+    if (!item.path) return item.optional
+    const resolved = path.resolve(item.path).toLowerCase()
+    if (seen.has(resolved)) return false
+    seen.add(resolved)
+    return true
+  })
+}
+
+async function buildStorageInventory(mode = "summary") {
+  const context = inventoryScanContext(mode)
+  const disk = storageDiskSnapshot()
+  const attachments = await inventoryScanAttachments(context)
+  const roots = []
+  for (const definition of inventoryBuildRootDefinitions()) {
+    if (inventoryShouldStop(context)) break
+    roots.push(await inventoryScanGenericRoot(definition, context))
+  }
+
+  const categories = [
+    {
+      id: "email_attachments",
+      label: "Emails & pièces jointes",
+      kind: "email",
+      status: attachments.status,
+      sizeBytes: attachments.sizeBytes,
+      fileCount: attachments.fileCount + attachments.metadataCount,
+      directoryCount: attachments.directoryCount,
+      detail: `${attachments.fileCount} fichier(s) Email OS · ${attachments.metadataCount} métadonnée(s)`
+    },
+    ...roots.map((root) => ({
+      id: root.id,
+      label: root.label,
+      kind: root.kind,
+      status: root.status,
+      sizeBytes: root.sizeBytes,
+      fileCount: root.fileCount,
+      directoryCount: root.directoryCount,
+      detail: root.status === "not_configured" ? "Source optionnelle non configurée" : `${root.fileCount} fichier(s)`
+    }))
+  ]
+
+  const classifiedBytes = categories.reduce((sum, item) => sum + Number(item.sizeBytes || 0), 0)
+  const unclassifiedBytes = Math.max(0, Number(disk.usedBytes || 0) - classifiedBytes)
+  categories.push({
+    id: "outside_approved_roots",
+    label: "Système & données hors périmètre",
+    kind: "system",
+    status: "unscanned",
+    sizeBytes: unclassifiedBytes,
+    fileCount: 0,
+    directoryCount: 0,
+    detail: "Espace utilisé hors des répertoires AngelCare autorisés — aucun accès fichier exposé"
+  })
+
+  const duplicateGroups = Array.from(attachments.duplicateHashes.values())
+    .filter((group) => group.fileCount > 1)
+    .map((group) => ({
+      ...group,
+      recoverableBytes: Math.max(0, Number(group.totalBytes || 0) - Number(group.sizeBytes || 0))
+    }))
+    .sort((left, right) => Number(right.recoverableBytes || 0) - Number(left.recoverableBytes || 0))
+    .slice(0, 100)
+  const duplicateRecoverableBytes = duplicateGroups.reduce((sum, group) => sum + Number(group.recoverableBytes || 0), 0)
+
+  const allLargestFiles = [
+    ...attachments.largestFiles,
+    ...roots.flatMap((root) => root.largestFiles || [])
+  ].sort((left, right) => Number(right.sizeBytes || 0) - Number(left.sizeBytes || 0)).slice(0, STORAGE_INVENTORY_TOP_FILES)
+
+  const previous = runtimeState.lastStorageInventory
+  const completedAt = nowIso()
+  const payload = {
+    phase: 1,
+    readOnly: true,
+    scanMode: context.mode,
+    scanStatus: context.truncated ? "partial" : context.errors.length ? "completed_with_warnings" : "complete",
+    scanStartedAt: new Date(context.startedAt).toISOString(),
+    scanCompletedAt: completedAt,
+    scanDurationMs: Date.now() - context.startedAt,
+    cacheTtlMs: STORAGE_INVENTORY_CACHE_MS,
+    limits: {
+      maxFiles: context.maxFiles,
+      maxDurationMs: context.deadline - context.startedAt,
+      filesVisited: context.filesVisited,
+      directoriesVisited: context.directoriesVisited,
+      truncated: context.truncated
+    },
+    disk: {
+      rootAlias: "windows-primary-volume",
+      totalBytes: disk.totalBytes,
+      usedBytes: disk.usedBytes,
+      freeBytes: disk.freeBytes,
+      usedPercent: disk.totalBytes > 0 ? Math.round((disk.usedBytes / disk.totalBytes) * 1000) / 10 : 0,
+      warning: disk.warning,
+      critical: disk.critical,
+      warningThresholdBytes: STORAGE_WARNING_FREE_BYTES,
+      criticalThresholdBytes: STORAGE_CRITICAL_FREE_BYTES
+    },
+    summary: {
+      classifiedBytes,
+      unclassifiedBytes,
+      attachmentBytes: attachments.sizeBytes,
+      attachmentFileCount: attachments.fileCount,
+      backupBytes: Number(roots.find((item) => item.id === "backups")?.sizeBytes || 0),
+      logBytes: Number(roots.find((item) => item.id === "logs")?.sizeBytes || 0),
+      temporaryBytes: Number(attachments.directions.get("temp")?.sizeBytes || 0),
+      duplicateGroupCount: duplicateGroups.length,
+      duplicateRecoverableBytes,
+      orphanCandidateCount: attachments.orphanCandidates.length,
+      largestFileBytes: Number(allLargestFiles[0]?.sizeBytes || 0)
+    },
+    growth: {
+      previousScanAt: clean(previous?.scanCompletedAt) || null,
+      diskUsedDeltaBytes: previous ? Number(disk.usedBytes || 0) - Number(previous.disk?.usedBytes || 0) : null,
+      classifiedDeltaBytes: previous ? classifiedBytes - Number(previous.summary?.classifiedBytes || 0) : null,
+      attachmentDeltaBytes: previous ? attachments.sizeBytes - Number(previous.summary?.attachmentBytes || 0) : null
+    },
+    categories: categories.sort((left, right) => Number(right.sizeBytes || 0) - Number(left.sizeBytes || 0)),
+    emailStorage: {
+      totalBytes: attachments.sizeBytes,
+      fileCount: attachments.fileCount,
+      metadataCount: attachments.metadataCount,
+      metadataBytes: attachments.metadataBytes,
+      directions: inventoryMapToArray(attachments.directions),
+      mailboxes: inventoryMapToArray(attachments.mailboxes).slice(0, 100),
+      fileTypes: inventoryMapToArray(attachments.fileTypes).slice(0, 40),
+      ageBuckets: inventoryMapToArray(attachments.ageBuckets, {
+        "0_7_days": "0–7 jours",
+        "8_30_days": "8–30 jours",
+        "31_90_days": "31–90 jours",
+        "91_365_days": "91–365 jours",
+        "over_365_days": "Plus d’un an",
+        unknown: "Date inconnue"
+      }),
+      largestFiles: attachments.largestFiles,
+      duplicateGroups,
+      orphanCandidates: attachments.orphanCandidates
+    },
+    sources: roots.map((root) => ({
+      id: root.id,
+      label: root.label,
+      rootAlias: root.rootAlias,
+      kind: root.kind,
+      status: root.status,
+      sizeBytes: root.sizeBytes,
+      fileCount: root.fileCount,
+      directoryCount: root.directoryCount,
+      fileTypes: inventoryMapToArray(root.fileTypes || new Map()).slice(0, 20),
+      ageBuckets: inventoryMapToArray(root.ageBuckets || new Map()).slice(0, 20),
+      topFolders: inventoryMapToArray(root.topFolders || new Map()).slice(0, 20),
+      errors: (root.errors || []).slice(0, 10)
+    })),
+    largestFiles: allLargestFiles,
+    warnings: context.errors.slice(0, 25),
+    sourceFreshness: [
+      { id: "windows_filesystem", label: "Système de fichiers Windows", status: context.truncated ? "partial" : "synced", lastSyncedAt: completedAt, detail: `${context.filesVisited} fichier(s) inspecté(s)` },
+      { id: "email_attachments", label: "Stockage pièces jointes Email OS", status: attachments.status === "partial" ? "partial" : "synced", lastSyncedAt: completedAt, detail: `${attachments.fileCount} pièce(s) jointe(s)` },
+      { id: "backups", label: "Sauvegardes", status: roots.find((item) => item.id === "backups")?.status || "unavailable", lastSyncedAt: completedAt, detail: "Inventaire du répertoire de sauvegarde" },
+      { id: "logs", label: "Journaux", status: roots.find((item) => item.id === "logs")?.status || "unavailable", lastSyncedAt: completedAt, detail: "Bridge, Caddy, services et audit" },
+      { id: "database", label: "Base de données Email OS", status: "not_in_phase_1", lastSyncedAt: null, detail: "Mesure logique de la base prévue dans une phase ultérieure" },
+      { id: "menara", label: "Rétention Menara", status: "provider_limited", lastSyncedAt: null, detail: "POP3 ne fournit pas une mesure détaillée du stockage distant" }
+    ]
+  }
+
+  runtimeState.previousStorageInventory = runtimeState.lastStorageInventory
+  runtimeState.lastStorageInventory = payload
+  return payload
+}
+
+async function handleStorageInventory(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) {
+    return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  }
+
+  const mode = clean(url?.searchParams?.get("mode")).toLowerCase() === "deep" ? "deep" : "summary"
+  const force = clean(url?.searchParams?.get("force")) === "1"
+  const cached = runtimeState.lastStorageInventory
+  const cacheAge = cached?.scanCompletedAt ? Date.now() - new Date(cached.scanCompletedAt).getTime() : Number.POSITIVE_INFINITY
+
+  if (!force && cached && cacheAge >= 0 && cacheAge < STORAGE_INVENTORY_CACHE_MS && (mode === "summary" || cached.scanMode === "deep")) {
+    return { status: 200, payload: { ok: true, data: { ...cached, cached: true, cacheAgeMs: cacheAge } } }
+  }
+
+  if (runtimeState.storageInventoryPromise) {
+    try {
+      const inventory = await runtimeState.storageInventoryPromise
+      return { status: 200, payload: { ok: true, data: { ...inventory, sharedScan: true } } }
+    } catch (error) {
+      return { status: 500, payload: { ok: false, error: error instanceof Error ? error.message : String(error), errorName: "StorageInventoryFailed", errorMessage: error instanceof Error ? error.message : String(error) } }
+    }
+  }
+
+  runtimeState.storageInventoryPromise = buildStorageInventory(mode)
+  try {
+    const inventory = await runtimeState.storageInventoryPromise
+    logStorageEvent({
+      action: "STORAGE_INVENTORY_SCAN",
+      moduleKey: "opsos",
+      entityType: "inventory",
+      direction: "archive",
+      status: inventory.scanStatus,
+      freeBytes: inventory.disk.freeBytes,
+      usedBytes: inventory.disk.usedBytes,
+      metadata: {
+        mode,
+        durationMs: inventory.scanDurationMs,
+        filesVisited: inventory.limits.filesVisited,
+        classifiedBytes: inventory.summary.classifiedBytes,
+        readOnly: true
+      }
+    })
+    return { status: 200, payload: { ok: true, data: inventory } }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    runtimeState.lastStorageError = { timestamp: nowIso(), action: "STORAGE_INVENTORY_SCAN", result: "error", message }
+    return { status: 500, payload: { ok: false, error: message, errorName: "StorageInventoryFailed", errorMessage: message } }
+  } finally {
+    runtimeState.storageInventoryPromise = null
+  }
+}
+
+
+function storageExplorerSourceDefinitions() {
+  const attachmentRoot = path.join(STORAGE_ROOT, "email-os", "attachments")
+  const definitions = [
+    { id: "email_attachments", label: "Email OS · Pièces jointes", kind: "email", rootAlias: "storage/email-os/attachments", path: attachmentRoot, optional: false },
+    ...inventoryBuildRootDefinitions()
+  ]
+  const seen = new Set()
+  return definitions.filter((item) => {
+    const rootPath = clean(item.path)
+    if (!rootPath) return Boolean(item.optional)
+    const resolved = path.resolve(rootPath).toLowerCase()
+    if (seen.has(resolved)) return false
+    seen.add(resolved)
+    return true
+  })
+}
+
+function storageExplorerPublicSources() {
+  return storageExplorerSourceDefinitions().map((item) => {
+    const configured = Boolean(clean(item.path))
+    const exists = configured && fs.existsSync(item.path)
+    return {
+      id: item.id,
+      label: item.label,
+      kind: item.kind,
+      rootAlias: item.rootAlias,
+      status: !configured ? "not_configured" : exists ? "ready" : "unavailable",
+      readOnly: true,
+      detail: !configured ? "Source optionnelle non configurée" : exists ? "Source autorisée disponible" : "Répertoire autorisé indisponible"
+    }
+  })
+}
+
+function storageExplorerSourceById(sourceId) {
+  const id = clean(sourceId)
+  return storageExplorerSourceDefinitions().find((item) => item.id === id) || null
+}
+
+function normalizeExplorerRelativePath(value) {
+  const raw = clean(value).replace(/\\/g, "/")
+  if (!raw || raw === "." || raw === "/") return "."
+  const normalized = path.posix.normalize(`/${raw}`).replace(/^\/+/, "")
+  if (!normalized || normalized === ".") return "."
+  if (normalized.startsWith("..") || normalized.includes("/../")) return null
+  return normalized
+}
+
+function resolveExplorerPath(source, relativePath) {
+  if (!source || !clean(source.path)) return { ok: false, error: "Storage source is not configured" }
+  const relative = normalizeExplorerRelativePath(relativePath)
+  if (relative === null) return { ok: false, error: "Invalid relative path" }
+  const rootPath = path.resolve(source.path)
+  const candidate = relative === "." ? rootPath : path.resolve(rootPath, ...relative.split("/"))
+  if (!isWithinRoot(candidate, rootPath)) return { ok: false, error: "Path is outside the approved storage root" }
+  return { ok: true, rootPath, candidate, relative }
+}
+
+function storagePreviewKind(filename, contentType, sizeBytes) {
+  const ext = path.extname(clean(filename)).toLowerCase()
+  const type = clean(contentType).toLowerCase()
+  const blocked = new Set([".exe", ".dll", ".msi", ".bat", ".cmd", ".ps1", ".vbs", ".scr", ".com", ".app", ".dmg", ".pkg"])
+  if (blocked.has(ext)) return { kind: "blocked", previewable: false, reason: "Executable and system files cannot be previewed" }
+  if (ext === ".svg" || type === "image/svg+xml") return { kind: "blocked", previewable: false, reason: "SVG is treated as untrusted active content" }
+  if (Number(sizeBytes || 0) > STORAGE_PREVIEW_MAX_BYTES) return { kind: "too_large", previewable: false, reason: `Preview limited to ${formatBytes(STORAGE_PREVIEW_MAX_BYTES)}` }
+  if (type.startsWith("image/") || [".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"].includes(ext)) return { kind: "image", previewable: true, reason: null }
+  if (type === "application/pdf" || ext === ".pdf") return { kind: "pdf", previewable: true, reason: null }
+  if (type === "application/json" || ext === ".json") return { kind: "json", previewable: true, reason: null }
+  if (type === "text/csv" || ext === ".csv") return { kind: "csv", previewable: true, reason: null }
+  if (type.startsWith("text/") || [".txt", ".log", ".jsonl", ".md", ".xml", ".html", ".css", ".js", ".ts", ".tsx", ".mjs", ".cjs"].includes(ext)) return { kind: "text", previewable: true, reason: null }
+  return { kind: "unsupported", previewable: false, reason: "Preview is unavailable for this file type" }
+}
+
+function readAttachmentMetadataForPath(source, filePath) {
+  if (!source || source.id !== "email_attachments") return null
+  const directory = path.dirname(filePath)
+  const metadataPath = path.join(directory, "_metadata.json")
+  const metadata = readStorageMeta(metadataPath)
+  if (!metadata || typeof metadata !== "object") return null
+  return { metadataPath, metadata }
+}
+
+function buildExplorerEntry(source, fullPath, stat, rootPath) {
+  const relativePath = inventorySafeRelative(rootPath, fullPath)
+  const parentRelativePath = inventorySafeRelative(rootPath, path.dirname(fullPath))
+  const isDirectory = stat.isDirectory()
+  const attachmentMetadata = isDirectory ? null : readAttachmentMetadataForPath(source, fullPath)
+  const metadata = attachmentMetadata?.metadata || {}
+  const contentType = clean(metadata.content_type || metadata.contentType) || null
+  const preview = isDirectory ? { kind: "unsupported", previewable: false, reason: null } : storagePreviewKind(path.basename(fullPath), contentType, stat.size)
+  const fileId = clean(metadata.id) || (!isDirectory && source.id === "email_attachments" ? path.basename(path.dirname(fullPath)) : "")
+  const entityId = clean(metadata.entity_id || metadata.entityId)
+  const mailboxId = clean(metadata.mailbox_id || metadata.mailboxId)
+  const sha256Hash = clean(metadata.sha256_hash || metadata.sha256Hash)
+  return {
+    sourceId: source.id,
+    sourceLabel: source.label,
+    rootAlias: source.rootAlias,
+    relativePath,
+    parentRelativePath: parentRelativePath === "." ? "." : parentRelativePath,
+    name: path.basename(fullPath),
+    entryType: isDirectory ? "directory" : "file",
+    sizeBytes: isDirectory ? 0 : Number(stat.size || 0),
+    createdAt: Number(stat.birthtimeMs || 0) > 0 ? stat.birthtime.toISOString() : null,
+    modifiedAt: stat.mtime ? stat.mtime.toISOString() : null,
+    lastAccessedAt: stat.atime ? stat.atime.toISOString() : null,
+    fileType: isDirectory ? "folder" : inventoryExtensionGroup(path.basename(fullPath), contentType),
+    contentType,
+    classification: isDirectory ? "directory" : source.kind === "email" ? "email_attachment" : source.kind,
+    mailboxId: mailboxId || null,
+    fileId: fileId || null,
+    entityType: clean(metadata.entity_type || metadata.entityType) || null,
+    entityId: entityId || null,
+    sha256Hash: sha256Hash || null,
+    referenceState: isDirectory ? null : attachmentMetadata ? (entityId ? "referenced" : "entity_reference_missing") : source.id === "email_attachments" ? "metadata_missing" : "filesystem_only",
+    referenceCount: entityId ? 1 : 0,
+    previewKind: preview.kind,
+    previewable: preview.previewable,
+    blockedReason: preview.reason,
+    safetyStatus: preview.kind === "blocked" ? "blocked" : preview.previewable ? "safe_preview" : "metadata_only"
+  }
+}
+
+function storageExplorerBreadcrumbs(relativePath) {
+  const normalized = normalizeExplorerRelativePath(relativePath) || "."
+  const rows = [{ label: "Racine", relativePath: "." }]
+  if (normalized === ".") return rows
+  const parts = normalized.split("/").filter(Boolean)
+  let current = ""
+  for (const part of parts) {
+    current = current ? `${current}/${part}` : part
+    rows.push({ label: part, relativePath: current })
+  }
+  return rows
+}
+
+async function storageExplorerRecursiveSearch(source, rootPath, query, limit, deadline) {
+  const matches = []
+  const warnings = []
+  const stack = [rootPath]
+  let totalMatched = 0
+  let truncated = false
+  while (stack.length) {
+    if (Date.now() >= deadline || matches.length >= limit) {
+      truncated = true
+      break
+    }
+    const directory = stack.pop()
+    if (!directory) continue
+    let entries
+    try {
+      entries = await fs.promises.readdir(directory, { withFileTypes: true })
+    } catch (error) {
+      warnings.push(`${inventorySafeRelative(rootPath, directory)}: ${error instanceof Error ? error.message : String(error)}`)
+      continue
+    }
+    for (const entry of entries) {
+      if (Date.now() >= deadline || matches.length >= limit) {
+        truncated = true
+        break
+      }
+      if ([".", ".."].includes(entry.name)) continue
+      if ([".git", "node_modules", ".next", "$RECYCLE.BIN", "System Volume Information"].includes(entry.name)) continue
+      const fullPath = path.join(directory, entry.name)
+      if (entry.isDirectory()) stack.push(fullPath)
+      if (!entry.name.toLowerCase().includes(query)) continue
+      totalMatched += 1
+      try {
+        const stat = await fs.promises.stat(fullPath)
+        matches.push(buildExplorerEntry(source, fullPath, stat, rootPath))
+      } catch (error) {
+        warnings.push(`${inventorySafeRelative(rootPath, fullPath)}: ${error instanceof Error ? error.message : String(error)}`)
+      }
+    }
+  }
+  return { matches, warnings, totalMatched, truncated }
+}
+
+async function handleStorageBrowse(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const sourceId = clean(url.searchParams.get("sourceId")) || "email_attachments"
+  const source = storageExplorerSourceById(sourceId)
+  if (!source) return { status: 404, payload: { ok: false, error: "Unknown storage source", errorName: "StorageSourceNotFound", errorMessage: "Unknown storage source" } }
+  const resolved = resolveExplorerPath(source, url.searchParams.get("path") || ".")
+  if (!resolved.ok) return { status: 400, payload: { ok: false, error: resolved.error, errorName: "InvalidStoragePath", errorMessage: resolved.error } }
+  if (!fs.existsSync(resolved.candidate)) return { status: 404, payload: { ok: false, error: "Storage path not found", errorName: "StoragePathNotFound", errorMessage: "Storage path not found" } }
+  const startedAt = Date.now()
+  const query = clean(url.searchParams.get("query")).toLowerCase()
+  const recursive = clean(url.searchParams.get("recursive")) === "1" || Boolean(query)
+  const limit = Math.max(1, Math.min(STORAGE_EXPLORER_MAX_RESULTS, Number(url.searchParams.get("limit") || 150)))
+  const cursor = Math.max(0, Number(url.searchParams.get("cursor") || 0))
+  let entries = []
+  let totalMatched = 0
+  let truncated = false
+  const warnings = []
+  if (recursive && query) {
+    const search = await storageExplorerRecursiveSearch(source, resolved.candidate, query, cursor + limit + 1, Date.now() + STORAGE_EXPLORER_SEARCH_MS)
+    totalMatched = search.totalMatched
+    truncated = search.truncated
+    warnings.push(...search.warnings)
+    entries = search.matches.slice(cursor, cursor + limit)
+  } else {
+    const stat = await fs.promises.stat(resolved.candidate)
+    if (!stat.isDirectory()) return { status: 400, payload: { ok: false, error: "Browse path must be a directory", errorName: "StoragePathNotDirectory", errorMessage: "Browse path must be a directory" } }
+    let directoryEntries = await fs.promises.readdir(resolved.candidate, { withFileTypes: true })
+    directoryEntries = directoryEntries.filter((entry) => ![".", ".."].includes(entry.name))
+    totalMatched = directoryEntries.length
+    const pageEntries = directoryEntries.slice(cursor, cursor + limit)
+    for (const entry of pageEntries) {
+      const fullPath = path.join(resolved.candidate, entry.name)
+      try {
+        const childStat = await fs.promises.stat(fullPath)
+        entries.push(buildExplorerEntry(source, fullPath, childStat, resolved.rootPath))
+      } catch (error) {
+        warnings.push(`${entry.name}: ${error instanceof Error ? error.message : String(error)}`)
+      }
+    }
+  }
+  entries.sort((left, right) => left.entryType === right.entryType ? Number(right.sizeBytes || 0) - Number(left.sizeBytes || 0) || left.name.localeCompare(right.name) : left.entryType === "directory" ? -1 : 1)
+  const data = {
+    phase: 2,
+    readOnly: true,
+    source: storageExplorerPublicSources().find((item) => item.id === source.id),
+    sources: storageExplorerPublicSources(),
+    currentRelativePath: resolved.relative,
+    breadcrumbs: storageExplorerBreadcrumbs(resolved.relative),
+    entries,
+    query,
+    recursive,
+    totalMatched,
+    returned: entries.length,
+    nextCursor: cursor + entries.length < totalMatched ? String(cursor + entries.length) : null,
+    truncated,
+    scannedAt: nowIso(),
+    scanDurationMs: Date.now() - startedAt,
+    warnings: warnings.slice(0, 20)
+  }
+  return { status: 200, payload: { ok: true, data } }
+}
+
+async function handleStorageFileDossier(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const source = storageExplorerSourceById(url.searchParams.get("sourceId"))
+  if (!source) return { status: 404, payload: { ok: false, error: "Unknown storage source", errorName: "StorageSourceNotFound", errorMessage: "Unknown storage source" } }
+  const resolved = resolveExplorerPath(source, url.searchParams.get("path") || "")
+  if (!resolved.ok) return { status: 400, payload: { ok: false, error: resolved.error, errorName: "InvalidStoragePath", errorMessage: resolved.error } }
+  if (!fs.existsSync(resolved.candidate)) return { status: 404, payload: { ok: false, error: "File not found", errorName: "StorageFileNotFound", errorMessage: "File not found" } }
+  const stat = await fs.promises.stat(resolved.candidate)
+  const entry = buildExplorerEntry(source, resolved.candidate, stat, resolved.rootPath)
+  const attachment = stat.isFile() ? readAttachmentMetadataForPath(source, resolved.candidate) : null
+  const metadata = attachment?.metadata || {}
+  let computedHash = null
+  const requestedHash = clean(url.searchParams.get("hash")) === "1"
+  if (requestedHash && stat.isFile() && stat.size <= 50 * 1024 * 1024) {
+    computedHash = crypto.createHash("sha256").update(await fs.promises.readFile(resolved.candidate)).digest("hex")
+  }
+  const sha256Hash = entry.sha256Hash || computedHash
+  const metadataSize = Number(metadata.size_bytes || metadata.sizeBytes || 0)
+  const references = []
+  if (entry.fileId) references.push({ type: "storage_file", id: entry.fileId, label: "Objet de stockage", detail: entry.rootAlias, mailboxId: entry.mailboxId })
+  if (entry.entityId) references.push({ type: entry.entityType || "business_entity", id: entry.entityId, label: "Référence métier", detail: `${entry.entityType || "entité"} · ${entry.entityId}`, mailboxId: entry.mailboxId })
+  if (entry.mailboxId) references.push({ type: "mailbox", id: entry.mailboxId, label: "Boîte Email OS", detail: entry.mailboxId, mailboxId: entry.mailboxId })
+  const data = {
+    ...entry,
+    phase: 2,
+    readOnly: true,
+    metadata: safeSummary(metadata, 5),
+    references,
+    integrity: {
+      sha256Hash: sha256Hash || null,
+      hashSource: entry.sha256Hash ? "metadata" : computedHash ? "computed" : "unavailable",
+      physicalExists: true,
+      metadataExists: Boolean(attachment),
+      sizeMatchesMetadata: metadataSize > 0 ? metadataSize === stat.size : null
+    },
+    preview: {
+      kind: entry.previewKind,
+      supported: entry.previewable,
+      maxBytes: STORAGE_PREVIEW_MAX_BYTES,
+      reason: entry.blockedReason
+    }
+  }
+  logStorageEvent({ action: "STORAGE_FILE_INSPECTED", moduleKey: "opsos", fileId: entry.fileId, mailboxId: entry.mailboxId, entityType: entry.entityType || "file", direction: clean(metadata.direction) || "archive", status: "read_only", metadata: { sourceId: source.id, relativePath: entry.relativePath, readOnly: true } })
+  return { status: 200, payload: { ok: true, data } }
+}
+
+async function handleStoragePreview(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const source = storageExplorerSourceById(url.searchParams.get("sourceId"))
+  if (!source) return { status: 404, payload: { ok: false, error: "Unknown storage source", errorName: "StorageSourceNotFound", errorMessage: "Unknown storage source" } }
+  const resolved = resolveExplorerPath(source, url.searchParams.get("path") || "")
+  if (!resolved.ok) return { status: 400, payload: { ok: false, error: resolved.error, errorName: "InvalidStoragePath", errorMessage: resolved.error } }
+  if (!fs.existsSync(resolved.candidate)) return { status: 404, payload: { ok: false, error: "File not found", errorName: "StorageFileNotFound", errorMessage: "File not found" } }
+  const stat = await fs.promises.stat(resolved.candidate)
+  if (!stat.isFile()) return { status: 400, payload: { ok: false, error: "Preview path must be a file", errorName: "StoragePreviewNotFile", errorMessage: "Preview path must be a file" } }
+  const attachment = readAttachmentMetadataForPath(source, resolved.candidate)
+  const contentType = clean(attachment?.metadata?.content_type || attachment?.metadata?.contentType) || "application/octet-stream"
+  const preview = storagePreviewKind(path.basename(resolved.candidate), contentType, stat.size)
+  if (!preview.previewable) {
+    return { status: 200, payload: { ok: true, data: { phase: 2, readOnly: true, sourceId: source.id, relativePath: resolved.relative, filename: path.basename(resolved.candidate), contentType, sizeBytes: stat.size, kind: preview.kind, encoding: "none", content: null, truncated: false, safetyStatus: preview.kind === "blocked" ? "blocked" : "metadata_only", reason: preview.reason } } }
+  }
+  const buffer = await fs.promises.readFile(resolved.candidate)
+  let encoding = "base64"
+  let content = buffer.toString("base64")
+  let truncated = false
+  if (["text", "json", "csv"].includes(preview.kind)) {
+    encoding = "utf8"
+    const limited = buffer.length > STORAGE_TEXT_PREVIEW_MAX_BYTES ? buffer.subarray(0, STORAGE_TEXT_PREVIEW_MAX_BYTES) : buffer
+    content = limited.toString("utf8")
+    truncated = buffer.length > limited.length
+  }
+  logStorageEvent({ action: "STORAGE_FILE_PREVIEWED", moduleKey: "opsos", fileId: clean(attachment?.metadata?.id), mailboxId: clean(attachment?.metadata?.mailbox_id), entityType: clean(attachment?.metadata?.entity_type) || "file", direction: clean(attachment?.metadata?.direction) || "archive", status: "read_only", metadata: { sourceId: source.id, relativePath: resolved.relative, previewKind: preview.kind, readOnly: true } })
+  return { status: 200, payload: { ok: true, data: { phase: 2, readOnly: true, sourceId: source.id, relativePath: resolved.relative, filename: path.basename(resolved.candidate), contentType, sizeBytes: stat.size, kind: preview.kind, encoding, content, truncated, safetyStatus: "safe_preview", reason: null } } }
+}
+
+async function handleStorageDuplicatesInvestigation(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const inventory = await buildStorageInventory("deep")
+  const hash = clean(url.searchParams.get("hash"))
+  const groups = inventory.emailStorage.duplicateGroups || []
+  const selectedGroup = hash ? groups.find((item) => item.sha256Hash === hash) || null : null
+  return { status: 200, payload: { ok: true, data: { phase: 2, readOnly: true, groups, selectedGroup, totalGroups: groups.length, totalPhysicalBytes: groups.reduce((sum, item) => sum + Number(item.totalBytes || 0), 0), totalRecoverableBytes: groups.reduce((sum, item) => sum + Number(item.recoverableBytes || 0), 0), scannedAt: inventory.scanCompletedAt } } }
+}
+
+async function handleStorageOrphansInvestigation(request) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const inventory = await buildStorageInventory("deep")
+  const candidates = (inventory.emailStorage.orphanCandidates || []).map((item) => {
+    const type = clean(item.candidateType)
+    const confidence = type === "metadata_without_file" ? "confirmed" : type === "file_without_metadata" ? "probable" : "review_required"
+    return {
+      ...item,
+      confidence,
+      referenceCount: item.entityId ? 1 : 0,
+      metadataExists: type !== "file_without_metadata",
+      physicalExists: type !== "metadata_without_file",
+      businessImpact: item.entityId ? "Une référence métier est présente et doit être vérifiée avant toute future action." : "Aucune référence métier complète n’est actuellement visible dans les métadonnées locales.",
+      recommendedReview: confidence === "confirmed" ? "Vérifier la base Email OS et les sauvegardes avant toute décision." : confidence === "probable" ? "Rechercher une relation de message ou de file d’attente dans Email OS." : "Comparer le fichier, la boîte, le message et la base de données."
+    }
+  })
+  return { status: 200, payload: { ok: true, data: { phase: 2, readOnly: true, candidates, totalCandidates: candidates.length, confirmedCount: candidates.filter((item) => item.confidence === "confirmed").length, probableCount: candidates.filter((item) => item.confidence === "probable").length, reviewRequiredCount: candidates.filter((item) => item.confidence === "review_required").length, scannedAt: inventory.scanCompletedAt } } }
+}
+
+
+function quarantineToken(payload) {
+  const encoded = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url")
+  const signature = crypto.createHmac("sha256", STORAGE_QUARANTINE_TOKEN_SECRET).update(encoded).digest("base64url")
+  return `${encoded}.${signature}`
+}
+
+function parseQuarantineToken(token, expectedKind) {
+  const text = clean(token)
+  const [encoded, signature] = text.split(".")
+  if (!encoded || !signature) return { ok: false, error: "Invalid storage location token" }
+  const expected = crypto.createHmac("sha256", STORAGE_QUARANTINE_TOKEN_SECRET).update(encoded).digest("base64url")
+  const left = Buffer.from(signature)
+  const right = Buffer.from(expected)
+  if (left.length !== right.length || !crypto.timingSafeEqual(left, right)) return { ok: false, error: "Invalid storage location token signature" }
+  try {
+    const payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8"))
+    if (expectedKind && payload.kind !== expectedKind) return { ok: false, error: "Unexpected storage location token type" }
+    if (!payload.issuedAt || Date.now() - Number(payload.issuedAt) > 3650 * 86400000) return { ok: false, error: "Storage location token expired" }
+    return { ok: true, payload }
+  } catch {
+    return { ok: false, error: "Invalid storage location token payload" }
+  }
+}
+
+function quarantineCaseRoot(caseId) {
+  const safe = clean(caseId).replace(/[^a-zA-Z0-9_-]/g, "")
+  if (!safe) throw new Error("Invalid quarantine case ID")
+  const root = path.resolve(STORAGE_QUARANTINE_ROOT, safe)
+  if (!isWithinRoot(root, path.resolve(STORAGE_QUARANTINE_ROOT))) throw new Error("Invalid quarantine case path")
+  return root
+}
+
+function quarantineManifestPath(caseId) {
+  return path.join(quarantineCaseRoot(caseId), "manifest.json")
+}
+
+function quarantineBlockedReason(source, resolved, stat, entry) {
+  const lower = resolved.candidate.toLowerCase()
+  const filename = path.basename(resolved.candidate).toLowerCase()
+  if (!stat.isFile()) return "Only regular files can be quarantined in Phase 3"
+  if (stat.size > STORAGE_QUARANTINE_MAX_FILE_BYTES) return `File exceeds Phase 3 quarantine limit (${formatBytes(STORAGE_QUARANTINE_MAX_FILE_BYTES)})`
+  if (source.id === "bridge_runtime" && ["server.js", ".env", "package.json", "package-lock.json"].includes(filename)) return "Active Email Bridge runtime files are blocked"
+  if (source.id === "application") return "Active application source is blocked from Phase 3 quarantine"
+  if (filename === "caddyfile" || lower.includes("\\caddy\\")) return "Active Caddy configuration is blocked"
+  if (/\.(exe|dll|sys|msi|com|bat|cmd|ps1|vbs|scr|lnk)$/i.test(filename)) return "Executable and system files are blocked"
+  if (/\.env($|\.)/i.test(filename) || /(credential|secret|token|password)/i.test(filename)) return "Credential and environment files are blocked"
+  if (source.id === "logs" && [LOG_OUT, LOG_ERROR, LOG_CADDY_OUT, LOG_CADDY_ERROR, LOG_DUCKDNS, LOG_SERVICE, AUDIT_FILE, STORAGE_EVENT_FILE].map((item) => path.resolve(item).toLowerCase()).includes(path.resolve(resolved.candidate).toLowerCase())) return "Current active log files are blocked"
+  if (entry.storageStatus === "uploading" || entry.storageStatus === "processing" || entry.storageStatus === "queued") return "Active upload or queue objects are blocked"
+  return null
+}
+
+async function sha256File(filePath) {
+  return await new Promise((resolve, reject) => {
+    const hash = crypto.createHash("sha256")
+    const stream = fs.createReadStream(filePath)
+    stream.on("error", reject)
+    stream.on("data", (chunk) => hash.update(chunk))
+    stream.on("end", () => resolve(hash.digest("hex")))
+  })
+}
+
+async function atomicJson(filePath, value) {
+  ensureDir(filePath)
+  const temp = `${filePath}.${process.pid}.${Date.now()}.tmp`
+  await fs.promises.writeFile(temp, JSON.stringify(value, null, 2), "utf8")
+  await fs.promises.rename(temp, filePath)
+}
+
+async function handleStorageQuarantineImpact(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const source = storageExplorerSourceById(body?.sourceId)
+  if (!source) return { status: 404, payload: { ok: false, error: "Unknown storage source", errorName: "StorageSourceNotFound", errorMessage: "Unknown storage source" } }
+  const resolved = resolveExplorerPath(source, body?.path || "")
+  if (!resolved.ok) return { status: 400, payload: { ok: false, error: resolved.error, errorName: "InvalidStoragePath", errorMessage: resolved.error } }
+  if (!fs.existsSync(resolved.candidate)) return { status: 404, payload: { ok: false, error: "File not found", errorName: "StorageFileNotFound", errorMessage: "File not found" } }
+  const stat = await fs.promises.stat(resolved.candidate)
+  const entry = buildExplorerEntry(source, resolved.candidate, stat, resolved.rootPath)
+  const attachment = stat.isFile() ? readAttachmentMetadataForPath(source, resolved.candidate) : null
+  const metadata = attachment?.metadata || {}
+  const blocked = quarantineBlockedReason(source, resolved, stat, entry)
+  const hash = stat.isFile() ? await sha256File(resolved.candidate) : null
+  const referenceState = clean(entry.referenceState) || "filesystem"
+  const referenced = Boolean(entry.fileId || entry.entityId || entry.mailboxId || referenceState === "referenced")
+  const active = ["active", "queued", "processing", "uploading"].includes(clean(entry.storageStatus).toLowerCase())
+  let riskLevel = blocked ? "blocked" : referenced || active ? "controlled" : source.id === "email_attachments" ? "controlled" : "low"
+  if (active && source.id === "email_attachments") riskLevel = "high"
+  const allowedModes = blocked ? [] : active ? ["logical"] : ["logical", "physical"]
+  const sameVolume = path.parse(resolved.candidate).root.toLowerCase() === path.parse(path.resolve(STORAGE_QUARANTINE_ROOT)).root.toLowerCase()
+  const originalLocationToken = quarantineToken({ kind: "original", sourceId: source.id, relativePath: resolved.relative, fullPath: resolved.candidate, issuedAt: Date.now() })
+  const data = {
+    phase: 3,
+    reversible: true,
+    sourceId: source.id,
+    relativePath: resolved.relative,
+    filename: entry.name,
+    sizeBytes: stat.size,
+    contentType: clean(metadata.content_type || metadata.contentType) || null,
+    sha256Hash: hash,
+    objectType: source.id === "email_attachments" ? "email_attachment" : "filesystem_file",
+    fileId: clean(entry.fileId) || null,
+    mailboxId: clean(entry.mailboxId) || null,
+    entityType: clean(entry.entityType) || null,
+    entityId: clean(entry.entityId) || null,
+    referenceState,
+    references: [],
+    referenceCount: referenced ? 1 : 0,
+    activeReferenceCount: active ? 1 : 0,
+    riskLevel,
+    riskReasons: [referenced ? "Business or Email OS references are present" : "No explicit active reference found", active ? "The storage object is marked active" : "The storage object is not marked active"],
+    blockedReasons: blocked ? [blocked] : [],
+    allowedModes,
+    recommendedMode: blocked ? null : active || referenced ? "logical" : "physical",
+    estimatedRecoverableBytes: blocked ? 0 : stat.size,
+    primaryStorageRecoveryByMode: { logical: 0, physical: sameVolume ? 0 : stat.size },
+    userVisibleConsequence: source.id === "email_attachments" ? "The related message remains visible while attachment access is replaced by a reversible quarantine notice." : "The object is removed from normal production access while its evidence and restore path are preserved.",
+    restoreReadiness: blocked ? "blocked" : hash ? "complete" : "partial",
+    restoreWarnings: sameVolume ? ["Physical quarantine uses the same volume and will not reclaim primary disk capacity."] : [],
+    backupCopiesUnaffected: true,
+    providerCopyUnaffected: true,
+    legalHold: false,
+    originalLocationToken,
+    sourceDetails: { rootAlias: source.rootAlias, sameVolumeQuarantine: sameVolume },
+    analyzedAt: nowIso()
+  }
+  logStorageEvent({ action: "STORAGE_QUARANTINE_IMPACT_ANALYZED", moduleKey: "opsos", fileId: entry.fileId, mailboxId: entry.mailboxId, entityType: entry.entityType || "file", direction: clean(metadata.direction) || "archive", status: riskLevel, metadata: { sourceId: source.id, relativePath: resolved.relative, allowedModes, phase: 3, reversible: true } })
+  return { status: 200, payload: { ok: true, data } }
+}
+
+async function moveFileReversibly(sourcePath, destinationPath) {
+  ensureDir(destinationPath)
+  const sameVolume = path.parse(sourcePath).root.toLowerCase() === path.parse(destinationPath).root.toLowerCase()
+  if (sameVolume) {
+    await fs.promises.rename(sourcePath, destinationPath)
+    return { sameVolume: true }
+  }
+  await fs.promises.copyFile(sourcePath, destinationPath, fs.constants.COPYFILE_EXCL)
+  const [sourceHash, destinationHash] = await Promise.all([sha256File(sourcePath), sha256File(destinationPath)])
+  if (sourceHash !== destinationHash) {
+    await fs.promises.unlink(destinationPath).catch(() => null)
+    throw new Error("Quarantine vault copy failed integrity verification")
+  }
+  await fs.promises.unlink(sourcePath)
+  return { sameVolume: false }
+}
+
+async function handleStorageQuarantineExecute(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const caseId = clean(body?.caseId)
+  const caseNumber = clean(body?.caseNumber)
+  const mode = clean(body?.mode)
+  if (!caseId || !caseNumber || !["logical", "physical"].includes(mode)) return { status: 400, payload: { ok: false, error: "caseId, caseNumber and a valid mode are required", errorName: "InvalidQuarantineRequest", errorMessage: "caseId, caseNumber and a valid mode are required" } }
+  const parsed = parseQuarantineToken(body?.originalLocationToken, "original")
+  if (!parsed.ok) return { status: 400, payload: { ok: false, error: parsed.error, errorName: "InvalidStorageToken", errorMessage: parsed.error } }
+  const source = storageExplorerSourceById(parsed.payload.sourceId)
+  if (!source) return { status: 404, payload: { ok: false, error: "Unknown storage source", errorName: "StorageSourceNotFound", errorMessage: "Unknown storage source" } }
+  const resolved = resolveExplorerPath(source, parsed.payload.relativePath)
+  if (!resolved.ok || path.resolve(resolved.candidate) !== path.resolve(parsed.payload.fullPath)) return { status: 400, payload: { ok: false, error: "Storage token path mismatch", errorName: "StorageTokenMismatch", errorMessage: "Storage token path mismatch" } }
+  if (!fs.existsSync(resolved.candidate)) return { status: 404, payload: { ok: false, error: "Original file not found", errorName: "StorageFileNotFound", errorMessage: "Original file not found" } }
+  const stat = await fs.promises.stat(resolved.candidate)
+  const entry = buildExplorerEntry(source, resolved.candidate, stat, resolved.rootPath)
+  const blocked = quarantineBlockedReason(source, resolved, stat, entry)
+  if (blocked) return { status: 409, payload: { ok: false, error: blocked, errorName: "StorageQuarantineBlocked", errorMessage: blocked } }
+  const originalHash = await sha256File(resolved.candidate)
+  if (clean(body?.expectedSha256) && clean(body.expectedSha256) !== originalHash) return { status: 409, payload: { ok: false, error: "File changed after impact analysis", errorName: "StorageObjectChanged", errorMessage: "File changed after impact analysis" } }
+  const caseRoot = quarantineCaseRoot(caseId)
+  const originalDir = path.join(caseRoot, "original")
+  const vaultPath = path.join(originalDir, path.basename(resolved.candidate))
+  const manifestPath = quarantineManifestPath(caseId)
+  if (fs.existsSync(manifestPath)) return { status: 409, payload: { ok: false, error: "Quarantine case already has a manifest", errorName: "QuarantineCaseAlreadyExecuted", errorMessage: "Quarantine case already has a manifest" } }
+  fs.mkdirSync(caseRoot, { recursive: true })
+  const beforeDisk = storageDiskSnapshot()
+  let moveResult = { sameVolume: true }
+  if (mode === "physical") moveResult = await moveFileReversibly(resolved.candidate, vaultPath)
+  const finalPath = mode === "physical" ? vaultPath : resolved.candidate
+  const resultingHash = await sha256File(finalPath)
+  if (resultingHash !== originalHash) throw new Error("Post-quarantine integrity verification failed")
+  const quarantineLocationToken = quarantineToken({ kind: "quarantine", caseId, caseRoot, vaultPath: mode === "physical" ? vaultPath : null, manifestPath, issuedAt: Date.now() })
+  const manifest = {
+    phase: 3,
+    reversible: true,
+    caseId,
+    caseNumber,
+    mode,
+    status: "quarantined",
+    reason: clean(body?.reason),
+    actor: clean(body?.actor) || clean(request.headers["x-angelcare-operator"]) || "operator",
+    sourceId: source.id,
+    originalFullPath: resolved.candidate,
+    originalRelativePath: resolved.relative,
+    originalLocationToken: clean(body?.originalLocationToken),
+    quarantineLocationToken,
+    vaultPath: mode === "physical" ? vaultPath : null,
+    filename: path.basename(resolved.candidate),
+    sizeBytes: stat.size,
+    sha256Hash: originalHash,
+    retentionUntil: clean(body?.retentionUntil),
+    createdAt: nowIso(),
+    evidence: safeSummary(body?.evidence || {}, 8)
+  }
+  await atomicJson(manifestPath, manifest)
+  await atomicJson(path.join(caseRoot, "evidence.json"), safeSummary(body?.evidence || {}, 8))
+  await fs.promises.writeFile(path.join(caseRoot, "checksum.sha256"), `${originalHash}  ${path.basename(finalPath)}\n`, "utf8")
+  appendJsonl(path.join(caseRoot, "events.log"), { timestamp: nowIso(), event: "quarantined", mode, actor: manifest.actor, sha256Hash: originalHash, sizeBytes: stat.size })
+  const afterDisk = storageDiskSnapshot()
+  const actualRecoveredBytes = mode === "physical" && !moveResult.sameVolume ? Math.max(0, Number(afterDisk.freeBytes || 0) - Number(beforeDisk.freeBytes || 0)) || stat.size : 0
+  logStorageEvent({ action: "STORAGE_OBJECT_QUARANTINED", moduleKey: "opsos", fileId: clean(body?.fileId), mailboxId: clean(body?.mailboxId), entityType: clean(body?.entityType) || "file", direction: "archive", status: "quarantined", metadata: { caseId, caseNumber, mode, sizeBytes: stat.size, actualRecoveredBytes, reversible: true } })
+  return { status: 200, payload: { ok: true, data: { phase: 3, reversible: true, caseId, caseNumber, status: "quarantined", step: "Integrity verified and quarantine activated", stepIndex: 7, stepCount: 7, originalSha256: originalHash, resultingSha256: resultingHash, actualRecoveredBytes, quarantineLocationToken, restoredRelativePath: null, warnings: moveResult.sameVolume && mode === "physical" ? ["Same-volume quarantine isolated the file but did not reclaim disk capacity."] : [], completedAt: nowIso() } } }
+}
+
+async function handleStorageQuarantineStatus(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const caseId = clean(url.searchParams.get("caseId"))
+  if (!caseId) return { status: 400, payload: { ok: false, error: "caseId is required", errorName: "InvalidQuarantineRequest", errorMessage: "caseId is required" } }
+  const manifestPath = quarantineManifestPath(caseId)
+  if (!fs.existsSync(manifestPath)) return { status: 404, payload: { ok: false, error: "Quarantine manifest not found", errorName: "QuarantineManifestNotFound", errorMessage: "Quarantine manifest not found" } }
+  const manifest = readJsonFile(manifestPath, null)
+  return { status: 200, payload: { ok: true, data: safeSummary(manifest, 8) } }
+}
+
+async function handleStorageQuarantineRestore(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const caseId = clean(body?.caseId)
+  const parsed = parseQuarantineToken(body?.quarantineLocationToken, "quarantine")
+  if (!caseId || !parsed.ok || parsed.payload.caseId !== caseId) return { status: 400, payload: { ok: false, error: parsed.ok ? "Quarantine token case mismatch" : parsed.error, errorName: "InvalidQuarantineToken", errorMessage: parsed.ok ? "Quarantine token case mismatch" : parsed.error } }
+  const manifestPath = quarantineManifestPath(caseId)
+  const manifest = readJsonFile(manifestPath, null)
+  if (!manifest) return { status: 404, payload: { ok: false, error: "Quarantine manifest not found", errorName: "QuarantineManifestNotFound", errorMessage: "Quarantine manifest not found" } }
+  if (manifest.status === "restored") return { status: 409, payload: { ok: false, error: "Object is already restored", errorName: "QuarantineAlreadyRestored", errorMessage: "Object is already restored" } }
+  const originalPath = path.resolve(manifest.originalFullPath)
+  const source = storageExplorerSourceById(manifest.sourceId)
+  if (!source || !isWithinRoot(originalPath, path.resolve(source.path))) return { status: 409, payload: { ok: false, error: "Original destination is no longer an approved storage location", errorName: "RestoreDestinationBlocked", errorMessage: "Original destination is no longer an approved storage location" } }
+  let warning = null
+  if (fs.existsSync(originalPath)) {
+    const existingHash = await sha256File(originalPath)
+    if (existingHash !== manifest.sha256Hash) return { status: 409, payload: { ok: false, error: "A different file exists at the original destination", errorName: "RestoreConflict", errorMessage: "A different file exists at the original destination" } }
+    warning = "An identical file already existed; references can be reactivated without overwriting it."
+  } else if (manifest.mode === "physical") {
+    const vaultPath = path.resolve(manifest.vaultPath)
+    if (!isWithinRoot(vaultPath, quarantineCaseRoot(caseId)) || !fs.existsSync(vaultPath)) return { status: 404, payload: { ok: false, error: "Quarantined file is missing from the vault", errorName: "QuarantineVaultFileMissing", errorMessage: "Quarantined file is missing from the vault" } }
+    ensureDir(originalPath)
+    const sameVolume = path.parse(vaultPath).root.toLowerCase() === path.parse(originalPath).root.toLowerCase()
+    if (sameVolume) {
+      await fs.promises.rename(vaultPath, originalPath)
+    } else {
+      await fs.promises.copyFile(vaultPath, originalPath, fs.constants.COPYFILE_EXCL)
+      const restoredHash = await sha256File(originalPath)
+      if (restoredHash !== manifest.sha256Hash) {
+        await fs.promises.unlink(originalPath).catch(() => null)
+        throw new Error("Restored file failed integrity verification")
+      }
+      await fs.promises.unlink(vaultPath)
+    }
+  }
+  if (!fs.existsSync(originalPath)) return { status: 500, payload: { ok: false, error: "Restore did not produce the original file", errorName: "RestoreVerificationFailed", errorMessage: "Restore did not produce the original file" } }
+  const resultingHash = await sha256File(originalPath)
+  if (resultingHash !== manifest.sha256Hash) return { status: 409, payload: { ok: false, error: "Restored file hash does not match the original", errorName: "RestoreHashMismatch", errorMessage: "Restored file hash does not match the original" } }
+  manifest.status = "restored"
+  manifest.restoredAt = nowIso()
+  manifest.restoredBy = clean(body?.actor) || clean(request.headers["x-angelcare-operator"]) || "operator"
+  await atomicJson(manifestPath, manifest)
+  appendJsonl(path.join(quarantineCaseRoot(caseId), "events.log"), { timestamp: nowIso(), event: "restored", actor: manifest.restoredBy, sha256Hash: resultingHash })
+  logStorageEvent({ action: "STORAGE_OBJECT_RESTORED", moduleKey: "opsos", fileId: clean(body?.fileId), mailboxId: clean(body?.mailboxId), entityType: clean(body?.entityType) || "file", direction: "archive", status: "restored", metadata: { caseId, caseNumber: manifest.caseNumber, reversible: true } })
+  return { status: 200, payload: { ok: true, data: { phase: 3, reversible: true, caseId, caseNumber: manifest.caseNumber, status: "restored", step: "Hash verified and business references ready for reactivation", stepIndex: 6, stepCount: 6, originalSha256: manifest.sha256Hash, resultingSha256: resultingHash, actualRecoveredBytes: 0, quarantineLocationToken: clean(body?.quarantineLocationToken), restoredRelativePath: manifest.originalRelativePath, warnings: warning ? [warning] : [], completedAt: nowIso() } } }
+}
+
+async function handleStorageQuarantineVerify(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const caseId = clean(url.searchParams.get("caseId"))
+  const manifest = readJsonFile(quarantineManifestPath(caseId), null)
+  if (!manifest) return { status: 404, payload: { ok: false, error: "Quarantine manifest not found", errorName: "QuarantineManifestNotFound", errorMessage: "Quarantine manifest not found" } }
+  const target = manifest.status === "restored" || manifest.mode === "logical" ? manifest.originalFullPath : manifest.vaultPath
+  const exists = Boolean(target && fs.existsSync(target))
+  const currentHash = exists ? await sha256File(target) : null
+  return { status: 200, payload: { ok: true, data: { phase: 3, reversible: true, caseId, status: manifest.status, physicalExists: exists, expectedSha256: manifest.sha256Hash, currentSha256: currentHash, integrityMatch: exists && currentHash === manifest.sha256Hash, verifiedAt: nowIso() } } }
+}
+
+
+function destructionManifestPath(requestId) {
+  const safe = clean(requestId).replace(/[^a-zA-Z0-9_-]/g, "")
+  if (!safe) throw new Error("Invalid destruction request ID")
+  return path.join(STORAGE_QUARANTINE_ROOT, "destruction-evidence", `${safe}.json`)
+}
+
+function destructionTargetFromManifest(caseId, manifest) {
+  if (!manifest) return { ok: false, error: "Quarantine manifest not found" }
+  if (!["quarantined", "eligible_for_future_purge"].includes(clean(manifest.status))) return { ok: false, error: "Quarantine manifest is not eligible for permanent destruction" }
+  if (manifest.mode === "physical") {
+    const candidate = path.resolve(clean(manifest.vaultPath))
+    if (!candidate || !isWithinRoot(candidate, quarantineCaseRoot(caseId))) return { ok: false, error: "Quarantine vault path is outside the approved case root" }
+    return { ok: true, candidate, kind: "quarantine_vault" }
+  }
+  const source = storageExplorerSourceById(manifest.sourceId)
+  const candidate = path.resolve(clean(manifest.originalFullPath))
+  if (!source || !candidate || !isWithinRoot(candidate, path.resolve(source.path))) return { ok: false, error: "Logical-quarantine object is outside an approved storage root" }
+  return { ok: true, candidate, kind: "logical_primary" }
+}
+
+async function handleStorageDestructionPreflight(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const caseId = clean(body?.caseId)
+  const parsed = parseQuarantineToken(body?.quarantineLocationToken, "quarantine")
+  if (!caseId || !parsed.ok || parsed.payload.caseId !== caseId) return { status: 400, payload: { ok: false, error: parsed.ok ? "Quarantine token case mismatch" : parsed.error, errorName: "InvalidDestructionEvidence", errorMessage: parsed.ok ? "Quarantine token case mismatch" : parsed.error } }
+  const manifest = readJsonFile(quarantineManifestPath(caseId), null)
+  const target = destructionTargetFromManifest(caseId, manifest)
+  const blockedReasons = []
+  if (!target.ok) blockedReasons.push(target.error)
+  const expectedSha256 = clean(body?.expectedSha256 || manifest?.sha256Hash)
+  let currentSha256 = null
+  let sizeBytes = Number(manifest?.sizeBytes || 0)
+  if (target.ok) {
+    if (!fs.existsSync(target.candidate)) blockedReasons.push("Targeted quarantined object is missing")
+    else {
+      const stat = await fs.promises.lstat(target.candidate)
+      if (!stat.isFile() || stat.isSymbolicLink()) blockedReasons.push("Only a regular non-link file can be permanently destroyed")
+      else {
+        sizeBytes = stat.size
+        currentSha256 = await sha256File(target.candidate)
+        if (expectedSha256 && currentSha256 !== expectedSha256) blockedReasons.push("Current hash does not match the Phase 3 evidence")
+      }
+    }
+  }
+  const copies = [
+    { label: "Objet ciblé en quarantaine", bytes: sizeBytes, targeted: true, status: target.ok && fs.existsSync(target.candidate) ? "present" : "unknown", detail: target.ok ? target.kind : "Target unavailable" },
+    { label: "Sauvegardes", bytes: sizeBytes * 2, targeted: false, status: "unknown", detail: "Backups remain outside this destruction request." },
+    { label: "Fournisseur Menara", bytes: 0, targeted: false, status: "unknown", detail: "Provider message is not changed by Phase 4." }
+  ]
+  return { status: 200, payload: { ok: true, data: { phase: 4, permanent: true, eligible: blockedReasons.length === 0, blockedReasons, caseId, sizeBytes, expectedSha256: expectedSha256 || null, currentSha256, immediateRecoverableBytes: sizeBytes, estimatedTotalRecoverableBytes: sizeBytes, copies, analyzedAt: nowIso() } } }
+}
+
+async function handleStorageDestructionExecute(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const requestId = clean(body?.requestId)
+  const requestNumber = clean(body?.requestNumber)
+  const caseId = clean(body?.quarantineCaseId)
+  const scope = clean(body?.scope)
+  const parsed = parseQuarantineToken(body?.quarantineLocationToken, "quarantine")
+  if (!requestId || !requestNumber || !caseId || !parsed.ok || parsed.payload.caseId !== caseId) return { status: 400, payload: { ok: false, error: parsed.ok ? "Invalid destruction request" : parsed.error, errorName: "InvalidDestructionRequest", errorMessage: parsed.ok ? "Invalid destruction request" : parsed.error } }
+  if (!["physical_file", "technical_cleanup", "application_message", "complete_local_message"].includes(scope)) return { status: 400, payload: { ok: false, error: "Unsupported destruction scope", errorName: "InvalidDestructionScope", errorMessage: "Unsupported destruction scope" } }
+  const manifestPath = quarantineManifestPath(caseId)
+  const manifest = readJsonFile(manifestPath, null)
+  const target = destructionTargetFromManifest(caseId, manifest)
+  if (!target.ok) return { status: 409, payload: { ok: false, error: target.error, errorName: "DestructionBlocked", errorMessage: target.error } }
+  if (!fs.existsSync(target.candidate)) return { status: 404, payload: { ok: false, error: "Targeted quarantined object is missing", errorName: "DestructionTargetMissing", errorMessage: "Targeted quarantined object is missing" } }
+  const stat = await fs.promises.lstat(target.candidate)
+  if (!stat.isFile() || stat.isSymbolicLink()) return { status: 409, payload: { ok: false, error: "Only a regular non-link file can be permanently destroyed", errorName: "DestructionBlocked", errorMessage: "Only a regular non-link file can be permanently destroyed" } }
+  const expectedSha256 = clean(body?.expectedSha256 || manifest.sha256Hash)
+  const currentSha256 = await sha256File(target.candidate)
+  if (!expectedSha256 || currentSha256 !== expectedSha256) return { status: 409, payload: { ok: false, error: "Target hash does not match approved evidence", errorName: "DestructionHashMismatch", errorMessage: "Target hash does not match approved evidence" } }
+  const beforeDisk = storageDiskSnapshot()
+  await fs.promises.unlink(target.candidate)
+  const quarantinePathExistsAfterExecution = fs.existsSync(target.candidate)
+  const originalPathExistsAfterExecution = Boolean(manifest.originalFullPath && fs.existsSync(manifest.originalFullPath))
+  let targetedHashPresentAfterExecution = false
+  if (quarantinePathExistsAfterExecution) {
+    targetedHashPresentAfterExecution = (await sha256File(target.candidate)) === expectedSha256
+  }
+  manifest.status = "destroyed"
+  manifest.destroyedAt = nowIso()
+  manifest.destroyedBy = clean(body?.actor) || clean(request.headers["x-angelcare-operator"]) || "operator"
+  manifest.destruction = { phase: 4, requestId, requestNumber, scope, reason: clean(body?.reason), permanent: true, expectedSha256, verifiedAbsent: !quarantinePathExistsAfterExecution && !targetedHashPresentAfterExecution }
+  await atomicJson(manifestPath, manifest)
+  appendJsonl(path.join(quarantineCaseRoot(caseId), "events.log"), { timestamp: nowIso(), event: "permanently_destroyed", requestId, requestNumber, actor: manifest.destroyedBy, sha256Hash: expectedSha256, sizeBytes: stat.size })
+  const afterDisk = storageDiskSnapshot()
+  const measured = Math.max(0, Number(afterDisk.freeBytes || 0) - Number(beforeDisk.freeBytes || 0))
+  const actualRecoveredBytes = measured || stat.size
+  const remainingCopies = [
+    { label: "Sauvegardes", bytes: stat.size * 2, targeted: false, status: "unknown", detail: "Backup copies remain until their independent retention expires." },
+    { label: "Fournisseur Menara", bytes: 0, targeted: false, status: "unknown", detail: "Provider message remains unaffected." }
+  ]
+  const evidence = { phase: 4, permanent: true, requestId, requestNumber, caseId, scope, expectedSha256, sizeBytes: stat.size, targetedHashPresentAfterExecution, quarantinePathExistsAfterExecution, originalPathExistsAfterExecution, actualRecoveredBytes, remainingCopies, completedAt: nowIso() }
+  await atomicJson(destructionManifestPath(requestId), evidence)
+  logStorageEvent({ action: "STORAGE_OBJECT_PERMANENTLY_DESTROYED", moduleKey: "opsos", fileId: clean(body?.fileId), mailboxId: clean(body?.mailboxId), entityType: clean(body?.entityType) || "file", direction: "archive", status: "destroyed", metadata: { requestId, requestNumber, caseId, scope, actualRecoveredBytes, permanent: true } })
+  return { status: 200, payload: { ok: true, data: { phase: 4, permanent: true, requestId, requestNumber, status: targetedHashPresentAfterExecution || quarantinePathExistsAfterExecution ? "partially_destroyed" : "destroyed", step: "Physical absence and hash verification completed", stepIndex: 7, stepCount: 7, expectedSha256, targetedHashPresentAfterExecution, quarantinePathExistsAfterExecution, originalPathExistsAfterExecution, actualRecoveredBytes, remainingCopies, warnings: ["Backup and provider copies remain outside this request."], completedAt: nowIso() } } }
+}
+
+async function handleStorageDestructionCancel(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const requestId = clean(body?.requestId)
+  if (!requestId) return { status: 400, payload: { ok: false, error: "requestId is required", errorName: "InvalidDestructionRequest", errorMessage: "requestId is required" } }
+  if (fs.existsSync(destructionManifestPath(requestId))) return { status: 409, payload: { ok: false, error: "Destruction evidence already exists; cancellation is no longer possible", errorName: "DestructionAlreadyExecuted", errorMessage: "Destruction evidence already exists; cancellation is no longer possible" } }
+  return { status: 200, payload: { ok: true, data: { phase: 4, permanent: false, requestId, status: "cancelled", cancelledAt: nowIso() } } }
+}
+
+async function handleStorageDestructionStatus(request, url) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const requestId = clean(url.searchParams.get("requestId"))
+  const evidence = requestId ? readJsonFile(destructionManifestPath(requestId), null) : null
+  if (!evidence) return { status: 404, payload: { ok: false, error: "Destruction evidence not found", errorName: "DestructionEvidenceNotFound", errorMessage: "Destruction evidence not found" } }
+  return { status: 200, payload: { ok: true, data: safeSummary(evidence, 8) } }
+}
+
+function cleanupCandidates(profile) {
+  const candidates = []
+  const cutoff = Date.now() - Math.max(0, Number(profile?.minimumAgeDays || 0)) * 86400000
+  const maximum = Math.max(1, Math.min(5000, Number(profile?.maximumBatchSize || 100)))
+  const sourceIds = Array.isArray(profile?.sourceIds) ? profile.sourceIds : []
+  const extensions = (Array.isArray(profile?.extensions) ? profile.extensions : []).map((item) => clean(item).toLowerCase()).filter(Boolean)
+  for (const sourceId of sourceIds) {
+    const source = storageExplorerSourceById(sourceId)
+    if (!source || !fs.existsSync(source.path)) continue
+    const stack = [path.resolve(source.path)]
+    while (stack.length && candidates.length < maximum) {
+      const current = stack.pop()
+      let entries = []
+      try { entries = fs.readdirSync(current, { withFileTypes: true }) } catch { continue }
+      for (const item of entries) {
+        if (candidates.length >= maximum) break
+        const full = path.join(current, item.name)
+        let stat
+        try { stat = fs.lstatSync(full) } catch { continue }
+        if (stat.isSymbolicLink()) continue
+        if (stat.isDirectory()) { stack.push(full); continue }
+        if (!stat.isFile() || stat.mtimeMs > cutoff) continue
+        const lower = item.name.toLowerCase()
+        if (extensions.length && !extensions.some((extension) => lower.endsWith(extension))) continue
+        if (quarantineBlockedReason(source, { candidate: full }, stat, { storageStatus: "historical" })) continue
+        candidates.push({ sourceId, relativePath: path.relative(source.path, full), name: item.name, sizeBytes: stat.size, modifiedAt: stat.mtime.toISOString(), fullPath: full })
+      }
+    }
+  }
+  return candidates
+}
+
+async function handleStorageCleanupDryRun(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const profile = body?.profile || {}
+  const candidates = cleanupCandidates(profile)
+  return { status: 200, payload: { ok: true, data: { phase: 4, readOnly: true, profileId: clean(profile.id), profileName: clean(profile.name), matchedCount: candidates.length, matchedBytes: candidates.reduce((sum, item) => sum + item.sizeBytes, 0), candidates: candidates.map(({ fullPath, ...item }) => item), simulatedAt: nowIso() } } }
+}
+
+async function handleStorageCleanupExecute(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error, errorName: "Unauthorized", errorMessage: auth.error } }
+  const profile = body?.profile || {}
+  if (clean(body?.confirmation) !== `EXECUTER ${clean(profile.id)}`) return { status: 400, payload: { ok: false, error: "Invalid cleanup confirmation", errorName: "InvalidCleanupConfirmation", errorMessage: "Invalid cleanup confirmation" } }
+  const candidates = cleanupCandidates(profile)
+  let recoveredBytes = 0
+  const results = []
+  for (const item of candidates) {
+    try {
+      const source = storageExplorerSourceById(item.sourceId)
+      if (!source || !isWithinRoot(item.fullPath, path.resolve(source.path))) throw new Error("Path outside approved root")
+      const stat = await fs.promises.lstat(item.fullPath)
+      if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("Blocked file type")
+      await fs.promises.unlink(item.fullPath)
+      recoveredBytes += stat.size
+      results.push({ sourceId: item.sourceId, relativePath: item.relativePath, status: "destroyed", sizeBytes: stat.size })
+    } catch (error) {
+      results.push({ sourceId: item.sourceId, relativePath: item.relativePath, status: "failed", error: error instanceof Error ? error.message : String(error) })
+    }
+  }
+  return { status: 200, payload: { ok: true, data: { phase: 4, permanent: true, profileId: clean(profile.id), status: results.some((item) => item.status === "failed") ? "completed_with_warnings" : "completed", matchedCount: candidates.length, destroyedCount: results.filter((item) => item.status === "destroyed").length, failedCount: results.filter((item) => item.status === "failed").length, recoveredBytes, results, completedAt: nowIso() } } }
 }
 
 function computeCpuSnapshot() {
@@ -1443,8 +2863,18 @@ function configSafe(config) {
 async function sendMail(config, input, diagnostics) {
   const transport = createTransport(config)
   try {
+    const resolvedFromAddress = input.fromEmail || config.fromEmail
+    const resolvedFrom = input.fromName
+      ? { name: input.fromName, address: resolvedFromAddress }
+      : resolvedFromAddress
+    const resolvedReplyTo = input.replyTo
+      ? input.replyToName
+        ? { name: input.replyToName, address: input.replyTo }
+        : input.replyTo
+      : undefined
+
     const info = await transport.sendMail({
-      from: input.fromEmail || config.fromEmail,
+      from: resolvedFrom,
       to: input.toEmail,
       cc: input.cc || undefined,
       bcc: input.bcc || undefined,
@@ -1452,11 +2882,14 @@ async function sendMail(config, input, diagnostics) {
       text: input.text || "",
       html: input.html || String(input.text || "").replace(/\n/g, "<br />"),
       attachments: normalizeBridgeAttachments(input.attachments || []),
-      replyTo: input.replyTo || undefined,
+      replyTo: resolvedReplyTo,
       headers: {
         "X-AngelCare-Mailbox": diagnostics.mailbox || "",
         "X-AngelCare-Mailbox-ID": diagnostics.mailboxId || "",
-        "X-AngelCare-From": input.fromEmail || config.fromEmail || "",
+        "X-AngelCare-From": resolvedFromAddress || "",
+        "X-AngelCare-From-Name": input.fromName || "",
+        "X-AngelCare-Sender-Identity-ID": diagnostics.senderIdentityId || "",
+        "X-AngelCare-Sender-Identity-Version": diagnostics.senderIdentityVersion || "",
         "X-AngelCare-Transport": "angelcare-windows-email-bridge"
       }
     })
@@ -2201,6 +3634,7 @@ async function handleSend(request, body) {
   const username = clean(body.username)
   const password = clean(body.password)
   const fromEmail = clean(body.fromEmail)
+  const fromName = clean(body.fromName)
   const toEmail = clean(body.toEmail)
   const cc = clean(body.cc)
   const bcc = clean(body.bcc)
@@ -2208,6 +3642,7 @@ async function handleSend(request, body) {
   const text = clean(body.text)
   const html = clean(body.html)
   const replyTo = clean(body.replyTo)
+  const replyToName = clean(body.replyToName)
   const attachments = Array.isArray(body.attachments) ? body.attachments : []
   const diagnostics = safeSummary(body.diagnostics || {})
   const mailbox = clean(body.diagnostics?.mailbox || body.diagnostics?.mailboxKey || body.diagnostics?.mailboxLabel || username || fromEmail)
@@ -2228,6 +3663,7 @@ async function handleSend(request, body) {
     mailbox,
     mailboxId,
     from: fromEmail,
+    fromName,
     to: toEmail,
     host: smtpHost,
     port: smtpPort,
@@ -2262,8 +3698,13 @@ async function handleSend(request, body) {
         pass: password,
         fromEmail
       },
-      { fromEmail, toEmail, cc, bcc, subject, text, html, replyTo, attachments },
-      { mailbox, mailboxId }
+      { fromEmail, fromName, toEmail, cc, bcc, subject, text, html, replyTo, replyToName, attachments },
+      {
+        mailbox,
+        mailboxId,
+        senderIdentityId: clean(body.diagnostics?.senderIdentity?.senderIdentityId),
+        senderIdentityVersion: clean(body.diagnostics?.senderIdentity?.senderIdentityVersion)
+      }
     )
     const latencyMs = Date.now() - started
     const payload = {
@@ -2925,6 +4366,228 @@ async function handleStorageDelete(request, body) {
       }
     }
   }
+}
+
+
+function readDedupMappings() {
+  const value = readJsonFile(STORAGE_DEDUP_MAPPING_FILE, { version: 1, updatedAt: null, plans: {}, files: {} })
+  return value && typeof value === "object" ? value : { version: 1, updatedAt: null, plans: {}, files: {} }
+}
+
+function writeDedupMappings(value) {
+  fs.mkdirSync(path.dirname(STORAGE_DEDUP_MAPPING_FILE), { recursive: true })
+  const temp = `${STORAGE_DEDUP_MAPPING_FILE}.tmp-${process.pid}-${Date.now()}`
+  fs.writeFileSync(temp, `${JSON.stringify(value, null, 2)}\n`, "utf8")
+  fs.renameSync(temp, STORAGE_DEDUP_MAPPING_FILE)
+}
+
+function normalizeDedupRelativePath(source, value) {
+  let relative = clean(value).replace(/\\/g, "/")
+  if (source && source.id === "email_attachments") {
+    relative = relative.replace(/^\/?email-os\/attachments\/?/i, "")
+  }
+  return relative || "."
+}
+
+function resolveDedupCopy(copy) {
+  const source = storageExplorerSourceById(copy && copy.sourceId)
+  if (!source) return { ok: false, error: `Unknown approved storage source: ${clean(copy && copy.sourceId)}` }
+  const relativePath = normalizeDedupRelativePath(source, copy && copy.relativePath)
+  const resolved = resolveExplorerPath(source, relativePath)
+  if (!resolved.ok) return { ok: false, error: resolved.error }
+  if (!fs.existsSync(resolved.candidate)) return { ok: false, error: `File not found: ${relativePath}` }
+  const stat = fs.statSync(resolved.candidate)
+  if (!stat.isFile()) return { ok: false, error: `Only regular files can be deduplicated: ${relativePath}` }
+  const actualHash = sha256File(resolved.candidate)
+  const expectedHash = clean(copy && (copy.sha256 || copy.sha256Hash)).toLowerCase()
+  if (expectedHash && actualHash.toLowerCase() !== expectedHash) return { ok: false, error: `SHA-256 mismatch: ${relativePath}` }
+  return {
+    ok: true,
+    source,
+    relativePath: resolved.relative,
+    fullPath: resolved.candidate,
+    fileId: clean(copy && copy.fileId) || null,
+    filename: clean(copy && copy.filename) || path.basename(resolved.candidate),
+    sizeBytes: stat.size,
+    sha256: actualHash,
+    canonical: Boolean(copy && copy.canonical),
+    volume: path.parse(resolved.candidate).root.toLowerCase(),
+    links: Number(stat.nlink || 1),
+  }
+}
+
+function buildDedupPreflight(body) {
+  const copies = Array.isArray(body && body.copies) ? body.copies.slice(0, STORAGE_DEDUP_MAX_COPIES) : []
+  const expectedSha256 = clean(body && body.sha256).toLowerCase()
+  const blockedReasons = []
+  if (copies.length < 2) blockedReasons.push("At least two physical copies are required")
+  if (Array.isArray(body && body.copies) && body.copies.length > STORAGE_DEDUP_MAX_COPIES) blockedReasons.push(`Plan exceeds ${STORAGE_DEDUP_MAX_COPIES} copies`)
+  const resolved = copies.map((copy) => resolveDedupCopy(copy))
+  for (const item of resolved) if (!item.ok) blockedReasons.push(item.error)
+  const valid = resolved.filter((item) => item.ok)
+  const hashes = new Set(valid.map((item) => item.sha256.toLowerCase()))
+  if (hashes.size > 1) blockedReasons.push("Copies do not have identical SHA-256 content")
+  if (expectedSha256 && hashes.size === 1 && !hashes.has(expectedSha256)) blockedReasons.push("Group SHA-256 does not match the files")
+  const volumes = new Set(valid.map((item) => item.volume))
+  if (volumes.size > 1) blockedReasons.push("NTFS hard-link consolidation requires all copies to be on the same volume")
+  const canonical = valid.find((item) => item.canonical) || valid[0] || null
+  if (!canonical) blockedReasons.push("Canonical copy could not be resolved")
+  const totalPhysicalBytes = valid.reduce((sum, item) => sum + item.sizeBytes, 0)
+  const potentialRecoverableBytes = canonical ? Math.max(0, totalPhysicalBytes - canonical.sizeBytes) : 0
+  return {
+    phase: 5,
+    eligible: blockedReasons.length === 0,
+    blockedReasons,
+    canonical,
+    copies: valid,
+    sha256: canonical ? canonical.sha256 : expectedSha256,
+    physicalCopies: valid.length,
+    totalPhysicalBytes,
+    potentialRecoverableBytes,
+    hardLinkSupported: process.platform === "win32",
+    sameVolume: volumes.size <= 1,
+    analyzedAt: nowIso(),
+  }
+}
+
+async function handleStorageDedupPreflight(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error } }
+  const data = buildDedupPreflight(body || {})
+  return { status: data.eligible ? 200 : 409, payload: { ok: data.eligible, data, error: data.eligible ? undefined : data.blockedReasons.join("; ") } }
+}
+
+async function handleStorageDedupExecute(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error } }
+  const planId = clean(body && body.planId)
+  const planNumber = clean(body && body.planNumber)
+  if (!planId || !planNumber) return { status: 400, payload: { ok: false, error: "planId and planNumber are required" } }
+  const preflight = buildDedupPreflight(body || {})
+  if (!preflight.eligible || !preflight.canonical) return { status: 409, payload: { ok: false, error: preflight.blockedReasons.join("; "), data: preflight } }
+  if (process.platform !== "win32") return { status: 409, payload: { ok: false, error: "Physical hard-link consolidation is enabled only on Windows NTFS" } }
+  const canonicalPath = preflight.canonical.fullPath
+  const canonicalHash = preflight.canonical.sha256
+  const before = storageDiskSnapshot()
+  const completed = []
+  const warnings = []
+  for (const item of preflight.copies) {
+    if (item.fullPath === canonicalPath) {
+      completed.push({ fileId: item.fileId, relativePath: item.relativePath, canonical: true, hardlinked: false, sha256: item.sha256 })
+      continue
+    }
+    const backupPath = `${item.fullPath}.dedup-backup-${planId}`
+    try {
+      if (fs.existsSync(backupPath)) fs.rmSync(backupPath, { force: true })
+      fs.renameSync(item.fullPath, backupPath)
+      fs.linkSync(canonicalPath, item.fullPath)
+      const linkedHash = sha256File(item.fullPath)
+      if (linkedHash !== canonicalHash) throw new Error("Post-link SHA-256 verification failed")
+      fs.rmSync(backupPath, { force: true })
+      completed.push({ fileId: item.fileId, relativePath: item.relativePath, canonical: false, hardlinked: true, sha256: linkedHash })
+    } catch (error) {
+      try {
+        if (fs.existsSync(item.fullPath)) fs.rmSync(item.fullPath, { force: true })
+        if (fs.existsSync(backupPath)) fs.renameSync(backupPath, item.fullPath)
+      } catch {}
+      warnings.push(`${item.relativePath}: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  const after = storageDiskSnapshot()
+  const mapping = readDedupMappings()
+  mapping.updatedAt = nowIso()
+  mapping.plans = mapping.plans || {}
+  mapping.files = mapping.files || {}
+  mapping.plans[planId] = { planId, planNumber, sha256: canonicalHash, canonicalPath, completed, warnings, createdAt: nowIso() }
+  for (const item of completed) if (item.fileId) mapping.files[item.fileId] = { planId, planNumber, sha256: canonicalHash, canonicalFileId: preflight.canonical.fileId, canonicalPath, relativePath: item.relativePath, hardlinked: item.hardlinked, updatedAt: nowIso() }
+  writeDedupMappings(mapping)
+  const actualRecoveredBytes = Math.max(0, Number(after.freeBytes || 0) - Number(before.freeBytes || 0))
+  const status = warnings.length ? "completed_with_warnings" : "completed"
+  logStorageEvent({ action: "STORAGE_DEDUP_EXECUTED", moduleKey: "opsos", fileId: preflight.canonical.fileId, mailboxId: null, entityType: "dedup_plan", direction: "archive", status, freeBytes: after.freeBytes, usedBytes: after.usedBytes, metadata: { phase: 5, planId, planNumber, physicalCopies: preflight.physicalCopies, potentialRecoverableBytes: preflight.potentialRecoverableBytes, actualRecoveredBytes, warnings } })
+  return { status: 200, payload: { ok: true, data: { phase: 5, planId, planNumber, status, sha256: canonicalHash, hardlinked: completed.some((item) => item.hardlinked), completedCopies: completed.length, warningCount: warnings.length, warnings, potentialRecoverableBytes: preflight.potentialRecoverableBytes, actualRecoveredBytes, planToken: quarantineToken({ kind: "dedup", planId, planNumber, sha256: canonicalHash, issuedAt: Date.now() }), completedAt: nowIso() } } }
+}
+
+async function handleStorageDedupMaterialize(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error } }
+  const resolved = resolveDedupCopy(body || {})
+  if (!resolved.ok) return { status: 400, payload: { ok: false, error: resolved.error } }
+  const stat = fs.statSync(resolved.fullPath)
+  if (Number(stat.nlink || 1) <= 1) return { status: 200, payload: { ok: true, data: { materialized: false, reason: "File already has an independent physical allocation", links: Number(stat.nlink || 1) } } }
+  const temp = `${resolved.fullPath}.materialize-${Date.now()}`
+  fs.copyFileSync(resolved.fullPath, temp)
+  const hash = sha256File(temp)
+  if (hash !== resolved.sha256) { fs.rmSync(temp, { force: true }); return { status: 500, payload: { ok: false, error: "Materialized copy hash mismatch" } } }
+  fs.rmSync(resolved.fullPath, { force: true })
+  fs.renameSync(temp, resolved.fullPath)
+  return { status: 200, payload: { ok: true, data: { materialized: true, sha256: hash, links: Number(fs.statSync(resolved.fullPath).nlink || 1), completedAt: nowIso() } } }
+}
+
+async function handleStorageProviderCapabilities(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error } }
+  const input = normalizePop3Body(body || {})
+  if (!input.mailboxId || !input.email || !input.username || !input.password || !input.host) return { status: 400, payload: { ok: false, error: "Complete POP3 mailbox credentials are required" } }
+  const client = new Pop3Client({ host: input.host, port: input.port, secure: input.secure, timeoutMs: POP_TIMEOUT_MS })
+  try {
+    await client.connect()
+    await client.login(input.username, input.password)
+    let capabilityLines = []
+    try { capabilityLines = await client.multiline("CAPA") } catch {}
+    const refs = await client.listMessages()
+    const capabilities = capabilityLines.map((line) => clean(line)).filter(Boolean)
+    const upper = capabilities.map((line) => line.toUpperCase())
+    const data = {
+      phase: 5,
+      mailboxId: input.mailboxId,
+      email: input.email,
+      protocol: "pop3",
+      host: input.host,
+      port: input.port,
+      secure: input.secure,
+      authenticated: true,
+      uidlSupported: refs.some((item) => clean(item.uid) && String(item.uid) !== String(item.number)),
+      listSupported: true,
+      capaSupported: capabilities.length > 0,
+      deleteCommandAdvertised: upper.some((line) => line.startsWith("DELE")),
+      remoteDeletionEnabled: STORAGE_PROVIDER_REMOTE_DELETE_ENABLED,
+      messageCount: refs.length,
+      totalBytes: refs.reduce((sum, item) => sum + Number(item.size || 0), 0),
+      capabilities,
+      checkedAt: nowIso(),
+      warning: STORAGE_PROVIDER_REMOTE_DELETE_ENABLED ? "Remote POP3 deletion is enabled by environment policy and remains separately governed." : "Remote provider deletion is disabled. Phase 5 performs synchronization and reconciliation only.",
+    }
+    return { status: 200, payload: { ok: true, data } }
+  } catch (error) {
+    const mapped = mapPop3Error(error, { mailboxId: input.mailboxId, email: input.email, incoming: { protocol: "pop3", host: input.host, port: input.port, secure: input.secure }, limit: input.limit })
+    return { status: mapped.status || 502, payload: { ok: false, error: mapped.message, code: mapped.code } }
+  } finally { await client.quit() }
+}
+
+async function handleStorageProviderReconcile(request, body) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error } }
+  const input = normalizePop3Body(body || {})
+  if (!input.mailboxId || !input.email || !input.username || !input.password || !input.host) return { status: 400, payload: { ok: false, error: "Complete POP3 mailbox credentials are required" } }
+  const client = new Pop3Client({ host: input.host, port: input.port, secure: input.secure, timeoutMs: POP_TIMEOUT_MS })
+  try {
+    await client.connect()
+    await client.login(input.username, input.password)
+    const refs = await client.listMessages()
+    return { status: 200, payload: { ok: true, data: { phase: 5, mailboxId: input.mailboxId, email: input.email, uids: refs.map((item) => clean(item.uid)).filter(Boolean), messageCount: refs.length, totalBytes: refs.reduce((sum, item) => sum + Number(item.size || 0), 0), checkedAt: nowIso(), remoteDeletionEnabled: STORAGE_PROVIDER_REMOTE_DELETE_ENABLED } } }
+  } catch (error) {
+    const mapped = mapPop3Error(error, { mailboxId: input.mailboxId, email: input.email, incoming: { protocol: "pop3", host: input.host, port: input.port, secure: input.secure }, limit: input.limit })
+    return { status: mapped.status || 502, payload: { ok: false, error: mapped.message, code: mapped.code } }
+  } finally { await client.quit() }
+}
+
+async function handleStorageLifecycleSnapshot(request) {
+  const auth = requireAdminToken(request)
+  if (!auth.ok) return { status: auth.status, payload: { ok: false, error: auth.error } }
+  const inventory = await buildStorageInventory("summary")
+  const mappings = readDedupMappings()
+  const disk = storageDiskSnapshot()
+  return { status: 200, payload: { ok: true, data: { phase: 5, disk, inventory, dedupPlanCount: Object.keys(mappings.plans || {}).length, dedupFileCount: Object.keys(mappings.files || {}).length, capturedAt: nowIso() } } }
 }
 
 async function handleAdminLogs(request, url) {
@@ -3928,6 +5591,139 @@ async function handleRequest(request, response) {
 
   if (pathname === "/admin/storage/usage" && request.method === "GET") {
     const result = await handleStorageUsage(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/inventory" && request.method === "GET") {
+    const result = await handleStorageInventory(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/browse" && request.method === "GET") {
+    const result = await handleStorageBrowse(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/file" && request.method === "GET") {
+    const result = await handleStorageFileDossier(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/preview" && request.method === "GET") {
+    const result = await handleStoragePreview(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/duplicates" && request.method === "GET") {
+    const result = await handleStorageDuplicatesInvestigation(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/orphans" && request.method === "GET") {
+    const result = await handleStorageOrphansInvestigation(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/quarantine/impact" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageQuarantineImpact(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/quarantine/execute" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageQuarantineExecute(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/quarantine/status" && request.method === "GET") {
+    const result = await handleStorageQuarantineStatus(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/quarantine/restore" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageQuarantineRestore(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/quarantine/verify" && request.method === "GET") {
+    const result = await handleStorageQuarantineVerify(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/destruction/preflight" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDestructionPreflight(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/destruction/execute" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDestructionExecute(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/destruction/status" && request.method === "GET") {
+    const result = await handleStorageDestructionStatus(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/destruction/verify" && request.method === "GET") {
+    const result = await handleStorageDestructionStatus(request, url)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/destruction/cancel" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDestructionCancel(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/cleanup/dry-run" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageCleanupDryRun(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/cleanup/execute" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageCleanupExecute(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/lifecycle/snapshot" && request.method === "GET") {
+    const result = await handleStorageLifecycleSnapshot(request)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/dedup/preflight" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDedupPreflight(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/dedup/execute" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDedupExecute(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/dedup/materialize" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageDedupMaterialize(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/provider/capabilities" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageProviderCapabilities(request, body)
+    return writeJson(response, result.status, result.payload)
+  }
+
+  if (pathname === "/admin/storage/provider/reconcile" && request.method === "POST") {
+    const body = await readJsonBody(request)
+    const result = await handleStorageProviderReconcile(request, body)
     return writeJson(response, result.status, result.payload)
   }
 

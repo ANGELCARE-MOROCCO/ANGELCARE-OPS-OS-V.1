@@ -1,0 +1,41 @@
+[
+  {
+    "id": "valid-academy-objective",
+    "valid": true,
+    "input": {
+      "title": "Dominer la fenêtre pré-rentrée Academy",
+      "mandate": "Construire un mandat stratégique sous gouvernance pour le marché des crèches marocaines.",
+      "businessUnit": "AngelCare Academy",
+      "targetMarket": "Crèches privées — Maroc",
+      "horizon": "30 jours",
+      "priority": "high",
+      "executionMode": "shadow"
+    }
+  },
+  {
+    "id": "reject-empty-title",
+    "valid": false,
+    "input": {
+      "title": "",
+      "mandate": "Mandat suffisamment détaillé mais objectif absent.",
+      "businessUnit": "Academy",
+      "targetMarket": "Maroc",
+      "horizon": "30 jours",
+      "priority": "high",
+      "executionMode": "shadow"
+    }
+  },
+  {
+    "id": "reject-autonomous-mode-phase1",
+    "valid": false,
+    "input": {
+      "title": "Exécuter sans contrôle humain",
+      "mandate": "Tentative volontaire de demander une autonomie interdite pendant la première phase.",
+      "businessUnit": "Academy",
+      "targetMarket": "Maroc",
+      "horizon": "Immédiat",
+      "priority": "critical",
+      "executionMode": "limited-autonomy"
+    }
+  }
+]

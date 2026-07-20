@@ -31,6 +31,8 @@ export type StorageFileMetadata = {
   created_at: string
   updated_at: string
   deleted_at: string | null
+  destruction_certificate_number?: string | null
+  destroyed_at?: string | null
   metadata: Record<string, unknown>
 }
 

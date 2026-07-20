@@ -1310,7 +1310,85 @@ function FunnelPanel({ funnel }: { funnel: { received: number; qualified: number
 }
 
 function EnterpriseModal({ title, subtitle, icon: Icon, onClose, children, footer, width = "max-w-[1580px]" }: { title: string; subtitle: string; icon: IconType; onClose: () => void; children: ReactNode; footer: ReactNode; width?: string }) {
-  return <div className="fixed inset-x-0 bottom-0 z-[120] flex items-center justify-center bg-slate-950/35 px-3 py-3 backdrop-blur-sm" style={{ top: "var(--angelcare-overhead-height, 96px)" }}><div className={`flex h-[calc(100dvh-var(--angelcare-overhead-height,96px)-24px)] w-full ${width} flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-2xl`}><header className="flex items-start justify-between gap-5 border-b border-slate-100 bg-white px-6 py-5"><div className="flex items-start gap-4"><div className="grid h-11 w-11 place-items-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-700"><Icon size={19} /></div><div><h2 className="text-2xl font-black text-slate-950">{title}</h2><p className="mt-1 max-w-4xl text-sm font-semibold leading-6 text-slate-600">{subtitle}</p></div></div><button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 text-slate-500 hover:bg-slate-50"><X size={16} /></button></header><div className="flex-1 overflow-y-auto bg-[#f6f8fc] px-6 py-5">{children}</div><footer className="border-t border-slate-100 bg-white px-6 py-4">{footer}</footer></div></div>
+  return (
+    <>
+      <style>{`
+        [data-leads-enterprise-modal="black-typography"],
+        [data-leads-enterprise-modal="black-typography"] * {
+          color: #020617 !important;
+          -webkit-text-fill-color: #020617 !important;
+          text-shadow: none !important;
+        }
+
+        [data-leads-enterprise-modal="black-typography"] h1,
+        [data-leads-enterprise-modal="black-typography"] h2,
+        [data-leads-enterprise-modal="black-typography"] h3,
+        [data-leads-enterprise-modal="black-typography"] h4,
+        [data-leads-enterprise-modal="black-typography"] h5,
+        [data-leads-enterprise-modal="black-typography"] h6,
+        [data-leads-enterprise-modal="black-typography"] [role="heading"] {
+          color: #020617 !important;
+          -webkit-text-fill-color: #020617 !important;
+          font-weight: 900 !important;
+          opacity: 1 !important;
+        }
+
+        [data-leads-enterprise-modal="black-typography"] p,
+        [data-leads-enterprise-modal="black-typography"] span,
+        [data-leads-enterprise-modal="black-typography"] label,
+        [data-leads-enterprise-modal="black-typography"] legend,
+        [data-leads-enterprise-modal="black-typography"] th,
+        [data-leads-enterprise-modal="black-typography"] td,
+        [data-leads-enterprise-modal="black-typography"] li,
+        [data-leads-enterprise-modal="black-typography"] small,
+        [data-leads-enterprise-modal="black-typography"] strong,
+        [data-leads-enterprise-modal="black-typography"] button,
+        [data-leads-enterprise-modal="black-typography"] a,
+        [data-leads-enterprise-modal="black-typography"] input,
+        [data-leads-enterprise-modal="black-typography"] select,
+        [data-leads-enterprise-modal="black-typography"] textarea,
+        [data-leads-enterprise-modal="black-typography"] option {
+          color: #020617 !important;
+          -webkit-text-fill-color: #020617 !important;
+          font-weight: 700 !important;
+          opacity: 1 !important;
+        }
+
+        [data-leads-enterprise-modal="black-typography"] input::placeholder,
+        [data-leads-enterprise-modal="black-typography"] textarea::placeholder {
+          color: #334155 !important;
+          -webkit-text-fill-color: #334155 !important;
+          font-weight: 700 !important;
+          opacity: 1 !important;
+        }
+      `}</style>
+
+      <div
+        data-leads-enterprise-modal="black-typography"
+        className="fixed inset-x-0 bottom-0 z-[120] flex items-center justify-center bg-slate-950/35 px-3 py-3 backdrop-blur-sm"
+        style={{ top: "var(--angelcare-overhead-height, 96px)" }}
+      >
+        <div className={`flex h-[calc(100dvh-var(--angelcare-overhead-height,96px)-24px)] w-full ${width} flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-2xl`}>
+          <header className="flex items-start justify-between gap-5 border-b border-slate-100 bg-white px-6 py-5">
+            <div className="flex items-start gap-4">
+              <div className="grid h-11 w-11 place-items-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-700">
+                <Icon size={19} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-950">{title}</h2>
+                <p className="mt-1 max-w-4xl text-sm font-bold leading-6 text-slate-950">{subtitle}</p>
+              </div>
+            </div>
+            <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50">
+              <X size={16} />
+            </button>
+          </header>
+          <div className="flex-1 overflow-y-auto bg-[#f6f8fc] px-6 py-5">{children}</div>
+          <footer className="border-t border-slate-100 bg-white px-6 py-4">{footer}</footer>
+        </div>
+      </div>
+    </>
+  )
 }
 
 function ModalError({ error }: { error?: string | null }) {

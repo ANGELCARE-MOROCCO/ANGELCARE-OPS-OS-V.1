@@ -1,0 +1,152 @@
+{
+  "version": "5.0.0",
+  "name": "Mega ZIP 5 — Partner Lifecycle, Activation, Performance, Expansion and Renewal",
+  "canonicalCapabilityCount": 45,
+  "operationalCapabilityCount": 41,
+  "implementedCapabilityIds": [
+    "B2B-030",
+    "B2B-031",
+    "B2B-032",
+    "B2B-033",
+    "B2B-034",
+    "B2B-035"
+  ],
+  "scope": [
+    "commercial_operational_handoff",
+    "promise_normalization",
+    "handoff_validation",
+    "partner_360",
+    "adaptive_partner_mode",
+    "partner_onboarding",
+    "activation_readiness",
+    "launch_gates",
+    "first_service",
+    "hypercare",
+    "partner_performance",
+    "partner_health",
+    "issue_command",
+    "corrective_actions",
+    "partner_reviews",
+    "quarterly_business_review",
+    "upsell",
+    "cross_sell",
+    "multi_site_expansion",
+    "renewal",
+    "churn_prevention",
+    "partner_rescue",
+    "tender_lifecycle",
+    "partner_360_hydration",
+    "persistent_partner_context",
+    "premium_focus_mode",
+    "user_profile_access"
+  ],
+  "commands": [
+    "b2b.handoff.generate",
+    "b2b.handoff.validate",
+    "b2b.handoff.accept",
+    "b2b.handoff.request_correction",
+    "b2b.partner.activate",
+    "b2b.partner.read",
+    "b2b.partner.update",
+    "b2b.partner.site_create",
+    "b2b.partner.service_configure",
+    "b2b.onboarding.create",
+    "b2b.onboarding.task_complete",
+    "b2b.activation.readiness_calculate",
+    "b2b.activation.approve",
+    "b2b.first_service.prepare",
+    "b2b.first_service.outcome_record",
+    "b2b.hypercare.create",
+    "b2b.partner_performance.read",
+    "b2b.partner_health.calculate",
+    "b2b.partner_issue.create",
+    "b2b.partner_issue.escalate",
+    "b2b.corrective_action.create",
+    "b2b.corrective_action.close",
+    "b2b.partner_review.prepare",
+    "b2b.qbr.generate",
+    "b2b.upsell.detect",
+    "b2b.upsell.create",
+    "b2b.cross_sell.detect",
+    "b2b.expansion.site_detect",
+    "b2b.expansion.plan_create",
+    "b2b.renewal.readiness_calculate",
+    "b2b.renewal.plan_create",
+    "b2b.renewal.proposal_prepare",
+    "b2b.churn_risk.detect",
+    "b2b.partner_rescue.create",
+    "b2b.tender.create",
+    "b2b.tender.requirements_extract",
+    "b2b.tender.bid_decision",
+    "b2b.tender.compliance_update",
+    "b2b.tender.submit",
+    "b2b.tender.outcome_record"
+  ],
+  "focusWorkspaces": [
+    "Operational Handoff",
+    "Partner Activation",
+    "Partner Performance",
+    "Issue Command",
+    "Quarterly Business Review",
+    "Growth and Expansion",
+    "Renewal Command",
+    "Tender Command"
+  ],
+  "persistentContext": [
+    "activePartnerId",
+    "activeContractId",
+    "activeSiteId",
+    "activeServiceId",
+    "activeActivationId",
+    "activeIssueId",
+    "activeGrowthOpportunityId",
+    "activeRenewalId"
+  ],
+  "acceptanceScenarios": [
+    {
+      "id": "M5-A01",
+      "title": "Closing to operational handoff"
+    },
+    {
+      "id": "M5-A02",
+      "title": "Handoff correction and version preservation"
+    },
+    {
+      "id": "M5-A03",
+      "title": "Partner onboarding and activation"
+    },
+    {
+      "id": "M5-A04",
+      "title": "Launch gates and first service"
+    },
+    {
+      "id": "M5-A05",
+      "title": "Issue and corrective action closure"
+    },
+    {
+      "id": "M5-A06",
+      "title": "Partner performance and QBR"
+    },
+    {
+      "id": "M5-A07",
+      "title": "Healthy-partner expansion"
+    },
+    {
+      "id": "M5-A08",
+      "title": "Renewal and churn prevention"
+    },
+    {
+      "id": "M5-A09",
+      "title": "Tender to handoff"
+    },
+    {
+      "id": "M5-A10",
+      "title": "Access, approval and revocation"
+    }
+  ],
+  "noSecondPartnerCrm": true,
+  "missingDataPolicy": "display_missing_never_fabricate",
+  "externalCommunication": "user-confirmed only",
+  "launchApproval": "authorized role only",
+  "tenderSubmission": "authorized role only"
+}

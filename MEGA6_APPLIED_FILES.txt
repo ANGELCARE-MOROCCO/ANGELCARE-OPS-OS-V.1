@@ -1,0 +1,73 @@
+# ANGELCARE Browser OS Mega ZIP 6 surgical applied-files manifest
+# + new file; ~ modified existing file
+# New: 26
+# Modified: 41
+# Total: 67
+
++ ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_06_IMPLEMENTATION_REPORT.md
++ ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_06_VERIFICATION.json
++ MEGA6_APPLIED_FILES.txt
++ MEGA6_DIRECT_PATCH_CONTEXT.txt
++ MEGA6_LIVE_ACCEPTANCE_CHECKLIST.md
++ MEGA6_MIGRATION_ORDER.md
++ MEGA6_ROLLBACK.md
++ MEGA6_TERMINAL_INJECTION.md
++ MEGA6_VERIFICATION_EVIDENCE.txt
++ apps/ops-web/app/api/browser-extension/v1/b2b/management/workspace/hydrate/route.ts
++ apps/ops-web/lib/browser-extension/b2b-management-command/authorization.ts
++ apps/ops-web/lib/browser-extension/b2b-management-command/contract.ts
++ apps/ops-web/lib/browser-extension/b2b-management-command/service.ts
++ apps/ops-web/lib/browser-extension/b2b-management-command/types.ts
++ apps/ops-web/lib/browser-extension/b2b-management-command/workspace.ts
++ apps/ops-web/lib/browser-extension/generated/b2b-ai-sales-director.v6.json
++ apps/ops-web/scripts/verify-browser-extension-b2b-ai-sales-director.mjs
++ apps/ops-web/supabase/migrations/20260720_browser_extension_b2b_ai_sales_director.sql
++ apps/ops-web/supabase/migrations/rollback_20260720_browser_extension_b2b_ai_sales_director.sql
++ apps/revenue-browser-extension/dist/generated/b2b-ai-sales-director.v6.json
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/management-actions.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/management-mode.js
++ apps/revenue-browser-extension/src/generated/b2b-ai-sales-director.v6.json
++ apps/revenue-browser-extension/src/modules/revenue-b2b/management-actions.ts
++ apps/revenue-browser-extension/src/modules/revenue-b2b/management-mode.ts
++ packages/browser-extension-contracts/b2b-ai-sales-director.v6.json
+~ apps/ops-web/app/(protected)/users/_components/UserBrowserExtensionAccessSection.tsx
+~ apps/ops-web/app/api/browser-extension/v1/admin/users/[id]/access/route.ts
+~ apps/ops-web/app/api/browser-extension/v1/bootstrap/route.ts
+~ apps/ops-web/app/api/browser-extension/v1/commands/execute/route.ts
+~ apps/ops-web/lib/browser-extension/authorization.ts
+~ apps/ops-web/lib/browser-extension/b2b-intelligence/authorization.ts
+~ apps/ops-web/lib/browser-extension/b2b-intelligence/service.ts
+~ apps/ops-web/lib/browser-extension/generated/b2b-capabilities.v1.json
+~ apps/ops-web/lib/browser-extension/generated/module-catalog.v1.json
+~ apps/ops-web/package.json
+~ apps/ops-web/scripts/verify-browser-extension-b2b-partner-lifecycle.mjs
+~ apps/ops-web/scripts/verify-browser-extension-user-profile-integration.mjs
+~ apps/revenue-browser-extension/README.md
+~ apps/revenue-browser-extension/dist/api.js
+~ apps/revenue-browser-extension/dist/background/service-worker.js
+~ apps/revenue-browser-extension/dist/generated/b2b-capabilities.v1.json
+~ apps/revenue-browser-extension/dist/generated/module-catalog.v1.json
+~ apps/revenue-browser-extension/dist/manifest.json
+~ apps/revenue-browser-extension/dist/modules/revenue-b2b.js
+~ apps/revenue-browser-extension/dist/modules/revenue-b2b/capability-ui.js
+~ apps/revenue-browser-extension/dist/modules/revenue-b2b/workspace-store.js
+~ apps/revenue-browser-extension/dist/runtime-config.json
+~ apps/revenue-browser-extension/dist/sidepanel.css
+~ apps/revenue-browser-extension/manifest.template.json
+~ apps/revenue-browser-extension/package-lock.json
+~ apps/revenue-browser-extension/package.json
+~ apps/revenue-browser-extension/public/sidepanel.css
+~ apps/revenue-browser-extension/scripts/verify.mjs
+~ apps/revenue-browser-extension/src/api.ts
+~ apps/revenue-browser-extension/src/background/service-worker.ts
+~ apps/revenue-browser-extension/src/generated/b2b-capabilities.v1.json
+~ apps/revenue-browser-extension/src/generated/module-catalog.v1.json
+~ apps/revenue-browser-extension/src/modules/revenue-b2b.ts
+~ apps/revenue-browser-extension/src/modules/revenue-b2b/capability-ui.ts
+~ apps/revenue-browser-extension/src/modules/revenue-b2b/workspace-store.ts
+~ apps/revenue-browser-extension/src/modules/revenue-b2b/workspace-types.ts
+~ package.json
+~ packages/browser-extension-contracts/b2b-capabilities.v1.json
+~ packages/browser-extension-contracts/module-catalog.v1.json
+~ scripts/sync-browser-extension-contracts.mjs
+~ scripts/verify-browser-extension-contracts.mjs

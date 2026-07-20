@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Settings,
   Sparkles,
+  WalletCards,
 } from "lucide-react"
 
 const groups = [
@@ -35,10 +36,10 @@ const groups = [
     label: "AMBASSADOR MANAGEMENT",
     items: [
       { label: "Recruitment", href: "/market-os/ambassadors/recruitment", icon: UserPlus },
-      { label: "Onboarding", href: "/market-os/ambassadors/onboarding", icon: ClipboardList },
+      { label: "Activation & onboarding", href: "/market-os/ambassadors/onboarding", icon: ClipboardList },
       { label: "Training & Certification", href: "/market-os/ambassadors/training-academy", icon: GraduationCap },
       { label: "Goals & KPIs", href: "/market-os/ambassadors/goals-kpis", icon: Target },
-      { label: "Incentives", href: "/market-os/ambassadors/incentives", icon: Gift },
+      { label: "Incentives & Payouts", href: "/market-os/ambassadors/payouts", icon: WalletCards },
     ],
   },
   {

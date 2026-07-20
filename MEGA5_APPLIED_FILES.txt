@@ -1,0 +1,124 @@
+ANGELCARE BROWSER OS — MEGA ZIP 5 APPLIED FILES
+New files: 79
+Modified files: 33
+Deleted files: 0
+
+NEW
++ ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_05_REPORT.md
++ ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_05_VERIFICATION.json
++ MEGA5_APPLIED_FILES.txt
++ MEGA5_DIRECT_PATCH_CONTEXT.txt
++ MEGA5_LIVE_ACCEPTANCE_CHECKLIST.md
++ MEGA5_MIGRATION_ORDER.md
++ MEGA5_ROLLBACK.md
++ MEGA5_VERIFICATION_EVIDENCE.txt
++ MEGA5_VERIFICATION_LOGS/01_contracts.log
++ MEGA5_VERIFICATION_LOGS/02_extension_typecheck.log
++ MEGA5_VERIFICATION_LOGS/03_extension_build.log
++ MEGA5_VERIFICATION_LOGS/04_extension_verify.log
++ MEGA5_VERIFICATION_LOGS/05_core.log
++ MEGA5_VERIFICATION_LOGS/06_user_profile.log
++ MEGA5_VERIFICATION_LOGS/07_mega2.log
++ MEGA5_VERIFICATION_LOGS/08_mega3.log
++ MEGA5_VERIFICATION_LOGS/09_mega4.log
++ MEGA5_VERIFICATION_LOGS/10_mega4_5.log
++ MEGA5_VERIFICATION_LOGS/11_mega5.log
++ MEGA5_VERIFICATION_LOGS/12_ops_typecheck_environment_limitation.log
++ MEGA5_VERIFICATION_LOGS/STATUS.txt
++ apps/ops-web/app/api/browser-extension/v1/b2b/partner/workspace/hydrate/route.ts
++ apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/authorization.ts
++ apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/contract.ts
++ apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/service.ts
++ apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/types.ts
++ apps/ops-web/lib/browser-extension/b2b-partner-lifecycle/workspace.ts
++ apps/ops-web/lib/browser-extension/generated/b2b-partner-lifecycle.v5.json
++ apps/ops-web/scripts/verify-browser-extension-b2b-partner-lifecycle.mjs
++ apps/ops-web/supabase/migrations/20260720_browser_extension_b2b_partner_lifecycle.sql
++ apps/ops-web/supabase/migrations/rollback_20260720_browser_extension_b2b_partner_lifecycle.sql
++ apps/revenue-browser-extension/dist/api.js
++ apps/revenue-browser-extension/dist/background/service-worker.js
++ apps/revenue-browser-extension/dist/content/angelcare-saas.js
++ apps/revenue-browser-extension/dist/content/generic-web.js
++ apps/revenue-browser-extension/dist/content/gmail.js
++ apps/revenue-browser-extension/dist/content/google-calendar.js
++ apps/revenue-browser-extension/dist/content/google-maps.js
++ apps/revenue-browser-extension/dist/content/whatsapp-web.js
++ apps/revenue-browser-extension/dist/focus.html
++ apps/revenue-browser-extension/dist/focus/focus.js
++ apps/revenue-browser-extension/dist/generated/b2b-account-intelligence.v2.json
++ apps/revenue-browser-extension/dist/generated/b2b-capabilities.v1.json
++ apps/revenue-browser-extension/dist/generated/b2b-deal-closing.v4.json
++ apps/revenue-browser-extension/dist/generated/b2b-enterprise-experience.v4_5.json
++ apps/revenue-browser-extension/dist/generated/b2b-partner-lifecycle.v5.json
++ apps/revenue-browser-extension/dist/generated/b2b-revenue-execution.v3.json
++ apps/revenue-browser-extension/dist/generated/module-catalog.v1.json
++ apps/revenue-browser-extension/dist/icons/icon-128.png
++ apps/revenue-browser-extension/dist/icons/icon-16.png
++ apps/revenue-browser-extension/dist/icons/icon-32.png
++ apps/revenue-browser-extension/dist/icons/icon-48.png
++ apps/revenue-browser-extension/dist/manifest.json
++ apps/revenue-browser-extension/dist/modules/ambassadors.js
++ apps/revenue-browser-extension/dist/modules/campaign-lifecycle.js
++ apps/revenue-browser-extension/dist/modules/capital-command.js
++ apps/revenue-browser-extension/dist/modules/market-os.js
++ apps/revenue-browser-extension/dist/modules/registry.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/capability-ui.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/partner-actions.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/partner-mode.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/workspace-store.js
++ apps/revenue-browser-extension/dist/modules/revenue-b2b/workspace-types.js
++ apps/revenue-browser-extension/dist/modules/seo-blog.js
++ apps/revenue-browser-extension/dist/modules/types.js
++ apps/revenue-browser-extension/dist/runtime-config.json
++ apps/revenue-browser-extension/dist/sidepanel.css
++ apps/revenue-browser-extension/dist/sidepanel.html
++ apps/revenue-browser-extension/dist/sidepanel/sidepanel.js
++ apps/revenue-browser-extension/dist/storage.js
++ apps/revenue-browser-extension/dist/types.js
++ apps/revenue-browser-extension/src/generated/b2b-partner-lifecycle.v5.json
++ apps/revenue-browser-extension/src/modules/revenue-b2b/partner-actions.ts
++ apps/revenue-browser-extension/src/modules/revenue-b2b/partner-mode.ts
++ docs/browser-extension/ANGELCARE_REVENUE_COMMAND_BROWSER_OS_CANONICAL_BUILD_CONTRACT.txt
++ docs/browser-extension/MEGA_PATCH_05_ACCEPTANCE_TRACEABILITY.md
++ docs/browser-extension/MEGA_PATCH_05_PARTNER_LIFECYCLE_CONTRACT.md
++ packages/browser-extension-contracts/b2b-partner-lifecycle.v5.json
+
+MODIFIED
+~ apps/ops-web/app/(protected)/users/_components/UserBrowserExtensionAccessSection.tsx
+~ apps/ops-web/app/api/browser-extension/v1/admin/users/[id]/access/route.ts
+~ apps/ops-web/app/api/browser-extension/v1/bootstrap/route.ts
+~ apps/ops-web/app/api/browser-extension/v1/commands/execute/route.ts
+~ apps/ops-web/lib/browser-extension/authorization.ts
+~ apps/ops-web/lib/browser-extension/b2b-intelligence/authorization.ts
+~ apps/ops-web/lib/browser-extension/b2b-intelligence/service.ts
+~ apps/ops-web/lib/browser-extension/b2b-workspace/service.ts
+~ apps/ops-web/lib/browser-extension/generated/b2b-capabilities.v1.json
+~ apps/ops-web/lib/browser-extension/generated/module-catalog.v1.json
+~ apps/ops-web/package.json
+~ apps/ops-web/scripts/verify-browser-extension-b2b-enterprise-experience.mjs
+~ apps/ops-web/scripts/verify-browser-extension-b2b-revenue-execution.mjs
+~ apps/ops-web/scripts/verify-browser-extension-user-profile-integration.mjs
+~ apps/revenue-browser-extension/README.md
+~ apps/revenue-browser-extension/manifest.template.json
+~ apps/revenue-browser-extension/package-lock.json
+~ apps/revenue-browser-extension/package.json
+~ apps/revenue-browser-extension/public/sidepanel.css
+~ apps/revenue-browser-extension/scripts/build.mjs
+~ apps/revenue-browser-extension/scripts/verify.mjs
+~ apps/revenue-browser-extension/src/api.ts
+~ apps/revenue-browser-extension/src/background/service-worker.ts
+~ apps/revenue-browser-extension/src/generated/b2b-capabilities.v1.json
+~ apps/revenue-browser-extension/src/generated/module-catalog.v1.json
+~ apps/revenue-browser-extension/src/modules/revenue-b2b.ts
+~ apps/revenue-browser-extension/src/modules/revenue-b2b/capability-ui.ts
+~ apps/revenue-browser-extension/src/modules/revenue-b2b/workspace-types.ts
+~ package.json
+~ packages/browser-extension-contracts/b2b-capabilities.v1.json
+~ packages/browser-extension-contracts/module-catalog.v1.json
+~ scripts/sync-browser-extension-contracts.mjs
+~ scripts/verify-browser-extension-contracts.mjs
+
+DELETED
+
+No Git staging, commit or push was performed.

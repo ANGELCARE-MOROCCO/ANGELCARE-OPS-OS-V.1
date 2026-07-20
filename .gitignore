@@ -82,3 +82,14 @@ AC360_*_REPORT.md
 *_CLEANUP*.md
 *_AUDIT_REPORT.md
 Texte collé*.txt
+
+# ANGELCARE Desktop generated output and local state
+apps/angelcare-desktop/node_modules/
+apps/angelcare-desktop/out/
+apps/angelcare-desktop/.webpack/
+apps/angelcare-desktop/.env
+apps/angelcare-desktop/.env.*
+!apps/angelcare-desktop/.env.example
+*.dmg
+*.nupkg
+RELEASES

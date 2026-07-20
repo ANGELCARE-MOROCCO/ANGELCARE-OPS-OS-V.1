@@ -1,0 +1,121 @@
+{
+  "version": "3.0.0",
+  "name": "Mega ZIP 3 — B2B Outreach, Pipeline, Meetings & Daily Revenue Execution",
+  "canonicalCapabilityCount": 45,
+  "implementedCapabilityIds": [
+    "B2B-010",
+    "B2B-011",
+    "B2B-012",
+    "B2B-013",
+    "B2B-014",
+    "B2B-015",
+    "B2B-016",
+    "B2B-017",
+    "B2B-018",
+    "B2B-019",
+    "B2B-036",
+    "B2B-037",
+    "B2B-038",
+    "B2B-044"
+  ],
+  "scope": [
+    "opportunity_creation",
+    "pipeline_governance",
+    "next_best_action",
+    "outreach_strategy",
+    "gmail_assisted_operations",
+    "whatsapp_assisted_operations",
+    "call_command",
+    "field_visit_mode",
+    "meeting_preparation",
+    "live_meeting_support",
+    "post_meeting_conversion",
+    "followup_orchestration",
+    "adaptive_sequences",
+    "campaign_attribution",
+    "referral_source_management",
+    "daily_revenue_command",
+    "unified_activity_timeline"
+  ],
+  "commands": [
+    "b2b.opportunity.create",
+    "b2b.opportunity.update",
+    "b2b.opportunity.stage_recommend",
+    "b2b.opportunity.stage_change",
+    "b2b.pipeline.read",
+    "b2b.pipeline.risk_detect",
+    "b2b.followup.create",
+    "b2b.followup.complete",
+    "b2b.outreach.strategy_prepare",
+    "b2b.communication.prepare",
+    "b2b.communication.log",
+    "b2b.gmail.thread_resolve",
+    "b2b.gmail.reply_prepare",
+    "b2b.whatsapp.context_resolve",
+    "b2b.whatsapp.message_prepare",
+    "b2b.call.prepare",
+    "b2b.call.result_record",
+    "b2b.field_visit.create",
+    "b2b.field_visit.result_record",
+    "b2b.meeting.prepare",
+    "b2b.meeting.create",
+    "b2b.meeting.assist",
+    "b2b.meeting.summary_prepare",
+    "b2b.meeting.outcome_apply",
+    "b2b.campaign.attribute",
+    "b2b.referral_source.record",
+    "b2b.daily_command.read",
+    "b2b.next_action.read",
+    "b2b.next_action.complete",
+    "b2b.timeline.read",
+    "b2b.sequence.create",
+    "b2b.sequence.enroll",
+    "b2b.sequence.pause",
+    "b2b.sequence.stop"
+  ],
+  "acceptanceScenarios": [
+    {
+      "id": "M3-A01",
+      "title": "Website to opportunity"
+    },
+    {
+      "id": "M3-A02",
+      "title": "Gmail reply workflow"
+    },
+    {
+      "id": "M3-A03",
+      "title": "WhatsApp commitment workflow"
+    },
+    {
+      "id": "M3-A04",
+      "title": "Call and follow-up outcome"
+    },
+    {
+      "id": "M3-A05",
+      "title": "Meeting lifecycle"
+    },
+    {
+      "id": "M3-A06",
+      "title": "Pipeline governance"
+    },
+    {
+      "id": "M3-A07",
+      "title": "Adaptive sequence stop"
+    },
+    {
+      "id": "M3-A08",
+      "title": "Daily revenue command"
+    },
+    {
+      "id": "M3-A09",
+      "title": "Adapter restriction"
+    },
+    {
+      "id": "M3-A10",
+      "title": "Access revocation"
+    }
+  ],
+  "externalSending": "user-confirmed only",
+  "bulkMessaging": false,
+  "canonicalReferralModule": "Ambassadors"
+}

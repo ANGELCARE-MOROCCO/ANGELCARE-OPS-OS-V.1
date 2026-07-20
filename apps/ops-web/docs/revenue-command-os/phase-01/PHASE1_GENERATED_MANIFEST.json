@@ -1,0 +1,198 @@
+{
+  "release": "AC-REVENUE-OS-MZ01-FOUNDATION",
+  "files": [
+    {
+      "file": "ANGELCARE_REVENUE_COMMAND_OS_PHASE1_FOUNDATION_REPORT.md",
+      "bytes": 1149
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/[workspace]/page.tsx",
+      "bytes": 695
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/_components/ObjectiveComposer.tsx",
+      "bytes": 7247
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/_components/RevenueOsContext.tsx",
+      "bytes": 2637
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/_components/RevenueOsDashboard.tsx",
+      "bytes": 19268
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/_components/RevenueOsIcon.tsx",
+      "bytes": 892
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx",
+      "bytes": 14982
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx",
+      "bytes": 18193
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/error.tsx",
+      "bytes": 1041
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/layout.tsx",
+      "bytes": 662
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/loading.tsx",
+      "bytes": 594
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/not-found.tsx",
+      "bytes": 930
+    },
+    {
+      "file": "app/(protected)/revenue-command-os/page.tsx",
+      "bytes": 190
+    },
+    {
+      "file": "app/api/revenue-command-os/foundation/route.ts",
+      "bytes": 4017
+    },
+    {
+      "file": "app/api/revenue-command-os/search/route.ts",
+      "bytes": 1426
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/ACCEPTANCE.md",
+      "bytes": 1603
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/ARCHITECTURE.md",
+      "bytes": 1095
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "bytes": 1560
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/CHANGELOG.md",
+      "bytes": 762
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/FILE_CHANGE_MANIFEST.md",
+      "bytes": 695
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/INSTALLATION.md",
+      "bytes": 1211
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/PERMISSIONS.md",
+      "bytes": 805
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/PHASE1_GENERATED_MANIFEST.json",
+      "bytes": 0
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/README.md",
+      "bytes": 1603
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/ROLLBACK.md",
+      "bytes": 535
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/ROLLBACK.sql",
+      "bytes": 1000
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/ROUTE_MAP.md",
+      "bytes": 838
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/SECURITY.md",
+      "bytes": 758
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/STATIC_VERIFICATION_REPORT.txt",
+      "bytes": 3738
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/TYPESCRIPT_VERIFICATION_REPORT.txt",
+      "bytes": 258
+    },
+    {
+      "file": "docs/revenue-command-os/phase-01/revenue-os.env.example",
+      "bytes": 212
+    },
+    {
+      "file": "lib/revenue-command-os/constants.ts",
+      "bytes": 8410
+    },
+    {
+      "file": "lib/revenue-command-os/env.ts",
+      "bytes": 1675
+    },
+    {
+      "file": "lib/revenue-command-os/errors.ts",
+      "bytes": 1320
+    },
+    {
+      "file": "lib/revenue-command-os/event-contracts.ts",
+      "bytes": 1581
+    },
+    {
+      "file": "lib/revenue-command-os/foundation-data.ts",
+      "bytes": 6677
+    },
+    {
+      "file": "lib/revenue-command-os/ids.ts",
+      "bytes": 840
+    },
+    {
+      "file": "lib/revenue-command-os/repository.ts",
+      "bytes": 9796
+    },
+    {
+      "file": "lib/revenue-command-os/search.ts",
+      "bytes": 3291
+    },
+    {
+      "file": "lib/revenue-command-os/statuses.ts",
+      "bytes": 2198
+    },
+    {
+      "file": "lib/revenue-command-os/types.ts",
+      "bytes": 3323
+    },
+    {
+      "file": "scripts/revenue-command-os/print-phase1-manifest.mjs",
+      "bytes": 1153
+    },
+    {
+      "file": "scripts/revenue-command-os/verify-phase1.mjs",
+      "bytes": 7085
+    },
+    {
+      "file": "supabase/migrations/20260720_revenue_command_os_phase1_foundation.sql",
+      "bytes": 23127
+    },
+    {
+      "file": "tests/revenue-command-os/fixtures/objective-validation-cases.json",
+      "bytes": 1183
+    },
+    {
+      "file": "tests/revenue-command-os/fixtures/phase1-bootstrap.json",
+      "bytes": 1009
+    },
+    {
+      "file": "tsconfig.revenue-os-integration.json",
+      "bytes": 378
+    },
+    {
+      "file": "tsconfig.revenue-os-phase1.json",
+      "bytes": 550
+    }
+  ],
+  "totalBytes": 164192
+}

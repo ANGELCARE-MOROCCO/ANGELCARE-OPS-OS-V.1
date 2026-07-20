@@ -1,0 +1,5 @@
+Applied: 20260720-010924
+Package: ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_04_5_ENTERPRISE_EXPERIENCE
+Backup: /Users/user/Desktop/angelcare-platform/.angelcare_patch_backups/browser-os-b2b-patch04-5-20260720-010924
+SQL: none required
+Extension version: 0.4.5

@@ -1,0 +1,7 @@
+{
+  "name": "@angelcare/browser-extension-contracts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canonical machine-readable contracts for ANGELCARE Revenue Command Browser OS.",
+  "files": ["*.json"]
+}

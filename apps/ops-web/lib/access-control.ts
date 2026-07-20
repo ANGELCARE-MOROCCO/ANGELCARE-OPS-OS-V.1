@@ -2,6 +2,7 @@ export const ACCESS_CONTROL: Record<string, string[]> = {
   '/users': ['users.manage', 'users.view'],
   '/leads': ['leads.view'],
   '/missions': ['missions.view'],
+  '/revenue-command-os': ['revenue_os.view', 'revenue.view'],
   '/revenue-command-center': ['revenue_center.access', 'revenue.view'],
   '/voice-center': ['voice_center.access', 'voice.view'],
 }

@@ -1,0 +1,76 @@
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase1:verify
+> node scripts/revenue-command-os/verify-phase1.mjs
+
+
+ANGELCARE Revenue Command OS Phase 1 Verification
+Passes: 64
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/[workspace]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/error.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/loading.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/not-found.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsDashboard.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/ObjectiveComposer.tsx
+  ✓ Required file: app/api/revenue-command-os/foundation/route.ts
+  ✓ Required file: app/api/revenue-command-os/search/route.ts
+  ✓ Required file: lib/revenue-command-os/types.ts
+  ✓ Required file: lib/revenue-command-os/constants.ts
+  ✓ Required file: lib/revenue-command-os/repository.ts
+  ✓ Required file: lib/revenue-command-os/event-contracts.ts
+  ✓ Required file: lib/revenue-command-os/errors.ts
+  ✓ Required file: lib/revenue-command-os/search.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase1_foundation.sql
+  ✓ Required file: docs/revenue-command-os/phase-01/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-01/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-01/ROLLBACK.sql
+  ✓ Required file: tsconfig.revenue-os-phase1.json
+  ✓ Required file: tsconfig.revenue-os-integration.json
+  ✓ Canonical contract version locked
+  ✓ Phase 1 release code locked
+  ✓ Workspace and feature flag registry populated
+  ✓ Exactly twelve Revenue OS workspace routes registered
+  ✓ Execution mode contract begins in Shadow
+  ✓ External action feature flag exists
+  ✓ Restricted features are disabled
+  ✓ Protected layout enforces Revenue OS access
+  ✓ Global command search keyboard handling exists
+  ✓ Objective composer is mounted in shell
+  ✓ Main cockpit is strategy-to-execution oriented
+  ✓ Main Phase 1 cockpit does not degrade into a money dashboard
+  ✓ API action is allow-listed
+  ✓ API blocks autonomous modes in Phase 1
+  ✓ Scoped Revenue OS permissions registered
+  ✓ Route access-control registry updated
+  ✓ Global app navigation entry added
+  ✓ Workspace module registry updated
+  ✓ Migration table: revenue_os_installations
+  ✓ Migration table: revenue_os_permission_registry
+  ✓ Migration table: revenue_os_workspaces
+  ✓ Migration table: revenue_os_feature_flags
+  ✓ Migration table: revenue_os_status_dictionary
+  ✓ Migration table: revenue_os_system_checks
+  ✓ Migration table: revenue_os_objectives
+  ✓ Migration table: revenue_os_business_events
+  ✓ Migration table: revenue_os_event_outbox
+  ✓ Migration table: revenue_os_audit_events
+  ✓ Append-only audit trigger included
+  ✓ RLS enabled across Revenue OS tables
+  ✓ Direct client access revoked
+  ✓ Database execution posture includes Shadow
+  ✓ External actions remain disabled at installation
+  ✓ Migration seed operations are idempotent
+  ✓ Fixture expects twelve workspaces
+  ✓ Fixture locks Shadow mode
+  ✓ Fixture covers eight scoped permissions
+  ✓ Objective tests include valid case
+  ✓ Objective tests include prohibited autonomy case
+  ✓ Legacy Revenue Command Center remains present
+
+PHASE 1 STATIC ACCEPTANCE: PASS
+

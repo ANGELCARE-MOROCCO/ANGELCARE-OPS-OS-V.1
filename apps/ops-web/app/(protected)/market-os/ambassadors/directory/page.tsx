@@ -1,7 +1,14 @@
-import AmbassadorProductionWorkspace from "@/components/market-os/ambassadors/ambassador-production-workspace"
+import AmbassadorMarketSidebar from "@/components/market-os/ambassadors/ambassador-market-sidebar"
+import AmbassadorDirectoryRoute from "@/components/market-os/ambassadors/routes/AmbassadorDirectoryRoute"
 
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <AmbassadorProductionWorkspace mode="directory" />
+export default function AmbassadorDirectoryPage() {
+  return (
+    <div
+      data-ambassador-directory-shell="shared-sidebar"
+      className="flex min-h-screen min-w-0 bg-[#f5f7fb] text-slate-950"
+    >
+      <AmbassadorMarketSidebar />
+      <AmbassadorDirectoryRoute />
+    </div>
+  )
 }

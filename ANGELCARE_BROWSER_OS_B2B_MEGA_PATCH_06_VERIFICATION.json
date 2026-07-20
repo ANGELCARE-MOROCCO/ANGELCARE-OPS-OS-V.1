@@ -1,0 +1,1624 @@
+{
+  "generatedAt": "2026-07-20T04:02:49.499Z",
+  "checks": [
+    {
+      "label": "required file packages/browser-extension-contracts/b2b-ai-sales-director.v6.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/supabase/migrations/20260720_browser_extension_b2b_ai_sales_director.sql",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/supabase/migrations/rollback_20260720_browser_extension_b2b_ai_sales_director.sql",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-management-command/types.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-management-command/contract.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-management-command/authorization.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-management-command/service.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/b2b-management-command/workspace.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/api/browser-extension/v1/b2b/management/workspace/hydrate/route.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/revenue-browser-extension/src/modules/revenue-b2b/management-mode.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/revenue-browser-extension/src/modules/revenue-b2b/management-actions.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "45 canonical capability families",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "45 operational capability families",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "four Mega ZIP 6 capability families implemented",
+      "ok": true,
+      "detail": "4"
+    },
+    {
+      "label": "Mega ZIP 6 exact implemented IDs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "61 governed Mega ZIP 6 commands",
+      "ok": true,
+      "detail": "61"
+    },
+    {
+      "label": "ten premium management workspaces",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "label": "eight truth classifications",
+      "ok": true,
+      "detail": "8"
+    },
+    {
+      "label": "six forecast categories",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "label": "external communication remains user confirmed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "secret surveillance prohibited",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "cross-territory leakage prohibited",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.review_account",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.review_account",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.review_pipeline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.review_pipeline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.review_partner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.review_partner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.review_renewal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.review_renewal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.recommend_action",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.recommend_action",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.refresh_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.refresh_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.accept_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.accept_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.ai_director.reject_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.ai_director.reject_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.priority_assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.priority_assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.account_reassign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.account_reassign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.opportunity_reassign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.opportunity_reassign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.correction_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.correction_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.action_freeze",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.action_freeze",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.intervention_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.intervention_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.management.intervention_close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.management.intervention_close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.pipeline_truth.assess",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.pipeline_truth.assess",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.pipeline_truth.stage_recommend",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.pipeline_truth.stage_recommend",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.pipeline_truth.correction_apply",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.pipeline_truth.correction_apply",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.forecast.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.forecast.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.forecast.snapshot_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.forecast.snapshot_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.forecast.override_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.forecast.override_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.forecast.override_approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.forecast.override_approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.revenue_risk.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.revenue_risk.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.revenue_risk.assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.revenue_risk.assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.revenue_risk.escalate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.revenue_risk.escalate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.revenue_risk.resolve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.revenue_risk.resolve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.proposal_recovery.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.proposal_recovery.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.payment_recovery.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.payment_recovery.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.renewal_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.renewal_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.partner_health_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.partner_health_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.execution_quality.assess",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.execution_quality.assess",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.execution_quality.pattern_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.execution_quality.pattern_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.coaching.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.coaching.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.coaching.assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.coaching.assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.coaching.complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.coaching.complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.coaching.review",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.coaching.review",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.coaching.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.coaching.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.territory_intelligence.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.territory_intelligence.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.territory_intelligence.coverage_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.territory_intelligence.coverage_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.territory_intelligence.gap_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.territory_intelligence.gap_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.vertical_intelligence.performance_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.vertical_intelligence.performance_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.daily_revenue_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.daily_revenue_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.weekly_commercial_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.weekly_commercial_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.pipeline_truth_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.pipeline_truth_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.margin_protection_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.margin_protection_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.payment_recovery_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.payment_recovery_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.partner_health_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.partner_health_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.renewal_exposure_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.renewal_exposure_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.territory_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.territory_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.staff_execution_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.staff_execution_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.report.automation_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.report.automation_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.enable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.enable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.pause",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.pause",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.approval_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.approval_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.approval_decide",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.approval_decide",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.execute",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.execute",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.retry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.retry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.kill",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.kill",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command registered b2b.automation.audit_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "command executable b2b.automation.audit_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard B2B_HIGH_RISK_ACTIONS",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard B2B_SAFE_AUTOMATION_TYPES",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard HIGH_RISK_ACTION_REQUIRES_HUMAN",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard AUTOMATION_KILL_SWITCH_ACTIVE",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard UNSAFE_AUTOMATION_TYPE_BLOCKED",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard filterByOwnership",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard assertTerritory",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard actorCanApprove",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard truth_classification",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard missing_evidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "governance safeguard confidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration aiDirector",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration pipeline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration risks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration team",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration territory",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration reports",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration automation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration activeContext",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration diagnostics",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration revenueAtRisk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management hydration decisionQueue",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Mega ZIP 6 persistence table count",
+      "ok": true,
+      "detail": "17"
+    },
+    {
+      "label": "RLS table browser_extension_b2b_ai_recommendations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_ai_recommendations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_ai_recommendation_evidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_ai_recommendation_evidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_pipeline_truth_assessments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_pipeline_truth_assessments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_forecast_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_forecast_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_forecast_overrides",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_forecast_overrides",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_revenue_risks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_revenue_risks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_management_interventions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_management_interventions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_execution_quality_assessments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_execution_quality_assessments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_execution_quality_patterns",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_execution_quality_patterns",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_coaching_missions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_coaching_missions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_territory_intelligence_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_territory_intelligence_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_executive_reports",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_executive_reports",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_automation_definitions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_automation_definitions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_automation_approvals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_automation_approvals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_automation_runs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_automation_runs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_automation_kill_switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_automation_kill_switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS table browser_extension_b2b_ai_policy_versions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback table browser_extension_b2b_ai_policy_versions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_ai_recommendations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_ai_recommendation_evidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_pipeline_truth_assessments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_forecast_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_revenue_risks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_execution_quality_assessments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_coaching_missions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_territory_intelligence_snapshots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_executive_reports",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_automation_definitions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_automation_runs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_automation_kill_switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL structure browser_extension_b2b_ai_policy_versions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "release channel upgrades to 0.6.0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback returns release to 0.5.0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule ai_sales_director",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule management_command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule team_priority_management",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule account_reassignment",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule pipeline_truth",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule forecast_management",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule forecast_override_approval",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule revenue_risk_command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule executive_intervention",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule staff_execution_quality",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule coaching_missions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule coaching_review",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule territory_intelligence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule vertical_intelligence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule executive_reporting",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule automation_center",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule automation_approval",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule automation_administration",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "user-profile submodule automation_kill_switch",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Mega ZIP 6 access preset",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "patch06 capability allow-list",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.ai_director.accept_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.management.action_freeze",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.pipeline_truth.correction_apply",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.forecast.override_approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.automation.enable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "sensitive approval b2b.automation.kill",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management workspace hydration API",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "45/45 UI coverage",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace AI Sales Director",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Management Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Pipeline Truth & Forecast",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Revenue Risk Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Team Execution Quality",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Coaching Mission Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Territory & Vertical Intelligence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Executive Reporting Studio",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Controlled Automation Center",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "focus workspace Executive Intervention Room",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.review_account",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.review_pipeline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.review_partner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.review_renewal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.recommend_action",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.refresh_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.accept_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.ai_director.reject_recommendation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.priority_assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.account_reassign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.opportunity_reassign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.correction_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.action_freeze",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.intervention_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.management.intervention_close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.pipeline_truth.assess",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.pipeline_truth.stage_recommend",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.pipeline_truth.correction_apply",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.forecast.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.forecast.snapshot_create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.forecast.override_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.forecast.override_approve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.revenue_risk.detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.revenue_risk.assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.revenue_risk.escalate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.revenue_risk.resolve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.proposal_recovery.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.payment_recovery.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.renewal_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.partner_health_rescue.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.execution_quality.assess",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.execution_quality.pattern_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.coaching.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.coaching.assign",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.coaching.complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.coaching.review",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.coaching.outcome_record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.territory_intelligence.calculate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.territory_intelligence.coverage_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.territory_intelligence.gap_detect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.vertical_intelligence.performance_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.daily_revenue_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.weekly_commercial_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.pipeline_truth_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.margin_protection_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.payment_recovery_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.partner_health_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.renewal_exposure_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.territory_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.staff_execution_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.report.automation_generate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.create",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.update",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.enable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.pause",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.approval_request",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.approval_decide",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.execute",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.retry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.kill",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "browser command action b2b.automation.audit_read",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management visual system management-runtime",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "management visual system management-safety-banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "extension version 0.6.0",
+      "ok": true,
+      "detail": "0.6.0"
+    },
+    {
+      "label": "no direct Chrome-to-Supabase client",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "no RefferQ resurrection",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "totals": {
+    "checks": 322,
+    "passed": 322,
+    "failed": 0,
+    "operationalCapabilities": 45,
+    "mega6Commands": 61,
+    "tables": 17,
+    "focusWorkspaces": 10
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "productionAppUrl": "https://opsmanagement.angelcarehub.com",
+  "developmentAppUrl": "http://localhost:3000",
+  "healthPath": "/api/desktop/runtime/health",
+  "toolbarHeight": 64,
+  "minimumWidth": 1120,
+  "minimumHeight": 720,
+  "defaultWidth": 1540,
+  "defaultHeight": 980,
+  "healthCheckIntervalMs": 30000,
+  "loadTimeoutMs": 45000,
+  "allowedExternalProtocols": [
+    "https:",
+    "http:",
+    "mailto:",
+    "tel:"
+  ],
+  "desktopContractVersion": "2.0.0",
+  "whatsappPartition": "persist:angelcare-whatsapp-main",
+  "whatsappHomeUrl": "https://web.whatsapp.com/",
+  "whatsappDownloadDirectory": "ANGELCARE WhatsApp"
+}

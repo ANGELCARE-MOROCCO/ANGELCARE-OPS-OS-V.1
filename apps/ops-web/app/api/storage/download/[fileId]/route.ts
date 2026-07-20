@@ -33,6 +33,37 @@ export async function GET(request: Request, { params }: { params: Promise<{ file
       return NextResponse.json({ ok: false, error: "Storage file not found" }, { status: 404 })
     }
 
+    if (["destroyed", "permanently_deleted"].includes(clean(fileRow.status).toLowerCase())) {
+      const destruction = fileRow.metadata && typeof fileRow.metadata === "object" ? (fileRow.metadata as Record<string, any>).destruction : null
+      return NextResponse.json({
+        ok: false,
+        error: "Attachment was permanently deleted",
+        code: "STORAGE_FILE_PERMANENTLY_DELETED",
+        message: "This attachment was permanently destroyed under the governed OPSOS retention and destruction policy.",
+        destruction: destruction ? {
+          requestNumber: clean(destruction.requestNumber),
+          certificateNumber: clean(fileRow.destruction_certificate_number || destruction.certificateNumber),
+          destroyedAt: clean(fileRow.destroyed_at || destruction.destroyedAt),
+          permanent: true,
+        } : null,
+      }, { status: 410, headers: { "cache-control": "no-store" } })
+    }
+
+    if (clean(fileRow.status).toLowerCase() === "quarantined") {
+      const quarantine = fileRow.metadata && typeof fileRow.metadata === "object" ? (fileRow.metadata as Record<string, any>).quarantine : null
+      return NextResponse.json({
+        ok: false,
+        error: "Attachment is quarantined",
+        code: "STORAGE_FILE_QUARANTINED",
+        message: "This attachment is temporarily isolated under the reversible OPSOS storage quarantine policy.",
+        quarantine: quarantine ? {
+          caseNumber: clean(quarantine.caseNumber),
+          reason: clean(quarantine.reason),
+          reversible: quarantine.reversible !== false,
+        } : null,
+      }, { status: 423, headers: { "cache-control": "no-store" } })
+    }
+
     const mailboxId = fileRow.mailbox_id || clean(new URL(request.url).searchParams.get("mailboxId")) || null
     if (mailboxId) {
       const scope = await resolveMailboxScopeForUser(user.id, mailboxId)

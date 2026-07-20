@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ANGELCARE Desktop</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="toolbar" aria-label="Contrôles ANGELCARE Desktop">
+      <div class="brand">
+        <img src="./logo.png" alt="ANGELCARE" class="logo" />
+        <span class="divider" aria-hidden="true"></span>
+        <div>
+          <div class="product">DESKTOP</div>
+          <div class="edition">Secure Runtime</div>
+        </div>
+      </div>
+
+      <div class="runtime-status" role="status" aria-live="polite">
+        <span id="status-dot" class="status-dot status-loading"></span>
+        <div>
+          <div id="status-label" class="status-label">Initialisation…</div>
+          <div id="status-detail" class="status-detail">Chargement du runtime sécurisé</div>
+        </div>
+      </div>
+
+      <nav class="toolbar-actions" aria-label="Actions du runtime">
+        <button type="button" data-action="reload" title="Actualiser ANGELCARE">Actualiser</button>
+        <button type="button" data-action="hard-reload" title="Actualiser sans cache">Sans cache</button>
+        <button type="button" data-action="open-browser" class="secondary" title="Ouvrir dans le navigateur">Navigateur</button>
+      </nav>
+    </header>
+
+    <main class="fallback">
+      <section class="fallback-card" aria-labelledby="fallback-title">
+        <div class="shield" aria-hidden="true">A</div>
+        <p class="eyebrow">ANGELCARE DESKTOP RUNTIME</p>
+        <h1 id="fallback-title">Connexion à votre plateforme sécurisée</h1>
+        <p id="fallback-message" class="fallback-message">
+          Le runtime prépare l’environnement ANGELCARE et vérifie la disponibilité de votre SaaS.
+        </p>
+        <div class="fallback-actions">
+          <button type="button" data-action="retry" class="primary">Réessayer</button>
+          <button type="button" data-action="open-browser" class="outline">Ouvrir dans le navigateur</button>
+        </div>
+        <div class="diagnostic-grid">
+          <div>
+            <span>Version</span>
+            <strong id="runtime-version">—</strong>
+          </div>
+          <div>
+            <span>Plateforme</span>
+            <strong id="runtime-platform">—</strong>
+          </div>
+          <div>
+            <span>Canal</span>
+            <strong id="runtime-channel">—</strong>
+          </div>
+          <div>
+            <span>Destination</span>
+            <strong id="runtime-origin">—</strong>
+          </div>
+        </div>
+        <p class="security-note">Node.js désactivé · Isolation de contexte active · Sandbox Chromium active</p>
+      </section>
+    </main>
+
+    <script src="./shell.js"></script>
+  </body>
+</html>

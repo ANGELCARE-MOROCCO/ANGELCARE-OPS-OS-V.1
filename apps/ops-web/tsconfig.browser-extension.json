@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "plugins": []
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/browser-extension/**/*.ts",
+    "app/api/browser-extension/**/*.ts",
+    "components/browser-extension/**/*.tsx",
+    "app/(protected)/browser-extension/**/*.tsx",
+    "app/(protected)/opsos/browser-extension/**/*.tsx",
+    "app/(protected)/users/_components/UserBrowserExtensionAccessSection.tsx",
+    "app/(protected)/users/[id]/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
