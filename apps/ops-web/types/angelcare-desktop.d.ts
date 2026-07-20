@@ -61,7 +61,7 @@ declare global {
     goForward(): Promise<AngelCareWhatsAppStatus>;
     focus(): Promise<AngelCareWhatsAppStatus>;
     openExternal(): Promise<AngelCareWhatsAppStatus>;
-    navigate(input: { phone?: string; text?: string }): Promise<AngelCareWhatsAppStatus>;
+    navigate(input: { phone?: string; text?: string; contextId?: string; attemptId?: string }): Promise<AngelCareWhatsAppStatus>;
     restart(): Promise<AngelCareWhatsAppStatus>;
     clearCache(): Promise<AngelCareWhatsAppStatus>;
     clearSession(): Promise<{ cancelled: boolean; state: AngelCareWhatsAppStatus }>;
@@ -131,6 +131,8 @@ declare global {
       readonly whatsappDeviceRegistration: boolean;
       readonly whatsappAuthorizationLeases: boolean;
       readonly whatsappRemoteCommands: boolean;
+      readonly whatsappBusinessContext: boolean;
+      readonly whatsappOutcomeCapture: boolean;
       readonly whatsappAutomation: false;
       readonly whatsappDomAccess: false;
     };
@@ -147,5 +149,6 @@ declare global {
     "angelcare:desktop-runtime": CustomEvent<AngelCareDesktopRuntime | null>;
     "angelcare:whatsapp-status": CustomEvent<AngelCareWhatsAppStatus>;
     "angelcare:whatsapp-governance": CustomEvent<AngelCareWhatsAppGovernanceStatus>;
+    "angelcare:open-whatsapp-context": CustomEvent<{ href: string; contextType: string; entityId: string; purpose?: string; sourceRoute?: string }>;
   }
 }

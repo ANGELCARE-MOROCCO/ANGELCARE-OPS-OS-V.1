@@ -11,7 +11,7 @@ const runtime = Object.freeze({
   isDesktop: true,
   productName: "ANGELCARE Desktop",
   version: argumentValue("--angelcare-desktop-version=", "0.0.0"),
-  contractVersion: argumentValue("--angelcare-desktop-contract=", "3.0.0"),
+  contractVersion: argumentValue("--angelcare-desktop-contract=", "4.0.0"),
   releaseChannel: argumentValue("--angelcare-desktop-channel=", "stable"),
   platform: process.platform,
   capabilities: Object.freeze({
@@ -22,6 +22,8 @@ const runtime = Object.freeze({
     whatsappDeviceRegistration: true,
     whatsappAuthorizationLeases: true,
     whatsappRemoteCommands: true,
+    whatsappBusinessContext: true,
+    whatsappOutcomeCapture: true,
     whatsappAutomation: false,
     whatsappDomAccess: false,
   }),

@@ -41,9 +41,9 @@ const DEFAULT_POLICY: Omit<WhatsAppDesktopPolicy, "workspace_id"> = {
   allow_external_open: true,
   allow_local_cache_clear: true,
   allow_local_session_clear: true,
-  minimum_desktop_version: "1.2.0",
+  minimum_desktop_version: "1.3.0",
   blocked_versions: [],
-  policy_json: {},
+  policy_json: { allowed_context_types: [], required_outcome_capture: true, required_next_action_outcomes: ["followup_required", "call_back", "payment_promised"], allowed_document_categories: [], default_message_language: "fr" },
 }
 
 function clean(value: unknown, max = 500) {
@@ -440,7 +440,7 @@ export function sanitizePolicyInput(workspaceId: string, body: Row, current?: Ro
     allow_external_open: bool("allow_external_open"),
     allow_local_cache_clear: bool("allow_local_cache_clear"),
     allow_local_session_clear: bool("allow_local_session_clear"),
-    minimum_desktop_version: clean(body.minimum_desktop_version ?? base.minimum_desktop_version, 80) || "1.2.0",
+    minimum_desktop_version: clean(body.minimum_desktop_version ?? base.minimum_desktop_version, 80) || "1.3.0",
     blocked_versions: asArray(body.blocked_versions ?? base.blocked_versions),
     policy_json: asObject(body.policy_json ?? base.policy_json),
   }

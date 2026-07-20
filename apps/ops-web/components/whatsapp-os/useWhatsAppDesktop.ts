@@ -3,12 +3,34 @@
 import { useCallback, useEffect, useState } from "react"
 import { getDesktopRuntime, getWhatsAppDesktopApi } from "@/lib/desktop-runtime"
 
-function isWhatsAppStatus(value: object): value is AngelCareWhatsAppStatus {
-  return [
-    "available", "created", "visible", "requestedVisible", "phase", "message", "detail", "currentUrl", "title", "online",
-    "rendererStatus", "authProfile", "canGoBack", "canGoForward", "layoutMode", "partition", "lastLoadStartedAt", "lastLoadedAt",
-    "lastErrorAt", "lastCrashAt", "lastResponsiveAt", "storagePath", "downloads", "permissions", "timestamp",
-  ].every((key) => key in value)
+function isWhatsAppStatus(value: unknown): value is AngelCareWhatsAppStatus {
+  if (!value || typeof value !== "object") return false
+  const status = value as Record<string, unknown>
+  return typeof status.available === "boolean"
+    && typeof status.created === "boolean"
+    && typeof status.visible === "boolean"
+    && typeof status.requestedVisible === "boolean"
+    && typeof status.phase === "string"
+    && typeof status.message === "string"
+    && (status.detail === null || typeof status.detail === "string")
+    && (status.currentUrl === null || typeof status.currentUrl === "string")
+    && (status.title === null || typeof status.title === "string")
+    && (status.online === null || typeof status.online === "boolean")
+    && typeof status.rendererStatus === "string"
+    && typeof status.authProfile === "string"
+    && typeof status.canGoBack === "boolean"
+    && typeof status.canGoForward === "boolean"
+    && (status.layoutMode === "split" || status.layoutMode === "focus" || status.layoutMode === "full" || status.layoutMode === "hidden")
+    && typeof status.partition === "string"
+    && (status.lastLoadStartedAt === null || typeof status.lastLoadStartedAt === "string")
+    && (status.lastLoadedAt === null || typeof status.lastLoadedAt === "string")
+    && (status.lastErrorAt === null || typeof status.lastErrorAt === "string")
+    && (status.lastCrashAt === null || typeof status.lastCrashAt === "string")
+    && (status.lastResponsiveAt === null || typeof status.lastResponsiveAt === "string")
+    && (status.storagePath === null || typeof status.storagePath === "string")
+    && Array.isArray(status.downloads)
+    && Array.isArray(status.permissions)
+    && typeof status.timestamp === "string"
 }
 
 export function useWhatsAppDesktop() {
@@ -50,8 +72,8 @@ export function useWhatsAppDesktop() {
     setError(null)
     try {
       const result = await operation(api)
-      if (result && typeof result === "object" && isWhatsAppStatus(result)) setStatus(result)
-      if (result && typeof result === "object" && "state" in result) setStatus((result as { state: AngelCareWhatsAppStatus }).state)
+      if (isWhatsAppStatus(result)) setStatus(result)
+      if (result && typeof result === "object" && "state" in result && isWhatsAppStatus(result.state)) setStatus(result.state)
       return result
     } catch (reason) {
       const message = reason instanceof Error ? reason.message : "Action WhatsApp impossible."

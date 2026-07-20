@@ -204,6 +204,8 @@ function desktopRuntimeInfo() {
       whatsappDeviceRegistration: true,
       whatsappAuthorizationLeases: true,
       whatsappRemoteCommands: true,
+      whatsappBusinessContext: true,
+      whatsappOutcomeCapture: true,
       whatsappAutomation: false,
       whatsappDomAccess: false,
     }),
@@ -298,7 +300,7 @@ function normalizeWhatsappPhone(value) {
 
 function buildWhatsappNavigationUrl(payload = {}) {
   const phone = normalizeWhatsappPhone(payload.phone);
-  const text = String(payload.text || "").slice(0, 4000);
+  const text = String(payload.text || "").slice(0, 8000);
   if (!phone) return WHATSAPP_HOME;
   const url = new URL("https://web.whatsapp.com/send");
   url.searchParams.set("phone", phone);
@@ -792,6 +794,7 @@ async function handleWhatsappCommand(action, payload = {}) {
       return publicWhatsappState();
     case "navigate": {
       await ensureWhatsappView({ load: false });
+      logger.info("whatsapp_business_context_navigation", { contextId: String(payload.contextId || "").slice(0, 100) || null, attemptId: String(payload.attemptId || "").slice(0, 100) || null, hasPreparedText: Boolean(payload.text), phoneDigits: normalizeWhatsappPhone(payload.phone)?.length || 0 });
       const url = buildWhatsappNavigationUrl(payload);
       await whatsappView.webContents.loadURL(url);
       showWhatsappView();

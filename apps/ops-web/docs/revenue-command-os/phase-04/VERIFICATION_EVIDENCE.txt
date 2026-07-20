@@ -1,0 +1,984 @@
+ANGELCARE REVENUE COMMAND OS — MEGA ZIP 4 VERIFICATION EVIDENCE
+Generated UTC: 2026-07-20T09:58:39Z
+
+
+> angelcare-platform@1.0.0 revenue-os:phase1:verify
+> npm --prefix apps/ops-web run revenue-os:phase1:verify
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase1:verify
+> node scripts/revenue-command-os/verify-phase1.mjs
+
+
+ANGELCARE Revenue Command OS Phase 1 Verification
+Passes: 64
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/[workspace]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/error.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/loading.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/not-found.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsDashboard.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/ObjectiveComposer.tsx
+  ✓ Required file: app/api/revenue-command-os/foundation/route.ts
+  ✓ Required file: app/api/revenue-command-os/search/route.ts
+  ✓ Required file: lib/revenue-command-os/types.ts
+  ✓ Required file: lib/revenue-command-os/constants.ts
+  ✓ Required file: lib/revenue-command-os/repository.ts
+  ✓ Required file: lib/revenue-command-os/event-contracts.ts
+  ✓ Required file: lib/revenue-command-os/errors.ts
+  ✓ Required file: lib/revenue-command-os/search.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase1_foundation.sql
+  ✓ Required file: docs/revenue-command-os/phase-01/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-01/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-01/ROLLBACK.sql
+  ✓ Required file: tsconfig.revenue-os-phase1.json
+  ✓ Required file: tsconfig.revenue-os-integration.json
+  ✓ Canonical contract version locked
+  ✓ Phase 1 release code locked
+  ✓ Workspace and feature flag registry populated
+  ✓ Original twelve Revenue OS workspace routes remain registered
+  ✓ Execution mode contract begins in Shadow
+  ✓ External action feature flag exists
+  ✓ Restricted features are disabled
+  ✓ Protected layout enforces Revenue OS access
+  ✓ Global command search keyboard handling exists
+  ✓ Objective composer is mounted in shell
+  ✓ Main cockpit is strategy-to-execution oriented
+  ✓ Main Phase 1 cockpit does not degrade into a money dashboard
+  ✓ API action is allow-listed
+  ✓ API blocks autonomous modes in Phase 1
+  ✓ Scoped Revenue OS permissions registered
+  ✓ Route access-control registry updated
+  ✓ Global app navigation entry added
+  ✓ Workspace module registry updated
+  ✓ Migration table: revenue_os_installations
+  ✓ Migration table: revenue_os_permission_registry
+  ✓ Migration table: revenue_os_workspaces
+  ✓ Migration table: revenue_os_feature_flags
+  ✓ Migration table: revenue_os_status_dictionary
+  ✓ Migration table: revenue_os_system_checks
+  ✓ Migration table: revenue_os_objectives
+  ✓ Migration table: revenue_os_business_events
+  ✓ Migration table: revenue_os_event_outbox
+  ✓ Migration table: revenue_os_audit_events
+  ✓ Append-only audit trigger included
+  ✓ RLS enabled across Revenue OS tables
+  ✓ Direct client access revoked
+  ✓ Database execution posture includes Shadow
+  ✓ External actions remain disabled at installation
+  ✓ Migration seed operations are idempotent
+  ✓ Fixture expects twelve workspaces
+  ✓ Fixture locks Shadow mode
+  ✓ Fixture covers eight scoped permissions
+  ✓ Objective tests include valid case
+  ✓ Objective tests include prohibited autonomy case
+  ✓ Legacy Revenue Command Center remains present
+
+PHASE 1 STATIC ACCEPTANCE: PASS
+
+
+> angelcare-platform@1.0.0 revenue-os:phase2:verify
+> npm --prefix apps/ops-web run revenue-os:phase2:verify
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase2:verify
+> node scripts/revenue-command-os/verify-phase2.mjs
+
+
+ANGELCARE Revenue Command OS Mega ZIP 2 Verification
+Passes: 192
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/[section]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinContext.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinFrame.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinWorkspace.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinEntityDrawer.tsx
+  ✓ Required file: app/api/revenue-command-os/digital-twin/route.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/constants.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/seed-data.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/validation.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/repository.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase2_digital_twin.sql
+  ✓ Required file: docs/revenue-command-os/phase-02/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-02/ARCHITECTURE.md
+  ✓ Required file: docs/revenue-command-os/phase-02/DATA_DICTIONARY.md
+  ✓ Required file: docs/revenue-command-os/phase-02/API_CONTRACT.md
+  ✓ Required file: docs/revenue-command-os/phase-02/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-02/INSTALLATION.md
+  ✓ Required file: docs/revenue-command-os/phase-02/ROLLBACK.sql
+  ✓ Required file: tests/revenue-command-os/fixtures/phase2-digital-twin.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase2-validation-cases.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase2-mutation-cases.json
+  ✓ Required file: tsconfig.revenue-os-phase2.json
+  ✓ Mega ZIP 2 release code locked
+  ✓ Mega ZIP 1 release history preserved
+  ✓ Digital Twin workspace registered
+  ✓ Digital Twin route registered
+  ✓ Digital Twin workspace is operational
+  ✓ Shadow remains default execution posture
+  ✓ External actions remain disabled
+  ✓ Strategy execution remains locked
+  ✓ Governed Digital Twin mutation flag exists
+  ✓ Digital Twin permission registered
+  ✓ Digital Twin route access registered
+  ✓ Workspace launcher integration registered
+  ✓ Digital Twin model version locked
+  ✓ Twin section registered: overview
+  ✓ Twin section registered: business-units
+  ✓ Twin section registered: offers-services
+  ✓ Twin section registered: bundles-combinations
+  ✓ Twin section registered: customer-segments
+  ✓ Twin section registered: decision-makers
+  ✓ Twin section registered: markets-territories
+  ✓ Twin section registered: channels-journeys
+  ✓ Twin section registered: pricing-margins
+  ✓ Twin section registered: capacity-constraints
+  ✓ Twin section registered: seasonality
+  ✓ Twin section registered: expansion-renewal
+  ✓ Twin section registered: revenue-dependencies
+  ✓ Twin section registered: model-validation
+  ✓ Exactly fourteen purpose-built Digital Twin sections registered
+  ✓ Seed business unit: BU-ACADEMY
+  ✓ Seed business unit: BU-HOME-SERVICE
+  ✓ Seed business unit: BU-FLASHCARDS
+  ✓ Seed business unit: BU-KINDERGARTEN
+  ✓ Seed business unit: BU-HOSPITALITY
+  ✓ Seed business unit: BU-CORPORATES
+  ✓ Seed business unit: BU-EVENTS
+  ✓ Seed business unit: BU-REFFERQ
+  ✓ Seed market city: Casablanca
+  ✓ Seed market city: Rabat
+  ✓ Seed market city: Kénitra
+  ✓ Seed market city: Tanger
+  ✓ Seed market city: Marrakech
+  ✓ Seed market city: Fès
+  ✓ Seed market city: Agadir
+  ✓ Seed offer: OFF-ACADEMY-ONSITE
+  ✓ Seed offer: OFF-ACADEMY-ELEARNING
+  ✓ Seed offer: OFF-HOME-RECURRING
+  ✓ Seed offer: OFF-FLASHCARDS-PLV
+  ✓ Seed offer: OFF-HOSPITALITY-KIDS-FRIENDLY
+  ✓ Seed offer: OFF-CORPORATE-CHILDCARE
+  ✓ Seed customer segment: SEG-PRESCHOOL-PRIVATE
+  ✓ Seed customer segment: SEG-MATERNITY
+  ✓ Seed customer segment: SEG-ORTHOPHONISTS
+  ✓ Seed customer segment: SEG-HOTELS
+  ✓ Seed customer segment: SEG-CORPORATES
+  ✓ Seed decision-maker: DM-OWNER
+  ✓ Seed decision-maker: DM-SCHOOL-DIRECTOR
+  ✓ Seed decision-maker: DM-PEDAGOGICAL
+  ✓ Seed decision-maker: DM-HR
+  ✓ Seed decision-maker: DM-PROCUREMENT
+  ✓ Casablanca caregiver capacity represented
+  ✓ Rabat caregiver capacity represented
+  ✓ Kénitra caregiver capacity represented
+  ✓ Known caregiver hourly cost signal represented
+  ✓ Unknown commercial data remains explicitly unvalidated
+  ✓ Contract seed provenance is explicit
+  ✓ Validation category covered: pricing
+  ✓ Validation category covered: capacity
+  ✓ Validation category covered: territory
+  ✓ Validation category covered: governance
+  ✓ Validation category covered: completeness
+  ✓ Validation category covered: journey
+  ✓ Validation category covered: dependency
+  ✓ Completeness engine implemented
+  ✓ Contradiction engine implemented
+  ✓ Missing pricing detection implemented
+  ✓ Capacity contradiction detection implemented
+  ✓ Dependency integrity detection implemented
+  ✓ Sales journey validation implemented
+  ✓ Bundle relationship validation implemented
+  ✓ Repository is server-only
+  ✓ Mutation table allow-list enforced
+  ✓ Mutation field allow-list enforced
+  ✓ Bundle and offer-relationship management implemented
+  ✓ Source provenance is added only to compatible tables
+  ✓ Capacity retirement uses availability instead of an invalid status column
+  ✓ Mutation operations are allow-listed
+  ✓ Digital Twin mutations are audited
+  ✓ Validation snapshots can be persisted
+  ✓ Digital Twin version snapshots are persisted
+  ✓ Repository does not expose secrets
+  ✓ API validation action allow-listed
+  ✓ API validation status action allow-listed
+  ✓ API governed mutation action allow-listed
+  ✓ API requires Digital Twin authority
+  ✓ API has no external communication execution
+  ✓ API returns normalized controlled failures
+  ✓ Premium Digital Twin frame communicates purpose
+  ✓ Premium Digital Twin frame exposes safe posture
+  ✓ Overview is business-model oriented
+  ✓ Pricing workspace implemented
+  ✓ Capacity workspace implemented
+  ✓ Dependency workspace implemented
+  ✓ Expansion paths workspace implemented
+  ✓ Model validation action exposed
+  ✓ Governed mutation UX implemented
+  ✓ Bundle and relationship editors exposed
+  ✓ Bundle workspace provides governed management actions
+  ✓ Mutation entity narrowing is explicit
+  ✓ Migration table: revenue_os_business_units
+  ✓ Migration table: revenue_os_offer_families
+  ✓ Migration table: revenue_os_offers
+  ✓ Migration table: revenue_os_offer_versions
+  ✓ Migration table: revenue_os_offer_formats
+  ✓ Migration table: revenue_os_offer_bundles
+  ✓ Migration table: revenue_os_offer_bundle_items
+  ✓ Migration table: revenue_os_offer_relationships
+  ✓ Migration table: revenue_os_customer_segments
+  ✓ Migration table: revenue_os_segment_needs
+  ✓ Migration table: revenue_os_segment_pain_points
+  ✓ Migration table: revenue_os_segment_offer_fit
+  ✓ Migration table: revenue_os_decision_maker_profiles
+  ✓ Migration table: revenue_os_regions
+  ✓ Migration table: revenue_os_cities
+  ✓ Migration table: revenue_os_territories
+  ✓ Migration table: revenue_os_markets
+  ✓ Migration table: revenue_os_offer_territory_availability
+  ✓ Migration table: revenue_os_sales_channels
+  ✓ Migration table: revenue_os_sales_journeys
+  ✓ Migration table: revenue_os_sales_journey_stages
+  ✓ Migration table: revenue_os_stage_requirements
+  ✓ Migration table: revenue_os_price_books
+  ✓ Migration table: revenue_os_pricing_models
+  ✓ Migration table: revenue_os_offer_prices
+  ✓ Migration table: revenue_os_cost_models
+  ✓ Migration table: revenue_os_margin_rules
+  ✓ Migration table: revenue_os_discount_rules
+  ✓ Migration table: revenue_os_capacity_types
+  ✓ Migration table: revenue_os_capacity_requirements
+  ✓ Migration table: revenue_os_delivery_constraints
+  ✓ Migration table: revenue_os_revenue_dependencies
+  ✓ Migration table: revenue_os_seasonal_windows
+  ✓ Migration table: revenue_os_growth_paths
+  ✓ Migration table: revenue_os_cross_sell_paths
+  ✓ Migration table: revenue_os_upsell_paths
+  ✓ Migration table: revenue_os_renewal_paths
+  ✓ Migration table: revenue_os_referral_paths
+  ✓ Migration table: revenue_os_digital_twin_validations
+  ✓ Migration table: revenue_os_digital_twin_gaps
+  ✓ Migration table: revenue_os_digital_twin_versions
+  ✓ Migration table: revenue_os_digital_twin_change_log
+  ✓ Migration table: revenue_os_model_owners
+  ✓ Migration table: revenue_os_model_approval_requests
+  ✓ Fixture and migration table contract agree
+  ✓ RLS enabled across Digital Twin tables
+  ✓ Direct client table access revoked
+  ✓ Seeds are idempotent
+  ✓ Database permission registry extended
+  ✓ Database workspace registry extended
+  ✓ Database feature flag registered
+  ✓ Model change log table included
+  ✓ Model approval workflow table included
+  ✓ Installation is recorded in immutable audit
+  ✓ Migration does not destroy Phase 1 tables
+  ✓ Validation regression cases provided
+  ✓ Autonomous pricing blocker tested
+  ✓ Capacity commitment blocker tested
+  ✓ Invalid mutation cases provided
+  ✓ Safe retirement mutation covered
+
+MEGA ZIP 2 STATIC ACCEPTANCE: PASS
+
+
+> angelcare-platform@1.0.0 revenue-os:phase3:verify
+> npm --prefix apps/ops-web run revenue-os:phase3:verify
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase3:verify
+> node scripts/revenue-command-os/verify-phase3.mjs
+
+
+ANGELCARE Revenue Command OS Mega ZIP 3 Verification
+Passes: 321
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/[section]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/_components/KnowledgeMemoryContext.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/_components/KnowledgeMemoryFrame.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/_components/KnowledgeMemoryWorkspace.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/memory-learning/_components/DoctrineDrawer.tsx
+  ✓ Required file: app/api/revenue-command-os/knowledge-memory/route.ts
+  ✓ Required file: lib/revenue-command-os/knowledge-memory/constants.ts
+  ✓ Required file: lib/revenue-command-os/knowledge-memory/seed-data.ts
+  ✓ Required file: lib/revenue-command-os/knowledge-memory/validation.ts
+  ✓ Required file: lib/revenue-command-os/knowledge-memory/repository.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase3_doctrine_memory.sql
+  ✓ Required file: docs/revenue-command-os/phase-03/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-03/README.md
+  ✓ Required file: docs/revenue-command-os/phase-03/ARCHITECTURE.md
+  ✓ Required file: docs/revenue-command-os/phase-03/DATA_DICTIONARY.md
+  ✓ Required file: docs/revenue-command-os/phase-03/API_CONTRACT.md
+  ✓ Required file: docs/revenue-command-os/phase-03/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-03/INSTALLATION.md
+  ✓ Required file: docs/revenue-command-os/phase-03/SECURITY_AND_GOVERNANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-03/SEED_PROVENANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-03/CHANGELOG.md
+  ✓ Required file: docs/revenue-command-os/phase-03/ROLLBACK.sql
+  ✓ Required file: tests/revenue-command-os/fixtures/phase3-doctrine-memory.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase3-lifecycle-cases.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase3-governance-cases.json
+  ✓ Required file: tsconfig.revenue-os-phase3.json
+  ✓ Mega ZIP 3 release code locked
+  ✓ Mega ZIP 3 module version locked
+  ✓ Mega ZIP 2 release history preserved
+  ✓ Mega ZIP 1 release history preserved
+  ✓ Doctrine & mémoire workspace registered
+  ✓ Doctrine & mémoire route registered
+  ✓ Workspace label upgraded from placeholder
+  ✓ Doctrine & mémoire workspace operational
+  ✓ Shadow remains default execution posture
+  ✓ External actions remain disabled
+  ✓ Strategy execution remains disabled
+  ✓ Knowledge memory feature flag registered
+  ✓ Knowledge indexing feature flag registered
+  ✓ Knowledge management permission registered
+  ✓ Knowledge approval permission registered
+  ✓ Protected route registry extended
+  ✓ Knowledge model version locked
+  ✓ Knowledge section registered: overview
+  ✓ Knowledge section registered: doctrine-library
+  ✓ Knowledge section registered: knowledge-assets
+  ✓ Knowledge section registered: rules-restrictions
+  ✓ Knowledge section registered: scripts-objections
+  ✓ Knowledge section registered: cases-patterns
+  ✓ Knowledge section registered: playbooks-sops
+  ✓ Knowledge section registered: approval-desk
+  ✓ Knowledge section registered: conflict-resolver
+  ✓ Knowledge section registered: versions-provenance
+  ✓ Knowledge section registered: indexing-readiness
+  ✓ Knowledge section registered: model-validation
+  ✓ Exactly twelve purpose-built knowledge sections registered
+  ✓ Knowledge lifecycle status registered: draft
+  ✓ Knowledge lifecycle status registered: in-review
+  ✓ Knowledge lifecycle status registered: approved
+  ✓ Knowledge lifecycle status registered: effective
+  ✓ Knowledge lifecycle status registered: suspended
+  ✓ Knowledge lifecycle status registered: retired
+  ✓ Knowledge lifecycle status registered: rejected
+  ✓ Knowledge type represented: commercial-doctrine
+  ✓ Knowledge type represented: policy
+  ✓ Knowledge type represented: playbook
+  ✓ Knowledge type represented: sop
+  ✓ Knowledge type represented: sales-script
+  ✓ Knowledge type represented: objection-logic
+  ✓ Knowledge type represented: case-study
+  ✓ Knowledge type represented: campaign-pattern
+  ✓ Knowledge type represented: offer-evidence
+  ✓ Knowledge type represented: pricing-rule
+  ✓ Knowledge type represented: legal-restriction
+  ✓ Knowledge type represented: brand-standard
+  ✓ Knowledge type represented: partner-benefit
+  ✓ Knowledge type represented: customer-profile
+  ✓ Knowledge type represented: market-positioning
+  ✓ Knowledge type represented: service-definition
+  ✓ Doctrine mutation allow-list exists
+  ✓ Seed doctrines count ≥ 45 — actual=45
+  ✓ Seed assets count ≥ 24 — actual=24
+  ✓ Seed relationships count ≥ 24 — actual=24
+  ✓ Seed scripts count ≥ 10 — actual=10
+  ✓ Seed objections count ≥ 12 — actual=12
+  ✓ Seed cases count ≥ 8 — actual=8
+  ✓ Seed campaign_patterns count ≥ 7 — actual=7
+  ✓ Seed playbooks count ≥ 6 — actual=6
+  ✓ Seed restrictions count ≥ 10 — actual=10
+  ✓ Seed brand_requirements count ≥ 6 — actual=6
+  ✓ Seed partner_benefits count ≥ 6 — actual=6
+  ✓ Governed doctrine seeded: REV-DOC-001
+  ✓ Governed doctrine seeded: REV-DOC-002
+  ✓ Governed doctrine seeded: REV-DOC-003
+  ✓ Governed doctrine seeded: REV-POL-001
+  ✓ Governed doctrine seeded: REV-POL-002
+  ✓ Governed doctrine seeded: REV-POL-003
+  ✓ Governed doctrine seeded: REV-SVC-001
+  ✓ Governed doctrine seeded: REV-SVC-002
+  ✓ Governed doctrine seeded: REV-SVC-003
+  ✓ Governed doctrine seeded: REV-POS-001
+  ✓ Governed doctrine seeded: REV-POS-002
+  ✓ Governed doctrine seeded: REV-POS-003
+  ✓ Governed doctrine seeded: REV-CUS-001
+  ✓ Governed doctrine seeded: REV-CUS-002
+  ✓ Governed doctrine seeded: REV-CUS-003
+  ✓ Governed doctrine seeded: REV-BEN-001
+  ✓ Governed doctrine seeded: REV-BEN-002
+  ✓ Governed doctrine seeded: REV-BEN-003
+  ✓ Governed doctrine seeded: REV-BRD-001
+  ✓ Governed doctrine seeded: REV-BRD-002
+  ✓ Governed doctrine seeded: REV-BRD-003
+  ✓ Governed doctrine seeded: REV-LEG-001
+  ✓ Governed doctrine seeded: REV-LEG-002
+  ✓ Governed doctrine seeded: REV-LEG-003
+  ✓ Governed doctrine seeded: REV-SOP-001
+  ✓ Governed doctrine seeded: REV-SOP-002
+  ✓ Governed doctrine seeded: REV-SOP-003
+  ✓ Governed doctrine seeded: REV-PLAY-001
+  ✓ Governed doctrine seeded: REV-PLAY-002
+  ✓ Governed doctrine seeded: REV-PLAY-003
+  ✓ Governed doctrine seeded: REV-SCR-001
+  ✓ Governed doctrine seeded: REV-SCR-002
+  ✓ Governed doctrine seeded: REV-SCR-003
+  ✓ Governed doctrine seeded: REV-OBJ-001
+  ✓ Governed doctrine seeded: REV-OBJ-002
+  ✓ Governed doctrine seeded: REV-OBJ-003
+  ✓ Governed doctrine seeded: REV-CASE-001
+  ✓ Governed doctrine seeded: REV-CASE-002
+  ✓ Governed doctrine seeded: REV-CASE-003
+  ✓ Governed doctrine seeded: REV-CAM-001
+  ✓ Governed doctrine seeded: REV-CAM-002
+  ✓ Governed doctrine seeded: REV-CAM-003
+  ✓ Governed doctrine seeded: REV-OFF-001
+  ✓ Governed doctrine seeded: REV-OFF-002
+  ✓ Governed doctrine seeded: REV-OFF-003
+  ✓ Knowledge asset seeded: KNW-ASSET-001
+  ✓ Knowledge asset seeded: KNW-ASSET-002
+  ✓ Knowledge asset seeded: KNW-ASSET-003
+  ✓ Knowledge asset seeded: KNW-ASSET-004
+  ✓ Knowledge asset seeded: KNW-ASSET-005
+  ✓ Knowledge asset seeded: KNW-ASSET-006
+  ✓ Knowledge asset seeded: KNW-ASSET-007
+  ✓ Knowledge asset seeded: KNW-ASSET-008
+  ✓ Knowledge asset seeded: KNW-ASSET-009
+  ✓ Knowledge asset seeded: KNW-ASSET-010
+  ✓ Knowledge asset seeded: KNW-ASSET-011
+  ✓ Knowledge asset seeded: KNW-ASSET-012
+  ✓ Knowledge asset seeded: KNW-ASSET-013
+  ✓ Knowledge asset seeded: KNW-ASSET-014
+  ✓ Knowledge asset seeded: KNW-ASSET-015
+  ✓ Knowledge asset seeded: KNW-ASSET-016
+  ✓ Knowledge asset seeded: KNW-ASSET-017
+  ✓ Knowledge asset seeded: KNW-ASSET-018
+  ✓ Knowledge asset seeded: KNW-ASSET-019
+  ✓ Knowledge asset seeded: KNW-ASSET-020
+  ✓ Knowledge asset seeded: KNW-ASSET-021
+  ✓ Knowledge asset seeded: KNW-ASSET-022
+  ✓ Knowledge asset seeded: KNW-ASSET-023
+  ✓ Knowledge asset seeded: KNW-ASSET-024
+  ✓ Sales script seeded: WA-ACADEMY-INTRO
+  ✓ Sales script seeded: WA-CATALOGUE-FOLLOWUP
+  ✓ Sales script seeded: WA-FLASHCARDS-PARTNER
+  ✓ Sales script seeded: EMAIL-ACADEMY-DIAGNOSTIC
+  ✓ Sales script seeded: PHONE-QUALIFICATION-B2B
+  ✓ Sales script seeded: MEETING-DIAGNOSTIC
+  ✓ Sales script seeded: PROPOSAL-DELIVERY
+  ✓ Sales script seeded: WA-REACTIVATION
+  ✓ Sales script seeded: EMAIL-RENEWAL
+  ✓ Sales script seeded: PHONE-PRICE-OBJECTION
+  ✓ Objection logic seeded: OBJ-PRICE
+  ✓ Objection logic seeded: OBJ-NOW
+  ✓ Objection logic seeded: OBJ-THINK
+  ✓ Objection logic seeded: OBJ-DIRECTOR
+  ✓ Objection logic seeded: OBJ-TRUST
+  ✓ Objection logic seeded: OBJ-TEAM
+  ✓ Objection logic seeded: OBJ-ONLINE
+  ✓ Objection logic seeded: OBJ-COMPETITOR
+  ✓ Objection logic seeded: OBJ-BUDGET
+  ✓ Objection logic seeded: OBJ-NEED
+  ✓ Objection logic seeded: OBJ-RISK
+  ✓ Objection logic seeded: OBJ-RESULT
+  ✓ Case memory covers success, failure and recovery
+  ✓ Restrictions cover all required governance families
+  ✓ Doctrine source authority is explicit
+  ✓ Doctrine effective and review dates are represented
+  ✓ Future command-family applicability is modeled
+  ✓ Evidence references are modeled
+  ✓ Confidentiality classification is modeled
+  ✓ Supersession chain field is modeled
+  ✓ Lifecycle transition graph implemented
+  ✓ Invalid lifecycle transition guard implemented
+  ✓ Effective doctrine resolver implemented
+  ✓ Only effective doctrine can become executable truth
+  ✓ Knowledge readiness engine implemented
+  ✓ Knowledge validation engine implemented
+  ✓ Readiness dimension: approvedDoctrineCoverage
+  ✓ Readiness dimension: provenanceCoverage
+  ✓ Readiness dimension: versionIntegrity
+  ✓ Readiness dimension: conflictSafety
+  ✓ Readiness dimension: indexingReadiness
+  ✓ Readiness dimension: authorityCoverage
+  ✓ Readiness dimension: reviewFreshness
+  ✓ Critical/high validation findings supported
+  ✓ Draft and retired content are excluded from effective truth
+  ✓ Knowledge repository is server-only
+  ✓ Repository enforces mutation allow-list
+  ✓ Repository enforces lifecycle graph
+  ✓ Repository writes immutable audit events
+  ✓ Repository persists version snapshots
+  ✓ Repository hashes doctrine snapshots
+  ✓ Controlled index queue implemented
+  ✓ Validation persistence implemented
+  ✓ Conflict resolution implemented
+  ✓ Approval workflow implemented
+  ✓ MZ03 does not invoke an external AI model
+  ✓ MZ03 repository cannot send external communication
+  ✓ API action allow-listed: mutate_doctrine
+  ✓ API action allow-listed: decide_approval
+  ✓ API action allow-listed: resolve_conflict
+  ✓ API action allow-listed: queue_index
+  ✓ API action allow-listed: run_validation
+  ✓ API action allow-listed: update_validation_status
+  ✓ API requires knowledge management authority
+  ✓ API separates approval authority
+  ✓ API normalizes controlled failures
+  ✓ Sensitive lifecycle actions require approval
+  ✓ API cannot execute external messaging
+  ✓ Protected layout enforces knowledge authority
+  ✓ Premium frame communicates institutional truth purpose
+  ✓ Frame exposes safe Shadow posture
+  ✓ Premium workspace implemented: Bibliothèque doctrinale
+  ✓ Premium workspace implemented: Actifs & preuves
+  ✓ Premium workspace implemented: Règles & restrictions
+  ✓ Premium workspace implemented: Scripts & objections
+  ✓ Premium workspace implemented: Cas & patterns
+  ✓ Premium workspace implemented: Playbooks & SOP
+  ✓ Premium workspace implemented: Bureau d’approbation
+  ✓ Premium workspace implemented: Résolution de conflits
+  ✓ Premium workspace implemented: Versions & provenance
+  ✓ Premium workspace implemented: Préparation à l’indexation
+  ✓ Premium workspace implemented: Validation du modèle
+  ✓ Validation run action exposed
+  ✓ Index queue action exposed
+  ✓ Approval action exposed
+  ✓ Conflict resolution action exposed
+  ✓ Doctrine editor communicates governance
+  ✓ Doctrine lifecycle controls exposed
+  ✓ Global search bridge implemented
+  ✓ Search indexes all knowledge resource families
+  ✓ Global search reads doctrine memory
+  ✓ Migration table: revenue_os_knowledge_domains
+  ✓ Migration table: revenue_os_doctrines
+  ✓ Migration table: revenue_os_knowledge_versions
+  ✓ Migration table: revenue_os_doctrine_sections
+  ✓ Migration table: revenue_os_doctrine_rules
+  ✓ Migration table: revenue_os_decision_trees
+  ✓ Migration table: revenue_os_knowledge_assets
+  ✓ Migration table: revenue_os_knowledge_asset_versions
+  ✓ Migration table: revenue_os_knowledge_chunks
+  ✓ Migration table: revenue_os_knowledge_relationships
+  ✓ Migration table: revenue_os_sales_scripts
+  ✓ Migration table: revenue_os_objection_patterns
+  ✓ Migration table: revenue_os_case_studies
+  ✓ Migration table: revenue_os_campaign_patterns
+  ✓ Migration table: revenue_os_playbooks
+  ✓ Migration table: revenue_os_policy_restrictions
+  ✓ Migration table: revenue_os_brand_requirements
+  ✓ Migration table: revenue_os_partner_benefits
+  ✓ Migration table: revenue_os_knowledge_approvals
+  ✓ Migration table: revenue_os_knowledge_conflicts
+  ✓ Migration table: revenue_os_knowledge_index_jobs
+  ✓ Migration table: revenue_os_knowledge_validation_issues
+  ✓ Migration table: revenue_os_knowledge_snapshots
+  ✓ Fixture and migration table contract agree
+  ✓ RLS enabled across all MZ03 tables
+  ✓ Direct client table access revoked
+  ✓ Server service role receives controlled table access
+  ✓ Seeds are idempotent
+  ✓ Database permission registry extended for management
+  ✓ Database permission registry extended for approval
+  ✓ Knowledge memory feature flag seeded
+  ✓ Knowledge indexing feature flag seeded
+  ✓ Workspace registry upgraded
+  ✓ Database posture remains Shadow
+  ✓ External-action posture retained
+  ✓ Installation and governance actions connect to immutable audit
+  ✓ Migration does not destroy MZ02 Digital Twin
+  ✓ Migration does not destroy MZ01 Foundation
+  ✓ Rollback covers table: revenue_os_knowledge_domains
+  ✓ Rollback covers table: revenue_os_doctrines
+  ✓ Rollback covers table: revenue_os_knowledge_versions
+  ✓ Rollback covers table: revenue_os_doctrine_sections
+  ✓ Rollback covers table: revenue_os_doctrine_rules
+  ✓ Rollback covers table: revenue_os_decision_trees
+  ✓ Rollback covers table: revenue_os_knowledge_assets
+  ✓ Rollback covers table: revenue_os_knowledge_asset_versions
+  ✓ Rollback covers table: revenue_os_knowledge_chunks
+  ✓ Rollback covers table: revenue_os_knowledge_relationships
+  ✓ Rollback covers table: revenue_os_sales_scripts
+  ✓ Rollback covers table: revenue_os_objection_patterns
+  ✓ Rollback covers table: revenue_os_case_studies
+  ✓ Rollback covers table: revenue_os_campaign_patterns
+  ✓ Rollback covers table: revenue_os_playbooks
+  ✓ Rollback covers table: revenue_os_policy_restrictions
+  ✓ Rollback covers table: revenue_os_brand_requirements
+  ✓ Rollback covers table: revenue_os_partner_benefits
+  ✓ Rollback covers table: revenue_os_knowledge_approvals
+  ✓ Rollback covers table: revenue_os_knowledge_conflicts
+  ✓ Rollback covers table: revenue_os_knowledge_index_jobs
+  ✓ Rollback covers table: revenue_os_knowledge_validation_issues
+  ✓ Rollback covers table: revenue_os_knowledge_snapshots
+  ✓ Lifecycle regression cases provided
+  ✓ Unsafe draft-to-effective transition tested
+  ✓ Retired doctrine reactivation blocker tested
+  ✓ Governance cases provided
+  ✓ Critical conflict blocker tested
+  ✓ Unsupported price blocker tested
+  ✓ Confidential retrieval permission case tested
+
+MEGA ZIP 3 STATIC ACCEPTANCE: PASS
+
+
+> angelcare-platform@1.0.0 revenue-os:phase4:verify
+> npm --prefix apps/ops-web run revenue-os:phase4:verify
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase4:verify
+> node scripts/revenue-command-os/verify-phase4.mjs
+
+
+ANGELCARE Revenue Command OS Mega ZIP 4 Verification
+Passes: 328
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/signals/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/signals/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/signals/[section]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/signals/_components/SignalFabricContext.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/signals/_components/SignalFabricFrame.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/signals/_components/SignalFabricWorkspace.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/signals/_components/SignalDrawer.tsx
+  ✓ Required file: app/api/revenue-command-os/signals/route.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/constants.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/adapters.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/classification.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/context.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/seed-data.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/validation.ts
+  ✓ Required file: lib/revenue-command-os/signal-fabric/repository.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase4_signal_fabric.sql
+  ✓ Required file: docs/revenue-command-os/phase-04/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-04/README.md
+  ✓ Required file: docs/revenue-command-os/phase-04/ARCHITECTURE.md
+  ✓ Required file: docs/revenue-command-os/phase-04/DATA_DICTIONARY.md
+  ✓ Required file: docs/revenue-command-os/phase-04/API_CONTRACT.md
+  ✓ Required file: docs/revenue-command-os/phase-04/SECURITY_AND_GOVERNANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-04/INSTALLATION.md
+  ✓ Required file: docs/revenue-command-os/phase-04/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-04/SEED_PROVENANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-04/CHANGELOG.md
+  ✓ Required file: docs/revenue-command-os/phase-04/ROLLBACK.sql
+  ✓ Required file: tests/revenue-command-os/fixtures/phase4-signal-fabric.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase4-classification-cases.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase4-privacy-cases.json
+  ✓ Required file: tsconfig.revenue-os-phase4.json
+  ✓ Release code locked
+  ✓ Module version locked
+  ✓ Execution posture locked to shadow observation
+  ✓ Signal workspace section: overview
+  ✓ Signal workspace section: live-stream
+  ✓ Signal workspace section: source-control
+  ✓ Signal workspace section: source-health
+  ✓ Signal workspace section: classification
+  ✓ Signal workspace section: deduplication
+  ✓ Signal workspace section: scheduled-scans
+  ✓ Signal workspace section: context-snapshots
+  ✓ Signal workspace section: stale-data
+  ✓ Signal workspace section: subscriptions
+  ✓ Signal workspace section: data-access
+  ✓ Signal workspace section: model-validation
+  ✓ Fixture section count matches
+  ✓ Source seed: SRC-B2B-PROSPECTS
+  ✓ Adapter registered: SRC-B2B-PROSPECTS
+  ✓ Source seed: SRC-B2B-CONTACTS
+  ✓ Adapter registered: SRC-B2B-CONTACTS
+  ✓ Source seed: SRC-B2B-MEETINGS
+  ✓ Adapter registered: SRC-B2B-MEETINGS
+  ✓ Source seed: SRC-B2B-PROPOSALS
+  ✓ Adapter registered: SRC-B2B-PROPOSALS
+  ✓ Source seed: SRC-BROWSER-OPPORTUNITIES
+  ✓ Adapter registered: SRC-BROWSER-OPPORTUNITIES
+  ✓ Source seed: SRC-REVENUE-PROSPECTS
+  ✓ Adapter registered: SRC-REVENUE-PROSPECTS
+  ✓ Source seed: SRC-REVENUE-APPOINTMENTS
+  ✓ Adapter registered: SRC-REVENUE-APPOINTMENTS
+  ✓ Source seed: SRC-REVENUE-PARTNERSHIPS
+  ✓ Adapter registered: SRC-REVENUE-PARTNERSHIPS
+  ✓ Source seed: SRC-EMAIL-INBOX
+  ✓ Adapter registered: SRC-EMAIL-INBOX
+  ✓ Source seed: SRC-EMAIL-OUTBOX
+  ✓ Adapter registered: SRC-EMAIL-OUTBOX
+  ✓ Source seed: SRC-TRAINING-SESSIONS
+  ✓ Adapter registered: SRC-TRAINING-SESSIONS
+  ✓ Source seed: SRC-ACADEMY-TRAINERS
+  ✓ Adapter registered: SRC-ACADEMY-TRAINERS
+  ✓ Source seed: SRC-FINANCE-INVOICES
+  ✓ Adapter registered: SRC-FINANCE-INVOICES
+  ✓ Source seed: SRC-FINANCE-PAYMENTS
+  ✓ Adapter registered: SRC-FINANCE-PAYMENTS
+  ✓ Source seed: SRC-CUSTOMER-CLAIMS
+  ✓ Adapter registered: SRC-CUSTOMER-CLAIMS
+  ✓ Fixture source count matches
+  ✓ Source table allow-listed: b2b_prospects
+  ✓ Source table allow-listed: b2b_contacts
+  ✓ Source table allow-listed: b2b_meetings
+  ✓ Source table allow-listed: b2b_proposals
+  ✓ Source table allow-listed: browser_extension_b2b_opportunities
+  ✓ Source table allow-listed: revenue_prospects
+  ✓ Source table allow-listed: revenue_appointments
+  ✓ Source table allow-listed: revenue_partnerships
+  ✓ Source table allow-listed: email_os_core_inbox
+  ✓ Source table allow-listed: email_os_core_outbox
+  ✓ Source table allow-listed: trn_sessions
+  ✓ Source table allow-listed: academy_trainers
+  ✓ Source table allow-listed: academy_trainer_assignments
+  ✓ Source table allow-listed: angelcare360_invoices
+  ✓ Source table allow-listed: angelcare360_payments
+  ✓ Source table allow-listed: bill_proposals
+  ✓ Source table allow-listed: angelcare360_reclamations
+  ✓ Payload minimization implemented
+  ✓ Sensitive pattern blocked: password
+  ✓ Sensitive pattern blocked: token
+  ✓ Sensitive pattern blocked: cookie
+  ✓ Sensitive pattern blocked: service_role
+  ✓ Sensitive pattern blocked: private_key
+  ✓ Sensitive pattern blocked: bank_account
+  ✓ SHA-256 deduplication implemented
+  ✓ Payload hashing implemented
+  ✓ Runtime source table allow-list enforced
+  ✓ Classifier rule seeded: SIG-RULE-001
+  ✓ Classifier rule seeded: SIG-RULE-002
+  ✓ Classifier rule seeded: SIG-RULE-003
+  ✓ Classifier rule seeded: SIG-RULE-004
+  ✓ Classifier rule seeded: SIG-RULE-005
+  ✓ Classifier rule seeded: SIG-RULE-006
+  ✓ Classifier rule seeded: SIG-RULE-007
+  ✓ Classifier rule seeded: SIG-RULE-008
+  ✓ Classifier rule seeded: SIG-RULE-009
+  ✓ Classifier rule seeded: SIG-RULE-010
+  ✓ Classifier rule seeded: SIG-RULE-011
+  ✓ Classifier rule seeded: SIG-RULE-012
+  ✓ Classifier rule seeded: SIG-RULE-013
+  ✓ Classifier rule seeded: SIG-RULE-014
+  ✓ Classifier rule seeded: SIG-RULE-015
+  ✓ Classifier rule seeded: SIG-RULE-016
+  ✓ Fixture classifier count locked
+  ✓ Classification category: payment
+  ✓ Classification category: customer-risk
+  ✓ Classification category: account-intent
+  ✓ Classification category: proposal
+  ✓ Classification category: meeting
+  ✓ Classification category: capacity
+  ✓ Classification category: renewal
+  ✓ Classification category: market-opportunity
+  ✓ Classification category: execution
+  ✓ Classification category: data-quality
+  ✓ Classification category: seasonality
+  ✓ Signal score modeled: urgencyScore
+  ✓ Signal score modeled: opportunityScore
+  ✓ Signal score modeled: riskScore
+  ✓ Signal score modeled: priorityScore
+  ✓ Priority formula implemented
+  ✓ Classification regression cases provided
+  ✓ Classification case complete: invoice overdue
+  ✓ Classification case complete: customer complaint
+  ✓ Classification case complete: reply interested
+  ✓ Classification case complete: proposal sent
+  ✓ Classification case complete: meeting scheduled
+  ✓ Classification case complete: capacity unavailable
+  ✓ Classification case complete: renewal expires
+  ✓ Classification case complete: market opportunity
+  ✓ Classification case complete: payment received
+  ✓ Classification case complete: email failed
+  ✓ Classification case complete: source stale
+  ✓ Classification case complete: seasonal window
+  ✓ Type contract: RevenueSignalSource
+  ✓ Type contract: RevenueRawSignalEvent
+  ✓ Type contract: RevenueSignal
+  ✓ Type contract: RevenueSignalRule
+  ✓ Type contract: RevenueScheduledScan
+  ✓ Type contract: RevenueSignalSourceHealth
+  ✓ Type contract: RevenueSignalContextSnapshot
+  ✓ Type contract: RevenueSignalSubscription
+  ✓ Type contract: RevenueSignalValidationIssue
+  ✓ Type contract: RevenueSignalReadiness
+  ✓ Type contract: RevenueSignalBootstrap
+  ✓ Signal lifecycle status: new
+  ✓ Signal lifecycle status: triaged
+  ✓ Signal lifecycle status: acknowledged
+  ✓ Signal lifecycle status: context-ready
+  ✓ Signal lifecycle status: monitoring
+  ✓ Signal lifecycle status: resolved
+  ✓ Signal lifecycle status: dismissed
+  ✓ Signal lifecycle status: blocked
+  ✓ Signal confidence status: confirmed
+  ✓ Signal confidence status: high
+  ✓ Signal confidence status: medium
+  ✓ Signal confidence status: low
+  ✓ Signal confidence status: unknown
+  ✓ Context builder implemented
+  ✓ Facts separated from hypotheses
+  ✓ Visibility profiles enforced
+  ✓ Context redactions represented
+  ✓ Digital Twin context bridge implemented
+  ✓ Doctrine context bridge implemented
+  ✓ Context expiry implemented
+  ✓ Visibility profile: executive
+  ✓ Visibility profile: revenue-manager
+  ✓ Visibility profile: commercial-agent
+  ✓ Visibility profile: auditor
+  ✓ Privacy regression cases provided
+  ✓ Privacy case complete: password
+  ✓ Privacy case complete: access_token
+  ✓ Privacy case complete: refresh_token
+  ✓ Privacy case complete: cookie
+  ✓ Privacy case complete: service_role_key
+  ✓ Privacy case complete: body
+  ✓ Privacy case complete: raw_message
+  ✓ Privacy case complete: commercial-agent
+  ✓ Privacy case complete: auditor
+  ✓ Privacy case complete: email
+  ✓ Signal repository is server-only
+  ✓ Repository function: readRevenueSignalFabric
+  ✓ Repository function: ingestRevenueSignal
+  ✓ Repository function: runRevenueSignalSourceScan
+  ✓ Repository function: runAllRevenueSignalScans
+  ✓ Repository function: updateRevenueSignalStatus
+  ✓ Repository function: createRevenueSignalContext
+  ✓ Repository function: persistRevenueSignalValidation
+  ✓ Repository function: updateRevenueSignalValidationStatus
+  ✓ Repository function: updateRevenueSignalSourceStatus
+  ✓ Raw event persistence implemented
+  ✓ Normalized signal persistence implemented
+  ✓ Foundation event/outbox bridge implemented
+  ✓ Duplicate outcome explicit
+  ✓ Shadow-only metadata persisted
+  ✓ Context audit states no external model
+  ✓ MZ04 invokes no OpenAI model
+  ✓ MZ04 cannot send external messages
+  ✓ MZ04 cannot alter prices or contracts
+  ✓ API action allow-listed: ingest_event
+  ✓ API action allow-listed: run_source_scan
+  ✓ API action allow-listed: run_all_scans
+  ✓ API action allow-listed: update_signal_status
+  ✓ API action allow-listed: build_context
+  ✓ API action allow-listed: run_validation
+  ✓ API action allow-listed: update_validation_status
+  ✓ API action allow-listed: update_source_status
+  ✓ Permission wired: revenue_os.signals.manage
+  ✓ Permission wired: revenue_os.signals.ingest
+  ✓ Permission wired: revenue_os.signals.audit
+  ✓ Controlled API errors implemented
+  ✓ Signal API has no external send action
+  ✓ Premium Signal Fabric identity rendered
+  ✓ Primary control actions rendered
+  ✓ Safe posture visible
+  ✓ Premium workspace implemented: Flux en direct
+  ✓ Premium workspace implemented: Sources & connecteurs
+  ✓ Premium workspace implemented: Santé des sources
+  ✓ Premium workspace implemented: Classification
+  ✓ Premium workspace implemented: Déduplication
+  ✓ Premium workspace implemented: Scans programmés
+  ✓ Premium workspace implemented: Snapshots de contexte
+  ✓ Premium workspace implemented: Données périmées
+  ✓ Premium workspace implemented: Abonnements
+  ✓ Premium workspace implemented: Accès & confidentialité
+  ✓ Premium workspace implemented: Validation du tissu
+  ✓ Source scan UI action wired
+  ✓ Source pause control wired
+  ✓ Validation triage action wired
+  ✓ Signal context action wired
+  ✓ Signal lifecycle controls rendered
+  ✓ Global signal search index implemented
+  ✓ Search result type: revenue-signal
+  ✓ Search result type: signal-source
+  ✓ Search result type: context-snapshot
+  ✓ Global search loads Signal Fabric
+  ✓ Readiness dimension: sourceCoverage
+  ✓ Readiness dimension: sourceHealth
+  ✓ Readiness dimension: freshness
+  ✓ Readiness dimension: classificationCoverage
+  ✓ Readiness dimension: deduplicationSafety
+  ✓ Readiness dimension: contextReadiness
+  ✓ Readiness dimension: privacySafety
+  ✓ Readiness dimension: scheduleReliability
+  ✓ Signal validation engine implemented
+  ✓ Critical signal context blocker implemented
+  ✓ Stale source validation implemented
+  ✓ Scan failure validation implemented
+  ✓ Migration table: revenue_os_signal_sources
+  ✓ Rollback table: revenue_os_signal_sources
+  ✓ Migration table: revenue_os_signal_source_cursors
+  ✓ Rollback table: revenue_os_signal_source_cursors
+  ✓ Migration table: revenue_os_signal_raw_events
+  ✓ Rollback table: revenue_os_signal_raw_events
+  ✓ Migration table: revenue_os_signals
+  ✓ Rollback table: revenue_os_signals
+  ✓ Migration table: revenue_os_signal_entities
+  ✓ Rollback table: revenue_os_signal_entities
+  ✓ Migration table: revenue_os_signal_evidence
+  ✓ Rollback table: revenue_os_signal_evidence
+  ✓ Migration table: revenue_os_signal_rules
+  ✓ Rollback table: revenue_os_signal_rules
+  ✓ Migration table: revenue_os_signal_scheduled_scans
+  ✓ Rollback table: revenue_os_signal_scheduled_scans
+  ✓ Migration table: revenue_os_signal_scan_runs
+  ✓ Rollback table: revenue_os_signal_scan_runs
+  ✓ Migration table: revenue_os_signal_source_health
+  ✓ Rollback table: revenue_os_signal_source_health
+  ✓ Migration table: revenue_os_signal_deduplication_log
+  ✓ Rollback table: revenue_os_signal_deduplication_log
+  ✓ Migration table: revenue_os_signal_context_snapshots
+  ✓ Rollback table: revenue_os_signal_context_snapshots
+  ✓ Migration table: revenue_os_signal_context_sources
+  ✓ Rollback table: revenue_os_signal_context_sources
+  ✓ Migration table: revenue_os_signal_subscriptions
+  ✓ Rollback table: revenue_os_signal_subscriptions
+  ✓ Migration table: revenue_os_signal_subscription_deliveries
+  ✓ Rollback table: revenue_os_signal_subscription_deliveries
+  ✓ Migration table: revenue_os_signal_access_logs
+  ✓ Rollback table: revenue_os_signal_access_logs
+  ✓ Migration table: revenue_os_signal_stale_checks
+  ✓ Rollback table: revenue_os_signal_stale_checks
+  ✓ Migration table: revenue_os_signal_webhook_receipts
+  ✓ Rollback table: revenue_os_signal_webhook_receipts
+  ✓ Migration table: revenue_os_signal_validation_issues
+  ✓ Rollback table: revenue_os_signal_validation_issues
+  ✓ Migration table: revenue_os_signal_snapshots
+  ✓ Rollback table: revenue_os_signal_snapshots
+  ✓ Fixture table count matches
+  ✓ Append-only raw event guard included
+  ✓ Deduplication key indexed and stored
+  ✓ RLS enabled across MZ04 tables
+  ✓ Direct client table access revoked
+  ✓ Controlled server access granted
+  ✓ MZ04 seeds are idempotent
+  ✓ Signal Fabric feature flag seeded
+  ✓ Signal ingestion feature flag seeded
+  ✓ Scheduled scans feature flag seeded
+  ✓ Installation remains Shadow
+  ✓ External actions explicitly disabled in installation metadata
+  ✓ No source secrets stored contract persisted
+  ✓ Migration preserves MZ02 Digital Twin
+  ✓ Migration preserves MZ03 Doctrine
+  ✓ Migration preserves MZ01 Foundation
+  ✓ Scheduler route implemented
+  ✓ Signed webhook route implemented
+  ✓ Scheduler secret and kill switch enforced
+  ✓ Webhook HMAC signature verification enforced
+  ✓ Webhook replay window bounded
+  ✓ Webhook receipts persisted hash-only
+  ✓ Webhook secrets remain server-only
+
+MEGA ZIP 4 STATIC ACCEPTANCE: PASS
+
+
+TARGETED TYPESCRIPT CHECK (temporary external dependency mirror; no node_modules included in delivery)
+
+> angelcare-platform@1.0.0 revenue-os:phase4:typecheck
+> npm --prefix apps/ops-web run revenue-os:phase4:typecheck
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase4:typecheck
+> NODE_OPTIONS="--max-old-space-size=4096" tsc -p tsconfig.revenue-os-phase4.json --pretty false && NODE_OPTIONS="--max-old-space-size=4096" tsc -p tsconfig.revenue-os-integration.json --pretty false
+
+
+RESULT: ALL CONTRACTUAL REGRESSION, MZ04 ACCEPTANCE AND TARGETED TYPESCRIPT CHECKS PASSED.

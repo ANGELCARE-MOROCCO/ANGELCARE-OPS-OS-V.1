@@ -2,6 +2,13 @@
 
 import {
   Activity,
+  BellRing,
+  TimerOff,
+  PanelsTopLeft,
+  CalendarClock,
+  CopyCheck,
+  HeartPulse,
+  Cable,
   Network,
   Gauge,
   Building2,
@@ -42,6 +49,13 @@ import {
 
 const ICONS = {
   Activity,
+  BellRing,
+  TimerOff,
+  PanelsTopLeft,
+  CalendarClock,
+  CopyCheck,
+  HeartPulse,
+  Cable,
   Network,
   Gauge,
   Building2,

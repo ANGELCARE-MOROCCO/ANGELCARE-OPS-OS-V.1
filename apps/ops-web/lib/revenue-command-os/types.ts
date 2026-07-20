@@ -109,7 +109,7 @@ export type RevenueOsFoundationBootstrap = {
 
 export type RevenueOsSearchResult = {
   id: string
-  type: 'workspace' | 'objective' | 'audit' | 'feature-flag' | 'status' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'playbook' | 'knowledge-conflict'
+  type: 'workspace' | 'objective' | 'audit' | 'feature-flag' | 'status' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'playbook' | 'knowledge-conflict' | 'revenue-signal' | 'signal-source' | 'context-snapshot'
   title: string
   subtitle: string
   href: string
@@ -904,4 +904,301 @@ export type RevenueDoctrineMutationInput = {
   operation: 'create' | 'update' | 'submit-review' | 'approve' | 'reject' | 'activate' | 'suspend' | 'retire'
   id?: string
   payload: Record<string, unknown>
+}
+
+// Revenue Command OS — Mega ZIP 4: Live Revenue Signal Fabric
+export type RevenueSignalStatus = 'new' | 'triaged' | 'acknowledged' | 'context-ready' | 'monitoring' | 'resolved' | 'dismissed' | 'blocked'
+export type RevenueSignalSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info'
+export type RevenueSignalConfidence = 'confirmed' | 'high' | 'medium' | 'low' | 'unknown'
+export type RevenueSignalSourceStatus = 'healthy' | 'degraded' | 'stale' | 'offline' | 'paused' | 'unconfigured'
+export type RevenueSignalSourceKind = 'database' | 'email' | 'whatsapp' | 'calendar' | 'finance' | 'academy' | 'operations' | 'crm' | 'browser-extension' | 'manual' | 'webhook'
+export type RevenueSignalCategory =
+  | 'market-opportunity'
+  | 'account-intent'
+  | 'pipeline-risk'
+  | 'engagement'
+  | 'meeting'
+  | 'proposal'
+  | 'capacity'
+  | 'payment'
+  | 'renewal'
+  | 'customer-risk'
+  | 'seasonality'
+  | 'execution'
+  | 'data-quality'
+  | 'competitive'
+  | 'referral'
+export type RevenueSignalEntityType = 'account' | 'contact' | 'opportunity' | 'proposal' | 'meeting' | 'message' | 'invoice' | 'payment' | 'training-session' | 'trainer' | 'capacity' | 'complaint' | 'territory' | 'offer' | 'campaign' | 'unknown'
+export type RevenueSignalValidationSeverity = 'critical' | 'high' | 'medium' | 'low'
+export type RevenueSignalSectionKey =
+  | 'overview'
+  | 'live-stream'
+  | 'source-control'
+  | 'source-health'
+  | 'classification'
+  | 'deduplication'
+  | 'scheduled-scans'
+  | 'context-snapshots'
+  | 'stale-data'
+  | 'subscriptions'
+  | 'data-access'
+  | 'model-validation'
+
+export type RevenueSignalSectionDefinition = {
+  key: RevenueSignalSectionKey
+  label: string
+  description: string
+  href: string
+  icon: string
+  status: 'ready' | 'needs-attention' | 'planned'
+}
+
+export type RevenueSignalSource = {
+  id: string
+  code: string
+  name: string
+  sourceKind: RevenueSignalSourceKind
+  adapterKey: string
+  description: string
+  businessUnitCodes: string[]
+  sourceTables: string[]
+  supportedEventTypes: string[]
+  status: RevenueSignalSourceStatus
+  pollingMinutes: number
+  staleAfterMinutes: number
+  lastObservedAt?: string
+  lastSuccessfulScanAt?: string
+  lastCursor?: string
+  recordCount24h: number
+  errorCount24h: number
+  containsSensitiveData: boolean
+  minimumPermission: string
+  enabled: boolean
+  updatedAt: string
+}
+
+export type RevenueRawSignalEvent = {
+  id: string
+  eventId: string
+  sourceCode: string
+  sourceRecordId?: string
+  eventType: string
+  occurredAt: string
+  receivedAt: string
+  deduplicationKey: string
+  payloadHash: string
+  payload: Record<string, unknown>
+  processingStatus: 'received' | 'normalized' | 'duplicate' | 'rejected' | 'failed'
+  duplicateOfEventId?: string
+  rejectionReason?: string
+}
+
+export type RevenueSignalEntityRef = {
+  entityType: RevenueSignalEntityType
+  entityId?: string
+  entityCode?: string
+  label: string
+  relationship: 'primary' | 'related' | 'owner' | 'decision-maker' | 'source' | 'dependency'
+}
+
+export type RevenueSignal = {
+  id: string
+  code: string
+  rawEventId?: string
+  sourceCode: string
+  category: RevenueSignalCategory
+  signalType: string
+  title: string
+  summary: string
+  businessUnitCode?: string
+  marketCode?: string
+  territoryCode?: string
+  offerCode?: string
+  segmentCode?: string
+  severity: RevenueSignalSeverity
+  confidence: RevenueSignalConfidence
+  priorityScore: number
+  urgencyScore: number
+  opportunityScore: number
+  riskScore: number
+  status: RevenueSignalStatus
+  occurredAt: string
+  detectedAt: string
+  expiresAt?: string
+  ownerRole?: string
+  entities: RevenueSignalEntityRef[]
+  evidence: Array<{ source: string; label: string; value: string; observedAt: string }>
+  recommendedCommandFamilies: string[]
+  recommendedNextActions: string[]
+  blockingReasons: string[]
+  metadata: Record<string, unknown>
+  acknowledgedBy?: string
+  acknowledgedAt?: string
+  resolvedAt?: string
+}
+
+export type RevenueSignalRule = {
+  id: string
+  code: string
+  name: string
+  sourceCodes: string[]
+  eventTypes: string[]
+  category: RevenueSignalCategory
+  signalType: string
+  condition: string
+  severityLogic: string
+  confidenceLogic: string
+  scoreLogic: string
+  recommendedCommandFamilies: string[]
+  expiryMinutes: number
+  cooldownMinutes: number
+  enabled: boolean
+  version: string
+  updatedAt: string
+}
+
+export type RevenueScheduledScan = {
+  id: string
+  code: string
+  name: string
+  sourceCode: string
+  scheduleExpression: string
+  timezone: string
+  scanMode: 'incremental' | 'lookback' | 'full-safe'
+  lookbackMinutes: number
+  maximumRecords: number
+  status: 'active' | 'paused' | 'failed' | 'planned'
+  lastRunAt?: string
+  nextRunAt?: string
+  lastOutcome?: 'success' | 'partial' | 'failure' | 'skipped'
+  lastCreatedSignals: number
+  consecutiveFailures: number
+}
+
+export type RevenueSignalSourceHealth = {
+  id: string
+  sourceCode: string
+  status: RevenueSignalSourceStatus
+  checkedAt: string
+  latencyMs?: number
+  freshnessMinutes?: number
+  recordsObserved: number
+  normalizedSignals: number
+  duplicateEvents: number
+  failedEvents: number
+  lastError?: string
+  diagnostic: string
+}
+
+export type RevenueSignalContextSource = {
+  sourceType: 'signal' | 'source-record' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'historical-outcome' | 'user-context'
+  sourceCode: string
+  label: string
+  authority: 'primary' | 'approved' | 'supporting' | 'hypothesis'
+  freshness: 'live' | 'fresh' | 'aging' | 'stale' | 'unknown'
+  retrievedAt: string
+  redactions: string[]
+}
+
+export type RevenueSignalContextSnapshot = {
+  id: string
+  code: string
+  signalCode: string
+  purpose: string
+  audienceRole: string
+  visibilityProfile: 'executive' | 'revenue-manager' | 'commercial-agent' | 'auditor'
+  status: 'building' | 'ready' | 'blocked' | 'expired'
+  generatedAt: string
+  expiresAt: string
+  facts: Array<{ key: string; label: string; value: string; confidence: RevenueSignalConfidence; sourceCode: string }>
+  hypotheses: Array<{ key: string; statement: string; validationMethod: string }>
+  constraints: string[]
+  opportunities: string[]
+  risks: string[]
+  sources: RevenueSignalContextSource[]
+  redactedFields: string[]
+  completenessScore: number
+  freshnessScore: number
+}
+
+export type RevenueSignalSubscription = {
+  id: string
+  code: string
+  name: string
+  subscriberType: 'role' | 'user' | 'workspace' | 'system'
+  subscriberKey: string
+  categories: RevenueSignalCategory[]
+  severities: RevenueSignalSeverity[]
+  businessUnitCodes: string[]
+  territoryCodes: string[]
+  deliveryMode: 'in-app' | 'digest' | 'mission-proposal' | 'approval-queue'
+  cooldownMinutes: number
+  active: boolean
+}
+
+export type RevenueSignalValidationIssue = {
+  id: string
+  code: string
+  resourceType: string
+  resourceCode: string
+  category: 'source' | 'freshness' | 'deduplication' | 'classification' | 'privacy' | 'context' | 'permission' | 'schedule' | 'coverage' | 'governance'
+  severity: RevenueSignalValidationSeverity
+  title: string
+  detail: string
+  recommendedAction: string
+  status: 'open' | 'acknowledged' | 'resolved' | 'waived'
+  detectedAt: string
+}
+
+export type RevenueSignalReadiness = {
+  overall: number
+  sourceCoverage: number
+  sourceHealth: number
+  freshness: number
+  classificationCoverage: number
+  deduplicationSafety: number
+  contextReadiness: number
+  privacySafety: number
+  scheduleReliability: number
+}
+
+export type RevenueSignalBootstrap = {
+  contractVersion: string
+  releaseCode: string
+  moduleVersion: string
+  generatedAt: string
+  storageMode: 'supabase' | 'contract-seed'
+  executionPosture: 'shadow-observation'
+  sections: RevenueSignalSectionDefinition[]
+  sources: RevenueSignalSource[]
+  signals: RevenueSignal[]
+  rawEvents: RevenueRawSignalEvent[]
+  rules: RevenueSignalRule[]
+  scheduledScans: RevenueScheduledScan[]
+  sourceHealth: RevenueSignalSourceHealth[]
+  contextSnapshots: RevenueSignalContextSnapshot[]
+  subscriptions: RevenueSignalSubscription[]
+  validationIssues: RevenueSignalValidationIssue[]
+  readiness: RevenueSignalReadiness
+  counters: {
+    sourcesEnabled: number
+    sourcesHealthy: number
+    signals24h: number
+    criticalSignals: number
+    highSignals: number
+    unacknowledgedSignals: number
+    duplicateEvents24h: number
+    staleSources: number
+    contextReady: number
+    scansAtRisk: number
+  }
+}
+
+export type RevenueSignalIngestionInput = {
+  sourceCode: string
+  sourceRecordId?: string
+  eventType: string
+  occurredAt?: string
+  payload: Record<string, unknown>
+  correlationId?: string
 }

@@ -1,0 +1,181 @@
+{
+  "release": "AC-REVENUE-OS-MZ04-SIGNAL-FABRIC",
+  "generatedAt": "2026-07-20T09:58:53.654Z",
+  "files": [
+    {
+      "path": "app/(protected)/revenue-command-os/signals/[section]/page.tsx",
+      "size": 639,
+      "sha256": "cca118b5d84cfe90329a8a7de440ca765c7416d2a9795813cc4ddcf288a49aa2"
+    },
+    {
+      "path": "app/(protected)/revenue-command-os/signals/_components/SignalDrawer.tsx",
+      "size": 5298,
+      "sha256": "8b60ea2cb13d0b20d8c0c5f768db4927d1bcec90fdd18b08c8666283db74dd0c"
+    },
+    {
+      "path": "app/(protected)/revenue-command-os/signals/_components/SignalFabricContext.tsx",
+      "size": 3208,
+      "sha256": "6565097a0a71603373d9745a5dc39d71e04dfa485a83add80ebe2898b821e8a4"
+    },
+    {
+      "path": "app/(protected)/revenue-command-os/signals/_components/SignalFabricFrame.tsx",
+      "size": 5150,
+      "sha256": "037e5d0bac194651e224123e5803d85c7bf6aa3ee84d4246a3564c1013991ade"
+    },
+    {
+      "path": "app/(protected)/revenue-command-os/signals/_components/SignalFabricWorkspace.tsx",
+      "size": 23267,
+      "sha256": "d9321ae953f473b6763628c51e524e24c2c85c6f0ef6efb8a758d0fea40b09a4"
+    },
+    {
+      "path": "app/(protected)/revenue-command-os/signals/layout.tsx",
+      "size": 684,
+      "sha256": "e6b46c5b194b302cf083484fd3aacf55f65b2408966fca7fea858118cf47c8cf"
+    },
+    {
+      "path": "app/(protected)/revenue-command-os/signals/page.tsx",
+      "size": 209,
+      "sha256": "9caa62a3cd5c95b222ec20081f6183529e826fee2338be4f5357afe41f311cd1"
+    },
+    {
+      "path": "app/api/revenue-command-os/signals/cron/route.ts",
+      "size": 1470,
+      "sha256": "3fe71ece79d9f82e8bc2e7679bf2b26352d70efed195368b860c7c74c4268dad"
+    },
+    {
+      "path": "app/api/revenue-command-os/signals/route.ts",
+      "size": 5863,
+      "sha256": "6abdbab1ddeaa698b469084feab95065384c6fcdd13565fceb5fbfa9aa73e24b"
+    },
+    {
+      "path": "app/api/revenue-command-os/signals/webhook/[sourceCode]/route.ts",
+      "size": 4146,
+      "sha256": "54130b2116c23282f6a23663569631c176980b9c73ee7a8a12c4a12bd0073e7c"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/adapters.ts",
+      "size": 8444,
+      "sha256": "a8fa89a2a9126a435fa81be6d4ab2d12083b49fa016c0d90881cb50494f1f3c8"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/classification.ts",
+      "size": 6537,
+      "sha256": "7683aa192adc88289f9a93f33b823c306622a62d66640879f66cea5ca9231001"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/constants.ts",
+      "size": 4874,
+      "sha256": "057287ec02a82df07f992c3d6fcc1b7bf7586cf82525678549c75b78a9d475c3"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/context.ts",
+      "size": 4235,
+      "sha256": "38a15a8dbe329d946dcd7fe430ec4d52e06db4c3b3791238587f55286dbb364d"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/repository.ts",
+      "size": 27784,
+      "sha256": "eeb1ac5943ea8d7996a212fb87d07d91c08947f6e024a301beff1b93d040e6d4"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/seed-data.ts",
+      "size": 100584,
+      "sha256": "dd4f793f8fc8619390174ce3c9fb84fd495a1dcdc7b918fe1dfaba0d43bd5ae9"
+    },
+    {
+      "path": "lib/revenue-command-os/signal-fabric/validation.ts",
+      "size": 6424,
+      "sha256": "56ed5958c72ec5f6ddafa530aca30fe7980ab48e8c3dae368a056986151463f6"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/ACCEPTANCE.md",
+      "size": 663,
+      "sha256": "b9e4793b02a686fbe016428d9f0d2b00fa4e123733fc0ef6894ce3941ba1a003"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/API_CONTRACT.md",
+      "size": 1427,
+      "sha256": "cb4758aa9dcbd53c75ce34a3ce389a33c3c60de97355ff5ee7d7103a9c9656f6"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/ARCHITECTURE.md",
+      "size": 639,
+      "sha256": "6f3f05306f664703ce94e5142af9c13c9844d08d3601aa9aae67ed4d3f6be8a0"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "size": 1471,
+      "sha256": "1de5a54477f7841f251047d7a58593dc8de4e8d71107d42fe4a897a553af9ca7"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/CHANGELOG.md",
+      "size": 496,
+      "sha256": "298d83d6f612efdb08a8daf28f98e19e8296e8a94a58944666fa5ca7b9cab916"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/DATA_DICTIONARY.md",
+      "size": 1126,
+      "sha256": "b6644d5949845c40d99e7d6286a662b18c7de1334284e78d583a032640262fd1"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/FILE_MANIFEST.json",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/INSTALLATION.md",
+      "size": 1125,
+      "sha256": "0ee12996f1b931c4547142ab6a1622dee9eef70c0e170a8813bc8360bdd4b408"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/README.md",
+      "size": 956,
+      "sha256": "f9513a40be370ff780f9a5befb1033eb6fa353d523a0073e4e46f770b75157e5"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/ROLLBACK.sql",
+      "size": 1791,
+      "sha256": "c6dc7712609a6095f07fb9d239317855c932fcdaba28716fbaed4298e98b5304"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/SECURITY_AND_GOVERNANCE.md",
+      "size": 1073,
+      "sha256": "c2bcbdda5a856f2e8e0b0e7707bdd71ba8817349cd6b497cfec006e28da54542"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/SEED_PROVENANCE.md",
+      "size": 357,
+      "sha256": "437a833f776a74ec6af3cd5efe73081e7801ceb8136c4682dc8deb1c7294114a"
+    },
+    {
+      "path": "docs/revenue-command-os/phase-04/VERIFICATION_EVIDENCE.txt",
+      "size": 47275,
+      "sha256": "89b79aeafe650c9e8cf46bf77460d1922671e847171e633afc3365e550889081"
+    },
+    {
+      "path": "supabase/migrations/20260720_revenue_command_os_phase4_signal_fabric.sql",
+      "size": 42807,
+      "sha256": "48a814e0f3f166835af80f05cb8c85437a3af0612c099a0e7bc0c71127015d15"
+    },
+    {
+      "path": "tests/revenue-command-os/fixtures/phase4-signal-fabric.json",
+      "size": 295,
+      "sha256": "e1a22570c093c54d156f2467355005604f931b5f69acdcff7d1748ed93330cc4"
+    },
+    {
+      "path": "tests/revenue-command-os/fixtures/phase4-classification-cases.json",
+      "size": 2315,
+      "sha256": "a79c2d3ff0ffa1aa3c93070f45dad31d0a4efdb5ac88631e069a308bf6a349a7"
+    },
+    {
+      "path": "tests/revenue-command-os/fixtures/phase4-privacy-cases.json",
+      "size": 639,
+      "sha256": "957aa7fb20b226df065a6e4647e4d8b75b4ec916ef32f2082bf70a734c3d8adc"
+    },
+    {
+      "path": "tsconfig.revenue-os-phase4.json",
+      "size": 461,
+      "sha256": "6f2a22cdc6ff8e4e6cf3abe1a84c31cae8e965979b2d2149bb966fc8ed47e84a"
+    }
+  ]
+}

@@ -22,6 +22,13 @@ export default function DesktopRuntimeBridge() {
 
     window.dispatchEvent(new CustomEvent("angelcare:desktop-runtime", { detail: runtime }))
 
+    const openContext = (event: Event) => {
+      const detail = (event as CustomEvent<{ href?: string }>).detail
+      if (!detail?.href || !detail.href.startsWith("/whatsapp-os/web-session")) return
+      window.location.assign(detail.href)
+    }
+    window.addEventListener("angelcare:open-whatsapp-context", openContext)
+
     const api = getWhatsAppDesktopApi()
     if (!api) return
 
@@ -52,6 +59,7 @@ export default function DesktopRuntimeBridge() {
       active = false
       unsubscribe()
       unsubscribeGovernance?.()
+      window.removeEventListener("angelcare:open-whatsapp-context", openContext)
     }
   }, [])
 

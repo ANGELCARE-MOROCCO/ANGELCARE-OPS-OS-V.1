@@ -1,5 +1,5 @@
 import { REVENUE_OS_STATUS_DICTIONARY } from './statuses'
-import type { RevenueKnowledgeBootstrap, RevenueOsFoundationBootstrap, RevenueOsSearchResult } from './types'
+import type { RevenueKnowledgeBootstrap, RevenueOsFoundationBootstrap, RevenueOsSearchResult, RevenueSignalBootstrap } from './types'
 
 function normalize(value: string) {
   return value
@@ -106,6 +106,38 @@ export function buildRevenueKnowledgeSearchIndex(bootstrap: RevenueKnowledgeBoot
   }))
 
   return [...doctrines, ...assets, ...playbooks, ...conflicts]
+}
+
+
+export function buildRevenueSignalSearchIndex(bootstrap: RevenueSignalBootstrap): RevenueOsSearchResult[] {
+  const signals: RevenueOsSearchResult[] = bootstrap.signals.map((item) => ({
+    id: `revenue-signal:${item.id}`,
+    type: 'revenue-signal',
+    title: item.title,
+    subtitle: `${item.category} · ${item.sourceCode} · priorité ${item.priorityScore}`,
+    href: '/revenue-command-os/signals/live-stream',
+    badge: item.severity,
+    keywords: [item.code, item.title, item.summary, item.category, item.signalType, item.sourceCode, item.businessUnitCode || '', item.marketCode || '', item.offerCode || '', item.segmentCode || '', ...item.recommendedCommandFamilies],
+  }))
+  const sources: RevenueOsSearchResult[] = bootstrap.sources.map((item) => ({
+    id: `signal-source:${item.id}`,
+    type: 'signal-source',
+    title: item.name,
+    subtitle: `${item.sourceKind} · ${item.adapterKey} · ${item.status}`,
+    href: '/revenue-command-os/signals/source-control',
+    badge: item.status,
+    keywords: [item.code, item.name, item.description, item.sourceKind, item.adapterKey, ...item.businessUnitCodes, ...item.sourceTables, ...item.supportedEventTypes],
+  }))
+  const contexts: RevenueOsSearchResult[] = bootstrap.contextSnapshots.map((item) => ({
+    id: `context-snapshot:${item.id}`,
+    type: 'context-snapshot',
+    title: item.code,
+    subtitle: `${item.signalCode} · ${item.visibilityProfile} · ${item.status}`,
+    href: '/revenue-command-os/signals/context-snapshots',
+    badge: item.status,
+    keywords: [item.code, item.signalCode, item.purpose, item.audienceRole, item.visibilityProfile, ...item.constraints, ...item.opportunities, ...item.risks],
+  }))
+  return [...signals, ...sources, ...contexts]
 }
 
 export function searchRevenueOs(index: RevenueOsSearchResult[], query: string, limit = 12) {

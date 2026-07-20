@@ -7,8 +7,10 @@ import type {
 export const REVENUE_OS_CONTRACT_VERSION = 'AC-REVENUE-OS-CANONICAL-2026.07'
 export const REVENUE_OS_PHASE1_RELEASE_CODE = 'AC-REVENUE-OS-MZ01-FOUNDATION'
 export const REVENUE_OS_PHASE2_RELEASE_CODE = 'AC-REVENUE-OS-MZ02-DIGITAL-TWIN'
-export const REVENUE_OS_RELEASE_CODE = 'AC-REVENUE-OS-MZ03-DOCTRINE-MEMORY'
-export const REVENUE_OS_MODULE_VERSION = '3.0.0-phase3'
+export const REVENUE_OS_PHASE3_RELEASE_CODE = 'AC-REVENUE-OS-MZ03-DOCTRINE-MEMORY'
+export const REVENUE_OS_PHASE3_MODULE_VERSION = '3.0.0-phase3'
+export const REVENUE_OS_RELEASE_CODE = 'AC-REVENUE-OS-MZ04-SIGNAL-FABRIC'
+export const REVENUE_OS_MODULE_VERSION = '4.0.0-phase4'
 export const REVENUE_OS_DEFAULT_EXECUTION_MODE: RevenueOsExecutionMode = 'shadow'
 
 export const REVENUE_OS_PERMISSIONS = {
@@ -18,6 +20,9 @@ export const REVENUE_OS_PERMISSIONS = {
   digitalTwin: 'revenue_os.digital_twin.manage',
   knowledge: 'revenue_os.knowledge.manage',
   knowledgeApprove: 'revenue_os.knowledge.approve',
+  signals: 'revenue_os.signals.manage',
+  signalsIngest: 'revenue_os.signals.ingest',
+  signalsAudit: 'revenue_os.signals.audit',
   strategy: 'revenue_os.strategy.manage',
   commands: 'revenue_os.commands.manage',
   approvals: 'revenue_os.approvals.manage',
@@ -69,14 +74,14 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     key: 'signals',
     label: 'Signaux',
     shortLabel: 'Signaux',
-    description: 'Registre des signaux commerciaux, saisonniers, opérationnels et comportementaux qui réveilleront le moteur.',
+    description: 'Tissu live des signaux revenus, sources, scans, classification, contexte, fraîcheur et accès.',
     href: '/revenue-command-os/signals',
     icon: 'RadioTower',
     order: 40,
-    permission: REVENUE_OS_PERMISSIONS.view,
-    status: 'foundation',
+    permission: REVENUE_OS_PERMISSIONS.signals,
+    status: 'ready',
     accent: 'cyan',
-    contractScope: ['Event IDs', 'Normalisation', 'Sévérité', 'Confiance', 'Déduplication'],
+    contractScope: ['Sources live', 'Normalisation', 'Classification', 'Sévérité', 'Confiance', 'Déduplication', 'Scans', 'Contexte', 'Fraîcheur', 'Accès'],
   },
   {
     key: 'strategies',
@@ -247,6 +252,33 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
     key: 'revenue_os.knowledge_indexing',
     label: 'Préparation à l’indexation documentaire',
     description: 'Autorise la mise en file des actifs validés pour découpage et indexation; aucun modèle externe n’est invoqué en Phase 3.',
+    enabled: true,
+    locked: false,
+    environment: 'all',
+    riskClass: 'controlled',
+  },
+  {
+    key: 'revenue_os.signal_fabric',
+    label: 'Live Revenue Signal Fabric',
+    description: 'Active les sources gouvernées, la normalisation, la déduplication, les scans et les snapshots de contexte en observation Shadow.',
+    enabled: true,
+    locked: true,
+    environment: 'all',
+    riskClass: 'controlled',
+  },
+  {
+    key: 'revenue_os.signal_ingestion',
+    label: 'Ingestion des signaux revenus',
+    description: 'Autorise l’ingestion interne ou par webhook signé; aucune action externe n’est exécutée.',
+    enabled: true,
+    locked: false,
+    environment: 'all',
+    riskClass: 'controlled',
+  },
+  {
+    key: 'revenue_os.signal_scheduled_scans',
+    label: 'Scans revenus programmés',
+    description: 'Active les scans incrémentaux et idempotents des sources internes autorisées.',
     enabled: true,
     locked: false,
     environment: 'all',

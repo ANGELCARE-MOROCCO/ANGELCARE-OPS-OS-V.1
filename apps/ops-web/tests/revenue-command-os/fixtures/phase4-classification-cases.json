@@ -1,0 +1,86 @@
+[
+  {
+    "case": "invoice overdue",
+    "input": "invoice overdue unpaid",
+    "expectedCategory": "payment",
+    "expectedSeverity": "critical",
+    "mustRecommend": "revenue-rescue"
+  },
+  {
+    "case": "customer complaint",
+    "input": "high complaint churn risk",
+    "expectedCategory": "customer-risk",
+    "expectedSeverity": "high",
+    "mustRecommend": "customer-rescue"
+  },
+  {
+    "case": "reply interested",
+    "input": "prospect replied interested appointment requested",
+    "expectedCategory": "account-intent",
+    "expectedSeverity": "high",
+    "mustRecommend": "qualification"
+  },
+  {
+    "case": "proposal sent",
+    "input": "proposal sent",
+    "expectedCategory": "proposal",
+    "expectedSeverity": "medium",
+    "mustRecommend": "proposal-progression"
+  },
+  {
+    "case": "meeting scheduled",
+    "input": "meeting scheduled",
+    "expectedCategory": "meeting",
+    "expectedSeverity": "medium",
+    "mustRecommend": "meeting-diagnostic"
+  },
+  {
+    "case": "capacity unavailable",
+    "input": "trainer unavailable capacity low",
+    "expectedCategory": "capacity",
+    "expectedSeverity": "high",
+    "mustRecommend": "capacity-protection"
+  },
+  {
+    "case": "renewal expires",
+    "input": "partnership renewal expires",
+    "expectedCategory": "renewal",
+    "expectedSeverity": "medium",
+    "mustRecommend": "renewal"
+  },
+  {
+    "case": "market opportunity",
+    "input": "new opportunity score 90",
+    "expectedCategory": "market-opportunity",
+    "expectedSeverity": "medium",
+    "mustRecommend": "account-discovery"
+  },
+  {
+    "case": "payment received",
+    "input": "payment received confirmed",
+    "expectedCategory": "payment",
+    "expectedSeverity": "info",
+    "mustRecommend": "delivery-handoff"
+  },
+  {
+    "case": "email failed",
+    "input": "email delivery failed",
+    "expectedCategory": "execution",
+    "expectedSeverity": "high",
+    "mustRecommend": "channel-recovery"
+  },
+  {
+    "case": "source stale",
+    "input": "source stale",
+    "expectedCategory": "data-quality",
+    "expectedSeverity": "high",
+    "mustRecommend": "data-recovery"
+  },
+  {
+    "case": "seasonal window",
+    "input": "pre-summer seasonal window",
+    "expectedCategory": "seasonality",
+    "expectedSeverity": "high",
+    "mustRecommend": "seasonal-activation"
+  }
+]

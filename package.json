@@ -29,6 +29,9 @@
     "revenue-os:phase2:manifest": "npm --prefix apps/ops-web run revenue-os:phase2:manifest",
     "revenue-os:phase3:verify": "npm --prefix apps/ops-web run revenue-os:phase3:verify",
     "revenue-os:phase3:typecheck": "npm --prefix apps/ops-web run revenue-os:phase3:typecheck",
-    "revenue-os:phase3:manifest": "npm --prefix apps/ops-web run revenue-os:phase3:manifest"
+    "revenue-os:phase3:manifest": "npm --prefix apps/ops-web run revenue-os:phase3:manifest",
+    "revenue-os:phase4:verify": "npm --prefix apps/ops-web run revenue-os:phase4:verify",
+    "revenue-os:phase4:typecheck": "npm --prefix apps/ops-web run revenue-os:phase4:typecheck",
+    "revenue-os:phase4:manifest": "npm --prefix apps/ops-web run revenue-os:phase4:manifest"
   }
 }

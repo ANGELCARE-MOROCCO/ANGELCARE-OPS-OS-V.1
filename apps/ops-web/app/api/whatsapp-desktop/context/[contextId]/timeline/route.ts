@@ -1,0 +1,5 @@
+import { NextRequest } from "next/server"
+import { fail,ok } from "@/lib/whatsapp-desktop/server"
+import { CONTEXT_PERMISSIONS,contextRequestContext,loadBusinessContext } from "@/lib/whatsapp-desktop/context-server"
+async function idOf(ctx:{params:Promise<{contextId:string}>|{contextId:string}}){return String((await Promise.resolve(ctx.params)).contextId||"")}
+export async function GET(request:NextRequest,routeContext:{params:Promise<{contextId:string}>|{contextId:string}}){const context=await contextRequestContext(request,CONTEXT_PERMISSIONS.view);if("error" in context)return context.error;try{const id=await idOf(routeContext);await loadBusinessContext(context.supabase,id,context.userId,false,CONTEXT_PERMISSIONS.view);const {data,error}=await context.supabase.from("whatsapp_context_events").select("*").eq("context_id",id).order("created_at",{ascending:false}).limit(300);if(error)return fail(error.message,500);return ok(data||[])}catch(error){return fail(error instanceof Error?error.message:String(error),404)}}

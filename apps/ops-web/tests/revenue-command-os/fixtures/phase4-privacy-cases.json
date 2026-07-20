@@ -1,0 +1,42 @@
+[
+  {
+    "field": "password",
+    "mustRedact": true
+  },
+  {
+    "field": "access_token",
+    "mustRedact": true
+  },
+  {
+    "field": "refresh_token",
+    "mustRedact": true
+  },
+  {
+    "field": "cookie",
+    "mustRedact": true
+  },
+  {
+    "field": "service_role_key",
+    "mustRedact": true
+  },
+  {
+    "field": "body",
+    "mustSummarize": true
+  },
+  {
+    "field": "raw_message",
+    "mustSummarize": true
+  },
+  {
+    "profile": "commercial-agent",
+    "mustHide": "financial_internal_cost"
+  },
+  {
+    "profile": "auditor",
+    "mustMinimize": true
+  },
+  {
+    "source": "email",
+    "mustNotCentralize": "mime_message"
+  }
+]

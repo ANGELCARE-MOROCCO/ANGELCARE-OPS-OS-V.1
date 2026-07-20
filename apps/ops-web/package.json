@@ -100,7 +100,10 @@
     "revenue-os:phase2:typecheck": "NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-phase2.json --pretty false && NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-integration.json --pretty false",
     "revenue-os:phase3:verify": "node scripts/revenue-command-os/verify-phase3.mjs",
     "revenue-os:phase3:manifest": "node scripts/revenue-command-os/print-phase3-manifest.mjs",
-    "revenue-os:phase3:typecheck": "NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-phase3.json --pretty false && NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-integration.json --pretty false"
+    "revenue-os:phase3:typecheck": "NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-phase3.json --pretty false && NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-integration.json --pretty false",
+    "revenue-os:phase4:verify": "node scripts/revenue-command-os/verify-phase4.mjs",
+    "revenue-os:phase4:manifest": "node scripts/revenue-command-os/print-phase4-manifest.mjs",
+    "revenue-os:phase4:typecheck": "NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-phase4.json --pretty false && NODE_OPTIONS=\"--max-old-space-size=4096\" tsc -p tsconfig.revenue-os-integration.json --pretty false"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.20",

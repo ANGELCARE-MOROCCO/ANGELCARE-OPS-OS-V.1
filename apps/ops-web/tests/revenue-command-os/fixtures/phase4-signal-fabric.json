@@ -1,0 +1,14 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ04-SIGNAL-FABRIC",
+  "minimum": {
+    "sections": 12,
+    "sources": 15,
+    "rules": 16,
+    "signals": 18,
+    "tables": 20,
+    "subscriptions": 4
+  },
+  "executionPosture": "shadow-observation",
+  "externalActions": false,
+  "sourceSecretsStored": false
+}
