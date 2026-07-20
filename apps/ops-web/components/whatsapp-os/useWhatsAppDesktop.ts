@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useState } from "react"
 import { getDesktopRuntime, getWhatsAppDesktopApi } from "@/lib/desktop-runtime"
 
+function isWhatsAppStatus(value: object): value is AngelCareWhatsAppStatus {
+  return [
+    "available", "created", "visible", "requestedVisible", "phase", "message", "detail", "currentUrl", "title", "online",
+    "rendererStatus", "authProfile", "canGoBack", "canGoForward", "layoutMode", "partition", "lastLoadStartedAt", "lastLoadedAt",
+    "lastErrorAt", "lastCrashAt", "lastResponsiveAt", "storagePath", "downloads", "permissions", "timestamp",
+  ].every((key) => key in value)
+}
+
 export function useWhatsAppDesktop() {
   const [runtime, setRuntime] = useState<ReturnType<typeof getDesktopRuntime>>(null)
   const [status, setStatus] = useState<AngelCareWhatsAppStatus | null>(null)
@@ -42,7 +50,7 @@ export function useWhatsAppDesktop() {
     setError(null)
     try {
       const result = await operation(api)
-      if (result && typeof result === "object" && "phase" in result) setStatus(result as AngelCareWhatsAppStatus)
+      if (result && typeof result === "object" && isWhatsAppStatus(result)) setStatus(result)
       if (result && typeof result === "object" && "state" in result) setStatus((result as { state: AngelCareWhatsAppStatus }).state)
       return result
     } catch (reason) {
