@@ -9,6 +9,10 @@ export type DesktopRuntimeInfo = {
     whatsappWebContentsView: boolean
     whatsappPersistentSession: boolean
     whatsappSessionControl: boolean
+    whatsappGovernance?: boolean
+    whatsappDeviceRegistration?: boolean
+    whatsappAuthorizationLeases?: boolean
+    whatsappRemoteCommands?: boolean
     whatsappAutomation: false
     whatsappDomAccess: false
   }
@@ -23,13 +27,17 @@ function runtimeFromUserAgent(): DesktopRuntimeInfo | null {
     isDesktop: true,
     productName: "ANGELCARE Desktop",
     version: match[1] || "unknown",
-    contractVersion: "2.0.0",
+    contractVersion: "3.0.0",
     releaseChannel: "stable",
     platform: navigator.platform || "unknown",
     capabilities: {
       whatsappWebContentsView: false,
       whatsappPersistentSession: false,
       whatsappSessionControl: false,
+      whatsappGovernance: false,
+      whatsappDeviceRegistration: false,
+      whatsappAuthorizationLeases: false,
+      whatsappRemoteCommands: false,
       whatsappAutomation: false,
       whatsappDomAccess: false,
     },
@@ -64,4 +72,13 @@ export function isAngelCareDesktop(): boolean {
 
 export function hasEmbeddedWhatsAppRuntime(): boolean {
   return Boolean(getDesktopRuntime()?.capabilities?.whatsappWebContentsView && getWhatsAppDesktopApi())
+}
+
+export function getWhatsAppGovernanceApi(): AngelCareWhatsAppGovernanceApi | null {
+  if (typeof window === "undefined") return null
+  return window.angelcareDesktop?.governance || null
+}
+
+export function hasWhatsAppGovernanceRuntime(): boolean {
+  return Boolean(getDesktopRuntime()?.capabilities?.whatsappGovernance && getWhatsAppGovernanceApi())
 }

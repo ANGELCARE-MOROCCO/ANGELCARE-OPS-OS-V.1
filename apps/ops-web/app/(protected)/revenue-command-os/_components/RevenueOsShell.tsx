@@ -137,7 +137,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
               </span>
               {!collapsed ? (
                 <div className="min-w-0">
-                  <p className="truncate text-xs font-black text-slate-900">Phase 1 — Fondation</p>
+                  <p className="truncate text-xs font-black text-slate-900">Phase 2 — Revenue Digital Twin</p>
                   <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-500">Mode Shadow verrouillé</p>
                 </div>
               ) : null}

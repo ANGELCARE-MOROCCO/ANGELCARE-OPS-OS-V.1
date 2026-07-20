@@ -71,6 +71,51 @@ declare global {
     onStatus(listener: (status: AngelCareWhatsAppStatus) => void): () => void;
   }
 
+
+  interface AngelCareWhatsAppGovernanceStatus {
+    readonly available: boolean;
+    readonly contractVersion: string;
+    readonly phase: string;
+    readonly message: string;
+    readonly detail: string | null;
+    readonly installationId: string;
+    readonly deviceId: string | null;
+    readonly deviceName: string;
+    readonly approvalStatus: string;
+    readonly selectedWorkspaceId: string | null;
+    readonly selectedWorkspaceName: string | null;
+    readonly authorized: boolean;
+    readonly authorizationReason: string;
+    readonly leaseId: string | null;
+    readonly leaseExpiresAt: string | null;
+    readonly graceExpiresAt: string | null;
+    readonly offlineGraceActive: boolean;
+    readonly policy: Record<string, unknown> | null;
+    readonly assignment: Record<string, unknown> | null;
+    readonly workspace: Record<string, unknown> | null;
+    readonly lastRegisteredAt: string | null;
+    readonly lastHeartbeatAt: string | null;
+    readonly lastAuthorizationAt: string | null;
+    readonly lastCommandAt: string | null;
+    readonly lastErrorAt: string | null;
+    readonly pendingCommands: number;
+    readonly online: boolean | null;
+    readonly desktopVersion: string;
+    readonly platform: string;
+    readonly architecture: string;
+    readonly operatingSystemVersion: string;
+    readonly timestamp: string;
+  }
+
+  interface AngelCareWhatsAppGovernanceApi {
+    getStatus(): Promise<AngelCareWhatsAppGovernanceStatus>;
+    register(): Promise<AngelCareWhatsAppGovernanceStatus>;
+    heartbeat(): Promise<AngelCareWhatsAppGovernanceStatus>;
+    refresh(): Promise<AngelCareWhatsAppGovernanceStatus>;
+    selectWorkspace(workspaceId: string, workspaceName?: string): Promise<AngelCareWhatsAppGovernanceStatus>;
+    onStatus(listener: (status: AngelCareWhatsAppGovernanceStatus) => void): () => void;
+  }
+
   interface AngelCareDesktopRuntime {
     readonly isDesktop: true;
     readonly productName: string;
@@ -82,10 +127,15 @@ declare global {
       readonly whatsappWebContentsView: boolean;
       readonly whatsappPersistentSession: boolean;
       readonly whatsappSessionControl: boolean;
+      readonly whatsappGovernance: boolean;
+      readonly whatsappDeviceRegistration: boolean;
+      readonly whatsappAuthorizationLeases: boolean;
+      readonly whatsappRemoteCommands: boolean;
       readonly whatsappAutomation: false;
       readonly whatsappDomAccess: false;
     };
     readonly whatsapp: AngelCareWhatsAppDesktopApi;
+    readonly governance: AngelCareWhatsAppGovernanceApi;
   }
 
   interface Window {
@@ -96,5 +146,6 @@ declare global {
     "angelcare:desktop-ready": CustomEvent<AngelCareDesktopRuntime>;
     "angelcare:desktop-runtime": CustomEvent<AngelCareDesktopRuntime | null>;
     "angelcare:whatsapp-status": CustomEvent<AngelCareWhatsAppStatus>;
+    "angelcare:whatsapp-governance": CustomEvent<AngelCareWhatsAppGovernanceStatus>;
   }
 }

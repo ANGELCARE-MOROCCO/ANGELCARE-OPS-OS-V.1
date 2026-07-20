@@ -11,13 +11,17 @@ const runtime = Object.freeze({
   isDesktop: true,
   productName: "ANGELCARE Desktop",
   version: argumentValue("--angelcare-desktop-version=", "0.0.0"),
-  contractVersion: argumentValue("--angelcare-desktop-contract=", "2.0.0"),
+  contractVersion: argumentValue("--angelcare-desktop-contract=", "3.0.0"),
   releaseChannel: argumentValue("--angelcare-desktop-channel=", "stable"),
   platform: process.platform,
   capabilities: Object.freeze({
     whatsappWebContentsView: true,
     whatsappPersistentSession: true,
     whatsappSessionControl: true,
+    whatsappGovernance: true,
+    whatsappDeviceRegistration: true,
+    whatsappAuthorizationLeases: true,
+    whatsappRemoteCommands: true,
     whatsappAutomation: false,
     whatsappDomAccess: false,
   }),
@@ -56,6 +60,12 @@ function setWhatsappBounds(bounds) {
   return ipcRenderer.invoke("angelcare-desktop:whatsapp-bounds", safeBounds);
 }
 
+const governanceCommands = new Set(["get-status", "register", "heartbeat", "refresh", "select-workspace"]);
+function invokeGovernance(action, payload = {}) {
+  if (!governanceCommands.has(action)) return Promise.reject(new Error("Unsupported ANGELCARE governance command."));
+  return ipcRenderer.invoke("angelcare-desktop:governance-command", action, payload);
+}
+
 function subscribe(channel, listener) {
   if (typeof listener !== "function") throw new TypeError("Listener must be a function.");
   const wrapped = (_event, payload) => listener(payload);
@@ -84,6 +94,14 @@ const api = Object.freeze({
     setBounds: setWhatsappBounds,
     onStatus: (listener) => subscribe("angelcare-desktop:whatsapp-state", listener),
   }),
+  governance: Object.freeze({
+    getStatus: () => invokeGovernance("get-status"),
+    register: () => invokeGovernance("register"),
+    heartbeat: () => invokeGovernance("heartbeat"),
+    refresh: () => invokeGovernance("refresh"),
+    selectWorkspace: (workspaceId, workspaceName = "") => invokeGovernance("select-workspace", { workspaceId, workspaceName }),
+    onStatus: (listener) => subscribe("angelcare-desktop:governance-state", listener),
+  }),
 });
 
 contextBridge.exposeInMainWorld("angelcareDesktop", api);
@@ -93,5 +111,5 @@ window.addEventListener("DOMContentLoaded", () => {
   document.documentElement.dataset.angelcareDesktopPlatform = runtime.platform;
   document.documentElement.dataset.angelcareDesktopVersion = runtime.version;
   document.documentElement.dataset.angelcareWhatsappRuntime = "available";
-  window.dispatchEvent(new CustomEvent("angelcare:desktop-ready", { detail: runtime }));
+  window.dispatchEvent(new CustomEvent("angelcare:desktop-ready", { detail: api }));
 });

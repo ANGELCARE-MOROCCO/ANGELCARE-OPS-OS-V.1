@@ -30,7 +30,18 @@ const workspaceBlueprints: Record<RevenueOsWorkspaceKey, {
     title: 'Vue stratégique',
     statement: 'La surface qui explique en temps réel ce que le moteur cherche à gagner, le raisonnement engagé, les validations et la progression de l’exécution.',
     columns: [{ title: 'Fondation active', items: ['Shell premium', 'Objective Command', 'État système', 'Recherche globale'] }],
-    nextPhase: 'Revenue Digital Twin',
+    nextPhase: 'Revenue Doctrine & Memory Intelligence',
+  },
+  'digital-twin': {
+    eyebrow: 'Commercial Truth Layer',
+    title: 'Revenue Digital Twin',
+    statement: 'Modèle machine-readable du portefeuille AngelCare: unités, offres, segments, décideurs, territoires, prix, capacités, parcours, dépendances et leviers de croissance.',
+    columns: [
+      { title: 'Portefeuille', items: ['Business units', 'Offres & formats', 'Bundles', 'Segments', 'Décideurs'] },
+      { title: 'Faisabilité', items: ['Marchés', 'Prix protégés', 'Capacités', 'Contraintes', 'Dépendances'] },
+      { title: 'Croissance', items: ['Saisonnalité', 'Cross-sell', 'Upsell', 'Renewal', 'Referral'] },
+    ],
+    nextPhase: 'Revenue Doctrine & Memory Intelligence',
   },
   'revenue-objectives': {
     eyebrow: 'Objective Command',
@@ -212,7 +223,7 @@ export default function RevenueOsWorkspacePage({ workspaceKey }: { workspaceKey:
       <section className="grid gap-4 md:grid-cols-3">
         <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-5"><ShieldCheck className="text-emerald-700" /><h3 className="mt-4 text-sm font-black text-emerald-950">Ce qui est réel maintenant</h3><p className="mt-2 text-xs leading-6 text-emerald-800">Route, shell, permission, registry, feature flags, contrats de statut, Objective Command, recherche et audit foundation.</p></div>
         <div className="rounded-[24px] border border-amber-200 bg-amber-50 p-5"><FileLock2 className="text-amber-700" /><h3 className="mt-4 text-sm font-black text-amber-950">Ce qui reste verrouillé</h3><p className="mt-2 text-xs leading-6 text-amber-800">Toute communication externe, engagement tarifaire, compilation ou propagation opérationnelle.</p></div>
-        <div className="rounded-[24px] border border-blue-200 bg-blue-50 p-5"><BookOpenCheck className="text-blue-700" /><h3 className="mt-4 text-sm font-black text-blue-950">Prochaine extension</h3><p className="mt-2 text-xs leading-6 text-blue-800">{blueprint.nextPhase}, sans modifier ni contourner le contrat canonique de la Phase 1.</p></div>
+        <div className="rounded-[24px] border border-blue-200 bg-blue-50 p-5"><BookOpenCheck className="text-blue-700" /><h3 className="mt-4 text-sm font-black text-blue-950">Prochaine extension</h3><p className="mt-2 text-xs leading-6 text-blue-800">{blueprint.nextPhase}, sans modifier ni contourner le contrat canonique cumulatif des Phases 1 et 2.</p></div>
       </section>
 
       <div className="flex flex-col gap-3 rounded-[24px] border border-slate-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between"><Link href="/revenue-command-os" className="inline-flex items-center gap-2 text-sm font-black text-slate-700"><ArrowLeft size={16} /> Retour au cockpit</Link><Link href={workspace.href === '/revenue-command-os/settings' ? '/revenue-command-os/audit' : '/revenue-command-os/settings'} className="inline-flex items-center gap-2 text-sm font-black text-blue-700">Inspecter la gouvernance <ArrowRight size={16} /></Link></div>

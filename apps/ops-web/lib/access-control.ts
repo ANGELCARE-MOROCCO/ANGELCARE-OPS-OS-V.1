@@ -3,6 +3,8 @@ export const ACCESS_CONTROL: Record<string, string[]> = {
   '/leads': ['leads.view'],
   '/missions': ['missions.view'],
   '/revenue-command-os': ['revenue_os.view', 'revenue.view'],
+  '/revenue-command-os/digital-twin': ['revenue_os.view', 'revenue_os.digital_twin.manage', 'revenue.view'],
+  '/revenue-command-os/memory-learning': ['revenue_os.view', 'revenue_os.knowledge.manage', 'revenue.view'],
   '/revenue-command-center': ['revenue_center.access', 'revenue.view'],
   '/voice-center': ['voice_center.access', 'voice.view'],
 }

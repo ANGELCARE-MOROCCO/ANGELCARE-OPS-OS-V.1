@@ -1,0 +1,44 @@
+[
+  {
+    "id": "missing-price-rule",
+    "situation": "An active offer has no price rule.",
+    "expectedSeverity": "high",
+    "expectedCategory": "pricing",
+    "mustBlockAutonomousPricing": true
+  },
+  {
+    "id": "unavailable-capacity",
+    "situation": "An offer depends on an unavailable capacity.",
+    "expectedSeverity": "critical",
+    "expectedCategory": "capacity",
+    "mustBlockFirmCommitment": true
+  },
+  {
+    "id": "market-conditional",
+    "situation": "A market can be prospected but not delivered immediately.",
+    "expectedSeverity": "medium",
+    "expectedCategory": "territory",
+    "mustRequireDeliveryValidation": true
+  },
+  {
+    "id": "invalid-growth-path",
+    "situation": "A growth path references an unknown destination offer.",
+    "expectedSeverity": "high",
+    "expectedCategory": "dependency",
+    "mustRejectValidation": true
+  },
+  {
+    "id": "journey-order",
+    "situation": "Sales journey stages have duplicated or invalid ordering.",
+    "expectedSeverity": "high",
+    "expectedCategory": "journey",
+    "mustRejectValidation": true
+  },
+  {
+    "id": "protected-margin",
+    "situation": "A price rule has no minimum protected price or approval authority.",
+    "expectedSeverity": "high",
+    "expectedCategory": "governance",
+    "mustBlockDiscountRecommendation": true
+  }
+]

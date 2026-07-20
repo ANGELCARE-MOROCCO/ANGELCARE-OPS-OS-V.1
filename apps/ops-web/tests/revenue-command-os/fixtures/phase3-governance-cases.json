@@ -1,0 +1,9 @@
+[
+  {"case":"effective doctrine wins over draft","mustUseStatus":"effective","mustBlock":false},
+  {"case":"retired doctrine cannot drive commands","mustUseStatus":null,"mustBlock":true},
+  {"case":"critical unresolved conflict","mustUseStatus":null,"mustBlock":true},
+  {"case":"unsupported price assertion","mustUseStatus":null,"mustBlock":true},
+  {"case":"approved but future effective date","mustUseStatus":null,"mustBlock":true},
+  {"case":"approved external promise requires authority","mustUseStatus":"approved","mustBlock":true},
+  {"case":"indexed confidential asset","mustUseStatus":"effective","mustBlock":false,"requiresPermission":true}
+]

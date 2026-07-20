@@ -3,28 +3,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { getDesktopRuntime, getWhatsAppDesktopApi } from "@/lib/desktop-runtime"
 
-function isWhatsAppStatus(value: unknown): value is AngelCareWhatsAppStatus {
-  if (!value || typeof value !== "object") return false
-  const candidate = value as Record<string, unknown>
-  return typeof candidate.available === "boolean" &&
-    typeof candidate.created === "boolean" &&
-    typeof candidate.visible === "boolean" &&
-    typeof candidate.requestedVisible === "boolean" &&
-    typeof candidate.phase === "string" &&
-    typeof candidate.message === "string" &&
-    (candidate.detail === null || typeof candidate.detail === "string") &&
-    (candidate.currentUrl === null || typeof candidate.currentUrl === "string") &&
-    (candidate.title === null || typeof candidate.title === "string") &&
-    (candidate.online === null || typeof candidate.online === "boolean") &&
-    typeof candidate.rendererStatus === "string" &&
-    typeof candidate.canGoBack === "boolean" &&
-    typeof candidate.canGoForward === "boolean" &&
-    typeof candidate.partition === "string" &&
-    Array.isArray(candidate.downloads) &&
-    Array.isArray(candidate.permissions) &&
-    typeof candidate.timestamp === "string"
-}
-
 export function useWhatsAppDesktop() {
   const [runtime, setRuntime] = useState<ReturnType<typeof getDesktopRuntime>>(null)
   const [status, setStatus] = useState<AngelCareWhatsAppStatus | null>(null)
@@ -64,8 +42,8 @@ export function useWhatsAppDesktop() {
     setError(null)
     try {
       const result = await operation(api)
-      if (isWhatsAppStatus(result)) setStatus(result)
-      if (result && typeof result === "object" && "state" in result && isWhatsAppStatus(result.state)) setStatus(result.state)
+      if (result && typeof result === "object" && "phase" in result) setStatus(result as AngelCareWhatsAppStatus)
+      if (result && typeof result === "object" && "state" in result) setStatus((result as { state: AngelCareWhatsAppStatus }).state)
       return result
     } catch (reason) {
       const message = reason instanceof Error ? reason.message : "Action WhatsApp impossible."

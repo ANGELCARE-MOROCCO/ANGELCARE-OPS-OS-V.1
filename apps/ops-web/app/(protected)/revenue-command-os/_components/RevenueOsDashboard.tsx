@@ -82,10 +82,10 @@ export default function RevenueOsDashboard() {
               <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-[.15em] text-slate-500">{bootstrap.moduleVersion}</span>
             </div>
             <h2 className="mt-6 max-w-4xl text-3xl font-black leading-[1.08] tracking-[-.035em] text-slate-950 sm:text-4xl xl:text-[44px]">Le système stratégique qui transforme une ambition commerciale en exécution gouvernée.</h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-7 text-slate-600">Phase 1 installe la coque premium, le contrat verrouillé, la gouvernance, les permissions, les feature flags, les identifiants événementiels, l’audit et le langage commun qui accueilleront le Revenue Digital Twin, les 3 000 commandes et le moteur stratégique.</p>
+            <p className="mt-4 max-w-3xl text-[15px] leading-7 text-slate-600">Mega ZIP 2 active le Revenue Digital Twin: une représentation structurée des unités commerciales, offres, segments, décideurs, territoires, prix, capacités, parcours, dépendances et leviers d’expansion qui alimentera les futures 3 000 commandes et le Strategy Brain.</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button onClick={openObjective} className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-900/15"><Plus size={17} /> Composer un objectif</button>
-              <Link href="/revenue-command-os/settings" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"><ShieldCheck size={17} /> Inspecter la gouvernance</Link>
+              <Link href="/revenue-command-os/digital-twin" className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-black text-blue-800 shadow-lg shadow-blue-950/10 transition hover:-translate-y-0.5">Ouvrir le Revenue Digital Twin <ArrowRight size={17} /></Link><Link href="/revenue-command-os/settings" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"><ShieldCheck size={17} /> Inspecter la gouvernance</Link>
               <button onClick={refresh} disabled={busy} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"><RefreshCw size={16} className={busy ? 'animate-spin' : ''} /> Actualiser</button>
             </div>
           </div>
@@ -109,7 +109,7 @@ export default function RevenueOsDashboard() {
             <div className="mt-5 border-t border-white/10 pt-4">
               <div className="flex items-center justify-between text-xs"><span className="font-semibold text-slate-400">Readiness fondation</span><span className="font-black text-white">{readiness}%</span></div>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-blue-400 to-emerald-400" style={{ width: `${readiness}%` }} /></div>
-              <p className="mt-3 text-[11px] leading-5 text-slate-400">La persistance réelle devient complète dès application de la migration Phase 1.</p>
+              <p className="mt-3 text-[11px] leading-5 text-slate-400">La persistance devient complète après application cumulative des migrations Phase 1 et Phase 2.</p>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function RevenueOsDashboard() {
 
       <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_14px_45px_rgba(15,23,42,.045)] sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div><p className="text-[10px] font-black uppercase tracking-[.17em] text-blue-700">Architecture contractuelle</p><h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">De l’objectif à la propagation</h3><p className="mt-1 text-sm text-slate-500">La chaîne complète est visible dès la fondation; seules les briques Phase 1 sont actives.</p></div>
+          <div><p className="text-[10px] font-black uppercase tracking-[.17em] text-blue-700">Architecture contractuelle</p><h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">De l’objectif à la propagation</h3><p className="mt-1 text-sm text-slate-500">La fondation et le Revenue Digital Twin sont actifs; les commandes intelligentes et le Strategy Brain restent volontairement verrouillés.</p></div>
           <Link href="/revenue-command-os/audit" className="inline-flex items-center gap-2 text-xs font-black text-blue-700">Voir la traçabilité <ArrowRight size={15} /></Link>
         </div>
         <div className="mt-6 grid gap-2 xl:grid-cols-7">
@@ -198,7 +198,7 @@ export default function RevenueOsDashboard() {
 
       <section className="grid gap-4 md:grid-cols-3">
         {[
-          { icon: BrainCircuit, title: 'Intelligence non simulée', text: 'La Phase 1 ne prétend pas exécuter ce qui appartient aux phases Digital Twin, Command Kernel ou Strategy Brain.' },
+          { icon: BrainCircuit, title: 'Intelligence gouvernée', text: 'Le Digital Twin structure la vérité commerciale sans prétendre exécuter les futures commandes ou stratégies avant leurs phases contractuelles.' },
           { icon: ShieldCheck, title: 'Gouvernance native', text: 'Les actions externes, réductions, propositions et engagements resteront bloqués sans autorité explicite.' },
           { icon: Sparkles, title: 'UX prête à évoluer', text: 'Le shell et les workspaces sont conçus pour accueillir la complexité sans devenir un dashboard financier ou un gestionnaire de tâches.' },
         ].map((item) => <div key={item.title} className="rounded-[24px] border border-slate-200 bg-white p-5"><item.icon className="text-blue-700" size={22} /><h4 className="mt-4 text-sm font-black text-slate-900">{item.title}</h4><p className="mt-2 text-xs leading-6 text-slate-500">{item.text}</p></div>)}

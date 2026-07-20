@@ -17,12 +17,18 @@
     "typecheck:extension": "npm --prefix apps/revenue-browser-extension run typecheck",
     "browser-extension:contracts:sync": "node scripts/sync-browser-extension-contracts.mjs",
     "browser-extension:contracts:verify": "node scripts/verify-browser-extension-contracts.mjs",
-    "browser-extension:verify": "npm run browser-extension:contracts:verify && npm --prefix apps/ops-web run browser-extension:verify && npm run browser-extension:b2b-ai-sales-director:verify && npm --prefix apps/revenue-browser-extension run verify",
+    "browser-extension:verify": "npm run browser-extension:contracts:verify && npm --prefix apps/ops-web run browser-extension:verify && npm --prefix apps/revenue-browser-extension run verify",
     "browser-extension:b2b-intelligence:verify": "npm --prefix apps/ops-web run browser-extension:b2b-intelligence:verify",
     "browser-extension:b2b-execution:verify": "npm --prefix apps/ops-web run browser-extension:b2b-execution:verify",
     "browser-extension:b2b-deal-closing:verify": "npm --prefix apps/ops-web run browser-extension:b2b-deal-closing:verify",
     "browser-extension:b2b-enterprise-experience:verify": "npm --prefix apps/ops-web run browser-extension:b2b-enterprise-experience:verify",
-    "browser-extension:b2b-partner-lifecycle:verify": "npm --prefix apps/ops-web run browser-extension:b2b-partner-lifecycle:verify",
-    "browser-extension:b2b-ai-sales-director:verify": "npm --prefix apps/ops-web run browser-extension:b2b-ai-sales-director:verify"
+    "revenue-os:phase1:verify": "npm --prefix apps/ops-web run revenue-os:phase1:verify",
+    "revenue-os:phase1:typecheck": "npm --prefix apps/ops-web run revenue-os:phase1:typecheck",
+    "revenue-os:phase2:verify": "npm --prefix apps/ops-web run revenue-os:phase2:verify",
+    "revenue-os:phase2:typecheck": "npm --prefix apps/ops-web run revenue-os:phase2:typecheck",
+    "revenue-os:phase2:manifest": "npm --prefix apps/ops-web run revenue-os:phase2:manifest",
+    "revenue-os:phase3:verify": "npm --prefix apps/ops-web run revenue-os:phase3:verify",
+    "revenue-os:phase3:typecheck": "npm --prefix apps/ops-web run revenue-os:phase3:typecheck",
+    "revenue-os:phase3:manifest": "npm --prefix apps/ops-web run revenue-os:phase3:manifest"
   }
 }

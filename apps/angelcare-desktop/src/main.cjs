@@ -20,6 +20,7 @@ const crypto = require("node:crypto");
 const { loadRuntimeConfig } = require("./runtime/config.cjs");
 const { createLogger } = require("./runtime/logger.cjs");
 const { isAllowedAppNavigation, isSafeExternalUrl } = require("./runtime/url-policy.cjs");
+const { createGovernanceController } = require("./runtime/governance.cjs");
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -60,6 +61,8 @@ const WHATSAPP_PERMISSION_ALLOWLIST = new Set([
   "media",
   "clipboard-read",
   "fullscreen",
+  "fileSystem",
+  "fileSystemAccess",
 ]);
 
 let mainWindow = null;
@@ -67,6 +70,8 @@ let shellView = null;
 let saasView = null;
 let whatsappView = null;
 let whatsappSession = null;
+let saasSessionRuntime = null;
+let governanceController = null;
 let runtime = null;
 let persistWindowState = null;
 let logger = null;
@@ -195,6 +200,10 @@ function desktopRuntimeInfo() {
       whatsappWebContentsView: true,
       whatsappPersistentSession: true,
       whatsappSessionControl: true,
+      whatsappGovernance: true,
+      whatsappDeviceRegistration: true,
+      whatsappAuthorizationLeases: true,
+      whatsappRemoteCommands: true,
       whatsappAutomation: false,
       whatsappDomAccess: false,
     }),
@@ -242,6 +251,20 @@ function sendWhatsappState(patch = {}) {
     saasView.webContents.send("angelcare-desktop:whatsapp-state", state);
   }
   return state;
+}
+
+function sendGovernanceState(state) {
+  if (saasView && !saasView.webContents.isDestroyed()) {
+    saasView.webContents.send("angelcare-desktop:governance-state", safeJson(state));
+  }
+}
+
+function requireGovernedWhatsappAccess(action) {
+  if (!governanceController) throw new Error("WhatsApp governance is not initialized.");
+  if (!governanceController.canOpen()) {
+    governanceController.enforceAccess(`blocked-${action}`);
+    throw new Error("WHATSAPP_DESKTOP_ACCESS_NOT_AUTHORIZED");
+  }
 }
 
 function isWhatsappNavigationAllowed(rawUrl) {
@@ -377,7 +400,16 @@ function configureWhatsappSession() {
 
   whatsappSession.setPermissionRequestHandler((webContents, permission, callback, details) => {
     const requestingUrl = details?.requestingUrl || webContents.getURL();
-    const allowed = isWhatsappResourceOrigin(requestingUrl) && WHATSAPP_PERMISSION_ALLOWLIST.has(permission);
+    const policy = governanceController?.getState()?.policy || {};
+    const mediaTypes = Array.isArray(details?.mediaTypes) ? details.mediaTypes : [];
+    let policyAllowed = true;
+    if (permission === "notifications") policyAllowed = policy.allow_notifications !== false;
+    if (permission === "media") {
+      if (mediaTypes.includes("audio")) policyAllowed = policyAllowed && policy.allow_microphone !== false;
+      if (mediaTypes.includes("video")) policyAllowed = policyAllowed && policy.allow_camera !== false;
+    }
+    if (permission === "fileSystem" || permission === "fileSystemAccess") policyAllowed = policy.allow_uploads !== false;
+    const allowed = isWhatsappResourceOrigin(requestingUrl) && WHATSAPP_PERMISSION_ALLOWLIST.has(permission) && policyAllowed && Boolean(governanceController?.canOpen());
     recordWhatsappPermission(permission, allowed, {
       origin: (() => { try { return new URL(requestingUrl).origin; } catch { return null; } })(),
       mediaTypes: details?.mediaTypes,
@@ -388,7 +420,10 @@ function configureWhatsappSession() {
 
   whatsappSession.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
     const origin = requestingOrigin || webContents?.getURL?.() || "";
-    return isWhatsappResourceOrigin(origin) && WHATSAPP_PERMISSION_ALLOWLIST.has(permission);
+    const policy = governanceController?.getState()?.policy || {};
+    if (permission === "notifications" && policy.allow_notifications === false) return false;
+    if ((permission === "fileSystem" || permission === "fileSystemAccess") && policy.allow_uploads === false) return false;
+    return Boolean(governanceController?.canOpen()) && isWhatsappResourceOrigin(origin) && WHATSAPP_PERMISSION_ALLOWLIST.has(permission);
   });
 
   whatsappSession.setDevicePermissionHandler(() => false);
@@ -396,6 +431,12 @@ function configureWhatsappSession() {
 
   whatsappSession.on("will-download", (event, item, webContents) => {
     const sourceUrl = item.getURL();
+    if (governanceController?.getState()?.policy?.allow_downloads === false || !governanceController?.canOpen()) {
+      event.preventDefault();
+      logger.warn("whatsapp_download_blocked_policy", { sourceUrl });
+      sendWhatsappState({ message: "Téléchargement bloqué par la politique de l’espace WhatsApp." });
+      return;
+    }
     if (!whatsappView || webContents.id !== whatsappView.webContents.id || !isWhatsappResourceOrigin(sourceUrl)) {
       event.preventDefault();
       logger.warn("whatsapp_download_blocked_untrusted_source", { sourceUrl });
@@ -487,7 +528,7 @@ function configureWhatsappViewEvents(view) {
   wc.setUserAgent(`${wc.getUserAgent()} AngelCareWhatsAppWorkspace/${app.getVersion()}`);
 
   wc.setWindowOpenHandler(({ url }) => {
-    if (isSafeExternalUrl(url, runtime)) void shell.openExternal(url);
+    if (governanceController?.getState()?.policy?.allow_external_open !== false && isSafeExternalUrl(url, runtime)) void shell.openExternal(url);
     logger.info("whatsapp_window_open_external", { url });
     return { action: "deny" };
   });
@@ -618,6 +659,12 @@ async function ensureWhatsappView({ load = true } = {}) {
 }
 
 function showWhatsappView() {
+  if (governanceController && !governanceController.canOpen()) {
+    whatsappRequestedVisible = false;
+    if (whatsappView) whatsappView.setVisible(false);
+    governanceController.enforceAccess("show-request");
+    return sendWhatsappState({ visible: false, requestedVisible: false, phase: "access-blocked", message: "Accès WhatsApp Desktop non autorisé." });
+  }
   whatsappRequestedVisible = true;
   if (!whatsappView || !whatsappBounds || !saasView?.getVisible()) return sendWhatsappState({ requestedVisible: true });
   whatsappView.setVisible(true);
@@ -663,8 +710,9 @@ async function clearWhatsappCache() {
   return sendWhatsappState({ message: "Cache WhatsApp Web effacé. La session liée est conservée." });
 }
 
-async function clearWhatsappSession() {
-  const confirmation = await dialog.showMessageBox({
+async function clearWhatsappSession(options = {}) {
+  const remote = options.remote === true;
+  const confirmation = remote ? { response: 1 } : await dialog.showMessageBox({
     type: "warning",
     buttons: ["Annuler", "Effacer la session locale"],
     defaultId: 0,
@@ -705,6 +753,12 @@ async function openWhatsappDownloadsFolder() {
 }
 
 async function handleWhatsappCommand(action, payload = {}) {
+  if (["show", "navigate", "focus", "set-layout", "open-downloads", "open-external"].includes(action)) {
+    if (action !== "set-layout" || String(payload.layout || "") !== "hidden") requireGovernedWhatsappAccess(action);
+  }
+  if (action === "clear-cache" && governanceController?.getState()?.policy?.allow_local_cache_clear === false) throw new Error("CLEAR_CACHE_DISABLED_BY_POLICY");
+  if (action === "clear-session" && governanceController?.getState()?.policy?.allow_local_session_clear === false) throw new Error("CLEAR_SESSION_DISABLED_BY_POLICY");
+  if (action === "open-external" && governanceController?.getState()?.policy?.allow_external_open === false) throw new Error("EXTERNAL_OPEN_DISABLED_BY_POLICY");
   switch (action) {
     case "get-status":
       return publicWhatsappState();
@@ -793,14 +847,28 @@ function installIpcHandlers() {
   ipcMain.handle("angelcare-desktop:whatsapp-bounds", async (event, input) => {
     if (!validateSaasSender(event)) throw new Error("Unauthorized WhatsApp bounds sender.");
     whatsappBounds = normalizeWhatsappBounds(input);
-    if (whatsappRequestedVisible && whatsappView) whatsappView.setVisible(true);
+    if (whatsappRequestedVisible && whatsappView && governanceController?.canOpen()) whatsappView.setVisible(true);
     layoutViews();
     return publicWhatsappState();
+  });
+
+  ipcMain.handle("angelcare-desktop:governance-command", async (event, action, payload) => {
+    if (!validateSaasSender(event)) throw new Error("Unauthorized governance IPC sender.");
+    if (!governanceController) throw new Error("WhatsApp governance is not initialized.");
+    switch (String(action || "")) {
+      case "get-status": return governanceController.getState();
+      case "register": return governanceController.register();
+      case "heartbeat": return governanceController.heartbeat();
+      case "refresh": return governanceController.refresh();
+      case "select-workspace": return governanceController.selectWorkspace(payload || {});
+      default: throw new Error(`Unsupported governance action: ${String(action)}`);
+    }
   });
 }
 
 function configureSaasSession() {
   const saasSession = session.fromPartition("persist:angelcare-saas", { cache: true });
+  saasSessionRuntime = saasSession;
   const requestFilter = { urls: [`${runtime.appOrigin}/*`] };
   saasSession.webRequest.onBeforeSendHeaders(requestFilter, (details, callback) => {
     callback({
@@ -866,6 +934,7 @@ function configureSaasView() {
       lastHealthyAt: new Date().toISOString(),
     });
     sendWhatsappState();
+    if (governanceController) void governanceController.start();
     logger.info("saas_loaded", { url: wc.getURL() });
   });
   wc.on("did-fail-load", (_event, errorCode, errorDescription, validatedUrl, isMainFrame) => {
@@ -1050,6 +1119,28 @@ async function createMainWindow() {
   mainWindow.contentView.addChildView(saasView);
   configureSaasView();
 
+  governanceController = createGovernanceController({
+    app,
+    runtime,
+    saasSession: saasSessionRuntime,
+    logger,
+    publishState: sendGovernanceState,
+    getWhatsappState: publicWhatsappState,
+    actions: {
+      hideWhatsapp: hideWhatsappView,
+      reloadWhatsapp: async () => { await ensureWhatsappView({ load: true }); whatsappView.webContents.reload(); },
+      restartWhatsapp: restartWhatsappView,
+      clearWhatsappCache,
+      clearWhatsappSession,
+      logoutDesktop: async () => {
+        hideWhatsappView("remote-logout");
+        await saasSessionRuntime.clearStorageData({ storages: ["cookies", "localstorage", "indexdb", "cachestorage", "serviceworkers"] });
+        await saasSessionRuntime.clearCache();
+        await loadSaas({ hard: true, reason: "remote-governance-logout" });
+      },
+    },
+  });
+
   mainWindow.on("resize", layoutViews);
   mainWindow.on("maximize", layoutViews);
   mainWindow.on("unmaximize", layoutViews);
@@ -1059,6 +1150,7 @@ async function createMainWindow() {
     if (!isQuitting) persistWindowState(mainWindow.getBounds(), mainWindow.isMaximized());
   });
   mainWindow.on("closed", () => {
+    governanceController?.stop();
     clearInterval(healthTimer);
     clearTimeout(loadTimer);
     if (whatsappView && !whatsappView.webContents.isDestroyed()) whatsappView.webContents.close();
@@ -1073,6 +1165,7 @@ async function createMainWindow() {
   shellView.webContents.on("did-finish-load", () => {
     layoutViews();
     sendShellState();
+    if (governanceController) sendGovernanceState(governanceController.getState());
     mainWindow.show();
   });
   shellView.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
@@ -1138,7 +1231,8 @@ if (hasSingleInstanceLock) {
       void checkHealth().then((healthy) => {
         if (!healthy && saasView && !saasView.webContents.isDestroyed()) saasView.webContents.reload();
       });
-      if (whatsappView && whatsappRequestedVisible) whatsappView.webContents.reload();
+      if (governanceController) void governanceController.refresh();
+      if (whatsappView && whatsappRequestedVisible && governanceController?.canOpen()) whatsappView.webContents.reload();
     });
     powerMonitor.on("lock-screen", () => logger.info("screen_locked"));
     powerMonitor.on("unlock-screen", () => logger.info("screen_unlocked"));

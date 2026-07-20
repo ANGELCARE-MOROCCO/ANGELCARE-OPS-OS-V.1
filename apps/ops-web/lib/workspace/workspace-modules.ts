@@ -119,6 +119,14 @@ export const WORKSPACE_MODULE_GROUPS: WorkspaceGroup[] = [
         permissions: ['revenue_os.view', 'revenue.view'],
       },
       {
+        id: 'revenue-digital-twin',
+        title: 'Revenue Digital Twin',
+        href: '/revenue-command-os/digital-twin',
+        icon: 'boxes',
+        categories: ['revenue'],
+        permissions: ['revenue_os.view', 'revenue.view'],
+      },
+      {
         id: 'revenue-command-center',
         title: 'Revenue Command Center',
         href: '/revenue-command-center',

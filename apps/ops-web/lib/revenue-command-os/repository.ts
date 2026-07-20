@@ -234,7 +234,7 @@ export async function createRevenueOsObjective(input: RevenueOsObjectiveInput, a
 
     return rowToObjective(data)
   } catch (error) {
-    throw new RevenueOsError('REVENUE_OS_STORAGE_FAILURE', 'La création de l’objectif a échoué. Vérifiez la migration Revenue OS Phase 1.', {
+    throw new RevenueOsError('REVENUE_OS_STORAGE_FAILURE', 'La création de l’objectif a échoué. Vérifiez les migrations cumulatives Revenue OS Phase 1 et Phase 2.', {
       status: 503,
       recoverable: true,
       cause: normalizeRevenueOsError(error),

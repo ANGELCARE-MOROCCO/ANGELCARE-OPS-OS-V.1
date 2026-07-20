@@ -47,7 +47,7 @@ export default function ObjectiveComposer({ open, onClose }: { open: boolean; on
             <div>
               <p className="mb-1 text-xs font-black uppercase tracking-[.18em] text-blue-700">Objective Command</p>
               <h2 className="text-2xl font-black tracking-tight text-slate-950">Soumettre un mandat stratégique</h2>
-              <p className="mt-1 max-w-xl text-sm leading-6 text-slate-500">La Phase 1 enregistre l’objectif sous gouvernance. Aucun moteur stratégique ni action externe n’est lancé.</p>
+              <p className="mt-1 max-w-xl text-sm leading-6 text-slate-500">Le socle cumulatif enregistre l’objectif sous gouvernance et l’aligne au Revenue Digital Twin. Aucun Strategy Brain ni action externe n’est lancé.</p>
             </div>
           </div>
           <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-50" aria-label="Fermer"><X size={19} /></button>

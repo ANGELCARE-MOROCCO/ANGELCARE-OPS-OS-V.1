@@ -1,0 +1,8 @@
+[
+  {"entity":"offer","operation":"create","valid":true,"required":["code","name","business_unit_code"]},
+  {"entity":"business-unit","operation":"update","valid":true,"requiresId":true},
+  {"entity":"unknown","operation":"create","valid":false,"reason":"entity allow-list"},
+  {"entity":"offer","operation":"delete","valid":false,"reason":"operation allow-list"},
+  {"entity":"price-rule","operation":"create","valid":false,"reason":"missing code"},
+  {"entity":"offer","operation":"retire","valid":true,"requiresId":true}
+]

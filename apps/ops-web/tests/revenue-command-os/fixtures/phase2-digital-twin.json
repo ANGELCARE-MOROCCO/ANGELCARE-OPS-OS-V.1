@@ -1,0 +1,38 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ02-DIGITAL-TWIN",
+  "modelVersion": "AC-REVENUE-TWIN-2026.07-V1",
+  "executionMode": "shadow",
+  "externalActions": false,
+  "expectedMinimum": {
+    "businessUnits": 8,
+    "offers": 16,
+    "customerSegments": 8,
+    "decisionMakers": 8,
+    "markets": 7,
+    "salesChannels": 6,
+    "salesJourneys": 3,
+    "capacityTypes": 8,
+    "seasonalWindows": 4,
+    "growthPaths": 5,
+    "sections": 14,
+    "tables": 44
+  },
+  "requiredBusinessUnits": [
+    "BU-ACADEMY",
+    "BU-HOME-SERVICE",
+    "BU-FLASHCARDS",
+    "BU-KINDERGARTEN",
+    "BU-HOSPITALITY",
+    "BU-CORPORATES",
+    "BU-EVENTS",
+    "BU-REFFERQ"
+  ],
+  "requiredCities": ["Casablanca", "Rabat", "Kénitra", "Tanger", "Marrakech", "Fès", "Agadir"],
+  "requiredValidationCategories": ["pricing", "capacity", "territory", "governance", "completeness", "journey", "dependency"],
+  "protectedUnknowns": [
+    "Home Service customer price",
+    "Corporate price architecture",
+    "Flashcards live stock",
+    "Hospitality delivery standard"
+  ]
+}

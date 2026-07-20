@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { getDesktopRuntime, getWhatsAppDesktopApi } from "@/lib/desktop-runtime"
+import { getDesktopRuntime, getWhatsAppDesktopApi, getWhatsAppGovernanceApi } from "@/lib/desktop-runtime"
 
 export default function DesktopRuntimeBridge() {
   useEffect(() => {
@@ -34,9 +34,24 @@ export default function DesktopRuntimeBridge() {
       window.dispatchEvent(new CustomEvent("angelcare:whatsapp-status", { detail: status }))
     })
 
+    const governance = getWhatsAppGovernanceApi()
+    let unsubscribeGovernance: (() => void) | undefined
+    if (governance) {
+      root.dataset.angelcareWhatsappGovernance = "available"
+      void governance.getStatus().then((status) => {
+        if (active) window.dispatchEvent(new CustomEvent("angelcare:whatsapp-governance", { detail: status }))
+      }).catch(() => undefined)
+      unsubscribeGovernance = governance.onStatus((status) => {
+        window.dispatchEvent(new CustomEvent("angelcare:whatsapp-governance", { detail: status }))
+      })
+    } else {
+      delete root.dataset.angelcareWhatsappGovernance
+    }
+
     return () => {
       active = false
       unsubscribe()
+      unsubscribeGovernance?.()
     }
   }, [])
 

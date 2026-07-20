@@ -1,0 +1,11 @@
+[
+  {"from":"draft","to":"in-review","valid":true},
+  {"from":"in-review","to":"approved","valid":true},
+  {"from":"approved","to":"effective","valid":true},
+  {"from":"effective","to":"suspended","valid":true},
+  {"from":"suspended","to":"effective","valid":true},
+  {"from":"effective","to":"retired","valid":true},
+  {"from":"draft","to":"effective","valid":false},
+  {"from":"retired","to":"effective","valid":false},
+  {"from":"rejected","to":"effective","valid":false}
+]

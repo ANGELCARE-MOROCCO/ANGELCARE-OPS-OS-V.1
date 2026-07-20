@@ -1,0 +1,59 @@
+{
+  "release": "AC-REVENUE-OS-MZ03-DOCTRINE-MEMORY",
+  "expectedMinimum": {
+    "sections": 12,
+    "doctrines": 45,
+    "assets": 24,
+    "relationships": 24,
+    "scripts": 10,
+    "objections": 12,
+    "cases": 8,
+    "campaignPatterns": 7,
+    "playbooks": 6,
+    "restrictions": 10,
+    "brandRequirements": 6,
+    "partnerBenefits": 6,
+    "tables": 23
+  },
+  "requiredSections": [
+    "overview",
+    "doctrine-library",
+    "knowledge-assets",
+    "rules-restrictions",
+    "scripts-objections",
+    "cases-patterns",
+    "playbooks-sops",
+    "approval-desk",
+    "conflict-resolver",
+    "versions-provenance",
+    "indexing-readiness",
+    "model-validation"
+  ],
+  "requiredStatuses": [
+    "draft",
+    "in-review",
+    "approved",
+    "effective",
+    "suspended",
+    "retired",
+    "rejected"
+  ],
+  "requiredKnowledgeTypes": [
+    "commercial-doctrine",
+    "policy",
+    "playbook",
+    "sop",
+    "sales-script",
+    "objection-logic",
+    "case-study",
+    "campaign-pattern",
+    "offer-evidence",
+    "pricing-rule",
+    "legal-restriction",
+    "brand-standard",
+    "partner-benefit",
+    "customer-profile",
+    "market-positioning",
+    "service-definition"
+  ]
+}

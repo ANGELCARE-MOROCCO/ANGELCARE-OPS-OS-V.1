@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
 import { readRevenueOsFoundation } from '@/lib/revenue-command-os/repository'
-import { buildRevenueOsSearchIndex, searchRevenueOs } from '@/lib/revenue-command-os/search'
+import { readRevenueKnowledgeMemory } from '@/lib/revenue-command-os/knowledge-memory/repository'
+import { buildRevenueKnowledgeSearchIndex, buildRevenueOsSearchIndex, searchRevenueOs } from '@/lib/revenue-command-os/search'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -19,8 +20,14 @@ export async function GET(request: NextRequest) {
   if (!canRead(user)) return NextResponse.json({ ok: false, error: { code: 'FORBIDDEN', message: 'Accès Revenue OS refusé.' } }, { status: 403 })
 
   const query = request.nextUrl.searchParams.get('q') || ''
-  const { bootstrap } = await readRevenueOsFoundation()
-  const index = buildRevenueOsSearchIndex(bootstrap)
-  const data = searchRevenueOs(index, query, 14)
+  const [{ bootstrap }, knowledgeResult] = await Promise.all([
+    readRevenueOsFoundation(),
+    readRevenueKnowledgeMemory(),
+  ])
+  const index = [
+    ...buildRevenueOsSearchIndex(bootstrap),
+    ...buildRevenueKnowledgeSearchIndex(knowledgeResult.bootstrap),
+  ]
+  const data = searchRevenueOs(index, query, 18)
   return NextResponse.json({ ok: true, data, query }, { headers: { 'Cache-Control': 'no-store' } })
 }
