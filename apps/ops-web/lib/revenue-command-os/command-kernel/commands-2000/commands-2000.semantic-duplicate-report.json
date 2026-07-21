@@ -1,0 +1,6510 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ08-COMMANDS-2000",
+  "librarySize": 2000,
+  "pairwiseComparisons": 1999000,
+  "highSimilarityPairs": 500,
+  "undocumentedDuplicates": 0,
+  "status": "pass",
+  "pairs": [
+    {
+      "left": "REV-G300-MKT-001-SEASONAL_DEMAND_WINDOW",
+      "right": "REV-G300-MKT-015-FLASHCARDS_SEASONAL_DEMAND",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-002-MATERNITY_NEWBORN_SIGNAL",
+      "right": "REV-G300-MKT-007-COMPETITOR_WITHDRAWAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-002-MATERNITY_NEWBORN_SIGNAL",
+      "right": "REV-G300-MKT-022-PAYMENT_RISK_PATTERN",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-005-CORPORATE_TENDER_SIGNAL",
+      "right": "REV-G300-MKT-019-REFERRAL_MOMENTUM",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-007-COMPETITOR_WITHDRAWAL",
+      "right": "REV-G300-MKT-022-PAYMENT_RISK_PATTERN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-008-NEW_PRESCHOOL_OPENING",
+      "right": "REV-G300-MKT-013-UNUSED_ACADEMY_CAPACITY",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-008-NEW_PRESCHOOL_OPENING",
+      "right": "REV-G300-MKT-019-REFERRAL_MOMENTUM",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-010-PEDIATRIC_PARTNERSHIP_SIGNAL",
+      "right": "REV-G300-QLF-019-MULTI_SITE_OPPORTUNITY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-011-SPEECH_THERAPY_NETWORK",
+      "right": "REV-G300-ACC-006-ORTHOPHONIST_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-OUT-008-WHATSAPP_STALLED_RESCUE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-OUT-015-TELEPHONE_FIRST_CALL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+      "right": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-017-INBOUND_INTEREST_SURGE",
+      "right": "REV-G300-MKT-019-REFERRAL_MOMENTUM",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-019-REFERRAL_MOMENTUM",
+      "right": "REV-G300-OFR-012-VOLUME_PRICING_RECOMMENDATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-021-PRICE_SENSITIVITY_SHIFT",
+      "right": "REV-G300-MKT-022-PAYMENT_RISK_PATTERN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-022-PAYMENT_RISK_PATTERN",
+      "right": "REV-G300-EXP-002-RENEWAL_RISK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MKT-023-TERRITORY_SATURATION",
+      "right": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-001-PRESCHOOL_ICP",
+      "right": "REV-G300-ACC-002-ACADEMY_PARTNER_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-001-PRESCHOOL_ICP",
+      "right": "REV-G300-ACC-003-HOTEL_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-001-PRESCHOOL_ICP",
+      "right": "REV-G300-ACC-004-CORPORATE_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-001-PRESCHOOL_ICP",
+      "right": "REV-G300-ACC-006-ORTHOPHONIST_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-001-PRESCHOOL_ICP",
+      "right": "REV-G300-ACC-008-FLASHCARDS_RESELLER_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-002-ACADEMY_PARTNER_ICP",
+      "right": "REV-G300-ACC-004-CORPORATE_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-003-HOTEL_ICP",
+      "right": "REV-G300-ACC-008-FLASHCARDS_RESELLER_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-003-HOTEL_ICP",
+      "right": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-003-HOTEL_ICP",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-003-HOTEL_ICP",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-004-CORPORATE_ICP",
+      "right": "REV-G300-ACC-005-CLINIC_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-004-CORPORATE_ICP",
+      "right": "REV-G300-ACC-006-ORTHOPHONIST_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-004-CORPORATE_ICP",
+      "right": "REV-G300-EXE-009-SEASONAL_URGENCY_SCENARIO",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-004-CORPORATE_ICP",
+      "right": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-005-CLINIC_ICP",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-006-ORTHOPHONIST_ICP",
+      "right": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-007-EVENT_OPERATOR_ICP",
+      "right": "REV-G300-EXE-013-PIPELINE_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-009-MULTI_SITE_OPERATOR_ICP",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-009-MULTI_SITE_OPERATOR_ICP",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-012-FAST_DECISION_CYCLE",
+      "right": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-015-BUDGET_AUTHORITY",
+      "right": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-015-BUDGET_AUTHORITY",
+      "right": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-015-BUDGET_AUTHORITY",
+      "right": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-015-BUDGET_AUTHORITY",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-015-BUDGET_AUTHORITY",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-016-OPERATIONAL_SPONSOR",
+      "right": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+      "right": "REV-G300-OFR-004-CORPORATE_FAMILY_BENEFIT_BUNDLE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+      "right": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+      "right": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+      "right": "REV-G300-MTG-014-PRICING_BOUNDARY",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-CLS-014-STAKEHOLDER_SIGNOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-022-ACCOUNT_READINESS",
+      "right": "REV-G300-AUD-024-OUTCOME_ATTRIBUTION_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-023-DORMANT_ACCOUNT_REDISCOVERY",
+      "right": "REV-G300-EXE-013-PIPELINE_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-024-NETWORK_HIERARCHY",
+      "right": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-024-NETWORK_HIERARCHY",
+      "right": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-024-NETWORK_HIERARCHY",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-EXP-010-MULTI_SITE_EXPANSION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-EXE-013-PIPELINE_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-AUD-016-TENANT_ISOLATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+      "right": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-GTM-011-BACK_TO_SCHOOL_CAMPAIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-002-ACADEMY_SUBSCRIPTION_VS_CREDITS",
+      "right": "REV-G300-OFR-024-BUNDLE_CANNIBALIZATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-004-CORPORATE_FAMILY_BENEFIT_BUNDLE",
+      "right": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "right": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "right": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "right": "REV-G300-MTG-014-PRICING_BOUNDARY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+      "right": "REV-G300-EXP-025-EXPANSION_SUCCESS_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-007-ACADEMY_SERVICE_CROSS_SELL",
+      "right": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-007-ACADEMY_SERVICE_CROSS_SELL",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "hammingDistance": 1,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-OFR-024-BUNDLE_CANNIBALIZATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-EXE-014-CONVERSION_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-010-STANDARD_PRICE_VALIDATION",
+      "right": "REV-G300-OFR-025-PRICE_CONFIDENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-010-STANDARD_PRICE_VALIDATION",
+      "right": "REV-G300-CLS-024-LOST_DEAL_CLASSIFICATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-010-STANDARD_PRICE_VALIDATION",
+      "right": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "right": "REV-G300-OUT-003-WHATSAPP_WARM_FOLLOWUP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "right": "REV-G300-OUT-006-WHATSAPP_PROPOSAL_FOLLOWUP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "right": "REV-G300-OUT-021-OPT_OUT_STOP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-012-VOLUME_PRICING_RECOMMENDATION",
+      "right": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-012-VOLUME_PRICING_RECOMMENDATION",
+      "right": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-012-VOLUME_PRICING_RECOMMENDATION",
+      "right": "REV-G300-EXP-001-RENEWAL_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+      "right": "REV-G300-OFR-014-PILOT_OFFER",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+      "right": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+      "right": "REV-G300-OFR-025-PRICE_CONFIDENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+      "right": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "right": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "right": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "right": "REV-G300-RSC-019-RENEWAL_AT_RISK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-015-RENEWAL_OFFER",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-016-REFERRAL_INCENTIVE_POLICY",
+      "right": "REV-G300-EXP-011-CITY_EXPANSION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "right": "REV-G300-GTM-025-CAMPAIGN_GO_NO_GO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "right": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "right": "REV-G300-CLS-010-CAPACITY_OBJECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+      "right": "REV-G300-EXP-019-UNRESOLVED_ISSUE_BLOCK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-OUT-008-WHATSAPP_STALLED_RESCUE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "hammingDistance": 1,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-OUT-024-LANGUAGE_SELECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-EXE-001-INTERVENTION_THRESHOLD",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-EXE-021-RESOURCE_INVESTMENT_DECISION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-018-SEASONAL_OFFER",
+      "right": "REV-G300-AUD-013-COMMAND_HEALTH",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-MTG-009-CLINIC_DIAGNOSTIC",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-MTG-010-STAKEHOLDER_INTERVIEW_PLAN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-EXP-019-UNRESOLVED_ISSUE_BLOCK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+      "right": "REV-G300-EXE-004-CAPACITY_CONFLICT_EXECUTIVE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-020-TRUST_PROOF_SELECTION",
+      "right": "REV-G300-OFR-025-PRICE_CONFIDENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-020-TRUST_PROOF_SELECTION",
+      "right": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-020-TRUST_PROOF_SELECTION",
+      "right": "REV-G300-EXP-019-UNRESOLVED_ISSUE_BLOCK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-QLF-017-REFERRAL_LEAD",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-EXP-016-CUSTOMER_ADVOCATE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-EXP-024-RENEWAL_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+      "right": "REV-G300-EXE-025-FORECAST_CONFIDENCE_CALIBRATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-024-BUNDLE_CANNIBALIZATION",
+      "right": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-024-BUNDLE_CANNIBALIZATION",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OFR-025-PRICE_CONFIDENCE",
+      "right": "REV-G300-EXP-019-UNRESOLVED_ISSUE_BLOCK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-004-CLINIC_REFERRAL_CAMPAIGN",
+      "right": "REV-G300-GTM-006-FLASHCARDS_RETAIL_CAMPAIGN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-004-CLINIC_REFERRAL_CAMPAIGN",
+      "right": "REV-G300-GTM-017-CUSTOMER_REFERRAL_WAVE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-005-CORPORATE_HR_CAMPAIGN",
+      "right": "REV-G300-GTM-010-NETWORK_ACCOUNT_ATTACK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-005-CORPORATE_HR_CAMPAIGN",
+      "right": "REV-G300-GTM-014-EVENT_SEASON_CAMPAIGN",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-005-CORPORATE_HR_CAMPAIGN",
+      "right": "REV-G300-GTM-020-COMPETITIVE_DISPLACEMENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-005-CORPORATE_HR_CAMPAIGN",
+      "right": "REV-G300-GTM-025-CAMPAIGN_GO_NO_GO",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-007-DORMANT_ACCOUNT_REVIVAL",
+      "right": "REV-G300-GTM-010-NETWORK_ACCOUNT_ATTACK",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-007-DORMANT_ACCOUNT_REVIVAL",
+      "right": "REV-G300-GTM-019-EXECUTIVE_ACCOUNT_CAMPAIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-010-NETWORK_ACCOUNT_ATTACK",
+      "right": "REV-G300-GTM-011-BACK_TO_SCHOOL_CAMPAIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-010-NETWORK_ACCOUNT_ATTACK",
+      "right": "REV-G300-GTM-014-EVENT_SEASON_CAMPAIGN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-010-NETWORK_ACCOUNT_ATTACK",
+      "right": "REV-G300-GTM-019-EXECUTIVE_ACCOUNT_CAMPAIGN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-011-BACK_TO_SCHOOL_CAMPAIGN",
+      "right": "REV-G300-GTM-019-EXECUTIVE_ACCOUNT_CAMPAIGN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-014-EVENT_SEASON_CAMPAIGN",
+      "right": "REV-G300-GTM-025-CAMPAIGN_GO_NO_GO",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-016-DIAGNOSTIC_WEBINAR_CAMPAIGN",
+      "right": "REV-G300-GTM-020-COMPETITIVE_DISPLACEMENT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-017-CUSTOMER_REFERRAL_WAVE",
+      "right": "REV-G300-CLS-006-DISCOUNT_BOUNDARY",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-GTM-019-EXECUTIVE_ACCOUNT_CAMPAIGN",
+      "right": "REV-G300-GTM-020-COMPETITIVE_DISPLACEMENT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-001-WHATSAPP_INITIAL_APPROACH",
+      "right": "REV-G300-OUT-004-WHATSAPP_POST_CALL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-003-WHATSAPP_WARM_FOLLOWUP",
+      "right": "REV-G300-OUT-006-WHATSAPP_PROPOSAL_FOLLOWUP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-007-WHATSAPP_OBJECTION_RESPONSE",
+      "right": "REV-G300-CLS-005-PRICING_APPROVAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-008-WHATSAPP_STALLED_RESCUE",
+      "right": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-008-WHATSAPP_STALLED_RESCUE",
+      "right": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-008-WHATSAPP_STALLED_RESCUE",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 1,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-009-EMAIL_DECISION_MAKER_INTRO",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-011-EMAIL_PRESCHOOL_SEQUENCE",
+      "right": "REV-G300-OUT-014-EMAIL_RENEWAL_SEQUENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-013-EMAIL_PROPOSAL_PROGRESSION",
+      "right": "REV-G300-QLF-001-B2B_FIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-013-EMAIL_PROPOSAL_PROGRESSION",
+      "right": "REV-G300-RSC-006-PROPOSAL_SILENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-015-TELEPHONE_FIRST_CALL",
+      "right": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "right": "REV-G300-OUT-021-OPT_OUT_STOP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-019-CHANNEL_PREFERENCE_SELECTION",
+      "right": "REV-G300-MTG-004-ACCOUNT_BRIEF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-019-CHANNEL_PREFERENCE_SELECTION",
+      "right": "REV-G300-AUD-015-PROHIBITED_ACTION_TEST",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-020-MULTICHANNEL_SEQUENCE",
+      "right": "REV-G300-EXP-014-REFERRAL_APPROACH",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-021-OPT_OUT_STOP",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-021-OPT_OUT_STOP",
+      "right": "REV-G300-AUD-017-RLS_SERVICE_ONLY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-022-OUTREACH_COOLDOWN",
+      "right": "REV-G300-MTG-009-CLINIC_DIAGNOSTIC",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-024-LANGUAGE_SELECTION",
+      "right": "REV-G300-CLS-025-CLOSE_PROBABILITY",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-OUT-024-LANGUAGE_SELECTION",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-QLF-015-POSITIVE_REPLY_TRIAGE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-AUD-013-COMMAND_HEALTH",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-AUD-024-OUTCOME_ATTRIBUTION_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-001-B2B_FIT",
+      "right": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-004-AUTHORITY_CONFIDENCE",
+      "right": "REV-G300-QLF-009-STRATEGIC_VALUE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-005-TIMING_READINESS",
+      "right": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-006-TERRITORY_FEASIBILITY",
+      "right": "REV-G300-QLF-007-CAPACITY_FEASIBILITY",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-006-TERRITORY_FEASIBILITY",
+      "right": "REV-G300-QLF-016-INBOUND_LEAD",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-008-SERVICE_FIT",
+      "right": "REV-G300-QLF-025-NEXT_BEST_ACTION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-009-STRATEGIC_VALUE",
+      "right": "REV-G300-QLF-012-MEETING_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-012-MEETING_READINESS",
+      "right": "REV-G300-QLF-014-PROPOSAL_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-013-DIAGNOSTIC_READINESS",
+      "right": "REV-G300-CLS-001-PROPOSAL_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-013-DIAGNOSTIC_READINESS",
+      "right": "REV-G300-EXP-001-RENEWAL_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-015-POSITIVE_REPLY_TRIAGE",
+      "right": "REV-G300-QLF-024-STAGE_REGRESSION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-015-POSITIVE_REPLY_TRIAGE",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-017-REFERRAL_LEAD",
+      "right": "REV-G300-EXP-024-RENEWAL_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "right": "REV-G300-CLS-014-STAKEHOLDER_SIGNOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "right": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-018-GROUP_ACCOUNT",
+      "right": "REV-G300-AUD-011-STALE_COMMAND_DETECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-019-MULTI_SITE_OPPORTUNITY",
+      "right": "REV-G300-QLF-024-STAGE_REGRESSION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-QLF-019-MULTI_SITE_OPPORTUNITY",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "right": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "hammingDistance": 1,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "right": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "right": "REV-G300-MTG-014-PRICING_BOUNDARY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "right": "REV-G300-MTG-019-DECISION_SUMMARY",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+      "right": "REV-G300-AUD-016-TENANT_ISOLATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "right": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-003-AGENDA_DESIGN",
+      "right": "REV-G300-MTG-019-DECISION_SUMMARY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-004-ACCOUNT_BRIEF",
+      "right": "REV-G300-MTG-009-CLINIC_DIAGNOSTIC",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-005-PRESCHOOL_DISCOVERY_QUESTIONS",
+      "right": "REV-G300-EXE-018-DOWNSIDE_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "right": "REV-G300-MTG-010-STAKEHOLDER_INTERVIEW_PLAN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "right": "REV-G300-MTG-014-PRICING_BOUNDARY",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+      "right": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-007-CORPORATE_HR_DIAGNOSTIC",
+      "right": "REV-G300-EXE-022-WEEKLY_COMMAND_MEMO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+      "right": "REV-G300-MTG-010-STAKEHOLDER_INTERVIEW_PLAN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+      "right": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+      "right": "REV-G300-EXE-024-EXECUTIVE_INTERVENTION_BRIEF",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-009-CLINIC_DIAGNOSTIC",
+      "right": "REV-G300-EXP-002-RENEWAL_RISK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-010-STAKEHOLDER_INTERVIEW_PLAN",
+      "right": "REV-G300-MTG-014-PRICING_BOUNDARY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "right": "REV-G300-MTG-019-DECISION_SUMMARY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "right": "REV-G300-EXP-004-RENEWAL_MEETING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+      "right": "REV-G300-EXP-016-CUSTOMER_ADVOCATE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-020-FOLLOW_UP_PLAN",
+      "right": "REV-G300-EXP-022-LIFETIME_VALUE_PLAN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "right": "REV-G300-CLS-005-PRICING_APPROVAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "right": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "right": "REV-G300-CLS-019-CONTRACT_APPROVAL_GATE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+      "right": "REV-G300-RSC-017-INVOICE_DISPUTE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-MTG-024-SITE_VISIT_PLAN",
+      "right": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-001-PROPOSAL_READINESS",
+      "right": "REV-G300-CLS-004-PROOF_SELECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-003-VALUE_CASE",
+      "right": "REV-G300-CLS-007-NEGOTIATION_PLAN",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-005-PRICING_APPROVAL",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-005-PRICING_APPROVAL",
+      "right": "REV-G300-CLS-019-CONTRACT_APPROVAL_GATE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-005-PRICING_APPROVAL",
+      "right": "REV-G300-EXE-003-PRICING_EXCEPTION_EXECUTIVE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-006-DISCOUNT_BOUNDARY",
+      "right": "REV-G300-CLS-014-STAKEHOLDER_SIGNOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-009-TRUST_OBJECTION",
+      "right": "REV-G300-CLS-010-CAPACITY_OBJECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "right": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-015-PROPOSAL_REVISION",
+      "right": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "right": "REV-G300-CLS-019-CONTRACT_APPROVAL_GATE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "right": "REV-G300-RSC-017-INVOICE_DISPUTE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+      "right": "REV-G300-EXE-001-INTERVENTION_THRESHOLD",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-019-CONTRACT_APPROVAL_GATE",
+      "right": "REV-G300-AUD-015-PROHIBITED_ACTION_TEST",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-021-PILOT_CLOSING",
+      "right": "REV-G300-EXE-008-PARTNERSHIP_LED_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+      "right": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-001-STALE_THREE_DAYS",
+      "right": "REV-G300-RSC-002-STALE_SEVEN_DAYS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-001-STALE_THREE_DAYS",
+      "right": "REV-G300-RSC-003-STALE_FOURTEEN_DAYS",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-001-STALE_THREE_DAYS",
+      "right": "REV-G300-RSC-016-PAYMENT_PROMISE_BREACH",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-002-STALE_SEVEN_DAYS",
+      "right": "REV-G300-RSC-003-STALE_FOURTEEN_DAYS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-003-STALE_FOURTEEN_DAYS",
+      "right": "REV-G300-RSC-016-PAYMENT_PROMISE_BREACH",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-003-STALE_FOURTEEN_DAYS",
+      "right": "REV-G300-RSC-019-RENEWAL_AT_RISK",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-011-MISSING_NEXT_ACTION",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-017-INVOICE_DISPUTE",
+      "right": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-019-RENEWAL_AT_RISK",
+      "right": "REV-G300-EXP-003-RENEWAL_OFFER",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "right": "REV-G300-RSC-022-EXECUTIVE_ESCALATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-RSC-024-REACTIVATE_AFTER_COOLDOWN",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-001-RENEWAL_READINESS",
+      "right": "REV-G300-EXP-013-REFERRAL_READINESS",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-001-RENEWAL_READINESS",
+      "right": "REV-G300-EXP-017-TESTIMONIAL_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-002-RENEWAL_RISK",
+      "right": "REV-G300-EXP-015-PARTNER_INTRODUCTION_MAP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-004-RENEWAL_MEETING",
+      "right": "REV-G300-EXP-016-CUSTOMER_ADVOCATE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-008-FLASHCARDS_CROSS_SELL",
+      "right": "REV-G300-EXP-009-CORPORATE_CROSS_SELL",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-010-MULTI_SITE_EXPANSION",
+      "right": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-010-MULTI_SITE_EXPANSION",
+      "right": "REV-G300-AUD-016-TENANT_ISOLATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-013-REFERRAL_READINESS",
+      "right": "REV-G300-EXP-017-TESTIMONIAL_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXP-021-UNDERUTILIZATION_RESCUE",
+      "right": "REV-G300-EXP-023-CHURN_PREVENTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-001-INTERVENTION_THRESHOLD",
+      "right": "REV-G300-EXE-024-EXECUTIVE_INTERVENTION_BRIEF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-002-STRATEGIC_ACCOUNT_ESCALATION",
+      "right": "REV-G300-EXE-010-BUNDLED_MONETIZATION_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-004-CAPACITY_CONFLICT_EXECUTIVE",
+      "right": "REV-G300-EXE-020-STOP_CONDITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-007-PREMIUM_DIFFERENTIATION_SCENARIO",
+      "right": "REV-G300-EXE-010-BUNDLED_MONETIZATION_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-009-SEASONAL_URGENCY_SCENARIO",
+      "right": "REV-G300-EXE-018-DOWNSIDE_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-009-SEASONAL_URGENCY_SCENARIO",
+      "right": "REV-G300-EXE-019-UPSIDE_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-009-SEASONAL_URGENCY_SCENARIO",
+      "right": "REV-G300-EXE-025-FORECAST_CONFIDENCE_CALIBRATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-009-SEASONAL_URGENCY_SCENARIO",
+      "right": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-013-PIPELINE_FORECAST",
+      "right": "REV-G300-EXE-014-CONVERSION_FORECAST",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-014-CONVERSION_FORECAST",
+      "right": "REV-G300-EXE-018-DOWNSIDE_SCENARIO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-014-CONVERSION_FORECAST",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-018-DOWNSIDE_SCENARIO",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-020-STOP_CONDITION",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-021-RESOURCE_INVESTMENT_DECISION",
+      "right": "REV-G300-EXE-024-EXECUTIVE_INTERVENTION_BRIEF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-022-WEEKLY_COMMAND_MEMO",
+      "right": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+      "right": "REV-G300-EXE-024-EXECUTIVE_INTERVENTION_BRIEF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "right": "REV-G300-AUD-006-APPROVAL_BOUNDARY_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-001-SCHEMA_AUDIT",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-002-CONTEXT_COMPLETENESS_AUDIT",
+      "right": "REV-G300-AUD-023-COOLDOWN_RETRY_SAFETY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-003-EVIDENCE_FRESHNESS_AUDIT",
+      "right": "REV-G300-AUD-022-FALLBACK_CHAIN_SAFETY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "right": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "right": "REV-G300-AUD-018-SECRET_LEAKAGE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "right": "REV-G300-AUD-024-OUTCOME_ATTRIBUTION_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+      "right": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-010-FAMILY_COVERAGE_AUDIT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-011-STALE_COMMAND_DETECTION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-018-SECRET_LEAKAGE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-019-DATA_MINIMIZATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-024-OUTCOME_ATTRIBUTION_READINESS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+      "right": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-010-FAMILY_COVERAGE_AUDIT",
+      "right": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-012-LOW_PERFORMANCE_COMMAND",
+      "right": "REV-G300-AUD-024-OUTCOME_ATTRIBUTION_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-018-SECRET_LEAKAGE",
+      "right": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-G300-AUD-018-SECRET_LEAKAGE",
+      "right": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-002-CRECHES-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "right": "REV-MZ07-OFR-001-CRECHES-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-002-CRECHES-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "right": "REV-MZ07-OUT-007-HOTELS-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-003-MATERNELLES-IDENTIFIER_LA_TENDANCE_EMERGENTE",
+      "right": "REV-MZ07-MKT-025-MATERNELLES-DETECTER_LE_SIGNAL_DE_DEMANDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-006-MATERNITY_CLINICS-CLASSIFIER_LE_SIGNAL_COMMERCIAL",
+      "right": "REV-MZ07-GTM-013-MATERNITY_CLINICS-PLANIFIER_LA_REACTIVATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-007-PEDIATRIC_CLINICS-MESURER_LA_DENSITE_D_OPPORTUNITE",
+      "right": "REV-MZ07-OFR-012-SEASONAL_CAMPAIGNS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-007-PEDIATRIC_CLINICS-MESURER_LA_DENSITE_D_OPPORTUNITE",
+      "right": "REV-MZ07-OUT-004-MATERNITY_CLINICS-CHOISIR_LE_CANAL_INITIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-014-TERRITORY_WAVES-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "right": "REV-MZ07-AUD-016-TERRITORY_WAVES-CONTROLER_LA_SEPARATION_FAIT_HYPOTHESE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-018-COMPLEX_STAKEHOLDER_MAPS-CLASSIFIER_LE_SIGNAL_COMMERCIAL",
+      "right": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-022-UNDERUSED_CAPACITY-EVALUER_LE_POTENTIEL_TERRITORIAL",
+      "right": "REV-MZ07-OFR-021-UNDERUSED_CAPACITY-EVALUER_LE_PILOTE_COMMERCIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-023-ACADEMY-DETECTER_LE_MOUVEMENT_DE_RESEAU",
+      "right": "REV-MZ07-RSC-003-ORTHOPHONISTS-SELECTIONNER_LA_ROUTE_DE_RESCUE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-026-PRESCHOOLS-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "right": "REV-MZ07-GTM-033-PRESCHOOLS-ORCHESTRER_LE_LANCEMENT_DE_SEGMENT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-027-PRIVATE_SCHOOLS-IDENTIFIER_LA_TENDANCE_EMERGENTE",
+      "right": "REV-MZ07-OUT-091-PRIVATE_SCHOOLS-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-031-HOTELS-MESURER_LA_DENSITE_D_OPPORTUNITE",
+      "right": "REV-MZ07-GTM-060-HOTELS-SELECTIONNER_LES_COMPTES_DE_LA_VAGUE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-031-HOTELS-MESURER_LA_DENSITE_D_OPPORTUNITE",
+      "right": "REV-MZ07-OUT-029-HOTELS-SELECTIONNER_L_APPROCHE_WHATSAPP",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-035-SEASONAL_CAMPAIGNS-DETECTER_LE_MOUVEMENT_DE_RESEAU",
+      "right": "REV-MZ07-CLS-001-SEASONAL_CAMPAIGNS-EVALUER_LA_PREPARATION_DE_PROPOSITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-036-TERRITORY_WAVES-IDENTIFIER_LA_CAPACITE_MONETISABLE",
+      "right": "REV-MZ07-MKT-048-PRESCHOOLS-IDENTIFIER_LA_CAPACITE_MONETISABLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-038-COLD_ACCOUNT_ACTIVATION-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "right": "REV-MZ07-RSC-055-COLD_ACCOUNT_ACTIVATION-PREPARER_LE_CONTOURNEMENT_DU_BLOQUEUR",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-OUT-060-COMPLEX_STAKEHOLDER_MAPS-CHOISIR_LE_CANAL_INITIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-QLF-018-COMPLEX_STAKEHOLDER_MAPS-DETECTER_LE_BLOCAGE_DE_QUALIFICATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-QLF-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_FAISABILITE_DE_LIVRAISON",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-CLS-050-COMPLEX_STAKEHOLDER_MAPS-CONTROLER_LES_ELEMENTS_DE_PROPOSITION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-RSC-035-COMPLEX_STAKEHOLDER_MAPS-DETERMINER_LA_MISE_EN_PAUSE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-RSC-057-COMPLEX_STAKEHOLDER_MAPS-DEFINIR_LE_COOLDOWN_DE_REPRISE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-040-COMPLEX_STAKEHOLDER_MAPS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "right": "REV-MZ07-EXE-004-DORMANT_ACCOUNT_REVIVAL-SIMULER_LE_POTENTIEL_TERRITORIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-046-CRECHES-EVALUER_LE_POTENTIEL_TERRITORIAL",
+      "right": "REV-MZ07-RSC-019-CRECHES-PREPARER_LE_CONTOURNEMENT_DU_BLOQUEUR",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-049-PRIVATE_SCHOOLS-DETECTER_LE_SIGNAL_DE_DEMANDE",
+      "right": "REV-MZ07-EXP-008-PRIVATE_SCHOOLS-PREPARER_LA_REACTIVATION_DU_PARTENAIRE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-058-TERRITORY_WAVES-EVALUER_LE_POTENTIEL_TERRITORIAL",
+      "right": "REV-MZ07-CLS-002-TERRITORY_WAVES-CONTROLER_LES_ELEMENTS_DE_PROPOSITION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-MKT-058-TERRITORY_WAVES-EVALUER_LE_POTENTIEL_TERRITORIAL",
+      "right": "REV-MZ07-EXP-039-TERRITORY_WAVES-IDENTIFIER_L_UPSELL_PERTINENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-001-GROUP_NETWORK_ACCOUNTS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-023-GROUP_NETWORK_ACCOUNTS-IDENTIFIER_LES_INFLUENCEURS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-001-GROUP_NETWORK_ACCOUNTS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-GTM-001-COLD_ACCOUNT_ACTIVATION-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-001-GROUP_NETWORK_ACCOUNTS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-GTM-015-ORTHOPHONISTS-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-001-GROUP_NETWORK_ACCOUNTS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-GTM-067-COLD_ACCOUNT_ACTIVATION-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-002-COLD_ACCOUNT_ACTIVATION-RESOUDRE_L_IDENTITE_DU_COMPTE",
+      "right": "REV-MZ07-ACC-012-PRESCHOOLS-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-002-COLD_ACCOUNT_ACTIVATION-RESOUDRE_L_IDENTITE_DU_COMPTE",
+      "right": "REV-MZ07-ACC-054-CRECHES-RESOUDRE_L_IDENTITE_DU_COMPTE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-004-COMPLEX_STAKEHOLDER_MAPS-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-OUT-016-COMPLEX_STAKEHOLDER_MAPS-CONCEVOIR_LA_SEQUENCE_EMAIL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-004-COMPLEX_STAKEHOLDER_MAPS-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-QLF-010-CORPORATE_CHILDCARE-CONTROLER_LES_INFORMATIONS_MANQUANTES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-004-COMPLEX_STAKEHOLDER_MAPS-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-QLF-018-COMPLEX_STAKEHOLDER_MAPS-DETECTER_LE_BLOCAGE_DE_QUALIFICATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-006-COMPETITIVE_DISPLACEMENT-DETECTER_LES_RESEAUX_PERTINENTS",
+      "right": "REV-MZ07-ACC-032-CRECHES-DETECTER_LES_RESEAUX_PERTINENTS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-006-COMPETITIVE_DISPLACEMENT-DETECTER_LES_RESEAUX_PERTINENTS",
+      "right": "REV-MZ07-ACC-058-MATERNITY_CLINICS-DETECTER_LES_RESEAUX_PERTINENTS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-007-DORMANT_ACCOUNT_REVIVAL-IDENTIFIER_LES_SITES_RATTACHES",
+      "right": "REV-MZ07-EXP-019-COLD_ACCOUNT_ACTIVATION-DETECTER_LA_SOUS_UTILISATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-010-CRECHES-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-ACC-012-PRESCHOOLS-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-010-CRECHES-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-CLS-012-CRECHES-CONTROLER_LES_CONDITIONS_DE_PAIEMENT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-010-CRECHES-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-AUD-019-WARM_LEAD_ACCELERATION-AUDITER_L_IDEMPOTENCE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-011-MATERNELLES-DETECTER_LES_COMPTES_DORMANTS",
+      "right": "REV-MZ07-OUT-001-MATERNELLES-SELECTIONNER_L_APPROCHE_WHATSAPP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-011-MATERNELLES-DETECTER_LES_COMPTES_DORMANTS",
+      "right": "REV-MZ07-QLF-003-MATERNELLES-VALIDER_LE_TIMING_D_ACHAT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-014-MATERNITY_CLINICS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-016-ORTHOPHONISTS-QUALIFIER_LE_PROFIL_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-014-MATERNITY_CLINICS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-022-TERRITORY_WAVES-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-014-MATERNITY_CLINICS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-025-WARM_LEAD_ACCELERATION-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-014-MATERNITY_CLINICS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-029-DORMANT_ACCOUNT_REVIVAL-QUALIFIER_LE_PROFIL_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-016-ORTHOPHONISTS-QUALIFIER_LE_PROFIL_ICP",
+      "right": "REV-MZ07-ACC-017-HOTELS-CARTOGRAPHIER_LES_DECIDEURS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-016-ORTHOPHONISTS-QUALIFIER_LE_PROFIL_ICP",
+      "right": "REV-MZ07-ACC-022-TERRITORY_WAVES-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-016-ORTHOPHONISTS-QUALIFIER_LE_PROFIL_ICP",
+      "right": "REV-MZ07-ACC-029-DORMANT_ACCOUNT_REVIVAL-QUALIFIER_LE_PROFIL_ICP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-016-ORTHOPHONISTS-QUALIFIER_LE_PROFIL_ICP",
+      "right": "REV-MZ07-ACC-039-HOTELS-CARTOGRAPHIER_LES_GROUPES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-017-HOTELS-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-ACC-039-HOTELS-CARTOGRAPHIER_LES_GROUPES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-017-HOTELS-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-ACC-056-PRESCHOOLS-CARTOGRAPHIER_LES_DECIDEURS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-019-EVENTS-DETECTER_LES_RESEAUX_PERTINENTS",
+      "right": "REV-MZ07-ACC-058-MATERNITY_CLINICS-DETECTER_LES_RESEAUX_PERTINENTS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-020-GEOGRAPHIC_CAPTURE-IDENTIFIER_LES_SITES_RATTACHES",
+      "right": "REV-MZ07-ACC-033-MATERNELLES-IDENTIFIER_LES_SITES_RATTACHES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-020-GEOGRAPHIC_CAPTURE-IDENTIFIER_LES_SITES_RATTACHES",
+      "right": "REV-MZ07-ACC-049-MULTI_SITE_OPERATORS-IDENTIFIER_LES_INFLUENCEURS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-020-GEOGRAPHIC_CAPTURE-IDENTIFIER_LES_SITES_RATTACHES",
+      "right": "REV-MZ07-ACC-059-PEDIATRIC_CLINICS-IDENTIFIER_LES_SITES_RATTACHES",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-022-TERRITORY_WAVES-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "right": "REV-MZ07-ACC-029-DORMANT_ACCOUNT_REVIVAL-QUALIFIER_LE_PROFIL_ICP",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-022-TERRITORY_WAVES-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "right": "REV-MZ07-ACC-044-TERRITORY_WAVES-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-022-TERRITORY_WAVES-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "right": "REV-MZ07-CLS-003-GROUP_NETWORK_ACCOUNTS-PREPARER_LA_POSTURE_DE_NEGOCIATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-022-TERRITORY_WAVES-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "right": "REV-MZ07-RSC-014-MULTI_SITE_OPERATORS-CLASSIFIER_LA_CAUSE_DU_BLOCAGE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-023-GROUP_NETWORK_ACCOUNTS-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-QLF-015-GROUP_NETWORK_ACCOUNTS-VALIDER_LE_TIMING_D_ACHAT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-024-COLD_ACCOUNT_ACTIVATION-DETECTER_LES_COMPTES_DORMANTS",
+      "right": "REV-MZ07-OFR-015-COLD_ACCOUNT_ACTIVATION-VALIDER_LE_MODELE_DE_VALEUR",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-024-COLD_ACCOUNT_ACTIVATION-DETECTER_LES_COMPTES_DORMANTS",
+      "right": "REV-MZ07-EXP-019-COLD_ACCOUNT_ACTIVATION-DETECTER_LA_SOUS_UTILISATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-029-DORMANT_ACCOUNT_REVIVAL-QUALIFIER_LE_PROFIL_ICP",
+      "right": "REV-MZ07-ACC-044-TERRITORY_WAVES-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-030-UNDERUSED_CAPACITY-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-ACC-052-UNDERUSED_CAPACITY-CARTOGRAPHIER_LES_GROUPES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-030-UNDERUSED_CAPACITY-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-ACC-074-UNDERUSED_CAPACITY-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-030-UNDERUSED_CAPACITY-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-QLF-022-UNDERUSED_CAPACITY-CONTROLER_LES_INFORMATIONS_MANQUANTES",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-033-MATERNELLES-IDENTIFIER_LES_SITES_RATTACHES",
+      "right": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-033-MATERNELLES-IDENTIFIER_LES_SITES_RATTACHES",
+      "right": "REV-MZ07-QLF-025-MATERNELLES-QUALIFIER_LE_BESOIN_COMMERCIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-036-MATERNITY_CLINICS-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-QLF-006-MATERNITY_CLINICS-DETECTER_LE_BLOCAGE_DE_QUALIFICATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-037-PEDIATRIC_CLINICS-DETECTER_LES_COMPTES_DORMANTS",
+      "right": "REV-MZ07-ACC-062-CORPORATE_CHILDCARE-IDENTIFIER_LES_INFLUENCEURS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-037-PEDIATRIC_CLINICS-DETECTER_LES_COMPTES_DORMANTS",
+      "right": "REV-MZ07-GTM-027-COMPETITIVE_DISPLACEMENT-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-038-ORTHOPHONISTS-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "right": "REV-MZ07-QLF-053-HOTELS-CLASSIFIER_LA_MATURITE_DU_LEAD",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-038-ORTHOPHONISTS-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "right": "REV-MZ07-AUD-019-WARM_LEAD_ACCELERATION-AUDITER_L_IDEMPOTENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-039-HOTELS-CARTOGRAPHIER_LES_GROUPES",
+      "right": "REV-MZ07-ACC-053-ACADEMY-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-039-HOTELS-CARTOGRAPHIER_LES_GROUPES",
+      "right": "REV-MZ07-OUT-021-ACADEMY-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-044-TERRITORY_WAVES-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "right": "REV-MZ07-RSC-014-MULTI_SITE_OPERATORS-CLASSIFIER_LA_CAUSE_DU_BLOCAGE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-049-MULTI_SITE_OPERATORS-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-ACC-056-PRESCHOOLS-CARTOGRAPHIER_LES_DECIDEURS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-051-DORMANT_ACCOUNT_REVIVAL-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "right": "REV-MZ07-OUT-019-DORMANT_ACCOUNT_REVIVAL-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-052-UNDERUSED_CAPACITY-CARTOGRAPHIER_LES_GROUPES",
+      "right": "REV-MZ07-ACC-074-UNDERUSED_CAPACITY-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-052-UNDERUSED_CAPACITY-CARTOGRAPHIER_LES_GROUPES",
+      "right": "REV-MZ07-QLF-022-UNDERUSED_CAPACITY-CONTROLER_LES_INFORMATIONS_MANQUANTES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-053-ACADEMY-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-061-HOTELS-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-053-ACADEMY-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-ACC-075-ACADEMY-IDENTIFIER_LES_INFLUENCEURS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-053-ACADEMY-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "right": "REV-MZ07-OUT-021-ACADEMY-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-057-PRIVATE_SCHOOLS-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "right": "REV-MZ07-QLF-049-PRIVATE_SCHOOLS-QUALIFIER_LE_BESOIN_COMMERCIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-057-PRIVATE_SCHOOLS-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "right": "REV-MZ07-MTG-029-DORMANT_ACCOUNT_REVIVAL-IDENTIFIER_LES_OBJECTIONS_PROBABLES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-057-PRIVATE_SCHOOLS-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "right": "REV-MZ07-RSC-057-COMPLEX_STAKEHOLDER_MAPS-DEFINIR_LE_COOLDOWN_DE_REPRISE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-061-HOTELS-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "right": "REV-MZ07-OUT-021-ACADEMY-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-062-CORPORATE_CHILDCARE-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-ACC-072-COMPETITIVE_DISPLACEMENT-IDENTIFIER_LES_SITES_RATTACHES",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-062-CORPORATE_CHILDCARE-IDENTIFIER_LES_INFLUENCEURS",
+      "right": "REV-MZ07-QLF-006-MATERNITY_CLINICS-DETECTER_LE_BLOCAGE_DE_QUALIFICATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-069-WARM_LEAD_ACCELERATION-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-AUD-010-ORTHOPHONISTS-AUDITER_LA_COUVERTURE_DE_TESTS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-069-WARM_LEAD_ACCELERATION-CARTOGRAPHIER_LES_DECIDEURS",
+      "right": "REV-MZ07-AUD-019-WARM_LEAD_ACCELERATION-AUDITER_L_IDEMPOTENCE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-ACC-074-UNDERUSED_CAPACITY-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "right": "REV-MZ07-QLF-022-UNDERUSED_CAPACITY-CONTROLER_LES_INFORMATIONS_MANQUANTES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-001-CRECHES-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "right": "REV-MZ07-OUT-047-PRIVATE_SCHOOLS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-001-CRECHES-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "right": "REV-MZ07-OUT-060-COMPLEX_STAKEHOLDER_MAPS-CHOISIR_LE_CANAL_INITIAL",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-002-MATERNELLES-ASSEMBLER_LE_BUNDLE_PERTINENT",
+      "right": "REV-MZ07-OUT-001-MATERNELLES-SELECTIONNER_L_APPROCHE_WHATSAPP",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-005-MATERNITY_CLINICS-PROTEGER_LA_MARGE_CIBLE",
+      "right": "REV-MZ07-OFR-029-ORTHOPHONISTS-PROTEGER_LA_MARGE_CIBLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-005-MATERNITY_CLINICS-PROTEGER_LA_MARGE_CIBLE",
+      "right": "REV-MZ07-OFR-038-WARM_LEAD_ACCELERATION-ASSEMBLER_LE_BUNDLE_PERTINENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-006-PEDIATRIC_CLINICS-EVALUER_LA_CAPACITE_REQUISE",
+      "right": "REV-MZ07-OUT-005-PEDIATRIC_CLINICS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-006-PEDIATRIC_CLINICS-EVALUER_LA_CAPACITE_REQUISE",
+      "right": "REV-MZ07-MTG-010-CRECHES-PREPARER_LE_BRIEF_EXECUTIF_DE_REUNION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-007-ORTHOPHONISTS-ADAPTER_LE_PACKAGING_AUTORISE",
+      "right": "REV-MZ07-OFR-031-CORPORATE_CHILDCARE-ADAPTER_LE_PACKAGING_AUTORISE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-008-HOTELS-IDENTIFIER_LE_CROSS_SELL_COMPATIBLE",
+      "right": "REV-MZ07-OUT-078-TERRITORY_WAVES-PREPARER_LA_RELANCE_FROIDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-012-SEASONAL_CAMPAIGNS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-OFR-024-MATERNELLES-PREPARER_LA_POSTURE_DE_VALEUR",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-012-SEASONAL_CAMPAIGNS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-MTG-019-EVENTS-PREPARER_LA_DEMONSTRATION_ADAPTEE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-014-GROUP_NETWORK_ACCOUNTS-ASSEMBLER_LE_BUNDLE_PERTINENT",
+      "right": "REV-MZ07-MTG-016-ORTHOPHONISTS-PREPARER_LES_QUESTIONS_DECISIVES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-017-COMPLEX_STAKEHOLDER_MAPS-PROTEGER_LA_MARGE_CIBLE",
+      "right": "REV-MZ07-MTG-026-COMPLEX_STAKEHOLDER_MAPS-PREPARER_LE_DIAGNOSTIC_DE_BESOINS",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-024-MATERNELLES-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-EXE-008-MATERNELLES-PREPARER_LE_MEMO_DE_DIRECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-025-PRESCHOOLS-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "right": "REV-MZ07-AUD-006-PRESCHOOLS-CONTROLER_L_ISOLATION_TENANT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-028-PEDIATRIC_CLINICS-CONTROLER_LA_COHERENCE_TARIFAIRE",
+      "right": "REV-MZ07-OUT-005-PEDIATRIC_CLINICS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-028-PEDIATRIC_CLINICS-CONTROLER_LA_COHERENCE_TARIFAIRE",
+      "right": "REV-MZ07-MTG-014-MATERNITY_CLINICS-PREPARER_LE_DIAGNOSTIC_DE_BESOINS",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-029-ORTHOPHONISTS-PROTEGER_LA_MARGE_CIBLE",
+      "right": "REV-MZ07-MTG-028-COMPETITIVE_DISPLACEMENT-PREPARER_LES_QUESTIONS_DECISIVES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-036-GROUP_NETWORK_ACCOUNTS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-OUT-005-PEDIATRIC_CLINICS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-036-GROUP_NETWORK_ACCOUNTS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-OUT-035-GROUP_NETWORK_ACCOUNTS-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-036-GROUP_NETWORK_ACCOUNTS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-AUD-009-PEDIATRIC_CLINICS-DETECTER_LA_COMMANDE_ORPHELINE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-048-PRIVATE_SCHOOLS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "right": "REV-MZ07-EXE-010-PRIVATE_SCHOOLS-SIMULER_LE_SCENARIO_FAVORABLE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-049-MATERNITY_CLINICS-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "right": "REV-MZ07-OFR-050-PEDIATRIC_CLINICS-ASSEMBLER_LE_BUNDLE_PERTINENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-055-GEOGRAPHIC_CAPTURE-ADAPTER_LE_PACKAGING_AUTORISE",
+      "right": "REV-MZ07-OUT-047-PRIVATE_SCHOOLS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-OFR-057-TERRITORY_WAVES-EVALUER_LE_PILOTE_COMMERCIAL",
+      "right": "REV-MZ07-CLS-049-WARM_LEAD_ACCELERATION-EVALUER_LA_PREPARATION_DE_PROPOSITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-005-COMPETITIVE_DISPLACEMENT-PREPARER_LA_CAMPAGNE_SAISONNIERE",
+      "right": "REV-MZ07-CLS-011-ACADEMY-PREPARER_L_ESCALADE_D_AUTORITE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-006-DORMANT_ACCOUNT_REVIVAL-DEFINIR_LA_CADENCE_DE_PROSPECTION",
+      "right": "REV-MZ07-GTM-050-DORMANT_ACCOUNT_REVIVAL-ORGANISER_LE_PILOTE_DE_TERRITOIRE",
+      "hammingDistance": 2,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-007-UNDERUSED_CAPACITY-ORCHESTRER_LE_LANCEMENT_DE_SEGMENT",
+      "right": "REV-MZ07-GTM-051-UNDERUSED_CAPACITY-CONSTRUIRE_LA_CAMPAGNE_RESEAU",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-012-PRIVATE_SCHOOLS-CONSTRUIRE_LA_CAMPAGNE_RESEAU",
+      "right": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-012-PRIVATE_SCHOOLS-CONSTRUIRE_LA_CAMPAGNE_RESEAU",
+      "right": "REV-MZ07-MTG-013-PRIVATE_SCHOOLS-EVALUER_LA_PREPARATION_DE_REUNION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-014-PEDIATRIC_CLINICS-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "right": "REV-MZ07-GTM-059-ORTHOPHONISTS-ORCHESTRER_LE_LANCEMENT_DE_SEGMENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-014-PEDIATRIC_CLINICS-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "right": "REV-MZ07-GTM-067-COLD_ACCOUNT_ACTIVATION-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-015-ORTHOPHONISTS-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-GTM-067-COLD_ACCOUNT_ACTIVATION-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-015-ORTHOPHONISTS-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-EXE-013-ORTHOPHONISTS-PREPARER_LE_SCENARIO_EXECUTIF",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-017-CORPORATE_CHILDCARE-ASSEMBLER_LE_PLAN_DE_CAPTURE",
+      "right": "REV-MZ07-GTM-019-GEOGRAPHIC_CAPTURE-DEFINIR_LA_CADENCE_DE_PROSPECTION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-018-EVENTS-PREPARER_LA_CAMPAGNE_SAISONNIERE",
+      "right": "REV-MZ07-GTM-055-PRESCHOOLS-DEFINIR_LA_SEQUENCE_DE_MARCHE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-018-EVENTS-PREPARER_LA_CAMPAGNE_SAISONNIERE",
+      "right": "REV-MZ07-GTM-062-EVENTS-PREPARER_LE_PLAN_DE_REPLI",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-024-WARM_LEAD_ACCELERATION-ORGANISER_LE_PILOTE_DE_TERRITOIRE",
+      "right": "REV-MZ07-GTM-037-ORTHOPHONISTS-ORGANISER_LE_PILOTE_DE_TERRITOIRE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-027-COMPETITIVE_DISPLACEMENT-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "right": "REV-MZ07-OUT-021-ACADEMY-PREPARER_LA_RELANCE_CHAUDE",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-027-COMPETITIVE_DISPLACEMENT-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "right": "REV-MZ07-QLF-053-HOTELS-CLASSIFIER_LA_MATURITE_DU_LEAD",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-027-COMPETITIVE_DISPLACEMENT-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "right": "REV-MZ07-EXP-001-COMPETITIVE_DISPLACEMENT-EVALUER_LA_PREPARATION_AU_RENOUVELLEMENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-028-DORMANT_ACCOUNT_REVIVAL-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-028-DORMANT_ACCOUNT_REVIVAL-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-GTM-072-DORMANT_ACCOUNT_REVIVAL-ORCHESTRER_LE_LANCEMENT_DE_SEGMENT",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-030-ACADEMY-ASSEMBLER_LE_PLAN_DE_CAPTURE",
+      "right": "REV-MZ07-CLS-033-ACADEMY-PREPARER_LE_PILOTE_DE_CLOSING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-034-PRIVATE_SCHOOLS-SELECTIONNER_LES_COMPTES_DE_LA_VAGUE",
+      "right": "REV-MZ07-MTG-035-PRIVATE_SCHOOLS-DEFINIR_LA_PREUVE_DE_SUCCES",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-037-ORTHOPHONISTS-ORGANISER_LE_PILOTE_DE_TERRITOIRE",
+      "right": "REV-MZ07-GTM-063-GEOGRAPHIC_CAPTURE-ORGANISER_LE_PILOTE_DE_TERRITOIRE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-041-GEOGRAPHIC_CAPTURE-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-OUT-046-PRESCHOOLS-CHOISIR_LE_CANAL_INITIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-043-TERRITORY_WAVES-ASSEMBLER_LE_PLAN_DE_CAPTURE",
+      "right": "REV-MZ07-MTG-022-TERRITORY_WAVES-PREPARER_LE_BRIEF_EXECUTIF_DE_REUNION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-QLF-025-MATERNELLES-QUALIFIER_LE_BESOIN_COMMERCIAL",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-CLS-033-ACADEMY-PREPARER_LE_PILOTE_DE_CLOSING",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-CLS-036-PRESCHOOLS-CONTROLER_LES_CONDITIONS_DE_PAIEMENT",
+      "hammingDistance": 3,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-054-MATERNELLES-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-CLS-038-MATERNITY_CLINICS-CONTROLER_LES_ELEMENTS_DE_PROPOSITION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-062-EVENTS-PREPARER_LE_PLAN_DE_REPLI",
+      "right": "REV-MZ07-MTG-019-EVENTS-PREPARER_LA_DEMONSTRATION_ADAPTEE",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-062-EVENTS-PREPARER_LE_PLAN_DE_REPLI",
+      "right": "REV-MZ07-EXP-014-EVENTS-DETECTER_LE_RISQUE_DE_CHURN",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-067-COLD_ACCOUNT_ACTIVATION-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "right": "REV-MZ07-MTG-024-COLD_ACCOUNT_ACTIVATION-PREPARER_LE_SUIVI_POST_REUNION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    },
+    {
+      "left": "REV-MZ07-GTM-070-MULTI_SITE_OPERATORS-PREPARER_LA_CAMPAGNE_SAISONNIERE",
+      "right": "REV-MZ07-CLS-051-MULTI_SITE_OPERATORS-PREPARER_LA_POSTURE_DE_NEGOCIATION",
+      "hammingDistance": 4,
+      "status": "documented-variant",
+      "differenceDimensions": [
+        "coverage-domain",
+        "intent",
+        "required-context",
+        "output",
+        "routing-role"
+      ]
+    }
+  ]
+}

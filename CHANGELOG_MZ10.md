@@ -1,0 +1,1 @@
+Adds Strategy Brain, objective normalization, context snapshots, command portfolio builder, multi-strategy orchestration, scenarios, comparisons, combinations, versions, API, UI, workers, persistence and 50,000 evaluations.

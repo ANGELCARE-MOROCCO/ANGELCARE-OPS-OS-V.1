@@ -1,0 +1,13 @@
+{
+  "ExtensionInstallForcelist": [
+    "__PRIVATE_EXTENSION_ID__;https://__ANGELCARE_PRIVATE_HOST__/browser-os/updates.xml"
+  ],
+  "ExtensionSettings": {
+    "__PRIVATE_EXTENSION_ID__": {
+      "installation_mode": "force_installed",
+      "update_url": "https://__ANGELCARE_PRIVATE_HOST__/browser-os/updates.xml",
+      "runtime_blocked_hosts": ["*://*/*"],
+      "runtime_allowed_hosts": ["https://__ANGELCARE_SAAS_HOST__/*"]
+    }
+  }
+}

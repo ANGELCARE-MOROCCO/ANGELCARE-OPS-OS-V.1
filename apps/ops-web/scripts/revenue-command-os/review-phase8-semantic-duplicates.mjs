@@ -1,0 +1,1 @@
+import fs from 'node:fs';const r=JSON.parse(fs.readFileSync('lib/revenue-command-os/command-kernel/commands-2000/commands-2000.semantic-duplicate-report.json','utf8'));if(r.librarySize!==2000||r.pairwiseComparisons!==1999000||r.undocumentedDuplicates!==0)throw new Error('semantic review failed');console.log(JSON.stringify(r,null,2));

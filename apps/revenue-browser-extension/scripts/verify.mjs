@@ -20,6 +20,7 @@ const required = [
   'dist/modules/revenue-b2b/partner-actions.js',
   'dist/modules/revenue-b2b/management-mode.js',
   'dist/modules/revenue-b2b/management-actions.js',
+  'dist/modules/revenue-b2b/scanner-mode.js',
   'dist/focus.html',
   'dist/focus/focus.js',
   'dist/sidepanel.css',
@@ -30,6 +31,13 @@ const required = [
   'dist/generated/b2b-enterprise-experience.v4_5.json',
   'dist/generated/b2b-partner-lifecycle.v5.json',
   'dist/generated/b2b-ai-sales-director.v6.json',
+  'dist/generated/b2b-production-final.v7.json',
+  'dist/generated/b2b-scanner-intelligence.v7_1.json',
+  'dist/generated/b2b-ultra-reality.v9.json',
+  'dist/modules/revenue-b2b/ultra-mode.js',
+  'dist/modules/revenue-b2b/scanner-mode.js',
+  'dist/production/reliability.js',
+  'dist/production/runtime-health.js',
 ]
 let failed = 0
 for (const rel of required) {
@@ -39,10 +47,10 @@ for (const rel of required) {
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'dist/manifest.json'), 'utf8'))
-if (manifest.version !== '0.6.0') {
-  console.error(`FAIL manifest version ${manifest.version}`)
+if (manifest.version !== '0.9.0') {
+  console.error(`FAIL manifest version ${manifest.version}; expected 0.9.0 RC`)
   failed += 1
-} else console.log('PASS manifest version 0.6.0')
+} else console.log('PASS manifest version 0.9.0 RC')
 
 for (const rel of ['dist/content/generic-web.js','dist/content/google-maps.js','dist/content/gmail.js','dist/content/whatsapp-web.js','dist/content/google-calendar.js']) {
   const text = fs.readFileSync(path.join(root, rel), 'utf8')
@@ -57,6 +65,11 @@ const revenue = [
   'dist/modules/revenue-b2b/partner-actions.js',
   'dist/modules/revenue-b2b/management-mode.js',
   'dist/modules/revenue-b2b/management-actions.js',
+  'dist/modules/revenue-b2b/scanner-mode.js',
+  'dist/modules/revenue-b2b/ultra-mode.js',
+  'dist/background/service-worker.js',
+  'dist/production/reliability.js',
+  'dist/production/runtime-health.js',
 ].map((relative) => fs.readFileSync(path.join(root, relative), 'utf8')).join('\n')
 const runtimeSignals = [
   'b2b.opportunity.create','b2b.daily_command.read','b2b.gmail.reply_prepare','b2b.whatsapp.message_prepare',
@@ -67,6 +80,9 @@ const runtimeSignals = [
   'b2b.qbr.generate','b2b.expansion.plan_create','b2b.renewal.plan_create','b2b.tender.submit','partner-runtime',
   'b2b.ai_director.review_pipeline','b2b.pipeline_truth.assess','b2b.forecast.calculate','b2b.revenue_risk.detect',
   'b2b.execution_quality.assess','b2b.coaching.create','b2b.report.daily_revenue_generate','b2b.automation.kill','management-runtime',
+  'angelcare-production-health','ANGELCARE_PRODUCTION_BLOCK','PRODUCTION_KILL_SWITCH',
+  'SCANNER_QUICK_SCAN','SCANNER_DEEP_SCAN','SCANNER_ACCOUNT_SEARCH','scanner-command-center','Deep Company Scan',
+  'b2b.ultra.launchpad.read','b2b.ultra.context.set','b2b.ultra.journey.read','b2b.ultra.data_quality.scan','b2b.ultra.ai.reason','ULTRA REALITY COMMAND',
 ]
 for (const signal of runtimeSignals) {
   const ok = revenue.includes(signal)
@@ -75,6 +91,8 @@ for (const signal of runtimeSignals) {
 }
 
 const experience = JSON.parse(fs.readFileSync(path.join(root, 'dist/generated/b2b-enterprise-experience.v4_5.json'), 'utf8'))
+const scanner = JSON.parse(fs.readFileSync(path.join(root, 'dist/generated/b2b-scanner-intelligence.v7_1.json'), 'utf8'))
+const production = JSON.parse(fs.readFileSync(path.join(root, 'dist/generated/b2b-production-final.v7.json'), 'utf8'))
 const director = JSON.parse(fs.readFileSync(path.join(root, 'dist/generated/b2b-ai-sales-director.v6.json'), 'utf8'))
 const lifecycle = JSON.parse(fs.readFileSync(path.join(root, 'dist/generated/b2b-partner-lifecycle.v5.json'), 'utf8'))
 const contract = JSON.parse(fs.readFileSync(path.join(root, 'dist/generated/b2b-capabilities.v1.json'), 'utf8'))
@@ -82,16 +100,16 @@ const preservedExperienceOk = experience.operationalCapabilityCount === 35 && ex
 console.log(`${preservedExperienceOk ? 'PASS' : 'FAIL'} Mega ZIP 4.5 35/35 capability foundation preserved`)
 if (!preservedExperienceOk) failed += 1
 const operational = contract.capabilities.filter((item) => item.patch02Status === 'implemented' || item.patch03Status === 'implemented' || item.patch04Status === 'implemented' || item.patch05Status === 'implemented' || (item.patch06Status === 'implemented' || item.patch06Status === 'preserved'))
-const coverageOk = operational.length === 45 && lifecycle.implementedCapabilityIds?.length === 6 && lifecycle.focusWorkspaces?.length === 8 && director.implementedCapabilityIds?.length === 4 && director.focusWorkspaces?.length === 10
+const coverageOk = scanner.version === '0.7.1' && scanner.operatingModes?.length === 3 && scanner.gatewayRoutes?.length === 5 && operational.length === 45 && lifecycle.implementedCapabilityIds?.length === 6 && lifecycle.focusWorkspaces?.length === 8 && director.implementedCapabilityIds?.length === 4 && director.focusWorkspaces?.length === 10 && production.capabilityProof?.canonical === 45 && production.releaseChannels?.length === 5
 console.log(`${coverageOk ? 'PASS' : 'FAIL'} Mega ZIP 6 cumulative 45/45 capability-to-UI coverage`)
 if (!coverageOk) failed += 1
 
 const css = fs.readFileSync(path.join(root, 'dist/sidepanel.css'), 'utf8')
-for (const signal of ['Mega ZIP 4.5','command-account-hero','proposal-paper','focus-root','partner-runtime','partner-hero','tender-board','management-runtime','management-safety-banner']) {
+for (const signal of ['Mega ZIP 4.5','scanner-command-center','scanner-launch-hero','scanner-opportunity-grid','command-account-hero','proposal-paper','focus-root','partner-runtime','partner-hero','tender-board','management-runtime','management-safety-banner']) {
   const ok = css.includes(signal)
   console.log(`${ok ? 'PASS' : 'FAIL'} visual system ${signal}`)
   if (!ok) failed += 1
 }
 
 if (failed) process.exit(1)
-console.log('ANGELCARE Revenue Command Mega ZIP 6 cumulative AI Sales Director and controlled automation verified')
+console.log('ANGELCARE Revenue Command Browser OS Ultra Reality Completion RC distribution verified at 0.9.0; live acceptance remains required')

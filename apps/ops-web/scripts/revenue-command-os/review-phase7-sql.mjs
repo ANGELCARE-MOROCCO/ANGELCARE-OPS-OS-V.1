@@ -1,0 +1,31 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
+const root=process.cwd()
+const migration=fs.readFileSync(path.join(root,'supabase/migrations/20260720_revenue_command_os_phase7_commands_1000.sql'),'utf8')
+const rollback=fs.readFileSync(path.join(root,'docs/revenue-command-os/phase-07/ROLLBACK.sql'),'utf8')
+const checks=[]
+const check=(condition,label)=>checks.push({label,pass:Boolean(condition)})
+check(/^begin;/i.test(migration.trim()),'Forward migration begins transaction')
+check(/commit;\s*$/i.test(migration),'Forward migration commits transaction')
+check(!/drop\s+table/i.test(migration),'Forward migration contains no DROP TABLE')
+check((migration.match(/\$mz07\$/g)||[]).length%2===0,'MZ07 dollar quote tags balanced')
+check((migration.match(/\$mz07json\$/g)||[]).length%2===0,'MZ07 JSON dollar quote tags balanced')
+for(const table of ['revenue_os_command_domain_coverage','revenue_os_command_routing_health','revenue_os_command_semantic_reviews'])check(migration.includes(`create table if not exists public.${table}`),`Additive table ${table}`)
+check(migration.includes('create or replace view public.revenue_os_command_library_active'),'Active 1,000-command view exists')
+check(migration.includes('with (security_invoker = true)'),'Active view preserves underlying RLS')
+check(migration.includes('on conflict(command_code,version) do nothing'),'Immutable versions are idempotent')
+check(migration.includes("'REVOS-MZ07-INSTALL-20260720'")&&migration.includes('on conflict(event_id) do nothing'),'Installation audit event is idempotent')
+check(migration.includes('revenue_os_command_triggers(code,command_code'),'Trigger schema aligned')
+check(migration.includes('revenue_os_command_schedules(code,command_code'),'Schedule schema aligned')
+check(migration.includes('revenue_os_command_graphs(code,version'),'Graph schema aligned')
+check(migration.includes('enable row level security'),'RLS enabled')
+check(migration.includes('revoke all on table')&&migration.includes('to service_role'),'Service-only table access enforced')
+check(/^begin;/i.test(rollback.trim())&&/commit;\s*$/i.test(rollback),'Rollback transaction complete')
+check(rollback.includes('drop view if exists public.revenue_os_command_library_active'),'Rollback removes active view')
+check(rollback.includes("command_code like 'REV-MZ07-%'"),'Rollback targets only MZ07 commands')
+check(rollback.includes("release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000'"),'Rollback targets only MZ07 release')
+const failures=checks.filter(item=>!item.pass)
+const result={migrationBytes:Buffer.byteLength(migration),checks:checks.length,passes:checks.length-failures.length,failures}
+console.log(JSON.stringify(result,null,2))
+if(failures.length)process.exit(1)

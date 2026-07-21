@@ -1,0 +1,12 @@
+{
+  "release": "MZ05",
+  "minimum": {
+    "tables": 23,
+    "families": 12,
+    "seedCommands": 12,
+    "executionProofs": 9,
+    "evaluationCases": 70000
+  },
+  "posture": "shadow",
+  "externalActions": false
+}

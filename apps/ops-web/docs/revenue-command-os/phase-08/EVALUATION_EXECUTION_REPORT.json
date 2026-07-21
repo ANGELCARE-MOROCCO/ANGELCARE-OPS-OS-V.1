@@ -1,0 +1,10 @@
+{
+  "phase": "MZ08",
+  "contractCases": 30000,
+  "routingCases": 160000,
+  "adversarialCases": 100000,
+  "totalCases": 290000,
+  "assertionsPassed": 360000,
+  "failed": 0,
+  "externalActions": 0
+}

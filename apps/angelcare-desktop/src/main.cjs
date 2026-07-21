@@ -21,6 +21,10 @@ const { loadRuntimeConfig } = require("./runtime/config.cjs");
 const { createLogger } = require("./runtime/logger.cjs");
 const { isAllowedAppNavigation, isSafeExternalUrl } = require("./runtime/url-policy.cjs");
 const { createGovernanceController } = require("./runtime/governance.cjs");
+const { createDiagnosticsController } = require("./runtime/diagnostics.cjs");
+const { createStartupRecoveryController } = require("./runtime/startup-recovery.cjs");
+const { createUpdateManager } = require("./runtime/update-manager.cjs");
+const { applySecurityHeaders, sanitizeFilename } = require("./runtime/security.cjs");
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -72,6 +76,9 @@ let whatsappView = null;
 let whatsappSession = null;
 let saasSessionRuntime = null;
 let governanceController = null;
+let diagnosticsController = null;
+let startupRecoveryController = null;
+let updateManager = null;
 let runtime = null;
 let persistWindowState = null;
 let logger = null;
@@ -85,6 +92,7 @@ let whatsappRestarting = false;
 let whatsappDownloadSequence = 0;
 let recentWhatsappDownloads = [];
 let recentWhatsappPermissions = [];
+let healthyTimer = null;
 
 let currentState = {
   phase: "booting",
@@ -206,6 +214,10 @@ function desktopRuntimeInfo() {
       whatsappRemoteCommands: true,
       whatsappBusinessContext: true,
       whatsappOutcomeCapture: true,
+      productionDiagnostics: true,
+      controlledUpdates: true,
+      crashLoopRecovery: true,
+      signedInstallerReady: true,
       whatsappAutomation: false,
       whatsappDomAccess: false,
     }),
@@ -259,6 +271,22 @@ function sendGovernanceState(state) {
   if (saasView && !saasView.webContents.isDestroyed()) {
     saasView.webContents.send("angelcare-desktop:governance-state", safeJson(state));
   }
+}
+
+function sendReleaseState(state) {
+  if (saasView && !saasView.webContents.isDestroyed()) {
+    saasView.webContents.send("angelcare-desktop:release-state", safeJson(state));
+  }
+}
+
+function publicProductionStatus() {
+  return Object.freeze({
+    runtime: desktopRuntimeInfo(),
+    release: updateManager?.getState() || null,
+    diagnostics: diagnosticsController?.getStatus() || null,
+    startupRecovery: startupRecoveryController?.getState() || null,
+    timestamp: new Date().toISOString(),
+  });
 }
 
 function requireGovernedWhatsappAccess(action) {
@@ -445,11 +473,19 @@ function configureWhatsappSession() {
       return;
     }
 
-    const filename = path.basename(item.getFilename() || "whatsapp-download");
+    const filename = sanitizeFilename(item.getFilename() || "whatsapp-download", "whatsapp-download");
     const extension = path.extname(filename).toLowerCase();
     const id = `WADL-${Date.now()}-${++whatsappDownloadSequence}`;
-    const downloadDirectory = path.join(app.getPath("downloads"), "ANGELCARE WhatsApp");
+    const downloadDirectory = path.join(app.getPath("downloads"), runtime.whatsappDownloadDirectory);
     fs.mkdirSync(downloadDirectory, { recursive: true });
+
+    if (item.getTotalBytes() > runtime.whatsappMaxDownloadBytes) {
+      event.preventDefault();
+      recentWhatsappDownloads = [{ id, filename, state: "blocked", receivedBytes: 0, totalBytes: item.getTotalBytes(), savePath: null, reason: "file-too-large", at: new Date().toISOString() }, ...recentWhatsappDownloads].slice(0, 30);
+      sendWhatsappState({ message: `Téléchargement bloqué : ${filename} dépasse la limite autorisée.` });
+      logger.warn("whatsapp_download_blocked_size", { filename, totalBytes: item.getTotalBytes(), maximumBytes: runtime.whatsappMaxDownloadBytes });
+      return;
+    }
 
     if (DANGEROUS_DOWNLOAD_EXTENSIONS.has(extension)) {
       event.preventDefault();
@@ -748,7 +784,7 @@ async function clearWhatsappSession(options = {}) {
 }
 
 async function openWhatsappDownloadsFolder() {
-  const folder = path.join(app.getPath("downloads"), "ANGELCARE WhatsApp");
+  const folder = path.join(app.getPath("downloads"), runtime.whatsappDownloadDirectory);
   fs.mkdirSync(folder, { recursive: true });
   await shell.openPath(folder);
   return { ok: true, folder };
@@ -867,6 +903,31 @@ function installIpcHandlers() {
       default: throw new Error(`Unsupported governance action: ${String(action)}`);
     }
   });
+
+
+  ipcMain.handle("angelcare-desktop:release-command", async (event, action) => {
+    if (!validateSaasSender(event)) throw new Error("Unauthorized release IPC sender.");
+    if (!updateManager) throw new Error("Release manager is not initialized.");
+    switch (String(action || "")) {
+      case "get-status": return updateManager.getState();
+      case "check": return updateManager.check();
+      case "download": return updateManager.download();
+      case "restart-to-update": return updateManager.restartToUpdate();
+      case "reveal-download": return updateManager.revealDownload();
+      default: throw new Error(`Unsupported release action: ${String(action)}`);
+    }
+  });
+
+  ipcMain.handle("angelcare-desktop:diagnostics-command", async (event, action) => {
+    if (!validateSaasSender(event)) throw new Error("Unauthorized diagnostics IPC sender.");
+    if (!diagnosticsController) throw new Error("Diagnostics controller is not initialized.");
+    switch (String(action || "")) {
+      case "get-status": return diagnosticsController.getStatus();
+      case "export": return diagnosticsController.exportBundle();
+      case "get-production-status": return publicProductionStatus();
+      default: throw new Error(`Unsupported diagnostics action: ${String(action)}`);
+    }
+  });
 }
 
 function configureSaasSession() {
@@ -880,8 +941,12 @@ function configureSaasSession() {
         "X-AngelCare-Desktop": "1",
         "X-AngelCare-Desktop-Version": app.getVersion(),
         "X-AngelCare-Desktop-Contract": runtime.desktopContractVersion,
+        "X-AngelCare-Desktop-Channel": runtime.releaseChannel,
       },
     });
+  });
+  saasSession.webRequest.onHeadersReceived(requestFilter, (details, callback) => {
+    callback({ responseHeaders: applySecurityHeaders(details.responseHeaders || {}, runtime) });
   });
   saasSession.setPermissionRequestHandler((webContents, permission, callback, details) => {
     let allowed = false;
@@ -938,6 +1003,8 @@ function configureSaasView() {
     });
     sendWhatsappState();
     if (governanceController) void governanceController.start();
+    clearTimeout(healthyTimer);
+    healthyTimer = setTimeout(() => startupRecoveryController?.markHealthy(), runtime.startupHealthyAfterMs);
     logger.info("saas_loaded", { url: wc.getURL() });
   });
   wc.on("did-fail-load", (_event, errorCode, errorDescription, validatedUrl, isMainFrame) => {
@@ -1061,8 +1128,20 @@ function buildApplicationMenu() {
       submenu: [{ role: "minimize" }, { role: "zoom" }, ...(isMac ? [{ type: "separator" }, { role: "front" }] : [{ role: "close" }])],
     },
     {
+      label: "Mises à jour",
+      submenu: [
+        { label: "Rechercher une mise à jour", click: () => void updateManager?.check() },
+        { label: "Télécharger la mise à jour disponible", click: () => void updateManager?.download() },
+        { label: "Afficher le fichier vérifié", click: () => void updateManager?.revealDownload() },
+      ],
+    },
+    {
       role: "help",
-      submenu: [{ label: "État du runtime", click: () => { setSaasVisible(false); sendShellState({ phase: "diagnostics", message: "Diagnostic du runtime ANGELCARE", detail: logger.logFile }); } }],
+      submenu: [
+        { label: "Centre de contrôle production", click: () => void saasView?.webContents.loadURL(`${runtime.appUrl}/whatsapp-os/session-control`) },
+        { label: "Exporter les diagnostics sécurisés", click: () => void diagnosticsController?.exportBundle() },
+        { label: "État du runtime", click: () => { setSaasVisible(false); sendShellState({ phase: "diagnostics", message: "Diagnostic du runtime ANGELCARE", detail: `Version ${app.getVersion()} · ${runtime.releaseChannel}` }); } },
+      ],
     },
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
@@ -1154,8 +1233,10 @@ async function createMainWindow() {
   });
   mainWindow.on("closed", () => {
     governanceController?.stop();
+    updateManager?.stop();
     clearInterval(healthTimer);
     clearTimeout(loadTimer);
+    clearTimeout(healthyTimer);
     if (whatsappView && !whatsappView.webContents.isDestroyed()) whatsappView.webContents.close();
     if (shellView && !shellView.webContents.isDestroyed()) shellView.webContents.close();
     if (saasView && !saasView.webContents.isDestroyed()) saasView.webContents.close();
@@ -1169,6 +1250,7 @@ async function createMainWindow() {
     layoutViews();
     sendShellState();
     if (governanceController) sendGovernanceState(governanceController.getState());
+    if (updateManager) sendReleaseState(updateManager.getState());
     mainWindow.show();
   });
   shellView.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
@@ -1190,6 +1272,8 @@ app.on("second-instance", () => {
 
 app.on("before-quit", () => {
   isQuitting = true;
+  updateManager?.stop();
+  startupRecoveryController?.markCleanExit();
   if (mainWindow) persistWindowState(mainWindow.getBounds(), mainWindow.isMaximized());
 });
 
@@ -1200,6 +1284,19 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
   if (!mainWindow) void createMainWindow();
   else mainWindow.show();
+});
+
+app.on("certificate-error", (event, _webContents, url, error, _certificate, callback) => {
+  event.preventDefault();
+  logger?.warn("certificate_error_blocked", { url, error });
+  callback(false);
+});
+
+app.on("web-contents-created", (_event, contents) => {
+  contents.on("will-attach-webview", (event) => {
+    event.preventDefault();
+    logger?.warn("webview_attachment_blocked");
+  });
 });
 
 process.on("uncaughtException", (error) => logger?.error("uncaught_exception", error));
@@ -1213,7 +1310,24 @@ if (hasSingleInstanceLock) {
     const loaded = loadRuntimeConfig({ app, defaultsPath });
     runtime = loaded.runtime;
     persistWindowState = loaded.persistWindowState;
-    logger = createLogger(path.join(app.getPath("userData"), "logs"));
+    logger = createLogger(path.join(app.getPath("userData"), "logs"), {
+      maxLogBytes: runtime.logMaxBytes,
+      maxArchives: runtime.logMaxArchives,
+      retentionDays: runtime.diagnosticRetentionDays,
+    });
+    startupRecoveryController = createStartupRecoveryController({ app, logger, threshold: runtime.startupCrashLoopThreshold });
+    updateManager = createUpdateManager({ app, runtime, logger, net, shell, dialog, publishState: sendReleaseState });
+    diagnosticsController = createDiagnosticsController({
+      app,
+      dialog,
+      runtime,
+      logger,
+      getRuntimeState: () => currentState,
+      getWhatsappState: publicWhatsappState,
+      getGovernanceState: () => governanceController?.getState() || null,
+      getReleaseState: () => updateManager?.getState() || null,
+      getStartupState: () => startupRecoveryController?.getState() || null,
+    });
 
     crashReporter.start({
       productName: APP_NAME,
@@ -1228,6 +1342,7 @@ if (hasSingleInstanceLock) {
     await registerLocalShellProtocol();
     installIpcHandlers();
     buildApplicationMenu();
+    updateManager.start();
 
     powerMonitor.on("resume", () => {
       logger.info("system_resume");

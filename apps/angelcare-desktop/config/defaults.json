@@ -15,10 +15,25 @@
     "mailto:",
     "tel:"
   ],
-  "desktopContractVersion": "4.0.0",
+  "desktopContractVersion": "5.0.0",
   "whatsappPartition": "persist:angelcare-whatsapp-main",
   "whatsappHomeUrl": "https://web.whatsapp.com/",
   "whatsappDownloadDirectory": "ANGELCARE WhatsApp",
   "governanceHeartbeatSeconds": 45,
-  "governanceCommandPollSeconds": 30
+  "governanceCommandPollSeconds": 30,
+  "updateManifestUrl": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/update-manifest.json",
+  "updateAllowedHosts": [
+    "opsmanagement.angelcarehub.com"
+  ],
+  "updateCheckIntervalMs": 21600000,
+  "updateAutoCheck": true,
+  "updatePublicKeyPem": "",
+  "diagnosticMaxLogLines": 2500,
+  "diagnosticRetentionDays": 14,
+  "logMaxBytes": 5242880,
+  "logMaxArchives": 5,
+  "whatsappMaxDownloadBytes": 262144000,
+  "securityCspMode": "report-only",
+  "startupCrashLoopThreshold": 3,
+  "startupHealthyAfterMs": 45000
 }

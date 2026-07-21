@@ -12,6 +12,8 @@ import { B2B_PARTNER_COMMAND_MAP } from '../b2b-partner-lifecycle/contract'
 import { executeB2BPartnerCommand } from '../b2b-partner-lifecycle/service'
 import { B2B_MANAGEMENT_COMMAND_MAP } from '../b2b-management-command/contract'
 import { executeB2BManagementCommand } from '../b2b-management-command/service'
+import { B2B_ULTRA_COMMAND_MAP } from '../b2b-ultra/contract'
+import { executeB2BUltraCommand } from '../b2b-ultra/service'
 
 function now(){return new Date().toISOString()}
 function error(message:string,status=400){return Object.assign(new Error(message),{status})}
@@ -92,6 +94,7 @@ export async function executeB2BIntelligenceCommand(input:{db:any;actor:any;devi
    if (B2B_DEAL_COMMAND_MAP.has(commandKey)) return executeB2BDealCommand(input)
    if (B2B_PARTNER_COMMAND_MAP.has(commandKey)) return executeB2BPartnerCommand(input)
    if (B2B_MANAGEMENT_COMMAND_MAP.has(commandKey)) return executeB2BManagementCommand(input)
+   if (B2B_ULTRA_COMMAND_MAP.has(commandKey)) return executeB2BUltraCommand(input)
    throw error('UNSUPPORTED_B2B_COMMAND',400)
  }
 }

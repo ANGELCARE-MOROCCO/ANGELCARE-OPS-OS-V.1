@@ -1,0 +1,10 @@
+const isMac = process.platform === "darwin";
+const isWindows = process.platform === "win32";
+const macSigning = Boolean(process.env.APPLE_SIGNING_IDENTITY);
+const macNotarization = Boolean(process.env.APPLE_ID && process.env.APPLE_APP_SPECIFIC_PASSWORD && process.env.APPLE_TEAM_ID);
+const windowsSigning = Boolean(process.env.WINDOWS_CERTIFICATE_FILE && process.env.WINDOWS_CERTIFICATE_PASSWORD);
+console.log(JSON.stringify({ platform: process.platform, macSigning, macNotarization, windowsSigning }, null, 2));
+if (isMac && !macSigning) console.warn("Apple Developer ID signing is not configured; only an unsigned/ad-hoc test build is possible.");
+if (isMac && !macNotarization) console.warn("Apple notarization is not configured.");
+if (isWindows && !windowsSigning) console.warn("Windows code signing is not configured; SmartScreen may warn users.");
+console.log("Signing preflight completed without exposing credential values.");

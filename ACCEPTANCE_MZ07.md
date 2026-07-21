@@ -1,0 +1,25 @@
+# MZ07 Acceptance
+
+- Golden 300 preserved: 300/300
+- New governed commands: 700/700
+- Active operational library: 1,000/1,000
+- Canonical families: 12/12
+- Signed coverage domains: 22/22
+- Immutable versions: 1,000
+- Triggers: 1,000
+- Schedules: 334
+- Graphs: 94 cumulative, 70 new
+- Pairwise semantic comparisons: 499,500
+- High-similarity variants documented: 61
+- Undocumented semantic duplicates: 0
+- MZ07 evaluations: 117,500, failures 0
+- Cumulative MZ05–MZ07 evaluations: 221,100, failures 0
+- MZ07 static acceptance: 9,855 passes, 0 failures
+- MZ06 static regression: 5,143 passes, 0 failures
+- MZ05 static regression: 171 passes, 0 failures
+- MZ04 static regression: 328 passes, 0 failures
+- Strict kernel TypeScript: PASS
+- French UI/API transpile: 9 files, 0 errors
+- Installer simulation: PASS
+- Application rollback restoration: PASS
+- External actions performed: 0

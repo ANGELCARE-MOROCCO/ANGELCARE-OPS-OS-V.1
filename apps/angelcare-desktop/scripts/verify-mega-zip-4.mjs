@@ -18,6 +18,7 @@ const opsFiles = [
   "app/(protected)/whatsapp-os/web-session/page.tsx", "app/(protected)/whatsapp-os/analytics/page.tsx",
   "supabase/migrations/20260720_whatsapp_business_context_mega_zip4.sql",
   "database/whatsapp-business-context-mega-zip4-20260720.sql",
+  "components/b2b-partnerships/B2BProspectDirectoryWorkspace.tsx",
 ]
 const adapters = ["b2b","academy","traininghub","customer","admissions","support","finance","recruitment","refferq","operations"].map((name) => `lib/whatsapp-desktop/adapters/${name}.ts`)
 for (const relative of desktopFiles) if (!fs.existsSync(path.join(desktopRoot, relative))) throw new Error(`Missing Mega ZIP 4 desktop file: ${relative}`)
@@ -31,6 +32,8 @@ const preload = fs.readFileSync(path.join(desktopRoot, "src/preload.cjs"), "utf8
 const server = fs.readFileSync(path.join(opsRoot, "lib/whatsapp-desktop/context-server.ts"), "utf8")
 const workspace = fs.readFileSync(path.join(opsRoot, "components/whatsapp-os/WhatsAppDesktopWorkspace.tsx"), "utf8")
 const rail = fs.readFileSync(path.join(opsRoot, "components/whatsapp-os/WhatsAppBusinessContextRail.tsx"), "utf8")
+const b2bProspectWorkspace = fs.readFileSync(path.join(opsRoot, "components/b2b-partnerships/B2BProspectDirectoryWorkspace.tsx"), "utf8")
+const contextClient = fs.readFileSync(path.join(opsRoot, "lib/whatsapp-desktop/context-client.ts"), "utf8")
 const migration = fs.readFileSync(path.join(opsRoot, "supabase/migrations/20260720_whatsapp_business_context_mega_zip4.sql"), "utf8")
 const contracts = [
   [main, "whatsapp_business_context_navigation", "desktop business-context navigation evidence"],
@@ -43,6 +46,10 @@ const contracts = [
   [rail, "Déclaration opérateur", "operator-declared outcome boundary"],
   [rail, "/api/whatsapp-desktop/context/documents/", "governed document redirect"],
   [rail, "Sélectionner l’espace destinataire", "human-readable handoff workspace selector"],
+  [b2bProspectWorkspace, "WhatsAppContextAction", "real B2B prospect entry-point integration"],
+  [b2bProspectWorkspace, 'contextType="b2b_prospect"', "B2B context type wiring"],
+  [b2bProspectWorkspace, "envoi manuel uniquement", "source-module manual-send disclosure"],
+  [contextClient, "url.searchParams.set", "safe context deep-link construction"],
   [migration, "whatsapp_context_sessions", "context session table"],
   [migration, "whatsapp_contact_attempts", "contact attempt table"],
   [migration, "whatsapp_contact_outcomes", "outcome table"],
@@ -51,10 +58,10 @@ const contracts = [
 ]
 for (const item of contracts) { const [content, needle, label, optional] = item; if (!content.includes(needle) && !optional) throw new Error(`Missing Mega ZIP 4 contract: ${label}`) }
 const forbidden = ["executeJavaScript(", "document.cookie", "indexedDB.databases", "querySelector('[data-testid=", "click() // send", "message_delivery_status_from_browser", "whatsapp_cookie"]
-const combined = [main, preload, server, workspace, rail].join("\n")
+const combined = [main, preload, server, workspace, rail, b2bProspectWorkspace, contextClient].join("\n")
 for (const needle of forbidden) if (combined.includes(needle)) throw new Error(`Forbidden Mega ZIP 4 pattern detected: ${needle}`)
 const packageJson = JSON.parse(fs.readFileSync(path.join(desktopRoot, "package.json"), "utf8"))
-if (packageJson.version !== "1.3.0") throw new Error("Mega ZIP 4 must set desktop version 1.3.0.")
+if (!["1.3.0", "1.4.0"].includes(packageJson.version)) throw new Error("Mega ZIP 4 requires desktop version 1.3.0 or a supported cumulative version.")
 if (!packageJson.scripts?.verify?.includes("verify-mega-zip-4.mjs")) throw new Error("Mega ZIP 4 verifier is not wired into npm run verify.")
 if (packageJson.devDependencies?.["@electron-forge/maker-dmg"] || packageJson.devDependencies?.appdmg || packageJson.devDependencies?.["macos-alias"]) throw new Error("Native hdiutil DMG pipeline must remain intact.")
 const apiRoot = path.join(opsRoot, "app", "api", "whatsapp-desktop")

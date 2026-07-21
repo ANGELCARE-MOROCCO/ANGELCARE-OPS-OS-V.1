@@ -1,0 +1,28 @@
+{
+  "release": "MZ06",
+  "goldenCommands": 300,
+  "families": 12,
+  "commandsPerFamily": 25,
+  "contractEvaluationCases": 3600,
+  "benchmarkCases": 30000,
+  "totalCases": 33600,
+  "evaluationClasses": [
+    "normal",
+    "complex",
+    "incomplete-data",
+    "contradictory-data",
+    "prohibited-action",
+    "stale-context",
+    "permission-denied",
+    "segment-mismatch",
+    "cooldown-active",
+    "duplicate-trigger",
+    "fallback-required",
+    "approval-gated"
+  ],
+  "externalActionsExpected": 0,
+  "files": {
+    "golden-300-contract-evaluations.jsonl": "50c7a2417f4b2e94dbefa9e9d3ab45c58f9d1c9cb727b899c327d8bb0f134973",
+    "golden-300-routing-benchmarks.jsonl": "068d8bb05495655c9e690738e545d2b8d9b64fc0aebeec56a11ce7df7a2dad7c"
+  }
+}

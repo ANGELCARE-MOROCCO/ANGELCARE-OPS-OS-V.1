@@ -1,4 +1,38 @@
+import type {
+  AmbassadorActor,
+  AmbassadorDiagnostic,
+  AmbassadorEntityKey,
+  AmbassadorMissionAssignment,
+  AmbassadorPermission,
+  AmbassadorProfile,
+  AmbassadorProof,
+  AmbassadorPayout,
+  AmbassadorServiceErrorCode,
+  AmbassadorServiceResult,
+  AmbassadorTerritoryAssignment,
+  JsonObject,
+  JsonPrimitive,
+  JsonValue,
+} from "./contracts"
 
+export type {
+  AmbassadorActor,
+  AmbassadorDiagnostic,
+  AmbassadorEntityKey,
+  AmbassadorMissionAssignment,
+  AmbassadorPermission,
+  AmbassadorProfile,
+  AmbassadorProof,
+  AmbassadorPayout,
+  AmbassadorServiceErrorCode,
+  AmbassadorServiceResult,
+  AmbassadorTerritoryAssignment,
+  JsonObject,
+  JsonPrimitive,
+  JsonValue,
+}
+
+// Compatibility surface for the frozen approved UI. Canonical server contracts live in contracts.ts.
 export type AnyAmbassadorRecord = Record<string, any>
 export type AmbassadorWorkspaceMode = string
 
@@ -40,6 +74,13 @@ export type AmbassadorWorkspaceSnapshot = {
   stats: AnyAmbassadorRecord
   kpis: AnyAmbassadorRecord
   activity: AnyAmbassadorRecord[]
+  diagnostics?: AmbassadorDiagnostic[]
   updatedAt: string
+  missionAssignments?: AmbassadorMissionAssignment[]
+  territoryAssignments?: AmbassadorTerritoryAssignment[]
+  leads?: AmbassadorRecord[]
+  conversions?: AmbassadorRecord[]
+  proofs?: AmbassadorProof[]
+  payouts?: AmbassadorPayout[]
   [key: string]: any
 }

@@ -1,0 +1,1092 @@
+[
+  {
+    "commandCode": "REV-MZ08-OFR-0007-PRICE_ARCHITECTURE-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0008-PRICE_ARCHITECTURE-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0009-PRICE_ARCHITECTURE-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0010-PRICE_ARCHITECTURE-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0011-PRICE_ARCHITECTURE-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0012-PRICE_ARCHITECTURE-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0013-PRICE_ARCHITECTURE-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0014-PRICE_ARCHITECTURE-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0015-PRICE_ARCHITECTURE-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0018-PRICE_ARCHITECTURE-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "market-sensing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0036-PRICE_ARCHITECTURE-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0039-PRICE_ARCHITECTURE-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0051-PACKAGING-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0052-PACKAGING-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0053-PACKAGING-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0054-PACKAGING-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0055-PACKAGING-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0056-PACKAGING-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0057-PACKAGING-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0058-PACKAGING-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0059-PACKAGING-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0062-PACKAGING-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0080-PACKAGING-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "segmentation-account-discovery",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0083-PACKAGING-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0095-BUNDLE_DESIGN-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0096-BUNDLE_DESIGN-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0097-BUNDLE_DESIGN-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0098-BUNDLE_DESIGN-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0099-BUNDLE_DESIGN-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0100-BUNDLE_DESIGN-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0101-BUNDLE_DESIGN-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0102-BUNDLE_DESIGN-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0103-BUNDLE_DESIGN-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0106-BUNDLE_DESIGN-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0124-BUNDLE_DESIGN-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0127-BUNDLE_DESIGN-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "campaign-go-to-market",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0139-PARTNER_PRICING-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0140-PARTNER_PRICING-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0141-PARTNER_PRICING-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0142-PARTNER_PRICING-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0143-PARTNER_PRICING-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0144-PARTNER_PRICING-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0145-PARTNER_PRICING-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0146-PARTNER_PRICING-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0147-PARTNER_PRICING-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0150-PARTNER_PRICING-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0168-PARTNER_PRICING-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0171-PARTNER_PRICING-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0183-DISCOUNT_GOVERNANCE-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0184-DISCOUNT_GOVERNANCE-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0185-DISCOUNT_GOVERNANCE-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0186-DISCOUNT_GOVERNANCE-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0187-DISCOUNT_GOVERNANCE-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0188-DISCOUNT_GOVERNANCE-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0189-DISCOUNT_GOVERNANCE-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0190-DISCOUNT_GOVERNANCE-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0191-DISCOUNT_GOVERNANCE-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0194-DISCOUNT_GOVERNANCE-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0212-DISCOUNT_GOVERNANCE-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0215-DISCOUNT_GOVERNANCE-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "outreach-channel",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0227-MARGIN_PROTECTION-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0228-MARGIN_PROTECTION-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0229-MARGIN_PROTECTION-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0230-MARGIN_PROTECTION-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0231-MARGIN_PROTECTION-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0232-MARGIN_PROTECTION-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0233-MARGIN_PROTECTION-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0234-MARGIN_PROTECTION-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0235-MARGIN_PROTECTION-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "qualification-progression",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0238-MARGIN_PROTECTION-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0256-MARGIN_PROTECTION-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0259-MARGIN_PROTECTION-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0271-OBJECTIONS-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0272-OBJECTIONS-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0273-OBJECTIONS-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0274-OBJECTIONS-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0275-OBJECTIONS-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0276-OBJECTIONS-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0277-OBJECTIONS-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0278-OBJECTIONS-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "meetings-diagnostics",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0279-OBJECTIONS-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0282-OBJECTIONS-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0300-OBJECTIONS-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0303-OBJECTIONS-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0315-NEGOTIATION-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0316-NEGOTIATION-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0317-NEGOTIATION-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "proposal-negotiation-closing",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0318-NEGOTIATION-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "pipeline-rescue",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0319-NEGOTIATION-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "pipeline-rescue",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0320-NEGOTIATION-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "pipeline-rescue",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0321-NEGOTIATION-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0322-NEGOTIATION-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0323-NEGOTIATION-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0326-NEGOTIATION-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0344-NEGOTIATION-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0347-NEGOTIATION-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0359-CLOSING-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0360-CLOSING-MODEL_PRICE_CORRIDOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0361-CLOSING-VERIFY_PRICE_FLOOR",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0362-CLOSING-VERIFY_PRICE_CEILING",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0363-CLOSING-DESIGN_VALUE_PACKAGE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "renewal-expansion-referral",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0364-CLOSING-COMPARE_PACKAGE_OPTIONS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "executive-forecasting",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0365-CLOSING-DESIGN_BUNDLE_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "executive-forecasting",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0366-CLOSING-VALIDATE_PARTNER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "executive-forecasting",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0367-CLOSING-ASSESS_DISCOUNT_REQUEST",
+    "fromFamily": "offer-pricing",
+    "toFamily": "audit-optimization",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0370-CLOSING-PROTECT_MARGIN_SCENARIO",
+    "fromFamily": "offer-pricing",
+    "toFamily": "audit-optimization",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0388-CLOSING-MODEL_RESELLER_ECONOMICS",
+    "fromFamily": "offer-pricing",
+    "toFamily": "audit-optimization",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0391-CLOSING-DESIGN_CROSS_UNIT_BUNDLE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "audit-optimization",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  },
+  {
+    "commandCode": "REV-MZ08-OFR-0403-REVENUE_RESCUE-ESTABLISH_VALUE_BASELINE",
+    "fromFamily": "offer-pricing",
+    "toFamily": "audit-optimization",
+    "fromVersion": "1.0.0",
+    "toVersion": "2.0.0",
+    "reason": "Réconciliation vers la taxonomie canonique 3 000; rôle de routage dominant réévalué.",
+    "approvedBy": "Revenue Governance Council",
+    "effectiveAt": "2026-07-21T00:00:00.000Z"
+  }
+]

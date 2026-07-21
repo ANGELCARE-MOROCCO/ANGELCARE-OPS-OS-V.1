@@ -21,7 +21,15 @@ export async function authenticateExtensionRequest(request:Request):Promise<{ok:
     if(!user || user.status!=='active') throw new Error('USER_DISABLED')
     if(!profile?.enabled || Number(profile.access_version)!==Number(claims.accessVersion)) throw new Error('ACCESS_CHANGED')
     if(profile.valid_until && new Date(profile.valid_until).getTime()<=Date.now()) throw new Error('ACCESS_EXPIRED')
-    await db.from('browser_extension_devices').update({last_seen_at:new Date().toISOString(),last_ip:request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||null}).eq('id',device.id)
+    const [{data:killSwitches},{data:knownBad}] = await Promise.all([
+      db.from('browser_extension_production_kill_switches').select('switch_key,scope_type,scope_reference,reason,expires_at').eq('active',true),
+      db.from('browser_extension_release_versions').select('known_bad,known_bad_reason').eq('version',device.extension_version||'').maybeSingle(),
+    ])
+    const activeSwitch=(killSwitches||[]).find((row:any)=>!row.expires_at||new Date(row.expires_at).getTime()>Date.now())
+    const blockingSwitch=(killSwitches||[]).find((row:any)=>['global','extension','device'].includes(row.scope_type)&&(row.scope_reference==='*'||row.scope_reference===device.id||row.scope_reference===device.release_channel))
+    if(blockingSwitch) throw new Error(`PRODUCTION_KILL_SWITCH:${blockingSwitch.switch_key}`)
+    if(knownBad?.known_bad) throw new Error(`KNOWN_BAD_EXTENSION_VERSION:${knownBad.known_bad_reason||device.extension_version}`)
+    await db.from('browser_extension_devices').update({last_seen_at:new Date().toISOString(),last_ip:request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||null,health_status:activeSwitch?'degraded':device.health_status||'unknown'}).eq('id',device.id)
     return {ok:true,context:{claims,device,user},db}
   } catch(error){ return {ok:false,response:NextResponse.json({ok:false,error:error instanceof Error?error.message:'EXTENSION_AUTH_FAILED'},{status:401})} }
 }

@@ -1,0 +1,25 @@
+# MZ07 Release Audit
+
+- Cumulative over MZ01–MZ06
+- Golden 300 preserved: 300/300
+- New governed commands: 700/700
+- Exact active library: 1,000/1,000
+- MZ05 proof fixtures preserved outside operational routing: 12
+- Mandatory domains: 22/22
+- Canonical families: 12/12
+- Versions and triggers: 1,000 each
+- Schedules: 334
+- Graphs: 94 cumulative / 70 new
+- Semantic pairwise review: 499,500 pairs
+- Close variants documented: 61
+- Undocumented duplicates: 0
+- MZ07 evaluation cases: 117,500 / failures 0
+- Cumulative MZ05–MZ07 cases: 221,100 / failures 0
+- MZ07 static checks: 9,852 / failures 0
+- External actions: 0
+- Execution posture: Shadow
+- OpenAI Strategy Brain: not enabled
+- Automatic database migration: prohibited
+- Installer simulation: PASS
+- Application rollback simulation: PASS
+- Exact pre-existing file hash restoration: PASS

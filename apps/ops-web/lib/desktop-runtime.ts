@@ -13,6 +13,12 @@ export type DesktopRuntimeInfo = {
     whatsappDeviceRegistration?: boolean
     whatsappAuthorizationLeases?: boolean
     whatsappRemoteCommands?: boolean
+    whatsappBusinessContext?: boolean
+    whatsappOutcomeCapture?: boolean
+    productionDiagnostics?: boolean
+    controlledUpdates?: boolean
+    crashLoopRecovery?: boolean
+    signedInstallerReady?: boolean
     whatsappAutomation: false
     whatsappDomAccess: false
   }
@@ -81,4 +87,14 @@ export function getWhatsAppGovernanceApi(): AngelCareWhatsAppGovernanceApi | nul
 
 export function hasWhatsAppGovernanceRuntime(): boolean {
   return Boolean(getDesktopRuntime()?.capabilities?.whatsappGovernance && getWhatsAppGovernanceApi())
+}
+
+export function getDesktopReleaseApi(): AngelCareDesktopReleaseApi | null {
+  if (typeof window === "undefined") return null
+  return window.angelcareDesktop?.release || null
+}
+
+export function getDesktopDiagnosticsApi(): AngelCareDesktopDiagnosticsApi | null {
+  if (typeof window === "undefined") return null
+  return window.angelcareDesktop?.diagnostics || null
 }

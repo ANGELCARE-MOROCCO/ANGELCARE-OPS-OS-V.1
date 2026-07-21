@@ -1,0 +1,1 @@
+import fs from 'node:fs';const c=JSON.parse(fs.readFileSync('lib/revenue-command-os/command-kernel/commands-2000/commands-2000.commands.json','utf8'));console.log(JSON.stringify({release:'MZ08',commands:c.length,newCommands:c.filter(x=>x.tags.includes('new-1000')).length},null,2));

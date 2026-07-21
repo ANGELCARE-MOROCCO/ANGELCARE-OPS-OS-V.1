@@ -32,6 +32,9 @@ const supplements = [
   'b2b-deal-closing.v4.json',
   'b2b-partner-lifecycle.v5.json',
   'b2b-ai-sales-director.v6.json',
+  'b2b-production-final.v7.json',
+  'b2b-scanner-intelligence.v7_1.json',
+  'b2b-ultra-reality.v9.json',
 ]
 for (const filename of supplements) {
   const supplementSource = path.join(root, 'packages/browser-extension-contracts', filename)

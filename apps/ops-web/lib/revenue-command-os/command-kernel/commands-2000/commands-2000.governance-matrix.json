@@ -1,0 +1,25 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ08-COMMANDS-2000",
+  "rules": [
+    "authority",
+    "margin",
+    "capacity",
+    "evidence"
+  ],
+  "commandsChecked": 2000,
+  "newCommandsChecked": 1000,
+  "newCommandsFullyGuarded": 1000,
+  "forbiddenTools": [
+    "send_email",
+    "send_whatsapp",
+    "place_call",
+    "apply_discount",
+    "commit_price",
+    "override_margin_floor",
+    "confirm_capacity",
+    "sign_contract",
+    "release_payment",
+    "alter_evidence"
+  ],
+  "externalActionsEnabled": false
+}

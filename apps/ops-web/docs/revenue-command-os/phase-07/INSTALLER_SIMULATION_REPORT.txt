@@ -1,0 +1,37 @@
+ANGELCARE REVENUE COMMAND OS — MZ07 INSTALLER & ROLLBACK SIMULATION
+Date: 2026-07-20
+Target: fresh cumulative MZ06 package copy with representative monorepo package scripts
+Mode: REVENUE_OS_INSTALLER_SIMULATION=1
+
+INSTALLER RESULT: PASS
+- ZIP checksum verified before extraction.
+- MZ06 prerequisite files verified.
+- Cumulative MZ01–MZ07 migration presence verified.
+- Timestamped exact-file backup created.
+- Manifest-authorized copying completed.
+- Existing root and app package scripts preserved.
+- MZ07 package scripts added surgically.
+- MZ04 static verification: 328 passes, 0 failures.
+- MZ05 static acceptance: 171 passes, 0 failures.
+- MZ06 static acceptance: 5,143 passes, 0 failures.
+- MZ07 static acceptance: 9,855 passes, 0 failures.
+- MZ05 evaluation regression: 70,000 cases, 0 failures.
+- MZ06 Golden 300 regression: 33,600 cases, 0 failures.
+- MZ07 command/routing suite: 117,500 cases, 0 failures.
+- Semantic review: 499,500 pairs, 61 documented variants, 0 undocumented duplicates.
+- SQL structural review: 21 checks, 21 passes.
+- MZ07 strict kernel TypeScript: PASS, 0 diagnostics.
+- MZ07 French UI/API transpile: 9 files, 0 errors.
+- External actions performed: 0.
+- No database migration applied.
+- No Git stage or commit performed.
+- No production build run.
+
+ROLLBACK RESULT: PASS
+- Application rollback executed from the timestamped backup.
+- Pre-existing application and package-file hashes restored exactly.
+- MZ07-added files removed.
+- Database remained untouched by application rollback.
+
+LIVE-INSTALL BOUNDARY
+The live installer executes MZ01–MZ07 static regression against the complete user monorepo. The focused package simulation executes the cumulative MZ04–MZ07 checks and all MZ05–MZ07 corpora because unrelated global application files are intentionally not included in the Revenue OS handoff.

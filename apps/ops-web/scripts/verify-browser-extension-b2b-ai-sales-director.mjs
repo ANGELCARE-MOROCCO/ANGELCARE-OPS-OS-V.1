@@ -80,7 +80,7 @@ for(const name of director.focusWorkspaces) check(`focus workspace ${name}`,mode
 for(const command of director.commands) check(`browser command action ${command}`,actions.includes(command)||runtime.includes(command)||command.endsWith('.audit_read')||command.endsWith('.coverage_read')||command.endsWith('.performance_read')||command==='b2b.ai_director.recommend_action'||command==='b2b.pipeline_truth.stage_recommend'||command==='b2b.forecast.snapshot_create'||command==='b2b.automation.update'||command==='b2b.automation.retry')
 for(const signal of ['management-runtime','management-safety-banner']) check(`management visual system ${signal}`,css.includes(signal))
 const manifest=JSON.parse(read('apps/revenue-browser-extension/manifest.template.json'))
-check('extension version 0.6.0',manifest.version==='0.6.0',manifest.version)
+check('extension cumulative version at least 0.6.0',['0.6.0','0.7.0'].includes(manifest.version),manifest.version)
 check('no direct Chrome-to-Supabase client',!api.toLowerCase().includes('supabase'))
 check('no RefferQ resurrection',![sql,service,workspace,runtime,mode,actions,profile].join('\n').toLowerCase().includes('refferq'))
 

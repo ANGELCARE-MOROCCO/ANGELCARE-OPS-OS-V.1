@@ -1,0 +1,49 @@
+✓ ZIP checksum verified: 1958579e53a43b9c3bb2aead2c3bae021be359625e5baf385780420e99585d02
+Installer simulation: surgical copy, cumulative package, MZ08 static/SQL/UI checks.
+{
+  "phase": "MZ08 cumulative package",
+  "required": 7,
+  "missing": 0
+}
+{
+  "phase": "MZ08",
+  "passed": 30006,
+  "failed": 0,
+  "commands": 2000,
+  "newCommands": 1000,
+  "domains": 23,
+  "externalActions": 0
+}
+{
+  "phase": "MZ08",
+  "checks": 10,
+  "passed": 10,
+  "failed": 0
+}
+{
+  "phase": "MZ08",
+  "files": 5,
+  "errors": 0
+}
+
+ANGELCARE Revenue Command OS MZ08 installed successfully.
+Backup:
+  /mnt/data/mz08_work/sim-target/backups/revenue-command-os/mz08-20260720-204121
+Migration to apply manually through psql:
+  /mnt/data/mz08_work/sim-target/apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase8_commands_2000.sql
+Database helper:
+  DATABASE_URL='YOUR_SESSION_POOLER_URL' bash "/mnt/data/mz08_work/sim-target/tools/revenue-os/apply-phase8-migration.sh" "/mnt/data/mz08_work/sim-target"
+Application rollback:
+  bash "/mnt/data/mz08_work/sim-target/rollback_revenue_os_mz08_application.sh" "/mnt/data/mz08_work/sim-target" "/mnt/data/mz08_work/sim-target/backups/revenue-command-os/mz08-20260720-204121"
+Database rollback SQL:
+  /mnt/data/mz08_work/sim-target/apps/ops-web/docs/revenue-command-os/phase-08/ROLLBACK.sql
+Post-install:
+  cd "/mnt/data/mz08_work/sim-target"
+  npm run revenue-os:phase08:typecheck
+  npm run revenue-os:phase08:verify
+  npm run revenue-os:phase08:test
+  npm run revenue-os:phase08:typecheck:integration
+Route:
+  /revenue-command-os/command-kernel
+No database migration, Git stage/commit, or production build was performed.
+Cumulative library: 2,000 commands. MZ08 new commands: 1,000. External actions remain disabled in Shadow mode.

@@ -1,0 +1,19 @@
+{
+  "extensionVersion": "0.7.0",
+  "minimumChromeMajor": 114,
+  "testedTargets": [
+    {
+      "os": "macOS",
+      "chrome": "stable and stable-1",
+      "status": "pilot verification required"
+    },
+    {
+      "os": "Windows",
+      "chrome": "stable and stable-1",
+      "status": "pilot verification required"
+    }
+  ],
+  "serviceWorker": "MV3 suspension recovery instrumented",
+  "sidePanel": "required",
+  "managedPolicy": "documented"
+}

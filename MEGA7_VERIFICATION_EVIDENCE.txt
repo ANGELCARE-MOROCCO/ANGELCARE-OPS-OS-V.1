@@ -1,0 +1,22 @@
+ANGELCARE Revenue Command Browser OS — Mega ZIP 7 verification evidence
+
+Version: 0.7.0
+Canonical capabilities: 45/45
+Production-final verifier: 113/113 passed
+Security verifier: passed
+Extension TypeScript: passed
+Manifest V3 build: passed
+Extension distribution: passed
+Mega ZIP 5 regression: 196 checks passed
+Mega ZIP 6 regression: 322 checks passed
+All earlier Mega ZIP regression suites: passed
+Production SQL structures: 14 with RLS and rollback coverage
+Production documentation: 22 handbooks/guides
+Release channels: development, internal, pilot, stable, rollback
+Private key and secret scan: passed
+Git stage/commit/push: none
+
+OPS web full TypeScript requires the installed repository dependencies and must be rerun after injection.
+Live production certification requires deployed telemetry, security testing, rollback rehearsal and end-to-end acceptance.
+Mega ZIP 7 targeted OPS production-control TypeScript surface: passed with dependency shims.
+Full OPS web TypeScript remains an installed-repository gate because this isolated copy has no React/Next/Supabase node_modules.

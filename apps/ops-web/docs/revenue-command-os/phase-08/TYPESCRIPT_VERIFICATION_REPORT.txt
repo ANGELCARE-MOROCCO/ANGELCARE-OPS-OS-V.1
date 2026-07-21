@@ -1,0 +1,5 @@
+MZ08 targeted kernel TypeScript verification
+Command: tsc -p tsconfig.revenue-os-phase8-kernel.json --noEmit
+Result: PASS
+Diagnostics: 0
+Full production build: NOT RUN (contractually prohibited unless explicitly requested)

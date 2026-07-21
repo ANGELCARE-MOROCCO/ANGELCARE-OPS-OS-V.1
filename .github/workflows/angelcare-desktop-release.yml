@@ -1,0 +1,60 @@
+name: ANGELCARE Desktop Release
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Release channel
+        required: true
+        default: internal
+        type: choice
+        options: [internal, pilot, stable]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm, cache-dependency-path: apps/angelcare-desktop/package-lock.json }
+      - run: npm ci
+        working-directory: apps/angelcare-desktop
+      - run: npm run verify
+        working-directory: apps/angelcare-desktop
+  macos:
+    needs: verify
+    runs-on: macos-latest
+    strategy: { matrix: { arch: [x64, arm64] } }
+    env:
+      ANGELCARE_DESKTOP_RELEASE_CHANNEL: ${{ inputs.channel }}
+      APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm, cache-dependency-path: apps/angelcare-desktop/package-lock.json }
+      - run: npm ci
+        working-directory: apps/angelcare-desktop
+      - run: npm run package:mac:${{ matrix.arch }}
+        working-directory: apps/angelcare-desktop
+      - uses: actions/upload-artifact@v4
+        with: { name: ANGELCARE-Desktop-macOS-${{ matrix.arch }}, path: apps/angelcare-desktop/out/make/**/* }
+  windows:
+    needs: verify
+    runs-on: windows-latest
+    env:
+      ANGELCARE_DESKTOP_RELEASE_CHANNEL: ${{ inputs.channel }}
+      WINDOWS_CERTIFICATE_FILE: ${{ secrets.WINDOWS_CERTIFICATE_FILE }}
+      WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm, cache-dependency-path: apps/angelcare-desktop/package-lock.json }
+      - run: npm ci
+        working-directory: apps/angelcare-desktop
+      - run: npm run make:win:x64
+        working-directory: apps/angelcare-desktop
+      - uses: actions/upload-artifact@v4
+        with: { name: ANGELCARE-Desktop-Windows-x64, path: apps/angelcare-desktop/out/make/**/* }

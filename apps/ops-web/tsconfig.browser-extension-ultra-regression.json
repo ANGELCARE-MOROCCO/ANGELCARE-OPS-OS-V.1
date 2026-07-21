@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "outDir": ".ultra-regression-build",
+    "resolveJsonModule": true
+  },
+  "include": [
+    "lib/browser-extension/b2b-ultra/service.ts",
+    "lib/browser-extension/b2b-ultra/doctrines.ts",
+    "lib/browser-extension/b2b-ultra/ai-provider.ts",
+    "scripts/browser-extension-ultra/service-regression.ts"
+  ]
+}

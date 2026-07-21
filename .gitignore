@@ -93,3 +93,6 @@ apps/angelcare-desktop/.env.*
 *.dmg
 *.nupkg
 RELEASES
+
+# Local Revenue OS backups
+.revenue-os-backups/

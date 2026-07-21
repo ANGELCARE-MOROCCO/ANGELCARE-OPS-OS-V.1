@@ -1,0 +1,5 @@
+import type {RevenueStrategy} from '../strategy-brain/types'
+const normalize=(value:string)=>value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim()
+const tokens=(value:string)=>new Set(normalize(value).split(' ').filter(x=>x.length>3))
+function jaccard(a:string,b:string){const x=tokens(a),y=tokens(b);const intersection=[...x].filter(t=>y.has(t)).length;const union=new Set([...x,...y]).size;return union?intersection/union:1}
+export function validateMaterialDiversity(strategies:RevenueStrategy[],minimum=5){const errors:string[]=[];if(strategies.length<minimum)errors.push('minimum_strategy_count');if(new Set(strategies.map(x=>x.archetype)).size<minimum)errors.push('duplicate_archetypes');for(let i=0;i<strategies.length;i++)for(let j=i+1;j<strategies.length;j++){const thesis=jaccard(strategies[i].thesis,strategies[j].thesis);const value=jaccard(strategies[i].valueProposition,strategies[j].valueProposition);const offer=JSON.stringify(strategies[i].offer)===JSON.stringify(strategies[j].offer);if(thesis>.82&&value>.82&&offer)errors.push(`semantic_duplicate:${i}:${j}`)}return{pass:errors.length===0,errors}}

@@ -1,0 +1,8 @@
+apps/ops-web/evaluations/revenue-command-os/phase-08/authority-margin-capacity-evidence-adversarial.ndjson filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/evaluations/revenue-command-os/phase-08/routing-2000-benchmark.ndjson filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/evaluations/revenue-command-os/phase-08/mz08-contract-evaluations.json filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/evaluations/revenue-command-os/phase-09/commands-3000-routing-benchmarks.jsonl filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/evaluations/revenue-command-os/phase-07/commands-1000-routing-benchmarks.jsonl filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/tests/revenue-command-os/evaluations/mz05-routing-corpus.ndjson filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/tests/revenue-command-os/evaluations/mz05-adversarial-integrity-corpus.ndjson filter=lfs diff=lfs merge=lfs -text
+apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase8_commands_2000.sql filter=lfs diff=lfs merge=lfs -text

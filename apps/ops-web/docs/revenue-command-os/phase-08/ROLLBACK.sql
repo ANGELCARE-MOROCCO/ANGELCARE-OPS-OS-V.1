@@ -1,0 +1,18 @@
+begin;
+drop view if exists public.revenue_os_command_library_active;
+delete from public.revenue_os_command_test_cases where command_code like 'REV-MZ08-%';
+delete from public.revenue_os_command_schedules where command_code like 'REV-MZ08-%';
+delete from public.revenue_os_command_triggers where command_code like 'REV-MZ08-%';
+delete from public.revenue_os_command_graphs where graph_code like 'MZ08-%';
+delete from public.revenue_os_command_versions where command_code like 'REV-MZ08-%';
+delete from public.revenue_os_command_definitions where command_code like 'REV-MZ08-%';
+delete from public.revenue_os_command_benchmarks where release_code='AC-REVENUE-OS-MZ08-COMMANDS-2000';
+delete from public.revenue_os_command_releases where release_code='AC-REVENUE-OS-MZ08-COMMANDS-2000';
+drop table if exists public.revenue_os_command_monetization_benchmarks;
+drop table if exists public.revenue_os_command_governance_reviews;
+drop table if exists public.revenue_os_command_monetization_coverage;
+create or replace view public.revenue_os_command_library_active with (security_invoker = true) as select * from public.revenue_os_command_definitions where tags ? 'golden-300' or tags ? 'new-700';
+revoke all on public.revenue_os_command_library_active from anon, authenticated;
+grant select on public.revenue_os_command_library_active to service_role;
+update public.revenue_os_installations set release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000',module_version='7.0.0-phase7',execution_mode='shadow',external_actions_enabled=false,updated_at=now() where installation_key='revenue-command-os';
+commit;

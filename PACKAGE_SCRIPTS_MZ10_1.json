@@ -1,0 +1,6 @@
+{
+  "revenue-os:phase10.1:verify": "node apps/ops-web/scripts/revenue-command-os/verify-phase10-1.mjs",
+  "revenue-os:phase10.1:test": "node apps/ops-web/scripts/revenue-command-os/test-phase10-1.mjs",
+  "revenue-os:phase10.1:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p apps/ops-web/tsconfig.revenue-os-phase10-1.json --noEmit",
+  "revenue-os:phase10.1:gemini:smoke": "node --env-file=apps/ops-web/.env.local apps/ops-web/scripts/revenue-command-os/test-phase10-1-live-gemini.mjs"
+}

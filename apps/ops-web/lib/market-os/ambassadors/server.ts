@@ -1,206 +1,41 @@
-import { randomUUID } from "crypto"
-import fs from "fs"
-import path from "path"
-import { createClient } from "@supabase/supabase-js"
-import type { AmbassadorWorkspaceSnapshot } from "./types"
+import { createHash, randomUUID } from "node:crypto"
+import type {
+  AmbassadorActor,
+  AmbassadorEntityKey,
+  AmbassadorMissionAssignment,
+  AmbassadorPermission,
+  AmbassadorRecord,
+  AmbassadorServiceResult,
+  AmbassadorTerritoryAssignment,
+  AmbassadorWorkspaceSnapshot,
+} from "./contracts"
+import {
+  assertLifecycleTransition,
+  ENTITY_LIFECYCLES,
+  normalizeLifecycleValue,
+} from "./contracts"
+import { actorCan, requireAmbassadorPermission } from "./auth"
+import { AmbassadorServiceError, asAmbassadorServiceError } from "./errors"
+import {
+  cleanEntityPayload,
+  ENTITY_CONFIG,
+  getRow,
+  getSettingsRow,
+  insertRow,
+  listRows,
+  listTable,
+  MISSION_ASSIGNMENTS_TABLE,
+  rpc,
+  SETTINGS_TABLE,
+  TERRITORY_ASSIGNMENTS_TABLE,
+  updateRow,
+  upsertSettingsRow,
+  validateRequired,
+  writeAudit,
+} from "./persistence"
+import { getAmbassadorSupabaseAdmin } from "./supabase"
 
-type AnyRecord = Record<string, any>
-type EntityKey =
-  | "ambassadors"
-  | "territories"
-  | "missions"
-  | "recruitment"
-  | "leads"
-  | "conversions"
-  | "onboarding"
-  | "training"
-  | "goals"
-  | "incentives"
-  | "reports"
-  | "audit"
-
-type ServiceResult<T = any> = {
-  ok: boolean
-  data?: T
-  record?: AnyRecord | null
-  records?: AnyRecord[]
-  items?: AnyRecord[]
-  snapshot?: AmbassadorWorkspaceSnapshot
-  source: string
-  error?: string | null
-  diagnostics?: AnyRecord[]
-  [key: string]: any
-}
-
-type EntityConfig = {
-  table: string
-  prefix: string
-  archivedField?: "status" | "stage" | "archived_at"
-  archiveStatus?: string
-  required?: string[]
-  fields: string[]
-  numeric?: string[]
-  json?: string[]
-}
-
-const ENTITY_CONFIG: Record<EntityKey, EntityConfig> = {
-  ambassadors: {
-    table: "market_os_ambassadors",
-    prefix: "amb",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["full_name"],
-    fields: [
-      "id",
-      "full_name",
-      "email",
-      "phone",
-      "city",
-      "region",
-      "zone",
-      "role",
-      "title",
-      "profile_type",
-      "status",
-      "lifecycle_stage",
-      "territory_id",
-      "territory_name",
-      "manager_name",
-      "performance_score",
-      "kpi_score",
-      "missions_assigned",
-      "missions_completed",
-      "leads_generated",
-      "hot_leads",
-      "meetings_booked",
-      "incentives_balance",
-      "certification_status",
-      "drive_folder_url",
-      "notes",
-      "source",
-      "created_at",
-      "updated_at",
-      "archived_at",
-    ],
-    numeric: ["performance_score", "kpi_score", "missions_assigned", "missions_completed", "leads_generated", "hot_leads", "meetings_booked", "incentives_balance"],
-  },
-  territories: {
-    table: "market_os_ambassador_territories",
-    prefix: "ter",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["name"],
-    fields: ["id", "name", "city", "region", "zone", "manager_name", "coverage_goal", "active_ambassadors_count", "status", "notes", "created_at", "updated_at", "archived_at"],
-    numeric: ["coverage_goal", "active_ambassadors_count"],
-  },
-  missions: {
-    table: "market_os_ambassador_missions",
-    prefix: "mis",
-    archivedField: "archived_at",
-    required: ["title"],
-    fields: ["id", "ambassador_id", "territory_id", "title", "mission_type", "priority", "status", "city", "region", "due_date", "completed_at", "archived_at", "description", "instructions", "evidence_url", "proof_status", "created_at", "updated_at"],
-  },
-  recruitment: {
-    table: "market_os_ambassador_recruitment",
-    prefix: "rec",
-    archivedField: "stage",
-    archiveStatus: "archived",
-    required: ["candidate_name"],
-    fields: ["id", "candidate_name", "email", "phone", "city", "region", "source", "stage", "evaluation_score", "interviewer", "next_step", "notes", "ambassador_id", "created_at", "updated_at", "archived_at"],
-    numeric: ["evaluation_score"],
-  },
-
-  leads: {
-    table: "market_os_ambassador_leads",
-    prefix: "lea",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["lead_name"],
-    fields: ["id", "lead_name", "parent_name", "email", "phone", "city", "region", "zone", "source", "lead_type", "status", "score", "ambassador_id", "territory_id", "next_followup_at", "qualified_at", "converted_at", "notes", "created_at", "updated_at", "archived_at"],
-    numeric: ["score"],
-  },
-  conversions: {
-    table: "market_os_ambassador_conversions",
-    prefix: "con",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["lead_name"],
-    fields: ["id", "lead_id", "lead_name", "parent_name", "ambassador_id", "ambassador_name", "territory_id", "city", "region", "offer_name", "value", "currency", "status", "validation_decision", "validation_note", "proof_url", "validated_by", "validated_at", "rejected_at", "paid_at", "score", "created_at", "updated_at", "archived_at"],
-    numeric: ["value", "score"],
-  },
-  onboarding: {
-    table: "market_os_ambassador_onboarding",
-    prefix: "onb",
-    archivedField: "stage",
-    archiveStatus: "archived",
-    required: ["ambassador_id"],
-    fields: ["id", "ambassador_id", "stage", "assigned_owner", "due_date", "completed_at", "completion_rate", "checklist", "notes", "created_at", "updated_at", "archived_at"],
-    numeric: ["completion_rate"],
-    json: ["checklist"],
-  },
-  training: {
-    table: "market_os_ambassador_training",
-    prefix: "trn",
-    archivedField: "archived_at",
-    required: ["ambassador_id", "training_name"],
-    fields: ["id", "ambassador_id", "training_name", "certification_name", "status", "certification_status", "score", "valid_until", "issued_by", "archived_at", "created_at", "updated_at"],
-    numeric: ["score"],
-  },
-  goals: {
-    table: "market_os_ambassador_goals",
-    prefix: "gol",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["goal_type"],
-    fields: ["id", "ambassador_id", "period", "goal_type", "target_value", "current_value", "completion_rate", "status", "manager_notes", "created_at", "updated_at", "archived_at"],
-    numeric: ["target_value", "current_value", "completion_rate"],
-  },
-  incentives: {
-    table: "market_os_ambassador_incentives",
-    prefix: "inc",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["ambassador_id", "amount"],
-    fields: ["id", "ambassador_id", "incentive_type", "amount", "currency", "status", "reason", "approved_by", "approved_at", "paid_at", "created_at", "updated_at", "archived_at"],
-    numeric: ["amount"],
-  },
-  reports: {
-    table: "market_os_ambassador_reports",
-    prefix: "rep",
-    archivedField: "status",
-    archiveStatus: "archived",
-    required: ["report_type"],
-    fields: ["id", "report_type", "title", "period_start", "period_end", "generated_by", "status", "filters", "row_count", "created_at", "updated_at", "archived_at"],
-    numeric: ["row_count"],
-    json: ["filters"],
-  },
-  audit: {
-    table: "market_os_ambassador_audit_logs",
-    prefix: "aud",
-    fields: ["id", "entity_type", "entity_id", "action", "summary", "actor_name", "payload", "created_at"],
-    json: ["payload"],
-  },
-}
-
-const SETTINGS_TABLE = "market_os_ambassador_settings"
-const STORE_FILE = ".angelcare_market_os_ambassadors_store.json"
-const DEFAULT_ACTOR = "AngelCare Operator"
-const ENTITY_LIMITS: Record<EntityKey, number> = {
-  ambassadors: 200,
-  territories: 80,
-  missions: 120,
-  recruitment: 120,
-  leads: 160,
-  conversions: 160,
-  onboarding: 120,
-  training: 120,
-  goals: 120,
-  incentives: 120,
-  reports: 60,
-  audit: 120,
-}
-
-const DEFAULT_SETTINGS: AnyRecord = {
+const DEFAULT_SETTINGS: AmbassadorRecord = {
   id: "00000000-0000-0000-0000-000000000001",
   default_region: "Rabat / Casablanca",
   approval_rules: {
@@ -208,410 +43,387 @@ const DEFAULT_SETTINGS: AnyRecord = {
     proof_required_before_payment: true,
     child_image_publication_blocked_without_written_authorization: true,
   },
-  incentive_rules: {
-    currency: "MAD",
-    payment_states: ["pending", "approved", "rejected", "paid"],
-  },
+  incentive_rules: { currency: "MAD", payment_states: ["pending", "approved", "rejected", "paid"] },
   onboarding_rules: {
     mandatory_steps: ["Profile verified", "Files collected", "Orientation completed", "Training assigned", "Territory confirmed"],
   },
-  training_rules: {
-    certification_min_score: 80,
-    field_shadowing_required: true,
-  },
-  kpi_rules: {
-    default_daily_contacts: 20,
-    default_daily_leads: 5,
-    hot_lead_requires_call_followup: true,
-  },
-  notification_rules: {
-    daily_report_required: true,
-    escalation_when_blocked_hours: 24,
-  },
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
+  training_rules: { certification_min_score: 80, field_shadowing_required: true },
+  kpi_rules: { default_daily_contacts: 20, default_daily_leads: 5, hot_lead_requires_call_followup: true },
+  notification_rules: { daily_report_required: true, escalation_when_blocked_hours: 24 },
 }
 
-function now() {
+const READ_PERMISSION: Record<AmbassadorEntityKey, AmbassadorPermission> = {
+  ambassadors: "ambassadors.read",
+  territories: "territories.read",
+  missions: "missions.read",
+  recruitment: "recruitment.read",
+  leads: "leads.read",
+  conversions: "conversions.read",
+  onboarding: "onboarding.read",
+  training: "training.read",
+  goals: "goals.read",
+  incentives: "rewards.read",
+  proofs: "proofs.read",
+  payouts: "payouts.read",
+  reports: "reports.read",
+  audit: "audit.read",
+}
+
+const WRITE_PERMISSION: Record<AmbassadorEntityKey, AmbassadorPermission> = {
+  ambassadors: "ambassadors.write",
+  territories: "territories.write",
+  missions: "missions.write",
+  recruitment: "recruitment.write",
+  leads: "leads.write",
+  conversions: "conversions.write",
+  onboarding: "onboarding.write",
+  training: "training.write",
+  goals: "goals.write",
+  incentives: "rewards.write",
+  proofs: "proofs.submit",
+  payouts: "payouts.approve",
+  reports: "reports.generate",
+  audit: "audit.read",
+}
+
+const TRANSITION_PERMISSION: Partial<Record<AmbassadorEntityKey, AmbassadorPermission>> = {
+  ambassadors: "ambassadors.write",
+  missions: "missions.transition",
+  recruitment: "recruitment.transition",
+  leads: "leads.transition",
+  conversions: "conversions.review",
+  incentives: "rewards.approve",
+  proofs: "proofs.review",
+  payouts: "payouts.approve",
+}
+
+const CONTROLLED_MUTATION_FIELDS: Partial<Record<AmbassadorEntityKey, readonly string[]>> = {
+  missions: ["status", "completed_at", "proof_status"],
+  recruitment: ["stage", "ambassador_id"],
+  conversions: ["status", "validation_decision", "validation_note", "validated_by", "validated_by_actor_id", "validated_at", "rejected_at", "paid_at"],
+  incentives: ["status", "approved_by", "approved_by_actor_id", "approved_at", "paid_at"],
+  proofs: ["status", "review_note", "reviewed_by_actor_id", "reviewed_at"],
+  payouts: ["status", "approval_note", "approved_by_actor_id", "approved_at", "executed_by_actor_id", "executed_at", "payment_reference", "paid_at"],
+}
+
+function rejectControlledGenericMutation(entity: AmbassadorEntityKey, payload: Record<string, unknown>): void {
+  const fields = CONTROLLED_MUTATION_FIELDS[entity] || []
+  const attempted = fields.filter((field) => Object.prototype.hasOwnProperty.call(payload, field))
+  if (attempted.length) {
+    throw new AmbassadorServiceError(
+      "GATE_BLOCKED",
+      `${entity} field(s) ${attempted.join(", ")} require the dedicated controlled action endpoint`,
+      409,
+    )
+  }
+}
+
+function now(): string {
   return new Date().toISOString()
 }
 
-function hasSupabaseEnv() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY))
+function success<T>(data: T, extras: Record<string, unknown> = {}): AmbassadorServiceResult<T> {
+  return { ok: true, source: "ambassador-supabase", data, ...extras }
 }
 
-function createAdminClient() {
-  if (!hasSupabaseEnv()) return null
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-    (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY) as string,
-    { auth: { persistSession: false, autoRefreshToken: false } }
-  )
-}
-
-function localStorePath() {
-  return path.join(process.cwd(), STORE_FILE)
-}
-
-function emptyTables(): Record<string, AnyRecord[]> {
-  return Object.fromEntries(Object.values(ENTITY_CONFIG).map((config) => [config.table, []]))
-}
-
-function readLocalStore(): { version: number; updatedAt: string; tables: Record<string, AnyRecord[]>; settings: AnyRecord } {
-  const file = localStorePath()
-  if (!fs.existsSync(file)) {
-    return { version: 1, updatedAt: now(), tables: emptyTables(), settings: DEFAULT_SETTINGS }
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, "utf8"))
-    return {
-      version: 1,
-      updatedAt: String(parsed.updatedAt || now()),
-      tables: parsed.tables && typeof parsed.tables === "object" ? { ...emptyTables(), ...parsed.tables } : emptyTables(),
-      settings: parsed.settings && typeof parsed.settings === "object" ? { ...DEFAULT_SETTINGS, ...parsed.settings } : DEFAULT_SETTINGS,
-    }
-  } catch {
-    return { version: 1, updatedAt: now(), tables: emptyTables(), settings: DEFAULT_SETTINGS }
+function failure(error: unknown): AmbassadorServiceResult<never> {
+  const resolved = asAmbassadorServiceError(error)
+  return {
+    ok: false,
+    source: resolved.code.startsWith("AUTH") || resolved.code === "FORBIDDEN" || resolved.code === "SCOPE_REQUIRED" ? "ambassador-auth" : resolved.code === "VALIDATION_ERROR" || resolved.code === "CONFLICT" || resolved.code === "GATE_BLOCKED" ? "ambassador-validation" : "ambassador-supabase",
+    error: resolved.message,
+    code: resolved.code,
+    status: resolved.status,
+    details: resolved.details,
   }
 }
 
-function writeLocalStore(store: { tables: Record<string, AnyRecord[]>; settings: AnyRecord }) {
-  const next = { version: 1, updatedAt: now(), tables: store.tables, settings: { ...store.settings, updated_at: now() } }
-  try {
-    fs.writeFileSync(localStorePath(), JSON.stringify(next, null, 2))
-  } catch {
-    // Serverless read-only filesystems should not break API responses; Supabase remains the production source.
-  }
-  return next
+function text(value: unknown): string {
+  return String(value ?? "").trim()
 }
 
-function idFor(_prefix: string) {
-  return randomUUID()
+function arrayOfRecords(value: unknown): AmbassadorRecord[] {
+  return Array.isArray(value) ? value.filter((item): item is AmbassadorRecord => Boolean(item) && typeof item === "object" && !Array.isArray(item)) : []
 }
 
-function cleanPayload(entity: EntityKey, payload: AnyRecord = {}, existing: AnyRecord = {}) {
-  const config = ENTITY_CONFIG[entity]
-  const current = now()
-  const output: AnyRecord = {}
-  for (const field of config.fields) {
-    if (payload[field] !== undefined && payload[field] !== "") output[field] = payload[field]
-  }
-  output.id = String(output.id || existing.id || idFor(config.prefix))
-  output.created_at = existing.created_at || payload.created_at || current
-  output.updated_at = current
-
-  for (const field of config.numeric || []) {
-    if (output[field] !== undefined) {
-      const value = Number(output[field])
-      output[field] = Number.isFinite(value) ? value : 0
-    }
-  }
-  for (const field of config.json || []) {
-    if (output[field] === undefined) continue
-    if (typeof output[field] === "string") {
-      try {
-        output[field] = JSON.parse(output[field])
-      } catch {
-        output[field] = []
-      }
-    }
-  }
-
-  if (entity === "ambassadors") {
-    output.status = output.status || existing.status || "active"
-    output.lifecycle_stage = output.lifecycle_stage || existing.lifecycle_stage || output.status
-    output.performance_score = Number(output.performance_score || 0)
-    output.kpi_score = Number(output.kpi_score || 0)
-    output.missions_assigned = Number(output.missions_assigned || 0)
-    output.missions_completed = Number(output.missions_completed || 0)
-    output.leads_generated = Number(output.leads_generated || 0)
-    output.hot_leads = Number(output.hot_leads || 0)
-    output.meetings_booked = Number(output.meetings_booked || 0)
-    output.incentives_balance = Number(output.incentives_balance || 0)
-    output.certification_status = output.certification_status || existing.certification_status || "pending"
-  }
-  if (entity === "territories") {
-    output.status = output.status || existing.status || "active"
-    output.coverage_goal = Number(output.coverage_goal || 0)
-    output.active_ambassadors_count = Number(output.active_ambassadors_count || 0)
-  }
-  if (entity === "missions") {
-    output.status = output.status || existing.status || "assigned"
-    output.priority = output.priority || existing.priority || "normal"
-    output.mission_type = output.mission_type || existing.mission_type || "field_activation"
-  }
-  if (entity === "recruitment") {
-    output.stage = output.stage || existing.stage || "sourced"
-    output.evaluation_score = Number(output.evaluation_score || 0)
-  }
-  if (entity === "leads") {
-    output.status = output.status || existing.status || "new"
-    output.lead_type = output.lead_type || existing.lead_type || "Parent"
-    output.source = output.source || existing.source || "Manual"
-    output.score = Number(output.score || 0)
-  }
-  if (entity === "conversions") {
-    output.status = output.status || existing.status || "pending"
-    output.currency = output.currency || existing.currency || "MAD"
-    output.value = Number(output.value || 0)
-    output.score = Number(output.score || 0)
-    if (["validated", "approved"].includes(String(output.status))) output.validated_at = output.validated_at || current
-    if (String(output.status) === "rejected") output.rejected_at = output.rejected_at || current
-  }
-  if (entity === "onboarding") {
-    output.stage = output.stage || existing.stage || "not_started"
-    output.checklist = Array.isArray(output.checklist) ? output.checklist : []
-    output.completion_rate = completionRate(output.checklist)
-    if (output.completion_rate >= 100) {
-      output.stage = "completed"
-      output.completed_at = output.completed_at || current
-    }
-  }
-  if (entity === "training") {
-    output.status = output.status || existing.status || "assigned"
-    output.certification_status = output.certification_status || existing.certification_status || "pending"
-    output.score = Number(output.score || 0)
-  }
-  if (entity === "goals") {
-    output.status = output.status || existing.status || "tracking"
-    output.target_value = Number(output.target_value || 0)
-    output.current_value = Number(output.current_value || 0)
-    output.completion_rate = goalCompletion(output)
-    if (output.completion_rate >= 100) output.status = "achieved"
-  }
-  if (entity === "incentives") {
-    output.status = output.status || existing.status || "pending"
-    output.currency = output.currency || existing.currency || "MAD"
-    output.amount = Number(output.amount || 0)
-  }
-  if (entity === "reports") {
-    output.status = output.status || existing.status || "generated"
-    output.title = output.title || `${String(output.report_type || "Ambassador")} report`
-    output.row_count = Number(output.row_count || 0)
-    output.filters = output.filters && typeof output.filters === "object" ? output.filters : {}
-  }
-  return output
+function completionRate(checklist: AmbassadorRecord[]): number {
+  if (!checklist.length) return 0
+  return Math.round((checklist.filter((step) => Boolean(step.done)).length / checklist.length) * 100)
 }
 
-function validateEntity(entity: EntityKey, payload: AnyRecord) {
-  const missing = (ENTITY_CONFIG[entity].required || []).filter((field) => !String(payload[field] ?? "").trim())
-  if (missing.length) return `Missing required field(s): ${missing.join(", ")}`
-  if (entity === "incentives" && Number(payload.amount || 0) <= 0) return "Incentive amount must be greater than zero"
-  if (entity === "goals" && Number(payload.target_value || 0) <= 0) return "Goal target value must be greater than zero"
-  return null
-}
-
-function completionRate(checklist: AnyRecord[] = []) {
-  if (!Array.isArray(checklist) || checklist.length === 0) return 0
-  const done = checklist.filter((step) => step.done).length
-  return Math.round((done / checklist.length) * 100)
-}
-
-function goalCompletion(goal: AnyRecord) {
+function goalCompletion(goal: AmbassadorRecord): number {
   const target = Number(goal.target_value || 0)
   if (!target) return 0
   return Math.max(0, Math.min(100, Math.round((Number(goal.current_value || 0) / target) * 100)))
 }
 
-async function tryDbList(entity: EntityKey) {
-  const supabase = createAdminClient()
-  if (!supabase) return { ok: false, reason: "Supabase env not configured" }
-  const table = ENTITY_CONFIG[entity].table
-  const limit = ENTITY_LIMITS[entity] || 100
-  const { data, error } = await supabase.from(table).select("*").order("updated_at", { ascending: false }).limit(limit)
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true, data: data || [] }
+function candidateIdentity(payload: Record<string, unknown>): { email: string | null; phone: string | null; hash: string | null } {
+  const email = text(payload.email).toLowerCase() || null
+  const phoneDigits = text(payload.phone).replace(/\D/g, "")
+  const phone = phoneDigits ? (phoneDigits.startsWith("212") ? `+${phoneDigits}` : phoneDigits.startsWith("0") ? `+212${phoneDigits.slice(1)}` : `+${phoneDigits}`) : null
+  const source = email ? `email:${email}` : phone ? `phone:${phone}` : null
+  return { email, phone, hash: source ? createHash("sha256").update(source).digest("hex") : null }
 }
 
-async function tryDbSettings() {
-  const supabase = createAdminClient()
-  if (!supabase) return { ok: false, reason: "Supabase env not configured" }
-  const { data, error } = await supabase.from(SETTINGS_TABLE).select("*").eq("id", DEFAULT_SETTINGS.id).maybeSingle()
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true, data: data || DEFAULT_SETTINGS }
-}
-
-async function tryDbUpsert(entity: EntityKey, row: AnyRecord) {
-  const supabase = createAdminClient()
-  if (!supabase) return { ok: false, reason: "Supabase env not configured" }
-  const { data, error } = await supabase.from(ENTITY_CONFIG[entity].table).upsert(row, { onConflict: "id" }).select("*").single()
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true, data }
-}
-
-async function tryDbPatch(entity: EntityKey, id: string, patch: AnyRecord) {
-  const supabase = createAdminClient()
-  if (!supabase) return { ok: false, reason: "Supabase env not configured" }
-  const { data, error } = await supabase.from(ENTITY_CONFIG[entity].table).update(patch).eq("id", id).select("*").single()
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true, data }
-}
-
-async function tryDbGet(entity: EntityKey, id: string) {
-  const supabase = createAdminClient()
-  if (!supabase) return { ok: false, reason: "Supabase env not configured" }
-  const { data, error } = await supabase.from(ENTITY_CONFIG[entity].table).select("*").eq("id", id).maybeSingle()
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true, data }
-}
-
-async function tryDbSettingsUpsert(settings: AnyRecord) {
-  const supabase = createAdminClient()
-  if (!supabase) return { ok: false, reason: "Supabase env not configured" }
-  const { data, error } = await supabase.from(SETTINGS_TABLE).upsert(settings, { onConflict: "id" }).select("*").single()
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true, data }
-}
-
-async function writeAudit(entity: string, entityId: string, action: string, summary: string, payload: AnyRecord = {}) {
-  const row = cleanPayload("audit", {
-    entity_type: entity,
-    entity_id: entityId,
-    action,
-    summary,
-    actor_name: DEFAULT_ACTOR,
-    payload,
-    created_at: now(),
-  })
-  const db = await tryDbUpsert("audit", row)
-  if (!db.ok) {
-    const store = readLocalStore()
-    const rows = store.tables[ENTITY_CONFIG.audit.table] || []
-    store.tables[ENTITY_CONFIG.audit.table] = [row, ...rows].slice(0, 500)
-    writeLocalStore(store)
+function applyDefaults(entity: AmbassadorEntityKey, row: AmbassadorRecord, existing: AmbassadorRecord | null): AmbassadorRecord {
+  const next = { ...row }
+  if (entity === "ambassadors") {
+    next.status = next.status || existing?.status || "candidate"
+    next.lifecycle_stage = normalizeLifecycleValue(next.lifecycle_stage || existing?.lifecycle_stage || next.status)
+    next.certification_status = next.certification_status || existing?.certification_status || "pending"
   }
-  return row
+  if (entity === "territories") next.status = next.status || existing?.status || "active"
+  if (entity === "missions") {
+    next.status = normalizeLifecycleValue(next.status || existing?.status || "draft")
+    next.priority = next.priority || existing?.priority || "normal"
+    next.mission_type = next.mission_type || existing?.mission_type || "field_activation"
+    if (next.proof_required === undefined) next.proof_required = existing?.proof_required ?? true
+  }
+  if (entity === "recruitment") {
+    next.stage = normalizeLifecycleValue(next.stage || existing?.stage || "sourced")
+    const identity = candidateIdentity(next)
+    next.normalized_email = identity.email
+    next.normalized_phone = identity.phone
+    next.identity_hash = identity.hash
+  }
+  if (entity === "leads") {
+    next.status = normalizeLifecycleValue(next.status || existing?.status || "new")
+    next.lead_type = next.lead_type || existing?.lead_type || "Parent"
+    next.source = next.source || existing?.source || "Manual"
+  }
+  if (entity === "conversions") {
+    next.status = normalizeLifecycleValue(next.status || existing?.status || "pending")
+    next.currency = next.currency || existing?.currency || "MAD"
+  }
+  if (entity === "onboarding") {
+    const checklist = arrayOfRecords(next.checklist)
+    next.checklist = checklist
+    next.completion_rate = completionRate(checklist)
+    next.stage = Number(next.completion_rate || 0) >= 100 ? "completed" : normalizeLifecycleValue(next.stage || existing?.stage || "not_started")
+    if (Number(next.completion_rate || 0) >= 100) next.completed_at = next.completed_at || now()
+  }
+  if (entity === "training") {
+    next.status = next.status || existing?.status || "assigned"
+    next.certification_status = next.certification_status || existing?.certification_status || "pending"
+  }
+  if (entity === "goals") {
+    next.status = next.status || existing?.status || "tracking"
+    next.completion_rate = goalCompletion(next)
+    if (Number(next.completion_rate) >= 100) next.status = "achieved"
+  }
+  if (entity === "incentives") {
+    next.status = normalizeLifecycleValue(next.status || existing?.status || "pending")
+    next.currency = next.currency || existing?.currency || "MAD"
+    next.amount_mad = Number(next.amount_mad || next.amount || 0)
+    next.amount = Number(next.amount || next.amount_mad || 0)
+  }
+  if (entity === "proofs") next.status = normalizeLifecycleValue(next.status || existing?.status || "submitted")
+  if (entity === "payouts") {
+    next.status = normalizeLifecycleValue(next.status || existing?.status || "draft")
+    next.currency = next.currency || existing?.currency || "MAD"
+  }
+  if (entity === "reports") {
+    next.status = next.status || existing?.status || "generated"
+    next.title = next.title || `${text(next.report_type) || "Ambassador"} report`
+  }
+  return next
 }
 
-function localRows(entity: EntityKey) {
-  const store = readLocalStore()
-  return (store.tables[ENTITY_CONFIG[entity].table] || []).slice(0, ENTITY_LIMITS[entity] || 100)
+function validateBusinessRules(entity: AmbassadorEntityKey, row: AmbassadorRecord): void {
+  validateRequired(entity, row)
+  if (entity === "recruitment" && !row.identity_hash) {
+    throw new AmbassadorServiceError("VALIDATION_ERROR", "Candidate email or phone is required for deduplication", 400)
+  }
+  if (entity === "incentives" && Number(row.amount || row.amount_mad || 0) <= 0) {
+    throw new AmbassadorServiceError("VALIDATION_ERROR", "Incentive amount must be greater than zero", 400)
+  }
+  if (entity === "payouts" && Number(row.amount_mad || 0) <= 0) {
+    throw new AmbassadorServiceError("VALIDATION_ERROR", "Payout amount must be greater than zero", 400)
+  }
+  if (entity === "goals" && Number(row.target_value || 0) <= 0) {
+    throw new AmbassadorServiceError("VALIDATION_ERROR", "Goal target value must be greater than zero", 400)
+  }
 }
 
-function upsertLocal(entity: EntityKey, row: AnyRecord) {
-  const store = readLocalStore()
-  const table = ENTITY_CONFIG[entity].table
-  const rows = [...(store.tables[table] || [])]
-  const index = rows.findIndex((item) => String(item.id) === String(row.id))
-  if (index >= 0) rows[index] = { ...rows[index], ...row }
-  else rows.unshift(row)
-  store.tables[table] = rows
-  writeLocalStore(store)
-  return index >= 0 ? rows[index] : row
+async function assertCandidateUnique(actor: AmbassadorActor, identityHash: string, excludingId?: string): Promise<void> {
+  let query: any = getAmbassadorSupabaseAdmin()
+    .from(ENTITY_CONFIG.recruitment.table)
+    .select("id,candidate_name,stage,ambassador_id")
+    .eq("tenant_id", actor.tenantId)
+    .eq("organization_id", actor.organizationId)
+    .eq("identity_hash", identityHash)
+    .is("archived_at", null)
+    .limit(1)
+  if (excludingId) query = query.neq("id", excludingId)
+  const result = await query
+  if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
+  if (result.data?.length) {
+    throw new AmbassadorServiceError("CONFLICT", "A candidate with the same normalized email or phone already exists", 409, { duplicate: result.data[0] })
+  }
 }
 
-function patchLocal(entity: EntityKey, id: string, patch: AnyRecord) {
-  const existing = localRows(entity).find((item) => String(item.id) === String(id)) || {}
-  return upsertLocal(entity, { ...existing, ...patch, id, updated_at: now() })
+function assertTransitionPermission(actor: AmbassadorActor, entity: AmbassadorEntityKey): void {
+  const permission = TRANSITION_PERMISSION[entity]
+  if (permission) requireAmbassadorPermission(actor, permission)
 }
 
-async function listRaw(entity: EntityKey) {
-  const db = await tryDbList(entity)
-  if (db.ok) return { rows: db.data as AnyRecord[], source: "supabase", diagnostic: null }
-  return { rows: localRows(entity), source: "local-store", diagnostic: { area: entity, store: "local-store", reason: db.reason } }
+function assertTransition(entity: AmbassadorEntityKey, before: AmbassadorRecord, after: AmbassadorRecord): void {
+  const lifecycle = ENTITY_LIFECYCLES[entity]
+  if (!lifecycle) return
+  const beforeValue = before[lifecycle.field]
+  const afterValue = after[lifecycle.field]
+  if (normalizeLifecycleValue(beforeValue) !== normalizeLifecycleValue(afterValue)) {
+    try {
+      assertLifecycleTransition(entity, beforeValue, afterValue)
+    } catch (error) {
+      throw new AmbassadorServiceError("VALIDATION_ERROR", error instanceof Error ? error.message : "Invalid lifecycle transition", 409)
+    }
+  }
 }
 
-async function getRaw(entity: EntityKey, id: string) {
-  const db = await tryDbGet(entity, id)
-  if (db.ok) return { row: db.data as AnyRecord | null, source: "supabase", diagnostic: null }
-  return { row: localRows(entity).find((item) => String(item.id) === String(id)) || null, source: "local-store", diagnostic: { area: entity, store: "local-store", reason: db.reason } }
+async function approvedProofForMission(actor: AmbassadorActor, missionId: string): Promise<AmbassadorRecord | null> {
+  const result = await getAmbassadorSupabaseAdmin()
+    .from(ENTITY_CONFIG.proofs.table)
+    .select("*")
+    .eq("tenant_id", actor.tenantId)
+    .eq("organization_id", actor.organizationId)
+    .eq("mission_id", missionId)
+    .eq("status", "approved")
+    .is("archived_at", null)
+    .order("reviewed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
+  return (result.data || null) as AmbassadorRecord | null
+}
+
+async function approvedRewardSource(actor: AmbassadorActor, incentive: AmbassadorRecord): Promise<boolean> {
+  if (incentive.proof_id) {
+    const proof = await getRow("proofs", String(incentive.proof_id), actor)
+    if (proof?.status === "approved") return true
+  }
+  if (incentive.conversion_id) {
+    const conversion = await getRow("conversions", String(incentive.conversion_id), actor)
+    if (conversion?.status === "validated" || conversion?.status === "paid") return true
+  }
+  return false
+}
+
+async function assignmentsForSnapshot(actor: AmbassadorActor): Promise<{ missionAssignments: AmbassadorMissionAssignment[]; territoryAssignments: AmbassadorTerritoryAssignment[] }> {
+  const [missionAssignments, territoryAssignments] = await Promise.all([
+    listTable(MISSION_ASSIGNMENTS_TABLE, actor, 1000),
+    listTable(TERRITORY_ASSIGNMENTS_TABLE, actor, 1000),
+  ])
+  return {
+    missionAssignments: missionAssignments as AmbassadorMissionAssignment[],
+    territoryAssignments: territoryAssignments as AmbassadorTerritoryAssignment[],
+  }
 }
 
 function enrichSnapshot(input: {
-  ambassadors: AnyRecord[]
-  territories: AnyRecord[]
-  missions: AnyRecord[]
-  recruitment: AnyRecord[]
-  onboarding: AnyRecord[]
-  training: AnyRecord[]
-  goals: AnyRecord[]
-  incentives: AnyRecord[]
-  reports: AnyRecord[]
-  audit: AnyRecord[]
-  settings: AnyRecord
-  diagnostics: AnyRecord[]
-  source: string
+  rows: Record<AmbassadorEntityKey, AmbassadorRecord[]>
+  settings: AmbassadorRecord
+  missionAssignments: AmbassadorMissionAssignment[]
+  territoryAssignments: AmbassadorTerritoryAssignment[]
 }): AmbassadorWorkspaceSnapshot {
-  const activeAmbassadors = input.ambassadors.filter((item) => item.status !== "archived")
-  const territoryById = new Map(input.territories.map((item) => [String(item.id), item]))
-  const missionsByAmbassador = new Map<string, AnyRecord[]>()
-  const incentivesByAmbassador = new Map<string, AnyRecord[]>()
-  const trainingByAmbassador = new Map<string, AnyRecord[]>()
+  const rows = input.rows
+  const activeMissionAssignments = input.missionAssignments.filter((item) => !item.archived_at && !["revoked", "declined"].includes(text(item.status)))
+  const activeTerritoryAssignments = input.territoryAssignments.filter((item) => !item.archived_at && text(item.status) === "approved" && !item.valid_to)
+  const assignmentsByMission = new Map<string, AmbassadorMissionAssignment[]>()
+  for (const assignment of activeMissionAssignments) {
+    const key = text(assignment.mission_id)
+    assignmentsByMission.set(key, [...(assignmentsByMission.get(key) || []), assignment])
+  }
+  const territoryById = new Map(rows.territories.map((item) => [text(item.id), item]))
+  const missionByAmbassador = new Map<string, AmbassadorRecord[]>()
+  for (const assignment of activeMissionAssignments) {
+    const mission = rows.missions.find((item) => text(item.id) === text(assignment.mission_id))
+    if (!mission) continue
+    const key = text(assignment.ambassador_id)
+    missionByAmbassador.set(key, [...(missionByAmbassador.get(key) || []), mission])
+  }
+  const incentiveByAmbassador = new Map<string, AmbassadorRecord[]>()
+  for (const incentive of rows.incentives.filter((item) => item.status !== "archived")) {
+    const key = text(incentive.ambassador_id)
+    incentiveByAmbassador.set(key, [...(incentiveByAmbassador.get(key) || []), incentive])
+  }
+  const trainingByAmbassador = new Map<string, AmbassadorRecord[]>()
+  for (const training of rows.training.filter((item) => !item.archived_at && item.status !== "archived")) {
+    const key = text(training.ambassador_id)
+    trainingByAmbassador.set(key, [...(trainingByAmbassador.get(key) || []), training])
+  }
 
-  for (const mission of input.missions.filter((item) => !item.archived_at && item.status !== "archived")) {
-    const key = String(mission.ambassador_id || "")
-    if (!missionsByAmbassador.has(key)) missionsByAmbassador.set(key, [])
-    missionsByAmbassador.get(key)?.push(mission)
-  }
-  for (const incentive of input.incentives.filter((item) => item.status !== "archived")) {
-    const key = String(incentive.ambassador_id || "")
-    if (!incentivesByAmbassador.has(key)) incentivesByAmbassador.set(key, [])
-    incentivesByAmbassador.get(key)?.push(incentive)
-  }
-  for (const training of input.training.filter((item) => !item.archived_at && item.status !== "archived")) {
-    const key = String(training.ambassador_id || "")
-    if (!trainingByAmbassador.has(key)) trainingByAmbassador.set(key, [])
-    trainingByAmbassador.get(key)?.push(training)
-  }
-
-  const ambassadors: AnyRecord[] = input.ambassadors.map((ambassador) => {
-    const territory = ambassador.territory_id ? territoryById.get(String(ambassador.territory_id)) : null
-    const missions = missionsByAmbassador.get(String(ambassador.id)) || []
-    const incentives = incentivesByAmbassador.get(String(ambassador.id)) || []
-    const trainings = trainingByAmbassador.get(String(ambassador.id)) || []
-    const paid = incentives.filter((item) => item.status === "paid").reduce((sum, item) => sum + Number(item.amount || 0), 0)
-    const pending = incentives.filter((item) => item.status === "pending" || item.status === "approved").reduce((sum, item) => sum + Number(item.amount || 0), 0)
-    const completed = missions.filter((item) => item.status === "completed").length
-    const completedTrainings = trainings.filter((item) => item.status === "completed" || item.certification_status === "certified").length
+  const ambassadors = rows.ambassadors.map((ambassador): import("./contracts").AmbassadorProfile => {
+    const territory = ambassador.territory_id ? territoryById.get(text(ambassador.territory_id)) : null
+    const missions = missionByAmbassador.get(text(ambassador.id)) || []
+    const incentives = incentiveByAmbassador.get(text(ambassador.id)) || []
+    const trainings = trainingByAmbassador.get(text(ambassador.id)) || []
     return {
       ...ambassador,
       territory_name: ambassador.territory_name || territory?.name || "",
       missions_assigned: missions.length,
-      missions_completed: completed,
-      incentives_balance: pending,
-      incentives_paid_total: paid,
-      certification_status: trainings.length && completedTrainings === trainings.length ? "certified" : ambassador.certification_status || "pending",
+      missions_completed: missions.filter((item) => item.status === "completed").length,
+      incentives_balance: incentives.filter((item) => ["pending", "approved"].includes(text(item.status))).reduce((sum, item) => sum + Number(item.amount || item.amount_mad || 0), 0),
+      incentives_paid_total: incentives.filter((item) => item.status === "paid").reduce((sum, item) => sum + Number(item.amount || item.amount_mad || 0), 0),
+      certification_status: trainings.length && trainings.every((item) => item.status === "completed" || item.certification_status === "certified") ? "certified" : ambassador.certification_status || "pending",
     }
   })
 
-  const territories: AnyRecord[] = input.territories.map((territory) => ({
-    ...territory,
-    active_ambassadors_count: activeAmbassadors.filter((ambassador) => String(ambassador.territory_id || "") === String(territory.id)).length,
+  const missions: AmbassadorRecord[] = rows.missions.filter((item) => !item.archived_at && item.status !== "archived").map((mission): AmbassadorRecord => ({
+    ...mission,
+    assigned_ambassadors: (assignmentsByMission.get(text(mission.id)) || []).map((assignment) => ({
+      ambassador_id: assignment.ambassador_id,
+      role: assignment.assignment_role,
+      status: assignment.status,
+      assignment_id: assignment.id,
+    })),
   }))
-
-  const onboarding: AnyRecord[] = input.onboarding.map((item) => ({ ...item, checklist: Array.isArray(item.checklist) ? item.checklist : [], completion_rate: completionRate(Array.isArray(item.checklist) ? item.checklist : []) }))
-  const goals: AnyRecord[] = input.goals.map((item) => ({ ...item, completion_rate: goalCompletion(item) }))
-
-  const missionsActive = input.missions.filter((item) => !item.archived_at && item.status !== "archived")
+  const territories: AmbassadorRecord[] = rows.territories.map((territory): AmbassadorRecord => ({
+    ...territory,
+    active_ambassadors_count: activeTerritoryAssignments.filter((assignment) => text(assignment.territory_id) === text(territory.id)).length,
+  }))
+  const onboarding = rows.onboarding.map((item) => {
+    const checklist = arrayOfRecords(item.checklist)
+    return { ...item, checklist, completion_rate: completionRate(checklist) }
+  })
+  const goals = rows.goals.map((item) => ({ ...item, completion_rate: goalCompletion(item) }))
+  const activeAmbassadors = ambassadors.filter((item) => !["archived", "suspended", "inactive"].includes(text(item.status || item.lifecycle_stage)))
   const activeTerritories = territories.filter((item) => item.status !== "archived")
-  const completedMissions = missionsActive.filter((item) => item.status === "completed").length
   const assignedTerritories = activeTerritories.filter((item) => Number(item.active_ambassadors_count || 0) > 0).length
+  const completedMissions = missions.filter((item) => item.status === "completed").length
   const onboardingCompletion = onboarding.length ? Math.round(onboarding.reduce((sum, item) => sum + Number(item.completion_rate || 0), 0) / onboarding.length) : 0
-  const trainingCompletion = input.training.length ? Math.round((input.training.filter((item) => item.status === "completed" || item.certification_status === "certified").length / input.training.length) * 100) : 0
-  const certificationValidity = input.training.length ? Math.round((input.training.filter((item) => item.certification_status === "certified").length / input.training.length) * 100) : 0
+  const trainingCompletion = rows.training.length ? Math.round((rows.training.filter((item) => item.status === "completed" || item.certification_status === "certified").length / rows.training.length) * 100) : 0
+  const certificationValidity = rows.training.length ? Math.round((rows.training.filter((item) => item.certification_status === "certified").length / rows.training.length) * 100) : 0
   const kpiCompletion = goals.length ? Math.round(goals.reduce((sum, item) => sum + Number(item.completion_rate || 0), 0) / goals.length) : 0
-  const incentivesPaid = input.incentives.filter((item) => item.status === "paid").reduce((sum, item) => sum + Number(item.amount || 0), 0)
-  const incentivesPending = input.incentives.filter((item) => item.status === "pending" || item.status === "approved").reduce((sum, item) => sum + Number(item.amount || 0), 0)
+  const incentivesPaid = rows.incentives.filter((item) => item.status === "paid").reduce((sum, item) => sum + Number(item.amount || item.amount_mad || 0), 0)
+  const incentivesPending = rows.incentives.filter((item) => ["pending", "approved"].includes(text(item.status))).reduce((sum, item) => sum + Number(item.amount || item.amount_mad || 0), 0)
+  const audit = [...rows.audit].sort((a, b) => text(b.created_at).localeCompare(text(a.created_at))).slice(0, 200)
 
-  const snapshot: AmbassadorWorkspaceSnapshot = {
+  return {
     records: ambassadors,
     ambassadors,
     archivedRecords: ambassadors.filter((item) => item.status === "archived"),
     territories,
-    missions: missionsActive,
-    recruitment: input.recruitment,
+    territoryAssignments: input.territoryAssignments,
+    missions,
+    missionAssignments: input.missionAssignments,
+    recruitment: rows.recruitment,
+    leads: rows.leads,
+    conversions: rows.conversions,
     onboarding,
-    training: input.training,
+    training: rows.training,
     goals,
-    incentives: input.incentives,
-    reports: input.reports,
-    settings: input.settings || DEFAULT_SETTINGS,
-    audit: input.audit.sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || ""))).slice(0, 100),
+    incentives: rows.incentives,
+    proofs: rows.proofs,
+    payouts: rows.payouts,
+    reports: rows.reports,
+    settings: input.settings,
+    audit,
     stats: {
-      store: input.source,
-      totalRecords: ambassadors.length + territories.length + missionsActive.length + input.recruitment.length + onboarding.length + input.training.length + goals.length + input.incentives.length + input.reports.length,
+      store: "ambassador-runtime-supabase",
+      totalRecords: ambassadors.length + territories.length + missions.length + rows.recruitment.length + rows.leads.length + rows.conversions.length + onboarding.length + rows.training.length + goals.length + rows.incentives.length + rows.proofs.length + rows.payouts.length + rows.reports.length,
       activeTerritories: activeTerritories.length,
-      activeMissions: missionsActive.length,
+      activeMissions: missions.length,
     },
     kpis: {
       totalAmbassadors: ambassadors.length,
@@ -619,251 +431,664 @@ function enrichSnapshot(input: {
       suspendedAmbassadors: ambassadors.filter((item) => item.status === "suspended").length,
       territoryCoverage: activeTerritories.length ? Math.round((assignedTerritories / activeTerritories.length) * 100) : 0,
       assignedTerritories,
-      missionsAssigned: missionsActive.length,
+      missionsAssigned: missions.length,
       missionsCompleted: completedMissions,
       onboardingCompletion,
-      recruitmentPipeline: input.recruitment.filter((item) => !["converted", "rejected", "archived"].includes(String(item.stage))).length,
+      recruitmentPipeline: rows.recruitment.filter((item) => !["converted", "rejected", "archived"].includes(text(item.stage))).length,
+      leadsOpen: rows.leads.filter((item) => !["converted", "lost", "archived"].includes(text(item.status))).length,
+      conversionsPending: rows.conversions.filter((item) => !["validated", "rejected", "paid", "archived"].includes(text(item.status))).length,
       trainingCompletion,
       certificationValidity,
       kpiCompletion,
       incentivesPaid,
       incentivesPending,
+      proofsPending: rows.proofs.filter((item) => ["submitted", "under_review", "revision_requested"].includes(text(item.status))).length,
+      payoutsPending: rows.payouts.filter((item) => ["draft", "pending_approval", "approved", "processing"].includes(text(item.status))).length,
     },
-    activity: input.audit.slice(0, 20),
-    diagnostics: input.diagnostics,
+    activity: audit.slice(0, 20),
+    diagnostics: [],
     updatedAt: now(),
   }
-  return snapshot
 }
 
-export async function loadAmbassadorWorkspaceSnapshot(): Promise<ServiceResult<AmbassadorWorkspaceSnapshot>> {
-  const diagnostics: AnyRecord[] = []
-  const entries = await Promise.all((Object.keys(ENTITY_CONFIG) as EntityKey[]).map(async (entity) => [entity, await listRaw(entity)] as const))
-  const rows = Object.fromEntries(entries.map(([entity, result]) => {
-    if (result.diagnostic) diagnostics.push(result.diagnostic)
-    return [entity, result.rows]
-  })) as Record<EntityKey, AnyRecord[]>
-  const settingsResult = await tryDbSettings()
-  let settings = DEFAULT_SETTINGS
-  if (settingsResult.ok) settings = { ...DEFAULT_SETTINGS, ...(settingsResult.data as AnyRecord) }
-  else {
-    diagnostics.push({ area: "settings", store: "local-store", reason: settingsResult.reason })
-    settings = readLocalStore().settings || DEFAULT_SETTINGS
+export async function loadAmbassadorWorkspaceSnapshot(actor: AmbassadorActor): Promise<AmbassadorServiceResult<AmbassadorWorkspaceSnapshot>> {
+  try {
+    requireAmbassadorPermission(actor, "ambassadors.read")
+    const entityKeys = Object.keys(ENTITY_CONFIG) as AmbassadorEntityKey[]
+    const readable = entityKeys.filter((entity) => actorCan(actor, READ_PERMISSION[entity]))
+    const entries = await Promise.all(readable.map(async (entity) => [entity, await listRows(entity, actor, entity === "audit" ? 200 : 500)] as const))
+    const rows = Object.fromEntries(entityKeys.map((entity) => [entity, [] as AmbassadorRecord[]])) as unknown as Record<AmbassadorEntityKey, AmbassadorRecord[]>
+    for (const [entity, values] of entries) rows[entity] = values
+    const settings = actorCan(actor, "settings.read") ? { ...DEFAULT_SETTINGS, ...(await getSettingsRow(actor) || {}) } : { ...DEFAULT_SETTINGS }
+    const assignments = await assignmentsForSnapshot(actor)
+    const snapshot = enrichSnapshot({ rows, settings, ...assignments })
+    return success(snapshot, { snapshot })
+  } catch (error) {
+    return failure(error)
   }
-  const source = diagnostics.length ? "ambassador-runtime-local-fallback" : "ambassador-runtime-supabase"
-  const snapshot = enrichSnapshot({
-    ambassadors: rows.ambassadors || [],
-    territories: rows.territories || [],
-    missions: rows.missions || [],
-    recruitment: rows.recruitment || [],
-    onboarding: rows.onboarding || [],
-    training: rows.training || [],
-    goals: rows.goals || [],
-    incentives: rows.incentives || [],
-    reports: rows.reports || [],
-    audit: rows.audit || [],
-    settings,
-    diagnostics,
-    source,
-  })
-  return { ok: true, source, data: snapshot, snapshot, diagnostics }
 }
 
 export const loadAmbassadorServerSnapshot = loadAmbassadorWorkspaceSnapshot
 
-export async function listAmbassadorEntity(entity: EntityKey): Promise<ServiceResult<AnyRecord[]>> {
-  const result = await listRaw(entity)
-  return { ok: true, source: `ambassador-${result.source}`, data: result.rows, records: result.rows, items: result.rows, diagnostics: result.diagnostic ? [result.diagnostic] : [] }
+export async function listAmbassadorEntity(actor: AmbassadorActor, entity: AmbassadorEntityKey): Promise<AmbassadorServiceResult<AmbassadorRecord[]>> {
+  try {
+    requireAmbassadorPermission(actor, READ_PERMISSION[entity])
+    const records = await listRows(entity, actor, entity === "audit" ? 200 : 500)
+    return success(records, { records, items: records })
+  } catch (error) {
+    return failure(error)
+  }
 }
 
-export async function getAmbassadorEntity(entity: EntityKey, id: string): Promise<ServiceResult<AnyRecord | null>> {
-  const result = await getRaw(entity, id)
-  return { ok: Boolean(result.row), source: `ambassador-${result.source}`, data: result.row, record: result.row, error: result.row ? null : "Record not found", diagnostics: result.diagnostic ? [result.diagnostic] : [] }
+export async function getAmbassadorEntity(actor: AmbassadorActor, entity: AmbassadorEntityKey, id: string): Promise<AmbassadorServiceResult<AmbassadorRecord | null>> {
+  try {
+    requireAmbassadorPermission(actor, READ_PERMISSION[entity])
+    const record = await getRow(entity, id, actor)
+    if (!record) throw new AmbassadorServiceError("NOT_FOUND", "Record not found", 404)
+    return success(record, { record })
+  } catch (error) {
+    return failure(error)
+  }
 }
 
-export async function createAmbassadorEntity(entity: EntityKey, payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const validationError = validateEntity(entity, payload)
-  if (validationError) return { ok: false, source: "ambassador-validation", error: validationError }
-  const row = cleanPayload(entity, payload)
-  const db = await tryDbUpsert(entity, row)
-  const record = db.ok ? (db.data as AnyRecord) : upsertLocal(entity, row)
-  await writeAudit(entity, record.id, "create", `Created ${entity} record`, record)
-  const snapshotResult = await loadAmbassadorWorkspaceSnapshot()
-  return { ok: true, source: db.ok ? "ambassador-supabase" : "ambassador-local-store", data: record, record, snapshot: snapshotResult.snapshot }
-}
-
-export async function updateAmbassadorEntity(entity: EntityKey, idOrPayload: string | AnyRecord, patch?: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const id = typeof idOrPayload === "string" ? idOrPayload : String(idOrPayload.id || "")
-  const payload = typeof idOrPayload === "string" ? (patch || {}) : idOrPayload
-  if (!id) return { ok: false, source: "ambassador-validation", error: "Missing record id" }
-  const existing = (await getRaw(entity, id)).row || {}
-  const next = cleanPayload(entity, { ...existing, ...payload, id }, existing)
-  const db = await tryDbPatch(entity, id, next)
-  const record = db.ok ? (db.data as AnyRecord) : patchLocal(entity, id, next)
-  await writeAudit(entity, id, "update", `Updated ${entity} record`, { before: existing, after: record })
-  const snapshotResult = await loadAmbassadorWorkspaceSnapshot()
-  return { ok: true, source: db.ok ? "ambassador-supabase" : "ambassador-local-store", data: record, record, snapshot: snapshotResult.snapshot }
-}
-
-export async function archiveAmbassadorEntity(entity: EntityKey, id: string): Promise<ServiceResult<AnyRecord>> {
-  if (!id) return { ok: false, source: "ambassador-validation", error: "Missing record id" }
-  const config = ENTITY_CONFIG[entity]
-  const patch: AnyRecord = { updated_at: now(), archived_at: now() }
-  if (config.archivedField === "status") patch.status = config.archiveStatus || "archived"
-  if (config.archivedField === "stage") patch.stage = config.archiveStatus || "archived"
-  const db = await tryDbPatch(entity, id, patch)
-  const record = db.ok ? (db.data as AnyRecord) : patchLocal(entity, id, patch)
-  await writeAudit(entity, id, "archive", `Archived ${entity} record`, record)
-  const snapshotResult = await loadAmbassadorWorkspaceSnapshot()
-  return { ok: true, source: db.ok ? "ambassador-supabase" : "ambassador-local-store", data: record, record, snapshot: snapshotResult.snapshot }
-}
-
-export async function assignAmbassadorTerritory(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const ambassadorId = String(payload.ambassador_id || "")
-  const territoryId = String(payload.territory_id || "")
-  if (!ambassadorId || !territoryId) return { ok: false, source: "ambassador-validation", error: "Ambassador and territory are required" }
-  const territory = (await getRaw("territories", territoryId)).row
-  if (!territory) return { ok: false, source: "ambassador-validation", error: "Territory not found" }
-  return updateAmbassadorEntity("ambassadors", ambassadorId, {
-    territory_id: territoryId,
-    territory_name: territory.name,
-    city: payload.city || territory.city,
-    region: payload.region || territory.region,
-  })
-}
-
-export async function assignMissionToAmbassador(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  return updateAmbassadorEntity("missions", String(payload.id || payload.mission_id || ""), {
-    ambassador_id: payload.ambassador_id,
-    status: payload.status || "assigned",
-  })
-}
-
-export async function moveRecruitmentStage(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const id = String(payload.id || "")
-  if (!id) return { ok: false, source: "ambassador-validation", error: "Missing candidate id" }
-  const updated = await updateAmbassadorEntity("recruitment", id, { stage: payload.stage, next_step: payload.next_step, notes: payload.notes })
-  if (updated.ok && payload.stage === "converted" && updated.record && !updated.record.ambassador_id) {
-    const ambassador = await createAmbassadorEntity("ambassadors", {
-      full_name: updated.record.candidate_name,
-      email: updated.record.email,
-      phone: updated.record.phone,
-      city: updated.record.city,
-      region: updated.record.region,
-      status: "active",
-      lifecycle_stage: "active",
-      source: "recruitment-conversion",
-      performance_score: updated.record.evaluation_score || 0,
-    })
-    if (ambassador.ok && ambassador.record) {
-      await updateAmbassadorEntity("recruitment", id, { ambassador_id: ambassador.record.id })
+export async function createAmbassadorEntity(actor: AmbassadorActor, entity: AmbassadorEntityKey, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    if (entity === "audit") throw new AmbassadorServiceError("FORBIDDEN", "Audit events are server-generated and immutable", 403)
+    requireAmbassadorPermission(actor, WRITE_PERMISSION[entity])
+    let row = applyDefaults(entity, cleanEntityPayload(entity, payload, null, actor), null)
+    if (entity === "ambassadors") { row.status = "candidate"; row.lifecycle_stage = "candidate" }
+    if (entity === "missions") row.status = "draft"
+    if (entity === "recruitment") row.stage = "sourced"
+    if (entity === "leads") row.status = "new"
+    if (entity === "conversions") row.status = "pending"
+    validateBusinessRules(entity, row)
+    if (entity === "recruitment") await assertCandidateUnique(actor, String(row.identity_hash))
+    if (entity === "incentives") {
+      row.status = "pending"
+      row.approved_by = null
+      row.approved_by_actor_id = null
+      row.approved_at = null
+      row.paid_at = null
     }
+    if (entity === "proofs") {
+      row.status = "submitted"
+      row.reviewed_by_actor_id = null
+      row.reviewed_at = null
+    }
+    if (entity === "payouts") row.status = "draft"
+    const record = await insertRow(entity, row, actor)
+    await writeAudit(actor, { entityType: entity, entityId: text(record.id), action: "create", summary: `Created ${entity} record`, after: record })
+
+    if (entity === "missions") {
+      const ambassadorIds = Array.from(new Set([...(Array.isArray(payload.ambassador_ids) ? payload.ambassador_ids : []), payload.ambassador_id].map(text).filter(Boolean)))
+      if (ambassadorIds.length) await assignMissionToAmbassador(actor, { id: text(record.id), ambassador_ids: ambassadorIds, assignment_role: "primary" })
+    }
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
   }
-  return updated
 }
 
-export async function completeOnboardingStep(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const id = String(payload.id || "")
-  const stepId = String(payload.step_id || "")
-  if (!id || !stepId) return { ok: false, source: "ambassador-validation", error: "Onboarding id and step id are required" }
-  const existing = (await getRaw("onboarding", id)).row
-  if (!existing) return { ok: false, source: "ambassador-validation", error: "Onboarding record not found" }
-  const checklist = Array.isArray(existing.checklist) ? existing.checklist.map((step: AnyRecord) => step.id === stepId ? { ...step, done: Boolean(payload.done) } : step) : []
-  return updateAmbassadorEntity("onboarding", id, { checklist, completion_rate: completionRate(checklist), completed_at: completionRate(checklist) >= 100 ? now() : null })
-}
-
-export async function recalculateGoal(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const id = String(payload.id || "")
-  if (!id) return { ok: false, source: "ambassador-validation", error: "Missing goal id" }
-  const existing = (await getRaw("goals", id)).row
-  if (!existing) return { ok: false, source: "ambassador-validation", error: "Goal not found" }
-  return updateAmbassadorEntity("goals", id, { completion_rate: goalCompletion(existing), status: goalCompletion(existing) >= 100 ? "achieved" : existing.status || "tracking" })
-}
-
-export async function decideIncentive(payload: AnyRecord, decision: "approved" | "rejected" | "paid"): Promise<ServiceResult<AnyRecord>> {
-  const id = String(payload.id || "")
-  if (!id) return { ok: false, source: "ambassador-validation", error: "Missing incentive id" }
-  const patch: AnyRecord = { status: decision }
-  if (decision === "approved") {
-    patch.approved_by = payload.approved_by || DEFAULT_ACTOR
-    patch.approved_at = now()
+export async function updateAmbassadorEntity(actor: AmbassadorActor, entity: AmbassadorEntityKey, idOrPayload: string | Record<string, unknown>, patch?: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    if (entity === "audit") throw new AmbassadorServiceError("FORBIDDEN", "Audit events are immutable", 403)
+    requireAmbassadorPermission(actor, WRITE_PERMISSION[entity])
+    const id = typeof idOrPayload === "string" ? idOrPayload : text(idOrPayload.id)
+    const payload = typeof idOrPayload === "string" ? patch || {} : idOrPayload
+    if (!id) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing record id", 400)
+    rejectControlledGenericMutation(entity, payload)
+    const existing = await getRow(entity, id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Record not found", 404)
+    let next = applyDefaults(entity, cleanEntityPayload(entity, { ...existing, ...payload, id }, existing, actor), existing)
+    validateBusinessRules(entity, next)
+    const lifecycle = ENTITY_LIFECYCLES[entity]
+    if (lifecycle && normalizeLifecycleValue(existing[lifecycle.field]) !== normalizeLifecycleValue(next[lifecycle.field])) {
+      assertTransitionPermission(actor, entity)
+      assertTransition(entity, existing, next)
+    }
+    if (entity === "recruitment" && next.identity_hash && next.identity_hash !== existing.identity_hash) {
+      await assertCandidateUnique(actor, String(next.identity_hash), id)
+    }
+    const record = await updateRow(entity, id, next, actor)
+    await writeAudit(actor, { entityType: entity, entityId: id, action: "update", summary: `Updated ${entity} record`, before: existing, after: record })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
   }
-  if (decision === "paid") {
-    patch.paid_at = now()
-    patch.approved_by = payload.approved_by || DEFAULT_ACTOR
-    patch.approved_at = payload.approved_at || now()
+}
+
+export async function archiveAmbassadorEntity(actor: AmbassadorActor, entity: AmbassadorEntityKey, id: string): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    if (entity === "audit") throw new AmbassadorServiceError("FORBIDDEN", "Audit events are immutable", 403)
+    requireAmbassadorPermission(actor, entity === "ambassadors" ? "ambassadors.archive" : WRITE_PERMISSION[entity])
+    const existing = await getRow(entity, id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Record not found", 404)
+    const lifecycle = ENTITY_LIFECYCLES[entity]
+    const patch: AmbassadorRecord = { id, archived_at: now(), updated_by_actor_id: actor.actorId }
+    if (lifecycle) {
+      assertTransitionPermission(actor, entity)
+      assertLifecycleTransition(entity, existing[lifecycle.field], "archived")
+      patch[lifecycle.field] = "archived"
+      if (lifecycle.field !== "status" && "status" in existing) patch.status = "archived"
+    } else if ("status" in existing) patch.status = "archived"
+    const record = await updateRow(entity, id, patch, actor)
+    await writeAudit(actor, { entityType: entity, entityId: id, action: "archive", summary: `Archived ${entity} record`, before: existing, after: record })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
   }
-  if (payload.reason) patch.reason = payload.reason
-  return updateAmbassadorEntity("incentives", id, patch)
 }
 
-export async function updateMissionStatus(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const id = String(payload.id || "")
-  if (!id) return { ok: false, source: "ambassador-validation", error: "Missing mission id" }
-  const status = String(payload.status || "completed")
-  return updateAmbassadorEntity("missions", id, { status, completed_at: status === "completed" ? now() : null })
+async function revokePreviousPrimaryTerritories(actor: AmbassadorActor, ambassadorId: string, exceptAssignmentId: string): Promise<void> {
+  const timestamp = now()
+  const result = await getAmbassadorSupabaseAdmin()
+    .from(TERRITORY_ASSIGNMENTS_TABLE)
+    .update({ status: "revoked", valid_to: timestamp, revoked_by_actor_id: actor.actorId, updated_by_actor_id: actor.actorId })
+    .eq("tenant_id", actor.tenantId)
+    .eq("organization_id", actor.organizationId)
+    .eq("ambassador_id", ambassadorId)
+    .eq("assignment_type", "primary")
+    .eq("status", "approved")
+    .neq("id", exceptAssignmentId)
+  if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
 }
 
-export async function getAmbassadorSettings(): Promise<ServiceResult<AnyRecord>> {
-  const db = await tryDbSettings()
-  const settings = db.ok ? { ...DEFAULT_SETTINGS, ...(db.data as AnyRecord) } : (readLocalStore().settings || DEFAULT_SETTINGS)
-  return { ok: true, source: db.ok ? "ambassador-supabase" : "ambassador-local-store", data: settings, record: settings }
-}
-
-export async function updateAmbassadorSettings(payload: AnyRecord): Promise<ServiceResult<AnyRecord>> {
-  const settings = { ...DEFAULT_SETTINGS, ...payload, id: DEFAULT_SETTINGS.id, updated_at: now() }
-  const db = await tryDbSettingsUpsert(settings)
-  let record: AnyRecord = settings
-  if (db.ok) record = db.data as AnyRecord
-  else {
-    const store = readLocalStore()
-    store.settings = settings
-    writeLocalStore(store)
+async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Record<string, unknown>, initialStatus: "pending" | "approved"): Promise<AmbassadorTerritoryAssignment> {
+  const ambassadorId = text(payload.ambassador_id)
+  const territoryId = text(payload.territory_id)
+  if (!ambassadorId || !territoryId) throw new AmbassadorServiceError("VALIDATION_ERROR", "Ambassador and territory are required", 400)
+  const [ambassador, territory] = await Promise.all([getRow("ambassadors", ambassadorId, actor), getRow("territories", territoryId, actor)])
+  if (!ambassador) throw new AmbassadorServiceError("NOT_FOUND", "Ambassador not found", 404)
+  if (!territory) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
+  if (["archived", "suspended", "inactive"].includes(normalizeLifecycleValue(ambassador.status || ambassador.lifecycle_stage))) {
+    throw new AmbassadorServiceError("GATE_BLOCKED", "Archived, suspended or inactive ambassadors cannot be assigned", 409)
   }
-  await writeAudit("settings", record.id, "update", "Updated Ambassador module settings", record)
-  return { ok: true, source: db.ok ? "ambassador-supabase" : "ambassador-local-store", data: record, record }
+  const assignmentType = text(payload.assignment_type) || "primary"
+  const externalKey = text(payload.assignment_id || payload.external_assignment_key) || null
+  const idempotencyKey = text(payload.idempotency_key) || `${ambassadorId}:${territoryId}:${assignmentType}:${externalKey || "direct"}`
+  const existingResult = await getAmbassadorSupabaseAdmin()
+    .from(TERRITORY_ASSIGNMENTS_TABLE)
+    .select("*")
+    .eq("tenant_id", actor.tenantId)
+    .eq("organization_id", actor.organizationId)
+    .eq("idempotency_key", idempotencyKey)
+    .maybeSingle()
+  if (existingResult.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", existingResult.error.message, 503)
+  if (existingResult.data) return existingResult.data as AmbassadorTerritoryAssignment
+
+  const row = {
+    id: randomUUID(),
+    tenant_id: actor.tenantId,
+    organization_id: actor.organizationId,
+    ambassador_id: ambassadorId,
+    territory_id: territoryId,
+    assignment_type: assignmentType,
+    coverage_mode: payload.coverage_mode || null,
+    radius_km: payload.radius_km || null,
+    status: initialStatus,
+    external_assignment_key: externalKey,
+    idempotency_key: idempotencyKey,
+    requested_by_actor_id: actor.actorId,
+    decided_by_actor_id: initialStatus === "approved" ? actor.actorId : null,
+    decision_note: payload.decision_note || null,
+    requested_at: now(),
+    decided_at: initialStatus === "approved" ? now() : null,
+    valid_from: initialStatus === "approved" ? now() : null,
+    valid_to: null,
+    metadata: { source: payload.source || "market-os-ambassadors" },
+    created_by_actor_id: actor.actorId,
+    updated_by_actor_id: actor.actorId,
+  }
+  const result = await getAmbassadorSupabaseAdmin().from(TERRITORY_ASSIGNMENTS_TABLE).insert(row).select("*").single()
+  if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
+  return result.data as AmbassadorTerritoryAssignment
 }
 
-export async function generateAmbassadorReport(payload: AnyRecord): Promise<ServiceResult<{ filename: string; csv: string; report: AnyRecord | null }>> {
-  const snapshot = (await loadAmbassadorWorkspaceSnapshot()).snapshot!
-  const reportType = String(payload.report_type || "ambassadors")
-  const rows = rowsForReport(snapshot, reportType)
-  const csv = buildCsv(rows.headers, rows.rows)
-  const reportResult = await createAmbassadorEntity("reports", {
-    report_type: reportType,
-    title: payload.title || `${reportType} report`,
-    period_start: payload.period_start || null,
-    period_end: payload.period_end || null,
-    generated_by: payload.generated_by || DEFAULT_ACTOR,
-    filters: payload.filters || {},
-    row_count: rows.rows.length,
-    status: "generated",
-  })
-  return {
-    ok: true,
-    source: "ambassador-report-engine",
-    data: {
-      filename: `angelcare-ambassadors-${reportType}-${new Date().toISOString().slice(0, 10)}.csv`,
-      csv,
-      report: reportResult.record || null,
-    },
+export async function assignAmbassadorTerritory(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "territories.assign")
+    const assignment = await persistTerritoryAssignment(actor, payload, "approved")
+    if (assignment.assignment_type === "primary") await revokePreviousPrimaryTerritories(actor, assignment.ambassador_id, assignment.id)
+    const territory = await getRow("territories", assignment.territory_id, actor)
+    if (!territory) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
+    const ambassador = await getRow("ambassadors", assignment.ambassador_id, actor)
+    if (!ambassador) throw new AmbassadorServiceError("NOT_FOUND", "Ambassador not found", 404)
+    const updated = await updateRow("ambassadors", assignment.ambassador_id, {
+      id: assignment.ambassador_id,
+      territory_id: assignment.territory_id,
+      territory_name: territory.name,
+      city: payload.city || territory.city || ambassador.city,
+      region: payload.region || territory.region || ambassador.region,
+      updated_by_actor_id: actor.actorId,
+    }, actor)
+    await writeAudit(actor, {
+      entityType: "territory_assignments",
+      entityId: assignment.id,
+      action: "territory_assignment_approved",
+      summary: `Assigned ${text(updated.full_name) || updated.id} to ${text(territory.name) || territory.id}`,
+      payload: { assignment, source: payload.source || null },
+      before: ambassador,
+      after: updated,
+    })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(updated, { record: updated, assignment, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function decideTerritoryAssignment(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "territories.approve")
+    const decision = normalizeLifecycleValue(payload.decision)
+    if (!text(payload.territory_id) || !text(payload.ambassador_id) || !text(payload.assignment_id)) {
+      throw new AmbassadorServiceError("VALIDATION_ERROR", "territory_id, assignment_id and ambassador_id are required", 400)
+    }
+    if (!["approved", "rejected"].includes(decision)) throw new AmbassadorServiceError("VALIDATION_ERROR", "Decision must be approved or rejected", 400)
+    if (decision === "rejected" && !text(payload.decision_note)) throw new AmbassadorServiceError("VALIDATION_ERROR", "A rejection reason is required", 400)
+
+    let query: any = getAmbassadorSupabaseAdmin()
+      .from(TERRITORY_ASSIGNMENTS_TABLE)
+      .select("*")
+      .eq("tenant_id", actor.tenantId)
+      .eq("organization_id", actor.organizationId)
+      .eq("ambassador_id", text(payload.ambassador_id))
+      .eq("territory_id", text(payload.territory_id))
+    const assignmentId = text(payload.assignment_id)
+    query = /^[0-9a-f-]{36}$/i.test(assignmentId) ? query.eq("id", assignmentId) : query.eq("external_assignment_key", assignmentId)
+    const existingResult = await query.maybeSingle()
+    if (existingResult.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", existingResult.error.message, 503)
+    let assignment = existingResult.data as AmbassadorTerritoryAssignment | null
+    if (!assignment) assignment = await persistTerritoryAssignment(actor, payload, "pending")
+    if (["approved", "rejected"].includes(text(assignment.status))) {
+      if (text(assignment.status) !== decision) throw new AmbassadorServiceError("CONFLICT", "This assignment already has a different final decision", 409)
+      const ambassador = await getRow("ambassadors", assignment.ambassador_id, actor)
+      return success(ambassador || { id: assignment.ambassador_id }, { record: ambassador, assignment, idempotent: true, decision })
+    }
+
+    const updateResult = await getAmbassadorSupabaseAdmin()
+      .from(TERRITORY_ASSIGNMENTS_TABLE)
+      .update({
+        status: decision,
+        decided_by_actor_id: actor.actorId,
+        decision_note: payload.decision_note || null,
+        decided_at: now(),
+        valid_from: decision === "approved" ? now() : null,
+        updated_by_actor_id: actor.actorId,
+      })
+      .eq("id", assignment.id)
+      .eq("tenant_id", actor.tenantId)
+      .eq("organization_id", actor.organizationId)
+      .eq("status", "pending")
+      .select("*")
+      .single()
+    if (updateResult.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", updateResult.error.message, 503)
+    assignment = updateResult.data as AmbassadorTerritoryAssignment
+    let ambassador = await getRow("ambassadors", assignment.ambassador_id, actor)
+    if (!ambassador) throw new AmbassadorServiceError("NOT_FOUND", "Ambassador not found", 404)
+    if (decision === "approved") {
+      if (assignment.assignment_type === "primary") await revokePreviousPrimaryTerritories(actor, assignment.ambassador_id, assignment.id)
+      const territory = await getRow("territories", assignment.territory_id, actor)
+      if (!territory) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
+      ambassador = await updateRow("ambassadors", assignment.ambassador_id, {
+        id: assignment.ambassador_id,
+        territory_id: assignment.territory_id,
+        territory_name: territory.name,
+        city: payload.city || territory.city || ambassador.city,
+        region: payload.region || territory.region || ambassador.region,
+        updated_by_actor_id: actor.actorId,
+      }, actor)
+    }
+    await writeAudit(actor, {
+      entityType: "territory_assignments",
+      entityId: assignment.id,
+      action: decision === "approved" ? "territory_assignment_approved" : "territory_assignment_rejected",
+      summary: `${decision === "approved" ? "Approved" : "Rejected"} territory assignment for ${text(ambassador.full_name) || ambassador.id}`,
+      payload: { assignment, decision_note: payload.decision_note || null },
+      after: ambassador,
+    })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(ambassador, { record: ambassador, assignment, decision, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function assignMissionToAmbassador(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "missions.assign")
+    const missionId = text(payload.id || payload.mission_id)
+    if (!missionId) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing mission id", 400)
+    const mission = await getRow("missions", missionId, actor)
+    if (!mission) throw new AmbassadorServiceError("NOT_FOUND", "Mission not found", 404)
+    const ambassadorIds = Array.from(new Set([...(Array.isArray(payload.ambassador_ids) ? payload.ambassador_ids : []), payload.ambassador_id].map(text).filter(Boolean)))
+    if (!ambassadorIds.length) throw new AmbassadorServiceError("VALIDATION_ERROR", "At least one ambassador is required", 400)
+    const ambassadors = await Promise.all(ambassadorIds.map((id) => getRow("ambassadors", id, actor)))
+    if (ambassadors.some((item) => !item)) throw new AmbassadorServiceError("NOT_FOUND", "One or more ambassadors were not found in the authenticated scope", 404)
+
+    const roleById = payload.roles && typeof payload.roles === "object" ? payload.roles as Record<string, unknown> : {}
+    const rows = ambassadorIds.map((ambassadorId, index) => ({
+      id: randomUUID(),
+      tenant_id: actor.tenantId,
+      organization_id: actor.organizationId,
+      mission_id: missionId,
+      ambassador_id: ambassadorId,
+      assignment_role: text(roleById[ambassadorId]) || (index === 0 ? text(payload.assignment_role) || "primary" : "support"),
+      status: "assigned",
+      assigned_by_actor_id: actor.actorId,
+      assigned_at: now(),
+      idempotency_key: `${missionId}:${ambassadorId}`,
+      metadata: { source: payload.source || "market-os-ambassadors" },
+      created_by_actor_id: actor.actorId,
+      updated_by_actor_id: actor.actorId,
+    }))
+    const result = await getAmbassadorSupabaseAdmin()
+      .from(MISSION_ASSIGNMENTS_TABLE)
+      .upsert(rows, { onConflict: "tenant_id,organization_id,mission_id,ambassador_id" })
+      .select("*")
+    if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
+
+    const currentStatus = normalizeLifecycleValue(mission.status)
+    const patch: AmbassadorRecord = {
+      id: missionId,
+      ambassador_id: ambassadorIds[0],
+      assigned_ambassador_id: ambassadorIds[0],
+      updated_by_actor_id: actor.actorId,
+    }
+    if (currentStatus === "draft") patch.status = "assigned"
+    const updated = await updateRow("missions", missionId, patch, actor)
+    await writeAudit(actor, {
+      entityType: "mission_assignments",
+      entityId: missionId,
+      action: "mission_ambassadors_assigned",
+      summary: `Assigned ${ambassadorIds.length} ambassador(s) to mission`,
+      payload: { assignment_ids: (result.data || []).map((item: AmbassadorRecord) => item.id), ambassador_ids: ambassadorIds },
+      before: mission,
+      after: updated,
+    })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(updated, { record: updated, assignments: result.data || [], snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function moveRecruitmentStage(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "recruitment.transition")
+    const id = text(payload.id)
+    const target = normalizeLifecycleValue(payload.stage)
+    if (!id || !target) throw new AmbassadorServiceError("VALIDATION_ERROR", "Candidate id and target stage are required", 400)
+    const existing = await getRow("recruitment", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Candidate not found", 404)
+    assertLifecycleTransition("recruitment", existing.stage, target)
+    if (target === "converted") {
+      requireAmbassadorPermission(actor, "recruitment.convert")
+      const response = await rpc<Record<string, unknown>>("market_os_ambassador_convert_candidate", {
+        p_candidate_id: id,
+        p_actor_id: actor.actorId,
+        p_tenant_id: actor.tenantId,
+        p_organization_id: actor.organizationId,
+        p_idempotency_key: text(payload.idempotency_key) || `candidate-conversion:${id}`,
+      })
+      const record = response.candidate as AmbassadorRecord
+      const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+      return success(record, { record, ambassador: response.ambassador, idempotent: Boolean(response.idempotent), snapshot: snapshotResult.snapshot })
+    }
+    const record = await updateRow("recruitment", id, {
+      id,
+      stage: target,
+      next_step: payload.next_step,
+      notes: payload.notes,
+      updated_by_actor_id: actor.actorId,
+    }, actor)
+    await writeAudit(actor, { entityType: "recruitment", entityId: id, action: "recruitment_stage_transition", summary: `Moved candidate from ${text(existing.stage)} to ${target}`, payload: { from: existing.stage, to: target }, before: existing, after: record })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function completeOnboardingStep(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "onboarding.write")
+    const id = text(payload.id)
+    const stepId = text(payload.step_id)
+    if (!id || !stepId) throw new AmbassadorServiceError("VALIDATION_ERROR", "Onboarding id and step id are required", 400)
+    const existing = await getRow("onboarding", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Onboarding record not found", 404)
+    const checklist = arrayOfRecords(existing.checklist).map((step) => text(step.id) === stepId ? { ...step, done: Boolean(payload.done), completed_by_actor_id: payload.done ? actor.actorId : null, completed_at: payload.done ? now() : null } : step)
+    const rate = completionRate(checklist)
+    const record = await updateRow("onboarding", id, { id, checklist, completion_rate: rate, stage: rate >= 100 ? "completed" : existing.stage, completed_at: rate >= 100 ? now() : null, updated_by_actor_id: actor.actorId }, actor)
+    await writeAudit(actor, { entityType: "onboarding", entityId: id, action: "onboarding_checklist_updated", summary: `Updated onboarding checklist step ${stepId}`, payload: { step_id: stepId, done: Boolean(payload.done), completion_rate: rate }, before: existing, after: record })
+    return success(record, { record })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function recalculateGoal(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "goals.write")
+    const id = text(payload.id)
+    if (!id) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing goal id", 400)
+    const existing = await getRow("goals", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Goal not found", 404)
+    const rate = goalCompletion(existing)
+    const record = await updateRow("goals", id, { id, completion_rate: rate, status: rate >= 100 ? "achieved" : existing.status || "tracking", updated_by_actor_id: actor.actorId }, actor)
+    await writeAudit(actor, { entityType: "goals", entityId: id, action: "goal_recalculated", summary: "Recalculated Ambassador goal", payload: { completion_rate: rate }, before: existing, after: record })
+    return success(record, { record })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function decideConversion(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "conversions.review")
+    const id = text(payload.id || payload.conversion_id)
+    const status = normalizeLifecycleValue(payload.status || payload.validation_decision || "validated")
+    if (!id) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing conversion id", 400)
+    const existing = await getRow("conversions", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Conversion not found", 404)
+    assertLifecycleTransition("conversions", existing.status, status)
+    if (status === "validated") {
+      const proofId = text(payload.proof_id || existing.proof_id)
+      if (!proofId) throw new AmbassadorServiceError("GATE_BLOCKED", "An approved proof is required before conversion validation", 409)
+      const proof = await getRow("proofs", proofId, actor)
+      if (!proof || proof.status !== "approved") throw new AmbassadorServiceError("GATE_BLOCKED", "The linked proof is not approved", 409)
+    }
+    const patch: AmbassadorRecord = {
+      id,
+      status,
+      validation_decision: status,
+      validation_note: payload.validation_note || payload.notes || null,
+      validated_by: actor.displayName,
+      validated_by_actor_id: actor.actorId,
+      updated_by_actor_id: actor.actorId,
+    }
+    if (status === "validated") patch.validated_at = now()
+    if (status === "rejected") patch.rejected_at = now()
+    const record = await updateRow("conversions", id, patch, actor)
+    await writeAudit(actor, { entityType: "conversions", entityId: id, action: `conversion_${status}`, summary: `Conversion decision: ${status}`, payload: { note: patch.validation_note }, before: existing, after: record })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function decideProof(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "proofs.review")
+    const id = text(payload.id || payload.proof_id)
+    const decision = normalizeLifecycleValue(payload.status || payload.decision)
+    if (!id || !["approved", "rejected", "revision_requested", "under_review"].includes(decision)) {
+      throw new AmbassadorServiceError("VALIDATION_ERROR", "Proof id and a valid decision are required", 400)
+    }
+    if (["rejected", "revision_requested"].includes(decision) && !text(payload.review_note || payload.reason)) {
+      throw new AmbassadorServiceError("VALIDATION_ERROR", "A review note is required", 400)
+    }
+    const existing = await getRow("proofs", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Proof not found", 404)
+    assertLifecycleTransition("proofs", existing.status, decision)
+    const record = await updateRow("proofs", id, {
+      id,
+      status: decision,
+      review_note: payload.review_note || payload.reason || null,
+      reviewed_by_actor_id: actor.actorId,
+      reviewed_at: now(),
+      updated_by_actor_id: actor.actorId,
+    }, actor)
+    await writeAudit(actor, { entityType: "proofs", entityId: id, action: `proof_${decision}`, summary: `Proof decision: ${decision}`, payload: { review_note: record.review_note }, before: existing, after: record })
+    return success(record, { record })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function decideIncentive(actor: AmbassadorActor, payload: Record<string, unknown>, decision: "approved" | "rejected" | "paid"): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    const permission: AmbassadorPermission = decision === "paid" ? "payouts.execute" : "rewards.approve"
+    requireAmbassadorPermission(actor, permission)
+    const id = text(payload.id)
+    if (!id) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing incentive id", 400)
+    const existing = await getRow("incentives", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Incentive not found", 404)
+    assertLifecycleTransition("incentives", existing.status, decision)
+    if (decision === "approved" && !(await approvedRewardSource(actor, existing))) {
+      throw new AmbassadorServiceError("GATE_BLOCKED", "Reward approval requires an approved proof or validated conversion", 409)
+    }
+    if (decision === "paid" && existing.status !== "approved") {
+      throw new AmbassadorServiceError("GATE_BLOCKED", "Only an approved reward can be paid", 409)
+    }
+    const response = await rpc<Record<string, unknown>>("market_os_ambassador_decide_incentive", {
+      p_incentive_id: id,
+      p_decision: decision,
+      p_actor_id: actor.actorId,
+      p_tenant_id: actor.tenantId,
+      p_organization_id: actor.organizationId,
+      p_reason: text(payload.reason) || null,
+      p_payment_reference: text(payload.payment_reference) || null,
+      p_idempotency_key: text(payload.idempotency_key) || `${decision}:${id}`,
+    })
+    const record = response.incentive as AmbassadorRecord
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, payout: response.payout || null, idempotent: Boolean(response.idempotent), snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function updateMissionStatus(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "missions.transition")
+    const id = text(payload.id)
+    const status = normalizeLifecycleValue(payload.status || "completed")
+    if (!id) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing mission id", 400)
+    const existing = await getRow("missions", id, actor)
+    if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Mission not found", 404)
+    assertLifecycleTransition("missions", existing.status, status)
+    if (["approved", "completed"].includes(status) && existing.proof_required !== false) {
+      const proof = await approvedProofForMission(actor, id)
+      if (!proof) throw new AmbassadorServiceError("GATE_BLOCKED", "Mission approval or completion requires an approved proof", 409)
+    }
+    const record = await updateRow("missions", id, { id, status, completed_at: status === "completed" ? now() : null, updated_by_actor_id: actor.actorId }, actor)
+    if (status === "completed") {
+      const assignmentResult = await getAmbassadorSupabaseAdmin()
+        .from(MISSION_ASSIGNMENTS_TABLE)
+        .update({ status: "completed", completed_at: now(), updated_by_actor_id: actor.actorId })
+        .eq("tenant_id", actor.tenantId)
+        .eq("organization_id", actor.organizationId)
+        .eq("mission_id", id)
+        .in("status", ["assigned", "accepted"])
+      if (assignmentResult.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", assignmentResult.error.message, 503)
+    }
+    await writeAudit(actor, { entityType: "missions", entityId: id, action: `mission_${status}`, summary: `Mission transitioned to ${status}`, payload: { from: existing.status, to: status }, before: existing, after: record })
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    return success(record, { record, snapshot: snapshotResult.snapshot })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function getAmbassadorSettings(actor: AmbassadorActor): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "settings.read")
+    const record = { ...DEFAULT_SETTINGS, ...(await getSettingsRow(actor) || {}) }
+    return success(record, { record })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function updateAmbassadorSettings(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+  try {
+    requireAmbassadorPermission(actor, "settings.write")
+    const existing = await getSettingsRow(actor)
+    const record = await upsertSettingsRow({
+      ...DEFAULT_SETTINGS,
+      ...(existing || {}),
+      ...payload,
+      id: existing?.id || randomUUID(),
+      tenant_id: actor.tenantId,
+      organization_id: actor.organizationId,
+      created_by_actor_id: existing?.created_by_actor_id || actor.actorId,
+      updated_by_actor_id: actor.actorId,
+    }, actor)
+    await writeAudit(actor, { entityType: SETTINGS_TABLE, entityId: text(record.id), action: "settings_updated", summary: "Updated Ambassador module settings", before: existing, after: record })
+    return success(record, { record })
+  } catch (error) {
+    return failure(error)
+  }
+}
+
+export async function generateAmbassadorReport(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<{ filename: string; csv: string; report: AmbassadorRecord | null }>> {
+  try {
+    requireAmbassadorPermission(actor, "reports.generate")
+    const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+    if (!snapshotResult.ok || !snapshotResult.snapshot) throw new AmbassadorServiceError("PERSISTENCE_ERROR", snapshotResult.error || "Snapshot unavailable", 503)
+    const reportType = text(payload.report_type) || "ambassadors"
+    const rows = rowsForReport(snapshotResult.snapshot, reportType)
+    const csv = buildCsv(rows.headers, rows.rows)
+    const reportResult = await createAmbassadorEntity(actor, "reports", {
+      report_type: reportType,
+      title: payload.title || `${reportType} report`,
+      period_start: payload.period_start || null,
+      period_end: payload.period_end || null,
+      generated_by: actor.displayName,
+      generated_by_actor_id: actor.actorId,
+      filters: payload.filters || {},
+      row_count: rows.rows.length,
+      status: "generated",
+    })
+    if (!reportResult.ok) throw new AmbassadorServiceError(reportResult.code || "PERSISTENCE_ERROR", reportResult.error || "Report record could not be persisted", Number(reportResult.status || 503))
+    return { ok: true, source: "ambassador-report-engine", data: { filename: `angelcare-ambassadors-${reportType}-${new Date().toISOString().slice(0, 10)}.csv`, csv, report: reportResult.record || null } }
+  } catch (error) {
+    return failure(error)
   }
 }
 
 function rowsForReport(snapshot: AmbassadorWorkspaceSnapshot, reportType: string): { headers: string[]; rows: unknown[][] } {
-  if (reportType.includes("territor")) return { headers: ["Territory", "City", "Region", "Goal", "Active", "Manager", "Status"], rows: snapshot.territories.map((item: any) => [item.name, item.city, item.region, item.coverage_goal, item.active_ambassadors_count, item.manager_name, item.status]) }
-  if (reportType.includes("mission")) return { headers: ["Mission", "Ambassador", "City", "Status", "Due", "Completed"], rows: snapshot.missions.map((item: any) => [item.title, item.ambassador_id, item.city, item.status, item.due_date, item.completed_at]) }
-  if (reportType.includes("recruit")) return { headers: ["Candidate", "Email", "Phone", "City", "Stage", "Score", "Next Step"], rows: snapshot.recruitment.map((item: any) => [item.candidate_name, item.email, item.phone, item.city, item.stage, item.evaluation_score, item.next_step]) }
-  if (reportType.includes("lead")) return { headers: ["Lead", "Parent", "Phone", "City", "Source", "Status", "Score", "Ambassador"], rows: ((snapshot as any).leads || []).map((item: any) => [item.lead_name, item.parent_name, item.phone, item.city, item.source, item.status, item.score, item.ambassador_id]) }
-  if (reportType.includes("conversion")) return { headers: ["Lead", "Parent", "Ambassador", "City", "Offer", "Value", "Status", "Validated"], rows: ((snapshot as any).conversions || []).map((item: any) => [item.lead_name, item.parent_name, item.ambassador_name || item.ambassador_id, item.city, item.offer_name, item.value, item.status, item.validated_at]) }
-  if (reportType.includes("onboard")) return { headers: ["Ambassador", "Stage", "Completion", "Owner", "Due"], rows: snapshot.onboarding.map((item: any) => [item.ambassador_id, item.stage, item.completion_rate, item.assigned_owner, item.due_date]) }
-  if (reportType.includes("training")) return { headers: ["Ambassador", "Training", "Status", "Certification", "Score", "Valid Until"], rows: snapshot.training.map((item: any) => [item.ambassador_id, item.training_name, item.status, item.certification_status, item.score, item.valid_until]) }
-  if (reportType.includes("goal") || reportType.includes("performance")) return { headers: ["Ambassador", "Goal", "Target", "Current", "Completion", "Status"], rows: snapshot.goals.map((item: any) => [item.ambassador_id, item.goal_type, item.target_value, item.current_value, item.completion_rate, item.status]) }
-  if (reportType.includes("incentive")) return { headers: ["Ambassador", "Type", "Amount", "Currency", "Status", "Approved", "Paid"], rows: snapshot.incentives.map((item: any) => [item.ambassador_id, item.incentive_type, item.amount, item.currency, item.status, item.approved_at, item.paid_at]) }
-  return { headers: ["Name", "Email", "Phone", "City", "Region", "Territory", "Status", "Performance", "KPI", "Missions Completed", "Incentives Pending"], rows: snapshot.ambassadors.map((item: any) => [item.full_name, item.email, item.phone, item.city, item.region, item.territory_name, item.status, item.performance_score, item.kpi_score, item.missions_completed, item.incentives_balance]) }
+  if (reportType.includes("territor")) return { headers: ["Territory", "City", "Region", "Goal", "Active", "Manager", "Status"], rows: snapshot.territories.map((item) => [item.name, item.city, item.region, item.coverage_goal, item.active_ambassadors_count, item.manager_name, item.status]) }
+  if (reportType.includes("mission")) return { headers: ["Mission", "Ambassadors", "City", "Status", "Due", "Completed"], rows: snapshot.missions.map((item) => [item.title, arrayOfRecords(item.assigned_ambassadors).map((entry) => entry.ambassador_id).join(";"), item.city, item.status, item.due_date, item.completed_at]) }
+  if (reportType.includes("recruit")) return { headers: ["Candidate", "Email", "Phone", "City", "Stage", "Score", "Next Step"], rows: snapshot.recruitment.map((item) => [item.candidate_name, item.email, item.phone, item.city, item.stage, item.evaluation_score, item.next_step]) }
+  if (reportType.includes("lead")) return { headers: ["Lead", "Parent", "Phone", "City", "Source", "Status", "Score", "Ambassador"], rows: snapshot.leads.map((item) => [item.lead_name, item.parent_name, item.phone, item.city, item.source, item.status, item.score, item.ambassador_id]) }
+  if (reportType.includes("conversion")) return { headers: ["Lead", "Parent", "Ambassador", "City", "Offer", "Value", "Status", "Validated"], rows: snapshot.conversions.map((item) => [item.lead_name, item.parent_name, item.ambassador_name || item.ambassador_id, item.city, item.offer_name, item.value, item.status, item.validated_at]) }
+  if (reportType.includes("proof")) return { headers: ["Proof", "Mission", "Ambassador", "Status", "Reviewed"], rows: snapshot.proofs.map((item) => [item.title, item.mission_id, item.ambassador_id, item.status, item.reviewed_at]) }
+  if (reportType.includes("payout")) return { headers: ["Ambassador", "Incentive", "Amount", "Status", "Reference", "Paid"], rows: snapshot.payouts.map((item) => [item.ambassador_id, item.incentive_id, item.amount_mad, item.status, item.payment_reference, item.paid_at]) }
+  if (reportType.includes("onboard")) return { headers: ["Ambassador", "Stage", "Completion", "Owner", "Due"], rows: snapshot.onboarding.map((item) => [item.ambassador_id, item.stage, item.completion_rate, item.assigned_owner, item.due_date]) }
+  if (reportType.includes("training")) return { headers: ["Ambassador", "Training", "Status", "Certification", "Score", "Valid Until"], rows: snapshot.training.map((item) => [item.ambassador_id, item.training_name, item.status, item.certification_status, item.score, item.valid_until]) }
+  if (reportType.includes("goal") || reportType.includes("performance")) return { headers: ["Ambassador", "Goal", "Target", "Current", "Completion", "Status"], rows: snapshot.goals.map((item) => [item.ambassador_id, item.goal_type, item.target_value, item.current_value, item.completion_rate, item.status]) }
+  if (reportType.includes("incentive")) return { headers: ["Ambassador", "Type", "Amount", "Currency", "Status", "Approved", "Paid"], rows: snapshot.incentives.map((item) => [item.ambassador_id, item.incentive_type, item.amount, item.currency, item.status, item.approved_at, item.paid_at]) }
+  return { headers: ["Name", "Email", "Phone", "City", "Region", "Territory", "Status", "Performance", "KPI", "Missions Completed", "Incentives Pending"], rows: snapshot.ambassadors.map((item) => [item.full_name, item.email, item.phone, item.city, item.region, item.territory_name, item.status, item.performance_score, item.kpi_score, item.missions_completed, item.incentives_balance]) }
 }
 
-function buildCsv(headers: string[], rows: unknown[][]) {
+function buildCsv(headers: string[], rows: unknown[][]): string {
   const esc = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`
   return [headers.map(esc).join(","), ...rows.map((row) => headers.map((_, index) => esc(row[index])).join(","))].join("\n")
 }
@@ -877,8 +1102,11 @@ export default {
   updateAmbassadorEntity,
   archiveAmbassadorEntity,
   assignAmbassadorTerritory,
+  decideTerritoryAssignment,
   assignMissionToAmbassador,
   completeOnboardingStep,
+  decideConversion,
+  decideProof,
   decideIncentive,
   getAmbassadorSettings,
   moveRecruitmentStage,

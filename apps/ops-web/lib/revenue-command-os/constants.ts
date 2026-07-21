@@ -9,8 +9,8 @@ export const REVENUE_OS_PHASE1_RELEASE_CODE = 'AC-REVENUE-OS-MZ01-FOUNDATION'
 export const REVENUE_OS_PHASE2_RELEASE_CODE = 'AC-REVENUE-OS-MZ02-DIGITAL-TWIN'
 export const REVENUE_OS_PHASE3_RELEASE_CODE = 'AC-REVENUE-OS-MZ03-DOCTRINE-MEMORY'
 export const REVENUE_OS_PHASE3_MODULE_VERSION = '3.0.0-phase3'
-export const REVENUE_OS_RELEASE_CODE = 'AC-REVENUE-OS-MZ04-SIGNAL-FABRIC'
-export const REVENUE_OS_MODULE_VERSION = '4.0.0-phase4'
+export const REVENUE_OS_RELEASE_CODE = 'AC-REVENUE-OS-MZ05-COMMAND-KERNEL'
+export const REVENUE_OS_MODULE_VERSION = '5.0.0-phase5'
 export const REVENUE_OS_DEFAULT_EXECUTION_MODE: RevenueOsExecutionMode = 'shadow'
 
 export const REVENUE_OS_PERMISSIONS = {
@@ -25,6 +25,12 @@ export const REVENUE_OS_PERMISSIONS = {
   signalsAudit: 'revenue_os.signals.audit',
   strategy: 'revenue_os.strategy.manage',
   commands: 'revenue_os.commands.manage',
+  commandsView: 'revenue_os.commands.view',
+  commandsSimulate: 'revenue_os.commands.simulate',
+  commandsExecute: 'revenue_os.commands.execute',
+  commandsApprove: 'revenue_os.commands.approve',
+  commandsRollback: 'revenue_os.commands.rollback',
+  commandsAudit: 'revenue_os.commands.audit',
   approvals: 'revenue_os.approvals.manage',
   audit: 'revenue_os.audit.view',
   settings: 'revenue_os.settings.manage',
@@ -101,13 +107,13 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     label: 'Commandes intelligentes',
     shortLabel: 'Commandes',
     description: 'Noyau des objets de commande versionnés qui orchestreront la bibliothèque des 3 000 intelligences commerciales.',
-    href: '/revenue-command-os/intelligent-commands',
+    href: '/revenue-command-os/command-kernel',
     icon: 'Sparkles',
     order: 60,
     permission: REVENUE_OS_PERMISSIONS.commands,
-    status: 'foundation',
+    status: 'ready',
     accent: 'violet',
-    contractScope: ['Identité', 'Trigger', 'Contexte', 'Outils', 'Validateurs', 'Sortie structurée'],
+    contractScope: ['Registre', 'Éligibilité', 'Routage', 'Déclencheurs', 'Graphes', 'Simulation', 'Versions', 'Rollback', 'Permissions'],
   },
   {
     key: 'active-programs',
@@ -283,6 +289,24 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
     locked: false,
     environment: 'all',
     riskClass: 'controlled',
+  },
+  {
+    key: 'revenue_os.command_kernel',
+    label: 'Noyau gouverné des commandes',
+    description: 'Active le registre, le routage, les graphes, la simulation et les contrôles MZ05 en Shadow.',
+    enabled: true,
+    locked: true,
+    environment: 'all',
+    riskClass: 'controlled',
+  },
+  {
+    key: 'revenue_os.command_external_actions',
+    label: 'Actions externes des commandes',
+    description: 'Reste verrouillé et désactivé pendant MZ05.',
+    enabled: false,
+    locked: true,
+    environment: 'all',
+    riskClass: 'restricted',
   },
   {
     key: 'revenue_os.strategy_execution',

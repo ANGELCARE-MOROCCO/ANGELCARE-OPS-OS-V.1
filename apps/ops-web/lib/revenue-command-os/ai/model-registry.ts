@@ -1,0 +1,3 @@
+import {getRevenueAiConfig} from './config'
+export interface RevenueAiModelRecord {provider:'gemini';modelId:string;role:'primary'|'fallback';enabled:boolean;supportsStructuredOutput:true;supportsTools:true;maxOutputTokens:number}
+export function getRevenueAiModels():RevenueAiModelRecord[]{const c=getRevenueAiConfig();return[{provider:'gemini',modelId:c.primaryModel,role:'primary',enabled:c.enabled,supportsStructuredOutput:true,supportsTools:true,maxOutputTokens:c.maxOutputTokensPerRun},{provider:'gemini',modelId:c.fallbackModel,role:'fallback',enabled:c.enabled&&c.fallbackModel!==c.primaryModel,supportsStructuredOutput:true,supportsTools:true,maxOutputTokens:c.maxOutputTokensPerRun}]}

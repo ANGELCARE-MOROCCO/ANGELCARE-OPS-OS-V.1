@@ -1,0 +1,4 @@
+
+MZ08 application rollback restored from:
+  /mnt/data/mz08_work/sim-target/backups/revenue-command-os/mz08-20260720-204121
+Database was not changed by this script. Apply phase-08/ROLLBACK.sql manually only if required.

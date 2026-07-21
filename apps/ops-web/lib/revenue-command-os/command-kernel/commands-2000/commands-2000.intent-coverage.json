@@ -1,0 +1,266 @@
+[
+  {
+    "intentKey": "detect-signal",
+    "label": "Détecter le signal économique",
+    "family": "market-sensing",
+    "count": 23
+  },
+  {
+    "intentKey": "validate-market-fact",
+    "label": "Valider le fait commercial",
+    "family": "market-sensing",
+    "count": 23
+  },
+  {
+    "intentKey": "identify-monetization-window",
+    "label": "Identifier la fenêtre de monétisation",
+    "family": "market-sensing",
+    "count": 23
+  },
+  {
+    "intentKey": "segment-value-potential",
+    "label": "Qualifier le potentiel de valeur",
+    "family": "segmentation-account-discovery",
+    "count": 23
+  },
+  {
+    "intentKey": "map-economic-buyer",
+    "label": "Cartographier l’acheteur économique",
+    "family": "segmentation-account-discovery",
+    "count": 23
+  },
+  {
+    "intentKey": "map-influence-network",
+    "label": "Cartographier le réseau d’influence",
+    "family": "segmentation-account-discovery",
+    "count": 23
+  },
+  {
+    "intentKey": "establish-value-baseline",
+    "label": "Établir la ligne de base de valeur",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "model-price-corridor",
+    "label": "Modéliser le corridor de prix",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "verify-price-floor",
+    "label": "Vérifier le plancher tarifaire",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "verify-price-ceiling",
+    "label": "Vérifier le plafond tarifaire",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "design-value-package",
+    "label": "Concevoir le package de valeur",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "compare-package-options",
+    "label": "Comparer les options de packaging",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "design-bundle-economics",
+    "label": "Concevoir l’économie du bundle",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "validate-partner-economics",
+    "label": "Valider l’économie partenaire",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "assess-discount-request",
+    "label": "Évaluer la demande de remise",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "build-concession-ladder",
+    "label": "Construire l’échelle de concessions",
+    "family": "proposal-negotiation-closing",
+    "count": 23
+  },
+  {
+    "intentKey": "define-walk-away-point",
+    "label": "Définir le seuil de retrait",
+    "family": "proposal-negotiation-closing",
+    "count": 23
+  },
+  {
+    "intentKey": "protect-margin-scenario",
+    "label": "Protéger la marge par scénario",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "validate-capacity-before-offer",
+    "label": "Valider la capacité avant offre",
+    "family": "qualification-progression",
+    "count": 23
+  },
+  {
+    "intentKey": "validate-evidence-before-claim",
+    "label": "Valider la preuve avant affirmation",
+    "family": "audit-optimization",
+    "count": 23
+  },
+  {
+    "intentKey": "prepare-objection-map",
+    "label": "Préparer la carte d’objections",
+    "family": "proposal-negotiation-closing",
+    "count": 23
+  },
+  {
+    "intentKey": "classify-live-objection",
+    "label": "Classifier l’objection active",
+    "family": "qualification-progression",
+    "count": 23
+  },
+  {
+    "intentKey": "select-objection-response",
+    "label": "Sélectionner la réponse à l’objection",
+    "family": "outreach-channel",
+    "count": 23
+  },
+  {
+    "intentKey": "prepare-negotiation-brief",
+    "label": "Préparer le brief de négociation",
+    "family": "meetings-diagnostics",
+    "count": 23
+  },
+  {
+    "intentKey": "simulate-negotiation-outcomes",
+    "label": "Simuler les issues de négociation",
+    "family": "executive-forecasting",
+    "count": 23
+  },
+  {
+    "intentKey": "design-closing-path",
+    "label": "Concevoir le chemin de closing",
+    "family": "proposal-negotiation-closing",
+    "count": 23
+  },
+  {
+    "intentKey": "verify-closing-readiness",
+    "label": "Vérifier la maturité de closing",
+    "family": "qualification-progression",
+    "count": 23
+  },
+  {
+    "intentKey": "detect-stall-cause",
+    "label": "Détecter la cause de blocage",
+    "family": "pipeline-rescue",
+    "count": 23
+  },
+  {
+    "intentKey": "design-revenue-rescue",
+    "label": "Concevoir le plan de rescue",
+    "family": "pipeline-rescue",
+    "count": 23
+  },
+  {
+    "intentKey": "rank-rescue-actions",
+    "label": "Prioriser les actions de rescue",
+    "family": "pipeline-rescue",
+    "count": 23
+  },
+  {
+    "intentKey": "monitor-payment-promise",
+    "label": "Contrôler la promesse de paiement",
+    "family": "pipeline-rescue",
+    "count": 23
+  },
+  {
+    "intentKey": "prioritize-collection-action",
+    "label": "Prioriser l’action de recouvrement",
+    "family": "pipeline-rescue",
+    "count": 23
+  },
+  {
+    "intentKey": "detect-revenue-leakage",
+    "label": "Détecter la fuite de revenu",
+    "family": "audit-optimization",
+    "count": 23
+  },
+  {
+    "intentKey": "design-account-plan",
+    "label": "Concevoir le plan de compte",
+    "family": "campaign-go-to-market",
+    "count": 23
+  },
+  {
+    "intentKey": "design-network-expansion",
+    "label": "Concevoir l’expansion réseau",
+    "family": "campaign-go-to-market",
+    "count": 23
+  },
+  {
+    "intentKey": "model-reseller-economics",
+    "label": "Modéliser l’économie revendeur",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "model-referral-economics",
+    "label": "Modéliser l’économie de recommandation",
+    "family": "renewal-expansion-referral",
+    "count": 23
+  },
+  {
+    "intentKey": "calculate-lifetime-value",
+    "label": "Calculer la valeur vie client",
+    "family": "executive-forecasting",
+    "count": 23
+  },
+  {
+    "intentKey": "design-cross-unit-bundle",
+    "label": "Concevoir le bundle inter-unités",
+    "family": "offer-pricing",
+    "count": 23
+  },
+  {
+    "intentKey": "monetize-idle-capacity",
+    "label": "Monétiser la capacité sous-utilisée",
+    "family": "campaign-go-to-market",
+    "count": 23
+  },
+  {
+    "intentKey": "optimize-lead-source",
+    "label": "Optimiser la source de leads",
+    "family": "audit-optimization",
+    "count": 23
+  },
+  {
+    "intentKey": "assess-territory-saturation",
+    "label": "Évaluer la saturation territoriale",
+    "family": "executive-forecasting",
+    "count": 23
+  },
+  {
+    "intentKey": "recover-competitive-account",
+    "label": "Récupérer le compte concurrentiel",
+    "family": "pipeline-rescue",
+    "count": 23
+  },
+  {
+    "intentKey": "audit-authority-margin-capacity-evidence",
+    "label": "Auditer autorité, marge, capacité et preuves",
+    "family": "audit-optimization",
+    "count": 11
+  }
+]

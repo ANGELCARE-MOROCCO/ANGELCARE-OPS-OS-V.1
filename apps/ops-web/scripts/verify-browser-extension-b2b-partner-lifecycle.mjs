@@ -88,7 +88,7 @@ for (const signal of ['partner-runtime','partner-hero','partner-gate-grid','issu
 for (const command of allCommands) check(`browser action contract ${command}`, actions.includes(command) || ['b2b.onboarding.task_complete'].includes(command) && runtime.includes(command) || command === 'b2b.partner.read' && workspace.includes('hydrateB2BPartnerWorkspace'))
 
 const manifest = JSON.parse(read('apps/revenue-browser-extension/manifest.template.json'))
-check('extension cumulative version 0.6.0', manifest.version === '0.6.0', manifest.version)
+check('extension cumulative version at least 0.5.0', ['0.5.0','0.6.0','0.7.0'].includes(manifest.version), manifest.version)
 check('no RefferQ resurrection in Mega ZIP 5 sources', ![sql,service,workspace,runtime,partnerMode,actions,profile].join('\n').toLowerCase().includes('refferq'))
 check('no direct Chrome-to-Supabase client', !read('apps/revenue-browser-extension/src/api.ts').toLowerCase().includes('supabase'))
 

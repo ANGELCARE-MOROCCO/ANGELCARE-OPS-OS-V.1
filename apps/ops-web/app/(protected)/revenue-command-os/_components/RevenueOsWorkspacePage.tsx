@@ -77,15 +77,15 @@ const workspaceBlueprints: Record<RevenueOsWorkspaceKey, {
     nextPhase: 'Revenue Strategy Assembly Engine',
   },
   'intelligent-commands': {
-    eyebrow: 'Command Kernel',
+    eyebrow: 'Golden 300 · MZ06',
     title: 'Commandes intelligentes',
-    statement: 'Fondation du catalogue de 3 000 objets de commande versionnés, gouvernés et routés selon le contexte commercial réel.',
+    statement: 'Première bibliothèque active de 300 objets de commande revenus versionnés, gouvernés, testés et routés par le noyau MZ05.',
     columns: [
-      { title: 'Identité commande', items: ['Code', 'Famille', 'Objectif', 'Version', 'Statut'] },
-      { title: 'Activation', items: ['Manuelle', 'Planifiée', 'Événementielle', 'Conditionnelle', 'Command graph'] },
-      { title: 'Contrôle', items: ['Contexte requis', 'Outils permis', 'Validateurs', 'Output schema', 'Performance'] },
+      { title: 'Intégrité', items: ['300 commandes exactes', '12 familles', '25 par famille', '300 versions', 'Empreintes uniques'] },
+      { title: 'Activation', items: ['Manuelle', 'Planifiée', 'Événementielle', 'Conditionnelle', 'Graphes gouvernés'] },
+      { title: 'Contrôle', items: ['Contexte exact', 'Outils bornés', '12 classes de tests', 'Shadow', 'Aucune action externe'] },
     ],
-    nextPhase: 'Golden 300 Revenue Commands',
+    nextPhase: 'Expansion à 1 000 commandes · MZ07',
   },
   'active-programs': {
     eyebrow: 'Revenue Programs',

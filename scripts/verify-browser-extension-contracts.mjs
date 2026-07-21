@@ -34,7 +34,7 @@ for (const relative of mirrors) {
   }
 }
 
-for (const filename of ['b2b-account-intelligence.v2.json', 'b2b-revenue-execution.v3.json', 'b2b-deal-closing.v4.json', 'b2b-partner-lifecycle.v5.json', 'b2b-ai-sales-director.v6.json']) {
+for (const filename of ['b2b-account-intelligence.v2.json', 'b2b-revenue-execution.v3.json', 'b2b-deal-closing.v4.json', 'b2b-partner-lifecycle.v5.json', 'b2b-ai-sales-director.v6.json', 'b2b-production-final.v7.json', 'b2b-scanner-intelligence.v7_1.json', 'b2b-ultra-reality.v9.json']) {
   const source = path.join(root, 'packages/browser-extension-contracts', filename)
   if (!fs.existsSync(source)) {
     errors.push(`Missing implementation supplement: ${filename}`)

@@ -1,0 +1,21 @@
+# Never commit real credentials. Configure these in CI secret storage.
+ANGELCARE_DESKTOP_RELEASE_CHANNEL=stable
+ANGELCARE_DESKTOP_BUILD_ID=git-commit-or-ci-build
+ANGELCARE_DESKTOP_UPDATE_MANIFEST_URL=https://opsmanagement.angelcarehub.com/desktop-updates/stable/update-manifest.json
+ANGELCARE_DESKTOP_UPDATE_ALLOWED_HOSTS=opsmanagement.angelcarehub.com
+# Optional manifest verification public key bundled as a public value only:
+ANGELCARE_DESKTOP_UPDATE_PUBLIC_KEY_PEM=
+
+# macOS signing and notarization
+APPLE_SIGNING_IDENTITY=Developer ID Application: ANGELCARE (...)
+APPLE_ID=
+APPLE_APP_SPECIFIC_PASSWORD=
+APPLE_TEAM_ID=
+
+# Windows code signing
+WINDOWS_CERTIFICATE_FILE=
+WINDOWS_CERTIFICATE_PASSWORD=
+WINDOWS_TIMESTAMP_SERVER=http://timestamp.digicert.com
+
+# Manifest signing (private key path available only inside the trusted release job)
+ANGELCARE_DESKTOP_UPDATE_PRIVATE_KEY_FILE=

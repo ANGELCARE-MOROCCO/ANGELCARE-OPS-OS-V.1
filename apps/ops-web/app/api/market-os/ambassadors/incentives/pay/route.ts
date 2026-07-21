@@ -1,8 +1,8 @@
-import { ambassadorJson, readBody } from "@/lib/market-os/ambassadors/api"
+import { readBody, withAmbassadorActor } from "@/lib/market-os/ambassadors/api"
 import { decideIncentive } from "@/lib/market-os/ambassadors/server"
 
 export const dynamic = "force-dynamic"
 
 export async function PATCH(request: Request) {
-  return ambassadorJson(await decideIncentive(await readBody(request), "paid"))
+  return withAmbassadorActor(request, async (actor) => decideIncentive(actor, await readBody(request), "paid"))
 }

@@ -1,0 +1,22 @@
+# ANGELCARE Revenue Command OS MZ07 — Commands 1000
+
+- Release: `AC-REVENUE-OS-MZ07-COMMANDS-1000`
+- Existing Golden commands: 300
+- New commands: 700
+- Exact operational library: 1,000
+- MZ05 proof fixtures preserved outside operational routing: 12
+- Mandatory coverage domains: 22
+- Canonical families: 12
+- New graphs: 70
+- Cumulative graphs: 94
+- Schedules: 334
+- Contract evaluations: 17,500
+- Routing benchmarks: 100,000
+- Total MZ07 cases: 117,500
+- Pairwise semantic comparisons: 499,500
+- High-similarity documented variants: 61
+- Undocumented duplicates: 0
+- Migration bytes: 34174965
+- Migration SHA-256: `c36fa1cb1a66eb0d0e49e80018146a8b578ffeac477d3c0b323c94142b216d72`
+- External actions: 0
+- Posture: Shadow

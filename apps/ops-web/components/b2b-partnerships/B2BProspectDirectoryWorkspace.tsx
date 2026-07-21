@@ -27,6 +27,7 @@ import {
   sectorGroup,
 } from '@/lib/b2b-partnerships/prospect-workspace-utils'
 import styles from './B2BProspectDirectoryWorkspace.module.css'
+import WhatsAppContextAction from '@/components/whatsapp-os/WhatsAppContextAction'
 
 type WorkspaceMode = 'directory' | 'pipeline'
 type LoadState = 'idle' | 'loading' | 'ready' | 'error'
@@ -630,6 +631,21 @@ export default function B2BProspectDirectoryWorkspace({ defaultMode = 'directory
               </div>
               <button onClick={() => setSelectedId(null)} type="button">×</button>
             </header>
+
+            {selectedProspect ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', padding: '14px 20px', borderBottom: '1px solid rgba(148, 163, 184, 0.22)', background: 'linear-gradient(90deg, rgba(236,253,245,.92), rgba(255,255,255,.98))' }}>
+                <WhatsAppContextAction
+                  contextType="b2b_prospect"
+                  entityId={selectedProspect.id}
+                  purpose={selectedProspect.last_contact_at ? 'follow_up' : 'first_contact'}
+                  sourceRoute={`/b2b-partnerships/prospects?prospect=${selectedProspect.id}`}
+                  label={selectedProspect.last_contact_at ? 'Relancer sur WhatsApp' : 'Contacter sur WhatsApp'}
+                />
+                <span style={{ fontSize: 11, fontWeight: 800, color: '#475569' }}>
+                  Ouverture gouvernée dans ANGELCARE Desktop · envoi manuel uniquement
+                </span>
+              </div>
+            ) : null}
 
             {detailState === 'loading' ? <div className={styles.drawerLoading}>Chargement du dossier prospect…</div> : null}
             {detailState === 'error' ? <div className={styles.drawerLoading}>Impossible de charger le dossier.</div> : null}

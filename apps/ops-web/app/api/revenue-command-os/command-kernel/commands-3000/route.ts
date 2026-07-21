@@ -1,0 +1,14 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentUser } from '@/lib/getUser'
+import commands from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.commands.json'
+import coverage from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.coverage.json'
+import health from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.health.json'
+import performance from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.performance.json'
+import staleness from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.staleness.json'
+import suppression from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.suppression.json'
+import gaps from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.coverage-gaps.json'
+import semantic from '@/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.semantic-duplicate-report.json'
+import { COMMANDS_3000_RELEASE } from '@/lib/revenue-command-os/command-kernel/commands-3000'
+export const dynamic='force-dynamic';export const runtime='nodejs'
+function allowed(user:any){const p=new Set(Array.isArray(user?.permissions)?user.permissions.map(String):[]);return p.has('*')||p.has('revenue_os.commands.view')||p.has('revenue_os.commands.manage')}
+export async function GET(request:NextRequest){const user=await getCurrentUser();if(!user)return NextResponse.json({ok:false,error:'Authentification requise.'},{status:401});if(!allowed(user))return NextResponse.json({ok:false,error:'Permission Commandes 3000 requise.'},{status:403});const url=new URL(request.url);const q=(url.searchParams.get('q')||'').toLowerCase();const family=url.searchParams.get('family');const healthState=url.searchParams.get('health');const page=Math.max(1,Number(url.searchParams.get('page')||1));const size=Math.min(200,Math.max(10,Number(url.searchParams.get('size')||50)));const healthMap=new Map((health as any[]).map(x=>[x.commandCode,x]));let filtered=(commands as any[]).filter(c=>(!family||family==='all'||c.family===family)&&(!q||`${c.commandCode} ${c.name} ${c.purpose} ${c.tags.join(' ')}`.toLowerCase().includes(q))&&(!healthState||healthState==='all'||healthMap.get(c.commandCode)?.healthStatus===healthState));const start=(page-1)*size;return NextResponse.json({ok:true,release:COMMANDS_3000_RELEASE,count:commands.length,filteredCount:filtered.length,page,size,coverage,semantic,suppression,coverageGaps:gaps,commands:filtered.slice(start,start+size).map(c=>({...c,health:healthMap.get(c.commandCode)})),performanceSummary:{commandsMeasured:(performance as any[]).length,benchmarkOnly:(performance as any[]).filter(x=>x.outcomeState==='benchmark-only').length},stalenessSummary:{fresh:(staleness as any[]).filter(x=>x.status==='fresh').length},posture:'shadow',externalActionsEnabled:false})}

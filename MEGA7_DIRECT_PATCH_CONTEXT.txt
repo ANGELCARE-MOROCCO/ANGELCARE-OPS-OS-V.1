@@ -1,0 +1,11 @@
+ANGELCARE Revenue Command Browser OS
+Current cumulative source version: 0.7.0
+Mega ZIP 7 scope: Production Hardening, Security, Deployment and Final B2B Release
+Mega ZIP 8 is not included and remains separately contracted.
+
+Injection must use MEGA7_APPLIED_FILES.txt only.
+Do not replace the full repository.
+Do not include or overwrite private extension signing keys.
+Do not stage, commit or push.
+Apply the Mega ZIP 7 migration after source injection and verification.
+Stable 1.0.0 promotion is prohibited until live acceptance and rollback rehearsal pass.

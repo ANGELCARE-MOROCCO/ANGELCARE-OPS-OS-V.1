@@ -1,0 +1,326 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ09-COMMANDS-3000",
+  "fileCount": 64,
+  "files": [
+    {
+      "path": "ACCEPTANCE_MZ09.md",
+      "sizeBytes": 631,
+      "sha256": "997ae9fc975509c5342795387246223643a77b0cd8755d34707dd65f5eb1c399"
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_CONTINUATION_LEDGER_MZ09.json",
+      "sizeBytes": 709,
+      "sha256": "0e9a5fe065691032a07101a6c0d76c7f590e3be6f06a02683be06ac42889d2a5"
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ09_COMMANDS_3000_REPORT.md",
+      "sizeBytes": 1101,
+      "sha256": "55117b38f753ab9e5db5a5373b0e02f07eaec3f43e5106cb079d0c6930d3acec"
+    },
+    {
+      "path": "CHANGELOG_MZ09.md",
+      "sizeBytes": 540,
+      "sha256": "f47f618687ec06aac1d1626610049dc38977245897aa1cc5d6bbe333b6603f51"
+    },
+    {
+      "path": "INSTALLATION_MZ09.md",
+      "sizeBytes": 575,
+      "sha256": "d3a2bf70768604d4190d19c8f136a555cb45d2d280220f461063fb456f49ac92"
+    },
+    {
+      "path": "INSTALL_MANIFEST_MZ09.txt",
+      "sizeBytes": 4479,
+      "sha256": "b92c499f1f55b13ee7568d531c495d5e42033995b8e366b5d9ad99284bf0de57"
+    },
+    {
+      "path": "README_MZ09.md",
+      "sizeBytes": 446,
+      "sha256": "c8da9e0d7f19c334cb52e208464f67fafd4808c9aac4cde102eb1f922ca804de"
+    },
+    {
+      "path": "ROLLBACK_MZ09.md",
+      "sizeBytes": 523,
+      "sha256": "6fae0274f1a879dbec5611dc227a4952f34212777e6d29db82ec2b2459540e94"
+    },
+    {
+      "path": "apply_revenue_os_mz09.sh",
+      "sizeBytes": 6941,
+      "sha256": "cb1955f33739a5ae280bb5db96f6b767e86246588f328e38604043ef789d9de4"
+    },
+    {
+      "path": "apply_revenue_os_mz09_database.sh",
+      "sizeBytes": 159,
+      "sha256": "fad0996ff09c2c1ba874618420232c37bb7d8b7988ba9bd4c83f828a9590bc1e"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelFrame.tsx",
+      "sizeBytes": 3450,
+      "sha256": "0c348349f0f53103574751c24c149e4ee7eda62554cbf74566ecb8f5508b2741"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelWorkspace.tsx",
+      "sizeBytes": 16534,
+      "sha256": "76fb72d39d8d944a5332e1e1a4bd9143856436ab7606aa7cdd618676e2351a60"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/command-kernel/commands-3000/route.ts",
+      "sizeBytes": 2869,
+      "sha256": "c82cee7ebeacf5ca2f93e997131da16286a630430d673393af6f0397a5e2dd9e"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-09/ACCEPTANCE_EVIDENCE.json",
+      "sizeBytes": 401,
+      "sha256": "1956cf7ee10a1a73fbe06da6b97119b8e398c73e9a22c2d3ce982d8bf4e40480"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-09/KNOWN_LIMITATIONS.md",
+      "sizeBytes": 328,
+      "sha256": "6fbef366919044197fd1fa04fe16182def9c3f47f5e64a63834cca64ea7e002b"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-09/MZ10_DEPENDENCY_MAP.md",
+      "sizeBytes": 425,
+      "sha256": "ee69ac65b23cbc388327ff643c5ce8da0366c68fa0cde0ee30dacf4fc5964210"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-09/ROLLBACK.sql",
+      "sizeBytes": 2573,
+      "sha256": "02100de4a678328d5b377c69244dbb356cec4376abafd46255692e601771369a"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-09/VERIFY.sql",
+      "sizeBytes": 2872,
+      "sha256": "1b351f8a2ff39c4e7ab27b312dfd7fadf899ba8660d8f03fc74bc2134ce9ddb8"
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-09/commands-3000-contract-evaluations.jsonl",
+      "sizeBytes": 25727200,
+      "sha256": "293114ac4aab1119e8849a841b1362d6062ab0459a2c8363045eb774ee8e47a9"
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-09/commands-3000-routing-benchmarks.jsonl",
+      "sizeBytes": 96167700,
+      "sha256": "cbe170928b77a6054eee1a735f92c8758521de7c3d1357130c91529476964ae5"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/catalog.ts",
+      "sizeBytes": 181,
+      "sha256": "0d685294d5eed6285437ce1fe7911ec27eaed55f463fba3db621ad4afd79a93f"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.commands.json",
+      "sizeBytes": 51035300,
+      "sha256": "8cb563b7653a94ae52df810a8d2721f7483f4b7f1f4084e76970dd2d85cf8550"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.coverage-gaps.json",
+      "sizeBytes": 9160,
+      "sha256": "6dc4ddbddd5e2481bf517ea66c5ade22cc800d2ab7e9070b701caee59aa4fad9"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.coverage.json",
+      "sizeBytes": 1063,
+      "sha256": "a4e31a187592a8f4cdb2072a195b155b78f55a4b07ae7b4272a6c9e80a12976d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.family-reconciliation.json",
+      "sizeBytes": 45542,
+      "sha256": "019cfe1b9df391e685e8140c97aeb7d1c79854278a6cc23bab37abdc568130b0"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.graphs.json",
+      "sizeBytes": 917189,
+      "sha256": "a0616c1df3674a5716ad590727cd85a46cba199adbd2562a334c51300c0706b3"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.health.json",
+      "sizeBytes": 1729930,
+      "sha256": "a9fb2d14e18e0f98ae31b54034f1f55843a222e9dd753da14c7ab0dd3450d9b3"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.performance.json",
+      "sizeBytes": 1273930,
+      "sha256": "5c9e1ceaaaa8dad999a79478efe736f63ad6580fc147428c62dca4f25908dcc2"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.schedules.json",
+      "sizeBytes": 537966,
+      "sha256": "e8e81edf8f58a6fcda8097dadcf28e993d8354caa037b0886a66f8955c9a6200"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.semantic-duplicate-report.json",
+      "sizeBytes": 404,
+      "sha256": "38b4a487b8c0d6e020d750b452d03c4775afc198c146ddaeb23563cdef7f3951"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.staleness.json",
+      "sizeBytes": 994930,
+      "sha256": "48106a92858bd4afbdf8f4389ca351f07e506ce5476b9c4d6a8ded4806f19969"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.suppression.json",
+      "sizeBytes": 907,
+      "sha256": "55a86874aadb4b18a2691a50fe25af6b4aa19d5d817b55cc6d189649b91058ea"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.triggers.json",
+      "sizeBytes": 912149,
+      "sha256": "65bcc91130173bf44ca187430ac70b81c155d68acc0b3909eca684df4ab82694"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.uniqueness.json",
+      "sizeBytes": 702330,
+      "sha256": "472f96525304b74d760c17dfe2692c266e05a44f81092af7d2530849ec234d38"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/commands-3000.versions.json",
+      "sizeBytes": 1705446,
+      "sha256": "46181bcea180a2154ce0cf3e351ed04a5c274680e9018f8aa84fdcb2dd35ddfc"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/graphs.ts",
+      "sizeBytes": 167,
+      "sha256": "43020d4b0b6b550bbcd3fafb83a900d71160139c860134c8298990cba1ae01d4"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/index.ts",
+      "sizeBytes": 639,
+      "sha256": "5092ad188c265016e875106eb28451609a9665e16fb6d2c92e4ecfa9499b95ad"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/mz09-final-1000.commands.json",
+      "sizeBytes": 15841317,
+      "sha256": "47a5a165dfa6ab84dffbfc3dc06e234607ed0f24cb685c286e3a56f203ff8aac"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/mz09-final-1000.graphs.json",
+      "sizeBytes": 403751,
+      "sha256": "d842e40d5805dda15b358b4b45a9725e480acace8fe668c0bb37d410f59ebe2d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/mz09-final-1000.schedules.json",
+      "sizeBytes": 166065,
+      "sha256": "c51362586bfea82d477792c740aaf0f458351181a0742119f322acf6e7fca80f"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/mz09-final-1000.triggers.json",
+      "sizeBytes": 269138,
+      "sha256": "717b04df96ae32059e01fefe14c45655e1b663f07fb86186a2a5d9f0e063d753"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/mz09-final-1000.versions.json",
+      "sizeBytes": 542270,
+      "sha256": "aa1b866ac48b640c1ce3f3d678e2dd5f2d157e7cdb768462d05fa5b0e6aa2fd4"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/schedules.ts",
+      "sizeBytes": 179,
+      "sha256": "b46e48c44daaf37dd65170757b368c8c6452ab9946ea5e2d6ca312c62426de63"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/triggers.ts",
+      "sizeBytes": 175,
+      "sha256": "26848c4f502ab91485690890e06df55b7c8447623e77e3a1442bc52aaf6b1992"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-3000/versions.ts",
+      "sizeBytes": 175,
+      "sha256": "ebc1dd243ea6634f2a70a1ed352909e0926ba56df8bd21343bbe81512eed181e"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/constants.ts",
+      "sizeBytes": 5247,
+      "sha256": "c86e5f938c1e18206d4bfc49570d0940a8dff61566e2a1f20a401247c5a37f4f"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/repository.ts",
+      "sizeBytes": 7030,
+      "sha256": "223268830313939711bce1a8ccd413f65e08bef37e98fa85566b7fb9364a6fc8"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase9-manifest.mjs",
+      "sizeBytes": 304,
+      "sha256": "8c97134d007ca645170f279c7fd96f101a866bb10076d8209b38439fbfef6868"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/review-phase9-semantic-duplicates.mjs",
+      "sizeBytes": 738,
+      "sha256": "1f56fd138082f5c5bae6e8a066c20a87de34d831c4b098ed1a5bbf283672bea4"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/review-phase9-sql.mjs",
+      "sizeBytes": 1174,
+      "sha256": "4cf447c1c444bdbf3f00a7799274e422089cad10354df8439432f5bf7b25d525"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/run-phase9-command-tests.mjs",
+      "sizeBytes": 1135,
+      "sha256": "3f2341f490996f0780efe712818edc0ef02de930c6cea648beb98d9272a42bf0"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/transpile-phase9-ui.mjs",
+      "sizeBytes": 710,
+      "sha256": "08322414bc70780b1f157eea0cc6a968de75767a07f9949f9f5b9e63998f476c"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase6.mjs",
+      "sizeBytes": 8577,
+      "sha256": "6e1a76ca320190d0bf05b88077b0bd64ba827397efb5102ba246ac38d868101d"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase7.mjs",
+      "sizeBytes": 9000,
+      "sha256": "f13306bb98883812b3e03aa600b7915e1a32b3265a1a3ed3385d9c551ab2182f"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase8.mjs",
+      "sizeBytes": 2532,
+      "sha256": "42cec3d07efddf5d38735cd70b5435483de8643f30680d098ef0dc52ff7f7d1c"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase9-cumulative-package.mjs",
+      "sizeBytes": 858,
+      "sha256": "6c0700a1eb64b28c86d20bd3b839e74ace6645643aaaa17f7dadfd11bd67577a"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase9.mjs",
+      "sizeBytes": 3975,
+      "sha256": "82286ae4d1bbee539d46d3bbe109b425c1eaaa8d7113c897449afa029a34fc3a"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260721_revenue_command_os_phase9_commands_3000.sql",
+      "sizeBytes": 11558499,
+      "sha256": "f0067d809984907f47a05b3daf37c7d21a60b9fab022344223e1a231b101850c"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase9-kernel.json",
+      "sizeBytes": 1248,
+      "sha256": "61aaf3ae5263d931767165265c7a51687a188eba828183d2734d1aab1c7e9080"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase9.json",
+      "sizeBytes": 360,
+      "sha256": "defd714841aa8d3bc68dc19a901da49e5536efec08ee654c86cc619648a79a1a"
+    },
+    {
+      "path": "audit-report/MZ09_RELEASE_AUDIT.md",
+      "sizeBytes": 638,
+      "sha256": "3b2599fedbfea4d03cb942fafa704d18b3074d4333a88c51045a68513e5cc5eb"
+    },
+    {
+      "path": "rollback_revenue_os_mz09_application.sh",
+      "sizeBytes": 1006,
+      "sha256": "8e757a93833a19daef42c7724420537a11765120ebb8cc18e55d9028c37990fa"
+    },
+    {
+      "path": "tools/revenue-os/apply-phase9-migration.sh",
+      "sizeBytes": 1255,
+      "sha256": "19c02e88497a6ebac5348b0b78d777903ca971bfa5180160265e90cb01134801"
+    },
+    {
+      "path": "tools/revenue-os/patch-package-scripts-mz09.mjs",
+      "sizeBytes": 1438,
+      "sha256": "b60679dacc8a82e75ca0f1a91d19276fbb2fd64e59abbd34df864968e1322a01"
+    }
+  ]
+}

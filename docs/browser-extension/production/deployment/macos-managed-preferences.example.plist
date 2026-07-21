@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict><key>ExtensionInstallForcelist</key><array><string>__PRIVATE_EXTENSION_ID__;https://__ANGELCARE_PRIVATE_HOST__/browser-os/updates.xml</string></array></dict></plist>

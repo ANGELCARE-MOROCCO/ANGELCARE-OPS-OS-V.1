@@ -1,0 +1,2 @@
+# Acceptance
+Static provider gateway, Gemini SDK integration, structured output schema, five-strategy diversity, quota/concurrency enforcement, fallback, tenant controls, RLS/service-only persistence, audit, external-action lock, live connection script and database verification are mandatory. A real business smoke test must be run in the target environment because the package does not contain the Gemini secret.

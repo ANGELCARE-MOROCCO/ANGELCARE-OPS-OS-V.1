@@ -43,6 +43,9 @@ async function renderDisconnected(error?: string) {
 async function renderConnected(bootstrap: BootstrapPayload) {
   const enabled = bootstrap.modules.filter((module) => module.enabled)
   const initials = bootstrap.user.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase()
+  const production = bootstrap.production || {}
+  const releaseChannel = String((production as any)?.channel?.channel_key || bootstrap.device.releaseChannel || 'pilot')
+  const productionBlocked = Array.isArray((production as any)?.killSwitches) && (production as any).killSwitches.length > 0
   const moduleDock = enabled.length > 1
     ? `<nav id="modules" class="module-tabs module-dock">${enabled.map((module, index) => `<button data-key="${module.key}" class="${index === 0 ? 'active' : ''}">${escapeHtml(module.label)}</button>`).join('')}</nav>`
     : ''
@@ -54,8 +57,10 @@ async function renderConnected(bootstrap: BootstrapPayload) {
         <span class="global-avatar">${escapeHtml(initials)}</span>
         <div><strong>${escapeHtml(bootstrap.user.name)}</strong><span>${escapeHtml(bootstrap.user.role || 'Assigned operator')} · Access v${bootstrap.accessVersion}</span></div>
       </div>
+      <div class="production-runtime-pill ${productionBlocked ? 'blocked' : 'healthy'}"><strong>${escapeHtml(releaseChannel.toUpperCase())}</strong><span>v${escapeHtml(chrome.runtime.getManifest().version)}</span></div>
       <button id="logout" class="global-icon-button" title="Disconnect">⏻</button>
     </header>
+    ${productionBlocked ? `<section class="production-block-banner"><strong>Production protection active</strong><span>${escapeHtml((production as any).killSwitches?.[0]?.reason || 'An administrator temporarily restricted this runtime.')}</span></section>` : ''}
     ${moduleDock}
     <section id="module-root" class="module-root enterprise-module-root"></section>
     <footer class="runtime-footer"><span>${enabled.length} module${enabled.length === 1 ? '' : 's'}</span><span>${bootstrap.capabilities.length} capabilities</span><span>${bootstrap.adapters.length} adapters</span></footer>
@@ -95,6 +100,12 @@ async function boot() {
 
 chrome.runtime.onMessage.addListener((incoming: any) => {
   if (incoming?.type === 'ANGELCARE_BOOTSTRAP_UPDATED') void renderConnected(incoming.bootstrap)
+  if (incoming?.type === 'ANGELCARE_PRODUCTION_BLOCK') {
+    const banner = document.createElement('section')
+    banner.className = 'production-block-banner'
+    banner.innerHTML = `<strong>Production protection active</strong><span>${escapeHtml(incoming.status?.killSwitches?.[0]?.reason || 'The runtime was restricted by an administrator.')}</span>`
+    document.querySelector('.global-header')?.insertAdjacentElement('afterend', banner)
+  }
 })
 
 void boot()

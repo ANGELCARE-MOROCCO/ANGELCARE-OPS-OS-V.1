@@ -1,4 +1,4 @@
-# ANGELCARE Revenue Command Browser OS — Mega ZIP 6 / v0.6.0
+# ANGELCARE Revenue Command Browser OS — Mega ZIP 6 / v0.7.0
 
 Private Manifest V3 extension connected to the ANGELCARE SaaS through the governed Extension Gateway. It contains no privileged server secret and lazy-loads only the modules, capabilities, adapters, territories and data scopes assigned to the current user from `/users/[id]`.
 
@@ -22,3 +22,8 @@ Back up `.secrets/angelcare-revenue-command-private.pem` outside the repository.
 ## Mega ZIP 6 deployment
 
 Apply the SQL migration and deploy the OPS Gateway before assigning Mega ZIP 6 capabilities. Use `MEGA6_MIGRATION_ORDER.md`, `MEGA6_LIVE_ACCEPTANCE_CHECKLIST.md` and `MEGA6_ROLLBACK.md` from the repository root.
+
+
+## Mega ZIP 7 production controls
+
+Version 0.7.0 adds measured runtime health, retry/backoff, adapter monitoring, release-channel governance, feature flags, emergency kill switches, incident command and private deployment artifacts. Stable 1.0.0 promotion remains blocked until live acceptance.

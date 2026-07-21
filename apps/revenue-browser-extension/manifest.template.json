@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ANGELCARE Revenue Command",
   "short_name": "ANGELCARE Revenue",
-  "version": "0.6.0",
+  "version": "0.9.0",
   "description": "Private browser-side revenue and growth operating system for ANGELCARE.",
   "minimum_chrome_version": "114",
   "permissions": [
@@ -60,5 +60,5 @@
     "https://*/*",
     "http://*/*"
   ],
-  "version_name": "0.6.0 Mega ZIP 6"
+  "version_name": "0.9.0 Ultra Reality Completion RC — live acceptance required"
 }

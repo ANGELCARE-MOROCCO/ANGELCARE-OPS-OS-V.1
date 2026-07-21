@@ -7,9 +7,12 @@ import { PARTNER_DOMAIN_LABELS, PARTNER_NAV, defaultPartnerView, partnerDomainFo
 import { handlePartnerAction } from './revenue-b2b/partner-actions.js'
 import { MANAGEMENT_DOMAIN_LABELS, MANAGEMENT_NAV, defaultManagementView, isManagementView, managementDomainForView, renderManagementWorkspace, type ManagementViewKey } from './revenue-b2b/management-mode.js'
 import { handleManagementAction } from './revenue-b2b/management-actions.js'
+import { renderScannerWorkspace, type ScannerWorkspaceState } from './revenue-b2b/scanner-mode.js'
+import { renderDataQuality, renderGuidedJourney, renderRealityCommand, type UltraWorkspaceState } from './revenue-b2b/ultra-mode.js'
 
 type ViewKey = PartnerViewKey
   | ManagementViewKey
+  | 'scanner'
   | 'recognition'
   | 'today'
   | 'opportunity'
@@ -33,6 +36,9 @@ type ViewKey = PartnerViewKey
   | 'payments'
   | 'rescue'
   | 'capabilities'
+  | 'journey'
+  | 'data_quality'
+  | 'reality_command'
 
 type State = {
   context?: BrowserBusinessContext
@@ -54,6 +60,8 @@ type State = {
   activeView: ViewKey
   lastHydratedAt?: string
   paletteOpen?: boolean
+  scanner: ScannerWorkspaceState
+  ultra: UltraWorkspaceState
 }
 
 type FormField = {
@@ -66,7 +74,7 @@ type FormField = {
   options?: Array<{ value: string; label: string }>
 }
 
-let state: State = { activeDomain: 'account', activeView: 'recognition', execution: {}, workspaceSession: null }
+let state: State = { activeDomain: 'account', activeView: 'scanner', execution: {}, workspaceSession: null, scanner: {}, ultra: {} }
 let root: HTMLElement | null = null
 let moduleRef: any = null
 let hydrateTimer: number | null = null
@@ -106,17 +114,17 @@ function clearMessages() {
 function domainForView(view: ViewKey): WorkspaceDomain {
   if (isManagementView(view)) return managementDomainForView(view)
   if (isPartnerView(view)) return partnerDomainForView(view)
-  if (['recognition', 'committee'].includes(view)) return 'account'
+  if (['scanner', 'recognition', 'committee', 'journey'].includes(view)) return 'account'
   if (['today', 'opportunity', 'pipeline', 'outreach', 'communications', 'calls', 'field_visits', 'meetings', 'tasks', 'sequences'].includes(view)) return 'execute'
   if (['proposal', 'pricing', 'negotiation', 'closing', 'payments', 'rescue'].includes(view)) return 'deal'
-  if (['plan', 'territory'].includes(view)) return 'intelligence'
+  if (['plan', 'territory', 'data_quality'].includes(view)) return 'intelligence'
   return 'more'
 }
 
 function defaultViewForDomain(domain: WorkspaceDomain): ViewKey {
   if (isManagementView(state.activeView)) return defaultManagementView(domain)
   if (partnerMode()) return defaultPartnerView(domain)
-  if (domain === 'account') return 'recognition'
+  if (domain === 'account') return 'scanner'
   if (domain === 'execute') return cap('extension.b2b.daily_revenue_command') ? 'today' : 'opportunity'
   if (domain === 'deal') return cap('extension.b2b.proposal_studio') ? 'proposal' : 'closing'
   if (domain === 'intelligence') return 'plan'
@@ -131,10 +139,16 @@ async function persistActiveWorkspace(account: any, opp?: any | null) {
   if (!account?.id) return
   const session: WorkspaceSession = {
     prospectId: String(account.id),
+    activeAccountId: String(account.id),
     opportunityId: opp?.id ? String(opp.id) : null,
+    activeOpportunityId: opp?.id ? String(opp.id) : null,
+    activeContactId: state.workspaceSession?.activeContactId || null,
     activePartnerId: state.partnerHydration?.activeContext?.activePartnerId || partner()?.id || state.workspaceSession?.activePartnerId || null,
     activeContractId: state.partnerHydration?.activeContext?.activeContractId || state.workspaceSession?.activeContractId || null,
     activeSiteId: state.partnerHydration?.activeContext?.activeSiteId || state.workspaceSession?.activeSiteId || null,
+    activeMeetingId: state.workspaceSession?.activeMeetingId || null,
+    activeProposalId: state.workspaceSession?.activeProposalId || state.hydration?.deal?.proposal?.id || null,
+    activeScanSessionId: state.workspaceSession?.activeScanSessionId || state.scanner.scan?.session?.id || null,
     activeServiceId: state.partnerHydration?.activeContext?.activeServiceId || state.workspaceSession?.activeServiceId || null,
     activeActivationId: state.partnerHydration?.activeContext?.activeActivationId || state.workspaceSession?.activeActivationId || null,
     activeIssueId: state.partnerHydration?.activeContext?.activeIssueId || state.workspaceSession?.activeIssueId || null,
@@ -147,10 +161,13 @@ async function persistActiveWorkspace(account: any, opp?: any | null) {
     accountName: account.name || account.commercial_name || null,
     sourceUrl: state.context?.url || state.workspaceSession?.sourceUrl || null,
     sourceAdapter: state.context?.adapterId || state.workspaceSession?.sourceAdapter || null,
+    contextVersion: 9,
+    lastTransition: 'workspace_persisted',
     updatedAt: new Date().toISOString(),
   }
   state.workspaceSession = session
   await saveWorkspaceSession(session)
+  try { await execute('b2b.ultra.context.set', session as unknown as Record<string, unknown>, { sourceAdapter: null, silent: true }) } catch (error: any) { state.execution.ultraContextWarning = error?.message || 'SERVER_CONTEXT_SYNC_FAILED' }
 }
 
 async function hydratePartnerWorkspace(force = false) {
@@ -296,8 +313,10 @@ async function clearWorkspace() {
   state.analysis = undefined
   state.context = undefined
   state.execution = {}
+  state.scanner = {}
+  state.ultra = {}
   state.activeDomain = 'account'
-  state.activeView = 'recognition'
+  state.activeView = 'scanner'
   await saveWorkspaceSession(null)
   render()
 }
@@ -376,6 +395,7 @@ async function run(commandKey: string, payload: Record<string, unknown>, success
 }
 
 async function analyze() {
+  if (state.busy || state.scanner.progress) return
   clearMessages()
   setState({ busy: 'Analyse du contexte navigateur…' })
   try {
@@ -410,24 +430,90 @@ async function analyze() {
       return setState({ busy: undefined, notice: result?.prospect ? 'Conversation WhatsApp reliée au dossier B2B et Account 360 synchronisé.' : 'Conversation analysée. Un rapprochement de compte est requis.' })
     }
 
-    const result = await execute('b2b.context.resolve', { context: captured.context }, { sourceAdapter: captured.context.adapterId, silent: true })
-    state.analysis = result
+    const response: any = await message({ type: 'SCANNER_QUICK_SCAN', context: captured.context })
+    if (!response?.ok) throw new Error(response?.error || 'SCANNER_QUICK_FAILED')
+    const result = response.data
+    state.context = result.context
+    state.scanner = { ...state.scanner, mode: 'quick', scan: result, progress: undefined }
+    state.analysis = { ...result, normalized: result.context, context: { id: result.session?.context_id || result.session?.contextId || null, resolved_status: result.matches?.[0]?.confidence >= .82 ? 'existing' : result.matches?.length ? 'possible_duplicate' : 'unknown' } }
     mergeExecution(result)
     const recognized = accountFromResult(result)
-    const nextView: ViewKey = captured.context.adapterId === 'google_maps' && sub('territory_sweep') && !recognized ? 'territory' : 'recognition'
-    state.activeDomain = domainForView(nextView)
-    state.activeView = nextView
+    state.activeDomain = 'account'
+    state.activeView = 'scanner'
     if (recognized) {
       await persistActiveWorkspace(recognized, result?.opportunity)
       await hydrateWorkspace(true)
     }
-    setState({
-      busy: undefined,
-      notice: recognized ? 'Compte reconnu. Account 360, exécution et deal chargés.' : 'Contexte analysé. Validation ou création du compte requise.',
-    })
+    setState({ busy: undefined, notice: recognized ? 'Compte reconnu et Account 360 synchronisé.' : 'Scan instantané terminé. Validez les preuves et la résolution proposée.' })
   } catch (error: any) {
     setState({ busy: undefined, error: error?.message || 'ANALYSIS_FAILED', errorDetails: error?.details || null })
   }
+}
+
+async function runScanner(mode: 'deep' | 'strategic') {
+  if (state.busy || state.scanner.progress) return
+  clearMessages()
+  state.activeDomain = 'account'
+  state.activeView = 'scanner'
+  state.scanner = { ...state.scanner, mode, progress: { stage: 'collecting_active_context', completed: 0, total: mode === 'strategic' ? 12 : 8, detail: 'Lecture structurée de la page active…' } }
+  render()
+  try {
+    await ensurePageAccess()
+    const captured: any = await message({ type: 'CAPTURE_ACTIVE_CONTEXT' })
+    if (!captured?.ok) throw new Error(captured?.error || 'CONTEXT_CAPTURE_FAILED')
+    if (['gmail','whatsapp_web'].includes(captured.context.adapterId)) return analyze()
+    state.context = captured.context
+    state.scanner.progress = { stage: 'researching_organization', completed: 1, total: mode === 'strategic' ? 12 : 8, detail: 'Sélection et analyse contrôlée des pages publiques pertinentes…' }
+    render()
+    const response: any = await message({ type: 'SCANNER_DEEP_SCAN', context: captured.context, mode })
+    if (!response?.ok) throw Object.assign(new Error(response?.error || 'SCANNER_DEEP_FAILED'), { details: response?.details })
+    const result = response.data
+    state.context = result.context
+    state.scanner = { ...state.scanner, mode, scan: result, progress: undefined }
+    state.analysis = { ...result, normalized: result.context, context: { id: result.session?.context_id || null, resolved_status: result.matches?.[0]?.confidence >= .82 ? 'existing' : result.matches?.length ? 'possible_duplicate' : 'unknown' } }
+    mergeExecution(result)
+    const recognized = accountFromResult(result)
+    if (recognized) {
+      await persistActiveWorkspace(recognized, result?.opportunity)
+      await hydrateWorkspace(true)
+    }
+    setState({ busy: undefined, notice: result.status === 'partial' ? 'Deep Scan partiel terminé. Les sources indisponibles sont clairement signalées.' : 'Deep Scan terminé. Identité, preuves, signaux et opportunités sont prêts à valider.' })
+  } catch (error: any) {
+    state.scanner.progress = undefined
+    setState({ busy: undefined, error: error?.message || 'SCANNER_DEEP_FAILED', errorDetails: error?.details || null })
+  }
+}
+
+async function searchScannerAccounts(query = '') {
+  state.scanner = { ...state.scanner, searching: true, searchQuery: query }
+  render()
+  try {
+    const launchpad: any = await execute('b2b.ultra.launchpad.read', { query, limit: 120 }, { sourceAdapter: null, silent: true })
+    const adapt = (row: any) => ({ ...row, id: row.prospectId || row.sourceId, name: row.name, recentContext: Boolean(row.recentContext), bridgeRequired: Boolean(row.bridgeRequired), activeOpportunity: row.activeOpportunity, partner: row.partner })
+    state.ultra.launchpad = launchpad
+    state.scanner = { ...state.scanner, searching: false, searchResults: (launchpad.accounts || []).map(adapt), recentAccounts: (launchpad.lists?.recent || []).map(adapt), totalAuthorized: launchpad.summary?.authorizedAccounts || 0 }
+    render()
+  } catch (error: any) {
+    state.scanner.searching = false
+    setState({ error: error?.message || 'ULTRA_LAUNCHPAD_LOAD_FAILED', errorDetails: error?.details || null })
+  }
+}
+
+async function selectScannerAccount(id: string) {
+  const candidates = [...(state.scanner.searchResults || []), ...(state.scanner.recentAccounts || []), ...(state.scanner.scan?.matches || []).map((row: any) => row.prospect || row.prospect_snapshot).filter(Boolean)]
+  const account = candidates.find((row: any) => String(row?.id) === String(id))
+  if (!account) return
+  if (account.bridgeRequired || !account.prospectId && account.source !== 'b2b_prospects') { setState({ error: 'BRIDGE_MAPPING_REQUIRED', errorDetails: { source: account.source, sourceId: account.sourceId, message: 'Run the reviewed data bridge/backfill before opening this legacy account.' } }); return }
+  clearMessages()
+  state.execution.prospect = account
+  state.execution.opportunity = undefined
+  state.hydration = undefined
+  state.activeDomain = 'account'
+  state.activeView = 'recognition'
+  state.notice = `${account.name} ouvert depuis le lanceur de comptes.`
+  await persistActiveWorkspace(account, null)
+  await hydrateWorkspace(true)
+  render()
 }
 
 function fieldHtml(field: FormField) {
@@ -805,7 +891,7 @@ function capabilitiesView() {
     .filter((group) => group.items.length)
   return `<section class="b2b-command capability-command-center">
     ${accountHeader()}
-    <article class="capability-coverage-hero"><div><span class="b2b-kicker">CAPABILITY-TO-UI COVERAGE</span><h2>${assigned.length}/45 capacités opérationnelles chargées</h2><p>Chaque capacité assignée dispose d’une destination visible, d’une action gouvernée et d’un retour synchronisé.</p></div><strong>${Math.round((assigned.length / 45) * 100)}%</strong></article>
+    <article class="capability-coverage-hero"><div><span class="b2b-kicker">CAPABILITY-TO-UI COVERAGE</span><h2>${assigned.length}/45 capacités assignées</h2><p>Cette couverture décrit les droits attribués. La disponibilité réelle dépend du contexte actif, des données, du Gateway et des contrôles de production.</p></div><strong>${Math.round((assigned.length / 45) * 100)}%</strong></article>
     ${grouped.map((group) => `<article class="b2b-panel capability-group"><div class="b2b-panel-head"><strong>${esc(DOMAIN_LABELS[group.domain].label)}</strong><span>${group.items.length} capacités</span></div><div class="capability-grid">${group.items.map((item) => `<button data-cap-view="${esc(item.view)}" data-cap-domain="${esc(item.domain)}" ${item.action ? `data-cap-action="${esc(item.action)}"` : ''}><span>${esc(item.id)}</span><strong>${esc(item.label)}</strong><small>${esc(item.summary)}</small><i>Ouvrir →</i></button>`).join('')}</div></article>`).join('')}
   </section>`
 }
@@ -815,6 +901,8 @@ function currentView() {
   if (isManagementView(state.activeView) && !state.managementHydration) return `<section class="partner-empty"><div class="partner-empty-mark">AI</div><h2>Management Command</h2><p>Synchronisez le cockpit de direction pour charger les données autorisées.</p><button data-action="review-pipeline" class="b2b-primary">Initialiser la revue</button></section>`
   if (isPartnerView(state.activeView) && state.partnerHydration) return renderPartnerWorkspace(state.activeView, state.partnerHydration, { esc, money, dt })
   switch (state.activeView) {
+    case 'scanner': return renderScannerWorkspace({ scanner: state.scanner, activeAccount: prospect(), analysis: state.analysis, context: state.context, canCreate: cap('extension.b2b.prospect_capture'), canEnrich: cap('extension.b2b.account_enrichment'), canPlan: cap('extension.b2b.account_plan_builder'), canOpportunity: cap('extension.b2b.opportunity_creation'), helpers: { esc, money } })
+    case 'recognition': return recognitionView()
     case 'today': return todayView()
     case 'opportunity': return opportunityView()
     case 'pipeline': return pipelineView()
@@ -837,13 +925,18 @@ function currentView() {
     case 'payments': return paymentsView()
     case 'rescue': return rescueView()
     case 'capabilities': return capabilitiesView()
+    case 'journey': return renderGuidedJourney(state.ultra, { esc, dt })
+    case 'data_quality': return renderDataQuality(state.ultra, { esc, dt })
+    case 'reality_command': return renderRealityCommand(state.ultra, { esc, dt })
     default: return recognitionView()
   }
 }
 
 const navConfig: Array<{ view: ViewKey; label: string; submodule: string; capability?: string; domain: WorkspaceDomain }> = [
+  { view: 'scanner', label: 'Scanner & Comptes', submodule: 'account_recognition', capability: 'extension.b2b.browser_context_understanding', domain: 'account' },
   { view: 'recognition', label: 'Account 360', submodule: 'account_recognition', domain: 'account' },
   { view: 'committee', label: 'Décideurs', submodule: 'decision_makers', domain: 'account' },
+  { view: 'journey', label: 'Parcours guidé', submodule: 'activity_timeline', capability: 'extension.b2b.daily_revenue_command', domain: 'account' },
   { view: 'today', label: 'Aujourd’hui', submodule: 'today', capability: 'extension.b2b.daily_revenue_command', domain: 'execute' },
   { view: 'opportunity', label: 'Opportunité', submodule: 'opportunities', capability: 'extension.b2b.opportunity_creation', domain: 'execute' },
   { view: 'pipeline', label: 'Pipeline', submodule: 'pipeline', capability: 'extension.b2b.intelligent_pipeline_management', domain: 'execute' },
@@ -863,9 +956,11 @@ const navConfig: Array<{ view: ViewKey; label: string; submodule: string; capabi
   { view: 'handoff', label: 'Operational Handoff', submodule: 'operational_handoff', capability: 'extension.b2b.operational_handoff', domain: 'execute' },
   { view: 'plan', label: 'Plan & Scores', submodule: 'account_plans', domain: 'intelligence' },
   { view: 'territory', label: 'Territoire', submodule: 'territory_sweep', domain: 'intelligence' },
+  { view: 'data_quality', label: 'Qualité données', submodule: 'management_command', capability: 'extension.b2b.manager_control', domain: 'intelligence' },
   { view: 'timeline', label: 'Timeline', submodule: 'activity_timeline', capability: 'extension.b2b.daily_revenue_command', domain: 'more' },
   { view: 'evidence', label: 'Preuves', submodule: 'evidence', domain: 'more' },
-  { view: 'capabilities', label: '45 Capacités', submodule: 'account_recognition', capability: 'extension.b2b.dynamic_user_loading', domain: 'more' },
+  { view: 'reality_command', label: 'Reality Command', submodule: 'executive_reporting', capability: 'extension.b2b.b2b_reporting', domain: 'more' },
+  { view: 'capabilities', label: 'Capacités assignées', submodule: 'account_recognition', capability: 'extension.b2b.dynamic_user_loading', domain: 'more' },
   ...MANAGEMENT_NAV,
 ]
 
@@ -911,7 +1006,7 @@ function render() {
   root.innerHTML = `<section class="b2b-runtime enterprise-runtime ${modeManagement ? 'management-runtime' : modePartner ? 'partner-runtime' : ''}">
     ${workspaceHeader()}
     <nav class="command-domain-nav">${domainAvailable.map((domain) => `<button data-domain="${domain}" class="${state.activeDomain === domain ? 'active' : ''}"><span>${esc(labels[domain].short)}</span><small>${esc(labels[domain].description)}</small></button>`).join('')}</nav>
-    <div class="command-context-row"><nav class="b2b-subnav contextual-nav">${domainNav.map((item) => `<button data-view="${item.view}" class="${state.activeView === item.view ? 'active' : ''}">${esc(item.label)}</button>`).join('')}</nav><span class="capability-count">${OPERATIONAL_CAPABILITY_UI.filter((item) => cap(item.key)).length}/45 actives</span></div>
+    <div class="command-context-row"><nav class="b2b-subnav contextual-nav">${domainNav.map((item) => `<button data-view="${item.view}" class="${state.activeView === item.view ? 'active' : ''}">${esc(item.label)}</button>`).join('')}</nav><span class="capability-count">${OPERATIONAL_CAPABILITY_UI.filter((item) => cap(item.key)).length}/45 attribuées · Scanner ${state.scanner.scan ? Math.round(Number(state.scanner.scan.quality?.overallResearchCompleteness || 0)) + '%' : 'prêt'}</span></div>
     ${statusBar()}
     ${(state.hydrating && !state.hydration) || (state.partnerHydrating && !state.partnerHydration) || (state.managementHydrating && !state.managementHydration) ? '<section class="workspace-skeleton"><div></div><div></div><div></div><div></div></section>' : currentView()}
     ${commandPalette()}
@@ -927,13 +1022,15 @@ function bindEvents() {
   paletteQuery?.addEventListener('input', () => { const query = paletteQuery.value.trim().toLowerCase(); root?.querySelectorAll('[data-palette-item]').forEach((item) => { (item as HTMLElement).style.display = !query || String((item as HTMLElement).dataset.paletteItem || '').includes(query) ? '' : 'none' }) })
   root.querySelectorAll('#analyze,#reanalyze').forEach((element) => element.addEventListener('click', analyze))
   root.querySelectorAll('[data-domain]').forEach((element) => element.addEventListener('click', () => {
+    clearMessages()
     const domain = ((element as HTMLElement).dataset.domain || 'account') as WorkspaceDomain
     state.activeDomain = domain
     state.activeView = defaultViewForDomain(domain)
     render()
   }))
   root.querySelectorAll('[data-view]').forEach((element) => element.addEventListener('click', async () => {
-    const view = ((element as HTMLElement).dataset.view || 'recognition') as ViewKey
+    clearMessages()
+    const view = ((element as HTMLElement).dataset.view || 'scanner') as ViewKey
     state.activeDomain = domainForView(view)
     state.activeView = view
     render()
@@ -941,10 +1038,19 @@ function bindEvents() {
     if (view === 'pipeline' && !state.execution.pipeline) await loadPipeline()
     if (view === 'timeline' && prospect() && !(state.execution.timeline || state.hydration?.more.timeline || []).length) await loadTimeline()
     if (view === 'tasks' && !(state.execution.actions || state.hydration?.execution.nextActions || []).length) await loadActions()
+    if (view === 'journey') await loadUltraJourney()
+    if (view === 'data_quality' && !state.ultra.quality) await scanUltraQuality()
+    if (view === 'reality_command') { if (!state.ultra.bridge) await loadUltraBridge(); if (!state.ultra.scheduler) await loadUltraScheduler() }
   }))
   root.querySelectorAll('[data-action]').forEach((element) => element.addEventListener('click', () => handleAction((element as HTMLElement).dataset.action || '')))
+  root.querySelectorAll('[data-select-account]').forEach((element) => element.addEventListener('click', () => { void selectScannerAccount((element as HTMLElement).dataset.selectAccount || '') }))
+  root.querySelector('#scanner-account-search')?.addEventListener('submit', (event) => {
+    event.preventDefault()
+    const query = (root?.querySelector('#scanner-search-query') as HTMLInputElement | null)?.value || ''
+    void searchScannerAccounts(query)
+  })
   root.querySelectorAll('[data-focus-mode]').forEach((element) => element.addEventListener('click', () => { void message({ type: 'OPEN_B2B_FOCUS_MODE' }) }))
-  root.querySelector('#sync-workspace')?.addEventListener('click', () => { state.stale = true; void hydrateWorkspace(true).then(() => hydratePartnerWorkspace(true)).then(() => hydrateManagementWorkspace(true)) })
+  root.querySelector('#sync-workspace')?.addEventListener('click', () => { state.stale = true; void hydrateWorkspace(true).then(() => hydratePartnerWorkspace(true)).then(() => hydrateManagementWorkspace(true)).then(() => prospect()?.id ? loadUltraJourney() : null) })
   root.querySelector('#clear-workspace')?.addEventListener('click', () => { void clearWorkspace() })
   root.querySelectorAll('[data-cap-view]').forEach((element) => element.addEventListener('click', () => {
     const target = element as HTMLElement
@@ -955,6 +1061,20 @@ function bindEvents() {
     const action = target.dataset.capAction
     if (action) window.setTimeout(() => { void handleAction(action) }, 80)
   }))
+  root.querySelectorAll('[data-ultra-action]').forEach((element) => element.addEventListener('click', () => {
+    const action = (element as HTMLElement).dataset.ultraAction
+    if (action === 'load-journey') void loadUltraJourney()
+    if (action === 'scan-quality') void scanUltraQuality()
+    if (action === 'load-bridge') void loadUltraBridge()
+    if (action === 'run-ai') void runUltraAI()
+    if (action === 'load-scheduler') void loadUltraScheduler()
+    if (action === 'scheduler-pause') void controlUltraScheduler('pause')
+    if (action === 'scheduler-resume') void controlUltraScheduler('resume')
+    if (action === 'scheduler-kill') void controlUltraScheduler('kill')
+    if (action === 'scheduler-clear-kill') void controlUltraScheduler('clear_kill')
+    if (action === 'scheduler-enqueue-quality') void enqueueUltraQualityJob()
+  }))
+  root.querySelectorAll('[data-quality-resolve]').forEach((element) => element.addEventListener('click', () => { void resolveUltraQuality((element as HTMLElement).dataset.qualityResolve || '') }))
   root.querySelectorAll('[data-research-role]').forEach((element) => element.addEventListener('click', () => researchRole((element as HTMLElement).dataset.researchRole || '', (element as HTMLElement).dataset.researchLabel || 'Décideur')))
   root.querySelectorAll('[data-select-opportunity]').forEach((element) => element.addEventListener('click', () => selectOpportunity((element as HTMLElement).dataset.selectOpportunity || '')))
   root.querySelectorAll('[data-complete-action]').forEach((element) => element.addEventListener('click', () => completeAction((element as HTMLElement).dataset.completeAction || '')))
@@ -962,6 +1082,68 @@ function bindEvents() {
   root.querySelectorAll('[data-complete-onboarding-task]').forEach((element) => element.addEventListener('click', () => completeOnboardingTask((element as HTMLElement).dataset.completeOnboardingTask || '')))
   root.querySelectorAll('[data-select-issue]').forEach((element) => element.addEventListener('click', () => selectPartnerContext('activeIssueId', (element as HTMLElement).dataset.selectIssue || '', 'issues')))
   root.querySelectorAll('[data-select-tender]').forEach((element) => element.addEventListener('click', () => selectPartnerContext('activeTenderId', (element as HTMLElement).dataset.selectTender || '', 'tender')))
+}
+
+async function loadUltraJourney() {
+  const account = prospect(); if (!account?.id) return setState({ error: 'ACCOUNT_CONTEXT_REQUIRED' })
+  clearMessages(); setState({ busy: 'Calcul du parcours revenu depuis les données persistées…' })
+  try { state.ultra.journey = await execute('b2b.ultra.journey.read', { prospectId: account.id }, { sourceAdapter: null, silent: true }); setState({ busy: undefined, notice: 'Parcours guidé actualisé.' }) }
+  catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_JOURNEY_FAILED', errorDetails: error?.details || null }) }
+}
+
+async function scanUltraQuality() {
+  clearMessages(); setState({ busy: 'Analyse de la qualité et des ruptures de vérité…' })
+  try { state.ultra.quality = await execute('b2b.ultra.data_quality.scan', { prospectId: prospect()?.id || null }, { sourceAdapter: null, silent: true }); setState({ busy: undefined, notice: 'Data Quality Command actualisé.' }) }
+  catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_DATA_QUALITY_FAILED', errorDetails: error?.details || null }) }
+}
+
+async function resolveUltraQuality(issueId: string) {
+  if (!issueId) return
+  const form = await openForm('Résoudre l’anomalie', 'Documentez la correction et la preuve. La résolution reste auditée.', [{ name: 'notes', label: 'Correction et preuve', type: 'textarea', required: true }])
+  if (!form) return
+  await run('b2b.ultra.data_quality.resolve', { issueId, status: 'resolved', notes: form.notes }, 'Anomalie résolue et historisée.', { sourceAdapter: null, view: 'data_quality' })
+  await scanUltraQuality()
+}
+
+async function loadUltraBridge() {
+  clearMessages(); setState({ busy: 'Lecture du bridge commercial canonique…' })
+  try { state.ultra.bridge = await execute('b2b.ultra.bridge.status', {}, { sourceAdapter: null, silent: true }); setState({ busy: undefined, notice: 'État du bridge actualisé.' }) }
+  catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_BRIDGE_STATUS_FAILED', errorDetails: error?.details || null }) }
+}
+
+async function runUltraAI() {
+  const account = prospect(); if (!account?.id) return setState({ error: 'ACCOUNT_CONTEXT_REQUIRED' })
+  clearMessages(); setState({ busy: 'Raisonnement gouverné sur les preuves du compte…' })
+  try { state.ultra.ai = await execute('b2b.ultra.ai.reason', { prospectId: account.id, objective: 'Recommander la prochaine action commerciale gouvernée' }, { sourceAdapter: null, silent: true }); setState({ busy: undefined, notice: state.ultra.ai?.result?.used ? 'Raisonnement IA gouverné terminé.' : 'Moteur de règles explicable exécuté; IA non utilisée.' }) }
+  catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_AI_REASONING_FAILED', errorDetails: error?.details || null }) }
+}
+
+async function loadUltraScheduler() {
+  clearMessages(); setState({ busy: 'Lecture du scheduler, des verrous et de la file…' })
+  try { state.ultra.scheduler = await execute('b2b.ultra.scheduler.status', {}, { sourceAdapter: null, silent: true }); setState({ busy: undefined, notice: 'Scheduler de production actualisé.' }) }
+  catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_SCHEDULER_STATUS_FAILED', errorDetails: error?.details || null }) }
+}
+
+async function controlUltraScheduler(action: 'pause' | 'resume' | 'kill' | 'clear_kill') {
+  const destructive = action === 'kill' || action === 'clear_kill'
+  const form = await openForm(action === 'kill' ? 'Activer le kill switch' : action === 'clear_kill' ? 'Lever le kill switch' : action === 'pause' ? 'Mettre le scheduler en pause' : 'Reprendre le scheduler', destructive ? 'Cette action est auditée. La levée du kill switch maintient le scheduler en pause jusqu’à une reprise séparée.' : 'Documentez la raison opérationnelle de ce changement.', [{ name: 'reason', label: 'Raison', type: 'textarea', required: true }])
+  if (!form) return
+  clearMessages(); setState({ busy: 'Application du contrôle scheduler…' })
+  try {
+    await execute('b2b.ultra.scheduler.control', { action, reason: form.reason, confirmation: action === 'clear_kill' ? 'CLEAR_ULTRA_KILL_SWITCH' : undefined }, { sourceAdapter: null, silent: true })
+    await loadUltraScheduler()
+    setState({ notice: `Contrôle scheduler appliqué: ${action}.` })
+  } catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_SCHEDULER_CONTROL_FAILED', errorDetails: error?.details || null }) }
+}
+
+async function enqueueUltraQualityJob() {
+  const hour = new Date().toISOString().slice(0, 13)
+  clearMessages(); setState({ busy: 'Planification du contrôle qualité interne…' })
+  try {
+    await execute('b2b.ultra.scheduler.enqueue', { jobType: 'data_quality_scan', idempotencyKey: `manual:data-quality:${hour}`, payload: { prospectId: prospect()?.id || null }, evidenceIds: [] }, { sourceAdapter: null, silent: true })
+    await loadUltraScheduler()
+    setState({ notice: 'Contrôle qualité interne ajouté à la file idempotente.' })
+  } catch (error: any) { setState({ busy: undefined, error: error?.message || 'ULTRA_SCHEDULER_ENQUEUE_FAILED', errorDetails: error?.details || null }) }
 }
 
 async function loadToday() {
@@ -1048,6 +1230,10 @@ async function handleAction(kind: string) {
   const opp = opportunity()
   const context = state.context
   const analysis = state.analysis
+
+  if (kind === 'scanner-quick') return analyze()
+  if (kind === 'scanner-deep') return runScanner('deep')
+  if (kind === 'scanner-strategic') return runScanner('strategic')
 
   try {
     const handled = await handleManagementAction(kind, {
@@ -1138,19 +1324,34 @@ async function handleAction(kind: string) {
   if (kind === 'check-payment-gate' && opp) {const form=await openForm('Gate paiement','Le commercial ne confirme pas le paiement; Finance vérifie.',[{name:'amountDue',label:'Montant dû',type:'number',value:state.execution.paymentPromise?.amount||0},{name:'depositPercent',label:'Dépôt %',type:'number',value:50},{name:'dueAt',label:'Échéance',type:'datetime-local'},{name:'paymentMethod',label:'Méthode'},{name:'payer',label:'Payeur'}]);if(!form)return;return run('b2b.payment.gate_check',{opportunityId:opp.id,...form,financeVerified:false},'Gate paiement contrôlé.',{sourceAdapter:null,view:'payments'})}
   if (kind === 'create-rescue' && opp) {const form=await openForm('Créer Revenue Rescue','Protégez une valeur à risque avec propriétaire et échéance.',[{name:'rescueType',label:'Type',type:'select',options:[{value:'proposal_recovery',label:'Proposal Recovery'},{value:'negotiation_rescue',label:'Negotiation Rescue'},{value:'contract_recovery',label:'Contract Recovery'},{value:'payment_recovery',label:'Payment Recovery'},{value:'strategic_account',label:'Strategic Account Rescue'}]},{name:'riskValue',label:'Valeur à risque',type:'number',value:opp.estimated_annual_value||0},{name:'reason',label:'Raison',type:'textarea',required:true},{name:'priority',label:'Priorité',value:'high'},{name:'dueAt',label:'Échéance',type:'datetime-local'}]);if(!form)return;return run('b2b.revenue_rescue.create',{opportunityId:opp.id,...form},'Revenue Rescue créé.',{sourceAdapter:null,view:'rescue'})}
   if (kind === 'prepare-executive-intervention' && opp) {const form=await openForm('Brief intervention exécutive','Cadrez l’intervention et les engagements interdits.',[{name:'executiveRole',label:'Autorité',value:'managing_director'},{name:'strategicValue',label:'Valeur stratégique',type:'textarea'},{name:'mainBlocker',label:'Blocage principal',type:'textarea',required:true},{name:'clientRequest',label:'Demande client',type:'textarea'},{name:'approvedPosition',label:'Position AngelCare approuvée',type:'textarea'},{name:'recommendedIntervention',label:'Intervention recommandée',type:'textarea',required:true},{name:'prohibitedCommitmentsText',label:'Engagements interdits (;)',type:'textarea'},{name:'requiredOutcome',label:'Résultat requis',type:'textarea',required:true}]);if(!form)return;const prohibitedCommitments=String(form.prohibitedCommitmentsText||'').split(';').map(x=>x.trim()).filter(Boolean);return run('b2b.executive_intervention.prepare',{opportunityId:opp.id,...form,prohibitedCommitments},'Brief exécutif préparé.',{sourceAdapter:null,view:'rescue'})}
-  if (kind === 'create-prospect' && context) return run('b2b.prospect.create', { context, contextId: analysis?.context?.id }, 'Prospect créé et relié au contexte navigateur.', { view: 'recognition' })
+  if (kind === 'create-prospect' && context) {
+    const result = await run('b2b.prospect.create', { context, contextId: analysis?.context?.id }, 'Prospect créé avec preuves et relié au contexte navigateur.', { view: 'recognition' })
+    const created = result?.prospect || result?.account || result
+    if (created?.id) {
+      state.execution.prospect = created
+      await persistActiveWorkspace(created, null)
+      const sessionId = state.scanner.scan?.session?.id || state.scanner.scan?.session?.scan_session_id || null
+      if (sessionId) await message({ type: 'SCANNER_RECORD_DECISION', input: { sessionId, decisionType: 'create_prospect', targetType: 'b2b_prospect', targetId: created.id, payload: { sourceUrl: context.url } } }).catch(() => null)
+      await hydrateWorkspace(true)
+      state.activeDomain = 'account'
+      state.activeView = 'recognition'
+      render()
+    }
+    return result
+  }
   if (kind === 'enrich' && context && account) return run('b2b.prospect.enrich', { prospectId: account.id, context, contextId: analysis?.context?.id, apply: true }, 'Enrichissement appuyé par les preuves appliqué.')
   if (kind === 'build-plan' && context && account) return run('b2b.account_plan.create', { prospectId: account.id, context, contextId: analysis?.context?.id }, 'Plan de compte généré.', { view: 'plan' })
   if (kind === 'capture-territory' && context) return run('b2b.territory.target_capture', { context, contextId: analysis?.context?.id }, 'Cible capturée dans le territoire.')
 
   if (kind === 'create-opportunity' && account) {
-    const form = await openForm('Créer l’opportunité', 'Définissez une opportunité mesurable avec valeur, calendrier et portée.', [
-      { name: 'title', label: 'Titre', value: `${account.name} — Partenariat stratégique`, required: true },
-      { name: 'estimatedAnnualValue', label: 'Valeur annuelle estimée (Dh)', type: 'number', value: analysis?.vertical?.estimatedAnnualValue?.min || account.estimated_annual_value || 0 },
-      { name: 'probability', label: 'Probabilité initiale (%)', type: 'number', value: 25 },
+    const hypothesis = state.scanner.scan?.opportunityHypotheses?.[0] || analysis?.opportunityHypotheses?.[0] || null
+    const form = await openForm('Créer l’opportunité', 'Transformez l’hypothèse evidence-backed en opportunité mesurable. Les valeurs restent à confirmer par le commercial.', [
+      { name: 'title', label: 'Titre', value: hypothesis?.title ? `${account.name} — ${hypothesis.title}` : `${account.name} — Partenariat stratégique`, required: true },
+      { name: 'estimatedAnnualValue', label: 'Valeur annuelle estimée (Dh)', type: 'number', value: hypothesis?.estimatedAnnualValueMin || analysis?.vertical?.estimatedAnnualValue?.min || account.estimated_annual_value || 0 },
+      { name: 'probability', label: 'Probabilité initiale (%)', type: 'number', value: hypothesis ? Math.max(10, Math.min(60, Math.round(Number(hypothesis.confidence || .25) * 60))) : 25 },
       { name: 'expectedCloseAt', label: 'Clôture prévue', type: 'datetime-local' },
-      { name: 'programKey', label: 'Programme / offre', placeholder: 'Ex. school_parent_relief' },
-      { name: 'scopeSummary', label: 'Portée préliminaire', type: 'textarea', placeholder: 'Besoin, population, sites, volume…' },
+      { name: 'programKey', label: 'Programme / offre', value: hypothesis?.programKey || '', placeholder: 'Ex. hospitality_kids_experience' },
+      { name: 'scopeSummary', label: 'Portée préliminaire', type: 'textarea', value: hypothesis?.rationale || '', placeholder: 'Besoin, preuves, population, sites, volume…' },
     ])
     if (!form) return
     const result = await run('b2b.opportunity.create', { prospectId: account.id, ...form, estimatedMonthlyValue: Number(form.estimatedAnnualValue || 0) / 12, sourceAdapter: context?.adapterId, sourceUrl: context?.url, contextId: analysis?.context?.id }, 'Opportunité créée avec prochaine action.', { sourceAdapter: context?.adapterId || null, view: 'opportunity' })
@@ -1386,9 +1587,10 @@ const runtime: ModuleRuntime = {
   mount(container, module) {
     root = container
     moduleRef = module
-    const first: ViewKey = managementMode() ? 'ai_director' : 'recognition'
-    state = { activeDomain: 'account', activeView: first, execution: {}, workspaceSession: null }
+    const first: ViewKey = 'scanner'
+    state = { activeDomain: 'account', activeView: first, execution: {}, workspaceSession: null, scanner: {}, ultra: {} }
     render()
+    if (!managementMode()) void searchScannerAccounts('')
     unsubscribeWorkspace = subscribeWorkspaceSession((session) => {
       if (!root || !session?.prospectId || session.prospectId === state.workspaceSession?.prospectId) return
       state.workspaceSession = session

@@ -1,0 +1,12 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ09-COMMANDS-3000",
+  "commandsReviewed": 3000,
+  "possiblePairs": 4498500,
+  "exactCodeDuplicates": 0,
+  "exactNameDuplicates": 0,
+  "exactPurposeDuplicates": 0,
+  "undocumentedSemanticDuplicates": 0,
+  "documentedFunctionalVariants": 1000,
+  "method": "exact fingerprints + token signatures + family/domain/intent/stage differentiation",
+  "reviewStatus": "passed"
+}

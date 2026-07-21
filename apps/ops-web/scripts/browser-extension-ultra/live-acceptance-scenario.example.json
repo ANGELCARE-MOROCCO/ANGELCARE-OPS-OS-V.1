@@ -1,0 +1,87 @@
+{
+  "fixtureKey": "unknown-company-controlled-fixture",
+  "scanCapture": {
+    "scanSessionId": "session.id"
+  },
+  "commands": [
+    {
+      "id": "createProspect",
+      "commandKey": "b2b.prospect.create",
+      "payload": { "context": "${context}", "contextId": "${scanSessionId}" },
+      "capture": { "prospectId": "prospect.id" }
+    },
+    {
+      "id": "persistContext",
+      "commandKey": "b2b.ultra.context.set",
+      "payload": { "activeAccountId": "${prospectId}", "activeScanSessionId": "${scanSessionId}", "sourceUrl": "${context.url}", "sourceAdapter": "${context.adapterId}" }
+    },
+    {
+      "id": "reloadContext",
+      "commandKey": "b2b.ultra.context.read",
+      "payload": {}
+    },
+    {
+      "id": "launchpad",
+      "commandKey": "b2b.ultra.launchpad.read",
+      "payload": { "query": "${context.organization.name}", "limit": 50 }
+    },
+    {
+      "id": "contact",
+      "commandKey": "b2b.contact.create",
+      "payload": {
+        "prospectId": "${prospectId}",
+        "contact": { "name": "Controlled Fixture Economic Buyer", "role": "Directeur Général", "email": "fixture-buyer@example.invalid", "notes": "Synthetic live-acceptance fixture; not a verified external email." },
+        "committeeRoleKey": "economic_buyer",
+        "influenceLevel": "high"
+      },
+      "capture": { "contactId": "contact.id" }
+    },
+    {
+      "id": "accountPlan",
+      "commandKey": "b2b.account_plan.create",
+      "payload": { "prospectId": "${prospectId}", "context": "${context}", "contextId": "${scanSessionId}" }
+    },
+    {
+      "id": "opportunity",
+      "commandKey": "b2b.opportunity.create",
+      "payload": { "prospectId": "${prospectId}", "title": "Controlled live acceptance opportunity", "estimatedAnnualValue": 120000, "probability": 20, "scopeSummary": "Synthetic acceptance fixture", "sourceUrl": "${context.url}", "sourceAdapter": "${context.adapterId}" },
+      "capture": { "opportunityId": "opportunity.id" }
+    },
+    {
+      "id": "firstAction",
+      "commandKey": "b2b.followup.create",
+      "payload": { "prospectId": "${prospectId}", "opportunityId": "${opportunityId}", "title": "Controlled acceptance follow-up", "objective": "Validate the next governed step", "dueAt": "2030-01-01T10:00:00.000Z", "channel": "internal", "priority": "high" }
+    },
+    {
+      "id": "journey",
+      "commandKey": "b2b.ultra.journey.read",
+      "payload": { "prospectId": "${prospectId}" }
+    },
+    {
+      "id": "timeline",
+      "commandKey": "b2b.ultra.timeline.read",
+      "payload": { "prospectId": "${prospectId}", "limit": 500 }
+    },
+    {
+      "id": "quality",
+      "commandKey": "b2b.ultra.data_quality.scan",
+      "payload": { "prospectId": "${prospectId}" }
+    },
+    {
+      "id": "aiTruth",
+      "commandKey": "b2b.ultra.ai.reason",
+      "payload": { "prospectId": "${prospectId}", "objective": "Recommend the next governed acceptance action" }
+    },
+    {
+      "id": "report",
+      "commandKey": "b2b.ultra.report.generate",
+      "payload": { "reportType": "live_acceptance_fixture", "prospectId": "${prospectId}" }
+    }
+  ],
+  "databaseChecks": [
+    { "id": "context", "table": "browser_extension_ultra_contexts", "match": { "active_account_id": "${prospectId}" } },
+    { "id": "aiRun", "table": "browser_extension_ultra_ai_runs", "match": { "prospect_id": "${prospectId}" } },
+    { "id": "report", "table": "browser_extension_ultra_reports", "match": { "report_type": "live_acceptance_fixture" } }
+  ],
+  "revocation": { "enabled": false }
+}

@@ -1376,7 +1376,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
             refreshing={refreshing}
             error={error}
             success={success}
-            diagnostics={snapshot.diagnostics}
+            diagnostics={snapshot.diagnostics?.map((item) => item.reason)}
             onRefresh={() => void load(true)}
             onCreateMission={() => openModal("mission")}
             onCreateCandidate={() => openModal("recruitment")}
@@ -1507,9 +1507,9 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
 
         {error ? <div className="mb-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700">{error}</div> : null}
         {success ? <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">{success}</div> : null}
-        {snapshot.diagnostics.length ? (
+        {snapshot.diagnostics?.length ? (
           <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">
-            Database setup required: {snapshot.diagnostics[0]}
+            Database setup required: {snapshot.diagnostics[0].reason}
           </div>
         ) : null}
 

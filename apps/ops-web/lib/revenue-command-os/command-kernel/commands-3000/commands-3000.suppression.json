@@ -1,0 +1,35 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ09-COMMANDS-3000",
+  "suppressedCount": 0,
+  "policies": [
+    {
+      "code": "SUPPRESS-LOW-PRECISION",
+      "metric": "routingPrecision",
+      "operator": "<",
+      "threshold": 0.75,
+      "minimumSamples": 30,
+      "action": "suppress-from-normal-routing",
+      "requiresApproval": "director"
+    },
+    {
+      "code": "SUPPRESS-STALE-CRITICAL",
+      "metric": "stalenessStatus",
+      "operator": "=",
+      "threshold": "critically-stale",
+      "minimumSamples": 1,
+      "action": "block",
+      "requiresApproval": "automatic-safety"
+    },
+    {
+      "code": "SUPPRESS-REPEATED-VALIDATION",
+      "metric": "validationFailureRate",
+      "operator": ">",
+      "threshold": 0.2,
+      "minimumSamples": 25,
+      "action": "needs-review",
+      "requiresApproval": "supervisor"
+    }
+  ],
+  "historyPreserved": true,
+  "externalActionsEnabled": false
+}

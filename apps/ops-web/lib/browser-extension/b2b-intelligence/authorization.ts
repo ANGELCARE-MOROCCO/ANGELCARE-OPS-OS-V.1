@@ -4,6 +4,7 @@ import { B2B_EXECUTION_COMMAND_MAP } from '../b2b-execution/contract'
 import { B2B_DEAL_COMMAND_MAP } from '../b2b-deal-closing/contract'
 import { B2B_PARTNER_COMMAND_MAP } from '../b2b-partner-lifecycle/contract'
 import { B2B_MANAGEMENT_COMMAND_MAP } from '../b2b-management-command/contract'
+import { B2B_ULTRA_COMMAND_MAP } from '../b2b-ultra/contract'
 
 const ALL_B2B_COMMANDS = new Map([
   ...B2B_INTELLIGENCE_COMMAND_MAP.entries(),
@@ -11,6 +12,7 @@ const ALL_B2B_COMMANDS = new Map([
   ...B2B_DEAL_COMMAND_MAP.entries(),
   ...B2B_PARTNER_COMMAND_MAP.entries(),
   ...B2B_MANAGEMENT_COMMAND_MAP.entries(),
+  ...B2B_ULTRA_COMMAND_MAP.entries(),
 ])
 
 export async function authorizeB2BIntelligenceCommand(db:any,userId:string,input:{commandKey:string;sourceAdapter?:string|null}){

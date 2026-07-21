@@ -1,0 +1,19 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ07-COMMANDS-1000",
+  "existingGoldenCommands": 300,
+  "newCommands": 700,
+  "exactCommandCount": 1000,
+  "families": 12,
+  "mandatoryCoverageDomains": 22,
+  "evaluationClasses": 25,
+  "contractEvaluationCases": 17500,
+  "routingBenchmarkCases": 100000,
+  "totalPhase7Cases": 117500,
+  "cumulativeMZ05Cases": 70000,
+  "cumulativeMZ06Cases": 33600,
+  "cumulativeEvaluationCases": 221100,
+  "contractCorpusHash": "f3b4c27d27e3eaa4f2d1d642e1e6217bcd9fe2f6345c3b7db1a0b8f7cfe23c45",
+  "routingCorpusHash": "6aed2e3a8f5f2d0c11ad589f29fa3e4a4977450b63668b18c97a91b9a6e64c78",
+  "externalActions": 0,
+  "executionPosture": "shadow"
+}

@@ -1,0 +1,120 @@
+{
+  "contractId": "AC-BROWSER-OS-SCANNER-INTELLIGENCE-2.0",
+  "package": "ANGELCARE_BROWSER_OS_B2B_MEGA_PATCH_SCANNER_INTELLIGENCE_2_0.zip",
+  "version": "0.7.1",
+  "status": "signed_implementation_contract",
+  "purpose": "Transform authorized browser context into an evidence-backed, entity-resolved, actionable ANGELCARE commercial dossier and active Account 360 context.",
+  "strengthensCapabilityIds": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "42",
+    "45"
+  ],
+  "operatingModes": [
+    {
+      "key": "quick",
+      "label": "Instant Scan",
+      "pageLimit": 1,
+      "target": "Immediate identity, public contacts, evidence, duplicate candidates and next action."
+    },
+    {
+      "key": "deep",
+      "label": "Deep Company Scan",
+      "pageLimit": 8,
+      "target": "Controlled same-origin research across identity, leadership, services, locations, contacts, news and partnerships."
+    },
+    {
+      "key": "strategic",
+      "label": "Strategic Research Mission",
+      "pageLimit": 12,
+      "target": "Extended evidence, stakeholders, vertical signals, opportunity hypotheses, missing research and account strategy."
+    }
+  ],
+  "mandatoryArchitecture": [
+    "Account search and context launcher independent from page scanning",
+    "Live browser adapter extraction before server interpretation",
+    "Controlled same-origin public-page discovery",
+    "SSRF protection, DNS validation, robots.txt respect, bounded redirects, timeouts and page-size limits",
+    "Evidence ledger retaining source, excerpt, method, confidence and validation state",
+    "Organization resolution and explainable duplicate matching",
+    "Parent, branch, contact, vertical, signal and opportunity hypothesis extraction",
+    "Optional governed AI that can be disabled and cannot create verified facts",
+    "Persistent scan sessions, pages, facts, contacts, signals, hypotheses, decisions and errors",
+    "Guided transition from scan result to prospect, enrichment, account plan and opportunity",
+    "Active account context persistence and Account 360 hydration",
+    "Progress, partial, empty, error, review and success states"
+  ],
+  "dataStructures": [
+    "browser_extension_scan_sessions",
+    "browser_extension_scan_pages",
+    "browser_extension_scan_facts",
+    "browser_extension_scan_contacts",
+    "browser_extension_scan_signals",
+    "browser_extension_scan_opportunity_hypotheses",
+    "browser_extension_scan_user_decisions",
+    "browser_extension_scan_errors"
+  ],
+  "gatewayRoutes": [
+    "/api/browser-extension/v1/b2b/scanner/quick",
+    "/api/browser-extension/v1/b2b/scanner/deep",
+    "/api/browser-extension/v1/b2b/scanner/status/[id]",
+    "/api/browser-extension/v1/b2b/scanner/accounts/search",
+    "/api/browser-extension/v1/b2b/scanner/decision"
+  ],
+  "safetyBoundaries": [
+    "No direct Chrome-to-database access",
+    "No unrestricted crawling",
+    "No cross-origin server research in Scanner 2.0",
+    "No private-network or localhost fetch",
+    "No bypass of robots, authentication, rate limits or platform restrictions",
+    "No hidden extraction of full private Gmail or WhatsApp histories",
+    "No guessed people or email addresses presented as verified",
+    "No automatic external communication",
+    "No silent duplicate creation",
+    "No AI inference promoted to verified evidence without human or authoritative verification"
+  ],
+  "truthfulnessRules": [
+    "45 assigned capabilities must never be displayed as 45 runtime-proven capabilities",
+    "AI is displayed as governed AI only when a configured provider successfully returns evidence-bound output",
+    "Deterministic intelligence is labelled deterministic",
+    "Partial or inaccessible sources remain visible",
+    "A successful build or registry check is not live scanner acceptance"
+  ],
+  "acceptanceJourneys": [
+    "Unknown website -> scan -> evidence -> duplicate search -> create prospect -> persist -> reload -> existing account recognition -> Account 360 hydration",
+    "Existing prospect -> high-confidence match -> open dossier without duplicate creation",
+    "Possible duplicate -> explain signals -> block silent creation -> user review",
+    "Deep scan -> multiple controlled same-origin pages -> partial-source diagnostics -> evidence ledger",
+    "Existing account launcher -> search 167+ authorized accounts -> select -> persist context -> hydrate Account 360",
+    "Scan result -> apply enrichment -> create account plan -> create opportunity",
+    "Access revoked during scan -> subsequent command denied and stale context cleared"
+  ],
+  "completionStandard": {
+    "sourceCompleteRequires": [
+      "real source",
+      "SQL migration",
+      "rollback",
+      "extension typecheck",
+      "build",
+      "contract verifier",
+      "scanner verifier",
+      "package integrity"
+    ],
+    "liveCompleteRequires": [
+      "migration applied",
+      "Gateway deployed",
+      "0.7.1 loaded in Chrome",
+      "real unknown and existing account journeys passed",
+      "database persistence verified",
+      "audit verified"
+    ]
+  }
+}

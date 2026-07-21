@@ -1,0 +1,102 @@
+OK  exists: lib/market-os/ambassadors/contracts.ts
+OK  exists: lib/market-os/ambassadors/auth.ts
+OK  exists: lib/market-os/ambassadors/supabase.ts
+OK  exists: lib/market-os/ambassadors/persistence.ts
+OK  exists: lib/market-os/ambassadors/server.ts
+OK  exists: app/api/market-os/ambassadors/proofs/decision/route.ts
+OK  exists: app/api/market-os/ambassadors/payouts/route.ts
+OK  exists: database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql
+OK  lib/market-os/ambassadors/server.ts excludes .angelcare_market_os_ambassadors_store
+OK  lib/market-os/ambassadors/server.ts excludes readFile(
+OK  lib/market-os/ambassadors/server.ts excludes writeFile(
+OK  lib/market-os/ambassadors/server.ts excludes process.cwd()
+OK  lib/market-os/ambassadors/server.ts excludes local-fallback
+OK  lib/market-os/ambassadors/server.ts excludes local fallback
+OK  lib/market-os/ambassadors/persistence.ts excludes .angelcare_market_os_ambassadors_store
+OK  lib/market-os/ambassadors/persistence.ts excludes readFile(
+OK  lib/market-os/ambassadors/persistence.ts excludes writeFile(
+OK  lib/market-os/ambassadors/persistence.ts excludes process.cwd()
+OK  lib/market-os/ambassadors/persistence.ts excludes local-fallback
+OK  lib/market-os/ambassadors/persistence.ts excludes local fallback
+OK  lib/market-os/ambassadors/supabase.ts excludes .angelcare_market_os_ambassadors_store
+OK  lib/market-os/ambassadors/supabase.ts excludes readFile(
+OK  lib/market-os/ambassadors/supabase.ts excludes writeFile(
+OK  lib/market-os/ambassadors/supabase.ts excludes process.cwd()
+OK  lib/market-os/ambassadors/supabase.ts excludes local-fallback
+OK  lib/market-os/ambassadors/supabase.ts excludes local fallback
+OK  lib/market-os/ambassadors/contracts.ts contains "leads"
+OK  lib/market-os/ambassadors/contracts.ts contains "conversions"
+OK  lib/market-os/ambassadors/contracts.ts contains "proofs"
+OK  lib/market-os/ambassadors/contracts.ts contains "payouts"
+OK  lib/market-os/ambassadors/contracts.ts contains AmbassadorActor
+OK  lib/market-os/ambassadors/contracts.ts contains AmbassadorWorkspaceSnapshot
+OK  lib/market-os/ambassadors/contracts.ts contains ENTITY_LIFECYCLES
+OK  lib/market-os/ambassadors/auth.ts contains auth.getUser
+OK  lib/market-os/ambassadors/auth.ts contains market_os_ambassador_actor_roles
+OK  lib/market-os/ambassadors/auth.ts contains market_os_ambassador_role_permissions
+OK  lib/market-os/ambassadors/auth.ts contains SCOPE_REQUIRED
+OK  lib/market-os/ambassadors/server.ts contains missionAssignments
+OK  lib/market-os/ambassadors/server.ts contains territoryAssignments
+OK  lib/market-os/ambassadors/server.ts contains rows.leads
+OK  lib/market-os/ambassadors/server.ts contains rows.conversions
+OK  lib/market-os/ambassadors/server.ts contains market_os_ambassador_convert_candidate
+OK  lib/market-os/ambassadors/server.ts contains approvedRewardSource
+OK  lib/market-os/ambassadors/server.ts contains approvedProofForMission
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_mission_assignments
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_territory_assignments
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_actor_roles
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_role_permissions
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_convert_candidate
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_decide_incentive
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains market_os_ambassador_block_audit_mutation
+OK  database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql contains enable row level security
+OK  actor boundary: app/api/market-os/ambassadors/ambassadors/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/ambassadors/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/audit/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/conversions/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/conversions/decision/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/conversions/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/goals/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/goals/recalculate/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/goals/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/incentives/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/incentives/approve/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/incentives/pay/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/incentives/reject/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/incentives/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/leads/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/leads/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/missions/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/missions/assign/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/missions/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/missions/status/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/onboarding/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/onboarding/complete-step/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/onboarding/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/operations/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/payouts/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/payouts/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/proofs/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/proofs/decision/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/proofs/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/recruitment/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/recruitment/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/recruitment/stage/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/reports/export/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/reports/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/settings/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/territories/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/territories/approve/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/territories/assign/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/territories/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/training/[id]/route.ts
+OK  actor boundary: app/api/market-os/ambassadors/training/route.ts
+OK  no frozen TSX file changed
+OK  TypeScript static verification passed (no emit)
+
+All 42 Ambassador API routes are actor-protected. Static verification passed. No build was run.
+
+Git diff check:
+PASS: git diff --check
+PASS: no build command executed

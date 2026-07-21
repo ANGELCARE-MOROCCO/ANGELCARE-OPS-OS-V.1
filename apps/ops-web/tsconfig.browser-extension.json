@@ -13,7 +13,8 @@
     "app/(protected)/browser-extension/**/*.tsx",
     "app/(protected)/opsos/browser-extension/**/*.tsx",
     "app/(protected)/users/_components/UserBrowserExtensionAccessSection.tsx",
-    "app/(protected)/users/[id]/page.tsx"
+    "app/(protected)/users/[id]/page.tsx",
+    "app/(protected)/browser-os-production/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

@@ -1,0 +1,21 @@
+{
+  "system": "ANGELCARE Revenue Command OS",
+  "latestCompletedPhase": "MZ10.1 package delivery",
+  "nextPhase": "MZ11",
+  "operationalCommands": 3000,
+  "aiProvider": "gemini",
+  "providerNeutralGateway": true,
+  "executionMode": "shadow",
+  "externalActionsEnabled": false,
+  "knownAuthoritativeCorrections": [
+    "MZ09 V3 evaluation uniqueness and semantic-summary compatibility",
+    "MZ10 V2 installation registry compatibility",
+    "MZ10.1 Gemini provider stabilization"
+  ],
+  "targetAcceptanceStillRequired": [
+    "strict TypeScript in full monorepo",
+    "MZ10.1 SQL COMMIT and VERIFY",
+    "live Gemini smoke with target secret",
+    "one objective-to-five-strategies persistence test"
+  ]
+}

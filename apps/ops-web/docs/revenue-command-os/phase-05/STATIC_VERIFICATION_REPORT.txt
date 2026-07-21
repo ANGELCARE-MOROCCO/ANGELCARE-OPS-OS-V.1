@@ -1,0 +1,177 @@
+
+MZ05 STATIC ACCEPTANCE
+Passes: 171
+Failures: 0
+  ✓ Fichier requis: app/(protected)/revenue-command-os/command-kernel/page.tsx
+  ✓ Fichier requis: app/(protected)/revenue-command-os/command-kernel/[section]/page.tsx
+  ✓ Fichier requis: app/api/revenue-command-os/command-kernel/route.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/types.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/constants.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/seed-data.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/eligibility.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/permissions.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/router.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/graph.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/scheduler.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/runtime.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/validation.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/repository.ts
+  ✓ Fichier requis: supabase/migrations/20260720_revenue_command_os_phase5_command_kernel.sql
+  ✓ Fichier requis: docs/revenue-command-os/phase-05/ROLLBACK.sql
+  ✓ Contrat type RevenueCommandDefinition
+  ✓ Contrat type RevenueCommandVersion
+  ✓ Contrat type RevenueCommandSituation
+  ✓ Contrat type RevenueCommandEligibilityDecision
+  ✓ Contrat type RevenueCommandRunPlan
+  ✓ Contrat type RevenueCommandGraph
+  ✓ Contrat type RevenueCommandKernelBootstrap
+  ✓ Preuve seed manual
+  ✓ Preuve seed scheduled
+  ✓ Preuve seed event
+  ✓ Preuve seed condition
+  ✓ Preuve seed chained
+  ✓ Preuve seed fallback
+  ✓ Preuve seed approval
+  ✓ Preuve seed rejected
+  ✓ Preuve seed simulation
+  ✓ Routage déterministe et idempotent
+  ✓ Aucune action externe
+  ✓ API allow-list MZ05
+  ✓ Workspace Vue du noyau
+  ✓ Workspace Catalogue des commandes
+  ✓ Workspace Familles & taxonomie
+  ✓ Workspace Routage & éligibilité
+  ✓ Workspace Déclencheurs
+  ✓ Workspace Planification
+  ✓ Workspace Graphes de commandes
+  ✓ Workspace Simulation
+  ✓ Workspace Exécutions
+  ✓ Workspace Versions & rollback
+  ✓ Workspace Permissions & garde-fous
+  ✓ Workspace Validation du noyau
+  ✓ Migration revenue_os_command_families
+  ✓ Rollback revenue_os_command_families
+  ✓ Migration revenue_os_command_definitions
+  ✓ Rollback revenue_os_command_definitions
+  ✓ Migration revenue_os_command_versions
+  ✓ Rollback revenue_os_command_versions
+  ✓ Migration revenue_os_command_eligibility_rules
+  ✓ Rollback revenue_os_command_eligibility_rules
+  ✓ Migration revenue_os_command_context_contracts
+  ✓ Rollback revenue_os_command_context_contracts
+  ✓ Migration revenue_os_command_tool_permissions
+  ✓ Rollback revenue_os_command_tool_permissions
+  ✓ Migration revenue_os_command_triggers
+  ✓ Rollback revenue_os_command_triggers
+  ✓ Migration revenue_os_command_schedules
+  ✓ Rollback revenue_os_command_schedules
+  ✓ Migration revenue_os_command_graphs
+  ✓ Rollback revenue_os_command_graphs
+  ✓ Migration revenue_os_command_graph_nodes
+  ✓ Rollback revenue_os_command_graph_nodes
+  ✓ Migration revenue_os_command_run_plans
+  ✓ Rollback revenue_os_command_run_plans
+  ✓ Migration revenue_os_command_runs
+  ✓ Rollback revenue_os_command_runs
+  ✓ Migration revenue_os_command_run_steps
+  ✓ Rollback revenue_os_command_run_steps
+  ✓ Migration revenue_os_command_idempotency
+  ✓ Rollback revenue_os_command_idempotency
+  ✓ Migration revenue_os_command_approval_classes
+  ✓ Rollback revenue_os_command_approval_classes
+  ✓ Migration revenue_os_command_permission_evaluations
+  ✓ Rollback revenue_os_command_permission_evaluations
+  ✓ Migration revenue_os_command_output_validations
+  ✓ Rollback revenue_os_command_output_validations
+  ✓ Migration revenue_os_command_rollbacks
+  ✓ Rollback revenue_os_command_rollbacks
+  ✓ Migration revenue_os_command_retirements
+  ✓ Rollback revenue_os_command_retirements
+  ✓ Migration revenue_os_command_test_cases
+  ✓ Rollback revenue_os_command_test_cases
+  ✓ Migration revenue_os_command_test_runs
+  ✓ Rollback revenue_os_command_test_runs
+  ✓ Migration revenue_os_command_kernel_validation_issues
+  ✓ Rollback revenue_os_command_kernel_validation_issues
+  ✓ Migration revenue_os_command_kernel_snapshots
+  ✓ Rollback revenue_os_command_kernel_snapshots
+  ✓ RLS activé
+  ✓ Accès client révoqué
+  ✓ Accès service_role
+  ✓ Contrats MZ01 de permissions et feature flags respectés
+  ✓ Seed représentatif déclaré
+  ✓ Posture Shadow persistée
+  ✓ Outils externes enregistrés uniquement comme interdits
+  ✓ MZ04 préservé
+  ✓ MZ03 préservé
+  ✓ MZ02 préservé
+  ✓ MZ01 préservé
+  ✓ Corpus d’évaluation présent
+  ✓ Corpus réel >30 MB (56360267)
+  ✓ Corpus >=30 000 cas (30000)
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Corpus adversarial présent
+  ✓ Corpus adversarial >100 MB (123316006)
+  ✓ Corpus adversarial >=40 000 cas (40000)
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Aucun fichier de police inclus
+
+MEGA ZIP 5 STATIC ACCEPTANCE: PASS

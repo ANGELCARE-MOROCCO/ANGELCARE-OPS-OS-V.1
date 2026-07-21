@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": [
+      "ES2022"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "files": [
+    "lib/revenue-command-os/command-kernel/types.ts",
+    "lib/revenue-command-os/command-kernel/constants.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/catalog.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/versions.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/triggers.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/schedules.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/graphs.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/index.ts",
+    "lib/revenue-command-os/command-kernel/seed-data.ts",
+    "lib/revenue-command-os/command-kernel/eligibility.ts",
+    "lib/revenue-command-os/command-kernel/permissions.ts",
+    "lib/revenue-command-os/command-kernel/graph.ts",
+    "lib/revenue-command-os/command-kernel/scheduler.ts",
+    "lib/revenue-command-os/command-kernel/schemas.ts",
+    "lib/revenue-command-os/command-kernel/validation.ts"
+  ]
+}

@@ -1,0 +1,410 @@
+{
+  "release": "MZ06",
+  "releaseCode": "AC-REVENUE-OS-MZ06-GOLDEN-300",
+  "generatedAt": "2026-07-20T16:25:00Z",
+  "summary": {
+    "added": 49,
+    "modified": 8
+  },
+  "changes": [
+    {
+      "path": "ACCEPTANCE_MZ06.md",
+      "status": "added",
+      "bytes": 455,
+      "sha256": "6a26f89c636b47fffc58afc2186300ae94027deee2c6adacdd7a5e21c5a503c3",
+      "previousSha256": null
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ06_GOLDEN_300_REPORT.md",
+      "status": "added",
+      "bytes": 437,
+      "sha256": "faf5be8ff01aef33a28f62a88559fcecccb28dad94f4fcf45334e676dbee63ef",
+      "previousSha256": null
+    },
+    {
+      "path": "INSTALLATION_MZ06.md",
+      "status": "added",
+      "bytes": 613,
+      "sha256": "3fd4fd1f061e4903cc22c86ea26a6c091470acca00d08dab8be045f60bf7170f",
+      "previousSha256": null
+    },
+    {
+      "path": "README_MZ06.md",
+      "status": "added",
+      "bytes": 879,
+      "sha256": "20cec986eaf23cf1a07809ad5ea78b1d23f2f0a1eab84bc109df64d18a10015b",
+      "previousSha256": null
+    },
+    {
+      "path": "ROLLBACK_MZ06.md",
+      "status": "added",
+      "bytes": 380,
+      "sha256": "b4300b11e22747b22f94570395ac4cf99f98de63e5b229be0194a10011a8c281",
+      "previousSha256": null
+    },
+    {
+      "path": "apply_revenue_os_mz06.sh",
+      "status": "added",
+      "bytes": 7386,
+      "sha256": "08331f75b93cbc03f792cbf6186bb5ac8e4ab5501172f5d56cd0c47785e616e8",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx",
+      "status": "modified",
+      "bytes": 19003,
+      "sha256": "ae63df5ee1023d7e703519d049d2252efa1f5e39b82d3520d5fc9f3a6ebef388",
+      "previousSha256": "feb3ad9312e095b8e4cae04695aa3eeccae8cf8fceeda3c1dfc4b51175562b9d"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelFrame.tsx",
+      "status": "modified",
+      "bytes": 3253,
+      "sha256": "164c3419ad407b343ea223b6e98227b062ab2ffcaff5e936f20530fffc54e1e4",
+      "previousSha256": "d2381eaa9c4f1cff7f9ed8503a0b9f174562040cb557cee9a4b0c42908143ff1"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelWorkspace.tsx",
+      "status": "modified",
+      "bytes": 14995,
+      "sha256": "023965d54098b0e036ae53e7827ad6d33fbb53813f64aa8f0e9cc0de0e82eb7c",
+      "previousSha256": "7fcb1d491a9dacffa647dd64e9b0ba0b5bcbbbd62f3b15edd1212c573ab35198"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/command-kernel/golden-300/route.ts",
+      "status": "added",
+      "bytes": 1137,
+      "sha256": "7bcfc526ba3bd5f525578822e4a377dc09ff9a39af6dbf1ca9b56c3bac9cf152",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/command-kernel/route.ts",
+      "status": "modified",
+      "bytes": 4871,
+      "sha256": "638c66031a4dbe74d8eab0e5edc381dd52e582fcc1c0703407bb956db22312e3",
+      "previousSha256": "dacea37fd767f205996dee584a32b049da13120c8e7b4d7099790d008ae74ca4"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/ACCEPTANCE.md",
+      "status": "added",
+      "bytes": 629,
+      "sha256": "178ae3408a975f453168120ef5bb9b7644ed43e745232e7b3634385c839ed789",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/ARCHITECTURE.md",
+      "status": "added",
+      "bytes": 595,
+      "sha256": "82bc1d7579045e3dfc2ba5bdc0e3159feec93d729aefad8d5ab30edc4f6b2b02",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/CHANGELOG.md",
+      "status": "added",
+      "bytes": 428,
+      "sha256": "5af26297b21d022c6408943e04d1de1d535d0be6e3e1e86968c89ec5bcc3ae73",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/DATA_DICTIONARY.md",
+      "status": "added",
+      "bytes": 338,
+      "sha256": "72d87259f9052d085af56f01e1128618fc0baa9cde95fde40607bcceeb179f52",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/INSTALLATION.md",
+      "status": "added",
+      "bytes": 403,
+      "sha256": "4a8f55aefbf18a397fec1b4fc1dc6342e524028efd200338dd668d5e4e0760ac",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/INSTALLER_SIMULATION_REPORT.txt",
+      "status": "added",
+      "bytes": 562,
+      "sha256": "5b375da2749d29ca903c96bfcb2d7dc7e7f5a31224f914f5303a2d2af49fbee3",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/KNOWN_LIMITATIONS.md",
+      "status": "added",
+      "bytes": 388,
+      "sha256": "4b488c40bc0afc0247e9ff4fd9a2f2c75888d449801ed94b56a8c6b007df83d0",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/MIGRATION_REVIEW.md",
+      "status": "added",
+      "bytes": 702,
+      "sha256": "3d138c7b9f54a536242574e70c70c1531cab367c75c108b7238d566912183b3d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/NEXT_PHASE_DEPENDENCY.md",
+      "status": "added",
+      "bytes": 353,
+      "sha256": "5363be049e8a92ffa14cb9421d8076a4967b0a72f9cc364cb78f2624fe0b3931",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/README.md",
+      "status": "added",
+      "bytes": 621,
+      "sha256": "a88c8ecb46ae0cb6a540dc442c83ed877ecd111bdf3f717a3ad0e6ffb8f23c6a",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/ROLLBACK.sql",
+      "status": "added",
+      "bytes": 3161,
+      "sha256": "fa02bc68420371da5332eb9b446c554bafc1a8dfbd408f5d1db4d1e6e957731d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/SECURITY_AND_GOVERNANCE.md",
+      "status": "added",
+      "bytes": 484,
+      "sha256": "8bd7ac7e27bd23eaa549fbdea13740f3345cc6b903f773e0805bc13d6ea0dbd0",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/STATIC_VERIFICATION_REPORT.txt",
+      "status": "added",
+      "bytes": 292,
+      "sha256": "ffa0f8402a337634b81160809b72dd6a8b84543a7047b8e2e992978c3846f14a",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/TYPESCRIPT_VERIFICATION_REPORT.txt",
+      "status": "added",
+      "bytes": 430,
+      "sha256": "7ed2b463097404ee1310430692f92b62166bdfcd06d22b3baea1e4c956b0cc6c",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/VERIFICATION_EVIDENCE.md",
+      "status": "added",
+      "bytes": 860,
+      "sha256": "f0bb3f959bd055feaf428e45c96ec861bea8d35178ad062179054d5357ba4feb",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-06/EVALUATION_MANIFEST_MZ06.json",
+      "status": "added",
+      "bytes": 748,
+      "sha256": "f14c7c8f2e3cc04e55706ffc8578385494cd23a5547ae7996e0fc805c0c011ce",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-06/golden-300-contract-evaluations.jsonl",
+      "status": "added",
+      "bytes": 4440787,
+      "sha256": "50c7a2417f4b2e94dbefa9e9d3ab45c58f9d1c9cb727b899c327d8bb0f134973",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-06/golden-300-routing-benchmarks.jsonl",
+      "status": "added",
+      "bytes": 23204940,
+      "sha256": "068d8bb05495655c9e690738e545d2b8d9b64fc0aebeec56a11ce7df7a2dad7c",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/fixtures/revenue-command-os/phase-06/golden-300-situations.jsonl",
+      "status": "added",
+      "bytes": 943533,
+      "sha256": "c31f8bf0ad6c29aab31c0733ec4e6f5af6d3ba41cf39fcf5b5e9ba80bfc49f08",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/constants.ts",
+      "status": "modified",
+      "bytes": 5244,
+      "sha256": "e78d04cbaec80b743f6932fd591168c96be095d67e769ad7659103f1ad3c2ad2",
+      "previousSha256": "e037ad6e3d17c3bce580bd707db32d375feed253bde53d7d1320d8edd296997d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/catalog.ts",
+      "status": "added",
+      "bytes": 2384696,
+      "sha256": "02a0a1afa73e537fbdb1d53ab0443c38dec3f62f87beac5d8519c0b990fd5f85",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.commands.json",
+      "status": "added",
+      "bytes": 3501148,
+      "sha256": "532f95fb969722f2c2f90a1b75ae5b1a18613dbe76585c30e0dffabce24df23e",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.coverage.json",
+      "status": "added",
+      "bytes": 5479,
+      "sha256": "c7eeb192981da328b41fb35d900b7bb89653e2a795e709b176bf7612fc06a72d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.graphs.json",
+      "status": "added",
+      "bytes": 32550,
+      "sha256": "0ab6d6b46f254a59377c262537ab967408bd697beefc0b2be05b840e5ba7e055",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.schedules.json",
+      "status": "added",
+      "bytes": 39046,
+      "sha256": "72b871e30c3ecf58889b91037ced358289d0384a234d062dcb48e643341753fe",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.triggers.json",
+      "status": "added",
+      "bytes": 86733,
+      "sha256": "a1faf30e21c2ea608ace5c9ed7cce6efdd626ce1f4637e17f45936ed6adb03ab",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.uniqueness.json",
+      "status": "added",
+      "bytes": 118425,
+      "sha256": "302089e5296065945baed6363e92df359681b0311bcceca87e065086b4b1051f",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.versions.json",
+      "status": "added",
+      "bytes": 151405,
+      "sha256": "d14ef5f59750dcf01efac0b4047f4f5d2ae4ea687c42af34e8ed0a6ea6e1f00e",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/graphs.ts",
+      "status": "added",
+      "bytes": 23057,
+      "sha256": "455f9f6dc808ba9b97c05f619ef434950ef9d37ae97867a4646c96fc4b1312a0",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/index.ts",
+      "status": "added",
+      "bytes": 443,
+      "sha256": "d01beea78ce3912a3dcad88038f3f1af3d59a333defb092a988636b15826e94d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/schedules.ts",
+      "status": "added",
+      "bytes": 32652,
+      "sha256": "5277b5dcfef88a58a3cb8fe581480cd6132c27b5c9f953a15294078fbcb4100b",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/triggers.ts",
+      "status": "added",
+      "bytes": 70034,
+      "sha256": "373866a481315767177307b63a08850cd65406c66829908f2cecc955ab72259d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/versions.ts",
+      "status": "added",
+      "bytes": 131838,
+      "sha256": "fa2a862da809fe2030a123b46c8a91cdf0d57a95176cb9295efb001d5debb29a",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/repository.ts",
+      "status": "modified",
+      "bytes": 5410,
+      "sha256": "9f5c6552cefeb9d61988d4c4287285191e1e314787ce771781987f8f301977c1",
+      "previousSha256": "916ac963b856be953942b17e695efd2e6e95aa6cc836d0185e410be691774d79"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/seed-data.ts",
+      "status": "modified",
+      "bytes": 12393,
+      "sha256": "e8a4c25d28e33d3e952c2827a03c62fdd94136d3e969de2ffbbfded40dadec47",
+      "previousSha256": "c9ec93babf324b1cc20498b796551600e3f0c2d8f921c47f2132ad0b7eb386c9"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase6-manifest.mjs",
+      "status": "added",
+      "bytes": 742,
+      "sha256": "a3e28f6e0715a2be8b58f796fef167d9a5146e5425464f5a3f1ddd08df2329a2",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/run-phase6-golden-tests.mjs",
+      "status": "added",
+      "bytes": 1984,
+      "sha256": "c161d7f5f744e9e46f8e549c59a92e2153478d826f49eab334b098012bd00374",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/transpile-phase6-ui.mjs",
+      "status": "added",
+      "bytes": 1570,
+      "sha256": "da8316239365fcb7a3518cb7948632eaec260e438358b110b792a4e5a0135442",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase6-cumulative-package.mjs",
+      "status": "added",
+      "bytes": 1083,
+      "sha256": "e4c4d2df9597d24ad05d9bfe01e03a3cd8d942e49e2f6f350bd6a6bef401bbbc",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase6.mjs",
+      "status": "added",
+      "bytes": 8096,
+      "sha256": "1e159dbcaa965efbfe82fb6da87e8b8d8face88f800e8ffb1915662ed40000ba",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase6_golden_300.sql",
+      "status": "added",
+      "bytes": 7209985,
+      "sha256": "66cabfaa0663d4edfd049aa340d8726ce7023c7060777721d8afbd9e2d6c973f",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase6-kernel.json",
+      "status": "added",
+      "bytes": 1269,
+      "sha256": "7c213afd5792ba8a8d03ec00b163c2485b6b38a6a66d3fab73aab6ab80e006b2",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase6.json",
+      "status": "added",
+      "bytes": 1029,
+      "sha256": "b4cec0a543437936d08b9560421c2eca9f02fd46172957263d693ad4ee85b4b9",
+      "previousSha256": null
+    },
+    {
+      "path": "audit-report/MZ06_RELEASE_AUDIT.md",
+      "status": "added",
+      "bytes": 1649,
+      "sha256": "bb100221f37b5d60e221a65e36cf8a94271b25004a709fbc86fc913b4a2a9415",
+      "previousSha256": null
+    },
+    {
+      "path": "rollback_revenue_os_mz06_application.sh",
+      "status": "added",
+      "bytes": 1051,
+      "sha256": "48202f8aad4a3c3405b5591465a35c7fd8633521687a6fd802b123804587cdf9",
+      "previousSha256": null
+    },
+    {
+      "path": "tools/revenue-os/patch-package-scripts.mjs",
+      "status": "modified",
+      "bytes": 1824,
+      "sha256": "7d8a19c1f3c56faace94021a8288b5747fd4d61e54670f8dde7e5ff8b72e0634",
+      "previousSha256": "3e369b8a9d877e47d5afaea3a7b1fb892e3c8d23959158bb1c1e909613164d95"
+    }
+  ]
+}

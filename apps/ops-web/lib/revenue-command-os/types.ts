@@ -109,7 +109,7 @@ export type RevenueOsFoundationBootstrap = {
 
 export type RevenueOsSearchResult = {
   id: string
-  type: 'workspace' | 'objective' | 'audit' | 'feature-flag' | 'status' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'playbook' | 'knowledge-conflict' | 'revenue-signal' | 'signal-source' | 'context-snapshot'
+  type: 'workspace' | 'objective' | 'audit' | 'feature-flag' | 'status' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'playbook' | 'knowledge-conflict' | 'revenue-signal' | 'signal-source' | 'context-snapshot' | 'revenue-command' | 'command-run'
   title: string
   subtitle: string
   href: string

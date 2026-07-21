@@ -1,0 +1,12 @@
+ANGELCARE REVENUE COMMAND OS — MZ07 STATIC VERIFICATION
+
+MZ07: 9,855 passes / 0 failures
+Exact library: 1,000
+Golden commands preserved: 300
+New MZ07 commands: 700
+Canonical families: 12
+Mandatory domains: 22
+Contract evaluations: 17,500
+Routing benchmarks: 100,000
+External actions: 0
+Result: PASS

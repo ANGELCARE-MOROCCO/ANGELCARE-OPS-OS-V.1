@@ -1,0 +1,35 @@
+{
+  "product": "ANGELCARE Revenue Command Browser OS",
+  "version": "0.7.0",
+  "channel": "pilot",
+  "status": "candidate",
+  "manifestVersion": 3,
+  "minimumChromeVersion": 114,
+  "minimumGatewayVersion": "0.7.0",
+  "minimumSchemaVersion": "mega7",
+  "stablePromotion": "1.0.0 after live gates",
+  "releaseChannels": [
+    "development",
+    "internal",
+    "pilot",
+    "stable",
+    "rollback"
+  ],
+  "artifacts": [
+    "unpacked-development-build",
+    "verified-dist",
+    "private-crx-preparation",
+    "update-manifest-template",
+    "chrome-enterprise-policy-examples"
+  ],
+  "exclusions": [
+    ".git",
+    ".env",
+    "node_modules",
+    ".next",
+    "private-signing-key",
+    "database-credentials",
+    "runtime-tokens"
+  ],
+  "generatedAt": "2026-07-20T00:00:00Z"
+}

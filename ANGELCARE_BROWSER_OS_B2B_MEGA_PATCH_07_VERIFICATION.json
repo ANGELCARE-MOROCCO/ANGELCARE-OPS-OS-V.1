@@ -1,0 +1,583 @@
+{
+  "generatedAt": "2026-07-21T01:45:36.684Z",
+  "checks": [
+    {
+      "label": "required file packages/browser-extension-contracts/b2b-production-final.v7.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/supabase/migrations/20260720_browser_extension_production_final.sql",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/supabase/migrations/rollback_20260720_browser_extension_production_final.sql",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/production-control/types.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/production-control/contract.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/production-control/authorization.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/lib/browser-extension/production-control/service.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/api/browser-extension/v1/production/status/route.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/api/browser-extension/v1/production/telemetry/route.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/api/browser-extension/v1/admin/production/control/route.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/(protected)/browser-os-production/page.tsx",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/ops-web/app/(protected)/browser-os-production/production-control.tsx",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/revenue-browser-extension/src/production/reliability.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file apps/revenue-browser-extension/src/production/runtime-health.ts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file docs/browser-extension/production/release/release-manifest.v0.7.0.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file docs/browser-extension/production/release/sbom.v0.7.0.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file docs/browser-extension/production/deployment/update-manifest.example.xml",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "required file docs/browser-extension/production/deployment/chrome-enterprise-policy.example.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "45 canonical capabilities",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "45 operational capabilities preserved",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof canonical 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof visibleUi 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof realCommands 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof permissionMapping 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof auditMapping 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof acceptanceScenarios 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "final proof productionStates 45/45",
+      "ok": true,
+      "detail": "45"
+    },
+    {
+      "label": "five release channels",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "label": "five production control workspaces",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "label": "22 documentation families",
+      "ok": true,
+      "detail": "22"
+    },
+    {
+      "label": "stable promotion remains gated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Mega ZIP 8 boundary preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production persistence structures >=14",
+      "ok": true,
+      "detail": "14"
+    },
+    {
+      "label": "RLS browser_extension_release_versions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_release_versions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_device_release_assignments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_device_release_assignments",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_runtime_health_events",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_runtime_health_events",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_performance_samples",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_performance_samples",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_adapter_health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_adapter_health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_error_fingerprints",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_error_fingerprints",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_feature_flags",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_feature_flags",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_production_kill_switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_production_kill_switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_incidents",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_incidents",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_incident_events",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_incident_events",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_deployment_approvals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_deployment_approvals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_compatibility_matrix",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_compatibility_matrix",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_migration_registry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_migration_registry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "RLS browser_extension_privacy_retention_policies",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback browser_extension_privacy_retention_policies",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal development",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal internal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal pilot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal stable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal rollback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_runtime_health_events",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_performance_samples",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_adapter_health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_error_fingerprints",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_feature_flags",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_production_kill_switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_incidents",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_compatibility_matrix",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "SQL production signal browser_extension_privacy_retention_policies",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "pilot upgraded to 0.7.0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "rollback returns 0.6.0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "server authority PRODUCTION_KILL_SWITCH",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "server authority KNOWN_BAD_EXTENSION_VERSION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "server authority EXTENSION_ORIGIN_MISMATCH",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "server authority ACCESS_CHANGED",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production service recordProductionTelemetry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production service loadProductionStatus",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production service loadProductionControl",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production service executeProductionAdminAction",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production service sanitize",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production service fingerprint",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "reliability withRetry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "reliability exponential",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "reliability onlineState",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "reliability isRetryableError",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "runtime health flushProductionTelemetry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "runtime health recordAdapterHealth",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "runtime health measure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "runtime health getProductionStatus",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "runtime health isProductionBlocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "service worker production angelcare-production-health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "service worker production angelcare-production-status",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "service worker production scheduled_health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "service worker production ANGELCARE_PRODUCTION_BLOCK",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production cockpit Production Health",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production cockpit Release Channels",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production cockpit Device Fleet",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production cockpit Flags & Kill Switches",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production cockpit Incident Command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production cockpit Emergency rollback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Gateway requests instrumented",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "extension preserves Mega ZIP 7 baseline at version >=0.7.0",
+      "ok": true,
+      "detail": "0.9.0"
+    },
+    {
+      "label": "newer cumulative RC preserves live-acceptance truth boundary",
+      "ok": true,
+      "detail": "0.9.0 Ultra Reality Completion RC — live acceptance required"
+    },
+    {
+      "label": "Manifest V3",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "label": "minimum Chrome documented",
+      "ok": true,
+      "detail": "114"
+    },
+    {
+      "label": "complete documentation files",
+      "ok": true,
+      "detail": "22"
+    },
+    {
+      "label": "release excludes secrets",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "production contract mirrors synchronized",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "totals": {
+    "checks": 114,
+    "passed": 114,
+    "failed": 0,
+    "tables": 14,
+    "documentationFiles": 22,
+    "capabilities": 45
+  }
+}

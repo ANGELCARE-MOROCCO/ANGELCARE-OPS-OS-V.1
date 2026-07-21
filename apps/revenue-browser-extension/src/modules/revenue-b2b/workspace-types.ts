@@ -2,10 +2,16 @@ export type WorkspaceDomain = 'account' | 'execute' | 'deal' | 'intelligence' | 
 
 export type WorkspaceSession = {
   prospectId: string
+  activeAccountId?: string | null
   opportunityId?: string | null
+  activeOpportunityId?: string | null
+  activeContactId?: string | null
   activePartnerId?: string | null
   activeContractId?: string | null
   activeSiteId?: string | null
+  activeMeetingId?: string | null
+  activeProposalId?: string | null
+  activeScanSessionId?: string | null
   activeServiceId?: string | null
   activeActivationId?: string | null
   activeIssueId?: string | null
@@ -18,6 +24,8 @@ export type WorkspaceSession = {
   accountName?: string | null
   sourceUrl?: string | null
   sourceAdapter?: string | null
+  contextVersion?: number
+  lastTransition?: string | null
   updatedAt: string
 }
 

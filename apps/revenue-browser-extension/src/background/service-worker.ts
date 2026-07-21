@@ -1,13 +1,18 @@
-import { exchangePairing, getBootstrap, executeB2BCommand, hydrateB2BWorkspace, hydrateB2BPartnerWorkspace, hydrateB2BManagementWorkspace } from '../api.js'
+import { exchangePairing, getBootstrap, executeB2BCommand, hydrateB2BWorkspace, hydrateB2BPartnerWorkspace, hydrateB2BManagementWorkspace, quickScanActiveContext, deepScanActiveContext, searchB2BAccounts, recordScannerDecision } from '../api.js'
 import { getInstallationId, getSession, setSession } from '../storage.js'
 import type { BootstrapPayload } from '../types.js'
+import { flushProductionTelemetry, getProductionStatus, isProductionBlocked, measure, recordAdapterHealth, recordHealth } from '../production/runtime-health.js'
 
 let bootstrapCache: BootstrapPayload | null = null
 
 async function bootstrap() {
-  const data = await getBootstrap()
-  bootstrapCache = data
-  return data
+  return measure('service_worker_wake', async () => {
+    const blocked = await isProductionBlocked('extension')
+    if (blocked) throw new Error(`PRODUCTION_KILL_SWITCH:${blocked.switch_key}`)
+    const data = await getBootstrap()
+    bootstrapCache = data
+    return data
+  }, { component: 'service_worker' })
 }
 
 async function activeTab() {
@@ -55,14 +60,27 @@ async function captureActiveContext() {
   } catch (error: any) {
     throw new Error(`PAGE_ACCESS_REQUIRED: ${error?.message || error}`)
   }
-  const response = await requestContextFromTab(tab.id)
-  if (!response?.ok) throw new Error(response?.error || 'CONTEXT_EXTRACTION_FAILED')
-  return response.context
+  try {
+    const response = await requestContextFromTab(tab.id)
+    if (!response?.ok) throw new Error(response?.error || 'CONTEXT_EXTRACTION_FAILED')
+    await recordAdapterHealth({ adapterKey: adapter.key, selectorVersion: 'mega7-v1', status: 'healthy', success: true, metadata: { pageType: response.context?.pageType || null } })
+    return response.context
+  } catch (error) {
+    await recordAdapterHealth({ adapterKey: adapter.key, selectorVersion: 'mega7-v1', status: navigator.onLine === false ? 'offline' : 'degraded', success: false, errorCode: error instanceof Error ? error.message.split(':')[0] : 'ADAPTER_FAILURE', errorMessage: error instanceof Error ? error.message : String(error) })
+    throw error
+  }
 }
 
 chrome.runtime.onInstalled.addListener(() => {
+  recordHealth({ component: 'extension_runtime', status: 'healthy', eventType: 'installed_or_updated', metadata: { version: chrome.runtime.getManifest().version } }).catch(() => undefined)
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => undefined)
   chrome.contextMenus.create({ id: 'angelcare-open-command', title: 'Open ANGELCARE Revenue Command', contexts: ['page', 'selection'] })
+})
+
+chrome.runtime.onStartup.addListener(() => {
+  recordHealth({ component: 'service_worker', status: navigator.onLine === false ? 'offline' : 'healthy', eventType: 'browser_startup', metadata: { version: chrome.runtime.getManifest().version } }).catch(() => undefined)
+  getProductionStatus(true).catch(() => undefined)
+  flushProductionTelemetry().catch(() => undefined)
 })
 
 chrome.contextMenus.onClicked.addListener((_info: unknown, tab: any) => {
@@ -120,6 +138,22 @@ chrome.runtime.onMessage.addListener((message: any, _sender: any, sendResponse: 
     executeB2BCommand(message.input).then((data) => sendResponse({ ok: true, data })).catch((error: any) => sendResponse({ ok: false, error: error.message, details: error.details || null }))
     return true
   }
+  if (message?.type === 'SCANNER_QUICK_SCAN') {
+    quickScanActiveContext(message.context).then((data) => sendResponse({ ok: true, data: data.scan })).catch((error: any) => sendResponse({ ok: false, error: error.message, details: error.details || null }))
+    return true
+  }
+  if (message?.type === 'SCANNER_DEEP_SCAN') {
+    deepScanActiveContext(message.context, message.mode === 'strategic' ? 'strategic' : 'deep').then((data) => sendResponse({ ok: true, data: data.scan })).catch((error: any) => sendResponse({ ok: false, error: error.message, details: error.details || null }))
+    return true
+  }
+  if (message?.type === 'SCANNER_ACCOUNT_SEARCH') {
+    searchB2BAccounts(message.input || {}).then((data) => sendResponse({ ok: true, data: data.accounts })).catch((error: any) => sendResponse({ ok: false, error: error.message, details: error.details || null }))
+    return true
+  }
+  if (message?.type === 'SCANNER_RECORD_DECISION') {
+    recordScannerDecision(message.input).then((data) => sendResponse({ ok: true, data: data.decision })).catch((error: any) => sendResponse({ ok: false, error: error.message, details: error.details || null }))
+    return true
+  }
   if (message?.type === 'HYDRATE_B2B_WORKSPACE') {
     hydrateB2BWorkspace(message.prospectId, message.opportunityId || null)
       .then((data) => sendResponse({ ok: true, data: data.workspace }))
@@ -158,7 +192,15 @@ chrome.runtime.onMessage.addListener((message: any, _sender: any, sendResponse: 
 
 chrome.alarms.create('angelcare-capability-refresh', { periodInMinutes: 1 })
 chrome.alarms.create('angelcare-workspace-refresh', { periodInMinutes: 1 })
+chrome.alarms.create('angelcare-production-health', { periodInMinutes: 5 })
+chrome.alarms.create('angelcare-production-status', { periodInMinutes: 1 })
 chrome.alarms.onAlarm.addListener((alarm: any) => {
   if (alarm.name === 'angelcare-capability-refresh') bootstrap().then((data) => chrome.runtime.sendMessage({ type: 'ANGELCARE_BOOTSTRAP_UPDATED', bootstrap: data })).catch(() => undefined)
   if (alarm.name === 'angelcare-workspace-refresh') chrome.runtime.sendMessage({ type: 'ANGELCARE_WORKSPACE_INVALIDATE', reason: 'scheduled_refresh' }).catch(() => undefined)
+  if (alarm.name === 'angelcare-production-health') {
+    recordHealth({ component: 'service_worker', status: navigator.onLine === false ? 'offline' : 'healthy', eventType: 'scheduled_health', metrics: { online: navigator.onLine !== false } }).then(() => flushProductionTelemetry()).catch(() => undefined)
+  }
+  if (alarm.name === 'angelcare-production-status') getProductionStatus(true).then((status) => {
+    if (status?.killSwitches?.length) chrome.runtime.sendMessage({ type: 'ANGELCARE_PRODUCTION_BLOCK', status }).catch(() => undefined)
+  }).catch(() => undefined)
 })

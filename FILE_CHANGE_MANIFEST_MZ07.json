@@ -1,0 +1,2379 @@
+{
+  "release": "MZ07 — Revenue Command Expansion to 1,000",
+  "releaseCode": "AC-REVENUE-OS-MZ07-COMMANDS-1000",
+  "generatedAt": "2026-07-20T17:43:00.029011+00:00",
+  "summary": {
+    "files": 338,
+    "added": 68,
+    "modified": 8,
+    "preserved": 262
+  },
+  "files": [
+    {
+      "path": "ACCEPTANCE_MZ06.md",
+      "action": "preserved",
+      "bytes": 455,
+      "sha256": "6a26f89c636b47fffc58afc2186300ae94027deee2c6adacdd7a5e21c5a503c3",
+      "previousSha256": "6a26f89c636b47fffc58afc2186300ae94027deee2c6adacdd7a5e21c5a503c3"
+    },
+    {
+      "path": "ACCEPTANCE_MZ07.md",
+      "action": "added",
+      "bytes": 881,
+      "sha256": "727d5ae08d178fcd00731bda8b5b15175824843146bb858f886debfe93be00ad",
+      "previousSha256": null
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ02_DIGITAL_TWIN_REPORT.md",
+      "action": "preserved",
+      "bytes": 2100,
+      "sha256": "e6662879c7f3b5d4df44ea5f53c339190014b48088db90fec7b974d381383d14",
+      "previousSha256": "e6662879c7f3b5d4df44ea5f53c339190014b48088db90fec7b974d381383d14"
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ03_DOCTRINE_MEMORY_REPORT.md",
+      "action": "preserved",
+      "bytes": 1549,
+      "sha256": "b733664fd8737b855d69cfe3f768ebc6d9c71fe28add76d667828c3ac00e6e96",
+      "previousSha256": "b733664fd8737b855d69cfe3f768ebc6d9c71fe28add76d667828c3ac00e6e96"
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ04_SIGNAL_FABRIC_REPORT.md",
+      "action": "preserved",
+      "bytes": 2577,
+      "sha256": "1c10a87ab03082bf632ea7c27264dd3cb6c5fe7351e3de66e7d2804609dcb810",
+      "previousSha256": "1c10a87ab03082bf632ea7c27264dd3cb6c5fe7351e3de66e7d2804609dcb810"
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ06_GOLDEN_300_REPORT.md",
+      "action": "preserved",
+      "bytes": 437,
+      "sha256": "faf5be8ff01aef33a28f62a88559fcecccb28dad94f4fcf45334e676dbee63ef",
+      "previousSha256": "faf5be8ff01aef33a28f62a88559fcecccb28dad94f4fcf45334e676dbee63ef"
+    },
+    {
+      "path": "ANGELCARE_REVENUE_COMMAND_OS_MZ07_COMMANDS_1000_REPORT.md",
+      "action": "added",
+      "bytes": 725,
+      "sha256": "c4331246bfe4c35c8580d28933bda204f706f78a9818620d716748c6c03f485b",
+      "previousSha256": null
+    },
+    {
+      "path": "FILE_CHANGE_MANIFEST_MZ05.json",
+      "action": "preserved",
+      "bytes": 44173,
+      "sha256": "5bb06994af2d1bc463efc496a490c836e59d1112fb15dc003b0aeca1feb8d79b",
+      "previousSha256": "5bb06994af2d1bc463efc496a490c836e59d1112fb15dc003b0aeca1feb8d79b"
+    },
+    {
+      "path": "FILE_CHANGE_MANIFEST_MZ06.json",
+      "action": "preserved",
+      "bytes": 15291,
+      "sha256": "aa58da5d0edf94757efe46a18b704ff190ca08dfbce792873f29efd9b714905b",
+      "previousSha256": "aa58da5d0edf94757efe46a18b704ff190ca08dfbce792873f29efd9b714905b"
+    },
+    {
+      "path": "INSTALLATION_MZ06.md",
+      "action": "preserved",
+      "bytes": 613,
+      "sha256": "3fd4fd1f061e4903cc22c86ea26a6c091470acca00d08dab8be045f60bf7170f",
+      "previousSha256": "3fd4fd1f061e4903cc22c86ea26a6c091470acca00d08dab8be045f60bf7170f"
+    },
+    {
+      "path": "INSTALLATION_MZ07.md",
+      "action": "added",
+      "bytes": 806,
+      "sha256": "53f2155d038ea7d470f33a421390a2303d22a3f6c5a37d39d7ccd8b334a600c8",
+      "previousSha256": null
+    },
+    {
+      "path": "INSTALL_MANIFEST_MZ05.txt",
+      "action": "preserved",
+      "bytes": 14720,
+      "sha256": "71899a261f7be5161710a2473fc15ffb1c8b88a7d643e391e265d6bb3a000cd0",
+      "previousSha256": "71899a261f7be5161710a2473fc15ffb1c8b88a7d643e391e265d6bb3a000cd0"
+    },
+    {
+      "path": "INSTALL_MANIFEST_MZ06.txt",
+      "action": "preserved",
+      "bytes": 17553,
+      "sha256": "ecb3ac9fed272332a924189f421e7fdd73c634d05ce24663a119d352a65a8b77",
+      "previousSha256": "ecb3ac9fed272332a924189f421e7fdd73c634d05ce24663a119d352a65a8b77"
+    },
+    {
+      "path": "INSTALL_MANIFEST_MZ07.txt",
+      "action": "added",
+      "bytes": 22098,
+      "sha256": "4b4227141c4fe59dd7f1ffb769b7e7fc76f7265cee98d27f4a05f760cb789aad",
+      "previousSha256": null
+    },
+    {
+      "path": "README_MZ05.md",
+      "action": "preserved",
+      "bytes": 218,
+      "sha256": "a0e627261ceda4daa8da3e30328ab0029f4138674a3171aa52d0b4b9b6e6957d",
+      "previousSha256": "a0e627261ceda4daa8da3e30328ab0029f4138674a3171aa52d0b4b9b6e6957d"
+    },
+    {
+      "path": "README_MZ06.md",
+      "action": "preserved",
+      "bytes": 879,
+      "sha256": "20cec986eaf23cf1a07809ad5ea78b1d23f2f0a1eab84bc109df64d18a10015b",
+      "previousSha256": "20cec986eaf23cf1a07809ad5ea78b1d23f2f0a1eab84bc109df64d18a10015b"
+    },
+    {
+      "path": "README_MZ07.md",
+      "action": "added",
+      "bytes": 849,
+      "sha256": "1af73b000ca747916212cf8043c3156bdbd0f2cafe8ff88264336261547831ef",
+      "previousSha256": null
+    },
+    {
+      "path": "ROLLBACK_MZ06.md",
+      "action": "preserved",
+      "bytes": 380,
+      "sha256": "b4300b11e22747b22f94570395ac4cf99f98de63e5b229be0194a10011a8c281",
+      "previousSha256": "b4300b11e22747b22f94570395ac4cf99f98de63e5b229be0194a10011a8c281"
+    },
+    {
+      "path": "ROLLBACK_MZ07.md",
+      "action": "added",
+      "bytes": 173,
+      "sha256": "e064d98b911353017c3372da8c5d6ecf602eae6058bc3f74a57811ab52b4f1f1",
+      "previousSha256": null
+    },
+    {
+      "path": "apply_revenue_os_mz05.sh",
+      "action": "preserved",
+      "bytes": 5300,
+      "sha256": "79d0682c50bde4ea65bc419d98ca8d53090d69746d136b167071c15238590fe2",
+      "previousSha256": "79d0682c50bde4ea65bc419d98ca8d53090d69746d136b167071c15238590fe2"
+    },
+    {
+      "path": "apply_revenue_os_mz06.sh",
+      "action": "preserved",
+      "bytes": 7386,
+      "sha256": "08331f75b93cbc03f792cbf6186bb5ac8e4ab5501172f5d56cd0c47785e616e8",
+      "previousSha256": "08331f75b93cbc03f792cbf6186bb5ac8e4ab5501172f5d56cd0c47785e616e8"
+    },
+    {
+      "path": "apply_revenue_os_mz07.sh",
+      "action": "added",
+      "bytes": 6926,
+      "sha256": "51362a3ce01723e1a7794dcbd4ff005d46d37274219943c9f72c2cecdc67df6b",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/ANGELCARE_REVENUE_COMMAND_OS_MZ02_DIGITAL_TWIN_REPORT.md",
+      "action": "preserved",
+      "bytes": 804,
+      "sha256": "be49a63c8bbce901eb9f34dddfea8af200db125dead5b36c28573b45863afd0b",
+      "previousSha256": "be49a63c8bbce901eb9f34dddfea8af200db125dead5b36c28573b45863afd0b"
+    },
+    {
+      "path": "apps/ops-web/ANGELCARE_REVENUE_COMMAND_OS_MZ03_DOCTRINE_MEMORY_REPORT.md",
+      "action": "preserved",
+      "bytes": 1549,
+      "sha256": "b733664fd8737b855d69cfe3f768ebc6d9c71fe28add76d667828c3ac00e6e96",
+      "previousSha256": "b733664fd8737b855d69cfe3f768ebc6d9c71fe28add76d667828c3ac00e6e96"
+    },
+    {
+      "path": "apps/ops-web/ANGELCARE_REVENUE_COMMAND_OS_MZ04_SIGNAL_FABRIC_REPORT.md",
+      "action": "preserved",
+      "bytes": 2577,
+      "sha256": "1c10a87ab03082bf632ea7c27264dd3cb6c5fe7351e3de66e7d2804609dcb810",
+      "previousSha256": "1c10a87ab03082bf632ea7c27264dd3cb6c5fe7351e3de66e7d2804609dcb810"
+    },
+    {
+      "path": "apps/ops-web/ANGELCARE_REVENUE_COMMAND_OS_PHASE1_FOUNDATION_REPORT.md",
+      "action": "preserved",
+      "bytes": 1149,
+      "sha256": "6fc16bd0d075195b4236e8e3f076c842df262ca692f751285d90095cc036e7fe",
+      "previousSha256": "6fc16bd0d075195b4236e8e3f076c842df262ca692f751285d90095cc036e7fe"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/[workspace]/page.tsx",
+      "action": "preserved",
+      "bytes": 695,
+      "sha256": "865d2aa4a6484ed4305ae2975e1e56e827cd902a68e86231b76cf9342898f1a0",
+      "previousSha256": "865d2aa4a6484ed4305ae2975e1e56e827cd902a68e86231b76cf9342898f1a0"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/ObjectiveComposer.tsx",
+      "action": "preserved",
+      "bytes": 7288,
+      "sha256": "9ab59ffa8049d51f06605cb116896e5b3d84a1ad72f2cc8275a14918fff544a4",
+      "previousSha256": "9ab59ffa8049d51f06605cb116896e5b3d84a1ad72f2cc8275a14918fff544a4"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/RevenueOsContext.tsx",
+      "action": "preserved",
+      "bytes": 2637,
+      "sha256": "97e5c520f81ae6fc50c9e40eeaa0b745585f59861d4e681c086676003730005c",
+      "previousSha256": "97e5c520f81ae6fc50c9e40eeaa0b745585f59861d4e681c086676003730005c"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/RevenueOsDashboard.tsx",
+      "action": "preserved",
+      "bytes": 19648,
+      "sha256": "3d7353c996f1d10f7b1cd774a6dcf89d5221b15eff0d312186c5bcee254239ba",
+      "previousSha256": "3d7353c996f1d10f7b1cd774a6dcf89d5221b15eff0d312186c5bcee254239ba"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/RevenueOsIcon.tsx",
+      "action": "preserved",
+      "bytes": 1496,
+      "sha256": "80627cc3779db99fe684a5595fef500dd88eadef14f60af8879716b867d50e56",
+      "previousSha256": "80627cc3779db99fe684a5595fef500dd88eadef14f60af8879716b867d50e56"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx",
+      "action": "preserved",
+      "bytes": 14993,
+      "sha256": "cb2621f44d380d029b34a44fe6bad9e5ee762fcda153bdfd06a1fd5c817de1b0",
+      "previousSha256": "cb2621f44d380d029b34a44fe6bad9e5ee762fcda153bdfd06a1fd5c817de1b0"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx",
+      "action": "preserved",
+      "bytes": 19003,
+      "sha256": "ae63df5ee1023d7e703519d049d2252efa1f5e39b82d3520d5fc9f3a6ebef388",
+      "previousSha256": "ae63df5ee1023d7e703519d049d2252efa1f5e39b82d3520d5fc9f3a6ebef388"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/[section]/page.tsx",
+      "action": "preserved",
+      "bytes": 235,
+      "sha256": "a7f9f703ad3e49b9011ae80c58dd8860fe203bf860acd5aa99a2f58d15674344",
+      "previousSha256": "a7f9f703ad3e49b9011ae80c58dd8860fe203bf860acd5aa99a2f58d15674344"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelContext.tsx",
+      "action": "preserved",
+      "bytes": 1692,
+      "sha256": "8d75817dced9d8e5a0dcedec05ef6558a419ba9c3b6b2db1a1a9783485613bdf",
+      "previousSha256": "8d75817dced9d8e5a0dcedec05ef6558a419ba9c3b6b2db1a1a9783485613bdf"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelFrame.tsx",
+      "action": "modified",
+      "bytes": 3401,
+      "sha256": "678a41c375cc6b0a2be8df675d799531955b5b2c9ea604c0fbdf30a9449ae5a3",
+      "previousSha256": "164c3419ad407b343ea223b6e98227b062ab2ffcaff5e936f20530fffc54e1e4"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/_components/CommandKernelWorkspace.tsx",
+      "action": "modified",
+      "bytes": 15831,
+      "sha256": "0ad0bbc71194183757708aba287bcb598beb8d0d38c297b71f1d3ec6fc75bc7d",
+      "previousSha256": "023965d54098b0e036ae53e7827ad6d33fbb53813f64aa8f0e9cc0de0e82eb7c"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/layout.tsx",
+      "action": "preserved",
+      "bytes": 306,
+      "sha256": "d03f7fbabf15dd285a7fd6dd28f1480b84368064f37ca624801c65cbaab25c42",
+      "previousSha256": "d03f7fbabf15dd285a7fd6dd28f1480b84368064f37ca624801c65cbaab25c42"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/command-kernel/page.tsx",
+      "action": "preserved",
+      "bytes": 158,
+      "sha256": "0575690964b17afe98d7a1f075978b5fea1c8303d2bb325b6541178f9e932d78",
+      "previousSha256": "0575690964b17afe98d7a1f075978b5fea1c8303d2bb325b6541178f9e932d78"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/[section]/page.tsx",
+      "action": "preserved",
+      "bytes": 681,
+      "sha256": "f174579018dccf5fabdea218840d51fdc2955a65bb08b4fe7dec0294786cfe47",
+      "previousSha256": "f174579018dccf5fabdea218840d51fdc2955a65bb08b4fe7dec0294786cfe47"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinContext.tsx",
+      "action": "preserved",
+      "bytes": 3381,
+      "sha256": "1fb7b4857b5861b9a2e90414cb2fb1d0ccbfa06cc672f474b6266d3b3289f4d3",
+      "previousSha256": "1fb7b4857b5861b9a2e90414cb2fb1d0ccbfa06cc672f474b6266d3b3289f4d3"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinEntityDrawer.tsx",
+      "action": "preserved",
+      "bytes": 17142,
+      "sha256": "7f39ccd6241cd87a385054855a82be1735ff01555f266600ce14a8540a95e703",
+      "previousSha256": "7f39ccd6241cd87a385054855a82be1735ff01555f266600ce14a8540a95e703"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinFrame.tsx",
+      "action": "preserved",
+      "bytes": 5634,
+      "sha256": "d6fdd6d16242541b1f123300b5b453369905c092d509a60c277ca0cd0a7577f6",
+      "previousSha256": "d6fdd6d16242541b1f123300b5b453369905c092d509a60c277ca0cd0a7577f6"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinWorkspace.tsx",
+      "action": "preserved",
+      "bytes": 53980,
+      "sha256": "e39cc37ec9a68828e21f4953fa38bdb0a0ede3f12be0f93e506e10661f13b5b3",
+      "previousSha256": "e39cc37ec9a68828e21f4953fa38bdb0a0ede3f12be0f93e506e10661f13b5b3"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/layout.tsx",
+      "action": "preserved",
+      "bytes": 697,
+      "sha256": "b8b975f4d40710bcf9400b5a89f4c24e51da35d7522a9a17973021ac3fc2f72b",
+      "previousSha256": "b8b975f4d40710bcf9400b5a89f4c24e51da35d7522a9a17973021ac3fc2f72b"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/digital-twin/page.tsx",
+      "action": "preserved",
+      "bytes": 220,
+      "sha256": "92ee2ba4b1c7d8e6ed68482ad076b4611706de199b7ab19e70988868df15c065",
+      "previousSha256": "92ee2ba4b1c7d8e6ed68482ad076b4611706de199b7ab19e70988868df15c065"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/error.tsx",
+      "action": "preserved",
+      "bytes": 1041,
+      "sha256": "29854f1bbf0bf4013481a6c7d161ecb5ecd9bed3540c94cc5519d337d8ad32b2",
+      "previousSha256": "29854f1bbf0bf4013481a6c7d161ecb5ecd9bed3540c94cc5519d337d8ad32b2"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/layout.tsx",
+      "action": "preserved",
+      "bytes": 662,
+      "sha256": "d704c53724c5c3a54ef5dc63a90c9abb15a07ee6020097d83be1266d93087e73",
+      "previousSha256": "d704c53724c5c3a54ef5dc63a90c9abb15a07ee6020097d83be1266d93087e73"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/loading.tsx",
+      "action": "preserved",
+      "bytes": 594,
+      "sha256": "ad80a98c7b3d4e96097884f03f189da4800200b53dd1277c266eb0b1f5b4ee54",
+      "previousSha256": "ad80a98c7b3d4e96097884f03f189da4800200b53dd1277c266eb0b1f5b4ee54"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/[section]/page.tsx",
+      "action": "preserved",
+      "bytes": 721,
+      "sha256": "a5436a32c05088208070eb3aec1479acac9f936a578cff30d665a926511502ef",
+      "previousSha256": "a5436a32c05088208070eb3aec1479acac9f936a578cff30d665a926511502ef"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/_components/DoctrineDrawer.tsx",
+      "action": "preserved",
+      "bytes": 7541,
+      "sha256": "6e36ffafa83ad8b1cae9963c116f5004a54e66ce5b53d84136cef319deb17864",
+      "previousSha256": "6e36ffafa83ad8b1cae9963c116f5004a54e66ce5b53d84136cef319deb17864"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/_components/KnowledgeMemoryContext.tsx",
+      "action": "preserved",
+      "bytes": 3520,
+      "sha256": "56717b4c3dba0a474a30b62cd0e6dca23c476dd913b8d17e34a99cbbacaf375b",
+      "previousSha256": "56717b4c3dba0a474a30b62cd0e6dca23c476dd913b8d17e34a99cbbacaf375b"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/_components/KnowledgeMemoryFrame.tsx",
+      "action": "preserved",
+      "bytes": 5188,
+      "sha256": "64b81fa53fa24568320bfa83ae806e52698ab5b7df501afc30e29b3afc2f17bc",
+      "previousSha256": "64b81fa53fa24568320bfa83ae806e52698ab5b7df501afc30e29b3afc2f17bc"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/_components/KnowledgeMemoryWorkspace.tsx",
+      "action": "preserved",
+      "bytes": 38606,
+      "sha256": "a27ebf5c7c080e0019aea37a043f5f23996ad88874294664110be369e857a9fd",
+      "previousSha256": "a27ebf5c7c080e0019aea37a043f5f23996ad88874294664110be369e857a9fd"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/layout.tsx",
+      "action": "preserved",
+      "bytes": 747,
+      "sha256": "5ba420d6c6c1df9d1b6b24535c88ac18ecd533dfa73265d5e4ed3eb563613c16",
+      "previousSha256": "5ba420d6c6c1df9d1b6b24535c88ac18ecd533dfa73265d5e4ed3eb563613c16"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/memory-learning/page.tsx",
+      "action": "preserved",
+      "bytes": 236,
+      "sha256": "d026ca70e2701d033a74c473a32afa5eabb9b0a434a895b7944cee327d2f5699",
+      "previousSha256": "d026ca70e2701d033a74c473a32afa5eabb9b0a434a895b7944cee327d2f5699"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/not-found.tsx",
+      "action": "preserved",
+      "bytes": 940,
+      "sha256": "47cc9a89c941239c8007626d6c14a52f377c98d5d92389cf8bf57eb6d123f751",
+      "previousSha256": "47cc9a89c941239c8007626d6c14a52f377c98d5d92389cf8bf57eb6d123f751"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/page.tsx",
+      "action": "preserved",
+      "bytes": 190,
+      "sha256": "77f6eaeae2d1d918f62f735c664a88d0833879aeb954c42cc69e6cd265d60a52",
+      "previousSha256": "77f6eaeae2d1d918f62f735c664a88d0833879aeb954c42cc69e6cd265d60a52"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/[section]/page.tsx",
+      "action": "preserved",
+      "bytes": 639,
+      "sha256": "cca118b5d84cfe90329a8a7de440ca765c7416d2a9795813cc4ddcf288a49aa2",
+      "previousSha256": "cca118b5d84cfe90329a8a7de440ca765c7416d2a9795813cc4ddcf288a49aa2"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/_components/SignalDrawer.tsx",
+      "action": "preserved",
+      "bytes": 5298,
+      "sha256": "8b60ea2cb13d0b20d8c0c5f768db4927d1bcec90fdd18b08c8666283db74dd0c",
+      "previousSha256": "8b60ea2cb13d0b20d8c0c5f768db4927d1bcec90fdd18b08c8666283db74dd0c"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/_components/SignalFabricContext.tsx",
+      "action": "preserved",
+      "bytes": 3208,
+      "sha256": "6565097a0a71603373d9745a5dc39d71e04dfa485a83add80ebe2898b821e8a4",
+      "previousSha256": "6565097a0a71603373d9745a5dc39d71e04dfa485a83add80ebe2898b821e8a4"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/_components/SignalFabricFrame.tsx",
+      "action": "preserved",
+      "bytes": 5150,
+      "sha256": "037e5d0bac194651e224123e5803d85c7bf6aa3ee84d4246a3564c1013991ade",
+      "previousSha256": "037e5d0bac194651e224123e5803d85c7bf6aa3ee84d4246a3564c1013991ade"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/_components/SignalFabricWorkspace.tsx",
+      "action": "preserved",
+      "bytes": 23267,
+      "sha256": "d9321ae953f473b6763628c51e524e24c2c85c6f0ef6efb8a758d0fea40b09a4",
+      "previousSha256": "d9321ae953f473b6763628c51e524e24c2c85c6f0ef6efb8a758d0fea40b09a4"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/layout.tsx",
+      "action": "preserved",
+      "bytes": 684,
+      "sha256": "e6b46c5b194b302cf083484fd3aacf55f65b2408966fca7fea858118cf47c8cf",
+      "previousSha256": "e6b46c5b194b302cf083484fd3aacf55f65b2408966fca7fea858118cf47c8cf"
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/revenue-command-os/signals/page.tsx",
+      "action": "preserved",
+      "bytes": 209,
+      "sha256": "9caa62a3cd5c95b222ec20081f6183529e826fee2338be4f5357afe41f311cd1",
+      "previousSha256": "9caa62a3cd5c95b222ec20081f6183529e826fee2338be4f5357afe41f311cd1"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/command-kernel/commands-1000/route.ts",
+      "action": "added",
+      "bytes": 1684,
+      "sha256": "ff9969d7c269466a1cc066a1272f6071f8821a2a31f81212da8dbfb835c30158",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/command-kernel/golden-300/route.ts",
+      "action": "preserved",
+      "bytes": 1137,
+      "sha256": "7bcfc526ba3bd5f525578822e4a377dc09ff9a39af6dbf1ca9b56c3bac9cf152",
+      "previousSha256": "7bcfc526ba3bd5f525578822e4a377dc09ff9a39af6dbf1ca9b56c3bac9cf152"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/command-kernel/route.ts",
+      "action": "preserved",
+      "bytes": 4871,
+      "sha256": "638c66031a4dbe74d8eab0e5edc381dd52e582fcc1c0703407bb956db22312e3",
+      "previousSha256": "638c66031a4dbe74d8eab0e5edc381dd52e582fcc1c0703407bb956db22312e3"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/digital-twin/route.ts",
+      "action": "preserved",
+      "bytes": 4069,
+      "sha256": "8ff2a25edddc11a979ceec8994718fb3dd8310a3339ca517c0d200c686baec7d",
+      "previousSha256": "8ff2a25edddc11a979ceec8994718fb3dd8310a3339ca517c0d200c686baec7d"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/foundation/route.ts",
+      "action": "preserved",
+      "bytes": 4017,
+      "sha256": "278df579fa1eb459e10e7053eb6d6918276bf906a9f7c5a4f101c0203c7eed35",
+      "previousSha256": "278df579fa1eb459e10e7053eb6d6918276bf906a9f7c5a4f101c0203c7eed35"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/knowledge-memory/route.ts",
+      "action": "preserved",
+      "bytes": 5682,
+      "sha256": "234d4eb4bbac0e876737878377a4b79c1cfc76ae99b8cd126be3bb61c59284f1",
+      "previousSha256": "234d4eb4bbac0e876737878377a4b79c1cfc76ae99b8cd126be3bb61c59284f1"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/search/route.ts",
+      "action": "preserved",
+      "bytes": 2258,
+      "sha256": "cc1f6dd840e741c407c39bb81a4c7c847630b6961d60e543ae679276eac7d18f",
+      "previousSha256": "cc1f6dd840e741c407c39bb81a4c7c847630b6961d60e543ae679276eac7d18f"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/signals/cron/route.ts",
+      "action": "preserved",
+      "bytes": 1470,
+      "sha256": "3fe71ece79d9f82e8bc2e7679bf2b26352d70efed195368b860c7c74c4268dad",
+      "previousSha256": "3fe71ece79d9f82e8bc2e7679bf2b26352d70efed195368b860c7c74c4268dad"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/signals/route.ts",
+      "action": "preserved",
+      "bytes": 5863,
+      "sha256": "6abdbab1ddeaa698b469084feab95065384c6fcdd13565fceb5fbfa9aa73e24b",
+      "previousSha256": "6abdbab1ddeaa698b469084feab95065384c6fcdd13565fceb5fbfa9aa73e24b"
+    },
+    {
+      "path": "apps/ops-web/app/api/revenue-command-os/signals/webhook/[sourceCode]/route.ts",
+      "action": "preserved",
+      "bytes": 4146,
+      "sha256": "54130b2116c23282f6a23663569631c176980b9c73ee7a8a12c4a12bd0073e7c",
+      "previousSha256": "54130b2116c23282f6a23663569631c176980b9c73ee7a8a12c4a12bd0073e7c"
+    },
+    {
+      "path": "apps/ops-web/components/revenue-command-center/RevenueProspectsLiveSyncCommandCenter.tsx",
+      "action": "preserved",
+      "bytes": 18522,
+      "sha256": "7fb3497a6a25f6ea55b17217e47ee3eca530410958e890c9fd7926b79c9aef15",
+      "previousSha256": "7fb3497a6a25f6ea55b17217e47ee3eca530410958e890c9fd7926b79c9aef15"
+    },
+    {
+      "path": "apps/ops-web/components/revenue-command-center/RevenueProspectsV12MegaWorkspace.tsx",
+      "action": "preserved",
+      "bytes": 337,
+      "sha256": "c874307df38468b9061101ae5e9afde8e27a1e6002a14539d5c3f2c36c78e361",
+      "previousSha256": "c874307df38468b9061101ae5e9afde8e27a1e6002a14539d5c3f2c36c78e361"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/ACCEPTANCE.md",
+      "action": "preserved",
+      "bytes": 1603,
+      "sha256": "fe6cba4240faa4a599eb11bce8558fe17eae27def9540def7ac86b900ad6967b",
+      "previousSha256": "fe6cba4240faa4a599eb11bce8558fe17eae27def9540def7ac86b900ad6967b"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/AC_REVENUE_OS_MZ01_PHASE1.patch",
+      "action": "preserved",
+      "bytes": 218474,
+      "sha256": "cf90c18f9d2bbde2e8a64684f4ca6461885f8d3fb20f595dc4005797150d7569",
+      "previousSha256": "cf90c18f9d2bbde2e8a64684f4ca6461885f8d3fb20f595dc4005797150d7569"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/ARCHITECTURE.md",
+      "action": "preserved",
+      "bytes": 1095,
+      "sha256": "620681845ab25e9e627e77fbeee83f4b0126471efe6a9f49a5e3622ad9223d9a",
+      "previousSha256": "620681845ab25e9e627e77fbeee83f4b0126471efe6a9f49a5e3622ad9223d9a"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "action": "preserved",
+      "bytes": 1560,
+      "sha256": "ab9d2d98f2fe0b43b13ed73046ae04f6729553b64635fa6e40afcbca3b5cc0ea",
+      "previousSha256": "ab9d2d98f2fe0b43b13ed73046ae04f6729553b64635fa6e40afcbca3b5cc0ea"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/CHANGELOG.md",
+      "action": "preserved",
+      "bytes": 762,
+      "sha256": "5991030d1357b51185d58778902bb902b42967cba89a26b89868e9446191b4b4",
+      "previousSha256": "5991030d1357b51185d58778902bb902b42967cba89a26b89868e9446191b4b4"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/FILE_CHANGE_MANIFEST.md",
+      "action": "preserved",
+      "bytes": 695,
+      "sha256": "7335a1ead67f238402b530d2f57a12d9433e66e32a404a3bead5ffa04058ba4e",
+      "previousSha256": "7335a1ead67f238402b530d2f57a12d9433e66e32a404a3bead5ffa04058ba4e"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/INSTALLATION.md",
+      "action": "preserved",
+      "bytes": 1211,
+      "sha256": "dba342e07b5bc65c2bccfb27901ed89bd2b088b473c0791dadc03df40e96cccf",
+      "previousSha256": "dba342e07b5bc65c2bccfb27901ed89bd2b088b473c0791dadc03df40e96cccf"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/INTEGRATION_FILE_HASHES.json",
+      "action": "preserved",
+      "bytes": 1407,
+      "sha256": "41b9ee06388bf4fa3c8b90f20e9dd019121bedecba68aa2561e1788e9eb7f0c3",
+      "previousSha256": "41b9ee06388bf4fa3c8b90f20e9dd019121bedecba68aa2561e1788e9eb7f0c3"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/PERMISSIONS.md",
+      "action": "preserved",
+      "bytes": 805,
+      "sha256": "813c66bd6641bb632b906e64f1aef4131b9570741569767dd92456b3a1bd7ed9",
+      "previousSha256": "813c66bd6641bb632b906e64f1aef4131b9570741569767dd92456b3a1bd7ed9"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/PHASE1_GENERATED_MANIFEST.json",
+      "action": "preserved",
+      "bytes": 4868,
+      "sha256": "bec3f22c9083258dd13434a764a84fe93add2884b3e920ddbd7fa76b7ab9ae98",
+      "previousSha256": "bec3f22c9083258dd13434a764a84fe93add2884b3e920ddbd7fa76b7ab9ae98"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/README.md",
+      "action": "preserved",
+      "bytes": 1603,
+      "sha256": "c4ab286b9a2bcaaaadadd0dcf9a5ae38289f87c9306b5d2b79fde298636e612c",
+      "previousSha256": "c4ab286b9a2bcaaaadadd0dcf9a5ae38289f87c9306b5d2b79fde298636e612c"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/ROLLBACK.md",
+      "action": "preserved",
+      "bytes": 535,
+      "sha256": "cc0636659acd56b5992c8bc18b39b3d30f397bdf974f4515ab0da1e45b9215e8",
+      "previousSha256": "cc0636659acd56b5992c8bc18b39b3d30f397bdf974f4515ab0da1e45b9215e8"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/ROLLBACK.sql",
+      "action": "preserved",
+      "bytes": 1000,
+      "sha256": "4507386cccb70ab19d74d48a62d3e602b8f90b73c969b4102ad0869bcba7e421",
+      "previousSha256": "4507386cccb70ab19d74d48a62d3e602b8f90b73c969b4102ad0869bcba7e421"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/ROUTE_MAP.md",
+      "action": "preserved",
+      "bytes": 838,
+      "sha256": "476c2d4d8cc1c7e62583e4328e9612ed2d2c369c73655164306fe059b64a5dd6",
+      "previousSha256": "476c2d4d8cc1c7e62583e4328e9612ed2d2c369c73655164306fe059b64a5dd6"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/SECURITY.md",
+      "action": "preserved",
+      "bytes": 758,
+      "sha256": "6fc8db21dfee2e1a7a4fb0477702c299323c20522ab2e147a150cb13853b3ed9",
+      "previousSha256": "6fc8db21dfee2e1a7a4fb0477702c299323c20522ab2e147a150cb13853b3ed9"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/STATIC_VERIFICATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 3738,
+      "sha256": "acca991d96e8455324b676b83861fa9ae2284b60843f81d40f3fff123ddc424b",
+      "previousSha256": "acca991d96e8455324b676b83861fa9ae2284b60843f81d40f3fff123ddc424b"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/TYPESCRIPT_VERIFICATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 258,
+      "sha256": "7ade71b9ed5b776b8eacf5a2d9bdc38e7df74af11cb1b119163ea4f4948c4f96",
+      "previousSha256": "7ade71b9ed5b776b8eacf5a2d9bdc38e7df74af11cb1b119163ea4f4948c4f96"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-01/revenue-os.env.example",
+      "action": "preserved",
+      "bytes": 212,
+      "sha256": "ffa3a934157ba65cf7160d1994c7f109011abeccc5f2b5a21502f765d757b9a0",
+      "previousSha256": "ffa3a934157ba65cf7160d1994c7f109011abeccc5f2b5a21502f765d757b9a0"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/ACCEPTANCE.md",
+      "action": "preserved",
+      "bytes": 1506,
+      "sha256": "80fb42e5c8c1be2a1321fca5a6b2001dcd8cba22a93edf23a0ef443aede5710b",
+      "previousSha256": "80fb42e5c8c1be2a1321fca5a6b2001dcd8cba22a93edf23a0ef443aede5710b"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/API_CONTRACT.md",
+      "action": "preserved",
+      "bytes": 1166,
+      "sha256": "d3553818f4a03bc75429bd41231ae5d919a30498218cccf5c575756b5099ad95",
+      "previousSha256": "d3553818f4a03bc75429bd41231ae5d919a30498218cccf5c575756b5099ad95"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/ARCHITECTURE.md",
+      "action": "preserved",
+      "bytes": 1786,
+      "sha256": "b387196d7d3eec3d9b2959b3bd4d11f74c78e8a0ebe99f0902eefee9c2c747e3",
+      "previousSha256": "b387196d7d3eec3d9b2959b3bd4d11f74c78e8a0ebe99f0902eefee9c2c747e3"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "action": "preserved",
+      "bytes": 2189,
+      "sha256": "874028a6984c1ea30bea000fc0922098c919b94492dbfb752256206ac4f95bfb",
+      "previousSha256": "874028a6984c1ea30bea000fc0922098c919b94492dbfb752256206ac4f95bfb"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/CHANGELOG.md",
+      "action": "preserved",
+      "bytes": 702,
+      "sha256": "c32421d71307e589f0f7c87e1944659503cfd1aa31c8feb003864d3f01194070",
+      "previousSha256": "c32421d71307e589f0f7c87e1944659503cfd1aa31c8feb003864d3f01194070"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/DATA_DICTIONARY.md",
+      "action": "preserved",
+      "bytes": 3013,
+      "sha256": "ec7367fdd48336b01342c3546b1871078e9ddda5ac4322756befa1a19731ac74",
+      "previousSha256": "ec7367fdd48336b01342c3546b1871078e9ddda5ac4322756befa1a19731ac74"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/INSTALLATION.md",
+      "action": "preserved",
+      "bytes": 937,
+      "sha256": "9e21a980f5a315fe697c10e443fa547810e5ac9aa5e5939a864e347b0ca8dc66",
+      "previousSha256": "9e21a980f5a315fe697c10e443fa547810e5ac9aa5e5939a864e347b0ca8dc66"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/ROLLBACK.sql",
+      "action": "preserved",
+      "bytes": 3414,
+      "sha256": "757da394c40c185f878f5359c8f915dcbb65125ec192561147237c616c589a64",
+      "previousSha256": "757da394c40c185f878f5359c8f915dcbb65125ec192561147237c616c589a64"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/SECURITY_AND_GOVERNANCE.md",
+      "action": "preserved",
+      "bytes": 653,
+      "sha256": "9f0c78349ee8011fb65ac0f424555a91e636272d4b1f125f4babb6677331d474",
+      "previousSha256": "9f0c78349ee8011fb65ac0f424555a91e636272d4b1f125f4babb6677331d474"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/SEED_PROVENANCE.md",
+      "action": "preserved",
+      "bytes": 994,
+      "sha256": "2f356edf623711bb3ebfad67f40b7ef5739bb231d166152d8d95ef1531d0012b",
+      "previousSha256": "2f356edf623711bb3ebfad67f40b7ef5739bb231d166152d8d95ef1531d0012b"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-02/VERIFICATION_EVIDENCE.txt",
+      "action": "preserved",
+      "bytes": 14374,
+      "sha256": "33e104b676d395b806cc6a9e0297af9a83aa2e79d9f5de51c704ed44f4fc8197",
+      "previousSha256": "33e104b676d395b806cc6a9e0297af9a83aa2e79d9f5de51c704ed44f4fc8197"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/ACCEPTANCE.md",
+      "action": "preserved",
+      "bytes": 807,
+      "sha256": "44ceb4fc2e4f2da85210cba8f5c3646e1a4f95cd6ca6847ad4e2ff9f20f64576",
+      "previousSha256": "44ceb4fc2e4f2da85210cba8f5c3646e1a4f95cd6ca6847ad4e2ff9f20f64576"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/API_CONTRACT.md",
+      "action": "preserved",
+      "bytes": 861,
+      "sha256": "198fc6daf5b06573da5baabcea5898d18b6373f363669b8e1493399d09c502ad",
+      "previousSha256": "198fc6daf5b06573da5baabcea5898d18b6373f363669b8e1493399d09c502ad"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/ARCHITECTURE.md",
+      "action": "preserved",
+      "bytes": 1119,
+      "sha256": "73bd2c077b0c8ea8ec89e211eedadfca563097f584674e212e872a5149d6cf64",
+      "previousSha256": "73bd2c077b0c8ea8ec89e211eedadfca563097f584674e212e872a5149d6cf64"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "action": "preserved",
+      "bytes": 1248,
+      "sha256": "65febb2b9072a494d9ac3083a106bba15d20667c095dfd477aa5d4548e07939e",
+      "previousSha256": "65febb2b9072a494d9ac3083a106bba15d20667c095dfd477aa5d4548e07939e"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/CHANGELOG.md",
+      "action": "preserved",
+      "bytes": 690,
+      "sha256": "c541c5e6453787d5b1d4c4ccd9597d50cf1e6b60d13e4f389efeb34914f5687e",
+      "previousSha256": "c541c5e6453787d5b1d4c4ccd9597d50cf1e6b60d13e4f389efeb34914f5687e"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/DATA_DICTIONARY.md",
+      "action": "preserved",
+      "bytes": 1902,
+      "sha256": "dfa89383560fdc7b5ba4522f72cf0d40a4f44d5791fb63e726c0549c3dcbfc54",
+      "previousSha256": "dfa89383560fdc7b5ba4522f72cf0d40a4f44d5791fb63e726c0549c3dcbfc54"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/INSTALLATION.md",
+      "action": "preserved",
+      "bytes": 572,
+      "sha256": "9908498879f728bcd094c554a028bd1fe84fac7e2a389535696b642c7c0bf8f7",
+      "previousSha256": "9908498879f728bcd094c554a028bd1fe84fac7e2a389535696b642c7c0bf8f7"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/README.md",
+      "action": "preserved",
+      "bytes": 783,
+      "sha256": "c0c8fa92bad8b0b1a8aa9aabb0230703753a037cb7aaca2e36430007eb7a9118",
+      "previousSha256": "c0c8fa92bad8b0b1a8aa9aabb0230703753a037cb7aaca2e36430007eb7a9118"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/ROLLBACK.sql",
+      "action": "preserved",
+      "bytes": 2391,
+      "sha256": "ef985b9c32154c567bfeb8864ecebff2ee858c7e5ba72725aa8c78c30b0b6ee8",
+      "previousSha256": "ef985b9c32154c567bfeb8864ecebff2ee858c7e5ba72725aa8c78c30b0b6ee8"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/SECURITY_AND_GOVERNANCE.md",
+      "action": "preserved",
+      "bytes": 780,
+      "sha256": "dc2801189c8cd7d07a38b653e9f6f32af4e3bf0a66f29339ea992226105d2a08",
+      "previousSha256": "dc2801189c8cd7d07a38b653e9f6f32af4e3bf0a66f29339ea992226105d2a08"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/SEED_PROVENANCE.md",
+      "action": "preserved",
+      "bytes": 726,
+      "sha256": "6e52d53fbc81f959af82fd7d222e7fc036a44fa7ed03b1aa7d1345ef1d0896dc",
+      "previousSha256": "6e52d53fbc81f959af82fd7d222e7fc036a44fa7ed03b1aa7d1345ef1d0896dc"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-03/VERIFICATION_EVIDENCE.txt",
+      "action": "preserved",
+      "bytes": 660,
+      "sha256": "b83e84e517007e53e73ae202568edd4d06ce51336ee6c8b86dc06e8632d9b8ce",
+      "previousSha256": "b83e84e517007e53e73ae202568edd4d06ce51336ee6c8b86dc06e8632d9b8ce"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/ACCEPTANCE.md",
+      "action": "preserved",
+      "bytes": 663,
+      "sha256": "b9e4793b02a686fbe016428d9f0d2b00fa4e123733fc0ef6894ce3941ba1a003",
+      "previousSha256": "b9e4793b02a686fbe016428d9f0d2b00fa4e123733fc0ef6894ce3941ba1a003"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/API_CONTRACT.md",
+      "action": "preserved",
+      "bytes": 1427,
+      "sha256": "cb4758aa9dcbd53c75ce34a3ce389a33c3c60de97355ff5ee7d7103a9c9656f6",
+      "previousSha256": "cb4758aa9dcbd53c75ce34a3ce389a33c3c60de97355ff5ee7d7103a9c9656f6"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/ARCHITECTURE.md",
+      "action": "preserved",
+      "bytes": 639,
+      "sha256": "6f3f05306f664703ce94e5142af9c13c9844d08d3601aa9aae67ed4d3f6be8a0",
+      "previousSha256": "6f3f05306f664703ce94e5142af9c13c9844d08d3601aa9aae67ed4d3f6be8a0"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "action": "preserved",
+      "bytes": 1471,
+      "sha256": "1de5a54477f7841f251047d7a58593dc8de4e8d71107d42fe4a897a553af9ca7",
+      "previousSha256": "1de5a54477f7841f251047d7a58593dc8de4e8d71107d42fe4a897a553af9ca7"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/CHANGELOG.md",
+      "action": "preserved",
+      "bytes": 496,
+      "sha256": "298d83d6f612efdb08a8daf28f98e19e8296e8a94a58944666fa5ca7b9cab916",
+      "previousSha256": "298d83d6f612efdb08a8daf28f98e19e8296e8a94a58944666fa5ca7b9cab916"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/DATA_DICTIONARY.md",
+      "action": "preserved",
+      "bytes": 1126,
+      "sha256": "b6644d5949845c40d99e7d6286a662b18c7de1334284e78d583a032640262fd1",
+      "previousSha256": "b6644d5949845c40d99e7d6286a662b18c7de1334284e78d583a032640262fd1"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/FILE_MANIFEST.json",
+      "action": "preserved",
+      "bytes": 6712,
+      "sha256": "af3cbdb33e387c4dcb58728e2fc4a16ed0a9100d585813fa5336e2a119b861a9",
+      "previousSha256": "af3cbdb33e387c4dcb58728e2fc4a16ed0a9100d585813fa5336e2a119b861a9"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/INSTALLATION.md",
+      "action": "preserved",
+      "bytes": 1125,
+      "sha256": "0ee12996f1b931c4547142ab6a1622dee9eef70c0e170a8813bc8360bdd4b408",
+      "previousSha256": "0ee12996f1b931c4547142ab6a1622dee9eef70c0e170a8813bc8360bdd4b408"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/README.md",
+      "action": "preserved",
+      "bytes": 956,
+      "sha256": "f9513a40be370ff780f9a5befb1033eb6fa353d523a0073e4e46f770b75157e5",
+      "previousSha256": "f9513a40be370ff780f9a5befb1033eb6fa353d523a0073e4e46f770b75157e5"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/ROLLBACK.sql",
+      "action": "preserved",
+      "bytes": 1791,
+      "sha256": "c6dc7712609a6095f07fb9d239317855c932fcdaba28716fbaed4298e98b5304",
+      "previousSha256": "c6dc7712609a6095f07fb9d239317855c932fcdaba28716fbaed4298e98b5304"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/SECURITY_AND_GOVERNANCE.md",
+      "action": "preserved",
+      "bytes": 1073,
+      "sha256": "c2bcbdda5a856f2e8e0b0e7707bdd71ba8817349cd6b497cfec006e28da54542",
+      "previousSha256": "c2bcbdda5a856f2e8e0b0e7707bdd71ba8817349cd6b497cfec006e28da54542"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/SEED_PROVENANCE.md",
+      "action": "preserved",
+      "bytes": 357,
+      "sha256": "437a833f776a74ec6af3cd5efe73081e7801ceb8136c4682dc8deb1c7294114a",
+      "previousSha256": "437a833f776a74ec6af3cd5efe73081e7801ceb8136c4682dc8deb1c7294114a"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-04/VERIFICATION_EVIDENCE.txt",
+      "action": "preserved",
+      "bytes": 47275,
+      "sha256": "89b79aeafe650c9e8cf46bf77460d1922671e847171e633afc3365e550889081",
+      "previousSha256": "89b79aeafe650c9e8cf46bf77460d1922671e847171e633afc3365e550889081"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/ACCEPTANCE.md",
+      "action": "preserved",
+      "bytes": 439,
+      "sha256": "44fdf8b133afd61e32a449d2357036d7b6a4497c35b645fe173946f63ebb9b34",
+      "previousSha256": "44fdf8b133afd61e32a449d2357036d7b6a4497c35b645fe173946f63ebb9b34"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/API_CONTRACT.md",
+      "action": "preserved",
+      "bytes": 373,
+      "sha256": "79dc141eb08006bbf0c3598482ecece6d873fb5b3d83867f963c35ad48ea5e40",
+      "previousSha256": "79dc141eb08006bbf0c3598482ecece6d873fb5b3d83867f963c35ad48ea5e40"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/APPLICATION_ROLLBACK_SIMULATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 237,
+      "sha256": "c509c550d0e9d119f82a0627b6d776dd3b4a4bef045b7068c5e7f8559dbe58a5",
+      "previousSha256": "c509c550d0e9d119f82a0627b6d776dd3b4a4bef045b7068c5e7f8559dbe58a5"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/ARCHITECTURE.md",
+      "action": "preserved",
+      "bytes": 428,
+      "sha256": "b5ef25f7dd63d4fde947856636777fa2d12040f4bb68fbd18026b0baf64f0bda",
+      "previousSha256": "b5ef25f7dd63d4fde947856636777fa2d12040f4bb68fbd18026b0baf64f0bda"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/CANONICAL_BUILD_CONTRACT_LOCK.md",
+      "action": "preserved",
+      "bytes": 268,
+      "sha256": "d6c86a9d21381ef86f59399a3972b77a9d2e50d415fe69c67327b0d339eae882",
+      "previousSha256": "d6c86a9d21381ef86f59399a3972b77a9d2e50d415fe69c67327b0d339eae882"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/CHANGELOG.md",
+      "action": "preserved",
+      "bytes": 370,
+      "sha256": "7077cca78e6ef60aa9a017d2751da532a0dc0cad36dd2cfae4e33126c4c463e0",
+      "previousSha256": "7077cca78e6ef60aa9a017d2751da532a0dc0cad36dd2cfae4e33126c4c463e0"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/CORE_TYPESCRIPT_VERIFICATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 850,
+      "sha256": "20f6595e6252f0f46b822cc576460de43ccef829fdd308cd58ac6e3b0a68a19e",
+      "previousSha256": "20f6595e6252f0f46b822cc576460de43ccef829fdd308cd58ac6e3b0a68a19e"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/CUMULATIVE_REGRESSION_STATUS.md",
+      "action": "preserved",
+      "bytes": 1033,
+      "sha256": "36b89d21d0a0b8d0c8af5093e1352fa4277fe3ec5723e29db02122f286c02f89",
+      "previousSha256": "36b89d21d0a0b8d0c8af5093e1352fa4277fe3ec5723e29db02122f286c02f89"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/DATA_DICTIONARY.md",
+      "action": "preserved",
+      "bytes": 374,
+      "sha256": "0d09388a7d3975b512d79cfdaa6452e51a741641731e76978f2ed24be3d6fede",
+      "previousSha256": "0d09388a7d3975b512d79cfdaa6452e51a741641731e76978f2ed24be3d6fede"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/EVALUATION_REPORT.json",
+      "action": "preserved",
+      "bytes": 1433,
+      "sha256": "c0e6cfafb7a0b58970352a00a707c5726d2a78add2a66c667bf162df482a5484",
+      "previousSha256": "c0e6cfafb7a0b58970352a00a707c5726d2a78add2a66c667bf162df482a5484"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/INSTALLATION.md",
+      "action": "preserved",
+      "bytes": 454,
+      "sha256": "60a4a81d8d40e91185da93c10abc12ceef41e3d039caf714ca1d325fba2fd01b",
+      "previousSha256": "60a4a81d8d40e91185da93c10abc12ceef41e3d039caf714ca1d325fba2fd01b"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/INSTALLER_SIMULATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 10457,
+      "sha256": "2f9657105f743db3eaa2584a631c03688afa7e10d1f717d37a7d7a3fe63dc1fe",
+      "previousSha256": "2f9657105f743db3eaa2584a631c03688afa7e10d1f717d37a7d7a3fe63dc1fe"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/KNOWN_LIMITATIONS.md",
+      "action": "preserved",
+      "bytes": 531,
+      "sha256": "325b4efca8555fb6b1e8e9fbb17652c03a74ccb9d96ded8d534b7e0454ab6e64",
+      "previousSha256": "325b4efca8555fb6b1e8e9fbb17652c03a74ccb9d96ded8d534b7e0454ab6e64"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/MIGRATION_STATIC_REVIEW.json",
+      "action": "preserved",
+      "bytes": 1928,
+      "sha256": "440db2890b942c5f75810ab8c7faaa77764eaa2c41aa5f157da2400712145944",
+      "previousSha256": "440db2890b942c5f75810ab8c7faaa77764eaa2c41aa5f157da2400712145944"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/NEXT_PHASE_DEPENDENCY_MAP.md",
+      "action": "preserved",
+      "bytes": 263,
+      "sha256": "d27664b5b5f083b4a0a1a049dd707a1a981fa7dd9b3e4907bc37f08eb0cb5cec",
+      "previousSha256": "d27664b5b5f083b4a0a1a049dd707a1a981fa7dd9b3e4907bc37f08eb0cb5cec"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/PACKAGE_PRE_ARCHIVE_REPORT.json",
+      "action": "preserved",
+      "bytes": 388,
+      "sha256": "c734e19292b4c2863a2b55f750484a70d8732b45dc75d7885dc8b5f0d5f0329a",
+      "previousSha256": "c734e19292b4c2863a2b55f750484a70d8732b45dc75d7885dc8b5f0d5f0329a"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/README.md",
+      "action": "preserved",
+      "bytes": 1081,
+      "sha256": "0a792a009337546a144d41ccef790e360d16734f131eeccc0956c8dfb5ce0120",
+      "previousSha256": "0a792a009337546a144d41ccef790e360d16734f131eeccc0956c8dfb5ce0120"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/ROLLBACK.md",
+      "action": "preserved",
+      "bytes": 279,
+      "sha256": "3d62f3b2dde9a46539fd1cc880d3029ecf7dde83c1b945e889bec1ef2b045bd9",
+      "previousSha256": "3d62f3b2dde9a46539fd1cc880d3029ecf7dde83c1b945e889bec1ef2b045bd9"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/ROLLBACK.sql",
+      "action": "preserved",
+      "bytes": 2737,
+      "sha256": "a53b36f8cd53eced54c8e13a86dfa0be2e679eb50ec9b0b83b3c2dc079860888",
+      "previousSha256": "a53b36f8cd53eced54c8e13a86dfa0be2e679eb50ec9b0b83b3c2dc079860888"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/RUNTIME_BEHAVIOR_REPORT.json",
+      "action": "preserved",
+      "bytes": 260,
+      "sha256": "e2486b13edab66ddc7adba091e961389e19a550904910d1bd7692f954dda8a38",
+      "previousSha256": "e2486b13edab66ddc7adba091e961389e19a550904910d1bd7692f954dda8a38"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/SECURITY_AND_GOVERNANCE.md",
+      "action": "preserved",
+      "bytes": 396,
+      "sha256": "90f9ce88fae1aa3cf9ced582aca2244fdf86c39394d2c0886240e7c5ec98b9bc",
+      "previousSha256": "90f9ce88fae1aa3cf9ced582aca2244fdf86c39394d2c0886240e7c5ec98b9bc"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/STATIC_VERIFICATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 7225,
+      "sha256": "311db2aa1a78d642df34abbc4e821a39acda6c5cc6a3063da4902f91f5abf592",
+      "previousSha256": "311db2aa1a78d642df34abbc4e821a39acda6c5cc6a3063da4902f91f5abf592"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-05/UI_API_TRANSPILE_REPORT.json",
+      "action": "preserved",
+      "bytes": 199,
+      "sha256": "0dd856e201f04573902cc460f26d3bfb7f2f9d8c4451c9b356d719247647f445",
+      "previousSha256": "0dd856e201f04573902cc460f26d3bfb7f2f9d8c4451c9b356d719247647f445"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/ACCEPTANCE.md",
+      "action": "preserved",
+      "bytes": 629,
+      "sha256": "178ae3408a975f453168120ef5bb9b7644ed43e745232e7b3634385c839ed789",
+      "previousSha256": "178ae3408a975f453168120ef5bb9b7644ed43e745232e7b3634385c839ed789"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/ARCHITECTURE.md",
+      "action": "preserved",
+      "bytes": 595,
+      "sha256": "82bc1d7579045e3dfc2ba5bdc0e3159feec93d729aefad8d5ab30edc4f6b2b02",
+      "previousSha256": "82bc1d7579045e3dfc2ba5bdc0e3159feec93d729aefad8d5ab30edc4f6b2b02"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/CHANGELOG.md",
+      "action": "preserved",
+      "bytes": 428,
+      "sha256": "5af26297b21d022c6408943e04d1de1d535d0be6e3e1e86968c89ec5bcc3ae73",
+      "previousSha256": "5af26297b21d022c6408943e04d1de1d535d0be6e3e1e86968c89ec5bcc3ae73"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/DATA_DICTIONARY.md",
+      "action": "preserved",
+      "bytes": 338,
+      "sha256": "72d87259f9052d085af56f01e1128618fc0baa9cde95fde40607bcceeb179f52",
+      "previousSha256": "72d87259f9052d085af56f01e1128618fc0baa9cde95fde40607bcceeb179f52"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/INSTALLATION.md",
+      "action": "preserved",
+      "bytes": 403,
+      "sha256": "4a8f55aefbf18a397fec1b4fc1dc6342e524028efd200338dd668d5e4e0760ac",
+      "previousSha256": "4a8f55aefbf18a397fec1b4fc1dc6342e524028efd200338dd668d5e4e0760ac"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/INSTALLER_SIMULATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 562,
+      "sha256": "5b375da2749d29ca903c96bfcb2d7dc7e7f5a31224f914f5303a2d2af49fbee3",
+      "previousSha256": "5b375da2749d29ca903c96bfcb2d7dc7e7f5a31224f914f5303a2d2af49fbee3"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/KNOWN_LIMITATIONS.md",
+      "action": "preserved",
+      "bytes": 388,
+      "sha256": "4b488c40bc0afc0247e9ff4fd9a2f2c75888d449801ed94b56a8c6b007df83d0",
+      "previousSha256": "4b488c40bc0afc0247e9ff4fd9a2f2c75888d449801ed94b56a8c6b007df83d0"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/MIGRATION_REVIEW.md",
+      "action": "preserved",
+      "bytes": 702,
+      "sha256": "3d138c7b9f54a536242574e70c70c1531cab367c75c108b7238d566912183b3d",
+      "previousSha256": "3d138c7b9f54a536242574e70c70c1531cab367c75c108b7238d566912183b3d"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/NEXT_PHASE_DEPENDENCY.md",
+      "action": "preserved",
+      "bytes": 353,
+      "sha256": "5363be049e8a92ffa14cb9421d8076a4967b0a72f9cc364cb78f2624fe0b3931",
+      "previousSha256": "5363be049e8a92ffa14cb9421d8076a4967b0a72f9cc364cb78f2624fe0b3931"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/README.md",
+      "action": "preserved",
+      "bytes": 621,
+      "sha256": "a88c8ecb46ae0cb6a540dc442c83ed877ecd111bdf3f717a3ad0e6ffb8f23c6a",
+      "previousSha256": "a88c8ecb46ae0cb6a540dc442c83ed877ecd111bdf3f717a3ad0e6ffb8f23c6a"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/ROLLBACK.sql",
+      "action": "preserved",
+      "bytes": 3161,
+      "sha256": "fa02bc68420371da5332eb9b446c554bafc1a8dfbd408f5d1db4d1e6e957731d",
+      "previousSha256": "fa02bc68420371da5332eb9b446c554bafc1a8dfbd408f5d1db4d1e6e957731d"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/SECURITY_AND_GOVERNANCE.md",
+      "action": "preserved",
+      "bytes": 484,
+      "sha256": "8bd7ac7e27bd23eaa549fbdea13740f3345cc6b903f773e0805bc13d6ea0dbd0",
+      "previousSha256": "8bd7ac7e27bd23eaa549fbdea13740f3345cc6b903f773e0805bc13d6ea0dbd0"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/STATIC_VERIFICATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 292,
+      "sha256": "ffa0f8402a337634b81160809b72dd6a8b84543a7047b8e2e992978c3846f14a",
+      "previousSha256": "ffa0f8402a337634b81160809b72dd6a8b84543a7047b8e2e992978c3846f14a"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/TYPESCRIPT_VERIFICATION_REPORT.txt",
+      "action": "preserved",
+      "bytes": 430,
+      "sha256": "7ed2b463097404ee1310430692f92b62166bdfcd06d22b3baea1e4c956b0cc6c",
+      "previousSha256": "7ed2b463097404ee1310430692f92b62166bdfcd06d22b3baea1e4c956b0cc6c"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-06/VERIFICATION_EVIDENCE.md",
+      "action": "preserved",
+      "bytes": 860,
+      "sha256": "f0bb3f959bd055feaf428e45c96ec861bea8d35178ad062179054d5357ba4feb",
+      "previousSha256": "f0bb3f959bd055feaf428e45c96ec861bea8d35178ad062179054d5357ba4feb"
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/ACCEPTANCE.md",
+      "action": "added",
+      "bytes": 233,
+      "sha256": "c2aed09c8b76ba97a53d620dac8e5ba95b0595223f04e8a1c4c85f87fbf8c9cb",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/ARCHITECTURE.md",
+      "action": "added",
+      "bytes": 678,
+      "sha256": "c6e69af2cc13539721be381b4312a9e1606cbbf7e0fcd6d881ab8836f539342e",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/CHANGELOG.md",
+      "action": "added",
+      "bytes": 218,
+      "sha256": "6699b46e6b65c3c7608c0efc8c7a7b4299e7f01cc8f725a6dcd2980184eee03a",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/CUMULATIVE_PACKAGE_REPORT.json",
+      "action": "added",
+      "bytes": 82,
+      "sha256": "ecd7b3484bfc21be94eb94b9f3919af2a8a4ea5c17d5d1cb5862be1419e5fe9f",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/CUMULATIVE_REGRESSION_REPORT.txt",
+      "action": "added",
+      "bytes": 1184,
+      "sha256": "03510b5d608457edb9a4e8ed68777655982d789d3a588d5dac29a46d8fbbd252",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/DATA_DICTIONARY.md",
+      "action": "added",
+      "bytes": 543,
+      "sha256": "3e1c68a05d77cc47d8d61b28a08a98026ac7304ba31b9d49b712f9d94e8106a3",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/EVALUATION_REPORT.json",
+      "action": "added",
+      "bytes": 329,
+      "sha256": "6a35af1938a4fd2c674005597fbfe5cbd3e73e21e27550b491d94bacf4dcf59b",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/INSTALLATION.md",
+      "action": "added",
+      "bytes": 488,
+      "sha256": "23a5dc618e5f878eefc40e23d9561bfe45daf2249af1e740a301b9c898454419",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/INSTALLER_SIMULATION_REPORT.txt",
+      "action": "added",
+      "bytes": 1843,
+      "sha256": "f555e4095c176a0a6d2ebf120bf22f9eedb6f94bfc515ceb6c80a2be3c989dc5",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/KNOWN_LIMITATIONS.md",
+      "action": "added",
+      "bytes": 597,
+      "sha256": "1a5da5a165f2e4bfc07dac12a0b7312ceefe1120d9ce28331e3ecf20119de920",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/MIGRATION_REVIEW.md",
+      "action": "added",
+      "bytes": 603,
+      "sha256": "30e75a0513e1fa92f039a3b3e8f28820d519d5b75be897927b48354c6798821a",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/NEXT_PHASE_DEPENDENCY.md",
+      "action": "added",
+      "bytes": 265,
+      "sha256": "ba74be50ff7f85e06bcb1dacc660b09d6de74f5226472456da8151e3285ea723",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/README.md",
+      "action": "added",
+      "bytes": 348,
+      "sha256": "d42c6d3c72a93ecba9277ca20456297d85f2fbff8fbc08a38a38e6e945b42861",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/ROLLBACK.sql",
+      "action": "added",
+      "bytes": 3289,
+      "sha256": "0bae5c60d4346de16ebb0fbacca823f85322dbd9fc73c6f1e868a6fa9b49d970",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/SECURITY_AND_GOVERNANCE.md",
+      "action": "added",
+      "bytes": 599,
+      "sha256": "03a04b9c71689340a5e8fb0285aa02d853aaf4bcf7dda40c2e97ab1426bb8436",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/SEMANTIC_REVIEW_REPORT.json",
+      "action": "added",
+      "bytes": 187,
+      "sha256": "82b51031b58b869f5611a8aa1db8edc3f96b94753c7a22bb5d5c3371747320d6",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/SQL_STRUCTURAL_REVIEW.txt",
+      "action": "added",
+      "bytes": 83,
+      "sha256": "6bb6045b6a718f09c06e02a909f3eb575d38a986e5c40c3aa428022f25854eb1",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/STATIC_VERIFICATION_REPORT.txt",
+      "action": "added",
+      "bytes": 301,
+      "sha256": "da923e9333938004bb04285d3e7eee91dea5113ca898fe9cbf59b95c79619cff",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/TYPESCRIPT_VERIFICATION_REPORT.txt",
+      "action": "added",
+      "bytes": 272,
+      "sha256": "8754e09657d884d0bb2a359c8e445a8f45d2c5dee94233d5718c4249c333f35d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/UI_API_TRANSPILE_REPORT.txt",
+      "action": "added",
+      "bytes": 76,
+      "sha256": "dc1ddb21f943328acb4538ffe2cc679ab4f2889ebc15d50d4db77c3d011750df",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/VERIFICATION_EVIDENCE.md",
+      "action": "added",
+      "bytes": 1204,
+      "sha256": "23434758f01fdd881aeff6c13aa6f9f1fe4d6d9a0da2f9f3d7e16f24fa96e5a1",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/docs/revenue-command-os/phase-07/VERIFY.sql",
+      "action": "added",
+      "bytes": 1247,
+      "sha256": "fcfbb6a14af980dd840579bb6d358e1bb13a3dc27bdfa6826f32cb975718aeae",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-06/EVALUATION_MANIFEST_MZ06.json",
+      "action": "preserved",
+      "bytes": 748,
+      "sha256": "f14c7c8f2e3cc04e55706ffc8578385494cd23a5547ae7996e0fc805c0c011ce",
+      "previousSha256": "f14c7c8f2e3cc04e55706ffc8578385494cd23a5547ae7996e0fc805c0c011ce"
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-06/golden-300-contract-evaluations.jsonl",
+      "action": "preserved",
+      "bytes": 4440787,
+      "sha256": "50c7a2417f4b2e94dbefa9e9d3ab45c58f9d1c9cb727b899c327d8bb0f134973",
+      "previousSha256": "50c7a2417f4b2e94dbefa9e9d3ab45c58f9d1c9cb727b899c327d8bb0f134973"
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-06/golden-300-routing-benchmarks.jsonl",
+      "action": "preserved",
+      "bytes": 23204940,
+      "sha256": "068d8bb05495655c9e690738e545d2b8d9b64fc0aebeec56a11ce7df7a2dad7c",
+      "previousSha256": "068d8bb05495655c9e690738e545d2b8d9b64fc0aebeec56a11ce7df7a2dad7c"
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-07/EVALUATION_MANIFEST_MZ07.json",
+      "action": "added",
+      "bytes": 661,
+      "sha256": "ca6d462cf7e9fa7f9bfccd191bc909e5121cf59ccb24e6d6354b0a36b6e1df65",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-07/commands-1000-contract-evaluations.jsonl",
+      "action": "added",
+      "bytes": 26181812,
+      "sha256": "f3b4c27d27e3eaa4f2d1d642e1e6217bcd9fe2f6345c3b7db1a0b8f7cfe23c45",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/evaluations/revenue-command-os/phase-07/commands-1000-routing-benchmarks.jsonl",
+      "action": "added",
+      "bytes": 108232040,
+      "sha256": "6aed2e3a8f5f2d0c11ad589f29fa3e4a4977450b63668b18c97a91b9a6e64c78",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/fixtures/revenue-command-os/phase-06/golden-300-situations.jsonl",
+      "action": "preserved",
+      "bytes": 943533,
+      "sha256": "c31f8bf0ad6c29aab31c0733ec4e6f5af6d3ba41cf39fcf5b5e9ba80bfc49f08",
+      "previousSha256": "c31f8bf0ad6c29aab31c0733ec4e6f5af6d3ba41cf39fcf5b5e9ba80bfc49f08"
+    },
+    {
+      "path": "apps/ops-web/fixtures/revenue-command-os/phase-07/mz07-command-situations.jsonl",
+      "action": "added",
+      "bytes": 1259557,
+      "sha256": "61de4f27a4369fd0efb6a8908d4859f1f6141ea12c43e8683c22b4d338f4a902",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/catalog.ts",
+      "action": "added",
+      "bytes": 6851221,
+      "sha256": "23750248291dc0a2ed6c35d80bda381cf476d193e9d667db82a24c1990daaecf",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.commands.json",
+      "action": "added",
+      "bytes": 9235492,
+      "sha256": "3f1086e00e8c65fe4b6c3511ef88a91d0df5a2434513237e6c05cae262386b04",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.coverage.json",
+      "action": "added",
+      "bytes": 2860,
+      "sha256": "77d1b9f272ec5bc68e84c7afc53763a4a23a01eac256192f0d8da80b62806cca",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.domain-coverage.json",
+      "action": "added",
+      "bytes": 12101,
+      "sha256": "74d043f144a861b583becc0759ca13ad10a04dbd3d504d2a5731a9ce573accf8",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.graphs.json",
+      "action": "added",
+      "bytes": 97517,
+      "sha256": "c02bf9696bd721a6ad452ca11f17ea0546626f3155c3f9d3b184dd1b3e07bebb",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.schedules.json",
+      "action": "added",
+      "bytes": 143473,
+      "sha256": "6d3a715cd8c7ad7e3db9afdfcd66b7618c2574e324145868b673b19ab5b4d7c0",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.semantic-duplicate-report.json",
+      "action": "added",
+      "bytes": 24814,
+      "sha256": "092d0b0280a6134cbcd0b54ce0dfabe41cee9ec2e914761cee10a8ddb24bca41",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.territory-coverage.json",
+      "action": "added",
+      "bytes": 707,
+      "sha256": "ef07ffac305320404c29160d02b3764cdd48f826d822cca01df68e533a5fe284",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.triggers.json",
+      "action": "added",
+      "bytes": 277921,
+      "sha256": "7b89e2226f39de675912885dea9bdeb3cf8e6939b386d6803e686556073e44ed",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.uniqueness.json",
+      "action": "added",
+      "bytes": 393256,
+      "sha256": "0207a7ca599afdb17234e88cab6c2014a423bb7cbbfec2d950e7883a1a4a94c6",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/commands-1000.versions.json",
+      "action": "added",
+      "bytes": 487982,
+      "sha256": "b0989ec3e6fea8d5252523edbc763a835622b44b3684a489094c60a5ed76ced1",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/graphs.ts",
+      "action": "added",
+      "bytes": 74861,
+      "sha256": "a5d0c45366a485ea158abaf4067e4d1226365391a63ebc010583898005ee03c8",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/index.ts",
+      "action": "added",
+      "bytes": 503,
+      "sha256": "fc27deb3581b5bac6ded5885c2df617bb50dcff6a1edffc95694e4bfaf7df1a6",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/mz07-new-700.commands.json",
+      "action": "added",
+      "bytes": 6851037,
+      "sha256": "c6e89f0d1e20479e00f6ecef0e9f7fbf1e0d07ae9bed8c1ffff7e125b47e4628",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/mz07-new-700.graphs.json",
+      "action": "added",
+      "bytes": 74689,
+      "sha256": "c5298075be343be66f281f28584ef79159c2935720e0ffc046a789d7a0b99c5f",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/mz07-new-700.schedules.json",
+      "action": "added",
+      "bytes": 111059,
+      "sha256": "e45380f44fdddba89adb4c264786c33c67ed5621fa6a8fb9e5b73b545f13fb57",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/mz07-new-700.triggers.json",
+      "action": "added",
+      "bytes": 208122,
+      "sha256": "aa70dafd6a00b3d93691fb411d2618f2e19e1d17283867a0ae399b1e3da7c477",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/mz07-new-700.versions.json",
+      "action": "added",
+      "bytes": 356379,
+      "sha256": "826535fcc8688d4d1920be6bf94516abaa7765b2cfc6fe5451e5052d087e7743",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/schedules.ts",
+      "action": "added",
+      "bytes": 111240,
+      "sha256": "ce84e43f7b5235d1d3cd4cc39df992ea3a213b6a43e40a5a1b672142f8e14a3f",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/triggers.ts",
+      "action": "added",
+      "bytes": 181971,
+      "sha256": "54fc039a17892336461bad41f2286f1a280843ab9d8bc7a13f8015dde462ffaf",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/commands-1000/versions.ts",
+      "action": "added",
+      "bytes": 356557,
+      "sha256": "a89368cda2cca10ca7cbbafeaa9e4974a67b899916b4c9a9f21475d563edcec0",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/constants.ts",
+      "action": "modified",
+      "bytes": 5247,
+      "sha256": "7763e5d54a45f7a8af11e98f3be7ae158752f1d636c35580c5c2247f8973ef3f",
+      "previousSha256": "e78d04cbaec80b743f6932fd591168c96be095d67e769ad7659103f1ad3c2ad2"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/eligibility.ts",
+      "action": "preserved",
+      "bytes": 4284,
+      "sha256": "86bf326f21a0dbbca6a55173472b0e71a241010a17e32e18a48603e56915785d",
+      "previousSha256": "86bf326f21a0dbbca6a55173472b0e71a241010a17e32e18a48603e56915785d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/catalog.ts",
+      "action": "preserved",
+      "bytes": 2384696,
+      "sha256": "02a0a1afa73e537fbdb1d53ab0443c38dec3f62f87beac5d8519c0b990fd5f85",
+      "previousSha256": "02a0a1afa73e537fbdb1d53ab0443c38dec3f62f87beac5d8519c0b990fd5f85"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.commands.json",
+      "action": "preserved",
+      "bytes": 3501148,
+      "sha256": "532f95fb969722f2c2f90a1b75ae5b1a18613dbe76585c30e0dffabce24df23e",
+      "previousSha256": "532f95fb969722f2c2f90a1b75ae5b1a18613dbe76585c30e0dffabce24df23e"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.coverage.json",
+      "action": "preserved",
+      "bytes": 5479,
+      "sha256": "c7eeb192981da328b41fb35d900b7bb89653e2a795e709b176bf7612fc06a72d",
+      "previousSha256": "c7eeb192981da328b41fb35d900b7bb89653e2a795e709b176bf7612fc06a72d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.graphs.json",
+      "action": "preserved",
+      "bytes": 32550,
+      "sha256": "0ab6d6b46f254a59377c262537ab967408bd697beefc0b2be05b840e5ba7e055",
+      "previousSha256": "0ab6d6b46f254a59377c262537ab967408bd697beefc0b2be05b840e5ba7e055"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.schedules.json",
+      "action": "preserved",
+      "bytes": 39046,
+      "sha256": "72b871e30c3ecf58889b91037ced358289d0384a234d062dcb48e643341753fe",
+      "previousSha256": "72b871e30c3ecf58889b91037ced358289d0384a234d062dcb48e643341753fe"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.triggers.json",
+      "action": "preserved",
+      "bytes": 86733,
+      "sha256": "a1faf30e21c2ea608ace5c9ed7cce6efdd626ce1f4637e17f45936ed6adb03ab",
+      "previousSha256": "a1faf30e21c2ea608ace5c9ed7cce6efdd626ce1f4637e17f45936ed6adb03ab"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.uniqueness.json",
+      "action": "preserved",
+      "bytes": 118425,
+      "sha256": "302089e5296065945baed6363e92df359681b0311bcceca87e065086b4b1051f",
+      "previousSha256": "302089e5296065945baed6363e92df359681b0311bcceca87e065086b4b1051f"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/golden-300.versions.json",
+      "action": "preserved",
+      "bytes": 151405,
+      "sha256": "d14ef5f59750dcf01efac0b4047f4f5d2ae4ea687c42af34e8ed0a6ea6e1f00e",
+      "previousSha256": "d14ef5f59750dcf01efac0b4047f4f5d2ae4ea687c42af34e8ed0a6ea6e1f00e"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/graphs.ts",
+      "action": "preserved",
+      "bytes": 23057,
+      "sha256": "455f9f6dc808ba9b97c05f619ef434950ef9d37ae97867a4646c96fc4b1312a0",
+      "previousSha256": "455f9f6dc808ba9b97c05f619ef434950ef9d37ae97867a4646c96fc4b1312a0"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/index.ts",
+      "action": "preserved",
+      "bytes": 443,
+      "sha256": "d01beea78ce3912a3dcad88038f3f1af3d59a333defb092a988636b15826e94d",
+      "previousSha256": "d01beea78ce3912a3dcad88038f3f1af3d59a333defb092a988636b15826e94d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/schedules.ts",
+      "action": "preserved",
+      "bytes": 32652,
+      "sha256": "5277b5dcfef88a58a3cb8fe581480cd6132c27b5c9f953a15294078fbcb4100b",
+      "previousSha256": "5277b5dcfef88a58a3cb8fe581480cd6132c27b5c9f953a15294078fbcb4100b"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/triggers.ts",
+      "action": "preserved",
+      "bytes": 70034,
+      "sha256": "373866a481315767177307b63a08850cd65406c66829908f2cecc955ab72259d",
+      "previousSha256": "373866a481315767177307b63a08850cd65406c66829908f2cecc955ab72259d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/golden-300/versions.ts",
+      "action": "preserved",
+      "bytes": 131838,
+      "sha256": "fa2a862da809fe2030a123b46c8a91cdf0d57a95176cb9295efb001d5debb29a",
+      "previousSha256": "fa2a862da809fe2030a123b46c8a91cdf0d57a95176cb9295efb001d5debb29a"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/graph.ts",
+      "action": "preserved",
+      "bytes": 1958,
+      "sha256": "641a5efcc50128ed1a6fdbf53ccb50e86f3babc0cda0ede8656ded750dc311a7",
+      "previousSha256": "641a5efcc50128ed1a6fdbf53ccb50e86f3babc0cda0ede8656ded750dc311a7"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/idempotency.ts",
+      "action": "preserved",
+      "bytes": 729,
+      "sha256": "df2c8992adf284b614dd886df8b49d890e7de7a5e9f48724ec22bc1733b4cfa0",
+      "previousSha256": "df2c8992adf284b614dd886df8b49d890e7de7a5e9f48724ec22bc1733b4cfa0"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/index.ts",
+      "action": "preserved",
+      "bytes": 270,
+      "sha256": "61c89e4752791d9c5db1ddd9f58b45ea8ef66059e3519055d47aac63089bd63e",
+      "previousSha256": "61c89e4752791d9c5db1ddd9f58b45ea8ef66059e3519055d47aac63089bd63e"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/permissions.ts",
+      "action": "preserved",
+      "bytes": 1880,
+      "sha256": "4a534e50b039b294a59c186f8b130796d903637ff70ac7dd37b040983d4baa51",
+      "previousSha256": "4a534e50b039b294a59c186f8b130796d903637ff70ac7dd37b040983d4baa51"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/repository.ts",
+      "action": "modified",
+      "bytes": 6076,
+      "sha256": "adde0ccfdb6baf47bd5678b7b96ad60f8c8013afbf7eed5b4ac00f39119c6077",
+      "previousSha256": "9f5c6552cefeb9d61988d4c4287285191e1e314787ce771781987f8f301977c1"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/router.ts",
+      "action": "preserved",
+      "bytes": 2745,
+      "sha256": "7e83c5841f4b8a7f62f145b84d560da5cc4fbb2698723e4ba31a1f511bd35282",
+      "previousSha256": "7e83c5841f4b8a7f62f145b84d560da5cc4fbb2698723e4ba31a1f511bd35282"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/runtime.ts",
+      "action": "preserved",
+      "bytes": 2349,
+      "sha256": "3cdefed11428471839971899104d37d0ee60fb5de061050d932138eef8f66907",
+      "previousSha256": "3cdefed11428471839971899104d37d0ee60fb5de061050d932138eef8f66907"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/scheduler.ts",
+      "action": "preserved",
+      "bytes": 1265,
+      "sha256": "77e60f8ef7750423c40dbfaf745ddce67853684324998d67263b266e56afce53",
+      "previousSha256": "77e60f8ef7750423c40dbfaf745ddce67853684324998d67263b266e56afce53"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/schemas.ts",
+      "action": "preserved",
+      "bytes": 2961,
+      "sha256": "622db2d00b182ba748c95a879aced117d651170fedc3caadd4dbedcb403919b3",
+      "previousSha256": "622db2d00b182ba748c95a879aced117d651170fedc3caadd4dbedcb403919b3"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/search.ts",
+      "action": "preserved",
+      "bytes": 1019,
+      "sha256": "430aa90bbda3fed9066872b70fb81cffa8ccecea2b16da5ae6a8a961c2c81eb5",
+      "previousSha256": "430aa90bbda3fed9066872b70fb81cffa8ccecea2b16da5ae6a8a961c2c81eb5"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/seed-data.ts",
+      "action": "modified",
+      "bytes": 13465,
+      "sha256": "c09b29a276f5fd0242651197f40254882009b2ef5d7b351ee9ac785f523bb1d8",
+      "previousSha256": "e8a4c25d28e33d3e952c2827a03c62fdd94136d3e969de2ffbbfded40dadec47"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/types.ts",
+      "action": "preserved",
+      "bytes": 8606,
+      "sha256": "e3b24cd97368136cc0f2b8f8f620ef4158cbeedfd4cc35a1b80525ea26045a8c",
+      "previousSha256": "e3b24cd97368136cc0f2b8f8f620ef4158cbeedfd4cc35a1b80525ea26045a8c"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/command-kernel/validation.ts",
+      "action": "modified",
+      "bytes": 2755,
+      "sha256": "3ea6fd7efd4f637ff6632dc0841d1d9981048bc725f6f64913a7cf8f249b311d",
+      "previousSha256": "2a3ebbe5f2cc8a55c4ea3c734a8e507cc7e73c6533138f45bf720cfd3b5c8bc8"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/constants.ts",
+      "action": "preserved",
+      "bytes": 12754,
+      "sha256": "b1dba7b294c5117a33facc380171e5464013c69db4784a703ad1bf4a35d976c2",
+      "previousSha256": "b1dba7b294c5117a33facc380171e5464013c69db4784a703ad1bf4a35d976c2"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/digital-twin/constants.ts",
+      "action": "preserved",
+      "bytes": 4685,
+      "sha256": "8dda9bd417db4b011181c3d40a77ce6b57773baad0f6057af1e1bc958ad7280b",
+      "previousSha256": "8dda9bd417db4b011181c3d40a77ce6b57773baad0f6057af1e1bc958ad7280b"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/digital-twin/repository.ts",
+      "action": "preserved",
+      "bytes": 25123,
+      "sha256": "9bba63b5ec22db4926f3f85e7d7135e59091205b44d9e2535b420bbd29b4825f",
+      "previousSha256": "9bba63b5ec22db4926f3f85e7d7135e59091205b44d9e2535b420bbd29b4825f"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/digital-twin/seed-data.ts",
+      "action": "preserved",
+      "bytes": 72453,
+      "sha256": "f0b972dc776bc3fb4177bb6ae97a8dad6b1b9095a222ecf327a17e6ef547241a",
+      "previousSha256": "f0b972dc776bc3fb4177bb6ae97a8dad6b1b9095a222ecf327a17e6ef547241a"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/digital-twin/validation.ts",
+      "action": "preserved",
+      "bytes": 11878,
+      "sha256": "27260feef62d080429cff75c6bc00162871c07d55913ba39f5e564251687d0c6",
+      "previousSha256": "27260feef62d080429cff75c6bc00162871c07d55913ba39f5e564251687d0c6"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/env.ts",
+      "action": "preserved",
+      "bytes": 1686,
+      "sha256": "1e49a3232a88f536b89de73a7d84e6b38c0ed01ba43dcc2feb8a4d4edc223d86",
+      "previousSha256": "1e49a3232a88f536b89de73a7d84e6b38c0ed01ba43dcc2feb8a4d4edc223d86"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/errors.ts",
+      "action": "preserved",
+      "bytes": 2105,
+      "sha256": "6f4b40fa179731c01ba9eb8a811ae5cafb9dc52c8d2de54d4b4702bc8973dd93",
+      "previousSha256": "6f4b40fa179731c01ba9eb8a811ae5cafb9dc52c8d2de54d4b4702bc8973dd93"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/event-contracts.ts",
+      "action": "preserved",
+      "bytes": 1581,
+      "sha256": "3687e4490f40eb29c0983325c04b4441d4d6256f096eb66f03c6ce2d83c52407",
+      "previousSha256": "3687e4490f40eb29c0983325c04b4441d4d6256f096eb66f03c6ce2d83c52407"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/foundation-data.ts",
+      "action": "preserved",
+      "bytes": 7085,
+      "sha256": "e5afc227735eab66adbfd8dd416f1dca201c59de63805618bfef17e09f25c46e",
+      "previousSha256": "e5afc227735eab66adbfd8dd416f1dca201c59de63805618bfef17e09f25c46e"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/ids.ts",
+      "action": "preserved",
+      "bytes": 840,
+      "sha256": "395217e12cd53b5f6c4a0fcd126e3bf582c96922a9ceec819e20f6c986b2bb8d",
+      "previousSha256": "395217e12cd53b5f6c4a0fcd126e3bf582c96922a9ceec819e20f6c986b2bb8d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/knowledge-memory/constants.ts",
+      "action": "preserved",
+      "bytes": 5023,
+      "sha256": "a71ae2f229faadf3f119676ab8b4bd3fc900366fa0b3f27f408647d48de64375",
+      "previousSha256": "a71ae2f229faadf3f119676ab8b4bd3fc900366fa0b3f27f408647d48de64375"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/knowledge-memory/repository.ts",
+      "action": "preserved",
+      "bytes": 28790,
+      "sha256": "b956a0cba1b25c01150d0b5dae9d007fe7815f4132d74ca020789aa8691bf96e",
+      "previousSha256": "b956a0cba1b25c01150d0b5dae9d007fe7815f4132d74ca020789aa8691bf96e"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/knowledge-memory/seed-data.ts",
+      "action": "preserved",
+      "bytes": 298760,
+      "sha256": "bce5c8f55e60e5b4dc38ef05a550e2da4d5e8cc82d06676a76cd7a27443f2147",
+      "previousSha256": "bce5c8f55e60e5b4dc38ef05a550e2da4d5e8cc82d06676a76cd7a27443f2147"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/knowledge-memory/validation.ts",
+      "action": "preserved",
+      "bytes": 8064,
+      "sha256": "52e4ba699393f57016beb41eb4989ebe526ce386e798e13d5229546b4dc33f56",
+      "previousSha256": "52e4ba699393f57016beb41eb4989ebe526ce386e798e13d5229546b4dc33f56"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/repository.ts",
+      "action": "preserved",
+      "bytes": 9821,
+      "sha256": "8bfff752971a495a93d8cc50b529e55d65687de704f1018ce842f2dc41fc597c",
+      "previousSha256": "8bfff752971a495a93d8cc50b529e55d65687de704f1018ce842f2dc41fc597c"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/search.ts",
+      "action": "preserved",
+      "bytes": 7267,
+      "sha256": "eb452d04192327f9dc959e342c7057e626ca4e696badbb14236c493fdab3c4a8",
+      "previousSha256": "eb452d04192327f9dc959e342c7057e626ca4e696badbb14236c493fdab3c4a8"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/adapters.ts",
+      "action": "preserved",
+      "bytes": 8444,
+      "sha256": "a8fa89a2a9126a435fa81be6d4ab2d12083b49fa016c0d90881cb50494f1f3c8",
+      "previousSha256": "a8fa89a2a9126a435fa81be6d4ab2d12083b49fa016c0d90881cb50494f1f3c8"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/classification.ts",
+      "action": "preserved",
+      "bytes": 6537,
+      "sha256": "7683aa192adc88289f9a93f33b823c306622a62d66640879f66cea5ca9231001",
+      "previousSha256": "7683aa192adc88289f9a93f33b823c306622a62d66640879f66cea5ca9231001"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/constants.ts",
+      "action": "preserved",
+      "bytes": 4874,
+      "sha256": "057287ec02a82df07f992c3d6fcc1b7bf7586cf82525678549c75b78a9d475c3",
+      "previousSha256": "057287ec02a82df07f992c3d6fcc1b7bf7586cf82525678549c75b78a9d475c3"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/context.ts",
+      "action": "preserved",
+      "bytes": 4235,
+      "sha256": "38a15a8dbe329d946dcd7fe430ec4d52e06db4c3b3791238587f55286dbb364d",
+      "previousSha256": "38a15a8dbe329d946dcd7fe430ec4d52e06db4c3b3791238587f55286dbb364d"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/repository.ts",
+      "action": "preserved",
+      "bytes": 27784,
+      "sha256": "eeb1ac5943ea8d7996a212fb87d07d91c08947f6e024a301beff1b93d040e6d4",
+      "previousSha256": "eeb1ac5943ea8d7996a212fb87d07d91c08947f6e024a301beff1b93d040e6d4"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/seed-data.ts",
+      "action": "preserved",
+      "bytes": 100584,
+      "sha256": "dd4f793f8fc8619390174ce3c9fb84fd495a1dcdc7b918fe1dfaba0d43bd5ae9",
+      "previousSha256": "dd4f793f8fc8619390174ce3c9fb84fd495a1dcdc7b918fe1dfaba0d43bd5ae9"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/signal-fabric/validation.ts",
+      "action": "preserved",
+      "bytes": 6424,
+      "sha256": "56ed5958c72ec5f6ddafa530aca30fe7980ab48e8c3dae368a056986151463f6",
+      "previousSha256": "56ed5958c72ec5f6ddafa530aca30fe7980ab48e8c3dae368a056986151463f6"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/statuses.ts",
+      "action": "preserved",
+      "bytes": 2198,
+      "sha256": "790e00451890c57a2408a5df75253e46dd5393ec120dd7415876ef295e40bc52",
+      "previousSha256": "790e00451890c57a2408a5df75253e46dd5393ec120dd7415876ef295e40bc52"
+    },
+    {
+      "path": "apps/ops-web/lib/revenue-command-os/types.ts",
+      "action": "preserved",
+      "bytes": 32672,
+      "sha256": "cf4e84d09134c810d10fe18729ffeec7fd792b8cbe8964ee1f8f8962e16421cc",
+      "previousSha256": "cf4e84d09134c810d10fe18729ffeec7fd792b8cbe8964ee1f8f8962e16421cc"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase1-manifest.mjs",
+      "action": "preserved",
+      "bytes": 1153,
+      "sha256": "67f8a53f95d26121c818c068bf9b7545fe7d0befe0680b8b54ee4ed02d078778",
+      "previousSha256": "67f8a53f95d26121c818c068bf9b7545fe7d0befe0680b8b54ee4ed02d078778"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase2-manifest.mjs",
+      "action": "preserved",
+      "bytes": 1047,
+      "sha256": "6c17a1219b9c853c028ed3f38c6e7e7d8409277d910977765cc211935cc4dd91",
+      "previousSha256": "6c17a1219b9c853c028ed3f38c6e7e7d8409277d910977765cc211935cc4dd91"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase3-manifest.mjs",
+      "action": "preserved",
+      "bytes": 1440,
+      "sha256": "4385afa4aa6180b24bc7d9574980e9825611123c6f75ecb3ad7dd66f94879333",
+      "previousSha256": "4385afa4aa6180b24bc7d9574980e9825611123c6f75ecb3ad7dd66f94879333"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase4-manifest.mjs",
+      "action": "preserved",
+      "bytes": 1027,
+      "sha256": "79d47ec4d5431fa9a8f9bdc217892490d6c73c1d5cfadc322e96c7efbce296f3",
+      "previousSha256": "79d47ec4d5431fa9a8f9bdc217892490d6c73c1d5cfadc322e96c7efbce296f3"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase5-manifest.mjs",
+      "action": "preserved",
+      "bytes": 740,
+      "sha256": "0d3d3b3aa3d585122c95e184a73719b6192ff34a63bb07841958bde5b531bb09",
+      "previousSha256": "0d3d3b3aa3d585122c95e184a73719b6192ff34a63bb07841958bde5b531bb09"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase6-manifest.mjs",
+      "action": "preserved",
+      "bytes": 742,
+      "sha256": "a3e28f6e0715a2be8b58f796fef167d9a5146e5425464f5a3f1ddd08df2329a2",
+      "previousSha256": "a3e28f6e0715a2be8b58f796fef167d9a5146e5425464f5a3f1ddd08df2329a2"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/print-phase7-manifest.mjs",
+      "action": "added",
+      "bytes": 408,
+      "sha256": "585f8fd578d9a9932b6b1e04be942409c7558563d151b50119685e325e0f433a",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/review-phase7-semantic-duplicates.mjs",
+      "action": "added",
+      "bytes": 2515,
+      "sha256": "4ccde077f970c30171cb354c07255cf609f4991c2bf407ee4aaa03fcacdfb41e",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/review-phase7-sql.mjs",
+      "action": "added",
+      "bytes": 2728,
+      "sha256": "1e0c1c56c454dad29a2ca4353301aaca95265fe604607cdb1ff67cc854af8beb",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/run-phase5-kernel-tests.mjs",
+      "action": "preserved",
+      "bytes": 1661,
+      "sha256": "79c0620d383d3ea5219d4d7c8a121247569a46dadfa4bfaf29de6301d29bd63f",
+      "previousSha256": "79c0620d383d3ea5219d4d7c8a121247569a46dadfa4bfaf29de6301d29bd63f"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/run-phase6-golden-tests.mjs",
+      "action": "preserved",
+      "bytes": 1984,
+      "sha256": "c161d7f5f744e9e46f8e549c59a92e2153478d826f49eab334b098012bd00374",
+      "previousSha256": "c161d7f5f744e9e46f8e549c59a92e2153478d826f49eab334b098012bd00374"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/run-phase7-command-tests.mjs",
+      "action": "added",
+      "bytes": 1257,
+      "sha256": "2229302c0480121bcd101aaed2fee792dab0fd3a8ff229bba7aac05bfe3c62a8",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/transpile-phase6-ui.mjs",
+      "action": "preserved",
+      "bytes": 1570,
+      "sha256": "da8316239365fcb7a3518cb7948632eaec260e438358b110b792a4e5a0135442",
+      "previousSha256": "da8316239365fcb7a3518cb7948632eaec260e438358b110b792a4e5a0135442"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/transpile-phase7-ui.mjs",
+      "action": "added",
+      "bytes": 1670,
+      "sha256": "5ad9a2f1e2828a1266224a42567cf6a0e92ce33c91a0f56fc871c939b6141d0f",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase1.mjs",
+      "action": "preserved",
+      "bytes": 7092,
+      "sha256": "3711bd6e4c1fb2e059b053254ff6b2b7633124973a0f7873e24469d014ea9621",
+      "previousSha256": "3711bd6e4c1fb2e059b053254ff6b2b7633124973a0f7873e24469d014ea9621"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase2.mjs",
+      "action": "preserved",
+      "bytes": 14475,
+      "sha256": "ebd314e03aa333e3afd5498bfb18b92abd03e53e8c53044eadf719d06a212244",
+      "previousSha256": "ebd314e03aa333e3afd5498bfb18b92abd03e53e8c53044eadf719d06a212244"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase3.mjs",
+      "action": "preserved",
+      "bytes": 19584,
+      "sha256": "2ef9c113df266c294e25af7228cf7983035d0c0ebe677f23944b800a5a7b01ba",
+      "previousSha256": "2ef9c113df266c294e25af7228cf7983035d0c0ebe677f23944b800a5a7b01ba"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase4.mjs",
+      "action": "preserved",
+      "bytes": 16969,
+      "sha256": "13f3ed9f6cea16a0f62499f4e91e66ae22889887c9fd1c10309fc37fbbc19e8f",
+      "previousSha256": "13f3ed9f6cea16a0f62499f4e91e66ae22889887c9fd1c10309fc37fbbc19e8f"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase5.mjs",
+      "action": "preserved",
+      "bytes": 7272,
+      "sha256": "a459a3fad9ef639aa711fc7add32527e18e570b932b7425cdad20fd42559581e",
+      "previousSha256": "a459a3fad9ef639aa711fc7add32527e18e570b932b7425cdad20fd42559581e"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase6-cumulative-package.mjs",
+      "action": "preserved",
+      "bytes": 1083,
+      "sha256": "e4c4d2df9597d24ad05d9bfe01e03a3cd8d942e49e2f6f350bd6a6bef401bbbc",
+      "previousSha256": "e4c4d2df9597d24ad05d9bfe01e03a3cd8d942e49e2f6f350bd6a6bef401bbbc"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase6.mjs",
+      "action": "modified",
+      "bytes": 8297,
+      "sha256": "0622b57f465daba054bf68fe2296f69b4cd3605961af42350c54599d481e8205",
+      "previousSha256": "1e159dbcaa965efbfe82fb6da87e8b8d8face88f800e8ffb1915662ed40000ba"
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase7-cumulative-package.mjs",
+      "action": "added",
+      "bytes": 1188,
+      "sha256": "5f4313dafd758ea2e6c5476dfc4944d87f30ce1f9bfbf8d0d526d59d14f3de91",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/scripts/revenue-command-os/verify-phase7.mjs",
+      "action": "added",
+      "bytes": 8649,
+      "sha256": "3e03af3b252a297217c46684d2ef79cf622c777113e9a64cd283f4945602c292",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260514_core_revenue_os.sql",
+      "action": "preserved",
+      "bytes": 7813,
+      "sha256": "e726fe1a3daa39aff82dd1276b3a7fe1c5c9401b71739017b12a4e61f252e1a7",
+      "previousSha256": "e726fe1a3daa39aff82dd1276b3a7fe1c5c9401b71739017b12a4e61f252e1a7"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260514_revenue_prospects_source_of_truth.sql",
+      "action": "preserved",
+      "bytes": 2163,
+      "sha256": "c5c80f324633b610d4c6454afe627a746cd7c52db0decd9891dd7d966b892718",
+      "previousSha256": "c5c80f324633b610d4c6454afe627a746cd7c52db0decd9891dd7d966b892718"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase1_foundation.sql",
+      "action": "preserved",
+      "bytes": 23127,
+      "sha256": "ab61c827e4920b93cd98d4e888fdaad26dde35366883a0752a0cf711d757c971",
+      "previousSha256": "ab61c827e4920b93cd98d4e888fdaad26dde35366883a0752a0cf711d757c971"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase2_digital_twin.sql",
+      "action": "preserved",
+      "bytes": 198756,
+      "sha256": "135cfc659a6b47177f1d4b8ab1e949a51eff7994afb25666b7e89a2c8bf88027",
+      "previousSha256": "135cfc659a6b47177f1d4b8ab1e949a51eff7994afb25666b7e89a2c8bf88027"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase3_doctrine_memory.sql",
+      "action": "preserved",
+      "bytes": 276874,
+      "sha256": "436d16b5cd9b29c5f399c9ef7e5267ae279e88f868b7fc31888938736ea43663",
+      "previousSha256": "436d16b5cd9b29c5f399c9ef7e5267ae279e88f868b7fc31888938736ea43663"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase4_signal_fabric.sql",
+      "action": "preserved",
+      "bytes": 42807,
+      "sha256": "48a814e0f3f166835af80f05cb8c85437a3af0612c099a0e7bc0c71127015d15",
+      "previousSha256": "48a814e0f3f166835af80f05cb8c85437a3af0612c099a0e7bc0c71127015d15"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase5_command_kernel.sql",
+      "action": "preserved",
+      "bytes": 60404,
+      "sha256": "c5fde40842b1a948d5412a852aca15a1de3e5fdb3c01c6ac69399da24b7ce367",
+      "previousSha256": "c5fde40842b1a948d5412a852aca15a1de3e5fdb3c01c6ac69399da24b7ce367"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase6_golden_300.sql",
+      "action": "preserved",
+      "bytes": 7209985,
+      "sha256": "66cabfaa0663d4edfd049aa340d8726ce7023c7060777721d8afbd9e2d6c973f",
+      "previousSha256": "66cabfaa0663d4edfd049aa340d8726ce7023c7060777721d8afbd9e2d6c973f"
+    },
+    {
+      "path": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase7_commands_1000.sql",
+      "action": "added",
+      "bytes": 34174965,
+      "sha256": "c36fa1cb1a66eb0d0e49e80018146a8b578ffeac477d3c0b323c94142b216d72",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/evaluations/mz05-adversarial-integrity-corpus.ndjson",
+      "action": "preserved",
+      "bytes": 123316006,
+      "sha256": "9ba29c5260f8fba145f6542136c903a1feea0f41912a1fcc4eb715c0cd89604c",
+      "previousSha256": "9ba29c5260f8fba145f6542136c903a1feea0f41912a1fcc4eb715c0cd89604c"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/evaluations/mz05-routing-corpus.ndjson",
+      "action": "preserved",
+      "bytes": 56360267,
+      "sha256": "27d1135c3bda98685959c808ea7b80e0d530968f1bbe2c24a360f0b1ee9c20d8",
+      "previousSha256": "27d1135c3bda98685959c808ea7b80e0d530968f1bbe2c24a360f0b1ee9c20d8"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/objective-validation-cases.json",
+      "action": "preserved",
+      "bytes": 1183,
+      "sha256": "f0ced70726ea8e5e32529c5e768502c021ded246838fa32085f3bf640087ec30",
+      "previousSha256": "f0ced70726ea8e5e32529c5e768502c021ded246838fa32085f3bf640087ec30"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase1-bootstrap.json",
+      "action": "preserved",
+      "bytes": 1009,
+      "sha256": "c231f371267bc38546f4adea28f8e04aadf3a80b186fdb26cb6f79d1f6b26e67",
+      "previousSha256": "c231f371267bc38546f4adea28f8e04aadf3a80b186fdb26cb6f79d1f6b26e67"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase2-digital-twin.json",
+      "action": "preserved",
+      "bytes": 1044,
+      "sha256": "ed6a6ea99c2d7a85142a2d334cef5bc674037917d61bba94ec26ef8a31b0d069",
+      "previousSha256": "ed6a6ea99c2d7a85142a2d334cef5bc674037917d61bba94ec26ef8a31b0d069"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase2-mutation-cases.json",
+      "action": "preserved",
+      "bytes": 526,
+      "sha256": "8cc580c0eef1ba13f4965223b57d5d1b8b66b0e11be51328253f8e8202d0620d",
+      "previousSha256": "8cc580c0eef1ba13f4965223b57d5d1b8b66b0e11be51328253f8e8202d0620d"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase2-validation-cases.json",
+      "action": "preserved",
+      "bytes": 1327,
+      "sha256": "3d5c872d051bab69aa840bf091222dcacfe67ca64095270014347c76794fd2de",
+      "previousSha256": "3d5c872d051bab69aa840bf091222dcacfe67ca64095270014347c76794fd2de"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase3-doctrine-memory.json",
+      "action": "preserved",
+      "bytes": 1190,
+      "sha256": "0452358ebdbd36b0f36fc695c2db3577e59ba70f5f674880bb5f01a5f398e9ad",
+      "previousSha256": "0452358ebdbd36b0f36fc695c2db3577e59ba70f5f674880bb5f01a5f398e9ad"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase3-governance-cases.json",
+      "action": "preserved",
+      "bytes": 653,
+      "sha256": "516cc9625ff3e44c34736e80e0d439fc050dd073c7e3ad7c86f5bc832fea4d51",
+      "previousSha256": "516cc9625ff3e44c34736e80e0d439fc050dd073c7e3ad7c86f5bc832fea4d51"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase3-lifecycle-cases.json",
+      "action": "preserved",
+      "bytes": 477,
+      "sha256": "b374eacb77c42b53d3e8dcdfb343afb45976116ef3b0db9df1daf08aa951cc9e",
+      "previousSha256": "b374eacb77c42b53d3e8dcdfb343afb45976116ef3b0db9df1daf08aa951cc9e"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase4-classification-cases.json",
+      "action": "preserved",
+      "bytes": 2315,
+      "sha256": "a79c2d3ff0ffa1aa3c93070f45dad31d0a4efdb5ac88631e069a308bf6a349a7",
+      "previousSha256": "a79c2d3ff0ffa1aa3c93070f45dad31d0a4efdb5ac88631e069a308bf6a349a7"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase4-privacy-cases.json",
+      "action": "preserved",
+      "bytes": 639,
+      "sha256": "957aa7fb20b226df065a6e4647e4d8b75b4ec916ef32f2082bf70a734c3d8adc",
+      "previousSha256": "957aa7fb20b226df065a6e4647e4d8b75b4ec916ef32f2082bf70a734c3d8adc"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase4-signal-fabric.json",
+      "action": "preserved",
+      "bytes": 295,
+      "sha256": "e1a22570c093c54d156f2467355005604f931b5f69acdcff7d1748ed93330cc4",
+      "previousSha256": "e1a22570c093c54d156f2467355005604f931b5f69acdcff7d1748ed93330cc4"
+    },
+    {
+      "path": "apps/ops-web/tests/revenue-command-os/fixtures/phase5-command-kernel.json",
+      "action": "preserved",
+      "bytes": 212,
+      "sha256": "0662fd98dc6b8ec9be0b4bc998090f6ec1e61b0b7d1ad5c2e714b06fb8f0df01",
+      "previousSha256": "0662fd98dc6b8ec9be0b4bc998090f6ec1e61b0b7d1ad5c2e714b06fb8f0df01"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-integration.json",
+      "action": "preserved",
+      "bytes": 378,
+      "sha256": "64bb2f6813a183f4c4d9d25c11183166a8baf2babe0a17a9e1244c56eea95b01",
+      "previousSha256": "64bb2f6813a183f4c4d9d25c11183166a8baf2babe0a17a9e1244c56eea95b01"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase1.json",
+      "action": "preserved",
+      "bytes": 550,
+      "sha256": "71cbe5c027979fd21e877ed29d95f6fe29f6767be6eb344025faa8bb547a1219",
+      "previousSha256": "71cbe5c027979fd21e877ed29d95f6fe29f6767be6eb344025faa8bb547a1219"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase2.json",
+      "action": "preserved",
+      "bytes": 530,
+      "sha256": "645ab31e7c252a8d4d36c131175c39ae30a0c8f3fb7078139150c5fee5adba07",
+      "previousSha256": "645ab31e7c252a8d4d36c131175c39ae30a0c8f3fb7078139150c5fee5adba07"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase3.json",
+      "action": "preserved",
+      "bytes": 530,
+      "sha256": "645ab31e7c252a8d4d36c131175c39ae30a0c8f3fb7078139150c5fee5adba07",
+      "previousSha256": "645ab31e7c252a8d4d36c131175c39ae30a0c8f3fb7078139150c5fee5adba07"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase4.json",
+      "action": "preserved",
+      "bytes": 461,
+      "sha256": "6f2a22cdc6ff8e4e6cf3abe1a84c31cae8e965979b2d2149bb966fc8ed47e84a",
+      "previousSha256": "6f2a22cdc6ff8e4e6cf3abe1a84c31cae8e965979b2d2149bb966fc8ed47e84a"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase5.json",
+      "action": "preserved",
+      "bytes": 558,
+      "sha256": "271bab0b49f44640f8c6111b68c0d9f1b7e6b27624b347fa3dc192cae57b9af6",
+      "previousSha256": "271bab0b49f44640f8c6111b68c0d9f1b7e6b27624b347fa3dc192cae57b9af6"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase6-kernel.json",
+      "action": "preserved",
+      "bytes": 1269,
+      "sha256": "7c213afd5792ba8a8d03ec00b163c2485b6b38a6a66d3fab73aab6ab80e006b2",
+      "previousSha256": "7c213afd5792ba8a8d03ec00b163c2485b6b38a6a66d3fab73aab6ab80e006b2"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase6.json",
+      "action": "preserved",
+      "bytes": 1029,
+      "sha256": "b4cec0a543437936d08b9560421c2eca9f02fd46172957263d693ad4ee85b4b9",
+      "previousSha256": "b4cec0a543437936d08b9560421c2eca9f02fd46172957263d693ad4ee85b4b9"
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase7-kernel.json",
+      "action": "added",
+      "bytes": 1690,
+      "sha256": "7e32d91341827c60e8d2ea24fbddb24550922dfe3164a54fa217b1bc6fd5680d",
+      "previousSha256": null
+    },
+    {
+      "path": "apps/ops-web/tsconfig.revenue-os-phase7.json",
+      "action": "added",
+      "bytes": 1099,
+      "sha256": "77b991296ef2b03afe97da89523b776f156ab678e1a6d8bad9278e33129cc2be",
+      "previousSha256": null
+    },
+    {
+      "path": "audit-report/MZ05_RELEASE_AUDIT.md",
+      "action": "preserved",
+      "bytes": 2082,
+      "sha256": "6f3be3d0cd2dc881a5f6abe351f97d72890c4eed0ff963d58541965db0ed0a05",
+      "previousSha256": "6f3be3d0cd2dc881a5f6abe351f97d72890c4eed0ff963d58541965db0ed0a05"
+    },
+    {
+      "path": "audit-report/MZ06_RELEASE_AUDIT.md",
+      "action": "preserved",
+      "bytes": 1649,
+      "sha256": "bb100221f37b5d60e221a65e36cf8a94271b25004a709fbc86fc913b4a2a9415",
+      "previousSha256": "bb100221f37b5d60e221a65e36cf8a94271b25004a709fbc86fc913b4a2a9415"
+    },
+    {
+      "path": "audit-report/MZ07_RELEASE_AUDIT.md",
+      "action": "added",
+      "bytes": 849,
+      "sha256": "b37852979fd71555acee21a1f54cd23e2b62efa47b93c8e3364119009eb081c4",
+      "previousSha256": null
+    },
+    {
+      "path": "docs/browser-extension/ANGELCARE_REVENUE_COMMAND_BROWSER_OS_CANONICAL_BUILD_CONTRACT.txt",
+      "action": "preserved",
+      "bytes": 48680,
+      "sha256": "b58dca2df1b0b780921231998a455c66a9b474433c66e03bbc2a7581dee1c808",
+      "previousSha256": "b58dca2df1b0b780921231998a455c66a9b474433c66e03bbc2a7581dee1c808"
+    },
+    {
+      "path": "rollback_revenue_os_mz05_application.sh",
+      "action": "preserved",
+      "bytes": 1051,
+      "sha256": "7112fde9f424b3f78cde6ef7fc2507b39d3e4b82fda6e1f766b60b9177c0071c",
+      "previousSha256": "7112fde9f424b3f78cde6ef7fc2507b39d3e4b82fda6e1f766b60b9177c0071c"
+    },
+    {
+      "path": "rollback_revenue_os_mz06_application.sh",
+      "action": "preserved",
+      "bytes": 1051,
+      "sha256": "48202f8aad4a3c3405b5591465a35c7fd8633521687a6fd802b123804587cdf9",
+      "previousSha256": "48202f8aad4a3c3405b5591465a35c7fd8633521687a6fd802b123804587cdf9"
+    },
+    {
+      "path": "rollback_revenue_os_mz07_application.sh",
+      "action": "added",
+      "bytes": 999,
+      "sha256": "54e9f4ee0eed8bbed7f33d42a72b525068ee70d108ae76152b0c95a5de494198",
+      "previousSha256": null
+    },
+    {
+      "path": "tools/revenue-os/apply-phase7-migration.sh",
+      "action": "added",
+      "bytes": 884,
+      "sha256": "e1a997fc75a6aeeeb6d2a736a200da2e09b6b8ba6e4b62bb7e8584347c35ccd8",
+      "previousSha256": null
+    },
+    {
+      "path": "tools/revenue-os/patch-package-scripts.mjs",
+      "action": "modified",
+      "bytes": 2123,
+      "sha256": "be610ccd904051714ec14c9a9dfd1865873cd8ae0f09e805df3593d7c3d81e91",
+      "previousSha256": "7d8a19c1f3c56faace94021a8288b5747fd4d61e54670f8dde7e5ff8b72e0634"
+    }
+  ]
+}

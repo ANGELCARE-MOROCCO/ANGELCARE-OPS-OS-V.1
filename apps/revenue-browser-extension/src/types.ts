@@ -3,7 +3,7 @@ export type BootstrapModule = { key: string; label: string; route: string; enabl
 export type BootstrapPayload = {
   ok: true
   user: { id: string; name: string; email: string | null; role: string | null }
-  device: { id: string; installationId: string; status: string; extensionVersion: string | null }
+  device: { id: string; installationId: string; status: string; extensionVersion: string | null; releaseChannel?: string; healthStatus?: string }
   accessVersion: number
   modules: BootstrapModule[]
   capabilities: string[]
@@ -11,7 +11,8 @@ export type BootstrapPayload = {
   autonomy: Array<{ actionPattern: string; mode: ExtensionAccessMode }>
   approvals: Array<{ commandPattern: string; approvalLevel: string; approverRole: string | null }>
   scopes: Record<string, unknown>
-  features?: { b2bAccountIntelligence?: boolean; contractVersion?: string; commands?: string[] }
+  production?: { channel?: Record<string, any> | null; release?: Record<string, any> | null; flags?: Array<Record<string, any>>; killSwitches?: Array<Record<string, any>>; compatibility?: Array<Record<string, any>>; serverTime?: string }
+  features?: { b2bAccountIntelligence?: boolean; b2bPartnerLifecycle?: boolean; b2bManagementCommand?: boolean; productionHardening?: boolean; contractVersion?: string; commands?: string[] }
   issuedAt: string
 }
 export type StoredSession = { accessToken: string; refreshToken: string; apiBase: string; deviceId: string; expiresAt: string }

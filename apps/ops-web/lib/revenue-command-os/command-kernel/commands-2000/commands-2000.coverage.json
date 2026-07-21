@@ -1,0 +1,49 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ08-COMMANDS-2000",
+  "existingCommands": 1000,
+  "newCommands": 1000,
+  "exactCommandCount": 2000,
+  "familyCounts": {
+    "market-sensing": 152,
+    "segmentation-account-discovery": 169,
+    "offer-pricing": 359,
+    "campaign-go-to-market": 169,
+    "outreach-channel": 156,
+    "qualification-progression": 152,
+    "meetings-diagnostics": 90,
+    "proposal-negotiation-closing": 176,
+    "pipeline-rescue": 221,
+    "renewal-expansion-referral": 90,
+    "executive-forecasting": 119,
+    "audit-optimization": 147
+  },
+  "newFamilyCounts": {
+    "market-sensing": 69,
+    "segmentation-account-discovery": 69,
+    "offer-pricing": 276,
+    "proposal-negotiation-closing": 92,
+    "qualification-progression": 69,
+    "audit-optimization": 80,
+    "outreach-channel": 23,
+    "meetings-diagnostics": 23,
+    "executive-forecasting": 69,
+    "pipeline-rescue": 138,
+    "campaign-go-to-market": 69,
+    "renewal-expansion-referral": 23
+  },
+  "canonicalTargets": {
+    "market-sensing": 250,
+    "segmentation-account-discovery": 300,
+    "offer-pricing": 250,
+    "campaign-go-to-market": 300,
+    "outreach-channel": 400,
+    "qualification-progression": 250,
+    "meetings-diagnostics": 200,
+    "proposal-negotiation-closing": 250,
+    "pipeline-rescue": 250,
+    "renewal-expansion-referral": 200,
+    "executive-forecasting": 150,
+    "audit-optimization": 200
+  },
+  "externalActionsEnabled": false
+}

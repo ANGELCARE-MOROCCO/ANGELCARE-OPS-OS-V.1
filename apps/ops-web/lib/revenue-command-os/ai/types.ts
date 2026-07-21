@@ -1,0 +1,9 @@
+import type {ContextSnapshot, RevenueObjective, RevenueStrategy, CommandSelection} from '../strategy-brain/types'
+export type RevenueAiProviderCode='gemini'|'deterministic'
+export type RevenueAiRunStatus='queued'|'running'|'completed'|'failed'|'quota_deferred'|'cancelled'|'invalid_output'
+export interface RevenueAiGenerationRequest {runId:string;tenantId:string;userId:string;objective:RevenueObjective;context:ContextSnapshot;commands:CommandSelection[];minimumStrategies:number;promptCode:string;promptVersion:string;idempotencyKey:string}
+export interface RevenueAiUsage {inputTokens:number;outputTokens:number;totalTokens:number;estimatedCostUsd:number}
+export interface RevenueAiGenerationResult {provider:RevenueAiProviderCode;model:string;modelVersion?:string;responseId?:string;strategies:RevenueStrategy[];usage:RevenueAiUsage;latencyMs:number;requestHash:string;responseHash:string;fallbackUsed:boolean;rawStatus:string}
+export interface RevenueAiProviderHealth {provider:RevenueAiProviderCode;enabled:boolean;available:boolean;model:string;checkedAt:string;lastSuccessAt?:string;lastFailureAt?:string;errorCode?:string;message:string}
+export interface RevenueAiProvider {readonly providerCode:RevenueAiProviderCode;generateStructured(request:RevenueAiGenerationRequest):Promise<RevenueAiGenerationResult>;checkHealth(live?:boolean):Promise<RevenueAiProviderHealth>}
+export interface RevenueAiRuntimeConfig {enabled:boolean;provider:RevenueAiProviderCode;executionMode:'shadow';allowExternalActions:false;primaryModel:string;fallbackModel:string;minimumStrategies:number;timeoutMs:number;maxRetries:number;maxConcurrentRuns:number;maxRequestsPerMinute:number;maxRequestsPerDay:number;maxInputTokensPerRun:number;maxOutputTokensPerRun:number;deterministicFallback:boolean;cacheEnabled:boolean;cacheTtlSeconds:number;maxRepairAttempts:number}

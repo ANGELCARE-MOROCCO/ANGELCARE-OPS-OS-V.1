@@ -1,0 +1,42 @@
+[
+  {
+    "territory": "Agadir",
+    "commandCount": 128,
+    "newCommandCount": 128
+  },
+  {
+    "territory": "Casablanca",
+    "commandCount": 416,
+    "newCommandCount": 416
+  },
+  {
+    "territory": "Fès",
+    "commandCount": 96,
+    "newCommandCount": 96
+  },
+  {
+    "territory": "Kénitra",
+    "commandCount": 384,
+    "newCommandCount": 384
+  },
+  {
+    "territory": "MA",
+    "commandCount": 1000,
+    "newCommandCount": 700
+  },
+  {
+    "territory": "Marrakech",
+    "commandCount": 160,
+    "newCommandCount": 160
+  },
+  {
+    "territory": "Rabat",
+    "commandCount": 416,
+    "newCommandCount": 416
+  },
+  {
+    "territory": "Tanger",
+    "commandCount": 160,
+    "newCommandCount": 160
+  }
+]

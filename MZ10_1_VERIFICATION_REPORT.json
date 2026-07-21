@@ -1,0 +1,17 @@
+{
+  "release": "MZ10.1",
+  "provider": "gemini",
+  "providerNeutral": true,
+  "staticAssertionsPassed": 21,
+  "staticAssertionsFailed": 0,
+  "evaluationCases": 25000,
+  "failureClasses": 21,
+  "evaluationFailures": 0,
+  "typescriptTranspileFiles": 51,
+  "typescriptSyntaxDiagnostics": 0,
+  "minimumStrategies": 5,
+  "externalActions": 0,
+  "liveGeminiConnection": "target-environment-required",
+  "strictTargetTypeScript": "installer-required",
+  "databaseMigration": "manual-target-application-required"
+}

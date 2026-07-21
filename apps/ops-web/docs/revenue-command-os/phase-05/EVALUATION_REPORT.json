@@ -1,0 +1,66 @@
+{
+  "suite": "MZ05 kernel and adversarial corpora",
+  "files": [
+    "tests/revenue-command-os/evaluations/mz05-routing-corpus.ndjson",
+    "tests/revenue-command-os/evaluations/mz05-adversarial-integrity-corpus.ndjson"
+  ],
+  "cases": 70000,
+  "failures": 0,
+  "families": [
+    "market-sensing",
+    "segmentation-account-discovery",
+    "offer-pricing",
+    "campaign-go-to-market",
+    "outreach-channel",
+    "qualification-progression",
+    "meetings-diagnostics",
+    "proposal-negotiation-closing",
+    "pipeline-rescue",
+    "renewal-expansion-referral",
+    "executive-forecasting",
+    "audit-optimization"
+  ],
+  "modes": [
+    "shadow",
+    "simulation",
+    "recommend",
+    "approval-gated"
+  ],
+  "outcomes": [
+    "eligible",
+    "excluded",
+    "blocked-context",
+    "blocked-permission",
+    "awaiting-approval",
+    "simulation-only",
+    "block",
+    "exclude",
+    "simulate",
+    "await-approval",
+    "retry",
+    "fallback"
+  ],
+  "categories": [
+    "normal",
+    "complex",
+    "incomplete",
+    "contradictory",
+    "prohibited",
+    "retry",
+    "fallback",
+    "approval",
+    "idempotency",
+    "idempotency-replay",
+    "schema-tampering",
+    "rollback-trace",
+    "tool-prohibition",
+    "approval-bypass",
+    "hash-stability",
+    "graph-cycle-attack",
+    "sensitive-field-redaction",
+    "context-staleness",
+    "tenant-isolation",
+    "permission-escalation",
+    "fallback-exhaustion"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "0.7.0",
+  "budgetsMs": {
+    "service_worker_wake_p95": 800,
+    "sidepanel_cached_interactive_p95": 1500,
+    "sidepanel_uncached_interactive_p95": 2500,
+    "account_hydration_p95": 3000,
+    "partner_hydration_p95": 4000,
+    "management_hydration_p95": 4000,
+    "focus_cached_startup_p95": 2000,
+    "command_acknowledgement_p95": 1500
+  },
+  "measurement": "runtime telemetry; live pilot samples required for stable promotion"
+}
