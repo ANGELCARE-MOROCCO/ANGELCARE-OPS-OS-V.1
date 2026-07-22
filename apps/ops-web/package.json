@@ -197,7 +197,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "allowScripts": {
     "fsevents@2.3.2": true,
