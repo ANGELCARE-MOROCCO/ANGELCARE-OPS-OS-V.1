@@ -26,14 +26,13 @@ import {
   listTable,
   MISSION_ASSIGNMENTS_TABLE,
   rpc,
-  SETTINGS_TABLE,
   TERRITORY_ASSIGNMENTS_TABLE,
   updateRow,
-  upsertSettingsRow,
   validateRequired,
   writeAudit,
 } from "./persistence"
 import { getAmbassadorSupabaseAdmin } from "./supabase"
+import { getEffectiveAmbassadorSettingsConfiguration } from "./settings/runtime"
 
 const DEFAULT_SETTINGS: AmbassadorRecord = {
   id: "00000000-0000-0000-0000-000000000001",
@@ -501,6 +500,26 @@ export async function createAmbassadorEntity(actor: AmbassadorActor, entity: Amb
     if (entity === "recruitment") row.stage = "sourced"
     if (entity === "leads") row.status = "new"
     if (entity === "conversions") row.status = "pending"
+    if (entity === "missions") {
+      const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+        territory: text(row.territory_id),
+        city: text(row.city),
+        region: text(row.region),
+      })
+      const missionType = text(row.mission_type)
+      if (missionType && !settings.missions.allowedMissionTypes.includes(missionType)) {
+        throw new AmbassadorServiceError("GATE_BLOCKED", `Mission type ${missionType} is not enabled by the effective Ambassador policy`, 409)
+      }
+      row.proof_required = settings.missions.proofRequired
+    }
+    if (entity === "incentives") {
+      const settings = await getEffectiveAmbassadorSettingsConfiguration(actor)
+      const amount = Number(row.amount_mad ?? row.amount ?? 0)
+      if (amount > settings.rewards.maximumRewardMad) {
+        throw new AmbassadorServiceError("GATE_BLOCKED", `Reward amount exceeds the effective ${settings.rewards.maximumRewardMad} Dh policy cap`, 409)
+      }
+      row.currency = "MAD"
+    }
     validateBusinessRules(entity, row)
     if (entity === "recruitment") await assertCandidateUnique(actor, String(row.identity_hash))
     if (entity === "incentives") {
@@ -596,6 +615,43 @@ async function revokePreviousPrimaryTerritories(actor: AmbassadorActor, ambassad
   if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
 }
 
+async function assertTerritoryCapacity(
+  actor: AmbassadorActor,
+  territoryId: string,
+  maximum: number,
+): Promise<void> {
+  const result = await getAmbassadorSupabaseAdmin()
+    .from(TERRITORY_ASSIGNMENTS_TABLE)
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", actor.tenantId)
+    .eq("organization_id", actor.organizationId)
+    .eq("territory_id", territoryId)
+    .eq("status", "approved")
+    .is("archived_at", null)
+  if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
+  if (Number(result.count || 0) >= maximum) {
+    throw new AmbassadorServiceError("GATE_BLOCKED", `Territory capacity is limited to ${maximum} active Ambassadors by the effective policy`, 409)
+  }
+}
+
+async function activeMissionAssignmentCount(
+  actor: AmbassadorActor,
+  ambassadorId: string,
+  exceptMissionId: string,
+): Promise<number> {
+  const result = await getAmbassadorSupabaseAdmin()
+    .from(MISSION_ASSIGNMENTS_TABLE)
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", actor.tenantId)
+    .eq("organization_id", actor.organizationId)
+    .eq("ambassador_id", ambassadorId)
+    .in("status", ["assigned", "accepted"])
+    .neq("mission_id", exceptMissionId)
+    .is("archived_at", null)
+  if (result.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", result.error.message, 503)
+  return Number(result.count || 0)
+}
+
 async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Record<string, unknown>, initialStatus: "pending" | "approved"): Promise<AmbassadorTerritoryAssignment> {
   const ambassadorId = text(payload.ambassador_id)
   const territoryId = text(payload.territory_id)
@@ -607,6 +663,24 @@ async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Recor
     throw new AmbassadorServiceError("GATE_BLOCKED", "Archived, suspended or inactive ambassadors cannot be assigned", 409)
   }
   const assignmentType = text(payload.assignment_type) || "primary"
+  if (!["primary", "backup", "temporary"].includes(assignmentType)) {
+    throw new AmbassadorServiceError("VALIDATION_ERROR", "Territory assignment type must be primary, backup or temporary", 400)
+  }
+  const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+    territory: territoryId,
+    city: text(territory.city),
+    region: text(territory.region),
+  })
+  if (assignmentType === "backup" && !settings.territories.allowBackupAssignments) {
+    throw new AmbassadorServiceError("GATE_BLOCKED", "Backup territory assignments are disabled by the effective policy", 409)
+  }
+  if (assignmentType === "temporary" && !settings.territories.allowTemporaryAssignments) {
+    throw new AmbassadorServiceError("GATE_BLOCKED", "Temporary territory assignments are disabled by the effective policy", 409)
+  }
+  const radiusKm = Number(payload.radius_km ?? settings.territories.travelRadiusKm)
+  if (radiusKm > settings.territories.travelRadiusKm) {
+    throw new AmbassadorServiceError("GATE_BLOCKED", `Territory travel radius exceeds the effective ${settings.territories.travelRadiusKm} km limit`, 409)
+  }
   const externalKey = text(payload.assignment_id || payload.external_assignment_key) || null
   const idempotencyKey = text(payload.idempotency_key) || `${ambassadorId}:${territoryId}:${assignmentType}:${externalKey || "direct"}`
   const existingResult = await getAmbassadorSupabaseAdmin()
@@ -618,6 +692,9 @@ async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Recor
     .maybeSingle()
   if (existingResult.error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", existingResult.error.message, 503)
   if (existingResult.data) return existingResult.data as AmbassadorTerritoryAssignment
+  if (initialStatus === "approved") {
+    await assertTerritoryCapacity(actor, territoryId, settings.territories.maximumAmbassadorsPerTerritory)
+  }
 
   const row = {
     id: randomUUID(),
@@ -627,7 +704,7 @@ async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Recor
     territory_id: territoryId,
     assignment_type: assignmentType,
     coverage_mode: payload.coverage_mode || null,
-    radius_km: payload.radius_km || null,
+    radius_km: radiusKm,
     status: initialStatus,
     external_assignment_key: externalKey,
     idempotency_key: idempotencyKey,
@@ -637,7 +714,9 @@ async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Recor
     requested_at: now(),
     decided_at: initialStatus === "approved" ? now() : null,
     valid_from: initialStatus === "approved" ? now() : null,
-    valid_to: null,
+    valid_to: assignmentType === "temporary"
+      ? new Date(Date.now() + settings.territories.defaultAssignmentDays * 86_400_000).toISOString()
+      : null,
     metadata: { source: payload.source || "market-os-ambassadors" },
     created_by_actor_id: actor.actorId,
     updated_by_actor_id: actor.actorId,
@@ -650,12 +729,34 @@ async function persistTerritoryAssignment(actor: AmbassadorActor, payload: Recor
 export async function assignAmbassadorTerritory(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
   try {
     requireAmbassadorPermission(actor, "territories.assign")
-    const assignment = await persistTerritoryAssignment(actor, payload, "approved")
-    if (assignment.assignment_type === "primary") await revokePreviousPrimaryTerritories(actor, assignment.ambassador_id, assignment.id)
+    const territoryId = text(payload.territory_id)
+    const territoryBefore = territoryId ? await getRow("territories", territoryId, actor) : null
+    if (!territoryBefore) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
+    const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+      territory: territoryId,
+      city: text(territoryBefore.city),
+      region: text(territoryBefore.region),
+    })
+    const assignment = await persistTerritoryAssignment(actor, payload, settings.territories.managerApprovalRequired ? "pending" : "approved")
     const territory = await getRow("territories", assignment.territory_id, actor)
     if (!territory) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
     const ambassador = await getRow("ambassadors", assignment.ambassador_id, actor)
     if (!ambassador) throw new AmbassadorServiceError("NOT_FOUND", "Ambassador not found", 404)
+    if (assignment.status === "pending") {
+      await writeAudit(actor, {
+        entityType: "territory_assignments",
+        entityId: assignment.id,
+        action: "territory_assignment_requested",
+        summary: `Requested territory assignment for ${text(ambassador.full_name) || ambassador.id}`,
+        payload: { assignment },
+        before: ambassador,
+      })
+      const snapshotResult = await loadAmbassadorWorkspaceSnapshot(actor)
+      return success(ambassador, { record: ambassador, assignment, pendingApproval: true, snapshot: snapshotResult.snapshot })
+    }
+    if (assignment.assignment_type === "primary" && settings.territories.exclusivePrimaryAssignment) {
+      await revokePreviousPrimaryTerritories(actor, assignment.ambassador_id, assignment.id)
+    }
     const updated = await updateRow("ambassadors", assignment.ambassador_id, {
       id: assignment.ambassador_id,
       territory_id: assignment.territory_id,
@@ -708,6 +809,16 @@ export async function decideTerritoryAssignment(actor: AmbassadorActor, payload:
       const ambassador = await getRow("ambassadors", assignment.ambassador_id, actor)
       return success(ambassador || { id: assignment.ambassador_id }, { record: ambassador, assignment, idempotent: true, decision })
     }
+    const territoryForPolicy = await getRow("territories", assignment.territory_id, actor)
+    if (!territoryForPolicy) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
+    const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+      territory: assignment.territory_id,
+      city: text(territoryForPolicy.city),
+      region: text(territoryForPolicy.region),
+    })
+    if (decision === "approved") {
+      await assertTerritoryCapacity(actor, assignment.territory_id, settings.territories.maximumAmbassadorsPerTerritory)
+    }
 
     const updateResult = await getAmbassadorSupabaseAdmin()
       .from(TERRITORY_ASSIGNMENTS_TABLE)
@@ -730,7 +841,9 @@ export async function decideTerritoryAssignment(actor: AmbassadorActor, payload:
     let ambassador = await getRow("ambassadors", assignment.ambassador_id, actor)
     if (!ambassador) throw new AmbassadorServiceError("NOT_FOUND", "Ambassador not found", 404)
     if (decision === "approved") {
-      if (assignment.assignment_type === "primary") await revokePreviousPrimaryTerritories(actor, assignment.ambassador_id, assignment.id)
+      if (assignment.assignment_type === "primary" && settings.territories.exclusivePrimaryAssignment) {
+        await revokePreviousPrimaryTerritories(actor, assignment.ambassador_id, assignment.id)
+      }
       const territory = await getRow("territories", assignment.territory_id, actor)
       if (!territory) throw new AmbassadorServiceError("NOT_FOUND", "Territory not found", 404)
       ambassador = await updateRow("ambassadors", assignment.ambassador_id, {
@@ -764,10 +877,29 @@ export async function assignMissionToAmbassador(actor: AmbassadorActor, payload:
     if (!missionId) throw new AmbassadorServiceError("VALIDATION_ERROR", "Missing mission id", 400)
     const mission = await getRow("missions", missionId, actor)
     if (!mission) throw new AmbassadorServiceError("NOT_FOUND", "Mission not found", 404)
+    const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+      territory: text(mission.territory_id),
+      city: text(mission.city),
+      region: text(mission.region),
+    })
+    const missionType = text(mission.mission_type)
+    if (missionType && !settings.missions.allowedMissionTypes.includes(missionType)) {
+      throw new AmbassadorServiceError("GATE_BLOCKED", `Mission type ${missionType} is not enabled by the effective Ambassador policy`, 409)
+    }
     const ambassadorIds = Array.from(new Set([...(Array.isArray(payload.ambassador_ids) ? payload.ambassador_ids : []), payload.ambassador_id].map(text).filter(Boolean)))
     if (!ambassadorIds.length) throw new AmbassadorServiceError("VALIDATION_ERROR", "At least one ambassador is required", 400)
     const ambassadors = await Promise.all(ambassadorIds.map((id) => getRow("ambassadors", id, actor)))
     if (ambassadors.some((item) => !item)) throw new AmbassadorServiceError("NOT_FOUND", "One or more ambassadors were not found in the authenticated scope", 404)
+    const concurrentCounts = await Promise.all(ambassadorIds.map((id) => activeMissionAssignmentCount(actor, id, missionId)))
+    const overloadedIndex = concurrentCounts.findIndex((count) => count >= settings.missions.maximumConcurrentMissions)
+    if (overloadedIndex >= 0) {
+      const overloaded = ambassadors[overloadedIndex]
+      throw new AmbassadorServiceError(
+        "GATE_BLOCKED",
+        `${text(overloaded?.full_name) || ambassadorIds[overloadedIndex]} already reached the effective limit of ${settings.missions.maximumConcurrentMissions} concurrent missions`,
+        409,
+      )
+    }
 
     const roleById = payload.roles && typeof payload.roles === "object" ? payload.roles as Record<string, unknown> : {}
     const rows = ambassadorIds.map((ambassadorId, index) => ({
@@ -897,10 +1029,17 @@ export async function decideConversion(actor: AmbassadorActor, payload: Record<s
     if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Conversion not found", 404)
     assertLifecycleTransition("conversions", existing.status, status)
     if (status === "validated") {
-      const proofId = text(payload.proof_id || existing.proof_id)
-      if (!proofId) throw new AmbassadorServiceError("GATE_BLOCKED", "An approved proof is required before conversion validation", 409)
-      const proof = await getRow("proofs", proofId, actor)
-      if (!proof || proof.status !== "approved") throw new AmbassadorServiceError("GATE_BLOCKED", "The linked proof is not approved", 409)
+      const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+        territory: text(existing.territory_id),
+        city: text(existing.city),
+        region: text(existing.region),
+      })
+      if (settings.attribution.conversionProofRequired) {
+        const proofId = text(payload.proof_id || existing.proof_id)
+        if (!proofId) throw new AmbassadorServiceError("GATE_BLOCKED", "An approved proof is required before conversion validation", 409)
+        const proof = await getRow("proofs", proofId, actor)
+        if (!proof || proof.status !== "approved") throw new AmbassadorServiceError("GATE_BLOCKED", "The linked proof is not approved", 409)
+      }
     }
     const patch: AmbassadorRecord = {
       id,
@@ -960,11 +1099,15 @@ export async function decideIncentive(actor: AmbassadorActor, payload: Record<st
     const existing = await getRow("incentives", id, actor)
     if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Incentive not found", 404)
     assertLifecycleTransition("incentives", existing.status, decision)
-    if (decision === "approved" && !(await approvedRewardSource(actor, existing))) {
+    const settings = await getEffectiveAmbassadorSettingsConfiguration(actor)
+    if (decision === "approved" && settings.rewards.proofRequiredBeforeReward && !(await approvedRewardSource(actor, existing))) {
       throw new AmbassadorServiceError("GATE_BLOCKED", "Reward approval requires an approved proof or validated conversion", 409)
     }
     if (decision === "paid" && existing.status !== "approved") {
       throw new AmbassadorServiceError("GATE_BLOCKED", "Only an approved reward can be paid", 409)
+    }
+    if (decision === "paid" && settings.rewards.paymentReferenceRequired && !text(payload.payment_reference)) {
+      throw new AmbassadorServiceError("GATE_BLOCKED", "A payment reference is required", 409)
     }
     const response = await rpc<Record<string, unknown>>("market_os_ambassador_decide_incentive", {
       p_incentive_id: id,
@@ -993,7 +1136,13 @@ export async function updateMissionStatus(actor: AmbassadorActor, payload: Recor
     const existing = await getRow("missions", id, actor)
     if (!existing) throw new AmbassadorServiceError("NOT_FOUND", "Mission not found", 404)
     assertLifecycleTransition("missions", existing.status, status)
-    if (["approved", "completed"].includes(status) && existing.proof_required !== false) {
+    const settings = await getEffectiveAmbassadorSettingsConfiguration(actor, {
+      territory: text(existing.territory_id),
+      city: text(existing.city),
+      region: text(existing.region),
+    })
+    const missionProofRequired = existing.proof_required !== false && settings.missions.proofRequired
+    if (["approved", "completed"].includes(status) && missionProofRequired && settings.missions.completionRequiresApprovedProof) {
       const proof = await approvedProofForMission(actor, id)
       if (!proof) throw new AmbassadorServiceError("GATE_BLOCKED", "Mission approval or completion requires an approved proof", 409)
     }
@@ -1026,22 +1175,14 @@ export async function getAmbassadorSettings(actor: AmbassadorActor): Promise<Amb
   }
 }
 
-export async function updateAmbassadorSettings(actor: AmbassadorActor, payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
+export async function updateAmbassadorSettings(actor: AmbassadorActor, _payload: Record<string, unknown>): Promise<AmbassadorServiceResult<AmbassadorRecord>> {
   try {
     requireAmbassadorPermission(actor, "settings.write")
-    const existing = await getSettingsRow(actor)
-    const record = await upsertSettingsRow({
-      ...DEFAULT_SETTINGS,
-      ...(existing || {}),
-      ...payload,
-      id: existing?.id || randomUUID(),
-      tenant_id: actor.tenantId,
-      organization_id: actor.organizationId,
-      created_by_actor_id: existing?.created_by_actor_id || actor.actorId,
-      updated_by_actor_id: actor.actorId,
-    }, actor)
-    await writeAudit(actor, { entityType: SETTINGS_TABLE, entityId: text(record.id), action: "settings_updated", summary: "Updated Ambassador module settings", before: existing, after: record })
-    return success(record, { record })
+    throw new AmbassadorServiceError(
+      "GATE_BLOCKED",
+      "Direct settings updates are retired. Create a versioned draft in the Ambassador Settings Control Center, validate it, obtain required approvals, then publish it.",
+      409,
+    )
   } catch (error) {
     return failure(error)
   }

@@ -34,7 +34,7 @@ function isWhatsAppStatus(value: unknown): value is AngelCareWhatsAppStatus {
 }
 
 export function useWhatsAppDesktop() {
-  const [runtime, setRuntime] = useState<ReturnType<typeof getDesktopRuntime>>(null)
+  const [runtime, setRuntime] = useState<ReturnType<typeof getDesktopRuntime>>(() => getDesktopRuntime())
   const [status, setStatus] = useState<AngelCareWhatsAppStatus | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)

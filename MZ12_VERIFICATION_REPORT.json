@@ -1,0 +1,18 @@
+{
+  "phase": "MZ12",
+  "release": "AC-REVENUE-OS-MZ12-STRATEGY-STUDIO",
+  "mode": "shadow",
+  "externalActions": 0,
+  "mandatoryWorkspaces": 14,
+  "implementedWorkspaces": 16,
+  "mandatoryActions": 12,
+  "databaseTables": 18,
+  "staticAssertions": {"passed": 51, "failed": 0},
+  "evaluationCorpus": {"scenarioClasses": 25, "cases": 25000, "assertionsPassed": 329000, "failures": 0},
+  "sqlGovernance": {"passed": 10, "failed": 0},
+  "targetedTypeScript": {"passed": true, "diagnostics": 0},
+  "humanApprovalOnly": true,
+  "immutableDecisionRecords": true,
+  "machineReadableConditions": true,
+  "mz13CompilationExecuted": false
+}

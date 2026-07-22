@@ -1,0 +1,7 @@
+{
+  "revenue-os:phase13:verify": "node scripts/revenue-command-os/verify-phase13.mjs",
+  "revenue-os:phase13:test": "node scripts/revenue-command-os/test-phase13.mjs",
+  "revenue-os:phase13:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.revenue-os-phase13.json --noEmit",
+  "revenue-os:phase13:sql-review": "node scripts/revenue-command-os/sql-review-phase13.mjs",
+  "revenue-os:phase13:smoke": "bash ../../tools/revenue-os/smoke-phase13-compiler.sh ../.."
+}

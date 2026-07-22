@@ -18,6 +18,7 @@ import {
   LoaderCircle,
   LockKeyhole,
   MessageCircleMore,
+  MonitorCog,
   Plus,
   RefreshCw,
   Save,
@@ -34,9 +35,10 @@ import {
 } from "lucide-react"
 import type { WhatsAppGovernanceAdminOverview } from "@/lib/whatsapp-desktop/types"
 import type { LucideIcon } from "lucide-react"
+import CorporateStationAdmin from "@/components/whatsapp-os/CorporateStationAdmin"
 
 type Row = Record<string, any>
-type Tab = "overview" | "workspaces" | "assignments" | "devices" | "requests" | "policies" | "commands" | "security" | "audit"
+type Tab = "overview" | "workspaces" | "assignments" | "devices" | "requests" | "policies" | "stations" | "commands" | "security" | "audit"
 type StatCard = { icon: LucideIcon; label: string; value: string | number; color: "blue" | "violet" | "slate" | "green" | "amber" | "red" }
 type WorkspaceMetric = { icon: LucideIcon; label: string; value: string | number }
 
@@ -47,6 +49,7 @@ const tabs: Array<{ id: Tab; label: string; icon: typeof LayoutDashboard }> = [
   { id: "devices", label: "Appareils", icon: Laptop2 },
   { id: "requests", label: "Demandes d’accès", icon: UserPlus },
   { id: "policies", label: "Politiques", icon: Settings2 },
+  { id: "stations", label: "Postes & Mode Corporate", icon: MonitorCog },
   { id: "commands", label: "Commandes distantes", icon: Command },
   { id: "security", label: "Sécurité", icon: ShieldAlert },
   { id: "audit", label: "Audit", icon: History },
@@ -149,7 +152,7 @@ export default function WhatsAppDesktopAdmin() {
         <header className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(135deg,#ffffff,#eff6ff_52%,#ecfdf5)] px-5 py-6 lg:px-8 lg:py-7">
           <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-200/30 blur-3xl" />
           <div className="relative flex flex-wrap items-start justify-between gap-5">
-            <div><div className="flex flex-wrap items-center gap-2"><Badge tone="green">Mega ZIP 3</Badge><Badge tone="blue">Governance Control Plane</Badge></div><h1 className="mt-4 text-3xl font-black tracking-[-0.055em] text-slate-950 lg:text-5xl">Administration WhatsApp Desktop</h1><p className="mt-3 max-w-4xl text-sm font-semibold leading-7 text-slate-600">Espaces, utilisateurs, appareils, baux d’autorisation, politiques, révocations, commandes distantes et audit — sans centraliser les cookies ou messages WhatsApp.</p></div>
+            <div><div className="flex flex-wrap items-center gap-2"><Badge tone="green">Mega ZIP 6</Badge><Badge tone="blue">Corporate Station OS 1.5.0</Badge></div><h1 className="mt-4 text-3xl font-black tracking-[-0.055em] text-slate-950 lg:text-5xl">Administration WhatsApp Desktop</h1><p className="mt-3 max-w-4xl text-sm font-semibold leading-7 text-slate-600">Espaces, utilisateurs, appareils, baux d’autorisation, politiques, révocations, commandes distantes et audit — sans centraliser les cookies ou messages WhatsApp.</p></div>
             <div className="flex gap-2"><Link href="/whatsapp-os/web-session" className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black text-slate-700 shadow-sm"><MessageCircleMore className="h-4 w-4" />Workspace</Link><button onClick={() => void load()} className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-950 px-4 text-xs font-black text-white"><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Actualiser</button></div>
           </div>
           {data ? <div className="relative mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">{([
@@ -197,6 +200,7 @@ export default function WhatsAppDesktopAdmin() {
           {tab === "devices" && data ? <DeviceWorkspace data={data} busy={busy} deviceWorkspace={deviceWorkspace} setDeviceWorkspace={setDeviceWorkspace} run={run} /> : null}
           {tab === "requests" && data ? <RequestsWorkspace data={data} busy={busy} run={run} /> : null}
           {tab === "policies" && data ? <PolicyWorkspace data={data} workspaceId={policyWorkspaceId} setWorkspaceId={setPolicyWorkspaceId} policy={policy} setPolicy={setPolicy} busy={busy} run={run} /> : null}
+          {tab === "stations" ? <CorporateStationAdmin /> : null}
           {tab === "commands" && data ? <CommandsWorkspace data={data} form={commandForm} setForm={setCommandForm} busy={busy} run={run} /> : null}
           {tab === "security" && data ? <EventsWorkspace rows={data.security_events} kind="security" /> : null}
           {tab === "audit" && data ? <EventsWorkspace rows={data.audit_events} kind="audit" /> : null}

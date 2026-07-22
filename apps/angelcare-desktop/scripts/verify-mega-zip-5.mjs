@@ -7,10 +7,10 @@ const projectRoot = path.resolve(desktopRoot, "../..");
 const opsRoot = path.join(projectRoot, "apps", "ops-web");
 function read(relative) { const file = path.join(desktopRoot, relative); if (!fs.existsSync(file)) throw new Error(`Missing Mega ZIP 5 file: ${relative}`); return fs.readFileSync(file, "utf8"); }
 const packageJson = JSON.parse(read("package.json"));
-if (packageJson.version !== "1.4.0") throw new Error("Mega ZIP 5 must set desktop version 1.4.0.");
+if (!["1.4.0", "1.5.0"].includes(packageJson.version)) throw new Error("Mega ZIP 5 requires version 1.4.0 or a supported cumulative version.");
 if (!packageJson.scripts?.verify?.includes("verify-mega-zip-5.mjs")) throw new Error("Mega ZIP 5 verifier is not wired into npm run verify.");
 const defaults = JSON.parse(read("config/defaults.json"));
-if (defaults.desktopContractVersion !== "5.0.0") throw new Error("Desktop contract version must be 5.0.0.");
+if (!["5.0.0", "6.0.0"].includes(defaults.desktopContractVersion)) throw new Error("Desktop contract version must preserve Mega ZIP 5 or a supported cumulative contract.");
 const required = [
   "src/runtime/security.cjs", "src/runtime/diagnostics.cjs", "src/runtime/update-manager.cjs", "src/runtime/startup-recovery.cjs",
   "scripts/smoke-runtime-security.mjs", "scripts/generate-release-manifest.mjs", "scripts/generate-checksums.mjs", "scripts/verify-release.mjs",

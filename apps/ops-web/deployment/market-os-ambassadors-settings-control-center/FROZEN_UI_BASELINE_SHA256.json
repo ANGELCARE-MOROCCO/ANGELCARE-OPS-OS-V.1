@@ -1,0 +1,642 @@
+{
+  "apps/ops-web/app/(protected)/market-os/ambassadors/[id]/delete/page.tsx": {
+    "sha256": "7883de82e6be55b8745d41e00f3c17ab6d902d5c174406e06d414dbd85dbdfc5",
+    "size_bytes": 363
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/[id]/edit/page.tsx": {
+    "sha256": "982e04eeda61e4174315a17b33d9dc293bc74911b931ef26cf8f9a63c9d3a4ca",
+    "size_bytes": 361
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/[id]/page.tsx": {
+    "sha256": "373b95739dfde278a4f227d03f746475b6fb2ad10ef0fa9331de78a5ef17d2b0",
+    "size_bytes": 363
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/academy-sync/page.tsx": {
+    "sha256": "f11a0f07e6962107f66fa27082778fd6efeb711b74195989cfa8c8e682cf6f13",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/agenda/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/agent-governance/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/ai-command/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/analytics-orchestration/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/analytics/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/approvals/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/assets/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/attribution/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/audit-models/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/automations/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/autonomous-growth/page.tsx": {
+    "sha256": "efc5fe7f97be9aa1912d11b2ab58a813d75849ca55b29698ce4dbcb4e63cec36",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/backend-infra/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/backend-readiness/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/broadcasts/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/ceo-command/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/certifications/page.tsx": {
+    "sha256": "f11a0f07e6962107f66fa27082778fd6efeb711b74195989cfa8c8e682cf6f13",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/command-center/page.tsx": {
+    "sha256": "efc5fe7f97be9aa1912d11b2ab58a813d75849ca55b29698ce4dbcb4e63cec36",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/communications-execution/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/communications/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/compliance/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/conversions/page.tsx": {
+    "sha256": "0d5e0d7c29aedebb5b99b980444b97618886d0f76fd290d8580189c3313fff43",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/create/page.tsx": {
+    "sha256": "2f05b254c0a0c7f95ed5f9164f8d937f2e36f97b454dae391a552c83b1e62b9c",
+    "size_bytes": 244
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/data-sync/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/database/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/directory/page.tsx": {
+    "sha256": "4c1df4d180c67da12e7264b82a07fa8ac3357828d04e0d4741a27ae0eb607030",
+    "size_bytes": 497
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/enterprise-dashboard/page.tsx": {
+    "sha256": "efc5fe7f97be9aa1912d11b2ab58a813d75849ca55b29698ce4dbcb4e63cec36",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/enterprise-sync/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/execution-center/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/execution-queue/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/executive-command/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/executive-intelligence/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/field-operations/page.tsx": {
+    "sha256": "4fd8f90da3f47007dd5bdb6c49b58f0281c78593b2a5da5d5476355475b09747",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/final-infrastructure/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/final-production-transition/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/final-stabilization/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/goals-kpis/page.tsx": {
+    "sha256": "47ab2cd2a42b4fd0aa0cd2641ddc6c5effc2d987fbe9a372cedef1ed0d0c5be9",
+    "size_bytes": 243
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/governance-blueprint/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/governance/page.tsx": {
+    "sha256": "0ed55d954ab8d12d809563d3bb575cbf2145f545dfed6530b5b1bb0c751aa912",
+    "size_bytes": 248
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/incentives/page.tsx": {
+    "sha256": "e957a7e896c27552fcfc86e622c8a3f68036966da7feb9cb75c89ece1ecf5aa6",
+    "size_bytes": 248
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/infrastructure-control/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/intelligence/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/leads/page.tsx": {
+    "sha256": "fbf7a5a355618319ba3fde9d02987ee0ff28b4d2890c5076e4425e3e64f118ef",
+    "size_bytes": 243
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/live-command/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/live-execution/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/local-activations/page.tsx": {
+    "sha256": "4fd8f90da3f47007dd5bdb6c49b58f0281c78593b2a5da5d5476355475b09747",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/market-dominance/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/market-intelligence/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/message-templates/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/missions/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/multi-agent-ops/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/onboarding/page.tsx": {
+    "sha256": "f6a91121402066a85ca7bb6d3ea870a6b15d67c8d304c6bbe2dd55f559ebfe5d",
+    "size_bytes": 503
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/operating-model/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/operations-intelligence/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/optimization-engine/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/orchestration-runtime/page.tsx": {
+    "sha256": "efc5fe7f97be9aa1912d11b2ab58a813d75849ca55b29698ce4dbcb4e63cec36",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/page.tsx": {
+    "sha256": "efc5fe7f97be9aa1912d11b2ab58a813d75849ca55b29698ce4dbcb4e63cec36",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/payout-forecast/page.tsx": {
+    "sha256": "e957a7e896c27552fcfc86e622c8a3f68036966da7feb9cb75c89ece1ecf5aa6",
+    "size_bytes": 248
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/payouts/page.tsx": {
+    "sha256": "b364f39782db93c05a341d6fa5890028e3947d126e454c9e9cbac7d0dc44d459",
+    "size_bytes": 245
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/performance-leaderboard/page.tsx": {
+    "sha256": "71ec1f697ef3a1bbade9b1db315547c747267b1ea392338146d532eb40e7d16a",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/performance/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/permission-matrix/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/permissions/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/production-hardening/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/production-transition/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/program-rules/page.tsx": {
+    "sha256": "0ed55d954ab8d12d809563d3bb575cbf2145f545dfed6530b5b1bb0c751aa912",
+    "size_bytes": 248
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/programs/page.tsx": {
+    "sha256": "47ab2cd2a42b4fd0aa0cd2641ddc6c5effc2d987fbe9a372cedef1ed0d0c5be9",
+    "size_bytes": 243
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/proofs/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/recruitment/page.tsx": {
+    "sha256": "71ec1f697ef3a1bbade9b1db315547c747267b1ea392338146d532eb40e7d16a",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/release-readiness/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/reports/page.tsx": {
+    "sha256": "903018d17ebc6b973e43a0f7ef74b8c544420dc4306803e1ec0dff97d3645604",
+    "size_bytes": 245
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/resources/page.tsx": {
+    "sha256": "6d5d28b387452ab2774e3fdb6c8c388f4f558609733453d43f9e0d1d459c0d6b",
+    "size_bytes": 247
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/revenue-orchestration/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/revenue-performance/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/reward-rules/page.tsx": {
+    "sha256": "47ab2cd2a42b4fd0aa0cd2641ddc6c5effc2d987fbe9a372cedef1ed0d0c5be9",
+    "size_bytes": 243
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/rewards/page.tsx": {
+    "sha256": "e957a7e896c27552fcfc86e622c8a3f68036966da7feb9cb75c89ece1ecf5aa6",
+    "size_bytes": 248
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/settings/page.tsx": {
+    "sha256": "0b0cce02519593b6aabf5ded09d0b3c779e9e03d05c5633ffca3786e34c1b5d4",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/strategic-intelligence/page.tsx": {
+    "sha256": "52967ab692e4b5afd3f248e3e48901001a7a4fea0f09c6ca6116c90b12c00bb1",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/territories/page.tsx": {
+    "sha256": "da20f2ef221ac54984cf0423a96c3f3deb7f15ee52b904d7380b8dc72d58f012",
+    "size_bytes": 509
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/territory-command/page.tsx": {
+    "sha256": "4fd8f90da3f47007dd5bdb6c49b58f0281c78593b2a5da5d5476355475b09747",
+    "size_bytes": 249
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/tier-rules/page.tsx": {
+    "sha256": "47ab2cd2a42b4fd0aa0cd2641ddc6c5effc2d987fbe9a372cedef1ed0d0c5be9",
+    "size_bytes": 243
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/training-academy/page.tsx": {
+    "sha256": "f11a0f07e6962107f66fa27082778fd6efeb711b74195989cfa8c8e682cf6f13",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/training-certification/page.tsx": {
+    "sha256": "f11a0f07e6962107f66fa27082778fd6efeb711b74195989cfa8c8e682cf6f13",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/training/page.tsx": {
+    "sha256": "f11a0f07e6962107f66fa27082778fd6efeb711b74195989cfa8c8e682cf6f13",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/unified-operations/page.tsx": {
+    "sha256": "efc5fe7f97be9aa1912d11b2ab58a813d75849ca55b29698ce4dbcb4e63cec36",
+    "size_bytes": 246
+  },
+  "apps/ops-web/app/(protected)/market-os/ambassadors/war-room/page.tsx": {
+    "sha256": "f00d6b70365c3ec1d78b1426a8ca67015b6949736ae2f4ec1bb58e6c92924064",
+    "size_bytes": 246
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-add-live-production-modal.tsx": {
+    "sha256": "6545393202dcef84591e71500bd67d256da6715b979d2deff763b8adad5a3b28",
+    "size_bytes": 556
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-assets-workspace.tsx": {
+    "sha256": "4baaa95926bb84b06bbdf9ecc654a39179cd92be3a735e073198df858960cc0c",
+    "size_bytes": 208
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-backoffice-system.tsx": {
+    "sha256": "f93aa6144d9789eaa0bbf548b24915c66f10d5e8cc93f5047a3e2684e3605ab8",
+    "size_bytes": 20359
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-main-overview-page.tsx": {
+    "sha256": "facf6e09fb296ae0c70d63833a12e2ad773d6ad808c8b11775df1598d92d523f",
+    "size_bytes": 209
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-market-sidebar.tsx": {
+    "sha256": "eda9f9529b73628b39911ed04cca58d879fcfcf5fc90bd1058a690b67cb12fcf",
+    "size_bytes": 3888
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-performance-command-center.tsx": {
+    "sha256": "6c2427767df69942408bcd06a4524e89dfb97aacb86cd6d5939421d1c5e55c1c",
+    "size_bytes": 220
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-phase2-execution-workspace.tsx": {
+    "sha256": "f57d4fccf63f6b68cf30ee9fba4fc6a8f7c167d87fb4ce17b66e022f34340664",
+    "size_bytes": 564
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-phase3-command-center.tsx": {
+    "sha256": "63874c7d1667b7772b36e02d94de842747c04de15938092315bc0a2284406232",
+    "size_bytes": 517
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-production-workspace.tsx": {
+    "sha256": "3c50df1fa610633fd155873f07a3f1aecb17a20c15223ee753634ffacd15bf9c",
+    "size_bytes": 110335
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-reports-command-center.tsx": {
+    "sha256": "c4fa879ee5ef7f336813afd10d6241ff637d91264ea5adb7c40e74695e1dddb5",
+    "size_bytes": 212
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-subpage.tsx": {
+    "sha256": "6c39b77b141df1702f0f3f3074ec40c9098fb147852dd9077089b9f3a5762c2e",
+    "size_bytes": 388
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-territories-futuristic-page.tsx": {
+    "sha256": "806ff5318ef3b76a040faf89a7f9508a5e874f7c1e2ba84fa5f476e0093b68e1",
+    "size_bytes": 8110
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-territories-ultra-page.tsx": {
+    "sha256": "90f090ee7dcf5fac686668dc6ea17586148763ebe845ee37facffd3844a40347",
+    "size_bytes": 216
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassador-v3-shared.tsx": {
+    "sha256": "e17c0bdd10fe95762940b6a18086a86d94eb12b4bd725c1f66cd31a14915862c",
+    "size_bytes": 6466
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassadors-directory-exact.tsx": {
+    "sha256": "54ab814105a50b3dbaaa6fceb294340cdd667454f7fb82afe98f3008834bd884",
+    "size_bytes": 209
+  },
+  "apps/ops-web/components/market-os/ambassadors/ambassadors-directory-operational-page.tsx": {
+    "sha256": "98604be5fd42e89a66ce0989c7ea982460822738dff67399c345e4f65e49456b",
+    "size_bytes": 219
+  },
+  "apps/ops-web/components/market-os/ambassadors/design/ambassador-enterprise-primitives.tsx": {
+    "sha256": "7ddb32def75d29b41739454d97dfbc2b538a73cfd26157c69f4e188a0d33e292",
+    "size_bytes": 7700
+  },
+  "apps/ops-web/components/market-os/ambassadors/design/ambassador-visible-route-canvas.tsx": {
+    "sha256": "498ce52134f8c56bbb2706d8c1793bcf214e199d679d6c70c305ce336ad7b187",
+    "size_bytes": 20421
+  },
+  "apps/ops-web/components/market-os/ambassadors/enterprise/AmbassadorAuditModelsWorkspace.tsx": {
+    "sha256": "0e97e92c2cbe6307798279a8df7f5487a0a5005c2f8195ad5b81a616cea91b01",
+    "size_bytes": 2102
+  },
+  "apps/ops-web/components/market-os/ambassadors/enterprise/AmbassadorBackendReadinessWorkspace.tsx": {
+    "sha256": "ce4b68bedcbb1a27ecea3df7d0756cc0405976d117e64d50e17b328d5741e551",
+    "size_bytes": 2312
+  },
+  "apps/ops-web/components/market-os/ambassadors/enterprise/AmbassadorEnterpriseDashboard.tsx": {
+    "sha256": "67e8e316b66a7c654aad562cb87842a29d807bb0ab7ed3dde5d313c3fda0bbc7",
+    "size_bytes": 5955
+  },
+  "apps/ops-web/components/market-os/ambassadors/enterprise/AmbassadorPermissionMatrixWorkspace.tsx": {
+    "sha256": "2e740eeac145fbee724e5e0f43deff1b732e370c7fcdeb3ebbff2706ac0524f7",
+    "size_bytes": 2871
+  },
+  "apps/ops-web/components/market-os/ambassadors/enterprise/AmbassadorProductionTransitionWorkspace.tsx": {
+    "sha256": "150ecc6ecab3fd97d1a3fec1ccacbe7ae351c8babb6198c00e45adff18d0f631",
+    "size_bytes": 2103
+  },
+  "apps/ops-web/components/market-os/ambassadors/final-production/FinalProductionTransitionDashboard.tsx": {
+    "sha256": "7a2403ec3527d0c7f192eab04b5291e12f7f1b4ed5c0c74f0319861e9328be48",
+    "size_bytes": 2799
+  },
+  "apps/ops-web/components/market-os/ambassadors/final-stabilization/AmbassadorFinalStabilizationWorkspace.tsx": {
+    "sha256": "388c1f2a9146167c172028dd245f61db14695038f44df6409643b2af034bc447",
+    "size_bytes": 4818
+  },
+  "apps/ops-web/components/market-os/ambassadors/goals-kpis-workspace.tsx": {
+    "sha256": "ce627a601da3455debacf71a0657c4224f1e25cf53fa0c5768d81009664cfa80",
+    "size_bytes": 208
+  },
+  "apps/ops-web/components/market-os/ambassadors/incentives-safety-snapshot-hardfix.tsx": {
+    "sha256": "9cbc4367571c3b407a4894078c5065a7d0fa12671caf8aff04bf62c5d5741100",
+    "size_bytes": 1916
+  },
+  "apps/ops-web/components/market-os/ambassadors/incentives-workspace.tsx": {
+    "sha256": "8e9dcb4e777310ed0c33d354550503246b1fd0bdaf5d0f21b7d72fdf3ad17e29",
+    "size_bytes": 214
+  },
+  "apps/ops-web/components/market-os/ambassadors/infrastructure-final/FinalInfrastructureCommand.tsx": {
+    "sha256": "e9cb380d673718e4dc292147b46d7f15225ba4ae8b4ebfc9c92e83e171fd5510",
+    "size_bytes": 2566
+  },
+  "apps/ops-web/components/market-os/ambassadors/missions-command-center.tsx": {
+    "sha256": "aae4b0ca2aed97d2a2ed21902c569f528c8679d976f353cf50dc208087dd6997",
+    "size_bytes": 214
+  },
+  "apps/ops-web/components/market-os/ambassadors/modals/AmbassadorCockpitActionModals.tsx": {
+    "sha256": "d03a3982d227036ca7a420ec3c3fb33d1b8987be62638f7f6adf0f73de76c7e5",
+    "size_bytes": 143807
+  },
+  "apps/ops-web/components/market-os/ambassadors/onboarding-workspace.tsx": {
+    "sha256": "c9c3081376dd97e74218c72fac62f3b6cc86d2b7c62bf1ecd9c7be005a6f1a18",
+    "size_bytes": 214
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase10/AmbassadorCommunicationsExecutionWorkspace.tsx": {
+    "sha256": "0507f4b5bba8673adf45e8ab7904d30e629621a928ac9b06b11f9069a049e5df",
+    "size_bytes": 10140
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase11/AmbassadorTrainingCertificationWorkspace.tsx": {
+    "sha256": "491f2ba24addf09cfe413bef27c3cd2717e225b4d6d7d9e519c85e5b3a370fbb",
+    "size_bytes": 10529
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase12/AmbassadorProgramRulesEngineWorkspace.tsx": {
+    "sha256": "a18e6f4635a32f6cd3b4ebc3123c66f1727374586b6c9b5812520dcc95aeb2df",
+    "size_bytes": 9444
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase13/AmbassadorFieldTerritoryExecutionWorkspace.tsx": {
+    "sha256": "0920c7c9f5a83a532048b064f344ea32120a74ec6e743de844df5ee29cd215e4",
+    "size_bytes": 9208
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase14/AmbassadorComplianceProofGovernanceWorkspace.tsx": {
+    "sha256": "3fe02e866631d0cc992b77f73c089c144432502ef25c9ccd2737ecdb188b16c1",
+    "size_bytes": 6808
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase15/AmbassadorRevenuePerformanceWorkspace.tsx": {
+    "sha256": "322398279c59c88dfe68eb4dd361dab6f3ff1f560e0973821698d511d3f81c5c",
+    "size_bytes": 10064
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase16/AmbassadorAIIntelligenceWorkspace.tsx": {
+    "sha256": "0ad83836f860cdb5ed631665c8b75e5d099fb4dd65bcedecc5a10a7334c98bd1",
+    "size_bytes": 7003
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase17/AmbassadorEnterpriseSyncWorkspace.tsx": {
+    "sha256": "9f44c76bb5b2637e23162804f29ca3c050709e2c471ea93ae483cadfdd699c95",
+    "size_bytes": 8812
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase18/AmbassadorWarRoomWorkspace.tsx": {
+    "sha256": "bada88b802efdbc196651f06667967ccc36f4c35e612218f930dc5d280103202",
+    "size_bytes": 9002
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase19/AmbassadorAutonomousGrowthWorkspace.tsx": {
+    "sha256": "d5183cce686b732541aab4a072bb2e5c252fc313fd589a86dbb19c5455a7acb9",
+    "size_bytes": 9769
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase20/AmbassadorInfrastructureWorkspace.tsx": {
+    "sha256": "a7eb1333094add9965b92d61534433d7e322eb11ef19112c9e81f3b734181c0a",
+    "size_bytes": 7617
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase21/AmbassadorMultiAgentWorkspace.tsx": {
+    "sha256": "01f5eeea61605791c21207b6716d596fa527e2cf4ee628d5b9b9b9ccd2b98ed3",
+    "size_bytes": 8518
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase22/AmbassadorProductionHardeningWorkspace.tsx": {
+    "sha256": "79a41f3d132c5bc1822a13a812ba23bf5e4bf5d9a13b8c01accb57aa7a4ed90f",
+    "size_bytes": 7016
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase23/AmbassadorExecutiveCommandWorkspace.tsx": {
+    "sha256": "1a1e3a80020962fc098d8199b26e1f1282c0a76ce7b5af6b322f6d67e9e49b62",
+    "size_bytes": 8557
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase24/AmbassadorMarketDominanceWorkspace.tsx": {
+    "sha256": "d024bc983a58863f8e79ff3f617a7a31af089e3e39f32f11325a1cd917f85d00",
+    "size_bytes": 8342
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase25/AmbassadorOperatingModelWorkspace.tsx": {
+    "sha256": "b9f479d8778b3fdee70338b0f1f7dcee26102984c5acfd3c80368124e23c31d3",
+    "size_bytes": 6808
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase26/AmbassadorLiveExecutionWorkspace.tsx": {
+    "sha256": "e1de8fbec53ee2ebc0ac6829a2279809769bd51d34607d4aa48aa83b0ff6e573",
+    "size_bytes": 7750
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase4/ambassador-health-engine.tsx": {
+    "sha256": "18f63f3cbb28d1c1ad8b7721d8cb41da0601768b07452800bfdd4c578377e2c6",
+    "size_bytes": 5103
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase4/ambassador-status-badge.tsx": {
+    "sha256": "2a32f49ed0e14bdcb33a1150c95dbf0a16e419ee695060e8b650c67cf92125c4",
+    "size_bytes": 1550
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase4/campaign-assignment-orchestrator.tsx": {
+    "sha256": "350c72da4da577bbbca23e4809fcaea30a72daff5ef2a467961ce500483a19f7",
+    "size_bytes": 3920
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase4/compliance-and-payout-control.tsx": {
+    "sha256": "135e63440d628b99a11cd5623bbdd02f39a2b9c753cf6331152b8c2db75eb5bc",
+    "size_bytes": 2966
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase4/operations-intelligence-workspace.tsx": {
+    "sha256": "d819a68994bec4d7dbc1bc9743f49d8b75bee85aeb086ee32ec3c524cae23d43",
+    "size_bytes": 2214
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase4/regional-execution-monitor.tsx": {
+    "sha256": "cf440f3ccfc96a10b4b1d38b6304e603bbe2cb0942f8d20bf7e39f467648f420",
+    "size_bytes": 2010
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase5/AmbassadorAutomationExecutionWorkspace.tsx": {
+    "sha256": "6f570922536b619b2f6e3a734b2ee6b8d516602106f290bb94681ac2ca238ba9",
+    "size_bytes": 8881
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase6/AmbassadorDataSyncFoundationWorkspace.tsx": {
+    "sha256": "45c2ad0953b166bb1509fc8f796aa1b3960e627df6b2b8ae369350a57cf50380",
+    "size_bytes": 7340
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase6/goals-kpis-workspace.tsx": {
+    "sha256": "e03a7ce8d370d78c40031bdb3749e5adac5f8b8e0f8ee642ff2709e08d963f82",
+    "size_bytes": 209
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase7/AmbassadorExecutiveIntelligenceWorkspace.tsx": {
+    "sha256": "24a8e01f34c58af2022365f0b92e068c1abbebe9acc91e66d1d82f94c0465140",
+    "size_bytes": 4170
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase8/AmbassadorBackendExecutionInfraWorkspace.tsx": {
+    "sha256": "eff34be2a2d399d53a55c97e0335ae1725f81455d8a800fb49ee36c408e3d40e",
+    "size_bytes": 4169
+  },
+  "apps/ops-web/components/market-os/ambassadors/phase9/AmbassadorAnalyticsOrchestrationWorkspace.tsx": {
+    "sha256": "d5983640bba7fcb983280b6fedc503b658058916298077667aa784d46f78e92e",
+    "size_bytes": 10453
+  },
+  "apps/ops-web/components/market-os/ambassadors/recruitment-workspace.tsx": {
+    "sha256": "487310e327caf0a399eb4757fa2a461b1d2f6af3f1f0583b4ce01ce69d6c95a1",
+    "size_bytes": 216
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorCockpitRoute.tsx": {
+    "sha256": "4a1667dca55d13e522cdd54bc66dfd79af94aa5e93d6f6e65770ede33f20da29",
+    "size_bytes": 178511
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorDirectoryRoute.tsx": {
+    "sha256": "ba9e1fa844b4f322c8599794ffcd2c17cfa6b632cafc1e931c05f6ec9104d0f6",
+    "size_bytes": 254122
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorLeadsRoute.tsx": {
+    "sha256": "913a69b9d0b88c6f49aa5dcc5fe4b6934df06dafb5eb1f20e32133b9df23cf5d",
+    "size_bytes": 105446
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorMissionsRoute.tsx": {
+    "sha256": "a949d918000823d018b7f6f16139448472a6fbcdb8be985446cb2932632ccca1",
+    "size_bytes": 137977
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorOnboardingRoute.tsx": {
+    "sha256": "fd493397a8adf07357bae40dd806a440d293b9eef3ff9b0c234b5cf4fb74b684",
+    "size_bytes": 238667
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorPayoutsRoute.tsx": {
+    "sha256": "e7ccd2ac526e92d5ec0b45767fedef8bb35dd7433270b34282bbeb94f51c476a",
+    "size_bytes": 75693
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorRecruitmentRoute.tsx": {
+    "sha256": "c99c0bf78da7928aa798c247e34460e33e32136a92f3238837fb14fe358bc1c8",
+    "size_bytes": 91144
+  },
+  "apps/ops-web/components/market-os/ambassadors/routes/AmbassadorTerritoriesRoute.tsx": {
+    "sha256": "a77e63bc674cf4bd3d0b673ce736cf68d0b89ba2b4392ff798be63b3d2dc209e",
+    "size_bytes": 88817
+  },
+  "apps/ops-web/components/market-os/ambassadors/training-certification-workspace.tsx": {
+    "sha256": "8d6cdc923fa3f4d31e272ec5dd72e4794d96a2c22947c2b47cc0280823d9f008",
+    "size_bytes": 223
+  }
+}

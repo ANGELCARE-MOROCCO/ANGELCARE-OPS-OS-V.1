@@ -1,0 +1,27 @@
+{
+  "phase": "MZ14",
+  "mandatoryAdapters": 16,
+  "mandatoryActions": 15,
+  "newDatabaseTables": 29,
+  "executionDomainTablesIncludingMZ13Package": 30,
+  "staticAssertionsPassed": 74,
+  "scenarioCases": 25000,
+  "scenarioClasses": 25,
+  "evaluationAssertionsPassed": 325000,
+  "failures": 0,
+  "sqlGovernancePassed": 13,
+  "syntaxTranspileFiles": 92,
+  "syntaxDiagnostics": 0,
+  "targetedStrictTypeScript": "passed-with-isolated-production-stubs",
+  "cumulativeRegression": [
+    "MZ10.1",
+    "MZ11",
+    "MZ12",
+    "MZ13",
+    "MZ14"
+  ],
+  "externalActionsExecuted": 0,
+  "defaultExecutionMode": "approval_required",
+  "installerRollbackProof": "passed",
+  "installerBaselineFiles": 758
+}

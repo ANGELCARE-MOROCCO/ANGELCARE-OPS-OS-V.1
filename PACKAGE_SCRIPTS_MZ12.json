@@ -1,0 +1,7 @@
+{
+  "revenue-os:phase12:verify": "node scripts/revenue-command-os/verify-phase12.mjs",
+  "revenue-os:phase12:test": "node scripts/revenue-command-os/test-phase12.mjs",
+  "revenue-os:phase12:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.revenue-os-phase12.json --noEmit",
+  "revenue-os:phase12:sql-review": "node scripts/revenue-command-os/sql-review-phase12.mjs",
+  "revenue-os:phase12:smoke": "bash ../../tools/revenue-os/smoke-phase12-studio.sh ../.."
+}

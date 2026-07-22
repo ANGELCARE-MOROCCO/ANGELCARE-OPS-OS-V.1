@@ -3,6 +3,8 @@ import { APP_ROUTES, APP_ROUTE_PERMISSIONS } from '@/lib/generated/app-routes'
 import type {
   AccessGovernanceRegistrySnapshot,
   AccessGovernanceStats,
+  AccessResourceRegistryRow,
+  AccessRegistryVersionRow,
   AccessModuleRegistryRow,
   AccessRegistryEventRow,
   AccessRoleTemplateRow,
@@ -284,20 +286,25 @@ export async function loadAccessGovernanceRegistry(supabase: SupabaseClient): Pr
   | { ok: false; error: string; missingMigration: boolean }
 > {
   try {
-    const [modules, routes, templates, scans] = await Promise.all([
+    const [modules, routes, resources, templates, scans, versions] = await Promise.all([
       safeSelect<AccessModuleRegistryRow>(supabase, 'access_module_registry', '*', { orderBy: 'sort_order', ascending: true, limit: 1000 }),
-      safeSelect<AccessRouteRegistryRow>(supabase, 'access_route_registry', '*', { orderBy: 'href', ascending: true, limit: 5000 }),
+      safeSelect<AccessRouteRegistryRow>(supabase, 'access_route_registry', '*', { orderBy: 'href', ascending: true, limit: 10000 }),
+      safeSelect<AccessResourceRegistryRow>(supabase, 'access_resource_registry', '*', { orderBy: 'display_name', ascending: true, limit: 20000 }),
       safeSelect<AccessRoleTemplateRow>(supabase, 'access_role_templates', '*', { orderBy: 'template_key', ascending: true, limit: 500 }),
       safeSelect<AccessScanRunRow>(supabase, 'access_scan_runs', '*', { orderBy: 'created_at', ascending: false, limit: 1 }),
+      safeSelect<AccessRegistryVersionRow>(supabase, 'access_registry_versions', '*', { orderBy: 'version_number', ascending: false, limit: 1 }),
     ])
 
     const latestScan = scans[0] || null
+    const latestVersion = versions[0] || null
     const snapshot: AccessGovernanceRegistrySnapshot = {
       modules,
       routes,
+      resources,
       templates,
       latestScan,
-      stats: computeGovernanceStats(modules, routes, latestScan),
+      latestVersion,
+      stats: computeGovernanceStats(modules, routes, latestScan, resources),
     }
 
     return { ok: true, snapshot }
@@ -306,7 +313,7 @@ export async function loadAccessGovernanceRegistry(supabase: SupabaseClient): Pr
       return {
         ok: false,
         missingMigration: true,
-        error: 'Access governance registry tables are missing. Apply the Phase 1 migration before using this module.',
+        error: 'Global access registry tables are missing. Apply the global registry migration before using this module.',
       }
     }
 
@@ -318,12 +325,23 @@ export async function loadAccessGovernanceRegistry(supabase: SupabaseClient): Pr
   }
 }
 
-export function computeGovernanceStats(modules: AccessModuleRegistryRow[], routes: AccessRouteRegistryRow[], latestScan: AccessScanRunRow | null): AccessGovernanceStats {
+export function computeGovernanceStats(
+  modules: AccessModuleRegistryRow[],
+  routes: AccessRouteRegistryRow[],
+  latestScan: AccessScanRunRow | null,
+  resources: AccessResourceRegistryRow[] = [],
+): AccessGovernanceStats {
   return {
     totalModules: modules.length,
     totalRoutes: routes.length,
+    totalResources: resources.length,
+    totalFamilies: resources.filter((resource) => resource.resource_type === 'route_family').length,
+    totalGroups: resources.filter((resource) => ['route_group', 'module_workspace'].includes(resource.resource_type)).length,
+    totalStandaloneRoutes: resources.filter((resource) => resource.resource_type === 'standalone_route').length,
     activeRoutes: routes.filter((route) => route.status === 'active').length,
-    staleRoutes: routes.filter((route) => route.status === 'stale').length,
+    activeResources: resources.filter((resource) => resource.status === 'active').length,
+    staleRoutes: routes.filter((route) => ['stale', 'missing'].includes(route.status)).length,
+    missingResources: resources.filter((resource) => resource.status === 'missing').length,
     newRoutesSinceLastScan: latestScan?.new_routes || 0,
     latestScanAt: latestScan?.created_at || null,
   }
@@ -339,7 +357,7 @@ export async function loadAccessGovernanceEvents(supabase: SupabaseClient) {
     return { ok: true as const, events, scans }
   } catch (error) {
     if (isMissingRegistryTableError(error)) {
-      return { ok: false as const, error: 'Access governance registry tables are missing. Apply the Phase 1 migration before using this module.', missingMigration: true }
+      return { ok: false as const, error: 'Global access registry tables are missing. Apply the global registry migration before using this module.', missingMigration: true }
     }
     return { ok: false as const, error: error instanceof Error ? error.message : 'Unable to load registry events.', missingMigration: false }
   }
@@ -370,7 +388,13 @@ export function summarizePermissionCoverage(routes: AccessRouteRegistryRow[], pe
 
 export function routePermissionMatches(permissions: string[], route: AccessRouteRegistryRow) {
   const permissionSet = new Set(permissions.map((permission) => strip(permission)).filter(Boolean))
-  return permissionSet.has('*') || permissionSet.has(route.permission_key) || permissionSet.has(route.module_permission_key || '')
+  const ancestorPermissionKeys = Array.isArray(route.metadata?.ancestorPermissionKeys)
+    ? route.metadata.ancestorPermissionKeys.map((permission) => strip(permission)).filter(Boolean)
+    : []
+  return permissionSet.has('*')
+    || permissionSet.has(route.permission_key)
+    || permissionSet.has(route.module_permission_key || '')
+    || ancestorPermissionKeys.some((permission) => permissionSet.has(permission))
 }
 
 export function getKnownRegistryPermissionKeys(routes: AccessRouteRegistryRow[]) {

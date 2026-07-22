@@ -1,0 +1,3 @@
+[CmdletBinding(SupportsShouldProcess=$true)] param([string]$Executable="$env:ProgramFiles\ANGELCARE Desktop\ANGELCARE Desktop.exe",[switch]$Remove)
+$ErrorActionPreference="Stop";$run="HKCU:\Software\Microsoft\Windows\CurrentVersion\Run";if($Remove){if($PSCmdlet.ShouldProcess($run,"Remove ANGELCARE startup")){Remove-ItemProperty -Path $run -Name "ANGELCARE Corporate Station" -ErrorAction SilentlyContinue};return}
+if(!(Test-Path $Executable)){throw "Executable not found: $Executable"};if($PSCmdlet.ShouldProcess($run,"Configure ANGELCARE startup")){New-Item -Path $run -Force|Out-Null;New-ItemProperty -Path $run -Name "ANGELCARE Corporate Station" -Value ('"'+$Executable+'"') -PropertyType String -Force|Out-Null}

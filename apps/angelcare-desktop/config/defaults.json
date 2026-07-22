@@ -2,7 +2,7 @@
   "productionAppUrl": "https://opsmanagement.angelcarehub.com",
   "developmentAppUrl": "http://localhost:3000",
   "healthPath": "/api/desktop/runtime/health",
-  "toolbarHeight": 64,
+  "toolbarHeight": 108,
   "minimumWidth": 1120,
   "minimumHeight": 720,
   "defaultWidth": 1540,
@@ -15,7 +15,7 @@
     "mailto:",
     "tel:"
   ],
-  "desktopContractVersion": "5.0.0",
+  "desktopContractVersion": "6.0.0",
   "whatsappPartition": "persist:angelcare-whatsapp-main",
   "whatsappHomeUrl": "https://web.whatsapp.com/",
   "whatsappDownloadDirectory": "ANGELCARE WhatsApp",
@@ -35,5 +35,8 @@
   "whatsappMaxDownloadBytes": 262144000,
   "securityCspMode": "report-only",
   "startupCrashLoopThreshold": 3,
-  "startupHealthyAfterMs": 45000
+  "startupHealthyAfterMs": 45000,
+  "corporateBrowserPartition": "persist:angelcare-corporate-browser",
+  "stationPolicyRefreshSeconds": 60,
+  "stationHeartbeatSeconds": 30
 }

@@ -233,7 +233,7 @@ export default function SmartPermissionsPanel({
   const moduleCount = filteredModules.length
   const routeCount = filteredModules.reduce((count, module) => count + module.permissions.filter((permission) => permission.type === 'route').length, 0)
   const permissionCount = filteredModules.reduce((count, module) => count + module.permissions.length, 0)
-  const sourceFlags = catalog.source || { registry: false, staticPermissions: false, generatedRoutes: false }
+  const sourceFlags = catalog.source || { registry: false, staticPermissions: false, generatedRoutes: false, resources: false }
 
   useEffect(() => {
     setExpanded((current) => {
@@ -348,7 +348,7 @@ export default function SmartPermissionsPanel({
       <div style={summaryBarStyle}>
         <span>{catalog.loading ? 'Loading permission catalog...' : 'Catalog ready for user save.'}</span>
         <span>
-          Registry: {sourceFlags.registry ? 'live' : 'fallback'} · Generated: {sourceFlags.generatedRoutes ? 'yes' : 'no'} · Legacy: {sourceFlags.staticPermissions ? 'yes' : 'no'}
+          Registry: {sourceFlags.registry ? 'live' : 'fallback'} · Families: {sourceFlags.resources ? 'yes' : 'no'} · Generated: {sourceFlags.generatedRoutes ? 'yes' : 'no'} · Legacy: {sourceFlags.staticPermissions ? 'yes' : 'no'}
         </span>
         {catalog.latestScan ? <span>Latest scan: {new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(String(catalog.latestScan.created_at)))}</span> : null}
       </div>

@@ -62,6 +62,13 @@ export const AMBASSADOR_PERMISSIONS = [
   "reports.generate",
   "settings.read",
   "settings.write",
+  "settings.draft",
+  "settings.validate",
+  "settings.submit",
+  "settings.approve",
+  "settings.publish",
+  "settings.rollback",
+  "settings.runtime",
   "audit.read",
 ] as const
 

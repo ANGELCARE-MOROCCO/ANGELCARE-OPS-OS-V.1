@@ -1,120 +1,140 @@
-import fs from "fs";
-import path from "path";
+import fs from 'node:fs'
+import path from 'node:path'
 
-const root = process.cwd();
-const outDir = path.join(root, "lib", "generated");
-const outFile = path.join(outDir, "app-routes.ts");
-
-const SCAN_ROOTS = [
-  {
-    dir: path.join(root, "app", "(protected)"),
-    baseHref: "",
-    source: "app/(protected)",
-  },
-  {
-    dir: path.join(root, "app", "carelink-ops"),
-    baseHref: "/carelink-ops",
-    source: "app/carelink-ops",
-  },
-];
+const root = process.cwd()
+const appRoot = path.join(root, 'app')
+const outDir = path.join(root, 'lib', 'generated')
+const outFile = path.join(outDir, 'app-routes.ts')
+const PAGE_FILES = new Set(['page.tsx', 'page.ts', 'page.jsx', 'page.js'])
+const IGNORE = new Set(['node_modules', '.next', '.git', '.turbo', 'coverage', 'dist', 'build', 'backups'])
 
 const MODULE_LABELS = {
-  academy: "Academy",
-  admin: "Admin",
-  billing: "Billing",
-  caregivers: "Caregivers",
-  "carelink-ops": "CareLink OPS",
-  contracts: "Contracts",
-  families: "Families",
-  hr: "HR",
-  incidents: "Incidents",
-  leads: "Leads",
-  locations: "Locations",
-  "market-os": "Market OS",
-  missions: "Missions",
-  operations: "Operations",
-  pointage: "Pointage",
-  print: "Print",
-  profile: "Profile",
-  reports: "Reports",
-  "revenue-command-center": "Revenue Command Center",
-  sales: "Sales",
-  services: "Services",
-  users: "Users",
-  "voice-center": "Voice Center",
-  dashboard: "Dashboard"
-};
+  academy: 'Academy',
+  admin: 'Admin',
+  billing: 'Billing',
+  caregivers: 'Caregivers',
+  'carelink-ops': 'CareLink OPS',
+  contracts: 'Contracts',
+  families: 'Families',
+  hr: 'HR',
+  incidents: 'Incidents',
+  leads: 'Leads',
+  locations: 'Locations',
+  'market-os': 'Market OS',
+  missions: 'Missions',
+  operations: 'Operations',
+  pointage: 'Pointage',
+  print: 'Print',
+  profile: 'Profile',
+  reports: 'Reports',
+  'revenue-command-center': 'Revenue Command Center',
+  sales: 'Sales',
+  services: 'Services',
+  traininghub: 'TrainingHub',
+  users: 'Users',
+  'voice-center': 'Voice Center',
+  dashboard: 'Dashboard',
+}
 
-function walk(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) return walk(full);
-    if (entry.isFile() && entry.name === "page.tsx") return [full];
-    return [];
-  });
+function walk(directory, output = []) {
+  if (!fs.existsSync(directory)) return output
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.isDirectory() && IGNORE.has(entry.name)) continue
+    const full = path.join(directory, entry.name)
+    if (entry.isDirectory()) walk(full, output)
+    else if (entry.isFile() && PAGE_FILES.has(entry.name)) output.push(full)
+  }
+  return output
 }
 
 function titleize(value) {
-  return value
-    .replaceAll("-", " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  return String(value || '')
+    .replace(/^\[\[?\.\.\./, '')
+    .replace(/\]\]?$/, '')
+    .replaceAll('-', ' ')
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
-function normalizeHref(value) {
-  const href = String(value || "").replace(/\/+/g, "/");
-  if (!href || href === "/.") return "/";
-  return href.endsWith("/") && href !== "/" ? href.slice(0, -1) : href;
+function routeParts(file) {
+  const relativeDirectory = path.relative(appRoot, path.dirname(file))
+  return relativeDirectory.split(path.sep).filter((part) => {
+    if (!part || part === '.') return false
+    if (part.startsWith('(') && part.endsWith(')')) return false
+    if (part.startsWith('@')) return false
+    return true
+  })
 }
 
-function toRoute(file, scanRoot) {
-  const relative = path.relative(scanRoot.dir, path.dirname(file));
-  const childHref = relative === "." ? "" : "/" + relative.replaceAll(path.sep, "/");
-  const cleanHref = normalizeHref(`${scanRoot.baseHref}${childHref}`);
+function normalizeHref(parts) {
+  const value = `/${parts.join('/')}`.replace(/\/+/g, '/')
+  return value === '/' ? '/' : value.replace(/\/$/, '')
+}
 
-  const parts = cleanHref.split("/").filter(Boolean);
-  const module = parts[0] || "dashboard";
-  const moduleLabel = MODULE_LABELS[module] || titleize(module);
+function routePattern(href) {
+  return href
+    .replace(/\[\[\.\.\.([^\]]+)\]\]/g, ':$1*?')
+    .replace(/\[\.\.\.([^\]]+)\]/g, ':$1*')
+    .replace(/\[([^\]]+)\]/g, ':$1')
+}
 
-  const leaf = parts.length ? parts[parts.length - 1] : "dashboard";
-  const label = parts.length ? parts.map(titleize).join(" / ") : "Dashboard";
-
+function toRoute(file) {
+  const parts = routeParts(file)
+  const href = normalizeHref(parts)
+  const module = parts[0] || 'dashboard'
+  const moduleLabel = MODULE_LABELS[module] || titleize(module)
+  const leaf = parts.at(-1) || 'dashboard'
+  const label = parts.length ? parts.map(titleize).join(' / ') : 'Dashboard'
+  const sourcePath = path.relative(root, file).split(path.sep).join('/')
   return {
     label,
     shortLabel: titleize(leaf),
-    href: cleanHref,
+    href,
+    routePattern: routePattern(href),
+    dynamic: parts.some((part) => part.includes('[')),
     module,
     moduleLabel,
-    permissionKey: `page:${cleanHref}`,
+    permissionKey: `page:${href}`,
     modulePermissionKey: `${module}.view`,
-    detectedSource: scanRoot.source,
-  };
+    detectedSource: sourcePath,
+  }
 }
 
-const routes = SCAN_ROOTS
-  .flatMap((scanRoot) => walk(scanRoot.dir).map((file) => toRoute(file, scanRoot)))
-  .filter((route) => !route.href.includes("["))
-  .sort((a, b) => {
-    if (a.module === b.module) return a.href.localeCompare(b.href);
-    return a.module.localeCompare(b.module);
-  });
+if (!fs.existsSync(appRoot)) {
+  throw new Error(`Application root not found: ${appRoot}`)
+}
+
+const routes = [...new Map(walk(appRoot).map(toRoute).map((route) => [route.href, route])).values()]
+  .sort((a, b) => a.module.localeCompare(b.module) || a.href.localeCompare(b.href))
 
 const permissions = routes.map((route) => ({
   value: route.permissionKey,
   label: route.label,
+  shortLabel: route.shortLabel,
   module: route.module,
   moduleLabel: route.moduleLabel,
   href: route.href,
-}));
+  routePattern: route.routePattern,
+  dynamic: route.dynamic,
+}))
 
-fs.mkdirSync(outDir, { recursive: true });
-
-fs.writeFileSync(
-  outFile,
+const output =
+  `// Generated by scripts/scan-app-routes.mjs. Do not edit manually.\n` +
+  `// Coverage: complete apps/ops-web/app tree, including protected and independently mounted pages.\n\n` +
   `export const APP_ROUTES = ${JSON.stringify(routes, null, 2)} as const;\n\n` +
   `export const APP_ROUTE_PERMISSIONS = ${JSON.stringify(permissions, null, 2)} as const;\n\n` +
   `export type AppRoute = typeof APP_ROUTES[number];\n` +
   `export type AppRoutePermission = typeof APP_ROUTE_PERMISSIONS[number];\n`
-);
 
-console.log(`Generated ${routes.length} routes → lib/generated/app-routes.ts`);
+if (process.argv.includes('--check')) {
+  const current = fs.existsSync(outFile) ? fs.readFileSync(outFile, 'utf8') : ''
+  if (current !== output) {
+    console.error('Generated app route registry is stale. Run: node scripts/scan-app-routes.mjs')
+    process.exit(1)
+  }
+  console.log(`Verified ${routes.length} synchronized global page routes.`)
+} else {
+  fs.mkdirSync(outDir, { recursive: true })
+  fs.writeFileSync(outFile, output)
+  console.log(`Generated ${routes.length} global page routes → lib/generated/app-routes.ts`)
+}

@@ -1,0 +1,22 @@
+{
+  "phase": "MZ11",
+  "status": "passed",
+  "mandatoryAgents": 10,
+  "staticAssertions": 29,
+  "staticFailures": 0,
+  "evaluationCases": 25000,
+  "scenarioClasses": 25,
+  "evaluationAssertions": 255000,
+  "evaluationFailures": 0,
+  "sqlReviewPassed": 10,
+  "sqlReviewFailed": 0,
+  "targetedTypeScript": "passed-with-local-module-stubs",
+  "installerSimulation": "passed",
+  "rollbackSimulation": "passed",
+  "rollbackHashDiffs": 0,
+  "externalActions": 0,
+  "executionMode": "shadow",
+  "cumulativeMZ10_1StaticPassed": 21,
+  "cumulativeMZ10_1Cases": 25000,
+  "cumulativeMZ10_1Failures": 0
+}

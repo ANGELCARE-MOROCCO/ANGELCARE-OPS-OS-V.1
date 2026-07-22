@@ -20,7 +20,7 @@ async function api<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 export function useWhatsAppGovernance() {
-  const [desktop, setDesktop] = useState<ReturnType<typeof getDesktopRuntime>>(null)
+  const [desktop, setDesktop] = useState<ReturnType<typeof getDesktopRuntime>>(() => getDesktopRuntime())
   const [status, setStatus] = useState<GovernanceStatus | null>(null)
   const [workspaces, setWorkspaces] = useState<WhatsAppDesktopWorkspace[]>([])
   const [catalog, setCatalog] = useState<WhatsAppDesktopWorkspace[]>([])
@@ -48,7 +48,10 @@ export function useWhatsAppGovernance() {
       if (governance) {
         const current = await governance.getStatus()
         setStatus(current)
-        await governance.register().then(setStatus).catch(() => null)
+
+        if (!current.deviceId) {
+          await governance.register().then(setStatus).catch(() => null)
+        }
       }
       await refreshWorkspaces()
     } catch (cause) {

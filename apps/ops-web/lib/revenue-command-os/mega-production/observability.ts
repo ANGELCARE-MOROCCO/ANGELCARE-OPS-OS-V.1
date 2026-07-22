@@ -1,0 +1,4 @@
+import type { QueueHealth, WorkerHealth } from './types'
+export function queueStatus(queue:QueueHealth):QueueHealth['status']{if(queue.deadLetters>20||queue.oldestJobAgeSeconds>3600)return'critical';if(queue.deadLetters>0||queue.oldestJobAgeSeconds>600||queue.successRate<.95)return'degraded';if(queue.status==='paused')return'paused';return'healthy'}
+export function workerStatus(worker:WorkerHealth):WorkerHealth['status']{const age=(Date.now()-new Date(worker.heartbeatAt).getTime())/1000;if(age>300)return'failed';if(age>90||worker.failedJobs>worker.processedJobs*.1)return'degraded';return worker.status==='draining'?'draining':'healthy'}
+export function activationSafetyScore(input:{securityCritical:number;deadLetters:number;queueCritical:number;openHighAnomalies:number;regressionFailures:number}):number{return Math.max(0,100-input.securityCritical*40-Math.min(20,input.deadLetters)-input.queueCritical*10-input.openHighAnomalies*5-input.regressionFailures*20)}

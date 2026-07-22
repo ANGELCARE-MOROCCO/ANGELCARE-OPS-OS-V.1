@@ -3,14 +3,14 @@
     {
       "platform": "darwin",
       "arch": "arm64",
-      "path": "/absolute/path/to/ANGELCARE Desktop-1.4.0-darwin-arm64.dmg",
-      "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.4.0-darwin-arm64.dmg"
+      "path": "/absolute/path/to/ANGELCARE Desktop-1.5.0-darwin-arm64.dmg",
+      "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.5.0-darwin-arm64.dmg"
     },
     {
       "platform": "win32",
       "arch": "x64",
-      "path": "C:/absolute/path/to/ANGELCARE Desktop Setup 1.4.0.exe",
-      "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-Setup-1.4.0.exe"
+      "path": "C:/absolute/path/to/ANGELCARE Desktop Setup 1.5.0.exe",
+      "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-Setup-1.5.0.exe"
     }
   ]
 }

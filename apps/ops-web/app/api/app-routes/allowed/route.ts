@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
 import { APP_ROUTES } from '@/lib/generated/app-routes'
+import { createClient } from '@/lib/supabase/server'
 
 type AppRoute = {
   label: string
@@ -48,11 +49,25 @@ function hasFullApplicationAccess(user: any) {
   return ['ceo', 'owner', 'super_admin'].includes(role) || permissions.includes('*')
 }
 
+
+function slugResourceSegment(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'root'
+}
+
+function inheritedResourcePermissions(route: AppRoute) {
+  const segments = String(route.href || '').split('/').filter(Boolean)
+  const candidates: string[] = []
+  if (segments[0]) candidates.push(`resource:family:${slugResourceSegment(segments[0])}`)
+  if (segments[0] && segments[1]) candidates.push(`resource:group:${slugResourceSegment(segments[0])}:${slugResourceSegment(segments[1])}`)
+  return candidates
+}
+
 function isRouteAllowed(route: AppRoute, permissions: string[]) {
   return (
     permissions.includes(route.permissionKey) ||
     Boolean(route.modulePermissionKey && permissions.includes(route.modulePermissionKey)) ||
-    permissions.includes(`${route.module}.view`)
+    permissions.includes(`${route.module}.view`) ||
+    inheritedResourcePermissions(route).some((permission) => permissions.includes(permission))
   )
 }
 
@@ -64,12 +79,35 @@ export async function GET() {
       return NextResponse.json({ routes: [] })
     }
 
+    const permissions = getUserPermissions(user)
+    const supabase = await createClient()
+    const { data: resourceRows } = await supabase
+      .from('access_resource_registry')
+      .select('resource_key,resource_type,display_name,canonical_route,permission_key,module_key,family_key,parent_resource_key,navigation_visible,status,assignable')
+      .eq('status', 'active')
+      .eq('assignable', true)
+      .eq('navigation_visible', true)
+      .not('canonical_route', 'is', null)
+      .limit(20000)
+
+    const registryRoutes: AppRoute[] = (resourceRows || []).map((resource: any) => ({
+      label: String(resource.display_name || resource.canonical_route),
+      shortLabel: String(resource.display_name || resource.canonical_route).split(' / ').pop(),
+      href: String(resource.canonical_route),
+      module: String(resource.module_key || (resource.family_key ? `family__${resource.family_key}` : resource.resource_key)),
+      moduleLabel: String(resource.display_name || resource.module_key || resource.family_key || 'Independent workspace'),
+      permissionKey: String(resource.permission_key),
+      modulePermissionKey: String(resource.permission_key),
+    }))
+
+    const combined = [...ROUTES, ...registryRoutes]
+    const deduped = [...new Map(combined.map((route) => [route.href, route])).values()]
+
     if (hasFullApplicationAccess(user)) {
-      return NextResponse.json({ routes: ROUTES })
+      return NextResponse.json({ routes: deduped })
     }
 
-    const permissions = getUserPermissions(user)
-    const routes = ROUTES.filter((route) => isRouteAllowed(route, permissions))
+    const routes = deduped.filter((route) => isRouteAllowed(route, permissions))
 
     return NextResponse.json({ routes })
   } catch (error) {

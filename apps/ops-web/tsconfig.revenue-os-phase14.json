@@ -1,0 +1,15 @@
+{
+  "extends":"./tsconfig.json",
+  "compilerOptions":{"noEmit":true,"strict":true,"skipLibCheck":true,"types":["node"]},
+  "include":[
+    "lib/revenue-command-os/execution-autopilot/**/*.ts",
+    "lib/revenue-command-os/mission-compiler/**/*.ts",
+    "app/api/revenue-command-os/propagation/**/*.ts",
+    "app/api/revenue-command-os/execution/**/*.ts",
+    "app/api/revenue-command-os/adapters/**/*.ts",
+    "app/api/revenue-command-os/webhooks/**/*.ts",
+    "app/api/revenue-command-os/execution-autopilot/**/*.ts",
+    "app/(protected)/revenue-command-os/execution-autopilot/**/*.tsx",
+    "workers/revenue-command-os/execution-autopilot/**/*.ts"
+  ]
+}

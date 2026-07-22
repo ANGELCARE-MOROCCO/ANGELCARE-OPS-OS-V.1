@@ -1,7 +1,7 @@
-import RevenueOsDashboard from './_components/RevenueOsDashboard'
+import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
 export default function RevenueCommandOsPage() {
-  return <RevenueOsDashboard />
+  redirect('/revenue-command-os/cockpit')
 }

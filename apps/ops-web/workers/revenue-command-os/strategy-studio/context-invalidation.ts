@@ -1,0 +1,3 @@
+import 'server-only'
+import { createClient } from '@/lib/supabase/server'
+export async function invalidateApprovalsForMaterialContextChange(input:{tenantId:string;strategyId:string;reason:string}){const c=await createClient() as any;const r=await c.from('revenue_os_approval_requests').update({status:'approval_revoked',ready_for_mz13:false,updated_at:new Date().toISOString(),payload:{reason:input.reason,materialContextChange:true}}).eq('tenant_id',input.tenantId).eq('strategy_id',input.strategyId).in('status',['conditional_approval','approved','ready_for_mz13']);if(r.error)throw r.error;return{revoked:true,externalActions:0}}

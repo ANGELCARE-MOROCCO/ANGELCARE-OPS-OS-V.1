@@ -3,69 +3,91 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ANGELCARE Desktop</title>
+    <title>ANGELCARE Corporate Station OS</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="toolbar" aria-label="Contrôles ANGELCARE Desktop">
+    <header class="station-header" aria-label="ANGELCARE Corporate Station OS">
       <div class="brand">
         <img src="./logo.png" alt="ANGELCARE" class="logo" />
         <span class="divider" aria-hidden="true"></span>
-        <div>
-          <div class="product">DESKTOP</div>
-          <div class="edition">Secure Runtime</div>
-        </div>
+        <div><div class="product">CORPORATE STATION OS</div><div class="edition">Desktop 1.5.0 · Secure workspace</div></div>
       </div>
-
       <div class="runtime-status" role="status" aria-live="polite">
         <span id="status-dot" class="status-dot status-loading"></span>
-        <div>
-          <div id="status-label" class="status-label">Initialisation…</div>
-          <div id="status-detail" class="status-detail">Chargement du runtime sécurisé</div>
-        </div>
+        <div><div id="status-label" class="status-label">Initialisation…</div><div id="status-detail" class="status-detail">Chargement du poste corporate</div></div>
       </div>
-
-      <nav class="toolbar-actions" aria-label="Actions du runtime">
-        <button type="button" data-action="reload" title="Actualiser ANGELCARE">Actualiser</button>
-        <button type="button" data-action="hard-reload" title="Actualiser sans cache">Sans cache</button>
-        <button type="button" data-action="open-browser" class="secondary" title="Ouvrir dans le navigateur">Navigateur</button>
-      </nav>
+      <div class="station-actions">
+        <span id="browser-health" class="health-pill">Navigateur —</span>
+        <button id="mode-button" type="button" class="mode-pill" data-station-action="request-unlock" title="État et sortie du mode corporate"><span id="mode-icon">◉</span><span id="mode-label">Standard</span></button>
+        <button type="button" class="icon-button" data-station-action="refresh-policy" title="Actualiser la politique">↻</button>
+      </div>
     </header>
+
+    <section class="corporate-toolbar" aria-label="Navigateur corporate ANGELCARE">
+      <div class="tab-row">
+        <div id="tab-strip" class="tab-strip" role="tablist" aria-label="Onglets corporate"></div>
+        <button type="button" id="new-tab" class="new-tab" title="Nouvel onglet (Ctrl/⌘ + T)">＋</button>
+        <button type="button" id="reopen-tab" class="tab-tool" title="Rouvrir le dernier onglet fermé">↶</button>
+        <span id="tab-limit" class="tab-limit">2 / 12</span>
+      </div>
+      <div class="navigation-row">
+        <div class="history-actions">
+          <button type="button" id="back" class="nav-icon" title="Précédent">←</button>
+          <button type="button" id="forward" class="nav-icon" title="Suivant">→</button>
+          <button type="button" id="reload" class="nav-icon" title="Actualiser">↻</button>
+          <button type="button" id="home" class="nav-icon" title="Nouvel onglet ANGELCARE">⌂</button>
+        </div>
+        <form id="address-form" class="address-form" autocomplete="off">
+          <span id="trust-indicator" class="trust-indicator trust-local" title="Niveau de confiance">◆</span>
+          <input id="address-input" type="text" spellcheck="false" autocomplete="off" placeholder="Rechercher sur Google ou saisir une adresse approuvée" aria-label="Adresse ou recherche corporate" />
+          <button type="submit" class="go-button">Ouvrir</button>
+        </form>
+        <div class="zoom-actions" aria-label="Zoom de l’onglet actif">
+          <button type="button" id="zoom-out" class="nav-icon" title="Réduire">−</button>
+          <button type="button" id="zoom-value" class="zoom-value" title="Réinitialiser">100%</button>
+          <button type="button" id="zoom-in" class="nav-icon" title="Agrandir">＋</button>
+        </div>
+        <button type="button" id="downloads" class="downloads-button" title="Téléchargements corporate">⇩ <span id="download-count">0</span></button>
+      </div>
+    </section>
+
+    <nav class="legacy-contract-actions" aria-hidden="true">
+      <button type="button" data-action="go-home" data-route="/">Accueil</button>
+      <button type="button" data-action="go-whatsapp-os" data-route="/whatsapp-os">WhatsApp OS</button>
+      <button type="button" data-action="go-whatsapp-session" data-route="/whatsapp-os/web-session">Session WhatsApp</button>
+      <button type="button" data-action="go-whatsapp-admin" data-route="/whatsapp-os/admin">Administration</button>
+      <button type="button" data-action="go-whatsapp-control" data-route="/whatsapp-os/session-control">Contrôle session</button>
+      <button type="button" data-action="open-whatsapp-workspace">Afficher le workspace</button>
+      <button type="button" data-action="hide-whatsapp-workspace">Masquer</button>
+      <button type="button" data-action="reload">Actualiser</button>
+      <button type="button" data-action="hard-reload">Sans cache</button>
+      <button type="button" data-action="open-browser">Navigateur</button>
+      <button type="button" data-action="go-back">Précédent</button>
+      <button type="button" data-action="go-forward">Suivant</button>
+    </nav>
 
     <main class="fallback">
       <section class="fallback-card" aria-labelledby="fallback-title">
         <div class="shield" aria-hidden="true">A</div>
-        <p class="eyebrow">ANGELCARE DESKTOP RUNTIME</p>
-        <h1 id="fallback-title">Connexion à votre plateforme sécurisée</h1>
-        <p id="fallback-message" class="fallback-message">
-          Le runtime prépare l’environnement ANGELCARE et vérifie la disponibilité de votre SaaS.
-        </p>
+        <p class="eyebrow">ANGELCARE CORPORATE STATION OS</p>
+        <h1 id="fallback-title">Votre environnement de travail gouverné</h1>
+        <p id="fallback-message" class="fallback-message">ANGELCARE prépare le SaaS, WhatsApp et le navigateur corporate sécurisé.</p>
         <div class="fallback-actions">
           <button type="button" data-action="retry" class="primary">Réessayer</button>
-          <button type="button" data-action="open-browser" class="outline">Ouvrir dans le navigateur</button>
+          <button type="button" id="fallback-new-tab" class="outline">Ouvrir un onglet corporate</button>
         </div>
         <div class="diagnostic-grid">
-          <div>
-            <span>Version</span>
-            <strong id="runtime-version">—</strong>
-          </div>
-          <div>
-            <span>Plateforme</span>
-            <strong id="runtime-platform">—</strong>
-          </div>
-          <div>
-            <span>Canal</span>
-            <strong id="runtime-channel">—</strong>
-          </div>
-          <div>
-            <span>Destination</span>
-            <strong id="runtime-origin">—</strong>
-          </div>
+          <div><span>Version</span><strong id="runtime-version">—</strong></div>
+          <div><span>Plateforme</span><strong id="runtime-platform">—</strong></div>
+          <div><span>Mode</span><strong id="runtime-mode">—</strong></div>
+          <div><span>Politique</span><strong id="runtime-policy">—</strong></div>
         </div>
-        <p class="security-note">Node.js désactivé · Isolation de contexte active · Sandbox Chromium active</p>
+        <p class="security-note">Node.js désactivé · Context isolation · Sandbox Chromium · Partitions ANGELCARE / WhatsApp / Corporate séparées</p>
       </section>
     </main>
-
+    <div id="toast" class="toast" hidden role="alert"></div>
     <script src="./shell.js"></script>
-  </body>
+  <nav class="desktop-menu" aria-hidden="true"></nav>
+</body>
 </html>

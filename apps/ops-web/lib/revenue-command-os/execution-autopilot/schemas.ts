@@ -1,0 +1,10 @@
+import { z } from 'zod'
+export const executionModeSchema=z.enum(['shadow','internal_only','approval_required','limited_autopilot','suspended','emergency_stop'])
+export const prepareSchema=z.object({packageId:z.string().uuid(),executionMode:executionModeSchema.default('approval_required'),idempotencyKey:z.string().min(8).max(300).optional(),dryRun:z.boolean().default(false)})
+export const activateSchema=z.object({runId:z.string().uuid(),acknowledgeControls:z.literal(true)})
+export const runActionSchema=z.object({runId:z.string().uuid(),reason:z.string().min(3).max(3000).optional()})
+export const approveActionSchema=z.object({actionId:z.string().uuid(),reason:z.string().min(3).max(3000),validUntil:z.string().datetime().optional(),conditions:z.array(z.string().min(1)).max(50).default([])})
+export const rejectActionSchema=z.object({actionId:z.string().uuid(),reason:z.string().min(3).max(3000)})
+export const retrySchema=z.object({actionId:z.string().uuid(),reason:z.string().min(3).max(3000)})
+export const rollbackSchema=z.object({actionId:z.string().uuid(),reason:z.string().min(3).max(3000),compensate:z.boolean().default(true)})
+export const adapterControlSchema=z.object({adapterCode:z.enum(['b2b_partnerships','traininghub_commercial','email_os','gmail','whatsapp','calendar','opportunities','account_plans','campaigns','meetings','proposals','payments','trainer_planning','academy_delivery','reporting','internal_tasks']),reason:z.string().min(3).max(3000)})

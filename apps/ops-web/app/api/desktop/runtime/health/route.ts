@@ -8,6 +8,8 @@ export async function GET() {
     {
       ok: true,
       data: {
+        desktop_version: "1.5.0",
+        desktop_contract: "6.0.0",
         service: "angelcare-ops-web",
         capability: "angelcare-desktop-runtime",
         contractVersion: "2.0.0",

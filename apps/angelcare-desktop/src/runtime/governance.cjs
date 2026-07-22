@@ -57,6 +57,9 @@ function createGovernanceController(options) {
   let commandTimer = null;
   let started = false;
   let processingCommands = false;
+  let authorizationRequest = null;
+  let lastAccessHideReason = null;
+  // WHATSAPP_LEASE_STABILITY_V1
 
   let state = {
     available: true,
@@ -135,24 +138,63 @@ function createGovernanceController(options) {
     return payload.data;
   }
 
+  function timestampValue(value) {
+    const timestamp = value ? new Date(value).getTime() : Number.NaN;
+    return Number.isFinite(timestamp) ? timestamp : 0;
+  }
+
   function authorizationStillValid() {
-    if (!state.authorized || !state.leaseExpiresAt) return false;
-    return Date.now() < new Date(state.leaseExpiresAt).getTime();
+    return Boolean(
+      state.authorized
+      && timestampValue(state.leaseExpiresAt) > Date.now()
+    );
   }
 
   function graceStillValid() {
-    if (!state.graceExpiresAt) return false;
-    return Date.now() < new Date(state.graceExpiresAt).getTime();
+    return timestampValue(state.graceExpiresAt) > Date.now();
   }
 
   function canOpen() {
-    return authorizationStillValid() || (state.offlineGraceActive && graceStillValid());
+    return authorizationStillValid()
+      || Boolean(
+        state.authorized
+        && state.offlineGraceActive
+        && graceStillValid()
+      );
+  }
+
+  function hideForAccess(reason) {
+    if (lastAccessHideReason === reason) return;
+    lastAccessHideReason = reason;
+    actions.hideWhatsapp?.(reason);
   }
 
   function enforceAccess(reason = "authorization_check") {
-    if (canOpen()) return true;
-    actions.hideWhatsapp?.(reason);
-    update({ authorized: false, offlineGraceActive: false, phase: "blocked", message: "Accès WhatsApp Desktop non autorisé.", authorizationReason: state.authorizationReason || "ACCESS_NOT_AUTHORIZED" });
+    if (canOpen()) {
+      lastAccessHideReason = null;
+      return true;
+    }
+
+    hideForAccess(reason);
+
+    const authorizationReason =
+      state.authorizationReason || "ACCESS_NOT_AUTHORIZED";
+
+    if (
+      state.authorized
+      || state.offlineGraceActive
+      || state.phase !== "blocked"
+      || state.authorizationReason !== authorizationReason
+    ) {
+      update({
+        authorized: false,
+        offlineGraceActive: false,
+        phase: "blocked",
+        message: "Accès WhatsApp Desktop non autorisé.",
+        authorizationReason,
+      });
+    }
+
     return false;
   }
 
@@ -195,57 +237,197 @@ function createGovernanceController(options) {
   }
 
   async function requestAuthorization({ renew = false } = {}) {
-    if (!state.selectedWorkspaceId) return update({ authorized: false, phase: "workspace-required", message: "Sélectionnez un espace WhatsApp autorisé.", authorizationReason: "WORKSPACE_REQUIRED" });
-    if (!state.deviceId) await register();
-    const endpoint = renew ? "/api/whatsapp-desktop/authorization/renew" : "/api/whatsapp-desktop/authorization/issue";
-    try {
-      const result = await api(endpoint, {
-        method: "POST",
-        body: JSON.stringify({ installation_id: installationId, workspace_id: state.selectedWorkspaceId, desktop_version: app.getVersion() }),
-      });
-      if (!result.authorized) {
-        actions.hideWhatsapp?.("authorization-denied");
+    if (authorizationRequest) return authorizationRequest;
+
+    authorizationRequest = (async () => {
+      if (!state.selectedWorkspaceId) {
         return update({
           authorized: false,
-          approvalStatus: result.device?.approval_status || state.approvalStatus,
-          authorizationReason: result.reason,
-          phase: "blocked",
-          message: authorizationMessage(result.reason),
-          leaseId: null,
-          leaseExpiresAt: null,
-          graceExpiresAt: null,
+          phase: "workspace-required",
+          message: "Sélectionnez un espace WhatsApp autorisé.",
+          authorizationReason: "WORKSPACE_REQUIRED",
+        });
+      }
+
+      if (!state.deviceId) await register();
+
+      const hadAuthorizedState = state.authorized;
+      const endpoint = renew
+        ? "/api/whatsapp-desktop/authorization/renew"
+        : "/api/whatsapp-desktop/authorization/issue";
+
+      try {
+        const result = await api(endpoint, {
+          method: "POST",
+          body: JSON.stringify({
+            installation_id: installationId,
+            workspace_id: state.selectedWorkspaceId,
+            desktop_version: app.getVersion(),
+          }),
+        });
+
+        if (!result.authorized) {
+          lastAccessHideReason = null;
+          hideForAccess("authorization-denied");
+
+          logger.warn("whatsapp_governance_authorization_denied", {
+            renew,
+            reason: result.reason || "ACCESS_NOT_AUTHORIZED",
+          });
+
+          return update({
+            authorized: false,
+            approvalStatus:
+              result.device?.approval_status || state.approvalStatus,
+            authorizationReason:
+              result.reason || "ACCESS_NOT_AUTHORIZED",
+            phase: "blocked",
+            message: authorizationMessage(
+              result.reason || "ACCESS_NOT_AUTHORIZED",
+            ),
+            leaseId: null,
+            leaseExpiresAt: null,
+            graceExpiresAt: null,
+            offlineGraceActive: false,
+            policy: result.policy || null,
+            assignment: result.assignment || null,
+            workspace: result.workspace || null,
+            online: true,
+            lastAuthorizationAt: nowIso(),
+          });
+        }
+
+        const leaseExpiresAt = result.lease?.expires_at || null;
+        const graceExpiresAt = result.lease?.grace_expires_at || null;
+
+        if (!timestampValue(leaseExpiresAt)) {
+          const leaseError = new Error("AUTHORIZATION_LEASE_INVALID");
+          leaseError.status = 502;
+          throw leaseError;
+        }
+
+        lastAccessHideReason = null;
+
+        logger.info("whatsapp_governance_authorization_granted", {
+          renew,
+          leaseExpiresAt,
+          graceExpiresAt,
+        });
+
+        return update({
+          authorized: true,
+          authorizationReason: "AUTHORIZED",
+          approvalStatus:
+            result.device?.approval_status || "approved",
+          phase: "authorized",
+          message: "Accès WhatsApp Desktop autorisé.",
+          detail: null,
+          leaseId: result.lease?.id || null,
+          leaseExpiresAt,
+          graceExpiresAt,
           offlineGraceActive: false,
           policy: result.policy || null,
           assignment: result.assignment || null,
           workspace: result.workspace || null,
+          selectedWorkspaceName:
+            result.workspace?.name || state.selectedWorkspaceName,
           online: true,
           lastAuthorizationAt: nowIso(),
         });
+      } catch (error) {
+        const status = Number(error.status || 0);
+        const detail = safeString(error.message, 1000);
+        const explicitDenial = [401, 403, 409, 410].includes(status);
+
+        if (!explicitDenial && authorizationStillValid()) {
+          logger.warn("whatsapp_governance_renewal_deferred", {
+            renew,
+            status,
+            leaseExpiresAt: state.leaseExpiresAt,
+            message: detail,
+          });
+
+          return update({
+            authorized: true,
+            offlineGraceActive: false,
+            phase: "authorized",
+            message: "Accès WhatsApp Desktop autorisé.",
+            detail:
+              "Renouvellement temporairement indisponible. "
+              + "Le bail actif reste valide.",
+            online: false,
+            lastErrorAt: nowIso(),
+          });
+        }
+
+        if (
+          !explicitDenial
+          && hadAuthorizedState
+          && graceStillValid()
+        ) {
+          logger.warn("whatsapp_governance_offline_grace_started", {
+            renew,
+            status,
+            graceExpiresAt: state.graceExpiresAt,
+            message: detail,
+          });
+
+          return update({
+            authorized: true,
+            offlineGraceActive: true,
+            phase: "offline-grace",
+            message:
+              "Connexion interrompue. Accès temporaire selon "
+              + "la période de grâce.",
+            detail,
+            online: false,
+            lastErrorAt: nowIso(),
+          });
+        }
+
+        const hideReason = explicitDenial
+          ? "authorization-denied"
+          : "authorization-network-failure";
+
+        hideForAccess(hideReason);
+
+        logger.warn("whatsapp_governance_authorization_closed", {
+          renew,
+          status,
+          reason: hideReason,
+          message: detail,
+        });
+
+        return update({
+          authorized: false,
+          offlineGraceActive: false,
+          phase:
+            status === 401
+              ? "authentication-required"
+              : explicitDenial
+                ? "blocked"
+                : "authorization-error",
+          message:
+            status === 401
+              ? "Reconnectez-vous à ANGELCARE."
+              : explicitDenial
+                ? "Accès WhatsApp Desktop refusé."
+                : "Autorisation ANGELCARE indisponible.",
+          authorizationReason:
+            explicitDenial
+              ? safeString(error.message, 160)
+              : "AUTHORIZATION_UNAVAILABLE",
+          detail,
+          online: explicitDenial ? true : false,
+          lastErrorAt: nowIso(),
+        });
       }
-      return update({
-        authorized: true,
-        authorizationReason: "AUTHORIZED",
-        approvalStatus: result.device?.approval_status || "approved",
-        phase: "authorized",
-        message: "Accès WhatsApp Desktop autorisé.",
-        detail: null,
-        leaseId: result.lease?.id || null,
-        leaseExpiresAt: result.lease?.expires_at || null,
-        graceExpiresAt: result.lease?.grace_expires_at || null,
-        offlineGraceActive: false,
-        policy: result.policy || null,
-        assignment: result.assignment || null,
-        workspace: result.workspace || null,
-        selectedWorkspaceName: result.workspace?.name || state.selectedWorkspaceName,
-        online: true,
-        lastAuthorizationAt: nowIso(),
-      });
-    } catch (error) {
-      if (state.authorized && graceStillValid()) {
-        return update({ offlineGraceActive: true, phase: "offline-grace", message: "Connexion interrompue. Accès temporaire selon la période de grâce.", detail: safeString(error.message, 1000), online: false, lastErrorAt: nowIso() });
-      }
-      actions.hideWhatsapp?.("authorization-network-failure");
-      return update({ authorized: false, offlineGraceActive: false, phase: "authorization-error", message: "Autorisation ANGELCARE indisponible.", detail: safeString(error.message, 1000), online: false, lastErrorAt: nowIso() });
+    })();
+
+    try {
+      return await authorizationRequest;
+    } finally {
+      authorizationRequest = null;
     }
   }
 
@@ -358,12 +540,43 @@ function createGovernanceController(options) {
     clearInterval(heartbeatTimer);
     clearInterval(renewTimer);
     clearInterval(commandTimer);
-    heartbeatTimer = setInterval(() => void heartbeat(), Math.max(15, Number(state.policy?.heartbeat_active_seconds || 45)) * 1000);
+
+    heartbeatTimer = setInterval(
+      () => void heartbeat(),
+      Math.max(
+        15,
+        Number(state.policy?.heartbeat_active_seconds || 45),
+      ) * 1000,
+    );
+
     renewTimer = setInterval(() => {
-      if (state.selectedWorkspaceId) void requestAuthorization({ renew: true });
-      if (!authorizationStillValid() && !graceStillValid()) enforceAccess("lease-expired");
+      if (!state.selectedWorkspaceId) return;
+
+      void (async () => {
+        await requestAuthorization({ renew: true });
+
+        if (
+          !canOpen()
+          && ![
+            "blocked",
+            "authorization-error",
+            "authentication-required",
+            "workspace-required",
+          ].includes(state.phase)
+        ) {
+          enforceAccess("lease-expired");
+        }
+      })().catch((error) => {
+        logger.warn("whatsapp_governance_renewal_cycle_failed", {
+          message: error.message,
+        });
+      });
     }, 60_000);
-    commandTimer = setInterval(() => void pollCommands(), 30_000);
+
+    commandTimer = setInterval(
+      () => void pollCommands(),
+      30_000,
+    );
   }
 
   async function start() {

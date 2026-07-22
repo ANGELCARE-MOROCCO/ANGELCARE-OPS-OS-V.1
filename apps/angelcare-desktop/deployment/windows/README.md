@@ -1,0 +1,2 @@
+# Windows Corporate Station deployment assets
+These scripts validate and assist deployment without silently applying Shell Launcher, Assigned Access, AppLocker, Task Manager restrictions or account changes. Pilot first, use a standard operator account, retain a separate emergency administrator, and deploy OS controls through an approved endpoint-management change. Shell Launcher availability depends on Windows edition and licensing.

@@ -1,9 +1,13 @@
 export type RevenueOsWorkspaceKey =
   | 'strategic-view'
+  | 'mega-production'
   | 'digital-twin'
   | 'revenue-objectives'
   | 'signals'
   | 'strategies'
+  | 'strategy-engine'
+  | 'validation-council'
+  | 'strategy-studio'
   | 'intelligent-commands'
   | 'active-programs'
   | 'compiled-missions'

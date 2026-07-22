@@ -1,0 +1,7 @@
+{
+  "revenue-os:phase14:verify": "node scripts/revenue-command-os/verify-phase14.mjs",
+  "revenue-os:phase14:test": "node scripts/revenue-command-os/test-phase14.mjs",
+  "revenue-os:phase14:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.revenue-os-phase14.json --noEmit",
+  "revenue-os:phase14:sql-review": "node scripts/revenue-command-os/sql-review-phase14.mjs",
+  "revenue-os:phase14:smoke": "bash ../../tools/revenue-os/smoke-phase14-autopilot.sh ../.."
+}

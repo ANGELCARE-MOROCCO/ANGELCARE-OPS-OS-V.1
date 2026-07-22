@@ -1,6 +1,6 @@
 import { MODULE_PERMISSIONS } from '@/lib/auth/permissions'
 import { normalizeGeneratedRoutes, titleize, loadAccessGovernanceRegistry } from './registry'
-import type { AccessModuleRegistryRow, AccessRouteRegistryRow, AccessScanRunRow } from './types'
+import type { AccessModuleRegistryRow, AccessResourceRegistryRow, AccessRouteRegistryRow, AccessScanRunRow } from './types'
 
 type SupabaseClient = any
 
@@ -8,9 +8,10 @@ export type PermissionCatalogSourceFlags = {
   registry: boolean
   staticPermissions: boolean
   generatedRoutes: boolean
+  resources: boolean
 }
 
-export type PermissionCatalogPermissionType = 'module' | 'route' | 'action' | 'legacy'
+export type PermissionCatalogPermissionType = 'module' | 'family' | 'group' | 'standalone' | 'route' | 'action' | 'legacy'
 export type PermissionCatalogPermissionSource = 'Registry' | 'Generated' | 'Legacy'
 
 export type PermissionCatalogPermission = {
@@ -280,6 +281,7 @@ export async function loadPermissionCatalog(supabase: SupabaseClient): Promise<P
   const registryResult = await loadAccessGovernanceRegistry(supabase)
   const registryModules = registryResult.ok ? registryResult.snapshot.modules : []
   const registryRoutes = registryResult.ok ? registryResult.snapshot.routes : []
+  const registryResources = registryResult.ok ? registryResult.snapshot.resources : []
   const latestScan = registryResult.ok ? registryResult.snapshot.latestScan : null
   const meta = latestScanMeta(latestScan)
 
@@ -291,6 +293,7 @@ export async function loadPermissionCatalog(supabase: SupabaseClient): Promise<P
     registry: hasRegistryRows,
     staticPermissions: Object.keys(MODULE_PERMISSIONS).length > 0,
     generatedRoutes: normalizeGeneratedRoutes().length > 0,
+    resources: registryResources.length > 0,
   }
 
   const registryModuleMap = new Map(registryModules.map((module) => [normalizeModuleKey(module.module_key), module]))
@@ -319,6 +322,56 @@ export async function loadPermissionCatalog(supabase: SupabaseClient): Promise<P
     }
   }
 
+  const resourceByKey = new Map(registryResources.map((resource) => [resource.resource_key, resource]))
+  const topResourceFor = (resource: AccessResourceRegistryRow) => {
+    let current = resource
+    const visited = new Set<string>()
+    while (current.parent_resource_key && !visited.has(current.resource_key)) {
+      visited.add(current.resource_key)
+      const parent = resourceByKey.get(current.parent_resource_key)
+      if (!parent) break
+      current = parent
+    }
+    return current
+  }
+
+  for (const resource of registryResources.filter((item) => item.assignable && item.status === 'active')) {
+    const top = topResourceFor(resource)
+    const containerKey = top.resource_type === 'module'
+      ? normalizeModuleKey(top.module_key || top.resource_key.replace(/^module:/, ''))
+      : top.resource_type === 'route_family'
+        ? `family__${normalizeModuleKey(top.family_key || top.resource_key.replace(/^family:/, ''))}`
+        : `standalone__${normalizeModuleKey(top.resource_key)}`
+    const containerLabel = top.display_name
+    const type: PermissionCatalogPermissionType = resource.resource_type === 'module'
+      ? 'module'
+      : resource.resource_type === 'route_family'
+        ? 'family'
+        : ['route_group', 'module_workspace'].includes(resource.resource_type)
+          ? 'group'
+          : resource.resource_type === 'standalone_route' && resource.resource_key === top.resource_key
+            ? 'standalone'
+            : 'route'
+    const permission: PermissionCatalogPermission = {
+      key: normalizePermissionKey(resource.permission_key),
+      label: resource.display_name,
+      type,
+      href: resource.canonical_route,
+      moduleKey: containerKey,
+      moduleLabel: containerLabel,
+      status: resource.status,
+      source: 'Registry',
+      modulePermissionKey: normalizePermissionKey(top.permission_key),
+      routeType: resource.resource_type,
+      riskLevel: resource.risk_level,
+      permissionKey: normalizePermissionKey(resource.permission_key),
+      stale: resource.status === 'missing',
+      isNew: false,
+    }
+    upsertPermission(permissionMap, permission, 4)
+    attachModule(moduleMap, permission, null)
+  }
+
   const generatedRoutes = normalizeGeneratedRoutes()
   for (const route of generatedRoutes) {
     const permission = generatedRoutePermission(route as any, meta)
@@ -326,7 +379,7 @@ export async function loadPermissionCatalog(supabase: SupabaseClient): Promise<P
     attachModule(moduleMap, permission, registryModuleMap.get(normalizeModuleKey(route.moduleKey)) || null)
   }
 
-  for (const [moduleKey, permissions] of Object.entries(MODULE_PERMISSIONS)) {
+  for (const [moduleKey, permissions] of Object.entries(MODULE_PERMISSIONS) as Array<[string, readonly string[]]>) {
     const registryModule = registryModuleMap.get(normalizeModuleKey(moduleKey)) || null
     for (const permissionKey of permissions) {
       const permission = staticModulePermission(moduleKey, permissionKey)
@@ -339,7 +392,7 @@ export async function loadPermissionCatalog(supabase: SupabaseClient): Promise<P
     const permissions = module.permissions
       .filter((permission, index, list) => list.findIndex((item) => item.key === permission.key) === index)
       .sort((a, b) => {
-        const order = { module: 0, route: 1, action: 2, legacy: 3 } as const
+        const order = { module: 0, family: 1, group: 2, standalone: 3, route: 4, action: 5, legacy: 6 } as const
         return (order[a.type] - order[b.type]) || a.label.localeCompare(b.label)
       })
 
@@ -371,7 +424,7 @@ export async function loadPermissionCatalog(supabase: SupabaseClient): Promise<P
   const flatPermissions = [...permissionMap.values()]
     .map(({ __priority, ...permission }) => permission)
     .sort((a, b) => {
-      const order = { module: 0, route: 1, action: 2, legacy: 3 } as const
+      const order = { module: 0, family: 1, group: 2, standalone: 3, route: 4, action: 5, legacy: 6 } as const
       return (order[a.type] - order[b.type]) || a.moduleLabel.localeCompare(b.moduleLabel) || a.label.localeCompare(b.label)
     })
 

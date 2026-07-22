@@ -29,9 +29,9 @@ function loadRuntimeConfig({ app, defaultsPath }) {
   const defaults = readJson(defaultsPath);
   const configPath = path.join(app.getPath("userData"), "desktop-config.json");
   const persisted = readJson(configPath);
-  const isDevelopment = process.env.NODE_ENV !== "production" || !app.isPackaged;
+  const isDevelopment = !app.isPackaged || process.env.NODE_ENV === "development";
   const fallbackUrl = isDevelopment ? defaults.developmentAppUrl : defaults.productionAppUrl;
-  const rawUrl = process.env.ANGELCARE_DESKTOP_APP_URL || persisted.appUrl || fallbackUrl;
+  const rawUrl = process.env.ANGELCARE_DESKTOP_APP_URL || (isDevelopment ? persisted.appUrl : null) || fallbackUrl;
   const appUrl = parseHttpUrl(rawUrl, { allowLocalHttp: isDevelopment });
   const allowedHosts = parseAllowedHosts(process.env.ANGELCARE_DESKTOP_ALLOWED_HOSTS, appUrl);
   const updateManifestUrl = String(process.env.ANGELCARE_DESKTOP_UPDATE_MANIFEST_URL || defaults.updateManifestUrl || "").trim();
@@ -55,7 +55,7 @@ function loadRuntimeConfig({ app, defaultsPath }) {
     healthPath: String(defaults.healthPath || "/api/desktop/runtime/health"),
     healthCheckIntervalMs: safePositive(defaults.healthCheckIntervalMs, 30000, 10000, 600000),
     loadTimeoutMs: safePositive(defaults.loadTimeoutMs, 45000, 10000, 180000),
-    desktopContractVersion: String(defaults.desktopContractVersion || "5.0.0"),
+    desktopContractVersion: String(defaults.desktopContractVersion || "6.0.0"),
     releaseChannel: String(process.env.ANGELCARE_DESKTOP_RELEASE_CHANNEL || "stable").replace(/[^a-z0-9-]/gi, "").slice(0, 30) || "stable",
     buildId: String(process.env.ANGELCARE_DESKTOP_BUILD_ID || "local").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 100) || "local",
     isDevelopment,

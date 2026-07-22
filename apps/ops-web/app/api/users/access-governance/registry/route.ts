@@ -25,8 +25,10 @@ export async function GET() {
     ok: true,
     modules: registry.snapshot.modules,
     routes: registry.snapshot.routes,
+    resources: registry.snapshot.resources,
     templates: registry.snapshot.templates,
     latestScan: registry.snapshot.latestScan,
+    latestVersion: registry.snapshot.latestVersion,
     stats: registry.snapshot.stats,
   })
 }

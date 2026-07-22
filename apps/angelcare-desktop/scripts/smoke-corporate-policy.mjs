@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+const require=createRequire(import.meta.url);
+const { DEFAULT_STATION_POLICY,evaluateUrl,normalizeStationPolicy,downloadDecision,permissionRuleFor }=require("../src/runtime/station-policy.cjs");
+const policy=normalizeStationPolicy({...DEFAULT_STATION_POLICY,maximum_tabs:8,browser:{...DEFAULT_STATION_POLICY.browser,default_action:"deny",allowed_domains:["example.com","google.com","www.google.com"],blocked_domains:["blocked.example.com"],allowed_private_hosts:[],downloads:"confirm",camera:"deny",microphone:"ask"}});
+assert.equal(policy.maximum_tabs,8);
+assert.equal(evaluateUrl("https://example.com/path",policy).allowed,true);
+assert.equal(evaluateUrl("https://sub.example.com/path",policy).allowed,true);
+assert.equal(evaluateUrl("https://blocked.example.com",policy).allowed,false);
+assert.equal(evaluateUrl("javascript:alert(1)",policy).reason,"SCHEME_BLOCKED");
+assert.equal(evaluateUrl("https://192.168.1.10",policy).reason,"PRIVATE_HOST_BLOCKED");
+assert.match(evaluateUrl("recherche entreprise Maroc",policy).normalizedUrl,/google\.com\/search/);
+assert.equal(downloadDecision("installer.exe",1000,policy).allowed,false);
+assert.equal(downloadDecision("report.pdf",1000,policy).confirmation,true);
+assert.equal(permissionRuleFor("camera",policy,"https://example.com"),"deny");
+assert.equal(permissionRuleFor("microphone",policy,"https://example.com"),"ask");
+console.log("Corporate Station URL, domain, permission and download policy smoke passed.");

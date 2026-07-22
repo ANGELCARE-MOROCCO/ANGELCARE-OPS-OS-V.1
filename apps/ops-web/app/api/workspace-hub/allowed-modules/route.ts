@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server'
 import { requireUser } from '@/lib/auth/session'
 import { loadAuthorizedWorkspaceHub } from '@/lib/workspace-hub/authorized-modules'
+import { loadAuthorizedIndependentResources } from '@/lib/workspace-hub/authorized-resources'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
     const user = await requireUser()
-    const data = await loadAuthorizedWorkspaceHub(user)
+    const [data, independentResources] = await Promise.all([
+      loadAuthorizedWorkspaceHub(user),
+      loadAuthorizedIndependentResources(user),
+    ])
 
     return NextResponse.json({
       ok: true,
       data,
+      independentResources,
     })
   } catch (error) {
     return NextResponse.json(

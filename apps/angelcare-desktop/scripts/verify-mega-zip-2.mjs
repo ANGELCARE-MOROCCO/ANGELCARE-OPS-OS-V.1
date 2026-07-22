@@ -75,7 +75,7 @@ for (const forbidden of ["executeJavaScript(", "BrowserView", "<webview", "webvi
 }
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(desktopRoot, "package.json"), "utf8"))
-if (!["1.1.0", "1.2.0", "1.3.0", "1.4.0"].includes(packageJson.version)) throw new Error("Mega ZIP 2 requires ANGELCARE Desktop version 1.1.0 or a supported cumulative version.")
+if (!["1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0"].includes(packageJson.version)) throw new Error("Mega ZIP 2 requires ANGELCARE Desktop version 1.1.0 or a supported cumulative version.")
 if (!packageJson.scripts?.verify?.includes("verify-mega-zip-2.mjs")) throw new Error("Mega ZIP 2 verifier is not wired into npm run verify.")
 if (packageJson.devDependencies?.["@electron-forge/maker-dmg"]) throw new Error("The native hdiutil DMG pipeline must remain intact.")
 

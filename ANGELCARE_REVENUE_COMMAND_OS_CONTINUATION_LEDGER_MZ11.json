@@ -1,0 +1,11 @@
+{
+  "system": "ANGELCARE Revenue Command OS",
+  "latestCompletedPhase": "MZ11",
+  "nextPhase": "MZ12",
+  "operationalCommands": 3000,
+  "aiProvider": "gemini",
+  "councilAgents": 10,
+  "executionMode": "shadow",
+  "externalActionsEnabled": false,
+  "databaseMigration": "20260721_revenue_command_os_phase11_validation_council.sql"
+}

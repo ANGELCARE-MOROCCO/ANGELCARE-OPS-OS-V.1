@@ -1,0 +1,7 @@
+{
+  "currentPhase": "MZ16",
+  "canonicalContractComplete": true,
+  "nextPhase": null,
+  "productionActivation": "explicit_and_reversible",
+  "externalActionsBypass": false
+}

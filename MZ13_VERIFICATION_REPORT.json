@@ -1,0 +1,35 @@
+{
+  "phase": "MZ13",
+  "release": "AC-REVENUE-OS-MZ13-MISSION-COMPILER",
+  "mode": "shadow",
+  "externalActions": 0,
+  "mandatoryOutputs": 19,
+  "compilerControls": 12,
+  "databaseTables": 29,
+  "staticAssertions": {
+    "passed": 90,
+    "failed": 0
+  },
+  "evaluationCorpus": {
+    "scenarioClasses": 25,
+    "cases": 25000,
+    "assertionsPassed": 325000,
+    "failures": 0
+  },
+  "sqlGovernance": {
+    "passed": 11,
+    "failed": 0
+  },
+  "targetedTypeScript": {
+    "passed": true,
+    "diagnostics": 0,
+    "scope": "MZ13 source/API/UI with local module stubs; installer runs target-repository check"
+  },
+  "deterministicCompilation": true,
+  "idempotency": true,
+  "fullRecompile": true,
+  "partialRecompile": true,
+  "deltaComparison": true,
+  "rollback": true,
+  "propagationExecuted": false
+}

@@ -1,0 +1,73 @@
+OK  required file exists: lib/generated/app-routes.ts
+OK  required file exists: lib/auth/page-access.ts
+OK  required file exists: lib/users/access-governance/types.ts
+OK  required file exists: lib/users/access-governance/admin-client.ts
+OK  required file exists: lib/users/access-governance/discovery.ts
+OK  required file exists: lib/users/access-governance/registry.ts
+OK  required file exists: lib/users/access-governance/scan.ts
+OK  required file exists: lib/users/access-governance/permission-catalog.ts
+OK  required file exists: lib/users/access-governance/preview.ts
+OK  required file exists: lib/workspace-hub/authorized-resources.ts
+OK  required file exists: components/workspace-hub/AuthorizedResourceFamilyCards.tsx
+OK  required file exists: app/(protected)/users/_components/GlobalAccessRegistryScannerModal.tsx
+OK  required file exists: app/(protected)/users/_components/UserAccessGovernanceCenter.tsx
+OK  required file exists: app/(protected)/users/_components/SmartPermissionsPanel.tsx
+OK  required file exists: app/(protected)/users/page.tsx
+OK  required file exists: app/(protected)/dashboard/page.tsx
+OK  required file exists: app/api/users/access-governance/scan/route.ts
+OK  required file exists: app/api/users/access-governance/scan/[id]/publish/route.ts
+OK  required file exists: app/api/users/access-governance/resources/route.ts
+OK  required file exists: app/api/users/access-governance/versions/route.ts
+OK  required file exists: app/api/users/access-governance/versions/[id]/rollback/route.ts
+OK  required file exists: app/api/users/access-governance/registry/route.ts
+OK  required file exists: app/api/app-routes/allowed/route.ts
+OK  required file exists: app/api/workspace-hub/allowed-modules/route.ts
+OK  required file exists: scripts/scan-app-routes.mjs
+OK  required file exists: supabase/migrations/20260721_users_global_access_registry_route_family_scanner.sql
+OK  required file exists: supabase/migrations/20260721_users_global_access_registry_route_family_scanner.rollback.sql
+OK  TypeScript compiler resolved: 5.8.3
+OK  24 TypeScript/TSX files transpiled without syntax errors
+Verified 1077 synchronized global page routes.
+OK  generated global APP_ROUTES catalogue is synchronized
+OK  strict backend semantic verification passed
+OK  focused scanner modal/dashboard UI semantic verification passed
+OK  global filesystem scanner discovered 2664 page/API route files
+OK  global hierarchy classified 2785 resources
+OK  formal modules classified
+OK  independent route families classified
+OK  standalone pages classified
+OK  API routes classified
+OK  no duplicate canonical permission keys
+OK  all resource parent references resolve
+OK  global scan covers /carelink-ops
+OK  global scan covers /traininghub
+OK  global scan covers /market-os
+OK  global scan covers /users
+OK  global scan covers /api/users/access-governance/scan
+OK  generated dashboard/page catalogue contains 1077 routes
+OK  generator scans complete application app root
+OK  Users Management opens scanner in-page
+OK  scanner modal includes Classification Studio
+OK  scanner modal includes Families & Groups
+OK  scanner modal includes Pages & APIs
+OK  scanner modal includes Reconciliation
+OK  scanner modal includes Publication & Recovery
+OK  published scans always include API routes
+OK  missing resources are marked, not automatically deleted
+OK  registry publication is versioned
+OK  family grants inherit to child page access
+OK  group grants inherit to child page access
+OK  dashboard resolver includes authorized families and standalone pages
+OK  dashboard renders independent authorized resource cards beside modules
+OK  permission catalog includes normalized registry resources
+OK  scan endpoint requires authenticated actor
+OK  scan and publication enforce management permission
+OK  registry mutation requires server-side service role configuration
+OK  additive canonical resource registry migration included
+OK  version history migration included
+OK  normalized resource grants migration included
+OK  registry RLS is read-only for authenticated clients
+OK  guarded SQL rollback included
+
+Global Access Registry verification: 69/69 checks passed.
+Discovery summary: 2664 route files, 2785 resources, 34 modules, 9 families, 47 standalone pages, 1587 APIs.

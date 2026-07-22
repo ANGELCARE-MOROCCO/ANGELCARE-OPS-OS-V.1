@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
   "product": "ANGELCARE Desktop",
-  "version": "1.4.0",
-  "buildNumber": 140,
+  "version": "1.5.0",
+  "buildNumber": 150,
   "channel": "stable",
-  "releaseDate": "2026-07-20T00:00:00.000Z",
-  "minimumSupportedVersion": "1.3.0",
+  "releaseDate": "2026-07-21T18:30:00.000Z",
+  "minimumSupportedVersion": "1.4.0",
   "mandatory": false,
-  "releaseNotes": "Production hardening, secure diagnostics, controlled updates and corporate handover.",
+  "releaseNotes": "Corporate Station OS 1.5.0: governed multi-tab Chromium workspace, Standard/Focus/Locked modes, native PIN recovery, centralized station policy and cross-platform deployment readiness.",
   "platforms": {
     "darwin": {
       "x64": {
-        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.4.0-darwin-x64.dmg",
-        "filename": "ANGELCARE Desktop-1.4.0-darwin-x64.dmg",
+        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.5.0-darwin-x64.dmg",
+        "filename": "ANGELCARE Desktop-1.5.0-darwin-x64.dmg",
         "size": 1,
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       },
       "arm64": {
-        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.4.0-darwin-arm64.dmg",
-        "filename": "ANGELCARE Desktop-1.4.0-darwin-arm64.dmg",
+        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.5.0-darwin-arm64.dmg",
+        "filename": "ANGELCARE Desktop-1.5.0-darwin-arm64.dmg",
         "size": 1,
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     "win32": {
       "x64": {
-        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-Setup-1.4.0.exe",
-        "filename": "ANGELCARE Desktop Setup 1.4.0.exe",
+        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-Setup-1.5.0.exe",
+        "filename": "ANGELCARE Desktop Setup 1.5.0.exe",
         "size": 1,
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       }

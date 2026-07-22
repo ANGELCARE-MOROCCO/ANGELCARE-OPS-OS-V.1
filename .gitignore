@@ -96,3 +96,13 @@ RELEASES
 
 # Local Revenue OS backups
 .revenue-os-backups/
+**/.DS_Store
+*.bak.*
+*.backup.*
+*.before-*
+.angelcare_patch_backups/
+**/_archive/
+**/_backup/
+**/_backups/
+**/backups/
+**/source-backups-*/

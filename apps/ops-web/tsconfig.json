@@ -45,6 +45,11 @@
     "_old_*",
     "modules",
     "backups",
-    "backups/**"
+    "backups/**",
+    "_archive",
+    "_archive/**",
+    ".angelcare_backups/**",
+    "deployment",
+    "deployment/**"
   ]
 }

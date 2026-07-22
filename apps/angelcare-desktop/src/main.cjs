@@ -24,6 +24,7 @@ const { createGovernanceController } = require("./runtime/governance.cjs");
 const { createDiagnosticsController } = require("./runtime/diagnostics.cjs");
 const { createStartupRecoveryController } = require("./runtime/startup-recovery.cjs");
 const { createUpdateManager } = require("./runtime/update-manager.cjs");
+const { createStationController } = require("./runtime/station-controller.cjs");
 const { applySecurityHeaders, sanitizeFilename } = require("./runtime/security.cjs");
 
 protocol.registerSchemesAsPrivileged([
@@ -44,6 +45,13 @@ const SHELL_HOST = "shell";
 const SHELL_URL = "angelcare-desktop://shell/index.html";
 const WHATSAPP_PARTITION = "persist:angelcare-whatsapp-main";
 const WHATSAPP_HOME = "https://web.whatsapp.com/";
+const DESKTOP_ROUTE_PATHS = Object.freeze({
+  home: "/",
+  whatsapp: "/whatsapp-os",
+  whatsappSession: "/whatsapp-os/web-session",
+  whatsappAdmin: "/whatsapp-os/admin",
+  whatsappControl: "/whatsapp-os/session-control",
+});
 const WHATSAPP_ALLOWED_NAVIGATION_HOSTS = new Set([
   "web.whatsapp.com",
   "www.whatsapp.com",
@@ -79,12 +87,18 @@ let governanceController = null;
 let diagnosticsController = null;
 let startupRecoveryController = null;
 let updateManager = null;
+let stationController = null;
+let corporateBrowserState = null;
+let stationState = null;
+let activeDesktopSurface = "angelcare-system";
+let closeAuthorizationPending = false;
 let runtime = null;
 let persistWindowState = null;
 let logger = null;
 let healthTimer = null;
 let loadTimer = null;
 let isQuitting = false;
+let stationAuthorizedQuit = false;
 let whatsappRequestedVisible = false;
 let whatsappBounds = null;
 let whatsappLayoutMode = "split";
@@ -156,14 +170,19 @@ function mimeTypeFor(filePath) {
 }
 
 async function registerLocalShellProtocol() {
-  const shellRoot = path.resolve(__dirname, "shell");
+  const localRoots = new Map([
+    [SHELL_HOST, path.resolve(__dirname, "shell")],
+    ["newtab", path.resolve(__dirname, "newtab")],
+    ["unlock", path.resolve(__dirname, "unlock")],
+  ]);
   await protocol.handle("angelcare-desktop", async (request) => {
     try {
       const url = new URL(request.url);
-      if (url.hostname !== SHELL_HOST) return new Response("Not found", { status: 404 });
+      const localRoot = localRoots.get(url.hostname);
+      if (!localRoot) return new Response("Not found", { status: 404 });
       const requestedPath = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
-      const filePath = path.resolve(shellRoot, `.${requestedPath}`);
-      if (!filePath.startsWith(`${shellRoot}${path.sep}`) && filePath !== path.join(shellRoot, "index.html")) {
+      const filePath = path.resolve(localRoot, `.${requestedPath}`);
+      if (!filePath.startsWith(`${localRoot}${path.sep}`) && filePath !== path.join(localRoot, "index.html")) {
         return new Response("Forbidden", { status: 403 });
       }
       const bytes = await fs.promises.readFile(filePath);
@@ -218,15 +237,45 @@ function desktopRuntimeInfo() {
       controlledUpdates: true,
       crashLoopRecovery: true,
       signedInstallerReady: true,
+      corporateStationOS: true,
+      corporateMultiTabBrowser: true,
+      corporateBrowserPartition: true,
+      stationModes: true,
+      nativeStationUnlock: true,
+      stationRemoteCommands: true,
+      perTabZoom: true,
       whatsappAutomation: false,
       whatsappDomAccess: false,
     }),
   });
 }
 
+function desktopNavigationState() {
+  if (!saasView || saasView.webContents.isDestroyed()) {
+    return {
+      canGoBack: false,
+      canGoForward: false,
+      whatsappVisible: false,
+      whatsappRequestedVisible,
+    };
+  }
+  const history = saasView.webContents.navigationHistory;
+  return {
+    loadedUrl: saasView.webContents.getURL() || currentState.loadedUrl || null,
+    canGoBack: history.canGoBack(),
+    canGoForward: history.canGoForward(),
+    whatsappVisible: Boolean(whatsappView?.getVisible()),
+    whatsappRequestedVisible,
+    activeDesktopSurface,
+    corporateBrowser: corporateBrowserState,
+    station: stationState,
+  };
+}
+
 function sendShellState(patch = {}) {
   currentState = {
     ...currentState,
+    ...desktopNavigationState(),
     ...patch,
     timestamp: new Date().toISOString(),
     appName: APP_NAME,
@@ -235,6 +284,9 @@ function sendShellState(patch = {}) {
     releaseChannel: runtime?.releaseChannel || "stable",
     buildId: runtime?.buildId || "local",
     targetUrl: runtime?.appUrl || null,
+    activeDesktopSurface,
+    corporateBrowser: corporateBrowserState,
+    station: stationState,
   };
   if (shellView && !shellView.webContents.isDestroyed()) {
     shellView.webContents.send("angelcare-desktop:state", currentState);
@@ -264,7 +316,23 @@ function sendWhatsappState(patch = {}) {
   if (saasView && !saasView.webContents.isDestroyed()) {
     saasView.webContents.send("angelcare-desktop:whatsapp-state", state);
   }
+  sendShellState();
   return state;
+}
+
+
+function sendCorporateBrowserState(state) {
+  corporateBrowserState = safeJson(state || {});
+  if (shellView && !shellView.webContents.isDestroyed()) shellView.webContents.send("angelcare-desktop:corporate-state", corporateBrowserState);
+  if (saasView && !saasView.webContents.isDestroyed()) saasView.webContents.send("angelcare-desktop:corporate-state", corporateBrowserState);
+  sendShellState();
+}
+
+function sendStationState(state) {
+  stationState = safeJson(state || {});
+  if (shellView && !shellView.webContents.isDestroyed()) shellView.webContents.send("angelcare-desktop:station-state", stationState);
+  if (saasView && !saasView.webContents.isDestroyed()) saasView.webContents.send("angelcare-desktop:station-state", stationState);
+  sendShellState();
 }
 
 function sendGovernanceState(state) {
@@ -285,6 +353,8 @@ function publicProductionStatus() {
     release: updateManager?.getState() || null,
     diagnostics: diagnosticsController?.getStatus() || null,
     startupRecovery: startupRecoveryController?.getState() || null,
+    station: stationController?.getStatus() || null,
+    corporateBrowser: stationController?.corporateBrowser?.getState() || null,
     timestamp: new Date().toISOString(),
   });
 }
@@ -336,6 +406,36 @@ function buildWhatsappNavigationUrl(payload = {}) {
   return url.href;
 }
 
+function desktopRouteUrl(routePath) {
+  const route = String(routePath || "/");
+  if (!Object.values(DESKTOP_ROUTE_PATHS).includes(route)) throw new Error("Unsupported ANGELCARE desktop route.");
+  return new URL(route, `${runtime.appOrigin}/`).href;
+}
+
+async function navigateDesktopRoute(routePath, source = "desktop-toolbar") {
+  if (!saasView || saasView.webContents.isDestroyed()) throw new Error("ANGELCARE SaaS view is unavailable.");
+  const target = desktopRouteUrl(routePath);
+  if (routePath !== DESKTOP_ROUTE_PATHS.whatsappSession) hideWhatsappView(`route:${source}`);
+  setSaasVisible(true);
+  if (saasView.webContents.getURL() !== target) await saasView.webContents.loadURL(target);
+  else sendShellState({ loadedUrl: target });
+  logger.info("desktop_route_navigation", { source, routePath, target });
+  return { ok: true, target };
+}
+
+async function openWhatsappWorkspace(source = "desktop-toolbar") {
+  requireGovernedWhatsappAccess("show");
+  whatsappRequestedVisible = true;
+  const whatsappReady = ensureWhatsappView({ load: true });
+  const target = desktopRouteUrl(DESKTOP_ROUTE_PATHS.whatsappSession);
+  setSaasVisible(true);
+  if (!saasView || saasView.webContents.isDestroyed()) throw new Error("ANGELCARE SaaS view is unavailable.");
+  if (saasView.webContents.getURL() !== target) await saasView.webContents.loadURL(target);
+  await whatsappReady;
+  logger.info("whatsapp_workspace_open_requested", { source, target });
+  return showWhatsappView();
+}
+
 function layoutViews() {
   if (!mainWindow || !shellView || !saasView) return;
   const contentBounds = mainWindow.getContentBounds();
@@ -348,6 +448,7 @@ function layoutViews() {
     saasView.setBounds({ x: 0, y: toolbarHeight, width, height: Math.max(0, height - toolbarHeight) });
   }
 
+  stationController?.resize();
   if (!whatsappView || !whatsappView.getVisible() || !whatsappBounds || !saasView.getVisible()) return;
   const maxWorkspaceHeight = Math.max(0, height - toolbarHeight);
   const x = clamp(Math.floor(whatsappBounds.x), 0, width);
@@ -563,7 +664,16 @@ function updateWhatsappNavigationState(patch = {}) {
 
 function configureWhatsappViewEvents(view) {
   const wc = view.webContents;
-  wc.setUserAgent(`${wc.getUserAgent()} AngelCareWhatsAppWorkspace/${app.getVersion()}`);
+  const chromeVersion = process.versions.chrome;
+  const platformToken = process.platform === "darwin"
+    ? "Macintosh; Intel Mac OS X 10_15_7"
+    : process.platform === "win32"
+      ? "Windows NT 10.0; Win64; x64"
+      : "X11; Linux x86_64";
+
+  wc.setUserAgent(
+    `Mozilla/5.0 (${platformToken}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`,
+  );
 
   wc.setWindowOpenHandler(({ url }) => {
     if (governanceController?.getState()?.policy?.allow_external_open !== false && isSafeExternalUrl(url, runtime)) void shell.openExternal(url);
@@ -711,10 +821,22 @@ function showWhatsappView() {
 }
 
 function hideWhatsappView(reason = "user") {
+  const wasRequestedVisible = whatsappRequestedVisible;
+  const wasVisible = Boolean(whatsappView?.getVisible?.());
+
   whatsappRequestedVisible = false;
+
   if (whatsappView) whatsappView.setVisible(false);
-  logger.info("whatsapp_view_hidden", { reason });
-  return sendWhatsappState({ visible: false, requestedVisible: false });
+
+  // WHATSAPP_HIDE_DEDUPLICATION_V1
+  if (wasRequestedVisible || wasVisible) {
+    logger.info("whatsapp_view_hidden", { reason });
+  }
+
+  return sendWhatsappState({
+    visible: false,
+    requestedVisible: false,
+  });
 }
 
 async function restartWhatsappView() {
@@ -857,6 +979,55 @@ async function handleWhatsappCommand(action, payload = {}) {
   }
 }
 
+
+async function handleCorporateCommand(action, payload = {}) {
+  if (!stationController) throw new Error("Corporate Station runtime is not initialized.");
+  const browser = stationController.corporateBrowser;
+  switch (String(action || "")) {
+    case "list":
+    case "get-status": return browser.getState();
+    case "create": return browser.createTab(payload || {});
+    case "close": return browser.closeTab(String(payload.id || payload.tabId || ""));
+    case "close-others": return browser.closeOtherTabs(String(payload.id || payload.tabId || ""));
+    case "activate": return browser.activateTab(String(payload.id || payload.tabId || ""));
+    case "duplicate": return browser.duplicateTab(String(payload.id || payload.tabId || ""));
+    case "pin": return browser.pinTab(String(payload.id || payload.tabId || ""), payload.pinned !== false);
+    case "reorder": return browser.reorderTab(String(payload.id || payload.tabId || ""), payload.targetIndex);
+    case "reopen-closed": return browser.reopenClosed();
+    case "navigate": return browser.navigate(String(payload.id || payload.tabId || ""), payload.url || payload.input || "");
+    case "back": return browser.back(payload.id || payload.tabId);
+    case "forward": return browser.forward(payload.id || payload.tabId);
+    case "reload": return browser.reload(payload.id || payload.tabId);
+    case "reload-no-cache": return browser.reloadIgnoringCache(payload.id || payload.tabId);
+    case "stop": return browser.stop(payload.id || payload.tabId);
+    case "home": return browser.home(payload.id || payload.tabId);
+    case "zoom-in": return browser.zoomIn(payload.id || payload.tabId);
+    case "zoom-out": return browser.zoomOut(payload.id || payload.tabId);
+    case "zoom-reset": return browser.zoomReset(payload.id || payload.tabId);
+    case "set-zoom": return browser.setZoom(payload.id || payload.tabId, payload.zoom);
+    case "fit-workspace": return browser.fitWorkspace(payload.id || payload.tabId);
+    case "recover": return browser.recoverTab(String(payload.id || payload.tabId || ""));
+    case "clear-cache": return browser.clearCache();
+    case "clear-data": return browser.clearData();
+    case "open-downloads": return browser.openDownloads();
+    default: throw new Error(`Unsupported corporate browser action: ${String(action)}`);
+  }
+}
+
+async function handleStationCommand(action, payload = {}) {
+  if (!stationController) throw new Error("Corporate Station runtime is not initialized.");
+  switch (String(action || "")) {
+    case "get-status": return stationController.getStatus();
+    case "get-policy": return stationController.getPolicy();
+    case "refresh-policy": return stationController.refreshPolicy({ source: "renderer" });
+    case "request-mode": return stationController.requestMode(String(payload.mode || ""), "renderer");
+    case "request-unlock": return stationController.requestUnlock("renderer");
+    case "get-lockout-status": return stationController.unlockController.getStatus();
+    case "get-diagnostics": return publicProductionStatus();
+    default: throw new Error(`Unsupported station action: ${String(action)}`);
+  }
+}
+
 function installIpcHandlers() {
   ipcMain.handle("angelcare-desktop:shell-action", async (event, action) => {
     if (!validateShellSender(event)) throw new Error("Unauthorized desktop IPC sender.");
@@ -864,7 +1035,16 @@ function installIpcHandlers() {
       case "retry": await loadSaas({ hard: false, reason: "shell_retry" }); return { ok: true };
       case "reload": saasView?.webContents.reload(); return { ok: true };
       case "hard-reload": saasView?.webContents.reloadIgnoringCache(); return { ok: true };
-      case "open-browser": await shell.openExternal(runtime.appUrl); return { ok: true };
+      case "go-back": if (saasView?.webContents.navigationHistory.canGoBack()) saasView.webContents.navigationHistory.goBack(); return { ok: true };
+      case "go-forward": if (saasView?.webContents.navigationHistory.canGoForward()) saasView.webContents.navigationHistory.goForward(); return { ok: true };
+      case "go-home": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.home, "desktop-toolbar");
+      case "go-whatsapp-os": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsapp, "desktop-toolbar");
+      case "go-whatsapp-session": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsappSession, "desktop-toolbar");
+      case "go-whatsapp-admin": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsappAdmin, "desktop-toolbar");
+      case "go-whatsapp-control": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsappControl, "desktop-toolbar");
+      case "open-whatsapp-workspace": return openWhatsappWorkspace("desktop-toolbar");
+      case "hide-whatsapp-workspace": return hideWhatsappView("desktop-toolbar");
+      case "open-browser": return stationController?.corporateBrowser.createTab({ url: runtime.appUrl, title: "ANGELCARE Web", activate: true });
       case "show-app": setSaasVisible(true); return { ok: true };
       case "hide-app": setSaasVisible(false); return { ok: true };
       case "quit": app.quit(); return { ok: true };
@@ -902,6 +1082,19 @@ function installIpcHandlers() {
       case "select-workspace": return governanceController.selectWorkspace(payload || {});
       default: throw new Error(`Unsupported governance action: ${String(action)}`);
     }
+  });
+
+
+  ipcMain.handle("angelcare-desktop:corporate-command", async (event, action, payload) => {
+    if (!validateSaasSender(event) && !validateShellSender(event)) throw new Error("Unauthorized corporate-browser IPC sender.");
+    logger.info("corporate_browser_command", { action: String(action || "") });
+    return handleCorporateCommand(action, payload || {});
+  });
+
+  ipcMain.handle("angelcare-desktop:station-command", async (event, action, payload) => {
+    if (!validateSaasSender(event) && !validateShellSender(event)) throw new Error("Unauthorized station IPC sender.");
+    logger.info("station_command", { action: String(action || "") });
+    return handleStationCommand(action, payload || {});
   });
 
 
@@ -1082,8 +1275,16 @@ async function loadSaas({ hard = false, reason = "startup" } = {}) {
       lastErrorAt: new Date().toISOString(),
     });
   }, runtime.loadTimeoutMs);
-  if (hard) await saasView.webContents.session.clearCache();
-  await saasView.webContents.loadURL(runtime.appUrl);
+  try {
+    if (hard) await saasView.webContents.session.clearCache();
+    await saasView.webContents.loadURL(runtime.appUrl);
+  } catch (error) {
+    logger.warn("saas_load_request_failed", {
+      reason,
+      url: runtime.appUrl,
+      message: error instanceof Error ? error.message : String(error),
+    });
+  }
 }
 
 function buildApplicationMenu() {
@@ -1096,8 +1297,8 @@ function buildApplicationMenu() {
     {
       label: "Fichier",
       submenu: [
-        { label: "Ouvrir ANGELCARE dans le navigateur", accelerator: "CmdOrCtrl+Shift+O", click: () => void shell.openExternal(runtime.appUrl) },
-        { label: "Ouvrir WhatsApp Web séparément", accelerator: "CmdOrCtrl+Shift+W", click: () => void shell.openExternal(WHATSAPP_HOME) },
+        { label: "Ouvrir ANGELCARE", accelerator: "CmdOrCtrl+Shift+O", click: () => void stationController?.corporateBrowser.activateTab("angelcare-system") },
+        { label: "Ouvrir WhatsApp", accelerator: "CmdOrCtrl+Shift+W", click: () => void stationController?.corporateBrowser.activateTab("whatsapp-system") },
         { type: "separator" },
         isMac ? { role: "close" } : { role: "quit" },
       ],
@@ -1105,7 +1306,7 @@ function buildApplicationMenu() {
     {
       label: "WhatsApp",
       submenu: [
-        { label: "Afficher le workspace", accelerator: "CmdOrCtrl+Alt+W", click: () => void ensureWhatsappView({ load: true }).then(showWhatsappView) },
+        { label: "Afficher le workspace", accelerator: "CmdOrCtrl+Alt+W", click: () => { void openWhatsappWorkspace("application-menu").catch((error) => logger.warn("whatsapp_workspace_menu_open_failed", { message: error instanceof Error ? error.message : String(error) })); } },
         { label: "Masquer le workspace", click: () => hideWhatsappView("menu") },
         { label: "Actualiser WhatsApp", click: () => whatsappView?.webContents.reload() },
         { label: "Redémarrer le moteur", click: () => void restartWhatsappView() },
@@ -1119,7 +1320,7 @@ function buildApplicationMenu() {
         { label: "Actualiser ANGELCARE", accelerator: "CmdOrCtrl+R", click: () => saasView?.webContents.reload() },
         { label: "Actualiser ANGELCARE sans cache", accelerator: "CmdOrCtrl+Shift+R", click: () => saasView?.webContents.reloadIgnoringCache() },
         { type: "separator" },
-        { role: "resetZoom" }, { role: "zoomIn" }, { role: "zoomOut" }, { type: "separator" }, { role: "togglefullscreen" },
+        { label: "Zoom 100 %", accelerator: "CmdOrCtrl+0", click: () => void stationController?.corporateBrowser.zoomReset() }, { label: "Zoom avant", accelerator: "CmdOrCtrl+Plus", click: () => void stationController?.corporateBrowser.zoomIn() }, { label: "Zoom arrière", accelerator: "CmdOrCtrl+-", click: () => void stationController?.corporateBrowser.zoomOut() }, { type: "separator" }, { label: "Plein écran", accelerator: "F11", click: () => { if (stationController?.getStatus()?.mode !== "locked") mainWindow?.setFullScreen?.(!mainWindow?.isFullScreen?.()); } },
         ...(runtime.isDevelopment ? [{ type: "separator" }, { role: "toggleDevTools" }] : []),
       ],
     },
@@ -1223,16 +1424,68 @@ async function createMainWindow() {
     },
   });
 
+  stationController = createStationController({
+    app,
+    mainWindow,
+    runtime,
+    logger,
+    dialog,
+    shell,
+    saasSession: saasSessionRuntime,
+    getInstallationId: () => governanceController?.getInstallationId?.() || "unknown-installation",
+    getDeviceId: () => governanceController?.getState?.()?.deviceId || null,
+    getUserId: () => governanceController?.getState?.()?.assignment?.user_id || null,
+    getCorporateBounds: () => {
+      const contentBounds = mainWindow?.getContentBounds?.() || { width: 0, height: 0 };
+      const toolbarHeight = Math.min(runtime.toolbarHeight, Math.max(0, contentBounds.height));
+      return { x: 0, y: toolbarHeight, width: Math.max(0, Math.floor(contentBounds.width)), height: Math.max(0, Math.floor(contentBounds.height - toolbarHeight)) };
+    },
+    onStationState: sendStationState,
+    onCorporateState: sendCorporateBrowserState,
+    onActivateSystemTab: (type) => {
+      activeDesktopSurface = type;
+      if (type === "whatsapp-system") {
+        void openWhatsappWorkspace("corporate-system-tab").catch((error) => logger.warn("station_whatsapp_system_tab_failed", { message: error.message }));
+      } else {
+        hideWhatsappView("corporate-system-tab");
+        setSaasVisible(true);
+      }
+      sendShellState();
+    },
+    onActivateCorporateTab: (tab) => {
+      activeDesktopSurface = tab.type || "corporate-web";
+      hideWhatsappView("corporate-tab-active");
+      setSaasVisible(false);
+      sendShellState();
+    },
+    requestDiagnostics: () => diagnosticsController?.exportBundle(),
+    restartDesktop: () => { app.relaunch(); app.exit(0); },
+  });
+
   mainWindow.on("resize", layoutViews);
   mainWindow.on("maximize", layoutViews);
   mainWindow.on("unmaximize", layoutViews);
   mainWindow.on("enter-full-screen", layoutViews);
   mainWindow.on("leave-full-screen", layoutViews);
-  mainWindow.on("close", () => {
+  mainWindow.on("close", (event) => {
     if (!isQuitting) persistWindowState(mainWindow.getBounds(), mainWindow.isMaximized());
+    if (!isQuitting && stationController?.shouldBlockClose()) {
+      event.preventDefault();
+      if (!closeAuthorizationPending) {
+        closeAuthorizationPending = true;
+        void stationController.requestCloseAuthorization("window-close").then((result) => {
+          if (result?.ok === false || result?.cancelled) return;
+          stationAuthorizedQuit = true;
+          isQuitting = true;
+          app.quit();
+        }).catch((error) => logger.warn("station_close_authorization_failed", { message: error.message })).finally(() => { closeAuthorizationPending = false; });
+      }
+    }
   });
   mainWindow.on("closed", () => {
     governanceController?.stop();
+    stationController?.destroy();
+    stationController = null;
     updateManager?.stop();
     clearInterval(healthTimer);
     clearTimeout(loadTimer);
@@ -1251,6 +1504,8 @@ async function createMainWindow() {
     sendShellState();
     if (governanceController) sendGovernanceState(governanceController.getState());
     if (updateManager) sendReleaseState(updateManager.getState());
+    if (stationController) sendStationState(stationController.getStatus());
+    if (stationController) sendCorporateBrowserState(stationController.corporateBrowser.getState());
     mainWindow.show();
   });
   shellView.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
@@ -1260,6 +1515,7 @@ async function createMainWindow() {
   if (persistedConfig.window?.maximized) mainWindow.maximize();
 
   await loadSaas({ reason: "startup" });
+  await stationController.initialize();
   healthTimer = setInterval(() => void checkHealth(), runtime.healthCheckIntervalMs);
 }
 
@@ -1270,7 +1526,21 @@ app.on("second-instance", () => {
   mainWindow.focus();
 });
 
-app.on("before-quit", () => {
+app.on("before-quit", (event) => {
+  if (mainWindow && stationController?.shouldBlockClose() && !stationAuthorizedQuit) {
+    event.preventDefault();
+    if (!closeAuthorizationPending) {
+      closeAuthorizationPending = true;
+      void stationController.requestCloseAuthorization("application-quit").then((result) => {
+        if (result?.ok === false || result?.cancelled) return;
+        stationAuthorizedQuit = true;
+        isQuitting = true;
+        app.quit();
+      }).catch((error) => logger?.warn("station_quit_authorization_failed", { message: error instanceof Error ? error.message : String(error) }))
+        .finally(() => { closeAuthorizationPending = false; });
+    }
+    return;
+  }
   isQuitting = true;
   updateManager?.stop();
   startupRecoveryController?.markCleanExit();
@@ -1350,6 +1620,7 @@ if (hasSingleInstanceLock) {
         if (!healthy && saasView && !saasView.webContents.isDestroyed()) saasView.webContents.reload();
       });
       if (governanceController) void governanceController.refresh();
+      if (stationController) void stationController.refreshPolicy({ source: "system-resume" }).then(() => stationController.heartbeat());
       if (whatsappView && whatsappRequestedVisible && governanceController?.canOpen()) whatsappView.webContents.reload();
     });
     powerMonitor.on("lock-screen", () => logger.info("screen_locked"));

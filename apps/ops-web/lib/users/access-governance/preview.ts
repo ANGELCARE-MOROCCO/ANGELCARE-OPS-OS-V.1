@@ -32,13 +32,14 @@ export async function buildAccessGovernancePreview(supabase: SupabaseClient, use
 
     if (userResult.error) throw userResult.error
     if (!userResult.data) return { ok: false as const, status: 404, error: 'User not found.', missingMigration: false }
-    if (!registryResult.ok) return { ok: false as const, status: 500, error: registryResult.error, missingMigration: registryResult.missingMigration }
+    if (registryResult.ok === false) return { ok: false as const, status: 500, error: registryResult.error, missingMigration: registryResult.missingMigration }
 
     const user = userResult.data as GovernanceUserRow
     const permissions = normalizePermissions(user)
     const role = normalizeRole(user.role)
-    const fullAccess = role === 'ceo' || permissions.includes('*')
+    const fullAccess = ['ceo', 'owner', 'super_admin', 'root', 'root_admin'].includes(role) || permissions.includes('*')
     const knownPermissionKeys = getKnownRegistryPermissionKeys(registryResult.snapshot.routes)
+    registryResult.snapshot.resources.forEach((resource) => knownPermissionKeys.add(resource.permission_key))
     const assignedRoutes = registryResult.snapshot.routes.filter((route) => route.status === 'active' && routePermissionMatches(permissions, route))
     const deniedRoutes = registryResult.snapshot.routes
       .filter((route) => route.status === 'active' && !routePermissionMatches(permissions, route))
@@ -52,6 +53,17 @@ export async function buildAccessGovernancePreview(supabase: SupabaseClient, use
           missingPermissions: Array.from(new Set(missingPermissions)),
         }
       })
+
+    const assignedResources = registryResult.snapshot.resources
+      .filter((resource) => resource.status === 'active' && resource.assignable)
+      .filter((resource) => fullAccess || permissions.includes(resource.permission_key))
+      .map((resource) => ({
+        resourceKey: resource.resource_key,
+        resourceType: resource.resource_type,
+        displayName: resource.display_name,
+        canonicalRoute: resource.canonical_route,
+        permissionKey: resource.permission_key,
+      }))
 
     const assignedModules = new Map<string, { moduleKey: string; moduleLabel: string | null; routeCount: number; permissionKey: string | null; modulePermissionKey: string | null }>()
     for (const route of assignedRoutes) {
@@ -77,6 +89,7 @@ export async function buildAccessGovernancePreview(supabase: SupabaseClient, use
       permissions,
       fullAccess,
       assignedModules: [...assignedModules.values()],
+      assignedResources,
       assignedRoutes: assignedRoutes.map((route) => ({
         href: route.href,
         label: route.label,
@@ -99,6 +112,7 @@ export async function buildAccessGovernancePreview(supabase: SupabaseClient, use
       latestScan,
       routeCount: assignedRoutes.length,
       moduleCount: assignedModules.size,
+      resourceCount: assignedResources.length,
     }
 
     return { ok: true as const, preview }
@@ -107,7 +121,7 @@ export async function buildAccessGovernancePreview(supabase: SupabaseClient, use
       return { ok: false as const, status: 404, error: 'User not found.', missingMigration: false }
     }
     if (String((error as { message?: string })?.message || '').toLowerCase().includes('access governance registry tables are missing')) {
-      return { ok: false as const, status: 500, error: 'Access governance registry tables are missing. Apply the Phase 1 migration before using preview.', missingMigration: true }
+      return { ok: false as const, status: 500, error: 'Global access registry tables are missing. Apply the global registry migration before using preview.', missingMigration: true }
     }
     return { ok: false as const, status: 500, error: error instanceof Error ? error.message : 'Unable to build access preview.', missingMigration: false }
   }

@@ -17,6 +17,7 @@ import ActionProgressPanel from '@/components/shared/ActionProgressPanel'
 import BroadcastControlTower from './BroadcastControlTower'
 import { useActionProgress } from '@/hooks/useActionProgress'
 import type { PermissionCatalogResponse } from '@/lib/users/access-governance/permission-catalog'
+import GlobalAccessRegistryScannerModal from './GlobalAccessRegistryScannerModal'
 
 type Props = {
   initialUsers: UserStaffRecord[]
@@ -159,6 +160,7 @@ const [moduleQuery, setModuleQuery] = useState('')
   const [refreshBusy, setRefreshBusy] = useState(false)
   const [previewBusy, setPreviewBusy] = useState(false)
   const [scanSummary, setScanSummary] = useState<AccessGovernanceScanSummary | null>(null)
+  const [scannerOpen, setScannerOpen] = useState(false)
   const actionProgress = useActionProgress()
   const [permissionCatalog, setPermissionCatalog] = useState<{
     modules: number
@@ -266,7 +268,7 @@ const [moduleQuery, setModuleQuery] = useState('')
     })
     actionProgress.setStep('registry', 'running', 'Loading module and route registry…', 30)
     const [registryResult, eventsResult] = await Promise.all([
-      fetchJson<{ ok: boolean; modules: AccessModuleRegistryRow[]; routes: AccessRouteRegistryRow[]; templates: AccessGovernanceRegistrySnapshot['templates']; latestScan: AccessGovernanceRegistrySnapshot['latestScan']; stats: AccessGovernanceRegistrySnapshot['stats'] }>('/api/users/access-governance/registry'),
+      fetchJson<{ ok: boolean; modules: AccessModuleRegistryRow[]; routes: AccessRouteRegistryRow[]; resources: AccessGovernanceRegistrySnapshot['resources']; templates: AccessGovernanceRegistrySnapshot['templates']; latestScan: AccessGovernanceRegistrySnapshot['latestScan']; latestVersion: AccessGovernanceRegistrySnapshot['latestVersion']; stats: AccessGovernanceRegistrySnapshot['stats'] }>('/api/users/access-governance/registry'),
       fetchJson<{ ok: boolean; events: AccessRegistryEventRow[]; scans: Array<Record<string, unknown>> }>('/api/users/access-governance/events'),
     ])
 
@@ -275,8 +277,10 @@ const [moduleQuery, setModuleQuery] = useState('')
       setRegistry({
         modules: registryResult.data.modules,
         routes: registryResult.data.routes,
+        resources: registryResult.data.resources || [],
         templates: registryResult.data.templates,
         latestScan: registryResult.data.latestScan,
+        latestVersion: registryResult.data.latestVersion || null,
         stats: registryResult.data.stats,
       })
       setRegistryMessage(null)
@@ -392,6 +396,20 @@ const [moduleQuery, setModuleQuery] = useState('')
   return (
     <div style={rootStyle}>
       <ActionProgressPanel progress={actionProgress.progress} onClose={actionProgress.closeProgress} />
+      <GlobalAccessRegistryScannerModal
+        open={scannerOpen}
+        canManage={canManageGovernance}
+        onClose={() => setScannerOpen(false)}
+        onPublished={async (published) => {
+          setScanSummary(published)
+          await refreshRegistry('Global registry published and synchronized.')
+          await refreshPermissionCatalog('Permission catalog refreshed with modules, route families, groups and standalone pages.')
+        }}
+        onRegistryChanged={async () => {
+          await refreshRegistry('Registry version restored and synchronized.')
+          await refreshPermissionCatalog('Permission catalog refreshed after registry rollback.')
+        }}
+      />
       <BroadcastControlTower />
       {registryMessage ? <div style={errorBannerStyle}>{registryMessage}</div> : null}
 
@@ -408,8 +426,8 @@ const [moduleQuery, setModuleQuery] = useState('')
 </div>
 
         <div style={actionsStyle}>
-          <ActionButton onClick={runScan} disabled={!canManageGovernance || scanBusy} tone="primary" reason={canRender(canManageGovernance, 'Requires CEO, Admin, Manager, or users.manage.')}>
-            {scanBusy ? 'Scanning App...' : 'Run App Access Scan'}
+          <ActionButton onClick={() => setScannerOpen(true)} disabled={!canManageGovernance} tone="primary" reason={canRender(canManageGovernance, 'Requires CEO, Admin, Manager, or users.manage.')}>
+            Open Global Registry Scanner
           </ActionButton>
           <ActionButton onClick={() => refreshRegistry()} disabled={refreshBusy} tone="secondary">
             {refreshBusy ? 'Refreshing...' : 'Refresh Registry'}
@@ -560,7 +578,7 @@ const [moduleQuery, setModuleQuery] = useState('')
           <SectionHeader eyebrow="App Scan" title="App Access Scan Center" subtitle="Detects access surfaces only. It does not grant access automatically." />
 
           <div className="scan-summary" style={scanSummaryStyle}>
-            <StatBlock label="Scan source" value="lib/generated/app-routes.ts" />
+            <StatBlock label="Scan source" value="Global app filesystem registry v2" />
             <StatBlock label="Modules detected" value={String(latestScan?.modules_detected || scanPayload?.modulesDetected || 0)} />
             <StatBlock label="Routes detected" value={String(latestScan?.routes_detected || scanPayload?.routesDetected || 0)} />
             <StatBlock label="New modules" value={String(latestScan?.new_modules || scanPayload?.newModules || 0)} />
@@ -602,7 +620,7 @@ const [moduleQuery, setModuleQuery] = useState('')
         </section>
 
         <section style={panelStyle}>
-          <SectionHeader eyebrow="Modules" title="Module Registry" subtitle="Canonical registry rows grouped from the generated app routes." />
+          <SectionHeader eyebrow="Modules" title="Module Registry" subtitle="Canonical formal modules plus independent route-family compatibility rows from the global registry." />
           <div className="uag-toolbar" style={toolbarStyle}>
             <input value={moduleQuery} onChange={(event) => setModuleQuery(event.target.value)} placeholder="Filter modules..." style={searchStyle} />
             <SmallStat label="Active" value={String(activeRegistryModules.length)} />
@@ -675,7 +693,7 @@ const [moduleQuery, setModuleQuery] = useState('')
 
       <div className="uag-two" style={twoColumnStyle}>
         <section style={panelStyle}>
-          <SectionHeader eyebrow="Routes" title="Route Registry" subtitle="Workspace, page, route and permission key registry for future governance edits." />
+          <SectionHeader eyebrow="Routes" title="Route Registry" subtitle="All assignable pages, dynamic routes and compatibility permission keys published from the global registry." />
           <div className="uag-toolbar" style={toolbarStyle}>
             <input value={routeQuery} onChange={(event) => setRouteQuery(event.target.value)} placeholder="Filter routes..." style={searchStyle} />
             <SmallStat label="Active" value={String(activeRegistryRoutes.length)} />

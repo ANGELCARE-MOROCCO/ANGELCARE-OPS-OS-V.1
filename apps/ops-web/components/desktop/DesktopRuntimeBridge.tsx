@@ -1,67 +1,63 @@
 "use client"
 
 import { useEffect } from "react"
-import { getDesktopRuntime, getWhatsAppDesktopApi, getWhatsAppGovernanceApi } from "@/lib/desktop-runtime"
+import LegacyDesktopRuntimeBridge from "./DesktopRuntimeBridgePreMegaZip6"
 
-export default function DesktopRuntimeBridge() {
+function dispatch(name: string, detail: unknown) {
+  window.dispatchEvent(new CustomEvent(name, { detail }))
+}
+
+function CorporateStationRuntimeBridge() {
   useEffect(() => {
-    const runtime = getDesktopRuntime()
-    const root = document.documentElement
+    const desktop = window.angelcareDesktop
 
-    if (runtime) {
-      root.dataset.angelcareDesktop = "true"
-      root.dataset.angelcareDesktopPlatform = runtime.platform
-      root.dataset.angelcareDesktopVersion = runtime.version
-      root.dataset.angelcareWhatsappRuntime = runtime.capabilities?.whatsappWebContentsView ? "available" : "unavailable"
-    } else {
-      delete root.dataset.angelcareDesktop
-      delete root.dataset.angelcareDesktopPlatform
-      delete root.dataset.angelcareDesktopVersion
-      delete root.dataset.angelcareWhatsappRuntime
+    if (!desktop) {
+      return
     }
 
-    window.dispatchEvent(new CustomEvent("angelcare:desktop-runtime", { detail: runtime }))
+    const unsubscribe: Array<() => void> = []
 
-    const openContext = (event: Event) => {
-      const detail = (event as CustomEvent<{ href?: string }>).detail
-      if (!detail?.href || !detail.href.startsWith("/whatsapp-os/web-session")) return
-      window.location.assign(detail.href)
-    }
-    window.addEventListener("angelcare:open-whatsapp-context", openContext)
-
-    const api = getWhatsAppDesktopApi()
-    if (!api) return
-
-    let active = true
-    void api.getStatus().then((status) => {
-      if (active) window.dispatchEvent(new CustomEvent("angelcare:whatsapp-status", { detail: status }))
-    }).catch(() => undefined)
-
-    const unsubscribe = api.onStatus((status) => {
-      window.dispatchEvent(new CustomEvent("angelcare:whatsapp-status", { detail: status }))
-    })
-
-    const governance = getWhatsAppGovernanceApi()
-    let unsubscribeGovernance: (() => void) | undefined
-    if (governance) {
-      root.dataset.angelcareWhatsappGovernance = "available"
-      void governance.getStatus().then((status) => {
-        if (active) window.dispatchEvent(new CustomEvent("angelcare:whatsapp-governance", { detail: status }))
-      }).catch(() => undefined)
-      unsubscribeGovernance = governance.onStatus((status) => {
-        window.dispatchEvent(new CustomEvent("angelcare:whatsapp-governance", { detail: status }))
+    void desktop.station
+      .getStatus()
+      .then((value) => {
+        dispatch("angelcare:station-status", value)
       })
-    } else {
-      delete root.dataset.angelcareWhatsappGovernance
-    }
+      .catch(() => null)
+
+    void desktop.corporateTabs
+      .getStatus()
+      .then((value) => {
+        dispatch("angelcare:corporate-tabs", value)
+      })
+      .catch(() => null)
+
+    unsubscribe.push(
+      desktop.station.onStatus((value) => {
+        dispatch("angelcare:station-status", value)
+      }),
+    )
+
+    unsubscribe.push(
+      desktop.corporateTabs.onStatus((value) => {
+        dispatch("angelcare:corporate-tabs", value)
+      }),
+    )
 
     return () => {
-      active = false
-      unsubscribe()
-      unsubscribeGovernance?.()
-      window.removeEventListener("angelcare:open-whatsapp-context", openContext)
+      unsubscribe.forEach((removeListener) => {
+        removeListener()
+      })
     }
   }, [])
 
   return null
+}
+
+export default function DesktopRuntimeBridge() {
+  return (
+    <>
+      <LegacyDesktopRuntimeBridge />
+      <CorporateStationRuntimeBridge />
+    </>
+  )
 }

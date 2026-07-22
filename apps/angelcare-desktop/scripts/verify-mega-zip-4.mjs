@@ -61,7 +61,7 @@ const forbidden = ["executeJavaScript(", "document.cookie", "indexedDB.databases
 const combined = [main, preload, server, workspace, rail, b2bProspectWorkspace, contextClient].join("\n")
 for (const needle of forbidden) if (combined.includes(needle)) throw new Error(`Forbidden Mega ZIP 4 pattern detected: ${needle}`)
 const packageJson = JSON.parse(fs.readFileSync(path.join(desktopRoot, "package.json"), "utf8"))
-if (!["1.3.0", "1.4.0"].includes(packageJson.version)) throw new Error("Mega ZIP 4 requires desktop version 1.3.0 or a supported cumulative version.")
+if (!["1.3.0", "1.4.0", "1.5.0"].includes(packageJson.version)) throw new Error("Mega ZIP 4 requires desktop version 1.3.0 or a supported cumulative version.")
 if (!packageJson.scripts?.verify?.includes("verify-mega-zip-4.mjs")) throw new Error("Mega ZIP 4 verifier is not wired into npm run verify.")
 if (packageJson.devDependencies?.["@electron-forge/maker-dmg"] || packageJson.devDependencies?.appdmg || packageJson.devDependencies?.["macos-alias"]) throw new Error("Native hdiutil DMG pipeline must remain intact.")
 const apiRoot = path.join(opsRoot, "app", "api", "whatsapp-desktop")

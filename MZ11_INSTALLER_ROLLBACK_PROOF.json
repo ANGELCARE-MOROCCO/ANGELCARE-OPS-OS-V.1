@@ -1,0 +1,12 @@
+{
+  "phase": "MZ11",
+  "installer": "passed",
+  "backupCreated": true,
+  "manifestAuthorizedCopy": true,
+  "packageScriptsPreserved": true,
+  "applicationRollback": "passed",
+  "touchedFileHashDiffsAfterRollback": 0,
+  "databaseAppliedByInstaller": false,
+  "gitActions": false,
+  "productionBuild": false
+}

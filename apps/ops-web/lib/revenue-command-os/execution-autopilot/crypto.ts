@@ -1,0 +1,5 @@
+import crypto from 'node:crypto'
+export const hashPayload=(value:unknown)=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex')
+export const stableId=(namespace:string,...parts:Array<string|number|undefined>)=>{const hex=crypto.createHash('sha256').update([namespace,...parts.map(x=>String(x??''))].join('|')).digest('hex');return`${hex.slice(0,8)}-${hex.slice(8,12)}-4${hex.slice(13,16)}-a${hex.slice(17,20)}-${hex.slice(20,32)}`}
+export const secureEqual=(a:string,b:string)=>{const aa=Buffer.from(a),bb=Buffer.from(b);return aa.length===bb.length&&crypto.timingSafeEqual(aa,bb)}
+export function redactRecord(input:Record<string,unknown>):Record<string,unknown>{const secret=/token|secret|password|authorization|api[_-]?key|credential/i;const entries:Array<[string,unknown]>=Object.entries(input).map(([k,v]):[string,unknown]=>[k,secret.test(k)?'[REDACTED]':typeof v==='object'&&v!==null&&!Array.isArray(v)?redactRecord(v as Record<string,unknown>):v]);return Object.fromEntries(entries) as Record<string,unknown>}

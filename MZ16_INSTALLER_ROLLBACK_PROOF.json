@@ -1,0 +1,16 @@
+{
+  "phase": "MZ16",
+  "installerSimulation": "passed",
+  "rollbackSimulation": "passed",
+  "simulationMode": {
+    "cumulativePriorPhaseChecks": "skipped_only_in_synthetic_simulation",
+    "phase16Acceptance": "executed",
+    "typecheck": "environment_bound"
+  },
+  "baselineFiles": 3,
+  "restoredFiles": 3,
+  "missingFiles": 0,
+  "unexpectedFiles": 0,
+  "hashMismatches": 0,
+  "externalActions": 0
+}

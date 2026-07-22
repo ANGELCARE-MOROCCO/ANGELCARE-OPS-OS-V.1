@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASE_URL="${BASE_URL:-http://localhost:3000}"; COOKIE="${ANGELCARE_SESSION_COOKIE:?ANGELCARE_SESSION_COOKIE required}"; STRATEGY_ID="${MZ13_STRATEGY_ID:?MZ13_STRATEGY_ID required}"; STRATEGY_VERSION="${MZ13_STRATEGY_VERSION:?MZ13_STRATEGY_VERSION required}"; APPROVAL_REQUEST_ID="${MZ13_APPROVAL_REQUEST_ID:?MZ13_APPROVAL_REQUEST_ID required}"
+KEY="mz13-live-${STRATEGY_ID}-${STRATEGY_VERSION}"
+RESULT=$(curl -fsS "$BASE_URL/api/revenue-command-os/mission-compiler/compile" -H "cookie: $COOKIE" -H 'content-type: application/json' -H "idempotency-key: $KEY" --data "{\"strategyId\":\"$STRATEGY_ID\",\"strategyVersion\":\"$STRATEGY_VERSION\",\"approvalRequestId\":\"$APPROVAL_REQUEST_ID\",\"scope\":\"full\",\"dryRun\":false}")
+node -e "const x=JSON.parse(process.argv[1]);if(!x.ok||!x.data?.blueprint||x.data.externalActions!==0)process.exit(1);const b=x.data.blueprint;if(!b.revenuePlays?.length||!b.programs?.length||!b.missions?.length||!b.tasks?.length||!b.steps?.length)process.exit(2);console.log(JSON.stringify({runId:b.run.id,status:b.run.status,plays:b.revenuePlays.length,programs:b.programs.length,campaigns:b.campaigns.length,waves:b.waves.length,missions:b.missions.length,tasks:b.tasks.length,steps:b.steps.length,readyForMZ14:b.readyForMZ14,externalActions:b.externalActions},null,2))" "$RESULT"

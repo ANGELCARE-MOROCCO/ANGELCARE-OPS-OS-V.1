@@ -1,0 +1,11 @@
+{
+  "phase": "MZ13",
+  "installerSimulation": "passed",
+  "rollbackSimulation": "passed",
+  "hashPerfectRestoration": true,
+  "baselineFiles": 689,
+  "restoredFiles": 689,
+  "missingFiles": [],
+  "unexpectedFiles": [],
+  "hashMismatches": []
+}

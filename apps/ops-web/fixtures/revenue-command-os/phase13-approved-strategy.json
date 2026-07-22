@@ -1,0 +1,6 @@
+{
+  "objective": {"id":"11111111-1111-4111-8111-111111111111","title":"Expansion Academy B2B Rabat–Casablanca","targetSegments":["écoles privées","préscolaires"],"territories":["Rabat","Casablanca"],"targetAccounts":[],"revenueTarget":600000,"marginTarget":35,"deadline":"2027-01-31T23:59:59.000Z"},
+  "strategy": {"id":"22222222-2222-4222-8222-222222222222","version":"1.1.0","archetype":"partnership_led_capture"},
+  "approval": {"id":"33333333-3333-4333-8333-333333333333","status":"ready_for_mz13","decisionId":"44444444-4444-4444-8444-444444444444","conditions":[{"type":"territory","operator":"in","value":["Rabat","Casablanca"],"status":"satisfied"},{"type":"no_discount","operator":"confirmed","value":true,"status":"satisfied"}]},
+  "expected": {"revenuePlays":1,"programs":1,"minimumCampaigns":1,"minimumMissions":3,"externalActions":0}
+}

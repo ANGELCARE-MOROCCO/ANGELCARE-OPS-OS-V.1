@@ -1,0 +1,107 @@
+{
+  "phase": "MZ15",
+  "tenantId": "tenant-angelcare-production",
+  "roleView": "executive",
+  "objective": {
+    "id": "obj-academy-2026",
+    "title": "Construire 1,8 M Dh de pipeline Academy B2B qualifié",
+    "revenueTarget": 1800000,
+    "qualifiedPipeline": 1120000,
+    "marginTarget": 42,
+    "confidence": 74,
+    "territories": [
+      "Rabat",
+      "Casablanca"
+    ]
+  },
+  "signals": [
+    {
+      "id": "sig-1",
+      "category": "revenue_acceleration",
+      "severity": "high",
+      "title": "Deux groupes scolaires avancent en proposition",
+      "confidence": "high"
+    },
+    {
+      "id": "sig-2",
+      "category": "capacity_risk",
+      "severity": "critical",
+      "title": "Wave Rabat bloquée par capacité formateurs",
+      "confidence": "verified"
+    },
+    {
+      "id": "sig-3",
+      "category": "payment_risk",
+      "severity": "high",
+      "title": "Trois promesses de paiement échues",
+      "confidence": "verified"
+    }
+  ],
+  "strategy": {
+    "id": "strat-1",
+    "version": "1.3",
+    "thesis": "Expansion pilotée par partenariats premium et vagues territoriales contrôlées",
+    "status": "approved",
+    "confidence": 82
+  },
+  "council": {
+    "classification": "recommended_for_executive_review",
+    "reviews": 10,
+    "blockingFindings": 0,
+    "redTeamAttacks": 8,
+    "scores": {
+      "evidence": 84,
+      "opportunity": 88,
+      "feasibility": 79,
+      "execution": 81,
+      "capacity": 70,
+      "profitability": 86,
+      "risk": 76,
+      "confidence": 82
+    }
+  },
+  "programs": [
+    {
+      "id": "prog-1",
+      "title": "Expansion Academy B2B Rabat–Casablanca",
+      "targetRevenue": 1800000,
+      "forecastRevenue": 1450000,
+      "progressPercent": 62,
+      "activeCampaigns": 3,
+      "activeWaves": 5,
+      "tasksBlocked": 4
+    }
+  ],
+  "execution": {
+    "prepared": 18,
+    "awaitingApproval": 7,
+    "queued": 9,
+    "executing": 3,
+    "succeeded": 42,
+    "failed": 2,
+    "deadLetters": 1,
+    "externalActionsExecuted": 0
+  },
+  "exceptions": [
+    {
+      "code": "CAPACITY-RABAT",
+      "priority": "P0",
+      "severity": "critical",
+      "revenueAtRisk": 240000,
+      "recommendedAction": "Approuver extension de capacité ou réduire Wave 3"
+    },
+    {
+      "code": "PAYMENT-PROMISES",
+      "priority": "P1",
+      "severity": "high",
+      "revenueAtRisk": 87000,
+      "recommendedAction": "Lancer mission de recovery senior"
+    }
+  ],
+  "approvals": {
+    "pending": 7,
+    "expiring": 2,
+    "critical": 3
+  },
+  "externalActions": 0
+}

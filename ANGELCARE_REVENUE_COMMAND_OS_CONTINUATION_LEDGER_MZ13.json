@@ -1,0 +1,26 @@
+{
+  "system": "ANGELCARE Revenue Command OS",
+  "latestCompletedPhase": "MZ13",
+  "nextPhase": "MZ14",
+  "activeCommandCount": 3000,
+  "aiProvider": "gemini",
+  "providerNeutralGateway": true,
+  "validationCouncilAgents": 10,
+  "strategyStudio": true,
+  "missionCompiler": true,
+  "compilerVersion": "13.0.0",
+  "executionMode": "shadow",
+  "externalActionsEnabled": false,
+  "databaseMigration": "20260721_revenue_command_os_phase13_mission_compiler.sql",
+  "databaseApplied": false,
+  "databaseVerificationRequired": true,
+  "compilerTables": 29,
+  "mandatoryOutputCategories": 19,
+  "knownAuthoritativeCorrections": [
+    "MZ09 V3 evaluation and semantic summary compatibility",
+    "MZ10 V2 installation registry compatibility",
+    "MZ10.1 Gemini runtime and Zod v4 structured output fixes",
+    "MZ12 approval-condition UUID normalization"
+  ],
+  "mz14Prerequisite": "Only a MZ13 blueprint with readyForMZ14=true may enter controlled propagation."
+}

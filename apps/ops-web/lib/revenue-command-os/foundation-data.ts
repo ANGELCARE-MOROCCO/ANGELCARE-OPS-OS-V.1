@@ -97,10 +97,10 @@ export const FOUNDATION_SYSTEM_CHECKS: RevenueOsSystemCheck[] = [
     checkedAt: nowIso,
   },
   {
-    key: 'openai-boundary',
-    label: 'Frontière OpenAI',
+    key: 'ai-provider-boundary',
+    label: 'Frontière fournisseur IA',
     status: 'operational',
-    detail: 'Aucun accès direct aux secrets ou à Supabase. Les futures actions passeront par des outils backend contrôlés.',
+    detail: 'Gemini est isolé derrière le gateway provider-neutral; aucun accès direct aux secrets, à Supabase ou aux actions externes.',
     checkedAt: nowIso,
   },
 ]

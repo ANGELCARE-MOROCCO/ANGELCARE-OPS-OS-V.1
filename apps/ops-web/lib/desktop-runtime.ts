@@ -19,6 +19,13 @@ export type DesktopRuntimeInfo = {
     controlledUpdates?: boolean
     crashLoopRecovery?: boolean
     signedInstallerReady?: boolean
+    corporateStationOS?: boolean
+    corporateMultiTabBrowser?: boolean
+    corporateBrowserPartition?: string
+    stationModes?: readonly string[]
+    nativeStationUnlock?: boolean
+    stationRemoteCommands?: boolean
+    perTabZoom?: boolean
     whatsappAutomation: false
     whatsappDomAccess: false
   }
@@ -33,7 +40,7 @@ function runtimeFromUserAgent(): DesktopRuntimeInfo | null {
     isDesktop: true,
     productName: "ANGELCARE Desktop",
     version: match[1] || "unknown",
-    contractVersion: "3.0.0",
+    contractVersion: "6.0.0",
     releaseChannel: "stable",
     platform: navigator.platform || "unknown",
     capabilities: {
@@ -97,4 +104,18 @@ export function getDesktopReleaseApi(): AngelCareDesktopReleaseApi | null {
 export function getDesktopDiagnosticsApi(): AngelCareDesktopDiagnosticsApi | null {
   if (typeof window === "undefined") return null
   return window.angelcareDesktop?.diagnostics || null
+}
+
+export function getCorporateTabsApi(): AngelCareCorporateTabsApi | null {
+  if (typeof window === "undefined") return null
+  return window.angelcareDesktop?.corporateTabs || null
+}
+
+export function getCorporateStationApi(): AngelCareStationApi | null {
+  if (typeof window === "undefined") return null
+  return window.angelcareDesktop?.station || null
+}
+
+export function hasCorporateStationRuntime(): boolean {
+  return Boolean(getDesktopRuntime()?.capabilities?.corporateStationOS && getCorporateStationApi() && getCorporateTabsApi())
 }

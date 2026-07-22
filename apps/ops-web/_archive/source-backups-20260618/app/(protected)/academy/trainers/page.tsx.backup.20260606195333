@@ -1,5 +1,0 @@
-import AcademyTrainersClient from './AcademyTrainersClient'
-
-export default function Page() {
-  return <AcademyTrainersClient />
-}

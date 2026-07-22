@@ -1,0 +1,21 @@
+{
+  "system": "ANGELCARE Revenue Command OS",
+  "latestCompletedPhase": "MZ12",
+  "nextPhase": "MZ13",
+  "activeCommandCount": 3000,
+  "aiProvider": "gemini",
+  "providerNeutralGateway": true,
+  "validationCouncilAgents": 10,
+  "strategyStudio": true,
+  "executionMode": "shadow",
+  "externalActionsEnabled": false,
+  "databaseMigration": "20260721_revenue_command_os_phase12_strategy_studio.sql",
+  "databaseApplied": false,
+  "databaseVerificationRequired": true,
+  "knownAuthoritativeCorrections": [
+    "MZ09 V3 evaluation and semantic summary compatibility",
+    "MZ10 V2 installation registry compatibility",
+    "MZ10.1 Gemini runtime and Zod v4 structured output fixes"
+  ],
+  "mz13Prerequisite": "Only an immutable strategy version with satisfied MZ11 and MZ12 gates may compile."
+}

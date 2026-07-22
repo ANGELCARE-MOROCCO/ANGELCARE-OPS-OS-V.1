@@ -11,7 +11,7 @@ const runtime = Object.freeze({
   isDesktop: true,
   productName: "ANGELCARE Desktop",
   version: argumentValue("--angelcare-desktop-version=", "0.0.0"),
-  contractVersion: argumentValue("--angelcare-desktop-contract=", "5.0.0"),
+  contractVersion: argumentValue("--angelcare-desktop-contract=", "6.0.0"),
   releaseChannel: argumentValue("--angelcare-desktop-channel=", "stable"),
   platform: process.platform,
   capabilities: Object.freeze({
@@ -28,6 +28,13 @@ const runtime = Object.freeze({
     controlledUpdates: true,
     crashLoopRecovery: true,
     signedInstallerReady: true,
+    corporateStationOS: true,
+    corporateMultiTabBrowser: true,
+    corporateBrowserPartition: true,
+    stationModes: true,
+    nativeStationUnlock: true,
+    stationRemoteCommands: true,
+    perTabZoom: true,
     whatsappAutomation: false,
     whatsappDomAccess: false,
   }),
@@ -37,6 +44,8 @@ const allowedCommands = new Set(["get-status", "show", "hide", "reload", "hard-r
 const governanceCommands = new Set(["get-status", "register", "heartbeat", "refresh", "select-workspace"]);
 const releaseCommands = new Set(["get-status", "check", "download", "restart-to-update", "reveal-download"]);
 const diagnosticsCommands = new Set(["get-status", "export", "get-production-status"]);
+const corporateCommands = new Set(["list", "get-status", "create", "close", "close-others", "activate", "duplicate", "pin", "reorder", "reopen-closed", "navigate", "back", "forward", "reload", "reload-no-cache", "stop", "home", "zoom-in", "zoom-out", "zoom-reset", "set-zoom", "fit-workspace", "recover", "clear-cache", "clear-data", "open-downloads"]);
+const stationCommands = new Set(["get-status", "get-policy", "refresh-policy", "request-mode", "request-unlock", "get-lockout-status", "get-diagnostics"]);
 
 function invoke(channel, allowed, action, payload = {}) {
   if (!allowed.has(action)) return Promise.reject(new Error("Unsupported ANGELCARE Desktop command."));
@@ -86,6 +95,45 @@ const api = Object.freeze({
     revealDownload: () => invoke("angelcare-desktop:release-command", releaseCommands, "reveal-download"),
     onStatus: (listener) => subscribe("angelcare-desktop:release-state", listener),
   }),
+  corporateTabs: Object.freeze({
+    list: () => invoke("angelcare-desktop:corporate-command", corporateCommands, "list"),
+    getStatus: () => invoke("angelcare-desktop:corporate-command", corporateCommands, "get-status"),
+    create: (input = {}) => invoke("angelcare-desktop:corporate-command", corporateCommands, "create", input),
+    close: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "close", { id }),
+    closeOthers: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "close-others", { id }),
+    activate: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "activate", { id }),
+    duplicate: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "duplicate", { id }),
+    pin: (id, pinned = true) => invoke("angelcare-desktop:corporate-command", corporateCommands, "pin", { id, pinned }),
+    reorder: (id, targetIndex) => invoke("angelcare-desktop:corporate-command", corporateCommands, "reorder", { id, targetIndex }),
+    reopenClosed: () => invoke("angelcare-desktop:corporate-command", corporateCommands, "reopen-closed"),
+    navigate: (id, input) => invoke("angelcare-desktop:corporate-command", corporateCommands, "navigate", { id, input }),
+    back: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "back", { id }),
+    forward: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "forward", { id }),
+    reload: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "reload", { id }),
+    reloadWithoutCache: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "reload-no-cache", { id }),
+    stop: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "stop", { id }),
+    home: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "home", { id }),
+    zoomIn: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "zoom-in", { id }),
+    zoomOut: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "zoom-out", { id }),
+    zoomReset: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "zoom-reset", { id }),
+    setZoom: (id, zoom) => invoke("angelcare-desktop:corporate-command", corporateCommands, "set-zoom", { id, zoom }),
+    fitWorkspace: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "fit-workspace", { id }),
+    recover: (id) => invoke("angelcare-desktop:corporate-command", corporateCommands, "recover", { id }),
+    clearCache: () => invoke("angelcare-desktop:corporate-command", corporateCommands, "clear-cache"),
+    clearData: () => invoke("angelcare-desktop:corporate-command", corporateCommands, "clear-data"),
+    openDownloads: () => invoke("angelcare-desktop:corporate-command", corporateCommands, "open-downloads"),
+    onStatus: (listener) => subscribe("angelcare-desktop:corporate-state", listener),
+  }),
+  station: Object.freeze({
+    getStatus: () => invoke("angelcare-desktop:station-command", stationCommands, "get-status"),
+    getPolicy: () => invoke("angelcare-desktop:station-command", stationCommands, "get-policy"),
+    refreshPolicy: () => invoke("angelcare-desktop:station-command", stationCommands, "refresh-policy"),
+    requestMode: (mode) => invoke("angelcare-desktop:station-command", stationCommands, "request-mode", { mode }),
+    requestUnlock: () => invoke("angelcare-desktop:station-command", stationCommands, "request-unlock"),
+    getLockoutStatus: () => invoke("angelcare-desktop:station-command", stationCommands, "get-lockout-status"),
+    getDiagnostics: () => invoke("angelcare-desktop:station-command", stationCommands, "get-diagnostics"),
+    onStatus: (listener) => subscribe("angelcare-desktop:station-state", listener),
+  }),
   diagnostics: Object.freeze({
     getStatus: () => invoke("angelcare-desktop:diagnostics-command", diagnosticsCommands, "get-status"),
     exportBundle: () => invoke("angelcare-desktop:diagnostics-command", diagnosticsCommands, "export"),
@@ -101,5 +149,6 @@ window.addEventListener("DOMContentLoaded", () => {
   document.documentElement.dataset.angelcareDesktopVersion = runtime.version;
   document.documentElement.dataset.angelcareWhatsappRuntime = "available";
   document.documentElement.dataset.angelcareProductionRuntime = "available";
+  document.documentElement.dataset.angelcareCorporateStation = "available";
   window.dispatchEvent(new CustomEvent("angelcare:desktop-ready", { detail: api }));
 });

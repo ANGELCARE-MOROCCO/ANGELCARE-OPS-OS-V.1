@@ -1,0 +1,9 @@
+import {NextRequest,NextResponse} from 'next/server'
+import {getCurrentUser} from '@/lib/getUser'
+import {councilError,councilRights,tenantOf} from '@/lib/revenue-command-os/validation-council/api-access'
+import {councilAgentByCode} from '@/lib/revenue-command-os/validation-council/agents'
+import {runCouncilAgent} from '@/lib/revenue-command-os/validation-council/gemini-agent'
+import {getCouncilRun,loadCouncilStrategy,persistReview} from '@/lib/revenue-command-os/validation-council/repository'
+import type {CouncilAgentCode,CouncilRun} from '@/lib/revenue-command-os/validation-council/types'
+export const runtime='nodejs';export const dynamic='force-dynamic';export const maxDuration=300
+export async function POST(request:NextRequest){const user=await getCurrentUser();if(!user)return councilError('UNAUTHENTICATED','Authentification requise.',401);if(!councilRights(user).run)return councilError('FORBIDDEN','Permission Conseil requise.',403);try{const body=await request.json();const tenantId=tenantOf(user,body);const snapshot=await getCouncilRun(body.runId,tenantId);if(!snapshot.run)throw new Error('COUNCIL_RUN_NOT_FOUND');const row=snapshot.run;const {strategy,context}=await loadCouncilStrategy(String(row.strategy_id),tenantId);const run=(row.payload||{id:row.id,tenantId,objectiveId:row.objective_id,strategyId:row.strategy_id,strategyVersion:row.strategy_version,contextSnapshotId:row.context_snapshot_id,status:row.status,idempotencyKey:row.idempotency_key,requestedBy:row.requested_by,startedAt:row.started_at,externalActions:0}) as CouncilRun;const review=await runCouncilAgent({run,strategy,context,agent:councilAgentByCode(body.agentCode as CouncilAgentCode)});await persistReview(review);return NextResponse.json({ok:true,data:review,mode:'shadow',externalActions:0})}catch(error){return councilError('COUNCIL_AGENT_RETRY_FAILED',error instanceof Error?error.message:String(error),500)}}

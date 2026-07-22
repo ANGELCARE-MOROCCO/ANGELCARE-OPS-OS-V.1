@@ -1,0 +1,24 @@
+{
+  "latestCompletedPhase": "MZ14",
+  "nextPhase": "MZ15",
+  "releaseCode": "AC-REVENUE-OS-MZ14-PROPAGATION-AUTOPILOT",
+  "moduleVersion": "14.0.0",
+  "prerequisite": "MZ13",
+  "geminiProvider": "configured",
+  "commandLibrary": 3000,
+  "validationCouncilAgents": 10,
+  "strategyStudio": true,
+  "missionCompiler": true,
+  "mandatoryAdapters": 16,
+  "mandatoryActions": 15,
+  "transactionalOutbox": true,
+  "webhookInbox": true,
+  "defaultExternalActionsEnabled": false,
+  "knownCorrectionsPreserved": [
+    "MZ09 evaluation uniqueness and semantic summary compatibility",
+    "MZ10 installation registry compatibility",
+    "MZ10.1 Gemini runtime and Zod v4 typing",
+    "MZ12 approval condition UUID normalization",
+    "MZ13 permission registry phase_introduced compatibility"
+  ]
+}

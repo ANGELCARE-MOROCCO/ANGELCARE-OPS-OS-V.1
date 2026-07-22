@@ -1,12 +1,22 @@
 import { requireUser } from '@/lib/auth/session'
 import { loadAuthorizedWorkspaceHub } from '@/lib/workspace-hub/authorized-modules'
 import AuthorizedWorkspaceHub from '@/components/workspace-hub/AuthorizedWorkspaceHub'
+import AuthorizedResourceFamilyCards from '@/components/workspace-hub/AuthorizedResourceFamilyCards'
+import { loadAuthorizedIndependentResources } from '@/lib/workspace-hub/authorized-resources'
 
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
   const user = await requireUser()
-  const data = await loadAuthorizedWorkspaceHub(user)
+  const [data, independentResources] = await Promise.all([
+    loadAuthorizedWorkspaceHub(user),
+    loadAuthorizedIndependentResources(user),
+  ])
 
-  return <AuthorizedWorkspaceHub initialData={data} />
+  return (
+    <>
+      <AuthorizedWorkspaceHub initialData={data} />
+      <AuthorizedResourceFamilyCards resources={independentResources} />
+    </>
+  )
 }
