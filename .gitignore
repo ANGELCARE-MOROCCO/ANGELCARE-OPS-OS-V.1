@@ -106,3 +106,4 @@ RELEASES
 **/_backups/
 **/backups/
 **/source-backups-*/
+**/.revenue-os-backups/

@@ -18,13 +18,13 @@ import type { RevenueOsWorkspaceKey } from '@/lib/revenue-command-os/types'
 import { useRevenueOs } from './RevenueOsContext'
 import RevenueOsIcon from './RevenueOsIcon'
 
-const workspaceBlueprints: Record<RevenueOsWorkspaceKey, {
+const workspaceBlueprints: Partial<Record<RevenueOsWorkspaceKey, {
   eyebrow: string
   title: string
   statement: string
   columns: { title: string; items: string[] }[]
   nextPhase: string
-}> = {
+}>> = {
   'strategic-view': {
     eyebrow: 'Cockpit central',
     title: 'Vue stratégique',
